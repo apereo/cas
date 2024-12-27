@@ -350,11 +350,6 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         this.serviceRegistryWatcherService.close();
     }
 
-    /**
-     * Remove registered service.
-     *
-     * @param service the service
-     */
     protected void removeRegisteredService(final RegisteredService service) {
         this.services.remove(service.getId());
     }

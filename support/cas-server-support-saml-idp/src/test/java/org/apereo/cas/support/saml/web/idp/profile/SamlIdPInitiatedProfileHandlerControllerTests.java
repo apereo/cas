@@ -56,7 +56,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifyNoShire() throws Throwable {
+    void verifyNoShire() {
         val request = new MockHttpServletRequest();
 
         val service = getSamlRegisteredServiceForTestShib();
@@ -70,7 +70,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifyBadServiceWithNoMetadata() throws Throwable {
+    void verifyBadServiceWithNoMetadata() {
         val request = new MockHttpServletRequest();
 
         val service = new SamlRegisteredService();
@@ -85,7 +85,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     }
 
     @Test
-    void verifyNoProvider() throws Throwable {
+    void verifyNoProvider() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         assertThrows(MessageDecodingException.class,
@@ -94,7 +94,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
 
 
     @Test
-    void verifyBadService() throws Throwable {
+    void verifyBadService() {
         val request = new MockHttpServletRequest();
         request.addParameter(SamlIdPConstants.PROVIDER_ID, "xxxxxx");
         val response = new MockHttpServletResponse();

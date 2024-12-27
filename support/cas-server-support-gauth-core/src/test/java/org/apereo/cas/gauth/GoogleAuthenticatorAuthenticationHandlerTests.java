@@ -77,20 +77,20 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
     }
 
     @Test
-    void verifySupports() throws Throwable {
+    void verifySupports() {
         val credential = new GoogleAuthenticatorTokenCredential();
         assertTrue(handler.supports(credential));
         assertTrue(handler.supports(GoogleAuthenticatorTokenCredential.class));
     }
 
     @Test
-    void verifyAuthnAccountNotFound() throws Throwable {
+    void verifyAuthnAccountNotFound() {
         val credential = getGoogleAuthenticatorTokenCredential();
         assertThrows(AccountNotFoundException.class, () -> handler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
-    void verifyAuthnFailsTokenUsed() throws Throwable {
+    void verifyAuthnFailsTokenUsed() {
         val credential = getGoogleAuthenticatorTokenCredential();
         handler.getValidator().store(
             new GoogleAuthenticatorToken(Integer.valueOf(credential.getToken()), "casuser"));

@@ -65,12 +65,12 @@ class SurrogatePrincipalResolverTests {
     private AttributeDefinitionStore attributeDefinitionStore;
     
     @BeforeEach
-    public void before() throws Exception {
+    public void before() {
         this.attributeDefinitionStore = mock(AttributeDefinitionStore.class);
     }
 
     @Test
-    void verifySupports() throws Throwable {
+    void verifySupports() {
         val context = getPrincipalResolutionContext(StringUtils.EMPTY, CoreAuthenticationTestUtils.getAttributeRepository());
         val surrogatePrincipalBuilder = getBuilder();
         val resolver = new SurrogatePrincipalResolver(context);
@@ -125,7 +125,7 @@ class SurrogatePrincipalResolverTests {
     }
 
     @Test
-    void verifyResolverSurrogateWithoutPrincipal() throws Throwable {
+    void verifyResolverSurrogateWithoutPrincipal() {
         val surrogatePrincipalBuilder = getBuilder();
 
         val context = getPrincipalResolutionContext("cn", CoreAuthenticationTestUtils.getAttributeRepository());

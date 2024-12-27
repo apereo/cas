@@ -43,7 +43,7 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
     private MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider;
 
     @Test
-    void verifyDeviceManager() throws Throwable {
+    void verifyDeviceManager() {
         val acct = registry.create(UUID.randomUUID().toString());
         val toSave = GoogleAuthenticatorAccount.builder()
             .username(acct.getUsername())
@@ -63,7 +63,7 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
     }
     
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val acct = registry.create(UUID.randomUUID().toString());
         val toSave = GoogleAuthenticatorAccount.builder()
             .username(acct.getUsername())

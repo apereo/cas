@@ -45,7 +45,7 @@ class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val policy = new OidcProfileScopeAttributeReleasePolicy();
         policy.setAllowedAttributes(CollectionUtils.wrapList("name", "gender"));
         val chain = new ChainingAttributeReleasePolicy();

@@ -88,7 +88,7 @@ class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlM
     }
 
     @Test
-    void verifyResolverDoesNotSupport() throws Throwable {
+    void verifyResolverDoesNotSupport() {
         assertFalse(resolver.supports(null));
 
     }

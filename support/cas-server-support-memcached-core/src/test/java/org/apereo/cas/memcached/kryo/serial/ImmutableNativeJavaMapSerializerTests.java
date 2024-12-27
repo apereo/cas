@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 11211)
 class ImmutableNativeJavaMapSerializerTests {
     @Test
-    void verifyTranscoderWorks() throws Throwable {
+    void verifyTranscoderWorks() {
         val pool = new CasKryoPool();
         try (val kryo = pool.borrow()) {
             val output = new ByteBufferOutput(4096);

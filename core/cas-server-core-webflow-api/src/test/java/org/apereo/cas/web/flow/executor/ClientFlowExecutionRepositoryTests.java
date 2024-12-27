@@ -67,7 +67,7 @@ class ClientFlowExecutionRepositoryTests {
         private FlowExecutor flowExecutor;
         
         @Test
-        void verifyLaunchAndResumeFlow() throws Throwable {
+        void verifyLaunchAndResumeFlow() {
             val request1 = new MockHttpServletRequest();
             request1.setRemoteAddr("223.456.789.000");
             request1.setLocalAddr("123.456.789.000");
@@ -102,7 +102,7 @@ class ClientFlowExecutionRepositoryTests {
         private FlowExecutor flowExecutor;
 
         @Test
-        void verifyBadKey() throws Throwable {
+        void verifyBadKey() {
             val factory = new ClientFlowExecutionRepository(mock(FlowExecutionFactory.class),
                 mock(FlowDefinitionLocator.class), mock(Transcoder.class), casProperties.getWebflow());
             factory.removeFlowExecutionSnapshot(mock(FlowExecution.class));
@@ -116,7 +116,7 @@ class ClientFlowExecutionRepositoryTests {
         }
 
         @Test
-        void verifyLaunchAndResumeFlow() throws Throwable {
+        void verifyLaunchAndResumeFlow() {
             assertNotNull(flowExecutor);
             val launchResult = flowExecutor.launchExecution("test-flow", new LocalAttributeMap<>(), new MockExternalContext());
             assertNotNull(launchResult.getPausedKey());

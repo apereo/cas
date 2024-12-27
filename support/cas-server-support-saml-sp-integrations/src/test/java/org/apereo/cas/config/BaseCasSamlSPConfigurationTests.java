@@ -58,7 +58,7 @@ public abstract class BaseCasSamlSPConfigurationTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         LOGGER.debug("Looking for service id [{}]", getServiceProviderId());
         val service = webApplicationServiceFactory.createService(getServiceProviderId());
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(getServiceProviderId()));

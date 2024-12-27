@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles({"prod1", "qa1"})
 class DefaultServicesManagerByEnvironmentTests extends AbstractServicesManagerTests {
     @Test
-    void verifyServiceByEnvironment() throws Throwable {
+    void verifyServiceByEnvironment() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(getClass().getSimpleName());

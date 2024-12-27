@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 class SpringExpressionLanguageValueResolverTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
 
         assertNotNull(resolver.apply("HelloWorld"));

@@ -44,25 +44,25 @@ class TimeoutExpirationPolicyTests {
     }
 
     @Test
-    void verifyTicketIsNull() throws Throwable {
+    void verifyTicketIsNull() {
         assertTrue(expirationPolicy.isExpired(null));
     }
 
     @Test
-    void verifyTicketIsNotExpired() throws Throwable {
+    void verifyTicketIsNotExpired() {
         assertFalse(ticket.isExpired());
         assertNotNull(ticket.getExpirationPolicy().toMaximumExpirationTime(ticket));
     }
 
     @Test
-    void verifyTicketIsExpired() throws Throwable {
+    void verifyTicketIsExpired() {
         ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(),
             new TimeoutExpirationPolicy(-100));
         assertTrue(ticket.isExpired());
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, TimeoutExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);

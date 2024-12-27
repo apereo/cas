@@ -34,7 +34,7 @@ class CasServerDiscoveryProfileEndpointTests extends AbstractCasEndpointTests {
     private CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val discovery = discoveryProfileEndpoint.discovery();
         assertNotNull(discovery);
         assertFalse(discovery.isEmpty());

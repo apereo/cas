@@ -30,7 +30,7 @@ class DelegatedSaml2ClientMetadataControllerTests {
     private Action delegatedAuthenticationAction;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(delegatedAuthenticationAction);
         assertNotNull(delegatedSaml2ClientMetadataController.getFirstIdentityProviderMetadata());
         assertNotNull(delegatedSaml2ClientMetadataController.getFirstServiceProviderMetadata());

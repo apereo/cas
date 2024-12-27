@@ -40,7 +40,7 @@ class ServiceAccessEnforcementAuditResourceResolverTests {
     @TestPropertySource(properties = "cas.audit.engine.include-validation-assertion=false")
     class WithoutAssertionTests extends BaseTests {
         @Test
-        void verifyAction() throws Throwable {
+        void verifyAction() {
             val result = AuditableExecutionResult.builder()
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
@@ -55,7 +55,7 @@ class ServiceAccessEnforcementAuditResourceResolverTests {
     @TestPropertySource(properties = "cas.audit.engine.include-validation-assertion=true")
     class WithAssertionTests extends BaseTests {
         @Test
-        void verifyAction() throws Throwable {
+        void verifyAction() {
             val result = AuditableExecutionResult.builder()
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())

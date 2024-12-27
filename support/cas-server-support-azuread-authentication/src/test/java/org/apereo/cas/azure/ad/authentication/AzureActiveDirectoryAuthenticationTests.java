@@ -50,7 +50,7 @@ class AzureActiveDirectoryAuthenticationTests {
         protected AuthenticationHandler microsoftAzureActiveDirectoryAuthenticationHandler;
 
         @Test
-        void verifyOperationFails() throws Throwable {
+        void verifyOperationFails() {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
                 "castest@" + AZURE_AD_DOMAIN, "bf65hfg78");
             assertThrows(FailedLoginException.class, () -> microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class)));
@@ -78,7 +78,7 @@ class AzureActiveDirectoryAuthenticationTests {
         }
 
         @Test
-        void verifyOperationFails() throws Throwable {
+        void verifyOperationFails() {
             val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
                 "castest@" + AZURE_AD_DOMAIN, "bf65hfg78");
             assertThrows(FailedLoginException.class, () -> microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class)));
@@ -118,7 +118,7 @@ class AzureActiveDirectoryAuthenticationTests {
         protected List<PersonAttributeDao> microsoftAzureActiveDirectoryAttributeRepositories;
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             val repository = microsoftAzureActiveDirectoryAttributeRepositories.getFirst();
             val person = repository.getPerson("castest@" + AZURE_AD_DOMAIN);
             assertNotNull(person);

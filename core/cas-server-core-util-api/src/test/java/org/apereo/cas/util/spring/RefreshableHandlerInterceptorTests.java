@@ -45,7 +45,7 @@ class RefreshableHandlerInterceptorTests {
     private ObjectProvider<HandlerInterceptor> localeChangeHandlerInterceptor;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
 
@@ -61,7 +61,7 @@ class RefreshableHandlerInterceptorTests {
     }
 
     @Test
-    void verifySupplierOperation() throws Throwable {
+    void verifySupplierOperation() {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
 

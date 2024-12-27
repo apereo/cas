@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Hibernate")
 class DefaultCloseableDataSourceTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val props = new Jpa()
             .setDriverClass("org.hsqldb.jdbcDriver")
             .setUser("sa")

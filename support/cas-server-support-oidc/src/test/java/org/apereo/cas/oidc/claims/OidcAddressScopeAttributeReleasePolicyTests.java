@@ -44,7 +44,7 @@ class OidcAddressScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val policy = new OidcAddressScopeAttributeReleasePolicy();
         val chain = new ChainingAttributeReleasePolicy();
         chain.addPolicies(policy);

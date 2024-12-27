@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class PersonDirectoryRuntimeHintsTests {
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new PersonDirectoryRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.proxies()

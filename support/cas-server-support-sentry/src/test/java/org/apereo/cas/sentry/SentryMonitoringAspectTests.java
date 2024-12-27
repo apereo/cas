@@ -50,7 +50,7 @@ class SentryMonitoringAspectTests {
     private Reporter realReporter;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertThrows(IllegalArgumentException.class, () -> greeter.greet(true));
         assertEquals("Hello", greeter.greet(false));
         assertEquals("Reporter", reporter.report());

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GrouperRuntimeHintsTests {
 
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new GrouperRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(GrouperFacade.class).test(hints));

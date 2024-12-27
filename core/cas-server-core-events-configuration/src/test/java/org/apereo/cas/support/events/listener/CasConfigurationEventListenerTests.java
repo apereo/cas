@@ -51,7 +51,7 @@ class CasConfigurationEventListenerTests {
     private CasConfigurationEventListener casConfigurationEventListener;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(casConfigurationEventListener);
         assertDoesNotThrow(() -> applicationContext.publishEvent(
             new EnvironmentChangeEvent(Set.of("cas.server.name"))));

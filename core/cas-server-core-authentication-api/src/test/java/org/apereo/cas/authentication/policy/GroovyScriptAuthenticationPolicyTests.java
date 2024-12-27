@@ -65,14 +65,14 @@ class GroovyScriptAuthenticationPolicyTests {
     }
 
     @Test
-    void verifyResumeOnFailureClasspath() throws Throwable {
+    void verifyResumeOnFailureClasspath() {
         val policy = new GroovyScriptAuthenticationPolicy("classpath:/GroovyAuthenticationPolicy.groovy");
         assertFalse(policy.shouldResumeOnFailure(new RuntimeException()));
         assertTrue(policy.shouldResumeOnFailure(new AccountNotFoundException()));
     }
 
     @Test
-    void verifyBadFile() throws Throwable {
+    void verifyBadFile() {
         val policy = new GroovyScriptAuthenticationPolicy("unknown-file");
         assertThrows(IllegalArgumentException.class, () -> policy.shouldResumeOnFailure(new RuntimeException()));
     }

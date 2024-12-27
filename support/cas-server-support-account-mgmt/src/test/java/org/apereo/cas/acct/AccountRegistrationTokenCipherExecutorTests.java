@@ -37,7 +37,7 @@ class AccountRegistrationTokenCipherExecutorTests {
     private CipherExecutor accountMgmtCipherExecutor;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val valueToEncode = UUID.randomUUID().toString();
         val encoded = accountMgmtCipherExecutor.encode(valueToEncode);
         assertEquals(valueToEncode, accountMgmtCipherExecutor.decode(encoded));

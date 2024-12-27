@@ -51,7 +51,7 @@ class CasJdbcSessionConfigurationTests {
     private SessionRepository sessionRepository;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(sessionRepository);
     }
 

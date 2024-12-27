@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ActiveDirectory")
 class ActiveDirectoryLdapEntryHandlerTests {
     @Test
-    void verifyAccountLocked() throws Exception {
+    void verifyAccountLocked() {
         val handler = new ActiveDirectoryLdapEntryHandler();
         val entry = LdapEntry.builder()
             .attributes(LdapAttribute.builder().name("userAccountControl")
@@ -29,7 +29,7 @@ class ActiveDirectoryLdapEntryHandlerTests {
     }
 
     @Test
-    void verifyAccountExpired() throws Exception {
+    void verifyAccountExpired() {
         val handler = new ActiveDirectoryLdapEntryHandler();
         val entry = LdapEntry.builder()
             .attributes(LdapAttribute.builder().name("userAccountControl")
@@ -40,7 +40,7 @@ class ActiveDirectoryLdapEntryHandlerTests {
     }
 
     @Test
-    void verifyAccountExpiredByDate() throws Exception {
+    void verifyAccountExpiredByDate() {
         val handler = new ActiveDirectoryLdapEntryHandler();
         val expiration = new Date().getTime();
         val entry = LdapEntry.builder()
@@ -53,7 +53,7 @@ class ActiveDirectoryLdapEntryHandlerTests {
 
 
     @Test
-    void verifyAccountLogonHours() throws Exception {
+    void verifyAccountLogonHours() {
         val handler = new ActiveDirectoryLdapEntryHandler();
         val logonHours = new byte[21];
         for (var day = 1; day <= 6; day++) {
@@ -74,7 +74,7 @@ class ActiveDirectoryLdapEntryHandlerTests {
     }
     
     @Test
-    void verifyAccountDisabled() throws Exception {
+    void verifyAccountDisabled() {
         val handler = new ActiveDirectoryLdapEntryHandler();
         val entry = LdapEntry.builder()
             .attributes(LdapAttribute.builder().name("userAccountControl")

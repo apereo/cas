@@ -29,4 +29,10 @@ public class MultitenancyProperties implements Serializable {
     @NestedConfigurationProperty
     private SpringResourceProperties json = new SpringResourceProperties();
 
+    /**
+     * Core settings for multitenancy.
+     */
+    @NestedConfigurationProperty
+    private MultitenancyCoreProperties core = new MultitenancyCoreProperties();
+
 }

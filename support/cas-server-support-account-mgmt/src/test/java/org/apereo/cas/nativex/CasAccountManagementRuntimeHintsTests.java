@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class CasAccountManagementRuntimeHintsTests {
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new CasAccountManagementRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.reflection().onType(AccountRegistrationProvisionerConfigurer.class).test(hints));

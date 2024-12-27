@@ -53,7 +53,7 @@ class YubiKeyAccountRegistryEndpointTests {
     private YubiKeyAccountRegistryEndpoint endpoint;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         endpoint.deleteAll();
         val username = UUID.randomUUID().toString();
         assertTrue(endpoint.load().isEmpty());

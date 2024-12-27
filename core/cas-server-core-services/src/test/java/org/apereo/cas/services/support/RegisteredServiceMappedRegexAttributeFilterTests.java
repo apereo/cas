@@ -65,7 +65,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
     }
 
     @Test
-    void verifyPatternFilter() throws Throwable {
+    void verifyPatternFilter() {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
         val attrs = this.filter.filter(givenAttributesMap);
         assertEquals(attrs.size(), givenAttributesMap.size());
@@ -73,7 +73,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
     }
 
     @Test
-    void verifyPattern() throws Throwable {
+    void verifyPattern() {
         this.filter = new RegisteredServiceMappedRegexAttributeFilter(Collections.singletonMap("memberOf", "^m"));
         val attrs = this.filter.filter(givenAttributesMap);
         assertEquals(attrs.size(), givenAttributesMap.size());
@@ -81,7 +81,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
     }
 
     @Test
-    void verifyPatternFilterExcludeUnmatched() throws Throwable {
+    void verifyPatternFilterExcludeUnmatched() {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
         this.filter.setExcludeUnmappedAttributes(true);
         val attrs = this.filter.filter(givenAttributesMap);
@@ -90,7 +90,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
     }
 
     @Test
-    void verifyPatternFilterFullMatch() throws Throwable {
+    void verifyPatternFilterFullMatch() {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
         this.filter.setCompleteMatch(true);
         val attrs = this.filter.filter(givenAttributesMap);
@@ -99,7 +99,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val data = SerializationUtils.serialize(this.filter);
         val secondFilter = SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);

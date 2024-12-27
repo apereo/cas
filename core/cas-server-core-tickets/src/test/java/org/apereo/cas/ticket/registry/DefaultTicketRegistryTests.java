@@ -56,7 +56,7 @@ class DefaultTicketRegistryTests {
         }
 
         @RepeatedTest(1)
-        void verifyCountsUnknown() throws Throwable {
+        void verifyCountsUnknown() {
             val registry = mock(DefaultTicketRegistry.class);
             when(registry.stream()).thenThrow(IllegalArgumentException.class);
             when(registry.sessionCount()).thenCallRealMethod();

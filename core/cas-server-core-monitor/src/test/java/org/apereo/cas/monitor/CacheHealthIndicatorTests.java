@@ -36,7 +36,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    void verifyObserveOk() throws Throwable {
+    void verifyObserveOk() {
         val warn = casProperties.getMonitor().getWarn();
         val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
@@ -51,7 +51,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    void verifyObserveWarn() throws Throwable {
+    void verifyObserveWarn() {
         val warn = casProperties.getMonitor().getWarn();
         val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
@@ -67,7 +67,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    void verifyObserveError() throws Throwable {
+    void verifyObserveError() {
         val warn = casProperties.getMonitor().getWarn();
         val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
@@ -82,7 +82,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    void verifyObserveError2() throws Throwable {
+    void verifyObserveError2() {
         val warn = casProperties.getMonitor().getWarn();
         val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
@@ -96,13 +96,13 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    void verifyToString() throws Throwable {
+    void verifyToString() {
         val stat = new SimpleCacheStatistics(100, 110, 0, "test");
         assertNotNull(stat.toString(new StringBuilder()));
     }
 
     @Test
-    void verifyOut() throws Throwable {
+    void verifyOut() {
         val indicator = new AbstractCacheHealthIndicator(0, 0) {
             @Override
             protected CacheStatistics[] getStatistics() {
@@ -113,7 +113,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    void verifyDown() throws Throwable {
+    void verifyDown() {
         val indicator = new AbstractCacheHealthIndicator(0, 0) {
             @Override
             protected CacheStatistics[] getStatistics() {
@@ -131,7 +131,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    void verifyError() throws Throwable {
+    void verifyError() {
         val indicator = new AbstractCacheHealthIndicator(0, 0) {
             @Override
             protected CacheStatistics[] getStatistics() {

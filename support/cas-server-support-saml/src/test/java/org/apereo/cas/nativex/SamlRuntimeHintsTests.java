@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class SamlRuntimeHintsTests {
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new SamlRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.serialization().onType(SamlService.class).test(hints));

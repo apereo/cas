@@ -34,7 +34,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcT
     protected OidcDynamicClientRegistrationEndpointController controller;
 
     @Test
-    void verifyBadEndpointRequest() throws Throwable {
+    void verifyBadEndpointRequest() {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
@@ -43,14 +43,14 @@ class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcT
     }
 
     @Test
-    void verifyBadInput() throws Throwable {
+    void verifyBadInput() {
         val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
         val response = new MockHttpServletResponse();
         assertEquals(HttpStatus.SC_BAD_REQUEST, controller.handleRequestInternal("bad-input", request, response).getStatusCode().value());
     }
 
     @Test
-    void verifyBadRedirect() throws Throwable {
+    void verifyBadRedirect() {
         val registrationReq = """
     {
        "redirect_uris": ["https://client.example.org/callback#something", "https://client.example.org/callback2"],
@@ -64,7 +64,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcT
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
         val response = new MockHttpServletResponse();
 
@@ -101,7 +101,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcT
     }
 
     @Test
-    void verifyNoClientNameOperation() throws Throwable {
+    void verifyNoClientNameOperation() {
         val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
         val response = new MockHttpServletResponse();
 
@@ -136,7 +136,7 @@ class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcT
     }
 
     @Test
-    void verifyMissingBackchannelEndpoint() throws Throwable {
+    void verifyMissingBackchannelEndpoint() {
         val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
         val response = new MockHttpServletResponse();
 

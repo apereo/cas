@@ -58,14 +58,14 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     private OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository;
 
     @Test
-    void verifyTokenAuthz() throws Throwable {
+    void verifyTokenAuthz() {
         val acct = getOneTimeTokenAccount();
         assertTrue(validator.isTokenAuthorizedFor(123456, acct));
         assertFalse(validator.isTokenAuthorizedFor(987654, acct));
     }
 
     @Test
-    void verifyTokenAuthzWithScratchCode() throws Throwable {
+    void verifyTokenAuthzWithScratchCode() {
         val acct = getOneTimeTokenAccount(List.of(223856));
         googleAuthenticatorAccountRegistry.save(acct);
         assertTrue(validator.isTokenAuthorizedFor(223856, acct));
@@ -73,7 +73,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     }
 
     @Test
-    void verifyStore() throws Throwable {
+    void verifyStore() {
         val token = new GoogleAuthenticatorToken(632435, "casuser");
         assertDoesNotThrow(() -> validator.store(token));
     }
@@ -98,7 +98,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     }
 
     @Test
-    void verifyTokenReuse() throws Throwable {
+    void verifyTokenReuse() {
         val acct = getOneTimeTokenAccount();
         googleAuthenticatorAccountRegistry.save(acct);
 
@@ -110,7 +110,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     }
 
     @Test
-    void verifyBadToken() throws Throwable {
+    void verifyBadToken() {
         assertThrows(PreventedException.class,
             () -> validator.validate(CoreAuthenticationTestUtils.getAuthentication("casuser"),
                 new GoogleAuthenticatorTokenCredential("abcdefg", 123456L)));
@@ -120,7 +120,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     }
 
     @Test
-    void verifyMultipleAccountsWithNoId() throws Throwable {
+    void verifyMultipleAccountsWithNoId() {
         for (var i = 0; i < 2; i++) {
             val acct = GoogleAuthenticatorAccount.builder()
                 .username("casuser")

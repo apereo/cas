@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
 class OAuth20AccessTokenSecurityLogicTests extends AbstractOAuth20Tests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val registeredService = addRegisteredService();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

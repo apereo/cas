@@ -36,7 +36,7 @@ class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpointTests {
     private ThrottledSubmissionHandlerInterceptor throttle;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertTrue(throttledSubmissionHandlerEndpoint.getRecords().isEmpty());
 
         val request = new MockHttpServletRequest();

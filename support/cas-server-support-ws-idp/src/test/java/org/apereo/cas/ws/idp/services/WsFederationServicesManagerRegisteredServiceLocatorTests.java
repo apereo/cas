@@ -57,7 +57,7 @@ class WsFederationServicesManagerRegisteredServiceLocatorTests extends BaseCoreW
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(wsFederationServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, wsFederationServicesManagerRegisteredServiceLocator.getOrder());
         val registeredService = getWsFederationRegisteredService("http://app.example.org/wsfed.*", "CAS");

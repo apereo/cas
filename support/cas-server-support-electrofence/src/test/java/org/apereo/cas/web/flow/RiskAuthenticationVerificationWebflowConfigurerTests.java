@@ -36,7 +36,7 @@ class RiskAuthenticationVerificationWebflowConfigurerTests extends BaseWebflowCo
     private FlowDefinitionRegistry riskVerificationFlowRegistry;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) riskVerificationFlowRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_RISK_VERIFICATION);
         assertNotNull(flow);

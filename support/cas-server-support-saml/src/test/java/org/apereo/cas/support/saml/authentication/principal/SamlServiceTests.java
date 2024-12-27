@@ -56,7 +56,7 @@ class SamlServiceTests extends AbstractOpenSamlTests {
     private ServiceFactory<SamlService> samlServiceFactory;
 
     @Test
-    void verifyResponse() throws Throwable {
+    void verifyResponse() {
         val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
         val impl = samlServiceFactory.createService(request);
@@ -69,7 +69,7 @@ class SamlServiceTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifyResponseForJsession() throws Throwable {
+    void verifyResponseForJsession() {
         val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "http://www.cnn.com/;jsession=test");
         val impl = samlServiceFactory.createService(request);
@@ -78,7 +78,7 @@ class SamlServiceTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifyResponseWithNoTicket() throws Throwable {
+    void verifyResponseWithNoTicket() {
         val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
         val impl = samlServiceFactory.createService(request);
@@ -90,7 +90,7 @@ class SamlServiceTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifyRequestBody() throws Throwable {
+    void verifyRequestBody() {
         val body = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">"
             + "<SOAP-ENV:Header/><SOAP-ENV:Body><samlp:Request xmlns:samlp=\"urn:oasis:names:tc:SAML:1.0:protocol\" MajorVersion=\"1\" "
             + "MinorVersion=\"1\" RequestID=\"_192.168.16.51.1024506224022\" IssueInstant=\"2002-06-19T17:03:44.022Z\">"
@@ -106,7 +106,7 @@ class SamlServiceTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifyTargetMatchingSamlService() throws Throwable {
+    void verifyTargetMatchingSamlService() {
         val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "https://some.service.edu/path/to/app");
 
@@ -117,7 +117,7 @@ class SamlServiceTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifyTargetMatchesNoSamlService() throws Throwable {
+    void verifyTargetMatchesNoSamlService() {
         val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "https://some.service.edu/path/to/app");
         val impl = new DefaultArgumentExtractor(samlServiceFactory).extractService(request);

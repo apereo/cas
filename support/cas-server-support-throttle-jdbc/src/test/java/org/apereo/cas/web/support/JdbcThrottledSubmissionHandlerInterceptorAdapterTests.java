@@ -44,7 +44,7 @@ class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottle
     private ThrottledSubmissionHandlerInterceptor throttle;
 
     @Test
-    void verifyRecords() throws Throwable {
+    void verifyRecords() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");
         request.setLocalAddr("4.5.6.7");

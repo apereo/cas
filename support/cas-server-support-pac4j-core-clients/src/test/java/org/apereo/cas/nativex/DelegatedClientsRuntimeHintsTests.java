@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class DelegatedClientsRuntimeHintsTests {
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new DelegatedClientsRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(DelegatedIdentityProviderFactory.class).test(hints));

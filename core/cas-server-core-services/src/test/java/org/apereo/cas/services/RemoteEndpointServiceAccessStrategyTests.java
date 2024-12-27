@@ -35,7 +35,7 @@ class RemoteEndpointServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val strategy = new RemoteEndpointServiceAccessStrategy();
         strategy.setAcceptableResponseCodes("200,201");
         try (val webServer = new MockWebServer(MediaType.APPLICATION_JSON_VALUE)) {
@@ -46,7 +46,7 @@ class RemoteEndpointServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyFails() throws Throwable {
+    void verifyFails() {
         val strategy = new RemoteEndpointServiceAccessStrategy();
         strategy.setEndpointUrl("http://localhost:1234");
         strategy.setAcceptableResponseCodes("600");

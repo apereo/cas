@@ -39,7 +39,7 @@ class EntityHistoryRepositoryMongoDbTests {
     private ServicesManager servicesManager;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val service1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(service1);
 

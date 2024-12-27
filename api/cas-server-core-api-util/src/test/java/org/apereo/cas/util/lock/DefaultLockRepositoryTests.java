@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class DefaultLockRepositoryTests {
     @Test
-    void verifyNoOp() throws Throwable {
+    void verifyNoOp() {
         val repository = LockRepository.noOp();
         val lockKey = UUID.randomUUID().toString();
         val result = repository.execute(lockKey, () -> lockKey);
@@ -30,7 +30,7 @@ class DefaultLockRepositoryTests {
     }
 
     @Test
-    void verifyDefault() throws Throwable {
+    void verifyDefault() {
         val repository = LockRepository.asDefault();
         val lockKey = UUID.randomUUID().toString();
 

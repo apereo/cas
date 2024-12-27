@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML")
 class SamlRegisteredServiceCacheKeyTests {
     @Test
-    void verifyCacheKeyByMetadataLocation() throws Throwable {
+    void verifyCacheKeyByMetadataLocation() {
         val entityId = "https://carmenwiki.osu.edu/shibboleth";
 
         val criteriaSet = new CriteriaSet();
@@ -42,7 +42,7 @@ class SamlRegisteredServiceCacheKeyTests {
     }
 
     @Test
-    void verifyCacheKeyDynamicMetadata() throws Throwable {
+    void verifyCacheKeyDynamicMetadata() {
         val criteriaSet = new CriteriaSet();
         val entityIdCriterion = new EntityIdCriterion("https://carmenwiki.osu.edu/shibboleth");
         criteriaSet.add(entityIdCriterion);
@@ -64,7 +64,7 @@ class SamlRegisteredServiceCacheKeyTests {
     }
 
     @Test
-    void verifyCacheKeyNoEntityIdCriteria() throws Throwable {
+    void verifyCacheKeyNoEntityIdCriteria() {
         val criteriaSet = new CriteriaSet();
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
 

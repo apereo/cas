@@ -53,7 +53,7 @@ class FileSystemSamlIdPMetadataLocatorTests {
     })
     class DefaultTests extends BaseSamlIdPConfigurationTests {
         @Test
-        void verifyUnknownDirectory() throws Throwable {
+        void verifyUnknownDirectory() {
             val locator = new FileSystemSamlIdPMetadataLocator(CipherExecutor.noOpOfStringToString(),
                 new File("/#**??#"), mock(Cache.class), applicationContext);
             assertThrows(IllegalArgumentException.class, locator::initialize);

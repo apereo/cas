@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @Tag("DynamoDb")
 class DynamoDbTableUtilsTests {
     @Test
-    void verifyCreateTable() throws Throwable {
+    void verifyCreateTable() {
         val client = mock(DynamoDbClient.class);
         when(client.createTable(any(CreateTableRequest.class)))
             .thenThrow(SdkException.create("error", new IllegalArgumentException()));
@@ -39,7 +39,7 @@ class DynamoDbTableUtilsTests {
     }
 
     @Test
-    void verifyWaitUntilTable() throws Throwable {
+    void verifyWaitUntilTable() {
         val client = mock(DynamoDbClient.class);
         val description = TableDescription.builder().tableStatus(TableStatus.CREATING).build();
         val table = DescribeTableResponse.builder().table(description).build();
@@ -49,7 +49,7 @@ class DynamoDbTableUtilsTests {
     }
 
     @Test
-    void verifyWaitUntilTableNotFound() throws Throwable {
+    void verifyWaitUntilTableNotFound() {
         val client = mock(DynamoDbClient.class);
         when(client.describeTable(any(DescribeTableRequest.class)))
             .thenThrow(SdkException.create("fail", new IllegalArgumentException()));
@@ -59,7 +59,7 @@ class DynamoDbTableUtilsTests {
     }
 
     @Test
-    void verifyCreateTableWithBillingModeProvisioned() throws Throwable {
+    void verifyCreateTableWithBillingModeProvisioned() {
         val client = mock(DynamoDbClient.class);
         val readCapacity = 7L;
         val writeCapacity = 9L;
@@ -90,7 +90,7 @@ class DynamoDbTableUtilsTests {
     }
 
     @Test
-    void verifyCreateTableWithBillingModePayPerRequest() throws Throwable {
+    void verifyCreateTableWithBillingModePayPerRequest() {
         val client = mock(DynamoDbClient.class);
 
         val createTableArgMatcher = new CreateTableRequestArgumentMatcher();

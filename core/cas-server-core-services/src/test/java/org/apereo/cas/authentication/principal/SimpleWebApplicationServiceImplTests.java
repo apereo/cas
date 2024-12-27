@@ -51,7 +51,7 @@ class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    void verifyResponse() throws Throwable {
+    void verifyResponse() {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
         val service = new WebApplicationServiceFactory().createService(request);
@@ -66,7 +66,7 @@ class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    void verifyCreateSimpleWebApplicationServiceImplFromServiceAttribute() throws Throwable {
+    void verifyCreateSimpleWebApplicationServiceImplFromServiceAttribute() {
         val request = new MockHttpServletRequest();
         request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
         val impl = new WebApplicationServiceFactory().createService(request);
@@ -74,7 +74,7 @@ class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    void verifyResponseForJsession() throws Throwable {
+    void verifyResponseForJsession() {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://www.cnn.com/;jsession=test");
         val impl = new WebApplicationServiceFactory().createService(request);
@@ -83,7 +83,7 @@ class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    void verifyResponseWithNoTicket() throws Throwable {
+    void verifyResponseWithNoTicket() {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
         val impl = new WebApplicationServiceFactory().createService(request);
@@ -96,7 +96,7 @@ class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    void verifyResponseWithNoTicketAndNoParameterInServiceURL() throws Throwable {
+    void verifyResponseWithNoTicketAndNoParameterInServiceURL() {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://foo.com/");
         val impl = new WebApplicationServiceFactory().createService(request);
@@ -110,7 +110,7 @@ class SimpleWebApplicationServiceImplTests {
     }
 
     @Test
-    void verifyResponseWithNoTicketAndOneParameterInServiceURL() throws Throwable {
+    void verifyResponseWithNoTicketAndOneParameterInServiceURL() {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://foo.com/?param=test");
         val impl = new WebApplicationServiceFactory().createService(request);

@@ -47,7 +47,7 @@ class OidcScopeFreeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val policy = new OidcScopeFreeAttributeReleasePolicy(List.of("family_name", "food"));
         val chain = new ChainingAttributeReleasePolicy();
         chain.addPolicies(policy);

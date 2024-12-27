@@ -34,7 +34,7 @@ class MappedExceptionErrorViewResolverTests {
     private ErrorViewResolver defaultMappedExceptionErrorViewResolver;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         var result = defaultMappedExceptionErrorViewResolver.resolveErrorView(request, HttpStatus.FORBIDDEN, Map.of());
         assertNull(result);

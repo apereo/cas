@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 class MultifactorAuthenticationTrustRecordExpiryTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val expiry = new MultifactorAuthenticationTrustRecordExpiry();
 
         val record = new MultifactorAuthenticationTrustRecord();

@@ -52,7 +52,7 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
     }
 
     @Test
-    void verifyClasspathByExpression() throws Throwable {
+    void verifyClasspathByExpression() {
         System.setProperty("CLASSPATH_SP", "classpath:sample-sp.xml");
         val loader = buildCacheLoader(new ClasspathResourceMetadataResolver(new SamlIdPProperties(), openSamlConfigBean));
         val service = new SamlRegisteredService();
@@ -82,7 +82,7 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
     }
 
     @Test
-    void verifyEmptyResolvers() throws Throwable {
+    void verifyEmptyResolvers() {
         val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
         val loader = new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, plan);
         val service = new SamlRegisteredService();

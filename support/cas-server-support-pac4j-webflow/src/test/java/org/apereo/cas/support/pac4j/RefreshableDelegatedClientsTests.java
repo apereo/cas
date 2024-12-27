@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 @Tag("Delegation")
 class RefreshableDelegatedClientsTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val delegatedFactory = mock(DelegatedIdentityProviderFactory.class);
         when(delegatedFactory.build()).thenReturn(List.of());
         val refreshableClients = new RefreshableDelegatedIdentityProviders("http://localhost:8080/cas", delegatedFactory);

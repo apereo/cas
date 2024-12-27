@@ -50,7 +50,7 @@ public abstract class AbstractServicesManagerTests{
     }
 
     @Test
-    void verifySaveAndGet() throws Throwable {
+    void verifySaveAndGet() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(UUID.randomUUID().toString());
@@ -68,7 +68,7 @@ public abstract class AbstractServicesManagerTests{
     }
 
     @Test
-    void verifySaveInRegistryAndGetById() throws Throwable {
+    void verifySaveInRegistryAndGetById() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(UUID.randomUUID().toString());
@@ -81,7 +81,7 @@ public abstract class AbstractServicesManagerTests{
     }
 
     @Test
-    void verifySaveInRegistryAndGetByServiceId() throws Throwable {
+    void verifySaveInRegistryAndGetByServiceId() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(UUID.randomUUID().toString());
@@ -95,7 +95,7 @@ public abstract class AbstractServicesManagerTests{
     }
 
     @Test
-    void verifyDelete() throws Throwable {
+    void verifyDelete() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(UUID.randomUUID().toString());
@@ -109,7 +109,7 @@ public abstract class AbstractServicesManagerTests{
     }
 
     @Test
-    void verifyExpiredNotify() throws Throwable {
+    void verifyExpiredNotify() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(UUID.randomUUID().toString());
@@ -123,7 +123,7 @@ public abstract class AbstractServicesManagerTests{
     }
 
     @Test
-    void verifyExpiredNotifyAndDelete() throws Throwable {
+    void verifyExpiredNotifyAndDelete() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(UUID.randomUUID().toString());

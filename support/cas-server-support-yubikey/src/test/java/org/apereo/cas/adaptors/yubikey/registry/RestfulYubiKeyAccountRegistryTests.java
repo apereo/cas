@@ -58,7 +58,7 @@ class RestfulYubiKeyAccountRegistryTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyOps() throws Throwable {
+    void verifyOps() {
         val port = URI.create(casProperties.getAuthn().getMfa().getYubikey().getRest().getUrl()).getPort();
         try (val webServer = new MockWebServer(port)) {
             webServer.responseBodySupplier(() -> new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8)));

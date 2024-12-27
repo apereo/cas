@@ -76,7 +76,7 @@ class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
-    void verifyDeleteUnknown() throws Throwable {
+    void verifyDeleteUnknown() {
         val catalog = mock(TicketCatalog.class);
         val registry = new IgniteTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, catalog, applicationContext,
             igniteConfiguration, casProperties.getTicket().getRegistry().getIgnite());

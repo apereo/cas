@@ -38,7 +38,7 @@ class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     @Order(0)
-    void verifyOperationByType() throws Throwable {
+    void verifyOperationByType() {
         val criteria = TicketRegistryQueryCriteria.builder().type(TicketGrantingTicket.PREFIX).build();
         val results = ticketRegistryEndpoint.query(criteria);
         assertTrue(results.isEmpty());
@@ -56,7 +56,7 @@ class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyHead() throws Throwable {
+    void verifyHead() {
         assertTrue(ticketRegistryEndpoint.head().getStatusCode().is2xxSuccessful());
     }
 
@@ -76,7 +76,7 @@ class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyCatalog() throws Throwable {
+    void verifyCatalog() {
         val catalog = (List) ticketRegistryEndpoint.ticketCatalog().getBody();
         assertFalse(catalog.isEmpty());
     }

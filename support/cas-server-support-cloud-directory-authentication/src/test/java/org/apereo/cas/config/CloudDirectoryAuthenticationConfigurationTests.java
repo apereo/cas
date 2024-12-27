@@ -47,7 +47,7 @@ class CloudDirectoryAuthenticationConfigurationTests {
     private CloudDirectoryClient amazonCloudDirectory;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(amazonCloudDirectory);
     }
 }

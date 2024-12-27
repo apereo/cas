@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 class DistributedCacheManagerTests {
     @Test
-    void verifyDefaults() throws Throwable {
+    void verifyDefaults() {
         val mgr = DistributedCacheManager.noOp();
 
         assertNull(mgr.get("key"));

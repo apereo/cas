@@ -78,7 +78,7 @@ public class DatabaseAuthenticationTestConfiguration {
         @Qualifier("jpaVendorAdapter")
         final JpaVendorAdapter jpaVendorAdapter,
         @Qualifier("dataSource")
-        final DataSource dataSource) throws Exception {
+        final DataSource dataSource) {
         val ctx = JpaConfigurationContext.builder()
             .jpaVendorAdapter(jpaVendorAdapter)
             .persistenceUnitName("databaseAuthnContext")

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class SocketUtilsTests {
     @Test
-    void verifyExec() throws Throwable {
+    void verifyExec() {
         assertTrue(SocketUtils.isTcpPortAvailable(1234));
     }
 }

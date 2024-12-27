@@ -29,7 +29,7 @@ class CasAcceptableUsagePolicyRestConfigurationTests {
     private AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(acceptableUsagePolicyRepository);
     }
 }

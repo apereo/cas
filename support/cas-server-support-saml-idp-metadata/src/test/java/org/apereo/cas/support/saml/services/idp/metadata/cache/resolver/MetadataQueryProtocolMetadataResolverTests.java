@@ -33,7 +33,7 @@ class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServicesTest
     }
 
     @Test
-    void verifyResolverSupports() throws Throwable {
+    void verifyResolverSupports() {
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation(fileSystemMetadataPath);
         val resolver = new MetadataQueryProtocolMetadataResolver(httpClient, props, openSamlConfigBean);

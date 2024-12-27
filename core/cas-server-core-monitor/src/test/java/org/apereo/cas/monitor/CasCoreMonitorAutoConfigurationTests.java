@@ -66,20 +66,20 @@ class CasCoreMonitorAutoConfigurationTests {
     private HealthIndicator systemHealthIndicator;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(memoryHealthIndicator);
         assertNotNull(sessionHealthIndicator);
         assertNotNull(systemHealthIndicator);
     }
 
     @Test
-    void verifyObserabilitySupplier() throws Throwable {
+    void verifyObserabilitySupplier() {
         val result = defaultExecutableObserver.supply(new MonitorableTask("verifyObserabilitySupplier"), () -> "CAS");
         assertEquals("CAS", result);
     }
 
     @Test
-    void verifyObservabilityRunner() throws Throwable {
+    void verifyObservabilityRunner() {
         val result = new AtomicBoolean(false);
         defaultExecutableObserver.run(new MonitorableTask("verifyObservabilityRunner"), () -> result.set(true));
         assertTrue(result.get());

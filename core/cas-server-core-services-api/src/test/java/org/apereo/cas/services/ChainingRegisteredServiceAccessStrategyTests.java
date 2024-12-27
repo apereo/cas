@@ -29,7 +29,7 @@ class ChainingRegisteredServiceAccessStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyDelegatedAccessAnd() throws Throwable {
+    void verifyDelegatedAccessAnd() {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setOperator(LogicalOperatorTypes.AND);
         var s1 = new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1")));
@@ -53,7 +53,7 @@ class ChainingRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyDelegatedAccessOr() throws Throwable {
+    void verifyDelegatedAccessOr() {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setOperator(LogicalOperatorTypes.OR);
         var s1 = new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1")));
@@ -76,7 +76,7 @@ class ChainingRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyRequiredAttributes() throws Throwable {
+    void verifyRequiredAttributes() {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setOperator(LogicalOperatorTypes.AND);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
@@ -92,7 +92,7 @@ class ChainingRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyAndOperation() throws Throwable {
+    void verifyAndOperation() {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setOperator(LogicalOperatorTypes.AND);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(false, true));
@@ -102,7 +102,7 @@ class ChainingRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyPrincipalAccessAnd() throws Throwable {
+    void verifyPrincipalAccessAnd() {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setOperator(LogicalOperatorTypes.AND);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
@@ -117,7 +117,7 @@ class ChainingRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyPrincipalAccessOr() throws Throwable {
+    void verifyPrincipalAccessOr() {
         val chain = new ChainingRegisteredServiceAccessStrategy();
         chain.setOperator(LogicalOperatorTypes.OR);
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));
@@ -157,7 +157,7 @@ class ChainingRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyPrincipalAccessMixedRules() throws Throwable {
+    void verifyPrincipalAccessMixedRules() {
         val chain1 = new ChainingRegisteredServiceAccessStrategy();
         chain1.setOperator(LogicalOperatorTypes.AND);
         chain1.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key1", Set.of("value1"))));

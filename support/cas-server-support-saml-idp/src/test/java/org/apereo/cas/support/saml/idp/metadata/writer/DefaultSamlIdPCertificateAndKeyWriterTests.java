@@ -33,7 +33,7 @@ class DefaultSamlIdPCertificateAndKeyWriterTests extends BaseSamlIdPConfiguratio
         private SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter;
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             val privateKey = new StringWriter();
             val certificate = new StringWriter();
             samlSelfSignedCertificateWriter.writeCertificateAndKey(privateKey, certificate);
@@ -56,7 +56,7 @@ class DefaultSamlIdPCertificateAndKeyWriterTests extends BaseSamlIdPConfiguratio
         private SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter;
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             val privateKey = new StringWriter();
             val certificate = new StringWriter();
             samlSelfSignedCertificateWriter.writeCertificateAndKey(privateKey, certificate);

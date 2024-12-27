@@ -24,7 +24,7 @@ class GroovyRegisteredServiceSingleSignOnParticipationPolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyExternalGroovyFile() throws Throwable {
+    void verifyExternalGroovyFile() {
         val ticket = mock(AuthenticationAwareTicket.class);
         when(ticket.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("Gandalf"));
         val results = new GroovyRegisteredServiceSingleSignOnParticipationPolicy();
@@ -33,7 +33,7 @@ class GroovyRegisteredServiceSingleSignOnParticipationPolicyTests {
     }
 
     @Test
-    void verifyInlineGroovyFile() throws Throwable {
+    void verifyInlineGroovyFile() {
         val ticket = mock(AuthenticationAwareTicket.class);
         when(ticket.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("Frodo"));
         val results = new GroovyRegisteredServiceSingleSignOnParticipationPolicy();

@@ -62,7 +62,7 @@ class RedisTicketRegistryCacheEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyUnknownTicket() throws Throwable {
+    void verifyUnknownTicket() {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val generator = new TicketGrantingTicketIdGenerator(10, "redis");
         val ticket = new TicketGrantingTicketImpl(generator.getNewTicketId(TicketGrantingTicket.PREFIX),

@@ -37,7 +37,7 @@ class OAuth20JwtAccessTokenEncoderTests {
     @Nested
     class CipherEnabled extends AbstractOAuth20Tests {
         @Test
-        void verifyAccessTokenIdEncodingAsJwtWithTokenResult() throws Throwable {
+        void verifyAccessTokenIdEncodingAsJwtWithTokenResult() {
             val accessToken = getAccessToken();
             val registeredService = getRegisteredServiceForJwtAccessTokenWithoutKeys(accessToken);
             val tokenResult = OAuth20AccessTokenResponseResult
@@ -61,7 +61,7 @@ class OAuth20JwtAccessTokenEncoderTests {
         }
         
         @Test
-        void verifyAccessTokenIdEncodingAsJwtWithoutServiceKeys() throws Throwable {
+        void verifyAccessTokenIdEncodingAsJwtWithoutServiceKeys() {
             val accessToken = getAccessToken();
             val registeredService = getRegisteredServiceForJwtAccessTokenWithoutKeys(accessToken);
             val encoder = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService, accessToken);
@@ -73,7 +73,7 @@ class OAuth20JwtAccessTokenEncoderTests {
         }
 
         @Test
-        void verifyAccessTokenIdEncodingAsJwtWithServiceKeys() throws Throwable {
+        void verifyAccessTokenIdEncodingAsJwtWithServiceKeys() {
             val accessToken = getAccessToken();
             val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken);
             val encoder = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService, accessToken);
@@ -142,7 +142,7 @@ class OAuth20JwtAccessTokenEncoderTests {
         }
         
         @Test
-        void verifyAccessTokenIdEncodingWithJwtWithNoCipher() throws Throwable {
+        void verifyAccessTokenIdEncodingWithJwtWithNoCipher() {
             val accessToken = getAccessToken();
             val registeredService = getRegisteredServiceForJwtAccessTokenWithoutKeys(accessToken);
             val encodedAccessToken1 = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService, accessToken).encode(accessToken.getId());

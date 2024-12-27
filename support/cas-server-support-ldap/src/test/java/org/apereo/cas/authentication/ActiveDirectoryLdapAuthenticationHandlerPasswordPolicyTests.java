@@ -51,7 +51,7 @@ class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends BaseAc
     }
 
     @Test
-    void verifyAuthenticateWarnings() throws Throwable {
+    void verifyAuthenticateWarnings() {
         assertNotEquals(0, ldapAuthenticationHandlers.size());
 
         ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(h -> {

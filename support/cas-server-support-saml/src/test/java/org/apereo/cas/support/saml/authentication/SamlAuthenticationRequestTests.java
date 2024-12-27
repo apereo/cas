@@ -48,7 +48,7 @@ class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifyFoundNoService() throws Throwable {
+    void verifyFoundNoService() {
         val casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory());
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");

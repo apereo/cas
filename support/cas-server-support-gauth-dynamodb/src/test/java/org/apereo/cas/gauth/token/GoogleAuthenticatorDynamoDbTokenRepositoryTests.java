@@ -82,7 +82,7 @@ class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTimeTokenRe
     }
 
     @Test
-    void verifyExpiredTokens() throws Throwable {
+    void verifyExpiredTokens() {
         val token = new GoogleAuthenticatorToken(1111, userId);
         token.setIssuedDateTime(LocalDateTime.now(ZoneOffset.UTC).plusHours(1));
         oneTimeTokenAuthenticatorTokenRepository.store(token);
@@ -94,7 +94,7 @@ class GoogleAuthenticatorDynamoDbTokenRepositoryTests extends BaseOneTimeTokenRe
     }
 
     @Test
-    void verifyLargeDataSet() throws Throwable {
+    void verifyLargeDataSet() {
         val tokens = Stream.generate(() -> new GoogleAuthenticatorToken(Integer.valueOf(RandomUtils.randomNumeric(6)), userId)).limit(500);
         var stopwatch = new StopWatch();
         stopwatch.start();

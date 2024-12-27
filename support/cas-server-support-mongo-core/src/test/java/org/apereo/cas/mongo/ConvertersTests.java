@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 class ConvertersTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNull(new BaseConverters.NullConverter().convert(new Object()));
         assertNull(new BaseConverters.StringToZonedDateTimeConverter().convert(StringUtils.EMPTY));
         assertNull(new BaseConverters.StringToPatternConverter().convert(StringUtils.EMPTY));

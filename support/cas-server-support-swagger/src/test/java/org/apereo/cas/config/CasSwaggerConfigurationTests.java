@@ -25,7 +25,7 @@ class CasSwaggerConfigurationTests {
     private OpenAPI swaggerOpenApi;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(swaggerOpenApi);
     }
 }

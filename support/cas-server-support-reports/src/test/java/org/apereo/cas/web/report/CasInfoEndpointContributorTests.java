@@ -33,7 +33,7 @@ class CasInfoEndpointContributorTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val contributor = new CasInfoEndpointContributor(casProperties, new DefaultCasRuntimeModuleLoader());
         val builder = new Info.Builder();
         contributor.contribute(builder);

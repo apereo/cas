@@ -65,7 +65,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
     }
 
     @Test
-    void verifyDuplicateHandlers() throws Throwable {
+    void verifyDuplicateHandlers() {
         val h1 = new AcceptUsersAuthenticationHandler("Handler1");
         val h2 = new AcceptUsersAuthenticationHandler(h1.getName());
         assertEquals(h1, h2);
@@ -78,7 +78,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val context = PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)
             .attributeRepositoryResolver(attributeRepositoryResolver)
@@ -108,7 +108,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
     }
 
     @Test
-    void verifyMismatchedCount() throws Throwable {
+    void verifyMismatchedCount() {
         val plan = new DefaultAuthenticationEventExecutionPlan();
         plan.registerAuthenticationHandlersWithPrincipalResolver(List.of(new SimpleTestUsernamePasswordAuthenticationHandler()), List.of());
         assertTrue(plan.getAuthenticationHandlers().isEmpty());
@@ -116,7 +116,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
 
 
     @Test
-    void verifyNoHandlerResolves() throws Throwable {
+    void verifyNoHandlerResolves() {
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
             .newTransaction(CoreAuthenticationTestUtils.getWebApplicationService(), mock(Credential.class));
         val plan = new DefaultAuthenticationEventExecutionPlan();
@@ -125,7 +125,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
 
 
     @Test
-    void verifyDefaults() throws Throwable {
+    void verifyDefaults() {
         val input = mock(AuthenticationEventExecutionPlan.class);
         when(input.getAuthenticationHandlers()).thenReturn(Set.of());
         when(input.getAuthenticationHandlersBy(any())).thenCallRealMethod();

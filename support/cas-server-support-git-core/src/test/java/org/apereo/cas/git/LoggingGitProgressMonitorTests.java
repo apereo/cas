@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Git")
 class LoggingGitProgressMonitorTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val monitor = new LoggingGitProgressMonitor();
         assertDoesNotThrow(() -> {
             monitor.onUpdate("taskName", 10, Duration.ZERO);

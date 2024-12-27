@@ -51,7 +51,7 @@ class CloudWatchLogsEndpointTests {
     private CloudWatchLogsEndpoint cloudWatchLogsEndpoint;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val events = cloudWatchLogsEndpoint.fetchLogEntries(20, "info");
         assertFalse(events.isEmpty());
     }

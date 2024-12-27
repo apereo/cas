@@ -20,21 +20,21 @@ import static org.mockito.Mockito.*;
 class RegisteredServicePropertyTests {
 
     @Test
-    void verifyNull() throws Throwable {
+    void verifyNull() {
         val p1 = new DefaultRegisteredServiceProperty(null);
         assertNull(p1.getValue(String.class));
         assertFalse(p1.getBooleanValue());
     }
 
     @Test
-    void verifyValue() throws Throwable {
+    void verifyValue() {
         val p1 = new DefaultRegisteredServiceProperty("true");
         assertEquals("true", p1.getValue(String.class));
         assertTrue(p1.getBooleanValue());
     }
 
     @Test
-    void verifyNotAssignedValue() throws Throwable {
+    void verifyNotAssignedValue() {
         val service = mock(RegisteredService.class);
         val properties = (Map) Map.of(
             RegisteredServiceProperties.CORS_MAX_AGE.getPropertyName(), new DefaultRegisteredServiceProperty("100"),
@@ -48,7 +48,7 @@ class RegisteredServicePropertyTests {
 
 
     @Test
-    void verifyTypedValue() throws Throwable {
+    void verifyTypedValue() {
         val service = mock(RegisteredService.class);
         val properties = (Map) Map.of(
             RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_CIPHER_STRATEGY_TYPE.getPropertyName(), new DefaultRegisteredServiceProperty("ENCRYPT_AND_SIGN"),

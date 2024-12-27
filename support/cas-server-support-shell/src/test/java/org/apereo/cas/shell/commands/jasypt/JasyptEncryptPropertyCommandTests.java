@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SHELL")
 class JasyptEncryptPropertyCommandTests extends BaseCasShellCommandTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "encrypt-value --value SOMEVALUE --password "
                                                       + "JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC"));
     }
@@ -36,7 +36,7 @@ class JasyptEncryptPropertyCommandTests extends BaseCasShellCommandTests {
     }
 
     @Test
-    void verifyOperationWithInitVector() throws Throwable {
+    void verifyOperationWithInitVector() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "encrypt-value --value SOMEVALUE --password "
                                                       + "JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC"));
     }

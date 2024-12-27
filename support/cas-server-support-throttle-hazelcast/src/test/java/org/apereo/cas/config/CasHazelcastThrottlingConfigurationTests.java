@@ -47,7 +47,7 @@ class CasHazelcastThrottlingConfigurationTests {
     private ThrottledSubmissionsStore<ThrottledSubmission> throttleSubmissionStore;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(throttleSubmissionStore);
         val submission = ThrottledSubmission.builder().key(UUID.randomUUID().toString()).build();
         throttleSubmissionStore.put(submission);

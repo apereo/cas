@@ -32,7 +32,7 @@ class OidcInitialAccessTokenControllerTests {
         protected OidcInitialAccessTokenController controller;
 
         @Test
-        void verifyNotAllowed() throws Throwable {
+        void verifyNotAllowed() {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
             val entity = controller.handleRequestInternal(request, response);
@@ -52,7 +52,7 @@ class OidcInitialAccessTokenControllerTests {
         protected OidcInitialAccessTokenController controller;
 
         @Test
-        void verifyMismatchedEndpoint() throws Throwable {
+        void verifyMismatchedEndpoint() {
             val request = getHttpRequestForEndpoint("unknown/issuer");
             request.setRequestURI("unknown/issuer");
             val response = new MockHttpServletResponse();
@@ -62,7 +62,7 @@ class OidcInitialAccessTokenControllerTests {
         }
 
         @Test
-        void verifyPasses() throws Throwable {
+        void verifyPasses() {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
             request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("casuser:Mellon"));
@@ -72,7 +72,7 @@ class OidcInitialAccessTokenControllerTests {
         }
 
         @Test
-        void verifyAuthFails() throws Throwable {
+        void verifyAuthFails() {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
             request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("casuser:unknown"));
@@ -81,7 +81,7 @@ class OidcInitialAccessTokenControllerTests {
         }
 
         @Test
-        void verifyAuthMissing() throws Throwable {
+        void verifyAuthMissing() {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
             val entity = controller.handleRequestInternal(request, response);

@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 @Tag("OAuth")
 class AccessTokenGrantRequestExtractorTests extends AbstractOAuth20Tests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val ext = mock(AccessTokenGrantRequestExtractor.class);
         when(ext.requestMustBeAuthenticated()).thenCallRealMethod();
         assertFalse(ext.requestMustBeAuthenticated());

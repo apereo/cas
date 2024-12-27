@@ -23,7 +23,7 @@ class AssuranceVerificationJsonSourceTests extends AbstractOidcTests {
     private AssuranceVerificationSource assuranceVerificationSource;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val verifications = assuranceVerificationSource.load();
         assertEquals(8, verifications.size());
         verifications.forEach(v -> assertNotNull(v.toJson()));

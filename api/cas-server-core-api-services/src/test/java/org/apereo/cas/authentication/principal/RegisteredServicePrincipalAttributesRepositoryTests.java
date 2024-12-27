@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @Tag("RegisteredService")
 class RegisteredServicePrincipalAttributesRepositoryTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val policy = mock(RegisteredServicePrincipalAttributesRepository.class);
         doCallRealMethod().when(policy).update(any(), any(), any());
         assertDoesNotThrow(() -> policy.update(UUID.randomUUID().toString(),

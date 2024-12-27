@@ -46,7 +46,7 @@ class BindModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     }
 
     @Test
-    void verifyInvalidAction() throws Throwable {
+    void verifyInvalidAction() {
         val h = new BindModeSearchDatabaseAuthenticationHandler(new BindJdbcAuthenticationProperties(), mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource);
         assertThrows(FailedLoginException.class,

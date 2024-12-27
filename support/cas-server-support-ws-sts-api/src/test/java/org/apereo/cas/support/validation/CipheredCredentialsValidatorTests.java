@@ -38,7 +38,7 @@ class CipheredCredentialsValidatorTests {
     }
 
     @Test
-    void verifyFailsOperation() throws Throwable {
+    void verifyFailsOperation() {
         val id = UUID.randomUUID().toString();
         val validator = new CipheredCredentialsValidator(CipherExecutor.noOp());
         val credential = new Credential();

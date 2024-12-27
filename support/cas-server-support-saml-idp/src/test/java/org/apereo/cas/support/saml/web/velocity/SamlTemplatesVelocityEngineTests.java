@@ -27,14 +27,14 @@ class SamlTemplatesVelocityEngineTests extends BaseSamlIdPConfigurationTests {
     private VelocityEngine velocityEngineFactoryBean;
 
     @Test
-    void verifySaml2PostBinding() throws Throwable {
+    void verifySaml2PostBinding() {
         val template = velocityEngineFactoryBean.getTemplate("templates/saml2-post-binding.vm");
         assertNotNull(template);
         template.merge(new VelocityContext(), new StringWriter());
     }
 
     @Test
-    void verifySaml2SimpleSignBinding() throws Throwable {
+    void verifySaml2SimpleSignBinding() {
         val template = velocityEngineFactoryBean.getTemplate("templates/saml2-post-simplesign-binding.vm");
         assertNotNull(template);
         template.merge(new VelocityContext(), new StringWriter());

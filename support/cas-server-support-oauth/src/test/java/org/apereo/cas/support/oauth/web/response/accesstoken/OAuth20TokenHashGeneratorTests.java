@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuth")
 class OAuth20TokenHashGeneratorTests extends AbstractOAuth20Tests {
     @Test
-    void verifyNoneAlgorithm() throws Throwable {
+    void verifyNoneAlgorithm() {
         val hash = generateHashWithAlgorithm("none");
         assertEquals("QVQtMTIzNDU2", hash);
     }
@@ -42,25 +42,25 @@ class OAuth20TokenHashGeneratorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifySha512Algorithm() throws Throwable {
+    void verifySha512Algorithm() {
         val hash = generateHashWithAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA512);
         assertEquals("EZsVCVYBY_zw4RAkJ3s759RxOZ8UingrP-52KQX4G6E", hash);
     }
 
     @Test
-    void verifySha256Algorithm() throws Throwable {
+    void verifySha256Algorithm() {
         val hash = generateHashWithAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA256);
         assertEquals("IzG3xSUlcgF_gHDCvKd3fQ", hash);
     }
 
     @Test
-    void verifySha384Algorithm() throws Throwable {
+    void verifySha384Algorithm() {
         val hash = generateHashWithAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA384);
         assertEquals("9Kb1tRRQ1YATHOB95-YAH3LHmnF2Lu7l", hash);
     }
 
     @Test
-    void verifyUnknownAlgorithm() throws Throwable {
+    void verifyUnknownAlgorithm() {
         assertThrows(IllegalArgumentException.class, () -> generateHashWithAlgorithm("xyz"));
     }
 }

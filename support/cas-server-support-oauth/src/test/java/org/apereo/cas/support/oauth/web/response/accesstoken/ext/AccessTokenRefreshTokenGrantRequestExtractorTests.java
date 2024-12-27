@@ -33,7 +33,7 @@ class AccessTokenRefreshTokenGrantRequestExtractorTests extends AbstractOAuth20T
     private AccessTokenGrantRequestExtractor extractor;
 
     @Test
-    void verifyNoService() throws Throwable {
+    void verifyNoService() {
         val request = new MockHttpServletRequest();
         val service = getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString(), CLIENT_SECRET);
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType());

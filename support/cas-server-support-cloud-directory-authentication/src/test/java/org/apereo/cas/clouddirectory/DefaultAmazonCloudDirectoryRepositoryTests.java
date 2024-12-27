@@ -57,7 +57,7 @@ class DefaultAmazonCloudDirectoryRepositoryTests {
     }
 
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val cloud = mock(CloudDirectoryClient.class);
         val result = ListIndexResponse.builder().build();
         when(cloud.listIndex(any(ListIndexRequest.class))).thenReturn(result);
@@ -67,7 +67,7 @@ class DefaultAmazonCloudDirectoryRepositoryTests {
     }
 
     @Test
-    void verifyNoAttachment() throws Throwable {
+    void verifyNoAttachment() {
         val cloud = mock(CloudDirectoryClient.class);
         val result = ListIndexResponse.builder().indexAttachments(List.of()).build();
         when(cloud.listIndex(any(ListIndexRequest.class))).thenReturn(result);
@@ -76,7 +76,7 @@ class DefaultAmazonCloudDirectoryRepositoryTests {
     }
 
     @Test
-    void verifyNoAttributeRequest() throws Throwable {
+    void verifyNoAttributeRequest() {
         val cloud = mock(CloudDirectoryClient.class);
         val attachment = IndexAttachment.builder().objectIdentifier(UUID.randomUUID().toString()).build();
         val result = ListIndexResponse.builder().indexAttachments(List.of(attachment)).build();
@@ -86,7 +86,7 @@ class DefaultAmazonCloudDirectoryRepositoryTests {
     }
 
     @Test
-    void verifyNoAttributeResult() throws Throwable {
+    void verifyNoAttributeResult() {
         val cloud = mock(CloudDirectoryClient.class);
         val attachment = IndexAttachment.builder().objectIdentifier(UUID.randomUUID().toString()).build();
         val result = ListIndexResponse.builder().indexAttachments(List.of(attachment)).build();
@@ -99,7 +99,7 @@ class DefaultAmazonCloudDirectoryRepositoryTests {
 
     @Test
     @SuppressWarnings("JdkObsolete")
-    void verifyActionIndexResult() throws Throwable {
+    void verifyActionIndexResult() {
         val cloud = mock(CloudDirectoryClient.class);
 
         val attr1 = AttributeKeyAndValue.builder()

@@ -74,7 +74,7 @@ class DefaultTicketStringSerializationManagerTests {
     }
 
     @Test
-    void verifyBadClass() throws Throwable {
+    void verifyBadClass() {
         assertThrows(NullPointerException.class, () -> ticketSerializationManager.serializeTicket(mock(Ticket.class)));
         assertThrows(InvalidTicketException.class, () -> ticketSerializationManager.deserializeTicket(StringUtils.EMPTY, StringUtils.EMPTY));
         assertThrows(IllegalArgumentException.class, () -> ticketSerializationManager.deserializeTicket(StringUtils.EMPTY, "something"));

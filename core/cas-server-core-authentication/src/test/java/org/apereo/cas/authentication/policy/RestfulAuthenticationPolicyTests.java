@@ -65,7 +65,7 @@ class RestfulAuthenticationPolicyTests {
     }
 
     @Test
-    void verifyStatusCodeUnAuthz() throws Throwable {
+    void verifyStatusCodeUnAuthz() {
         assertPolicyFails(9201, HttpStatus.UNAUTHORIZED, FailedLoginException.class);
         assertPolicyFails(9202, HttpStatus.LOCKED, AccountLockedException.class);
         assertPolicyFails(9203, HttpStatus.METHOD_NOT_ALLOWED, AccountDisabledException.class);

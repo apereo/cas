@@ -43,7 +43,7 @@ class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests
     private ServicesManagerRegisteredServiceLocator oidcServicesManagerRegisteredServiceLocator;
     
     @Test
-    void verifyFindByQuery() throws Throwable {
+    void verifyFindByQuery() {
         val service1 = getOidcRegisteredService(UUID.randomUUID().toString(),
             "https://app.example.org/%s".formatted(RandomUtils.randomAlphabetic(4)));
         val service2 = getOidcRegisteredService(UUID.randomUUID().toString(),
@@ -94,7 +94,7 @@ class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(oidcServicesManagerRegisteredServiceLocator);
         assertEquals(OidcServicesManagerRegisteredServiceLocator.DEFAULT_ORDER, oidcServicesManagerRegisteredServiceLocator.getOrder());
 
@@ -108,7 +108,7 @@ class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests
     }
 
     @Test
-    void verifyReverseOperation() throws Throwable {
+    void verifyReverseOperation() {
         val service1 = RegisteredServiceTestUtils.getRegisteredService(".+");
         service1.setEvaluationOrder(5);
 

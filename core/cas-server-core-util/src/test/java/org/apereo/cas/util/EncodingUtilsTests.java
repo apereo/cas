@@ -46,7 +46,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    void verifyAesKeyForJwtSigning() throws Throwable {
+    void verifyAesKeyForJwtSigning() {
         val secret = EncodingUtils.generateJsonWebKey(512);
         val key = new AesKey(secret.getBytes(StandardCharsets.UTF_8));
         val value = "ThisValue";
@@ -66,7 +66,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    void verifyAesKeyForJwtEncryption() throws Throwable {
+    void verifyAesKeyForJwtEncryption() {
         val secret = EncodingUtils.generateJsonWebKey(256);
         val key = EncodingUtils.generateJsonWebKey(secret);
         val value = "ThisValue";
@@ -86,7 +86,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    void verifyHex() throws Throwable {
+    void verifyHex() {
         assertNull(EncodingUtils.hexDecode("one"));
         assertNull(EncodingUtils.hexDecode(StringUtils.EMPTY));
         assertNull(EncodingUtils.hexEncode((byte[]) null));
@@ -96,7 +96,7 @@ class EncodingUtilsTests {
     }
 
     @Test
-    void verifyEncoding() throws Throwable {
+    void verifyEncoding() {
         assertNull(EncodingUtils.urlDecode(null));
 
         assertTrue(EncodingUtils.encodeBase64(ArrayUtils.EMPTY_BYTE_ARRAY, true).isEmpty());

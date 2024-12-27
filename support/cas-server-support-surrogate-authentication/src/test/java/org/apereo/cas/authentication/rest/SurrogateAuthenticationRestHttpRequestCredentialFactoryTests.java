@@ -38,7 +38,7 @@ class SurrogateAuthenticationRestHttpRequestCredentialFactoryTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyUnAuthz() throws Throwable {
+    void verifyUnAuthz() {
         val request = new MockHttpServletRequest();
         val requestBody = new LinkedMultiValueMap<String, String>();
         request.addHeader(SurrogateAuthenticationRestHttpRequestCredentialFactory.REQUEST_HEADER_SURROGATE_PRINCIPAL, "surrogate");

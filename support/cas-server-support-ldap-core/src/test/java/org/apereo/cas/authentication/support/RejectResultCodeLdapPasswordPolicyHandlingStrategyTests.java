@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 @Tag("LdapAuthentication")
 class RejectResultCodeLdapPasswordPolicyHandlingStrategyTests {
     @Test
-    void verifyStrategySupportsDefault() throws Throwable {
+    void verifyStrategySupportsDefault() {
         val s = new RejectResultCodeLdapPasswordPolicyHandlingStrategy();
         val res = mock(AuthenticationResponse.class);
         when(res.getAuthenticationResultCode()).thenReturn(AuthenticationResultCode.INVALID_CREDENTIAL);

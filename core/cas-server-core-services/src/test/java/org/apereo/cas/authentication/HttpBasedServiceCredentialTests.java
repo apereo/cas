@@ -28,7 +28,7 @@ class HttpBasedServiceCredentialTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyProperUrl() throws Throwable {
+    void verifyProperUrl() {
         assertEquals(CoreAuthenticationTestUtils.CONST_GOOD_URL,
             CoreAuthenticationTestUtils.getHttpBasedServiceCredentials().getCallbackUrl().toExternalForm());
     }

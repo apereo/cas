@@ -26,7 +26,7 @@ class PublicKeyFactoryBeanTests {
     }
 
     @Test
-    void verifyFails() throws Throwable {
+    void verifyFails() {
         val factory = new PublicKeyFactoryBean(new ClassPathResource("badkey.pem"), RsaKeyUtil.RSA);
         factory.setSingleton(false);
         assertNull(factory.toCipher());

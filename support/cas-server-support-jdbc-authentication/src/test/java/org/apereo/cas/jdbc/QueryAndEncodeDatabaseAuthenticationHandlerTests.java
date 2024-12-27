@@ -111,7 +111,7 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     }
 
     @Test
-    void verifyAuthenticationFailsToFindUser() throws Throwable {
+    void verifyAuthenticationFailsToFindUser() {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setSaltFieldName("salt").setDisabledFieldName("ops");
@@ -120,7 +120,7 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     }
 
     @Test
-    void verifyAuthenticationInvalidSql() throws Throwable {
+    void verifyAuthenticationInvalidSql() {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql("makesNoSenseInSql")).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setSaltFieldName("salt").setDisabledFieldName("ops");
@@ -129,7 +129,7 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     }
 
     @Test
-    void verifyAuthenticationMultipleAccounts() throws Throwable {
+    void verifyAuthenticationMultipleAccounts() {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setSaltFieldName("salt").setDisabledFieldName("ops");
@@ -154,7 +154,7 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     }
 
     @Test
-    void verifyAuthenticationWithExpiredField() throws Throwable {
+    void verifyAuthenticationWithExpiredField() {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql())
             .setPasswordFieldName(PASSWORD_FIELD_NAME)
@@ -167,7 +167,7 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     }
 
     @Test
-    void verifyAuthenticationWithDisabledField() throws Throwable {
+    void verifyAuthenticationWithDisabledField() {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setDisabledFieldName(DISABLED_FIELD_NAME)

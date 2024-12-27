@@ -22,7 +22,7 @@ class GroovyRegisteredServiceAttributeReleaseActivationCriteriaTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyExternalGroovyFile() throws Throwable {
+    void verifyExternalGroovyFile() {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .principal(CoreAuthenticationTestUtils.getPrincipal("Gandalf"))
             .build();
@@ -32,7 +32,7 @@ class GroovyRegisteredServiceAttributeReleaseActivationCriteriaTests {
     }
 
     @Test
-    void verifyInlineGroovyFile() throws Throwable {
+    void verifyInlineGroovyFile() {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .principal(CoreAuthenticationTestUtils.getPrincipal("Frodo"))
             .build();

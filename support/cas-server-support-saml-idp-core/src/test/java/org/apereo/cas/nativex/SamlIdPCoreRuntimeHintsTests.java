@@ -15,7 +15,7 @@ import org.springframework.aot.hint.RuntimeHints;
 class SamlIdPCoreRuntimeHintsTests {
 
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new SamlIdPCoreRuntimeHints().registerHints(hints, getClass().getClassLoader());
     }

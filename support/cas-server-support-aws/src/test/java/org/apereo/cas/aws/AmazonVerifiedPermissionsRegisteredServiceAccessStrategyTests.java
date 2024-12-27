@@ -51,7 +51,7 @@ class AmazonVerifiedPermissionsRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val strategy = new AmazonVerifiedPermissionsRegisteredServiceAccessStrategy();
         strategy.setActionId("read");
 

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Metrics")
 class CompositeHealthIndicatorTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val composite = new CompositeHealthIndicator(
             List.of(new DownHealthIndicator(Status.OUT_OF_SERVICE), new PingHealthIndicator())
         );

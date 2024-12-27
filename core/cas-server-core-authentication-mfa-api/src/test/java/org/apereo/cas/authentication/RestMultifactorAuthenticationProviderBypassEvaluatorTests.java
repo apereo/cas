@@ -52,7 +52,7 @@ class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
     }
 
     @Test
-    void verifyOperationFailsWithNoProvider() throws Throwable {
+    void verifyOperationFailsWithNoProvider() {
         try (val webServer = new MockWebServer("Y", HttpStatus.ACCEPTED)) {
             webServer.start();
             val props = new MultifactorAuthenticationProviderBypassProperties();

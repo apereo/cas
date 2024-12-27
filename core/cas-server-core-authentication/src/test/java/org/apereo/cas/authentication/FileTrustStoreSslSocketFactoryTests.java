@@ -98,12 +98,12 @@ class FileTrustStoreSslSocketFactoryTests {
         }
 
         @Test
-        void verifyTrustStoreNotFound() throws Throwable {
+        void verifyTrustStoreNotFound() {
             assertThrows(IOException.class, () -> sslFactory(new FileSystemResource("test.jks"), "changeit", "JKS"));
         }
 
         @Test
-        void verifyTrustStoreBadPassword() throws Throwable {
+        void verifyTrustStoreBadPassword() {
             assertThrows(IOException.class, () -> sslFactory(RESOURCE, "invalid", "JKS"));
         }
 

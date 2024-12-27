@@ -24,33 +24,33 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcJsonWebKeyStoreUtilsTests extends AbstractOidcTests {
 
     @Test
-    void verifyKeySet() throws Throwable {
+    void verifyKeySet() {
         val service = getOidcRegisteredService();
         service.setJwks(StringUtils.EMPTY);
         assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING)).isEmpty());
     }
 
     @Test
-    void verifyBadSvc() throws Throwable {
+    void verifyBadSvc() {
         assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(
             null, applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING)).isEmpty());
     }
 
     @Test
-    void verifyEmptyKeySet() throws Throwable {
+    void verifyEmptyKeySet() {
         val service = getOidcRegisteredService();
         service.setJwks(new JsonWebKeySet(List.of()).toJson());
         assertTrue(OidcJsonWebKeyStoreUtils.getJsonWebKeySet(service, applicationContext, Optional.of(OidcJsonWebKeyUsage.SIGNING)).isEmpty());
     }
 
     @Test
-    void verifyEc() throws Throwable {
+    void verifyEc() {
         assertNotNull(OidcJsonWebKeyStoreUtils.generateJsonWebKey("ec", 512, OidcJsonWebKeyUsage.SIGNING));
         assertNotNull(OidcJsonWebKeyStoreUtils.generateJsonWebKey("ec", 256, OidcJsonWebKeyUsage.SIGNING));
     }
 
     @Test
-    void verifyParsing() throws Throwable {
+    void verifyParsing() {
         val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("ec", 512, OidcJsonWebKeyUsage.SIGNING);
         val keyset = new JsonWebKeySet(key);
         assertNotNull(OidcJsonWebKeyStoreUtils.parseJsonWebKeySet(

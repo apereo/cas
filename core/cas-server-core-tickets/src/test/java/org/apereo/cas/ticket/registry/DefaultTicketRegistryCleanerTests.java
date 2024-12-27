@@ -46,7 +46,7 @@ class DefaultTicketRegistryCleanerTests {
     }
 
     @Test
-    void verifyCleanFail() throws Throwable {
+    void verifyCleanFail() {
         val applicationContext = mock(ConfigurableApplicationContext.class);
         val ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.stream()).thenThrow(IllegalArgumentException.class);
@@ -55,7 +55,7 @@ class DefaultTicketRegistryCleanerTests {
     }
 
     @Test
-    void verifyNoCleaner() throws Throwable {
+    void verifyNoCleaner() {
         val applicationContext = mock(ConfigurableApplicationContext.class);
         val ticketRegistry = newTicketRegistry();
         val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry) {

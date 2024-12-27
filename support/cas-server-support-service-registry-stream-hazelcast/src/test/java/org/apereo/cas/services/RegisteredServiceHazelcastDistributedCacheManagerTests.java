@@ -51,7 +51,7 @@ class RegisteredServiceHazelcastDistributedCacheManagerTests {
     }
 
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         var obj = mgr.get(registeredService);
         assertNull(obj);
@@ -74,7 +74,7 @@ class RegisteredServiceHazelcastDistributedCacheManagerTests {
     }
 
     @Test
-    void verifyPublisher() throws Throwable {
+    void verifyPublisher() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val casRegisteredServiceStreamPublisherIdentifier = new PublisherIdentifier("123456");
         

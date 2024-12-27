@@ -83,7 +83,7 @@ class UmaFindPolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoint
     }
 
     @Test
-    void verifyNoAuthOperation() throws Throwable {
+    void verifyNoAuthOperation() {
         var response = umaFindPolicyForResourceSetEndpointController.getPoliciesForResourceSet(10,
             new MockHttpServletRequest(), new MockHttpServletResponse());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

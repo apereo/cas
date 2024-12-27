@@ -75,7 +75,7 @@ class MaxmindDatabaseGeoLocationServiceTests {
     }
 
     @Test
-    void verifyNoReader() throws Throwable {
+    void verifyNoReader() {
         val service = new MaxmindDatabaseGeoLocationService(new MaxmindProperties());
         val response = service.locate("127.0.0.1");
         assertEquals(0, response.getLatitude());
@@ -83,7 +83,7 @@ class MaxmindDatabaseGeoLocationServiceTests {
     }
 
     @Test
-    void verifyLocate() throws Throwable {
+    void verifyLocate() {
         val service = new MaxmindDatabaseGeoLocationService(new MaxmindProperties());
         val response = service.locate("abcedf");
         assertNull(response);

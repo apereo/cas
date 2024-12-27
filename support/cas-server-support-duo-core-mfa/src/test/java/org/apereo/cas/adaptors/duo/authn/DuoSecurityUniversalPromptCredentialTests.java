@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DuoSecurityUniversalPromptCredentialTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val id = UUID.randomUUID().toString();
         val credential = new DuoSecurityUniversalPromptCredential(id, CoreAuthenticationTestUtils.getAuthentication());
         credential.setProviderId(id);

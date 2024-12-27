@@ -54,7 +54,7 @@ class MultifactorAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyAvailProviders() throws Throwable {
+    void verifyAvailProviders() {
         val appCtx = mock(ApplicationContext.class);
         when(appCtx.getBeansOfType(any(), anyBoolean(), anyBoolean())).thenThrow(new RuntimeException());
         assertNotNull(MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(appCtx));
@@ -136,7 +136,7 @@ class MultifactorAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyProviderByService() throws Throwable {
+    void verifyProviderByService() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

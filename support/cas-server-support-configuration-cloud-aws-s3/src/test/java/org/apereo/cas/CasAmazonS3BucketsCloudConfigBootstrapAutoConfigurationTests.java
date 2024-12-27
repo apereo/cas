@@ -78,7 +78,7 @@ class CasAmazonS3BucketsCloudConfigBootstrapAutoConfigurationTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertEquals(STATIC_AUTHN_USERS, casProperties.getAuthn().getAccept().getUsers());
     }
 

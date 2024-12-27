@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(CasTestExtension.class)
 class StringSerializerTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val input = mock(StringSerializer.class);
         when(input.supports(any(File.class))).thenCallRealMethod();
         when(input.supports(anyString())).thenCallRealMethod();

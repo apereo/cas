@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SCIM")
 class ScimV2PrincipalAttributeMapperTests {
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val user = new User();
         user.setActive(true);
         user.setDisplayName("CASUser");

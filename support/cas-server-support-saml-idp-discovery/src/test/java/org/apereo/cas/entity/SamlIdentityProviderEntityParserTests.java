@@ -43,7 +43,7 @@ class SamlIdentityProviderEntityParserTests {
     }
 
     @Test
-    void verifyEntity() throws Throwable {
+    void verifyEntity() {
         val entity = new SamlIdentityProviderEntity();
         entity.setEntityID("org.example");
         val parser = new SamlIdentityProviderEntityParser(entity);

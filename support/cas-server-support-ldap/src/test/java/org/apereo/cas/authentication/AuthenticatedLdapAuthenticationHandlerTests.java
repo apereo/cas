@@ -37,7 +37,7 @@ class AuthenticatedLdapAuthenticationHandlerTests {
     @Nested
     class WithoutCustomPrincipalId extends BaseLdapAuthenticationHandlerTests {
         @Test
-        void verifyAuthenticateNotFound() throws Throwable {
+        void verifyAuthenticateNotFound() {
             assertThrowsWithRootCause(RuntimeException.class, AccountNotFoundException.class,
                 () -> ldapAuthenticationHandlers.toList()
                     .forEach(Unchecked.consumer(h -> h.authenticate(
@@ -45,7 +45,7 @@ class AuthenticatedLdapAuthenticationHandlerTests {
         }
 
         @Test
-        void verifyAuthenticateFailureNotFound() throws Throwable {
+        void verifyAuthenticateFailureNotFound() {
             assertNotEquals(0, ldapAuthenticationHandlers.size());
             assertThrowsWithRootCause(RuntimeException.class, AccountNotFoundException.class,
                 () -> ldapAuthenticationHandlers.toList().forEach(

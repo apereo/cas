@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CasConfigurationMetadataRepositoryTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val repository = new CasConfigurationMetadataRepository();
         var properties = repository.getPropertiesWithType(LdapAuthenticationProperties.class);
         assertFalse(properties.isEmpty());

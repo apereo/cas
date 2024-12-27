@@ -64,7 +64,7 @@ class LdapUtilsTests {
     private ConfigurableApplicationContext applicationContext;
     
     @Test
-    void verifyGetBoolean() throws Throwable {
+    void verifyGetBoolean() {
         val entry = new LdapEntry();
         entry.addAttributes(new LdapAttribute("attr1", "true"));
         entry.addAttributes(new LdapAttribute("attr2", StringUtils.EMPTY));
@@ -76,7 +76,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyGetLong() throws Throwable {
+    void verifyGetLong() {
         val entry = new LdapEntry();
         entry.addAttributes(new LdapAttribute("attr1", "100"));
         val input = LdapUtils.getLong(entry, "attr1", 0L);
@@ -84,7 +84,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyGetBinary() throws Throwable {
+    void verifyGetBinary() {
         val entry = new LdapEntry();
         val attr = new LdapAttribute("attr1", "100".getBytes(StandardCharsets.UTF_8));
         attr.setBinary(true);
@@ -114,7 +114,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyScriptedFilter() throws Throwable {
+    void verifyScriptedFilter() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         ApplicationContextProvider.holdApplicationContext(appCtx);
@@ -130,14 +130,14 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyFilterByIndex() throws Throwable {
+    void verifyFilterByIndex() {
         val filter = LdapUtils.newLdaptiveSearchFilter("cn={0}", List.of("casuser"));
         assertTrue(filter.getParameters().containsKey("0"));
         assertTrue(filter.getParameters().containsValue("casuser"));
     }
 
     @Test
-    void verifyLdapAuthnAnon() throws Throwable {
+    void verifyLdapAuthnAnon() {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -155,7 +155,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyLdapAuthnDirect() throws Throwable {
+    void verifyLdapAuthnDirect() {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -171,7 +171,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyActiveDirectoryPasswordPolicy() throws Throwable {
+    void verifyActiveDirectoryPasswordPolicy() {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -195,7 +195,7 @@ class LdapUtilsTests {
     }
 
     @Test
-    void verifyActiveDirectoryPasswordPolicyWithoutExpiration() throws Throwable {
+    void verifyActiveDirectoryPasswordPolicyWithoutExpiration() {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -220,7 +220,7 @@ class LdapUtilsTests {
     }
     
     @Test
-    void verifyLdapAuthnActiveDirectory() throws Throwable {
+    void verifyLdapAuthnActiveDirectory() {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");

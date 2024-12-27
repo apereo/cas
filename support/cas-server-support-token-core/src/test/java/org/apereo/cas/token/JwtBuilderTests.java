@@ -36,7 +36,7 @@ class JwtBuilderTests {
     @TestPropertySource(properties = "cas.authn.token.crypto.enabled=false")
     class DefaultCipherDisabled extends BaseJwtTokenTicketBuilderTests {
         @Test
-        void verifyUnknownJwt() throws Throwable {
+        void verifyUnknownJwt() {
             val jwt = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIm9yZy5hcGVyZW8uY2FzLnNlcnZpY2VzLlJlZ2"
                 + "lzdGVyZWRTZXJ2aWNlIjoiMjEzMzI0ODYyMSIsImtpZCI6IjEyMzQ1Njc4OTAifQ"
                 + ".eyJzdWIiOiJjYXN1c2VyIiwic2NvcGUiOiJvcGVuaWQiLCJpc3MiOiJodHRwczpcL1wvY2FzLmV4Y"

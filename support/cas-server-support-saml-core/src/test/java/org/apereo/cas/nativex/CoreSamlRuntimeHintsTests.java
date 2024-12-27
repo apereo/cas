@@ -14,7 +14,7 @@ import org.springframework.aot.hint.RuntimeHints;
 @Tag("Native")
 class CoreSamlRuntimeHintsTests {
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new CoreSamlRuntimeHints().registerHints(hints, getClass().getClassLoader());
     }

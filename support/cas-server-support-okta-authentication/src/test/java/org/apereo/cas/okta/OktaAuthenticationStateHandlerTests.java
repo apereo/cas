@@ -61,7 +61,7 @@ class OktaAuthenticationStateHandlerTests {
     private PrincipalFactory oktaPrincipalFactory;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
             "casuser@apereo.org", "a8BuQH@6B7z");
         assertThrows(FailedLoginException.class, () -> oktaAuthenticationHandler.authenticate(credential, mock(Service.class)));

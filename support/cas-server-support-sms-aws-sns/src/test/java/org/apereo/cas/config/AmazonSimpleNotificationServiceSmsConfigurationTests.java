@@ -33,7 +33,7 @@ class AmazonSimpleNotificationServiceSmsConfigurationTests {
     private SmsSender smsSender;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(smsSender);
     }
 }

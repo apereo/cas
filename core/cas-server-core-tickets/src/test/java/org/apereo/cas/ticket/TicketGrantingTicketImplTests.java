@@ -251,7 +251,7 @@ class TicketGrantingTicketImplTests {
         }
 
         @Test
-        void verifyEquals() throws Throwable {
+        void verifyEquals() {
             val tgt = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), null, null,
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
             assertNotNull(tgt);
@@ -260,12 +260,12 @@ class TicketGrantingTicketImplTests {
         }
 
         @Test
-        void verifyNullAuthentication() throws Throwable {
+        void verifyNullAuthentication() {
             assertThrows(Exception.class, () -> new TicketGrantingTicketImpl(UUID.randomUUID().toString(), null, null, null, NeverExpiresExpirationPolicy.INSTANCE));
         }
 
         @Test
-        void verifyGetAuthentication() throws Throwable {
+        void verifyGetAuthentication() {
             val authentication = CoreAuthenticationTestUtils.getAuthentication();
             val t = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), null, null, authentication, NeverExpiresExpirationPolicy.INSTANCE);
             assertEquals(t.getAuthentication(), authentication);
@@ -273,7 +273,7 @@ class TicketGrantingTicketImplTests {
         }
 
         @Test
-        void verifyIsRootTrue() throws Throwable {
+        void verifyIsRootTrue() {
             val t = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), null, null,
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
 
@@ -281,7 +281,7 @@ class TicketGrantingTicketImplTests {
         }
 
         @Test
-        void verifyIsRootFalse() throws Throwable {
+        void verifyIsRootFalse() {
             val t1 = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), null, null,
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
             val t = new TicketGrantingTicketImpl(UUID.randomUUID().toString(),
@@ -292,7 +292,7 @@ class TicketGrantingTicketImplTests {
         }
 
         @Test
-        void verifyProperRootIsReturned() throws Throwable {
+        void verifyProperRootIsReturned() {
             val t1 = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), null, null,
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
             val t2 = new TicketGrantingTicketImpl(UUID.randomUUID().toString(),
@@ -307,7 +307,7 @@ class TicketGrantingTicketImplTests {
         }
 
         @Test
-        void verifyGetChainedPrincipalsWithOne() throws Throwable {
+        void verifyGetChainedPrincipalsWithOne() {
             val authentication = CoreAuthenticationTestUtils.getAuthentication();
             val principals = new ArrayList<Authentication>();
             principals.add(authentication);
@@ -319,7 +319,7 @@ class TicketGrantingTicketImplTests {
         }
 
         @Test
-        void verifyCheckCreationTime() throws Throwable {
+        void verifyCheckCreationTime() {
             val authentication = CoreAuthenticationTestUtils.getAuthentication();
 
             val startTime = ZonedDateTime.now(ZoneOffset.UTC).minusNanos(100);
@@ -330,7 +330,7 @@ class TicketGrantingTicketImplTests {
         }
 
         @Test
-        void verifyGetChainedPrincipalsWithTwo() throws Throwable {
+        void verifyGetChainedPrincipalsWithTwo() {
             val authentication = CoreAuthenticationTestUtils.getAuthentication();
             val authentication1 = CoreAuthenticationTestUtils.getAuthentication("test1");
             val principals = new ArrayList<Authentication>();

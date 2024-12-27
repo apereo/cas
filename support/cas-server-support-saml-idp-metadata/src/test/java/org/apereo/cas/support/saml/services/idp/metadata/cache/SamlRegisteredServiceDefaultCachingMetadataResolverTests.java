@@ -101,7 +101,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     @Test
-    void verifyRetryableOpWithFailure() throws Throwable {
+    void verifyRetryableOpWithFailure() {
         val criteriaSet = getCriteriaFor("urn:app.e2ma.net");
 
         val service = new SamlRegisteredService();
@@ -160,7 +160,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     @Test
-    void verifyMissingMetadataInMDQ() throws Throwable {
+    void verifyMissingMetadataInMDQ() {
         val criteriaSet1 = getCriteriaFor("https://shib-sp-test-preprod.dartmouth.edu/shibboleth");
         val service = getSamlRegisteredService(1, ".*", "https://mdq.incommon.org/entities/{0}");
         val resolver = getResolver("PT5M");

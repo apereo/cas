@@ -34,21 +34,21 @@ class RequestHeaderX509CertificateExtractorTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyNullHeader() throws Throwable {
+    void verifyNullHeader() {
         val request = new MockHttpServletRequest();
         request.addHeader(casProperties.getAuthn().getX509().getSslHeaderName(), "(null)");
         assertNull(x509CertificateExtractor.extract(request));
     }
 
     @Test
-    void verifyBadHeaderLength() throws Throwable {
+    void verifyBadHeaderLength() {
         val request = new MockHttpServletRequest();
         request.addHeader(casProperties.getAuthn().getX509().getSslHeaderName(), "header-value");
         assertNull(x509CertificateExtractor.extract(request));
     }
 
     @Test
-    void verifyBadHeaderLength2() throws Throwable {
+    void verifyBadHeaderLength2() {
         val cert = RequestHeaderX509CertificateExtractor.X509_HEADER;
         val request = new MockHttpServletRequest();
         request.addHeader(casProperties.getAuthn().getX509().getSslHeaderName(), cert);
@@ -56,7 +56,7 @@ class RequestHeaderX509CertificateExtractorTests {
     }
 
     @Test
-    void verifyBadHeaderLength3() throws Throwable {
+    void verifyBadHeaderLength3() {
         val cert = RequestHeaderX509CertificateExtractor.X509_HEADER + RequestHeaderX509CertificateExtractor.X509_FOOTER;
         val request = new MockHttpServletRequest();
         request.addHeader(casProperties.getAuthn().getX509().getSslHeaderName(), cert);
@@ -64,7 +64,7 @@ class RequestHeaderX509CertificateExtractorTests {
     }
 
     @Test
-    void verifyBadHeaderLength4() throws Throwable {
+    void verifyBadHeaderLength4() {
         val cert = RequestHeaderX509CertificateExtractor.X509_HEADER + ' ' + RequestHeaderX509CertificateExtractor.X509_FOOTER;
         val request = new MockHttpServletRequest();
         request.addHeader(casProperties.getAuthn().getX509().getSslHeaderName(), cert);
@@ -72,7 +72,7 @@ class RequestHeaderX509CertificateExtractorTests {
     }
 
     @Test
-    void verifyBadHeader() throws Throwable {
+    void verifyBadHeader() {
         val cert = RequestHeaderX509CertificateExtractor.X509_HEADER + "\nwhatever\n" + RequestHeaderX509CertificateExtractor.X509_FOOTER;
         val request = new MockHttpServletRequest();
         request.addHeader(casProperties.getAuthn().getX509().getSslHeaderName(), cert);

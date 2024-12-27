@@ -31,7 +31,7 @@ class SurrogateSessionExpirationPolicyJsonSerializerTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val policy = new SurrogateSessionExpirationPolicy();
         val serializer = new SurrogateSessionExpirationPolicyJsonSerializer(applicationContext);
         val result = serializer.toString(policy);

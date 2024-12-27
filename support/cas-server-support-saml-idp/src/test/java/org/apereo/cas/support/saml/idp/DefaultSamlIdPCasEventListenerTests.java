@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 @Import(DefaultSamlIdPCasEventListenerTests.SamlIdPLocatorFailsTestConfiguration.class)
 class DefaultSamlIdPCasEventListenerTests extends BaseSamlIdPConfigurationTests {
     @Test
-    void verifyPassOperation() throws Throwable {
+    void verifyPassOperation() {
         System.setProperty("test.runtime", "pass");
         val event = new ApplicationReadyEvent(mock(SpringApplication.class),
             ArrayUtils.EMPTY_STRING_ARRAY, this.applicationContext, Duration.ofSeconds(30));
@@ -35,7 +35,7 @@ class DefaultSamlIdPCasEventListenerTests extends BaseSamlIdPConfigurationTests 
     }
 
     @Test
-    void verifyFailOperation() throws Throwable {
+    void verifyFailOperation() {
         System.setProperty("test.runtime", "fail");
         val event = new ApplicationReadyEvent(mock(SpringApplication.class),
             ArrayUtils.EMPTY_STRING_ARRAY, this.applicationContext, Duration.ofSeconds(30));

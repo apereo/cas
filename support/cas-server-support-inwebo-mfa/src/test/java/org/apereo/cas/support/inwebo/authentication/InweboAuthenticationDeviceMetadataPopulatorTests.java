@@ -20,7 +20,7 @@ class InweboAuthenticationDeviceMetadataPopulatorTests {
         new InweboAuthenticationDeviceMetadataPopulator();
 
     @Test
-    void verifyPopulator() throws Throwable {
+    void verifyPopulator() {
         val credentials = new InweboCredential();
         credentials.setDeviceName("MyDeviceName");
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();

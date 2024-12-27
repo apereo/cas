@@ -113,7 +113,7 @@ class TokenAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyNoService() throws Throwable {
+    void verifyNoService() {
         val service = RegisteredServiceTestUtils.getService("nosigningservice");
         val registeredService = servicesManager.findServiceBy(service);
         assertThrows(UnauthorizedServiceException.class,

@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 @Tag("Web")
 class ThemeBasedViewResolverTests {
     @Test
-    void verifyFailsOperation() throws Throwable {
+    void verifyFailsOperation() {
         val themeResolver = mock(ThemeResolver.class);
         when(themeResolver.resolveThemeName(any())).thenThrow(new RuntimeException());
         val viewResolver = new ThemeBasedViewResolver(themeResolver, mock(ThemeViewResolverFactory.class));

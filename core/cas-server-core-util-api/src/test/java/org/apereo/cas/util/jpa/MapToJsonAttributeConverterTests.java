@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("JDBC")
 class MapToJsonAttributeConverterTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val converter = new MapToJsonAttributeConverter();
         val map = new HashMap<String, List<Object>>();
         map.put("attribute1", CollectionUtils.wrapList("1", "2"));

@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 class ChainingMultifactorAuthenticationProviderSelectorTests {
 
     @Test
-    void verifyMultipleProviders() throws Throwable {
+    void verifyMultipleProviders() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

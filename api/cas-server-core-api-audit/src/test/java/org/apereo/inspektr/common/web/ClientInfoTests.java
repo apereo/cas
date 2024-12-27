@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Audits")
 class ClientInfoTests {
     @Test
-    void verifyClientInfoCreation() throws Throwable {
+    void verifyClientInfoCreation() {
         try {
             val clientInfo = new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "Paris")
                 .setHeaders(new HashMap<>())
@@ -43,7 +43,7 @@ class ClientInfoTests {
     }
 
     @Test
-    void verifyClientInfoFromHttp() throws Throwable {
+    void verifyClientInfoFromHttp() {
         try {
             val request = getHttpServletRequest();
             ClientInfoHolder.setClientInfo(ClientInfo.from(request));
@@ -57,7 +57,7 @@ class ClientInfoTests {
     }
 
     @Test
-    void verifyClientInfoWithServerHost() throws Throwable {
+    void verifyClientInfoWithServerHost() {
         try {
             val request = getHttpServletRequest();
             val options = ClientInfoExtractionOptions.builder()
@@ -76,7 +76,7 @@ class ClientInfoTests {
     }
 
     @Test
-    void verifyHeaderExtractionForAllHeaders() throws Throwable {
+    void verifyHeaderExtractionForAllHeaders() {
         try {
             val request = getHttpServletRequest();
             val options = ClientInfoExtractionOptions.builder()
@@ -95,7 +95,7 @@ class ClientInfoTests {
     }
 
     @Test
-    void verifyHeaderExtractionForDefinedHeaders() throws Throwable {
+    void verifyHeaderExtractionForDefinedHeaders() {
         try {
             val request = getHttpServletRequest();
             val options = ClientInfoExtractionOptions.builder()
@@ -114,7 +114,7 @@ class ClientInfoTests {
     }
 
     @Test
-    void verifyClientInfoWithoutServerHost() throws Throwable {
+    void verifyClientInfoWithoutServerHost() {
         try {
             val request = getHttpServletRequest();
             val options = ClientInfoExtractionOptions.builder()

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ClientInfoAuthenticationMetaDataPopulatorTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("223.456.789.000");
         request.setLocalAddr("123.456.789.000");

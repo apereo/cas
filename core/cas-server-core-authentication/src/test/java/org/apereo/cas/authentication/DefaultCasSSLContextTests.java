@@ -60,7 +60,7 @@ class DefaultCasSSLContextTests {
         private CasSSLContext casSslContext;
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             assertNotNull(casSslContext.getTrustManagerFactory());
             assertThrows(Exception.class,
                 () -> SharedTestConfiguration.contactUrl("https://self-signed.badssl.com", casSslContext));

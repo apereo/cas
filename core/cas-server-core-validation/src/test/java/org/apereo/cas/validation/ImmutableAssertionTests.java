@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ImmutableAssertionTests {
 
     @Test
-    void verifyGettersForChainedPrincipals() throws Throwable {
+    void verifyGettersForChainedPrincipals() {
         val list = new ArrayList<Authentication>();
 
         list.add(CoreAuthenticationTestUtils.getAuthentication("test"));
@@ -33,7 +33,7 @@ class ImmutableAssertionTests {
     }
 
     @Test
-    void verifyGetterFalseForNewLogin() throws Throwable {
+    void verifyGetterFalseForNewLogin() {
         val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication());
         val assertion = new ImmutableAssertion(CoreAuthenticationTestUtils.getAuthentication(),
@@ -43,7 +43,7 @@ class ImmutableAssertionTests {
     }
 
     @Test
-    void verifyGetterTrueForNewLogin() throws Throwable {
+    void verifyGetterTrueForNewLogin() {
         val list = new ArrayList<Authentication>();
 
         list.add(CoreAuthenticationTestUtils.getAuthentication());
@@ -57,7 +57,7 @@ class ImmutableAssertionTests {
     }
 
     @Test
-    void verifyEqualsWithNull() throws Throwable {
+    void verifyEqualsWithNull() {
         val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication());
 
@@ -70,7 +70,7 @@ class ImmutableAssertionTests {
     }
 
     @Test
-    void verifyEqualsWithInvalidObject() throws Throwable {
+    void verifyEqualsWithInvalidObject() {
         val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication());
         val assertion = new ImmutableAssertion(CoreAuthenticationTestUtils.getAuthentication(),
@@ -80,7 +80,7 @@ class ImmutableAssertionTests {
     }
 
     @Test
-    void verifyEqualsWithValidObject() throws Throwable {
+    void verifyEqualsWithValidObject() {
         val list1 = new ArrayList<Authentication>();
         val list2 = new ArrayList<Authentication>();
 
@@ -99,7 +99,7 @@ class ImmutableAssertionTests {
     }
 
     @Test
-    void verifyGetService() throws Throwable {
+    void verifyGetService() {
         val service = RegisteredServiceTestUtils.getService();
         val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication());

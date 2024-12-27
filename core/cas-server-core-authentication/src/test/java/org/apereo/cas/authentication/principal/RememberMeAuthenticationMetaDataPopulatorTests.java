@@ -42,7 +42,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    void verifyWithTrueRememberMeCredentials() throws Throwable {
+    void verifyWithTrueRememberMeCredentials() {
         val c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
         val builder = newBuilder(c, new RememberMeAuthenticationProperties());
@@ -52,7 +52,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    void verifyRememberMeUserAgentAndIp() throws Throwable {
+    void verifyRememberMeUserAgentAndIp() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
@@ -69,7 +69,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    void verifyRememberMeUserAgent() throws Throwable {
+    void verifyRememberMeUserAgent() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
@@ -85,7 +85,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    void verifyRememberMeIp() throws Throwable {
+    void verifyRememberMeIp() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
@@ -100,7 +100,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    void verifyWithFalseRememberMeCredentials() throws Throwable {
+    void verifyWithFalseRememberMeCredentials() {
         val c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(false);
         val builder = newBuilder(c, new RememberMeAuthenticationProperties());
@@ -110,7 +110,7 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    void verifyWithoutRememberMeCredentials() throws Throwable {
+    void verifyWithoutRememberMeCredentials() {
         val builder = newBuilder(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
             new RememberMeAuthenticationProperties());
         val auth = builder.build();

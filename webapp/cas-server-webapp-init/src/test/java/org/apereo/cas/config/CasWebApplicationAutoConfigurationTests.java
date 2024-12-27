@@ -29,7 +29,7 @@ class CasWebApplicationAutoConfigurationTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val event = new ApplicationReadyEvent(
             mock(SpringApplication.class), ArrayUtils.EMPTY_STRING_ARRAY,
             applicationContext, Duration.ofSeconds(1));

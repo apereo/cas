@@ -23,7 +23,7 @@ class AuthenticationCredentialTypeMetaDataPopulatorTests {
         new AuthenticationCredentialTypeMetaDataPopulator();
 
     @Test
-    void verifyPopulator() throws Throwable {
+    void verifyPopulator() {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         this.populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
@@ -34,7 +34,7 @@ class AuthenticationCredentialTypeMetaDataPopulatorTests {
     }
 
     @Test
-    void verifyPopulatorMultipleTimes() throws Throwable {
+    void verifyPopulatorMultipleTimes() {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         IntStream.rangeClosed(1, 2)

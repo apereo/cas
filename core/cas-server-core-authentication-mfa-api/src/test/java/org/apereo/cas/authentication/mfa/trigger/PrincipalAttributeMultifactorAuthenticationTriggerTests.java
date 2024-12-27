@@ -29,7 +29,7 @@ class PrincipalAttributeMultifactorAuthenticationTriggerTests {
     })
     class DefaultTests extends BaseMultifactorAuthenticationTriggerTests {
         @Test
-        void verifyOperationByProvider() throws Throwable {
+        void verifyOperationByProvider() {
             val resolver = new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical());
             val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(casProperties, resolver, applicationContext);
             val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
@@ -45,7 +45,7 @@ class PrincipalAttributeMultifactorAuthenticationTriggerTests {
     })
     class ReversedMatchTests extends BaseMultifactorAuthenticationTriggerTests {
         @Test
-        void verifyOperationByProvider() throws Throwable {
+        void verifyOperationByProvider() {
             val resolver = new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical());
             val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(casProperties, resolver, applicationContext);
             val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
@@ -61,7 +61,7 @@ class PrincipalAttributeMultifactorAuthenticationTriggerTests {
     })
     class DenyTests extends BaseMultifactorAuthenticationTriggerTests {
         @Test
-        void verifyDenyWhenUnmatched() throws Throwable {
+        void verifyDenyWhenUnmatched() {
             val resolver = new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical());
             val trigger = new PrincipalAttributeMultifactorAuthenticationTrigger(casProperties, resolver, applicationContext);
             val exception = assertThrows(AuthenticationException.class,

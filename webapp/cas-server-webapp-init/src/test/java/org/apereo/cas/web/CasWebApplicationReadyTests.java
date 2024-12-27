@@ -30,12 +30,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 class CasWebApplicationReadyTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertEquals(Boolean.FALSE.toString(), System.getProperty(CasWebApplicationReady.SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS));
     }
 
     @Test
-    void verifyWebApplication() throws Throwable {
+    void verifyWebApplication() {
         val sources = CasWebApplication.getApplicationSources(ArrayUtils.EMPTY_STRING_ARRAY);
         assertEquals(1, sources.size());
     }

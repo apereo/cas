@@ -1,3 +1,4 @@
+# renovate: ignore
 FROM node:20
 RUN apt-get update > /dev/null && apt-get install iproute2 iputils-ping -y > /dev/null
 

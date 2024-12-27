@@ -52,7 +52,7 @@ class RestServicesConfigurationTests {
     private RegisteredServiceResource registeredServiceResourceRestController;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(registeredServiceResourceRestController);
     }
 }

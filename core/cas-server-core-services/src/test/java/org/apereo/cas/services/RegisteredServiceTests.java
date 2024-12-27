@@ -87,13 +87,13 @@ class RegisteredServiceTests {
     };
 
     @Test
-    void verifyAllowToProxyIsFalseByDefault() throws Throwable {
+    void verifyAllowToProxyIsFalseByDefault() {
         val service = new CasRegisteredService();
         assertFalse(service.getProxyPolicy().isAllowedToProxy());
     }
 
     @Test
-    void verifySettersAndGetters() throws Throwable {
+    void verifySettersAndGetters() {
         prepareService();
         assertEquals(DESCRIPTION, baseService.getDescription());
         assertEquals(ENABLED, baseService.getAccessStrategy().isServiceAccessAllowed(baseService, CoreAuthenticationTestUtils.getService()));
@@ -182,14 +182,14 @@ class RegisteredServiceTests {
     }
 
     @Test
-    void verifyServiceEquality() throws Throwable {
+    void verifyServiceEquality() {
         val svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID, false);
         val svc2 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID, false);
         assertEquals(svc1, svc2);
     }
 
     @Test
-    void verifyServiceWithInvalidIdStillHasTheSameIdAfterCallingMatches() throws Throwable {
+    void verifyServiceWithInvalidIdStillHasTheSameIdAfterCallingMatches() {
         val invalidId = "***";
         val service = RegisteredServiceTestUtils.getRegisteredService(invalidId);
         service.matches("notRelevant");

@@ -113,7 +113,7 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyBadCred() throws Throwable {
+    void verifyBadCred() {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();

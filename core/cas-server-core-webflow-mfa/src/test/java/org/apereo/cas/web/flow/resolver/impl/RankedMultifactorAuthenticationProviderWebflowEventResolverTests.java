@@ -172,7 +172,7 @@ class RankedMultifactorAuthenticationProviderWebflowEventResolverTests extends B
     }
 
     @Test
-    void verifyAddDelegate() throws Throwable {
+    void verifyAddDelegate() {
         assertDoesNotThrow(() -> {
             resolver.addDelegate(mock(CasWebflowEventResolver.class));
             resolver.addDelegate(mock(CasWebflowEventResolver.class), 0);

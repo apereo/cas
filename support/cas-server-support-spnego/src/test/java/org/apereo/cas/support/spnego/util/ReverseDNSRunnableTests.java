@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class ReverseDNSRunnableTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val input = new ReverseDNSRunnable("123.456.000.xyz");
         input.run();
         assertNotNull(input.getHostName());

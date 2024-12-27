@@ -56,7 +56,7 @@ class RestAuditTrailManagerTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyRemoval() throws Throwable {
+    void verifyRemoval() {
         val props = casProperties.getAudit().getRest();
         val port = URI.create(props.getUrl()).getPort();
         try (val webServer = new MockWebServer(port,

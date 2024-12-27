@@ -69,7 +69,7 @@ class CasServerProfileRegistrarTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val profile = casServerProfileRegistrar.getProfile();
         assertNotNull(profile);

@@ -41,7 +41,7 @@ class MultifactorAuthenticationWebflowUtilsTests {
     private ConfigurableApplicationContext applicationContext;
     
     @Test
-    void verifyCustomizers() throws Exception {
+    void verifyCustomizers() {
         val results = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext);
         assertFalse(results.isEmpty());
     }

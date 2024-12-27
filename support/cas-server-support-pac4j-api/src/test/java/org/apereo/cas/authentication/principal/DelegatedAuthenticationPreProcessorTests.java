@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 class DelegatedAuthenticationPreProcessorTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val policy = mock(DelegatedAuthenticationPreProcessor.class);
         when(policy.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.LOWEST_PRECEDENCE, policy.getOrder());

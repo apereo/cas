@@ -28,7 +28,7 @@ class WebflowConversationStateCipherExecutorTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val cipher = new WebflowConversationStateCipherExecutor(null, null,
             "AES", 512, 16, "webflow");
         val encoded = cipher.encode("ST-1234567890".getBytes(StandardCharsets.UTF_8));
@@ -39,7 +39,7 @@ class WebflowConversationStateCipherExecutorTests {
     }
 
     @Test
-    void verifyCipherWithProps() throws Throwable {
+    void verifyCipherWithProps() {
         val crypto = casProperties.getWebflow().getCrypto();
         val cipher = new WebflowConversationStateCipherExecutor(
             "P4fxK62MCY5xL5y1DGb3_Q",
@@ -56,7 +56,7 @@ class WebflowConversationStateCipherExecutorTests {
     }
 
     @Test
-    void verifyCipherWithoutSigning() throws Throwable {
+    void verifyCipherWithoutSigning() {
         val crypto = casProperties.getWebflow().getCrypto();
         val cipher = new WebflowConversationStateCipherExecutor(
             "P4fxK62MCY5xL5y1DGb3_Q",

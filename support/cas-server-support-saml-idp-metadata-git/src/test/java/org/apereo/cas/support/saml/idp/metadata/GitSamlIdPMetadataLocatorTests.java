@@ -59,7 +59,7 @@ class GitSamlIdPMetadataLocatorTests extends BaseGitSamlMetadataTests {
     }
 
     @AfterAll
-    public static void cleanUp() throws Exception {
+    public static void cleanUp() {
         val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-metadata-idp");
         if (gitRepoDir.exists()) {
             FunctionUtils.doAndHandle(

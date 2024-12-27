@@ -37,7 +37,7 @@ class AlwaysExpiresExpirationPolicyTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val policyWritten = AlwaysExpiresExpirationPolicy.INSTANCE;
         val result = SerializationUtils.serialize(policyWritten);
         val policyRead = SerializationUtils.deserialize(result, AlwaysExpiresExpirationPolicy.class);

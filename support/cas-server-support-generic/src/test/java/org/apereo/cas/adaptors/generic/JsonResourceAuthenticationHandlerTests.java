@@ -204,43 +204,43 @@ class JsonResourceAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyNotFoundAccount() throws Throwable {
+    void verifyNotFoundAccount() {
         assertThrows(AccountNotFoundException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("nobody", "Mellon"), mock(Service.class)));
     }
 
     @Test
-    void verifyExpiredAccount() throws Throwable {
+    void verifyExpiredAccount() {
         assertThrows(AccountExpiredException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpired", "Mellon"), mock(Service.class)));
     }
 
     @Test
-    void verifyDisabledAccount() throws Throwable {
+    void verifyDisabledAccount() {
         assertThrows(AccountDisabledException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casdisabled", "Mellon"), mock(Service.class)));
     }
 
     @Test
-    void verifyLockedAccount() throws Throwable {
+    void verifyLockedAccount() {
         assertThrows(AccountLockedException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("caslocked", "Mellon"), mock(Service.class)));
     }
 
     @Test
-    void verifyMustChangePswAccount() throws Throwable {
+    void verifyMustChangePswAccount() {
         assertThrows(AccountPasswordMustChangeException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casmustchange", "Mellon"), mock(Service.class)));
     }
 
     @Test
-    void verifyInvalidLocation() throws Throwable {
+    void verifyInvalidLocation() {
         assertThrows(InvalidLoginLocationException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("badlocation", "Mellon"), mock(Service.class)));
     }
 
     @Test
-    void verifyInvalidTime() throws Throwable {
+    void verifyInvalidTime() {
         assertThrows(InvalidLoginTimeException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("badtime", "Mellon"), mock(Service.class)));
     }

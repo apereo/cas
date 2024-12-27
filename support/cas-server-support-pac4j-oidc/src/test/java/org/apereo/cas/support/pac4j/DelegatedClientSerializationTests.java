@@ -59,7 +59,7 @@ class DelegatedClientSerializationTests {
     }
     
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val jwt = new PlainJWT(new JWTClaimsSet.Builder()
             .audience("audience")
             .subject("subject")
@@ -79,7 +79,7 @@ class DelegatedClientSerializationTests {
     }
 
     @Test
-    void verifyClientCredentials() throws Throwable {
+    void verifyClientCredentials() {
         val creds = new OidcCredentials();
         creds.setCode("authcode");
         creds.setAccessToken(new BearerAccessToken("value", 0L, Scope.parse("oidc email")).toJSONObject());

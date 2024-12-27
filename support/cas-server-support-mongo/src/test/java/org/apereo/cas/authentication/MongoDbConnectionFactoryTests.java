@@ -27,7 +27,7 @@ class MongoDbConnectionFactoryTests {
     private static final String URI = "mongodb://root:secret@localhost:27017/admin";
 
     @Test
-    void verifyProps() throws Throwable {
+    void verifyProps() {
         val factory = new MongoDbConnectionFactory();
         val props = new SingleCollectionMongoDbProperties();
         props.setClientUri(URI);
@@ -37,7 +37,7 @@ class MongoDbConnectionFactoryTests {
     }
 
     @Test
-    void verifyClient() throws Throwable {
+    void verifyClient() {
         val props = new SingleCollectionMongoDbProperties();
         props.setClientUri(URI);
         val factory = new MongoDbConnectionFactory();
@@ -46,7 +46,7 @@ class MongoDbConnectionFactoryTests {
     }
 
     @Test
-    void verifyPackages() throws Throwable {
+    void verifyPackages() {
         val props = new SingleCollectionMongoDbProperties();
         props.setHost("localhost,localhost");
         props.setPort(27017);

@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultServiceTicketFactoryTests extends BaseTicketFactoryTests {
 
     @Test
-    void verifyBadType() throws Throwable {
+    void verifyBadType() {
         val factory = (ServiceTicketFactory) this.ticketFactory.get(ServiceTicket.class);
         assertThrows(ClassCastException.class,
             () -> factory.create(new MockTicketGrantingTicket("casuser"),

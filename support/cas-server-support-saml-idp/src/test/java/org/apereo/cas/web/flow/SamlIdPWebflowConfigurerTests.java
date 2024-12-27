@@ -26,12 +26,12 @@ class SamlIdPWebflowConfigurerTests extends BaseSamlIdPWebflowTests {
     private CasWebSecurityConfigurer<Void> samlIdPProtocolEndpointConfigurer;
 
     @Test
-    void verifyEndpoints() throws Throwable {
+    void verifyEndpoints() {
         assertFalse(samlIdPProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
     
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

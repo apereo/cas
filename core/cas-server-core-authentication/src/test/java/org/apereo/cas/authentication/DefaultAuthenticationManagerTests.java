@@ -123,7 +123,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyNoHandlers() throws Throwable {
+    void verifyNoHandlers() {
         val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         val manager = getAuthenticationManager(authenticationExecutionPlan);

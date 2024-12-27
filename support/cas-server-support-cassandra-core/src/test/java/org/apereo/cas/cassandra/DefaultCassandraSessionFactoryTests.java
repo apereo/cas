@@ -45,7 +45,7 @@ class DefaultCassandraSessionFactoryTests {
     private CasSSLContext casSslContext;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val cassandra = casProperties.getAuthn().getCassandra();
         val factory = new DefaultCassandraSessionFactory(cassandra, casSslContext.getSslContext());
         assertNotNull(factory.getCassandraTemplate());

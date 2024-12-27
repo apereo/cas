@@ -78,7 +78,7 @@ public abstract class BaseAuditConfigurationTests {
     }
 
     @Test
-    void verifyAuditByDate() throws Throwable {
+    void verifyAuditByDate() {
         val time = LocalDateTime.now(ZoneOffset.UTC).minusDays(2);
         val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(AuditTrailManager.WhereClauseFields.DATE, time);
         val results = getAuditTrailManager().getAuditRecords(criteria);
@@ -86,7 +86,7 @@ public abstract class BaseAuditConfigurationTests {
     }
 
     @Test
-    void verifyAuditByPrincipal() throws Throwable {
+    void verifyAuditByPrincipal() {
         val time = LocalDateTime.now(ZoneOffset.UTC).minusDays(2);
         val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(
             AuditTrailManager.WhereClauseFields.DATE, time,

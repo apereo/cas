@@ -41,14 +41,14 @@ class DefaultYubiKeyAccountValidatorTests {
     }
 
     @Test
-    void verifyBadPubKey() throws Throwable {
+    void verifyBadPubKey() {
         val client = mock(YubicoClient.class);
         val v = new DefaultYubiKeyAccountValidator(client);
         assertFalse(v.isValid("casuser", "abcdeyf"));
     }
 
     @Test
-    void verifyNoPubKey() throws Throwable {
+    void verifyNoPubKey() {
         val client = mock(YubicoClient.class);
         val v = new DefaultYubiKeyAccountValidator(client) {
             @Override

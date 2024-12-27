@@ -36,7 +36,7 @@ class DefaultRegisteredServiceServiceTicketExpirationPolicyTests {
     }
 
     @Test
-    void verifyUndefined() throws Throwable {
+    void verifyUndefined() {
         val p = RegisteredServiceServiceTicketExpirationPolicy.undefined();
         assertNull(p.getTimeToLive());
         assertEquals(Long.MIN_VALUE, p.getNumberOfUses());

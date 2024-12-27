@@ -36,7 +36,7 @@ class TicketValidationResourceResolverTests {
     private AuditResourceResolver ticketValidationResourceResolver;
 
     @Test
-    void verifyActionPassedJson() throws Throwable {
+    void verifyActionPassedJson() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(ArrayUtils.EMPTY_OBJECT_ARRAY);
         val assertion = mock(Assertion.class);
@@ -46,7 +46,7 @@ class TicketValidationResourceResolverTests {
     }
 
     @Test
-    void verifyActionPassed() throws Throwable {
+    void verifyActionPassed() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(ArrayUtils.EMPTY_OBJECT_ARRAY);
         val assertion = mock(Assertion.class);
@@ -55,7 +55,7 @@ class TicketValidationResourceResolverTests {
     }
 
     @Test
-    void verifyTicketId() throws Throwable {
+    void verifyTicketId() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"ticket-id"});
         val assertion = mock(Assertion.class);
@@ -64,7 +64,7 @@ class TicketValidationResourceResolverTests {
     }
 
     @Test
-    void verifyTicketIdJson() throws Throwable {
+    void verifyTicketIdJson() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"ticket-id"});
         val assertion = mock(Assertion.class);
@@ -73,7 +73,7 @@ class TicketValidationResourceResolverTests {
     }
 
     @Test
-    void verifyEmpty() throws Throwable {
+    void verifyEmpty() {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertEquals(0, ticketValidationResourceResolver.resolveFrom(jp, new Object()).length);

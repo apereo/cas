@@ -83,7 +83,7 @@ class SpnegoCredentialsToPrincipalResolverTests {
     }
 
     @Test
-    void verifySupports() throws Throwable {
+    void verifySupports() {
         assertFalse(this.resolver.supports(null));
         assertTrue(this.resolver.supports(this.spnegoCredentials));
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));

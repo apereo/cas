@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Audits")
 class WhereClauseMatchCriteriaTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val criteria1 = new NoMatchWhereClauseMatchCriteria();
         assertTrue(criteria1.getParameterValues().isEmpty());
         assertNotNull(criteria1.toString());

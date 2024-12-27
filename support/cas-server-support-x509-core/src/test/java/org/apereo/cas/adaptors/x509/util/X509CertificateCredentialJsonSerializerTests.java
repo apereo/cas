@@ -43,7 +43,7 @@ class X509CertificateCredentialJsonSerializerTests {
     }
 
     @Test
-    void verifyAuditableOperation() throws Throwable {
+    void verifyAuditableOperation() {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         val set = new LinkedHashSet<>();
         set.add(c);

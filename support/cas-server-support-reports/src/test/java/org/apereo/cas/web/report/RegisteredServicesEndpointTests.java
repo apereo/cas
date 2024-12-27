@@ -69,7 +69,7 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifySaveService() throws Throwable {
+    void verifySaveService() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
@@ -99,7 +99,7 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyServiceUpdate() throws Throwable {
+    void verifyServiceUpdate() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());

@@ -138,7 +138,7 @@ class X509CommonNameEDIPIPrincipalResolverTests {
                                         final String expectedResult,
                                         final String alternatePrincipalAttribute,
                                         final X509AttributeExtractor x509AttributeExtractor,
-                                        final boolean edipiExpected) throws Exception {
+                                        final boolean edipiExpected) {
 
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)

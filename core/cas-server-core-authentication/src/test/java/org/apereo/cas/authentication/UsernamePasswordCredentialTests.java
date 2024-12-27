@@ -62,7 +62,7 @@ class UsernamePasswordCredentialTests {
     }
 
     @Test
-    void verifySetGetUsername() throws Throwable {
+    void verifySetGetUsername() {
         val credential = new UsernamePasswordCredential();
         val userName = "test";
         credential.setUsername(userName);
@@ -70,7 +70,7 @@ class UsernamePasswordCredentialTests {
     }
 
     @Test
-    void verifySetGetPassword() throws Throwable {
+    void verifySetGetPassword() {
         val credential = new UsernamePasswordCredential();
         val password = "test";
 
@@ -79,7 +79,7 @@ class UsernamePasswordCredentialTests {
     }
 
     @Test
-    void verifyEquals() throws Throwable {
+    void verifyEquals() {
         val c1 = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword();
         assertNotEquals(null, c1);
         val c2 = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");

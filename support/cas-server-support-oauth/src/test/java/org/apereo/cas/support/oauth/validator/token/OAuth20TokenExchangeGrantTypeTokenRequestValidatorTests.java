@@ -74,7 +74,7 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
     }
 
     @Test
-    void verifyWithoutSubjectToken() throws Throwable {
+    void verifyWithoutSubjectToken() {
         val service = addRegisteredService(Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE), UUID.randomUUID().toString(), UUID.randomUUID().toString());
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());

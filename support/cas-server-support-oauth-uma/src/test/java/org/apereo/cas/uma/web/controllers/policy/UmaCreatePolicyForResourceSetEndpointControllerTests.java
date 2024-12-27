@@ -52,7 +52,7 @@ class UmaCreatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
     }
 
     @Test
-    void verifyNoAuthOperation() throws Throwable {
+    void verifyNoAuthOperation() {
         val body = createUmaResourceRegistrationRequest().toJson();
         val response = umaCreatePolicyForResourceSetEndpointController.createPolicyForResourceSet(100, body,
             new MockHttpServletRequest(), new MockHttpServletResponse());

@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @Tag("RestfulApi")
 class RestResponseEntityAuditResourceResolverTests {
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val resolver = new RestResponseEntityAuditResourceResolver(true);
         try (val webServer = new MockWebServer()) {
             webServer.start();

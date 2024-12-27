@@ -48,7 +48,7 @@ class MongoDbServiceRegistryTests extends AbstractServiceRegistryTests {
     private ServiceRegistry newServiceRegistry;
 
     @Test
-    void verifySamlServiceAttributeNames() throws Throwable {
+    void verifySamlServiceAttributeNames() {
         val service = new SamlRegisteredService();
         service.setName("TestAttributeNames");
         service.setDescription("Test Description");

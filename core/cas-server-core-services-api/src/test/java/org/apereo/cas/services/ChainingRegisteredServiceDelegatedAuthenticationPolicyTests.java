@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Delegation")
 class ChainingRegisteredServiceDelegatedAuthenticationPolicyTests {
     @Test
-    void verifySelectionStrategy() throws Throwable {
+    void verifySelectionStrategy() {
         val chain = new ChainingRegisteredServiceDelegatedAuthenticationPolicy();
         val p1 = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
         val p2 = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();

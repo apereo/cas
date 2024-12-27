@@ -37,7 +37,7 @@ class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
     private CasWebSecurityConfigurer<HttpSecurity> oidcProtocolEndpointConfigurer;
 
     @Test
-    void verifyEndpoints() throws Throwable {
+    void verifyEndpoints() {
         assertFalse(oidcProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 

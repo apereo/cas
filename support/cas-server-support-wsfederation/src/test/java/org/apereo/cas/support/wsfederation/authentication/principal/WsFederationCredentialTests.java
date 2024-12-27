@@ -21,26 +21,26 @@ import static org.junit.jupiter.api.Assertions.*;
 class WsFederationCredentialTests extends AbstractWsFederationTests {
     
     @Test
-    void verifyIsValidAllGood() throws Throwable {
+    void verifyIsValidAllGood() {
         assertTrue(getCredential().isValid(AUDIENCE, ISSUER, 2000), "testIsValidAllGood() - True");
     }
 
     @Test
-    void verifyIsValidBadAudience() throws Throwable {
+    void verifyIsValidBadAudience() {
         val standardCred = getCredential();
         standardCred.setAudience("urn:NotUs");
         assertFalse(standardCred.isValid(AUDIENCE, ISSUER, 2000), "testIsValidBadAudeience() - False");
     }
 
     @Test
-    void verifyIsValidBadIssuer() throws Throwable {
+    void verifyIsValidBadIssuer() {
         val standardCred = getCredential();
         standardCred.setIssuer("urn:NotThem");
         assertFalse(standardCred.isValid(AUDIENCE, ISSUER, 2000), "testIsValidBadIssuer() - False");
     }
 
     @Test
-    void verifyIsValidEarlyToken() throws Throwable {
+    void verifyIsValidEarlyToken() {
         val standardCred = getCredential();
         standardCred.setNotBefore(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1));
         standardCred.setNotOnOrAfter(ZonedDateTime.now(ZoneOffset.UTC).plusHours(1).plusDays(1));
@@ -50,7 +50,7 @@ class WsFederationCredentialTests extends AbstractWsFederationTests {
     }
 
     @Test
-    void verifyIsValidOldToken() throws Throwable {
+    void verifyIsValidOldToken() {
         val standardCred = getCredential();
         standardCred.setNotBefore(ZonedDateTime.now(ZoneOffset.UTC).minusDays(1));
         standardCred.setNotOnOrAfter(ZonedDateTime.now(ZoneOffset.UTC).plusHours(1).minusDays(1));
@@ -67,7 +67,7 @@ class WsFederationCredentialTests extends AbstractWsFederationTests {
     }
 
     @Test
-    void verifyIsValidExpiredIssuedOn() throws Throwable {
+    void verifyIsValidExpiredIssuedOn() {
         val standardCred = getCredential();
         standardCred.setIssuedOn(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(3));
 

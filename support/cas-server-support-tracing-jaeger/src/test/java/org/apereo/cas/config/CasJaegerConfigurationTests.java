@@ -36,7 +36,7 @@ class CasJaegerConfigurationTests {
     private SpanExporter jaegerGrpcHttpSpanExporter;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         assertNotNull(jaegerGrpcHttpSpanExporter);
     }
 }

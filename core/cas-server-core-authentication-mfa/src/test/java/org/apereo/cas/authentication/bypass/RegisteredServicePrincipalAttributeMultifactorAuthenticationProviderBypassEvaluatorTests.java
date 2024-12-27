@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 class RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @Test
-    void verifyMissingPrincipalAttribute() throws Throwable {
+    void verifyMissingPrincipalAttribute() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -55,7 +55,7 @@ class RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypass
     }
 
     @Test
-    void verifyNoMatchOperation() throws Throwable {
+    void verifyNoMatchOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -82,7 +82,7 @@ class RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypass
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -108,7 +108,7 @@ class RegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypass
     }
 
     @Test
-    void verifyNoService() throws Throwable {
+    void verifyNoService() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);

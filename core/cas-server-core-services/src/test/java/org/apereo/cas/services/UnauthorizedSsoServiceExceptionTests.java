@@ -16,19 +16,19 @@ class UnauthorizedSsoServiceExceptionTests {
     private static final String MESSAGE = UUID.randomUUID().toString();
 
     @Test
-    void verifyGetCode() throws Throwable {
+    void verifyGetCode() {
         val e = new UnauthorizedSsoServiceException();
         assertEquals(UnauthorizedSsoServiceException.CODE, e.getMessage());
     }
 
     @Test
-    void verifyCodeConstructor() throws Throwable {
+    void verifyCodeConstructor() {
         val e = new UnauthorizedSsoServiceException(MESSAGE);
         assertEquals(MESSAGE, e.getMessage());
     }
 
     @Test
-    void verifyThrowableConstructorWithCode() throws Throwable {
+    void verifyThrowableConstructorWithCode() {
         val r = new RuntimeException();
         val e = new UnauthorizedSsoServiceException(MESSAGE, r);
         assertEquals(MESSAGE, e.getMessage());

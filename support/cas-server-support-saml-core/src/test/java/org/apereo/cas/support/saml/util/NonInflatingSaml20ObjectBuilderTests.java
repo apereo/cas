@@ -49,7 +49,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     private OpenSamlConfigBean openSamlConfigBean;
 
     @Test
-    void verifyAttrValueTypeString() throws Throwable {
+    void verifyAttrValueTypeString() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of("cas@example.org"),
@@ -58,7 +58,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttrValueTypeUri() throws Throwable {
+    void verifyAttrValueTypeUri() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of("cas@example.org"),
@@ -67,7 +67,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttrValueTypeXSBoolean() throws Throwable {
+    void verifyAttrValueTypeXSBoolean() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of("false"),
@@ -76,7 +76,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttrValueTypeXSInteger() throws Throwable {
+    void verifyAttrValueTypeXSInteger() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of("12345678"),
@@ -85,7 +85,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttrValueTypeXSDateTime() throws Throwable {
+    void verifyAttrValueTypeXSDateTime() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of(ZonedDateTime.now(ZoneOffset.UTC).toString()),
@@ -94,7 +94,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttrValueTypeXSBinary() throws Throwable {
+    void verifyAttrValueTypeXSBinary() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of(EncodingUtils.encodeBase64("values")),
@@ -103,7 +103,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttrValueTypeXSObject() throws Throwable {
+    void verifyAttrValueTypeXSObject() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of(new TicketGrantingTicketExpirationPolicy(100, 100)),
@@ -112,7 +112,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttrValueTypeNone() throws Throwable {
+    void verifyAttrValueTypeNone() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertNotNull(builder.newAttribute("email", "mail",
             List.of(),
@@ -121,7 +121,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyAttributes() throws Throwable {
+    void verifyAttributes() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         val formats = Map.of("mail", "basic", "name", "unspecified", "cn", StringUtils.EMPTY);
         assertNotNull(builder.newAttribute("email", "mail",
@@ -138,7 +138,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifySubject() throws Throwable {
+    void verifySubject() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         val id = builder.newNameID(NameIDType.UNSPECIFIED, "casuser");
         val subjectId = builder.newNameID(NameIDType.UNSPECIFIED, "casuser");
@@ -151,7 +151,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifySubjectNoRecipient() throws Throwable {
+    void verifySubjectNoRecipient() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         val id = builder.newNameID(NameIDType.UNSPECIFIED, "casuser");
         val subjectId = builder.newNameID(NameIDType.UNSPECIFIED, "casuser");
@@ -162,7 +162,7 @@ class NonInflatingSaml20ObjectBuilderTests {
     }
 
     @Test
-    void verifyQName() throws Throwable {
+    void verifyQName() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         assertThrows(IllegalStateException.class,
             () -> builder.getSamlObjectQName(Object.class));

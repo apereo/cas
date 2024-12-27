@@ -102,31 +102,31 @@ class RedisAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyNotFound() throws Throwable {
+    void verifyNotFound() {
         assertThrows(AccountNotFoundException.class,
             () -> authenticationHandler.authenticate(new UsernamePasswordCredential("123456", "caspassword"), mock(Service.class)));
     }
 
     @Test
-    void verifyInvalid() throws Throwable {
+    void verifyInvalid() {
         assertThrows(FailedLoginException.class,
             () -> authenticationHandler.authenticate(new UsernamePasswordCredential("casuser", "badpassword"), mock(Service.class)));
     }
 
     @Test
-    void verifyExpired() throws Throwable {
+    void verifyExpired() {
         assertThrows(AccountExpiredException.class,
             () -> authenticationHandler.authenticate(new UsernamePasswordCredential("casexpired", "caspassword"), mock(Service.class)));
     }
 
     @Test
-    void verifyLocked() throws Throwable {
+    void verifyLocked() {
         assertThrows(AccountLockedException.class,
             () -> authenticationHandler.authenticate(new UsernamePasswordCredential("caslocked", "caspassword"), mock(Service.class)));
     }
 
     @Test
-    void verifyChangePsw() throws Throwable {
+    void verifyChangePsw() {
         assertThrows(AccountPasswordMustChangeException.class,
             () -> authenticationHandler.authenticate(new UsernamePasswordCredential("caschangepsw", "caspassword"), mock(Service.class)));
     }

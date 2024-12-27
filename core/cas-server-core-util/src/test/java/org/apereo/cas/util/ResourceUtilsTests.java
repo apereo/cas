@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @Tag("Utility")
 class ResourceUtilsTests {
     @Test
-    void verifyResourceExists() throws Throwable {
+    void verifyResourceExists() {
         assertThrows(IllegalArgumentException.class, () -> ResourceUtils.getRawResourceFrom(null));
         assertFalse(ResourceUtils.doesResourceExist(new FileSystemResource("invalid.json")));
         val resourceLoader = mock(ResourceLoader.class);
@@ -44,7 +44,7 @@ class ResourceUtilsTests {
     }
 
     @Test
-    void verifyResourceOnClasspath() throws Throwable {
+    void verifyResourceOnClasspath() {
         val res = new ClassPathResource("valid.json");
         assertNotNull(ResourceUtils.prepareClasspathResourceIfNeeded(res, false, "valid"));
         assertNull(ResourceUtils.prepareClasspathResourceIfNeeded(null, false, "valid"));
@@ -52,7 +52,7 @@ class ResourceUtilsTests {
     }
 
     @Test
-    void verifyPrepare() throws Throwable {
+    void verifyPrepare() {
         val url = getClass().getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
         assertNotNull(url);
         val resource = ResourceUtils.prepareClasspathResourceIfNeeded(new UrlResource(url), false, ".*");
@@ -60,7 +60,7 @@ class ResourceUtilsTests {
     }
 
     @Test
-    void verifyPrepareDir() throws Throwable {
+    void verifyPrepareDir() {
         val url = getClass().getClassLoader().getResource("META-INF");
         assertNotNull(url);
         val resource = ResourceUtils.prepareClasspathResourceIfNeeded(new UrlResource(url), true, "MANIFEST");
@@ -90,7 +90,7 @@ class ResourceUtilsTests {
     }
 
     @Test
-    void verifyClasspathResourceDirectory() throws Throwable {
+    void verifyClasspathResourceDirectory() {
         val url = getClass().getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
         assertNotNull(url);
         val file = new File(url.toExternalForm()).getParentFile();

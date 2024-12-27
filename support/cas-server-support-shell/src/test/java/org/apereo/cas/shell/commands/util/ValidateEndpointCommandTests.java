@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SHELL")
 class ValidateEndpointCommandTests extends BaseCasShellCommandTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "validate-endpoint --url http://http.badssl.com/"));
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "validate-endpoint --url https://github.com"));
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "validate-endpoint --timeout 1000 --url https://wrong.host.badssl.com/"));

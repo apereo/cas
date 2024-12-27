@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SHELL")
 class JasyptTestAlgorithmsCommandTests extends BaseCasShellCommandTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "jasypt-test-algorithms"));
     }
 }

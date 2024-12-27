@@ -327,7 +327,7 @@ class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyRequestedDefinitions() throws Throwable {
+    void verifyRequestedDefinitions() {
         val allowed1 = CollectionUtils.<String, Object>wrap("uid", "my-userid");
         val policy = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(allowed1);
 
@@ -431,7 +431,7 @@ class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyChainDependingOnPreviousAttributes() throws Throwable {
+    void verifyChainDependingOnPreviousAttributes() {
         val policy1 = new ReturnMappedAttributeReleasePolicy();
         policy1.setAllowedAttributes(CollectionUtils.wrap("uid", "my-userid"));
         policy1.setOrder(1);

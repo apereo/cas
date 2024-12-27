@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 class RegisteredServiceAccessStrategyUtilsTests {
 
     @Test
-    void verifyExpired() throws Throwable {
+    void verifyExpired() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         service.setExpirationPolicy(new DefaultRegisteredServiceExpirationPolicy(false,
             LocalDate.now(ZoneOffset.UTC).minusDays(1)));
@@ -34,7 +34,7 @@ class RegisteredServiceAccessStrategyUtilsTests {
     }
 
     @Test
-    void verifySsoAccess() throws Throwable {
+    void verifySsoAccess() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
         val tgt = mock(TicketGrantingTicket.class);
@@ -45,7 +45,7 @@ class RegisteredServiceAccessStrategyUtilsTests {
     }
 
     @Test
-    void verifySsoAccessDisabledAllowsAccessWithCredentials() throws Throwable {
+    void verifySsoAccessDisabledAllowsAccessWithCredentials() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
         val tgt = mock(TicketGrantingTicket.class);
@@ -57,7 +57,7 @@ class RegisteredServiceAccessStrategyUtilsTests {
     }
 
     @Test
-    void verifySsoAccessWithCredentialsProvided() throws Throwable {
+    void verifySsoAccessWithCredentialsProvided() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
         val tgt = mock(TicketGrantingTicket.class);
@@ -73,7 +73,7 @@ class RegisteredServiceAccessStrategyUtilsTests {
     }
 
     @Test
-    void verifyPrincipalAccess() throws Throwable {
+    void verifyPrincipalAccess() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val authentication = RegisteredServiceTestUtils.getAuthentication();
         assertThrows(PrincipalException.class, () ->

@@ -33,7 +33,7 @@ class GoogleMultifactorAuthenticationAccountProfileWebflowConfigurerTests extend
     protected FlowDefinitionRegistry flowDefinitionRegistry;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         val accountView = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
         assertEquals(4, accountView.getRenderActionList().size());

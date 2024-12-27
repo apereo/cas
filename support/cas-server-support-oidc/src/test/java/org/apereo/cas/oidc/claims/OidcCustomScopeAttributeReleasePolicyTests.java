@@ -80,7 +80,7 @@ class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val policy = new OidcCustomScopeAttributeReleasePolicy("groups", CollectionUtils.wrap("groups"));
         val chain = new ChainingAttributeReleasePolicy();
         chain.addPolicies(policy);

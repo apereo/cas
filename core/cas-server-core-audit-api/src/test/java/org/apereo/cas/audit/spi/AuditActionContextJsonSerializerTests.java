@@ -32,7 +32,7 @@ class AuditActionContextJsonSerializerTests {
     private ConfigurableApplicationContext applicationContext;
     
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS", LocalDateTime.now(Clock.systemUTC()),
             new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London"));

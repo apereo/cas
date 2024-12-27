@@ -53,7 +53,7 @@ class SamlValidateEndpointTests extends AbstractCasEndpointTests {
     private CasWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer;
 
     @Test
-    void verifyEndpoints() throws Throwable {
+    void verifyEndpoints() {
         assertFalse(samlProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 

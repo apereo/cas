@@ -25,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class ApplicationUtilsTests {
     @Test
-    void verifyMainArgs() throws Throwable {
+    void verifyMainArgs() {
         assertFalse(ApplicationUtils.getApplicationEntrypointInitializers().isEmpty());
     }
 
     @Test
-    void verifyCasBanner() throws Throwable {
+    void verifyCasBanner() {
         val banner = CasBanner.getInstance();
         assertNotNull(banner);
         val out = new ByteArrayOutputStream();
@@ -40,7 +40,7 @@ class ApplicationUtilsTests {
     }
 
     @Test
-    void verifyStartup() throws Throwable {
+    void verifyStartup() {
         assertNotNull(ApplicationUtils.getApplicationStartup());
         System.setProperty("CAS_APP_STARTUP", "buffering");
         assertNotNull(ApplicationUtils.getApplicationStartup());
@@ -49,7 +49,7 @@ class ApplicationUtilsTests {
     }
 
     @Test
-    void verifyCustomBanner() throws Throwable {
+    void verifyCustomBanner() {
         val banner = CasBanner.getInstance();
         assertNotNull(banner);
         val out = new ByteArrayOutputStream();

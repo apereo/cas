@@ -19,7 +19,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hjson.JsonValue;
-import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -287,7 +286,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     public void watchStore(final Resource resource) throws Exception {
         if (ResourceUtils.isFile(resource)) {
             this.storeWatcherService = new FileWatcherService(resource.getFile(),
-                Unchecked.consumer(file -> importStore(new FileSystemResource(file))));
+                file -> importStore(new FileSystemResource(file)));
             this.storeWatcherService.start(getClass().getSimpleName());
         }
     }

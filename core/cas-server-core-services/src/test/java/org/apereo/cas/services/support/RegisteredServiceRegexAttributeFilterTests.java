@@ -127,14 +127,14 @@ class RegisteredServiceRegexAttributeFilterTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val data = SerializationUtils.serialize(filter);
         val secondFilter = SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, filter);
     }
 
     @Test
-    void verifyDefault() throws Throwable {
+    void verifyDefault() {
         val data = mock(RegisteredServiceAttributeFilter.class);
         when(data.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.HIGHEST_PRECEDENCE, data.getOrder());

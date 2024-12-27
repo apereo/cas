@@ -65,7 +65,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @AfterEach
-    public void teardown() throws Throwable {
+    public void teardown() {
         singleSignOnSessionsEndpoint.destroySsoSessions(
             new SingleSignOnSessionsEndpoint.SsoSessionsRequest()
                 .withType(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType()),
@@ -100,7 +100,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         var results = singleSignOnSessionsEndpoint.getSsoSessions(new SingleSignOnSessionsEndpoint.SsoSessionsRequest()
             .withType(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType()));
         assertFalse(results.isEmpty());

@@ -85,7 +85,7 @@ class TokenWebApplicationServiceResponseBuilderTests {
     private TicketRegistry ticketRegistry;
 
     @Test
-    void verifyDecrypt() throws Throwable {
+    void verifyDecrypt() {
         val signingSecret = "EihBwA3OuDQMm4gdWzkqRJ87596G7o7a_naJAJipxFoRJbXK7APRcnCA91Y30rJdh4q-C2dmpfV6eNhQT0bR5A";
         val encryptionSecret = "dJ2YpUd-r_Qd7e3nDm79WiIHkqaLT8yZt6nN5eG0YnE";
 
@@ -96,7 +96,7 @@ class TokenWebApplicationServiceResponseBuilderTests {
     }
 
     @Test
-    void verifyBuilderSupport() throws Throwable {
+    void verifyBuilderSupport() {
         assertTrue(responseBuilder.supports(serviceFactory.createService("test")));
     }
 
@@ -118,7 +118,7 @@ class TokenWebApplicationServiceResponseBuilderTests {
     }
 
     @Test
-    void verifyTokenBuilderWithoutServiceTicket() throws Throwable {
+    void verifyTokenBuilderWithoutServiceTicket() {
         val result = responseBuilder.build(CoreAuthenticationTestUtils.getWebApplicationService("jwtservice"),
             StringUtils.EMPTY, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(result);

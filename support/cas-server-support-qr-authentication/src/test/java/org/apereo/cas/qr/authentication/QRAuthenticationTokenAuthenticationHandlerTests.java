@@ -64,7 +64,7 @@ class QRAuthenticationTokenAuthenticationHandlerTests {
 
 
     @Test
-    void verifySupports() throws Throwable {
+    void verifySupports() {
         val credential = new QRAuthenticationTokenCredential("token", UUID.randomUUID().toString());
         assertTrue(qrAuthenticationTokenAuthenticationHandler.supports(credential));
         assertTrue(qrAuthenticationTokenAuthenticationHandler.supports(QRAuthenticationTokenCredential.class));

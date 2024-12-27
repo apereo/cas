@@ -19,7 +19,6 @@ import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -57,8 +56,8 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         this.location = location;
         readTrustedRecordsFromResource();
         if (ResourceUtils.isFile(location)) {
-            val callback = Unchecked.<File>consumer(__ -> readTrustedRecordsFromResource());
-            this.watcherService = new FileWatcherService(Unchecked.supplier(location::getFile).get(), callback);
+            this.watcherService = new FileWatcherService(Unchecked.supplier(location::getFile).get(),
+                __ -> readTrustedRecordsFromResource());
             this.watcherService.start(getClass().getSimpleName());
         }
     }

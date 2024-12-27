@@ -36,7 +36,7 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
     private AccessTokenGrantRequestExtractor extractor;
 
     @Test
-    void verifyNoToken() throws Throwable {
+    void verifyNoToken() {
         val service = getRegisteredService(REDIRECT_URI, UUID.randomUUID().toString(), CLIENT_SECRET);
         servicesManager.save(service);
 

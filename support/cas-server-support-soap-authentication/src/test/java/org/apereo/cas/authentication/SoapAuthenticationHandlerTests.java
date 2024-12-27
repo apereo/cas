@@ -75,7 +75,7 @@ class SoapAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailures() throws Throwable {
+    void verifyFailures() {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         runTest(creds, HttpStatus.FORBIDDEN, AccountDisabledException.class);
         runTest(creds, HttpStatus.UNAUTHORIZED, FailedLoginException.class);

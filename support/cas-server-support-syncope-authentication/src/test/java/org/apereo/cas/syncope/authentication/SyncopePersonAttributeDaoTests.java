@@ -50,7 +50,7 @@ class SyncopePersonAttributeDaoTests {
         private PersonAttributeDao attributeRepository;
 
         @Test
-        void verifyUserIsFound() throws Throwable {
+        void verifyUserIsFound() {
             var found = attributeRepository.getPeople(Map.of("username", List.of("syncopecas")));
             assertFalse(found.iterator().next().getAttributes().isEmpty());
             var people = attributeRepository.getPeople(Map.of("username", List.of("syncopecas")),
@@ -59,7 +59,7 @@ class SyncopePersonAttributeDaoTests {
         }
 
         @Test
-        void verifyUserAttributeMappings() throws Throwable {
+        void verifyUserAttributeMappings() {
             val found = attributeRepository.getPeople(Map.of("username", List.of("syncopecas")));
             val attributes = found.iterator().next().getAttributes();
             assertFalse(attributes.isEmpty());

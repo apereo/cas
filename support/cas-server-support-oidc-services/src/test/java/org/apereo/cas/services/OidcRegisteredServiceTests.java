@@ -36,7 +36,7 @@ class OidcRegisteredServiceTests {
 
     private final ServiceRegistry dao;
 
-    OidcRegisteredServiceTests() throws Exception {
+    OidcRegisteredServiceTests() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         this.dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),

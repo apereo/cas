@@ -71,7 +71,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
     }
 
     @Test
-    void verifyNoAuthnRequest() throws Throwable {
+    void verifyNoAuthnRequest() {
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setAllowedAttributes(List.of("eduPersonPrincipalAttribute"));
         filter.setUseFriendlyName(true);

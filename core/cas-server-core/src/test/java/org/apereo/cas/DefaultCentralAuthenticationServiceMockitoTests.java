@@ -183,12 +183,12 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
     }
 
     @Test
-    void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() throws Throwable {
+    void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() {
         assertThrows(InvalidTicketException.class, () -> cas.createProxyGrantingTicket("bad-st", getAuthenticationContext()));
     }
 
     @Test
-    void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() throws Throwable {
+    void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() {
         assertThrows(UnauthorizedServiceException.class, () -> cas.createProxyGrantingTicket(serviceTicketId, getAuthenticationContext()));
     }
 

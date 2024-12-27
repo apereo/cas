@@ -37,7 +37,7 @@ class PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests extends 
     }
 
     @Test
-    void verifyOperationByHeader() throws Throwable {
+    void verifyOperationByHeader() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getPrincipal().getGlobalPrincipalAttributePredicate().setLocation(new ClassPathResource("GroovyPredicate.groovy"));
         val trigger = new PredicatedPrincipalAttributeMultifactorAuthenticationTrigger(props, this.applicationContext);

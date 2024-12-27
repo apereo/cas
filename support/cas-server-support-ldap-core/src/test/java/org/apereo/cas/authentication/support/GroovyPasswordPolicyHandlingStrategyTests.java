@@ -40,7 +40,7 @@ class GroovyPasswordPolicyHandlingStrategyTests {
     }
 
     @Test
-    void verifyStrategyHandlesErrors() throws Throwable {
+    void verifyStrategyHandlesErrors() {
         val resource = new ClassPathResource("lppe-strategy-throws-error.groovy");
         val strategy = new GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse>(resource, mock(ApplicationContext.class));
         val res = mock(AuthenticationResponse.class);

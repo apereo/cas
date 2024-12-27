@@ -68,7 +68,7 @@ class GlibcCryptPasswordEncoderTests {
     }
 
     @Test
-    void verifyBadInput() throws Throwable {
+    void verifyBadInput() {
         val encoder = new GlibcCryptPasswordEncoder(null, 0, null);
         assertNull(encoder.encode(null));
         assertNull(encoder.encode("password"));
@@ -76,7 +76,7 @@ class GlibcCryptPasswordEncoderTests {
     }
 
     @Test
-    void verifyNoSalt() throws Throwable {
+    void verifyNoSalt() {
         val encoder = new GlibcCryptPasswordEncoder("MD5", 10, "secret");
         assertNotNull(encoder.encode("value"));
     }

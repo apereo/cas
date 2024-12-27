@@ -85,7 +85,7 @@ class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseSamlIdPC
 
     @Test
     @Order(2)
-    void verifyBadRequest() throws Throwable {
+    void verifyBadRequest() {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
         request.addParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, "Text");

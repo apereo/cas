@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Delegation")
 class Pac4jBannerContributorTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val contributor = new Pac4jBannerContributor();
         val builder = new StringBuilder();
         contributor.contribute(new Formatter(builder), new MockEnvironment());

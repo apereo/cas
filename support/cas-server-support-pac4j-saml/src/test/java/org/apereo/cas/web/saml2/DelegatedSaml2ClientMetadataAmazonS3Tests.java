@@ -38,7 +38,7 @@ class DelegatedSaml2ClientMetadataAmazonS3Tests {
     private DelegatedSaml2ClientMetadataController delegatedSaml2ClientMetadataController;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(delegatedSaml2ClientMetadataController.getFirstServiceProviderMetadata());
         assertTrue(delegatedSaml2ClientMetadataController.getServiceProviderMetadataByName("SAML2Client").getStatusCode().is2xxSuccessful());
     }

@@ -38,7 +38,7 @@ class DelegatedClientIdentityProviderConfigurationFactoryTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyRedirectUrl() throws Throwable {
+    void verifyRedirectUrl() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -74,7 +74,7 @@ class DelegatedClientIdentityProviderConfigurationFactoryTests {
     }
 
     @Test
-    void verifyRedirectUrlCorrectlyEncoded() throws Throwable {
+    void verifyRedirectUrlCorrectlyEncoded() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);

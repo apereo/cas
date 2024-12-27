@@ -91,13 +91,13 @@ class X509SerialNumberAndIssuerDNPrincipalResolverTests {
     }
 
     @Test
-    void verifySupport() throws Throwable {
+    void verifySupport() {
         val credential = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(credential));
     }
 
     @Test
-    void verifySupportFalse() throws Throwable {
+    void verifySupportFalse() {
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 

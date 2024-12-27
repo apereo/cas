@@ -58,7 +58,7 @@ class CosmosDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(1)
     @Tag("TicketRegistryTestWithEncryption")
-    void verifyLargeDataset() throws Throwable {
+    void verifyLargeDataset() {
         val ticketGrantingTickets = Stream.generate(() -> {
             val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                 .getNewTicketId(TicketGrantingTicket.PREFIX);

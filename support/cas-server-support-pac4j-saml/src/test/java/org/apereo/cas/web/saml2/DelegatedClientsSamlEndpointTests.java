@@ -34,7 +34,7 @@ class DelegatedClientsSamlEndpointTests extends AbstractCasEndpointTests {
     private DelegatedClientsEndpoint endpoint;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertFalse(endpoint.getClients().isEmpty());
         assertFalse(endpoint.reload().isEmpty());
     }

@@ -32,7 +32,7 @@ class SlackNotificationSenderTests {
     private NotificationSender notificationSender;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertFalse(notificationSender.notify(RegisteredServiceTestUtils.getPrincipal("cas"),
             Map.of(NotificationSender.ATTRIBUTE_NOTIFICATION_TITLE, "Apereo CAS Notification",
                 NotificationSender.ATTRIBUTE_NOTIFICATION_MESSAGE, "Hello, this message is from _Apereo CAS_")));

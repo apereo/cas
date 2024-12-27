@@ -48,7 +48,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
     @Nested
     class AttributeMappingTests extends BaseOAuth20AuthenticatorTests {
         @RetryingTest(2)
-        void verifyAuthenticationWithAttributesMapping() throws Throwable {
+        void verifyAuthenticationWithAttributesMapping() {
             val credentials = new UsernamePasswordCredentials(serviceWithAttributesMapping.getClientId(), "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -64,7 +64,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
     @Nested
     class DefaultPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
         @RetryingTest(3)
-        void verifyAuthentication() throws Throwable {
+        void verifyAuthentication() {
             val credentials = new UsernamePasswordCredentials("client", "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -74,7 +74,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        void verifyAuthenticationWithGrantTypePassword() throws Throwable {
+        void verifyAuthenticationWithGrantTypePassword() {
             val credentials = new UsernamePasswordCredentials("client", "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -160,7 +160,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
     @Nested
     class NullPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
         @Test
-        void verifyAuthenticationWithoutResolvedPrincipal() throws Throwable {
+        void verifyAuthenticationWithoutResolvedPrincipal() {
             val credentials = new UsernamePasswordCredentials("serviceWithAttributesMapping", "secret");
 
             val registeredService = new OAuthRegisteredService();

@@ -60,7 +60,7 @@ class ServiceThemeResolverTests {
     }
 
     @Test
-    void verifyGetDefaultService() throws Throwable {
+    void verifyGetDefaultService() {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "myServiceId");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, MOZILLA);

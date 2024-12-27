@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @Tag("Delegation")
 class ChainingDelegatedClientUserProfileProvisionerTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val commonProfile = new CommonProfile();
         commonProfile.setClientName("CasClient");
         commonProfile.setId("testuser");

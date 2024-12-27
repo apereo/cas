@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @Tag("Webflow")
 class CasFlowHandlerAdapterTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val plan = mock(CasWebflowExecutionPlan.class);

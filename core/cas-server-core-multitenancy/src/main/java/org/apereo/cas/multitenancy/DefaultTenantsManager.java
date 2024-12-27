@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.hjson.JsonValue;
-import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
@@ -49,13 +48,13 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean {
         FunctionUtils.doAndHandle(__ -> {
             if (ResourceUtils.isFile(jsonResource)) {
                 watcherService = new FileWatcherService(jsonResource.getFile(),
-                    Unchecked.consumer(file -> {
+                    file -> {
                         val resources = readFromJsonResource();
                         if (resources.isEmpty()) {
                             tenantDefinitionList.clear();
                             tenantDefinitionList.addAll(resources);
                         }
-                    }));
+                    });
                 watcherService.start(getClass().getSimpleName());
             }
         });

@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDC")
 class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends AbstractOidcTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val authzRequest = OAuth20AuthorizationRequest
             .builder()
             .responseType(OAuth20ResponseTypes.ID_TOKEN.getType())

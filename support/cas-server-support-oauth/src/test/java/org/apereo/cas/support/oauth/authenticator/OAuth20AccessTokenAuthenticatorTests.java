@@ -43,7 +43,7 @@ class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTests
     }
 
     @Test
-    void verifyAuthenticationFailsWithNoToken() throws Throwable {
+    void verifyAuthenticationFailsWithNoToken() {
         val accessToken = getAccessToken();
         val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, serviceJwtAccessToken,
             accessToken, accessToken.getService(), false).encode(accessToken.getId());

@@ -45,7 +45,7 @@ class AuthenticationMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @ParameterizedTest
     @MethodSource("getTestAuthAttributes")
-    void verifyOperationByAuthAttribute(final String attributeValuePattern, final List<Object> attributeValue) throws Throwable {
+    void verifyOperationByAuthAttribute(final String attributeValuePattern, final List<Object> attributeValue) {
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val eval = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         val bypassProps = new MultifactorAuthenticationProviderBypassProperties();
@@ -63,7 +63,7 @@ class AuthenticationMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @ParameterizedTest
     @MethodSource("getTestAuthHandlerNames")
-    void verifyOperationByAuthAHandlerName(final String handlerNamePattern, final List<Object> handlerNames) throws Throwable {
+    void verifyOperationByAuthAHandlerName(final String handlerNamePattern, final List<Object> handlerNames) {
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val eval = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         val bypassProps = new MultifactorAuthenticationProviderBypassProperties();

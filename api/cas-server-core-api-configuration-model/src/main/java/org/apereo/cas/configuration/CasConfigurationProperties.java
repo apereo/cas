@@ -393,7 +393,6 @@ public class CasConfigurationProperties implements Serializable {
     @NestedConfigurationProperty
     private MultitenancyProperties multitenancy = new MultitenancyProperties();
 
-    
     /**
      * Bind from map.
      *

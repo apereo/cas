@@ -41,7 +41,7 @@ public class JdbcDelegatedIdentityProviderFactoryTests {
 
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val clientList = pac4jDelegatedClientFactory.build();
         assertFalse(clientList.isEmpty());
     }

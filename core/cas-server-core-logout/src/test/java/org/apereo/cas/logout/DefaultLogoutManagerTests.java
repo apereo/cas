@@ -107,7 +107,7 @@ class DefaultLogoutManagerTests {
     }
 
     @Test
-    void verifyServiceLogoutUrlIsUsed() throws Throwable {
+    void verifyServiceLogoutUrlIsUsed() {
 
         this.registeredService.setLogoutUrl("https://www.apereo.org");
         val logoutRequests = this.logoutManager.performLogout(
@@ -122,7 +122,7 @@ class DefaultLogoutManagerTests {
     }
 
     @Test
-    void verifyLogoutDisabled() throws Throwable {
+    void verifyLogoutDisabled() {
         val plan = new DefaultLogoutExecutionPlan();
         plan.registerSingleLogoutServiceMessageHandler(singleLogoutServiceMessageHandler);
         this.logoutManager = new DefaultLogoutManager(true, plan);
@@ -137,7 +137,7 @@ class DefaultLogoutManagerTests {
     }
 
     @Test
-    void verifyLogoutAlreadyLoggedOut() throws Throwable {
+    void verifyLogoutAlreadyLoggedOut() {
         this.simpleWebApplicationServiceImpl.setLoggedOutAlready(true);
         val logoutRequests = this.logoutManager.performLogout(SingleLogoutExecutionRequest
             .builder()
@@ -149,7 +149,7 @@ class DefaultLogoutManagerTests {
     }
 
     @Test
-    void verifyLogoutTypeNotSet() throws Throwable {
+    void verifyLogoutTypeNotSet() {
         val logoutRequests = this.logoutManager.performLogout(SingleLogoutExecutionRequest
             .builder()
             .ticketGrantingTicket(tgt)
@@ -164,7 +164,7 @@ class DefaultLogoutManagerTests {
     }
 
     @Test
-    void verifyLogoutTypeBack() throws Throwable {
+    void verifyLogoutTypeBack() {
         this.registeredService.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
         val logoutRequests = this.logoutManager.performLogout(SingleLogoutExecutionRequest
             .builder()
@@ -180,7 +180,7 @@ class DefaultLogoutManagerTests {
     }
 
     @Test
-    void verifyLogoutTypeNone() throws Throwable {
+    void verifyLogoutTypeNone() {
         this.registeredService.setLogoutType(RegisteredServiceLogoutType.NONE);
         val logoutRequests = this.logoutManager.performLogout(SingleLogoutExecutionRequest
             .builder()
@@ -192,7 +192,7 @@ class DefaultLogoutManagerTests {
     }
 
     @Test
-    void verifyLogoutTypeNull() throws Throwable {
+    void verifyLogoutTypeNull() {
         this.registeredService.setLogoutType(null);
         val logoutRequests = this.logoutManager.performLogout(SingleLogoutExecutionRequest
             .builder()
@@ -206,7 +206,7 @@ class DefaultLogoutManagerTests {
     }
 
     @Test
-    void verifyLogoutTypeFront() throws Throwable {
+    void verifyLogoutTypeFront() {
         this.registeredService.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
         val logoutRequests = this.logoutManager.performLogout(SingleLogoutExecutionRequest
             .builder()
@@ -222,7 +222,7 @@ class DefaultLogoutManagerTests {
     }
 
     @Test
-    void verifyAsynchronousLogout() throws Throwable {
+    void verifyAsynchronousLogout() {
         this.registeredService.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
         val logoutRequests = this.logoutManager.performLogout(SingleLogoutExecutionRequest
             .builder()

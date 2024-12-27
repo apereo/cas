@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ByCredentialTypeAuthenticationHandlerResolverTests {
 
     @Test
-    void verifySupports() throws Throwable {
+    void verifySupports() {
         val resolver = new ByCredentialTypeAuthenticationHandlerResolver(UsernamePasswordCredential.class);
         assertTrue(resolver.supports(CollectionUtils.wrapSet(new SimpleTestUsernamePasswordAuthenticationHandler()),
             CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword())));

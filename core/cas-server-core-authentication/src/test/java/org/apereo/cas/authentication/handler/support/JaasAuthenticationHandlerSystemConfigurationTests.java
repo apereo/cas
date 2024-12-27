@@ -51,7 +51,7 @@ class JaasAuthenticationHandlerSystemConfigurationTests {
     }
 
     @Test
-    void verifyWithAlternativeRealm() throws Throwable {
+    void verifyWithAlternativeRealm() {
         handler.setRealm("TEST");
         assertThrows(LoginException.class,
             () -> handler.authenticate(
@@ -72,7 +72,7 @@ class JaasAuthenticationHandlerSystemConfigurationTests {
     }
 
     @Test
-    void verifyWithInvalidCredentials() throws Throwable {
+    void verifyWithInvalidCredentials() {
         assertThrows(LoginException.class,
             () -> handler.authenticate(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1"), mock(Service.class)));

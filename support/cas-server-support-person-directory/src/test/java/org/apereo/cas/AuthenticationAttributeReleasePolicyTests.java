@@ -87,7 +87,7 @@ class AuthenticationAttributeReleasePolicyTests {
     private AuthenticationEventExecutionPlanConfigurer groovyAuthenticationProcessorExecutionPlanConfigurer;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(groovyAuthenticationHandlerResolver);
         assertNotNull(globalPrincipalAttributeRepository);
         assertNotNull(authenticationManager);

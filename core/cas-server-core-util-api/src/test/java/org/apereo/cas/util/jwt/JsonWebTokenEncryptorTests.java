@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class JsonWebTokenEncryptorTests {
     @Test
-    void verifyEncryptionFails() throws Throwable {
+    void verifyEncryptionFails() {
         val secret = new DefaultRandomStringGenerator().getNewString(16);
         val key = new AesKey(secret.getBytes(StandardCharsets.UTF_8));
         val encryptor = JsonWebTokenEncryptor.builder()

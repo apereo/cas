@@ -57,7 +57,7 @@ class GoogleCloudLogsEndpointTests {
     private GoogleCloudLogsEndpoint googleCloudLogsEndpoint;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val events = googleCloudLogsEndpoint.fetchLogEntries(20, "info");
         assertFalse(events.isEmpty());
     }

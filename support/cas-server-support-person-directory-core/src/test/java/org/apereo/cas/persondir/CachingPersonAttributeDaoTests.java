@@ -32,7 +32,7 @@ class CachingPersonAttributeDaoTests {
     private ComplexPersonAttributeDao stubDao;
 
     @BeforeEach
-    protected void setUp() throws Exception {
+    protected void setUp() {
         stubDao = new ComplexPersonAttributeDao();
         val daoBackingMap = new HashMap<String, Map<String, List<Object>>>();
 
@@ -67,7 +67,7 @@ class CachingPersonAttributeDaoTests {
     }
 
     @Test
-    void testCacheStats() throws Exception {
+    void testCacheStats() {
         var dao = new CachingPersonAttributeDaoImpl();
         dao.setCachedPersonAttributesDao(stubDao);
         dao.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider(DEFAULT_ATTR));
@@ -114,7 +114,7 @@ class CachingPersonAttributeDaoTests {
     }
 
     @Test
-    void testCaching() throws Exception {
+    void testCaching() {
         val cacheMap = new HashMap<Serializable, Set<PersonAttributes>>();
 
         var dao = new CachingPersonAttributeDaoImpl();
@@ -169,7 +169,7 @@ class CachingPersonAttributeDaoTests {
 
 
     @Test
-    void testMultipleAttributeKeys() throws Exception {
+    void testMultipleAttributeKeys() {
         val cacheMap = new HashMap<Serializable, Set<PersonAttributes>>();
 
         val keyAttrs = new HashSet<String>();
@@ -224,7 +224,7 @@ class CachingPersonAttributeDaoTests {
     }
 
     @Test
-    void testEmptyCacheKeyWithDefaultAttr() throws Exception {
+    void testEmptyCacheKeyWithDefaultAttr() {
         val cacheMap = new HashMap<Serializable, Set<PersonAttributes>>();
 
         var dao = new CachingPersonAttributeDaoImpl();
@@ -265,7 +265,7 @@ class CachingPersonAttributeDaoTests {
     }
 
     @Test
-    void testEmptyCacheKeyWithKeyAttrs() throws Exception {
+    void testEmptyCacheKeyWithKeyAttrs() {
         val cacheMap = new HashMap<Serializable, Set<PersonAttributes>>();
 
         var dao = new CachingPersonAttributeDaoImpl();

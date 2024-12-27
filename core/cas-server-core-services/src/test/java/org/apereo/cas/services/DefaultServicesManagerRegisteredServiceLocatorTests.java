@@ -34,7 +34,7 @@ class DefaultServicesManagerRegisteredServiceLocatorTests {
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Test
-    void verifyDefaultOperation() throws Throwable {
+    void verifyDefaultOperation() {
         val input = mock(ServicesManagerRegisteredServiceLocator.class);
         when(input.getOrder()).thenCallRealMethod();
         when(input.getRegisteredServiceIndexes()).thenCallRealMethod();
@@ -45,7 +45,7 @@ class DefaultServicesManagerRegisteredServiceLocatorTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(defaultServicesManagerRegisteredServiceLocator);
         assertEquals(ServicesManagerRegisteredServiceLocator.DEFAULT_ORDER, defaultServicesManagerRegisteredServiceLocator.getOrder());
         val service = RegisteredServiceTestUtils.getRegisteredService("https://example.org.+");
@@ -56,7 +56,7 @@ class DefaultServicesManagerRegisteredServiceLocatorTests {
     }
 
     @Test
-    void verifyExtendedServices() throws Throwable {
+    void verifyExtendedServices() {
         val service = new ExtendedRegisteredService();
         service.setServiceId("https://\\w+.org.+");
         service.setId(100);

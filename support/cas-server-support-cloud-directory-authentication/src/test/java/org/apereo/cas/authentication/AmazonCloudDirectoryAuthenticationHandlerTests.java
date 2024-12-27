@@ -52,7 +52,7 @@ class AmazonCloudDirectoryAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyNoPassAttr() throws Throwable {
+    void verifyNoPassAttr() {
         val repository = mock(AmazonCloudDirectoryRepository.class);
         when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username", List.of("casuser")));
         val h = new AmazonCloudDirectoryAuthenticationHandler(StringUtils.EMPTY, mock(ServicesManager.class),
@@ -62,7 +62,7 @@ class AmazonCloudDirectoryAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyNoMatch() throws Throwable {
+    void verifyNoMatch() {
         val repository = mock(AmazonCloudDirectoryRepository.class);
         when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username",
             List.of("casuser"), "password", List.of("Mellon")));

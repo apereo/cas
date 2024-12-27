@@ -76,7 +76,7 @@ class TicketRegistrySessionStoreTests {
     }
 
     @Test
-    void verifyTracking() throws Throwable {
+    void verifyTracking() {
         assertNotNull(request.getSession());
         assertFalse(sessionStore.renewSession(webContext));
         assertTrue(sessionStore.buildFromTrackableSession(webContext, "trackable-session").isPresent());
@@ -84,7 +84,7 @@ class TicketRegistrySessionStoreTests {
     }
 
     @Test
-    void verifyCookieValue() throws Throwable {
+    void verifyCookieValue() {
         assertTrue(sessionStore.get(webContext, "SessionAttribute1").isEmpty());
         assertTrue(sessionStore.getSessionId(webContext, true).isEmpty());
         assertThrows(InvalidCookieException.class, this::getDistributedSessionCookie);
@@ -105,7 +105,7 @@ class TicketRegistrySessionStoreTests {
     }
 
     @Test
-    void verifySetGet() throws Throwable {
+    void verifySetGet() {
         assertTrue(sessionStore.getSessionId(webContext, false).isEmpty());
         sessionStore.set(webContext, "attribute", "test");
         assertTrue(sessionStore.getSessionId(webContext, false).isPresent());

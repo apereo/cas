@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Attributes")
 class DefaultCas30ProtocolAttributesRendererTests {
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val r = new DefaultCas30ProtocolAttributesRenderer();
         val results = CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap();
         assertFalse(r.render((Map) results).isEmpty());

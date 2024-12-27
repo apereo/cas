@@ -27,7 +27,7 @@ class GroovyRegisteredServiceAccessStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void checkDefaultAuthzStrategyConfig() throws Throwable {
+    void checkDefaultAuthzStrategyConfig() {
         val accessStrategy = new GroovyRegisteredServiceAccessStrategy();
         accessStrategy.setGroovyScript("classpath:GroovyServiceAccessStrategy.groovy");
         assertTrue(accessStrategy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
@@ -43,7 +43,7 @@ class GroovyRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyFailingOps() throws Throwable {
+    void verifyFailingOps() {
         val accessStrategy = new GroovyRegisteredServiceAccessStrategy();
         accessStrategy.setGroovyScript("classpath:Unknown.groovy");
         assertThrows(UnauthorizedServiceException.class, () -> accessStrategy.isServiceAccessAllowed(null, null));

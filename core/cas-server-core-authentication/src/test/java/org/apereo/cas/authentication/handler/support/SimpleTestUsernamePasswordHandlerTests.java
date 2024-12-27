@@ -32,17 +32,17 @@ class SimpleTestUsernamePasswordHandlerTests {
     }
 
     @Test
-    void verifySupportsProperUserCredentials() throws Throwable {
+    void verifySupportsProperUserCredentials() {
         assertTrue(authenticationHandler.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
-    void verifySupportsRememberMeUserCredentials() throws Throwable {
+    void verifySupportsRememberMeUserCredentials() {
         assertTrue(authenticationHandler.supports(new RememberMeUsernamePasswordCredential()));
     }
 
     @Test
-    void verifyDoesntSupportBadUserCredentials() throws Throwable {
+    void verifyDoesntSupportBadUserCredentials() {
         assertFalse(authenticationHandler.supports(CoreAuthenticationTestUtils.getHttpBasedServiceCredentials()));
     }
 
@@ -53,7 +53,7 @@ class SimpleTestUsernamePasswordHandlerTests {
     }
 
     @Test
-    void verifyInvalidUsernamePassword() throws Throwable {
+    void verifyInvalidUsernamePassword() {
         assertThrows(FailedLoginException.class,
             () -> authenticationHandler.authenticate(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(), mock(Service.class)));

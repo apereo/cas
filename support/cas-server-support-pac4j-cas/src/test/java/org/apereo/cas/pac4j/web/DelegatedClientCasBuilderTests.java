@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 class DelegatedClientCasBuilderTests extends BaseDelegatedClientFactoryTests {
     @Test
-    void verifyFactoryForCasClientsHavingLoginInDomain() throws Throwable {
+    void verifyFactoryForCasClientsHavingLoginInDomain() {
         val clients = delegatedIdentityProviderFactory.build();
         assertEquals(1, clients.size());
         val client = (CasClient) clients.iterator().next();

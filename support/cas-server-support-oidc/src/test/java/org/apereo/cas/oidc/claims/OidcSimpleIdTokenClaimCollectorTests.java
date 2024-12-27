@@ -32,7 +32,7 @@ class OidcSimpleIdTokenClaimCollectorTests extends AbstractOidcTests {
     private OidcIdTokenClaimCollector oidcIdTokenClaimCollector;
 
     @Test
-    void verifyEmptyValue() throws Throwable {
+    void verifyEmptyValue() {
         val claims = new JwtClaims();
         oidcIdTokenClaimCollector.collect(claims, "unknown", List.of());
         assertEquals(0, claims.getClaimNames().size());
@@ -60,7 +60,7 @@ class OidcSimpleIdTokenClaimCollectorTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyStructuredClaim() throws Throwable {
+    void verifyStructuredClaim() {
         val claims = new JwtClaims();
         oidcIdTokenClaimCollector.collect(claims, "organization", List.of("example.org", "apereo.org"));
         assertNull(claims.getClaimValue("organization"));
@@ -69,7 +69,7 @@ class OidcSimpleIdTokenClaimCollectorTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyStructuredClaimByDefnName() throws Throwable {
+    void verifyStructuredClaimByDefnName() {
         val claims = new JwtClaims();
         oidcIdTokenClaimCollector.collect(claims, "org.apereo.cas.entity", List.of("example.org", "apereo.org"));
         assertNull(claims.getClaimValue("organization"));

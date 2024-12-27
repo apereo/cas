@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ConvertCasePrincipalNameTransformerTests {
 
     @Test
-    void verifyUpperCaseTransformerWithTrimAndDelegate() throws Throwable {
+    void verifyUpperCaseTransformerWithTrimAndDelegate() {
         val suffixTrans = new PrefixSuffixPrincipalNameTransformer();
         suffixTrans.setPrefix("a");
         suffixTrans.setSuffix("z");
@@ -30,7 +30,7 @@ class ConvertCasePrincipalNameTransformerTests {
     }
 
     @Test
-    void verifyUpperCaseTransformerWithTrim() throws Throwable {
+    void verifyUpperCaseTransformerWithTrim() {
         val transformer = new ConvertCasePrincipalNameTransformer();
         transformer.setToUpperCase(true);
         val result = transformer.transform("   uid  ");
@@ -38,7 +38,7 @@ class ConvertCasePrincipalNameTransformerTests {
     }
 
     @Test
-    void verifyLowerCaseTransformerWithTrim() throws Throwable {
+    void verifyLowerCaseTransformerWithTrim() {
         val transformer = new ConvertCasePrincipalNameTransformer();
         val result = transformer.transform("   UID  ");
         assertEquals("uid", result);

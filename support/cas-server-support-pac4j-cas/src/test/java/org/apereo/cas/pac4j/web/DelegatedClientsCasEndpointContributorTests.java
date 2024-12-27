@@ -46,7 +46,7 @@ class DelegatedClientsCasEndpointContributorTests {
     private DelegatedIdentityProviders identityProviders;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val casClient = identityProviders.findClient("CasClient").map(BaseClient.class::cast).orElseThrow();
         assertTrue(delegatedClientsOidcEndpointContributor.supports(casClient));
         assertFalse(delegatedClientsOidcEndpointContributor.contribute(casClient).isEmpty());
