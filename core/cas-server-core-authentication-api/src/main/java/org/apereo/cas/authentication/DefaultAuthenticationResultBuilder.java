@@ -71,7 +71,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         if (this.providedCredentials.isEmpty()) {
             LOGGER.warn("Provided credentials chain is empty as no credentials have been collected");
         }
-        return this.providedCredentials.stream().findFirst();
+        return providedCredentials.stream().findFirst();
     }
 
     @Override
@@ -99,13 +99,13 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     public AuthenticationResult build(final Service service) throws Throwable {
         val authentication = buildAuthentication(principalElectionStrategy);
         if (authentication == null) {
-            LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning null");
+            LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain");
             return null;
         }
         LOGGER.trace("Building an authentication result for authentication [{}] and service [{}]", authentication, service);
-        val res = new DefaultAuthenticationResult(authentication, service);
-        res.setCredentialProvided(!this.providedCredentials.isEmpty());
-        return res;
+        val authenticationResult = new DefaultAuthenticationResult(authentication, service);
+        authenticationResult.setCredentialProvided(!this.providedCredentials.isEmpty());
+        return authenticationResult;
     }
 
     protected void mergeAuthenticationAttributes(final Map<String, List<Object>> authenticationAttributes,
