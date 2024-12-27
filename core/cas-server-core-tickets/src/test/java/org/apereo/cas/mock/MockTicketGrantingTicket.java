@@ -54,6 +54,9 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     @Setter
     private String id;
 
+    @Setter
+    private String tenantId;
+
     private final Authentication authentication;
 
     private final Map<String, Service> services = new HashMap<>();

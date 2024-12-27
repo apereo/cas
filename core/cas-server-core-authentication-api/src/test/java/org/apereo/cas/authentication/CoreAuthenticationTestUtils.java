@@ -22,7 +22,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -262,18 +262,18 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        val authSupport = mock(AuthenticationSystemSupport.class);
-        lenient().when(authSupport.getPrincipalElectionStrategy()).thenReturn(new DefaultPrincipalElectionStrategy());
-        return authSupport;
+        return getAuthenticationSystemSupport(mock(AuthenticationManager.class), mock(ServicesManager.class));
     }
 
     public static AuthenticationSystemSupport getAuthenticationSystemSupport(final AuthenticationManager authenticationManager,
                                                                              final ServicesManager servicesManager) {
-        val publisher = mock(ApplicationEventPublisher.class);
+        val staticApplicationContext = new StaticApplicationContext();
+        staticApplicationContext.refresh();
+        
         val principalElectionStrategy = new DefaultPrincipalElectionStrategy();
         val tenantsManager = new DefaultTenantsManager();
         return new DefaultAuthenticationSystemSupport(
-            new DefaultAuthenticationTransactionManager(publisher, authenticationManager),
+            new DefaultAuthenticationTransactionManager(staticApplicationContext, authenticationManager),
             principalElectionStrategy,
             new DefaultAuthenticationResultBuilderFactory(principalElectionStrategy),
             getAuthenticationTransactionFactory(servicesManager),
