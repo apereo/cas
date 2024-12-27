@@ -26,13 +26,14 @@
             <h3 class="border-bottom bg-primary p-2" th:text="#{screen.oidc.confirm.scopes}"/>
             <p th:text="#{screen.oidc.confirm.asksinfo}"/>
 
-            <div th:each="scope : ${cibaRequest.scopes}">
-                <span th:id="${scope}">
-                    <i class="mdi mdi-cog fas fa-cog" aria-hidden="true"></i>
-                    <strong><code th:text="${scope}"/></strong>
-                    <p th:utext="#{screen.oidc.confirm.scope.__${scope}__}"/>
-                </span>
-            </div>
+            <dl class="dl-class0 dl-class1">
+                <div th:each="scope : ${cibaRequest.scopes}">
+                    <span th:id="${scope}">
+                        <dt class="dt-class0 dt-class1 mdi mdi-cog"> <strong><code th:text="${claim}"/></strong></dt>
+                        <dd class="dd-class0 dd-class1" th:utext="#{screen.oidc.confirm.scope.__${scope}__}"/>
+                    </span>
+                </div>
+            </dl>
         </div>
     
         <div th:if="${registeredService.informationUrl}" class="my-2">
