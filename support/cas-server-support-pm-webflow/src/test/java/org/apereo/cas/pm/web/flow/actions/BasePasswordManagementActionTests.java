@@ -21,6 +21,7 @@ import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
 import org.apereo.cas.config.CasPasswordManagementWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
+import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.test.CasTestExtension;
