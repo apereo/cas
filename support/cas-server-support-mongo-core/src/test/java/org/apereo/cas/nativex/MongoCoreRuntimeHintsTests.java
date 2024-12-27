@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MongoCoreRuntimeHintsTests {
 
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new MongoCoreRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.reflection().onType(WriteConcern.class).test(hints));

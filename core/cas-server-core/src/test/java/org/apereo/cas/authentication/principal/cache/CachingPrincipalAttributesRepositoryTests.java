@@ -102,7 +102,7 @@ class CachingPrincipalAttributesRepositoryTests {
         }
 
         @Test
-        void verifyMergingStrategyWithNoncollidingAttributeAdder() throws Throwable {
+        void verifyMergingStrategyWithNoncollidingAttributeAdder() {
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .applicationContext(applicationContext)
                 .principal(PRINCIPAL)
@@ -118,7 +118,7 @@ class CachingPrincipalAttributesRepositoryTests {
         }
 
         @Test
-        void verifyMergingStrategyWithReplacingAttributeAdder() throws Throwable {
+        void verifyMergingStrategyWithReplacingAttributeAdder() {
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .applicationContext(applicationContext)
                 .principal(PRINCIPAL)
@@ -136,7 +136,7 @@ class CachingPrincipalAttributesRepositoryTests {
         }
 
         @Test
-        void verifyMergingStrategyWithMultivaluedAttributeMerger() throws Throwable {
+        void verifyMergingStrategyWithMultivaluedAttributeMerger() {
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .applicationContext(applicationContext)
                 .principal(PRINCIPAL)

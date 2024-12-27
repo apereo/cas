@@ -42,14 +42,14 @@ class CredentialTests {
     }
 
     @Test
-    void verifyCred() throws Throwable {
+    void verifyCred() {
         val credential = getCredential();
         assertNotNull(credential.getCredentialMetadata().getCredentialClass());
         assertTrue(credential.isValid());
     }
 
     @Test
-    void verifyEquals() throws Throwable {
+    void verifyEquals() {
         val credential = getCredential();
         val credential2 = getCredential();
         assertNotNull(credential.getCredentialMetadata().getCredentialClass());

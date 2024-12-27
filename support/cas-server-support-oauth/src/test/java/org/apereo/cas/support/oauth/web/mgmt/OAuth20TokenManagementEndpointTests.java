@@ -56,7 +56,7 @@ class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyBadOperation() throws Throwable {
+    void verifyBadOperation() {
         assertNull(tokenManagementEndpoint.getToken("unknown"));
     }
 }

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 class HazelcastBannerContributorTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val c = new HazelcastBannerContributor();
         val builder = new StringBuilder();
         c.contribute(new Formatter(builder), new MockEnvironment());

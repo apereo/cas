@@ -119,7 +119,7 @@ class QRAuthenticationChannelControllerTests {
     }
 
     @Test
-    void verifyMissingHeader() throws Throwable {
+    void verifyMissingHeader() {
         assertNotNull(qrAuthenticationChannelController);
         val message = mock(Message.class);
         var headers = new MessageHeaders(Map.of("nativeHeaders", new LinkedMultiValueMap<>()));

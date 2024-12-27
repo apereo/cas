@@ -175,7 +175,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyAddTicketWithStream() throws Throwable {
+    void verifyAddTicketWithStream() {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val ticketGrantingTicket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
             originalAuthn, NeverExpiresExpirationPolicy.INSTANCE);
@@ -187,7 +187,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyUnableToAddExpiredTicket() throws Throwable {
+    void verifyUnableToAddExpiredTicket() {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
         val s1 = Stream.of(new TicketGrantingTicketImpl(ticketGrantingTicketId,
@@ -237,13 +237,13 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyGetNullTicket() throws Throwable {
+    void verifyGetNullTicket() {
         assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(null, TicketGrantingTicket.class),
             () -> TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption + ']');
     }
 
     @RepeatedTest(2)
-    void verifyGetNonExistingTicket() throws Throwable {
+    void verifyGetNonExistingTicket() {
         assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket("unknown-ticket", TicketGrantingTicket.class),
             () -> TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption + ']');
     }
@@ -305,12 +305,12 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyGetNullTicketWithoutClass() throws Throwable {
+    void verifyGetNullTicketWithoutClass() {
         assertNull(ticketRegistry.getTicket(null), () -> TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption + ']');
     }
 
     @RepeatedTest(2)
-    void verifyGetNonExistingTicketWithoutClass() throws Throwable {
+    void verifyGetNonExistingTicketWithoutClass() {
         assertNull(ticketRegistry.getTicket("FALALALALALAL"), () -> TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption + ']');
     }
 
@@ -460,7 +460,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyGetTicketsIsZero() throws Throwable {
+    void verifyGetTicketsIsZero() {
         ticketRegistry.deleteAll();
         assertEquals(0, ticketRegistry.getTickets().size(), "The size of the empty registry is not zero.");
     }

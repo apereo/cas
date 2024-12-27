@@ -38,7 +38,7 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
     private Authenticator authenticator;
 
     @Test
-    void verifyClientIdWithoutAnyAttributes() throws Throwable {
+    void verifyClientIdWithoutAnyAttributes() {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
 
@@ -54,7 +54,7 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyClientIdWithScopesRequest() throws Throwable {
+    void verifyClientIdWithScopesRequest() {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
         val credentials = new UsernamePasswordCredentials("oidctest", "oidctest");
@@ -72,7 +72,7 @@ class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyClientIdWithoutScopesRequest() throws Throwable {
+    void verifyClientIdWithoutScopesRequest() {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
         val credentials = new UsernamePasswordCredentials("oidctest", "oidctest");

@@ -53,7 +53,7 @@ class JaasAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailsCredentials() throws Throwable {
+    void verifyFailsCredentials() {
         val handler = new JaasAuthenticationHandler("JAAS", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0);
         handler.setLoginConfigType("JavaLoginConfig");

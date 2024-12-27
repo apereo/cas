@@ -46,7 +46,7 @@ class PrincipalAttributeRepositoryFetcherTests {
     @Nested
     class DefaultTests extends BaseTests {
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)
                 .principalId("casuser-whatever")
@@ -79,7 +79,7 @@ class PrincipalAttributeRepositoryFetcherTests {
     @Nested
     class SelectiveRepositoryTests extends BaseTests {
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)
                 .principalId("friabili")

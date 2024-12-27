@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Test
-    void verifySetAnExpireByKey() throws Throwable {
+    void verifySetAnExpireByKey() {
         var record = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
         record = getMfaTrustEngine().save(record);
         assertNotNull(getMfaTrustEngine().get(record.getId()));
@@ -51,7 +51,7 @@ class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifac
     }
 
     @Test
-    void verifyExpireByDate() throws Throwable {
+    void verifyExpireByDate() {
         val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
         val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
         r.setRecordDate(now.minusDays(2));

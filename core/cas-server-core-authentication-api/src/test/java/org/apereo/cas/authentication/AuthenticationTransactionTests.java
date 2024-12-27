@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class AuthenticationTransactionTests {
     @Test
-    void verifyHasCredentialOfTypeSingle() throws Throwable {
+    void verifyHasCredentialOfTypeSingle() {
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(new TestCredentialType1());
         assertTrue(transaction.hasCredentialOfType(BaseTestCredential.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType1.class));
@@ -28,7 +28,7 @@ class AuthenticationTransactionTests {
     }
 
     @Test
-    void verifyHasCredentialOfTypeMultiple() throws Throwable {
+    void verifyHasCredentialOfTypeMultiple() {
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(new TestCredentialType2(), new TestCredentialType1());
         assertTrue(transaction.hasCredentialOfType(BaseTestCredential.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType1.class));

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 11211)
 class CasKryoPoolTests {
     @Test
-    void verifyRunOperation() throws Throwable {
+    void verifyRunOperation() {
         val pool = new CasKryoPool();
         try (val kryo = pool.borrow()) {
             assertNotNull(kryo);

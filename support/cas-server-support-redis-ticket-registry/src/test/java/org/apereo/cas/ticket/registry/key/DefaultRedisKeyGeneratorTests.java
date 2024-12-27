@@ -54,7 +54,7 @@ class DefaultRedisKeyGeneratorTests {
         ProxyTicket.PROXY_TICKET_PREFIX,
         ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
     })
-    void verifyTickets(final String prefix) throws Exception {
+    void verifyTickets(final String prefix) {
         assertFalse(redisKeyGeneratorFactory.getRedisKeyGenerators().isEmpty());
         val generator = redisKeyGeneratorFactory.getRedisKeyGenerator(prefix).orElseThrow();
         assertTrue(generator.isTicketKeyGenerator());
@@ -78,7 +78,7 @@ class DefaultRedisKeyGeneratorTests {
     }
 
     @Test
-    void verifyPrincipals() throws Exception {
+    void verifyPrincipals() {
         val generator = redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName()).orElseThrow();
         assertFalse(generator.isTicketKeyGenerator());
         val id = UUID.randomUUID().toString();

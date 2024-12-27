@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class EmailMessageBodyBuilderTests {
 
     @Test
-    void verifyNoBody() throws Throwable {
+    void verifyNoBody() {
         val props = new EmailProperties();
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -40,7 +40,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyLocalizedFileFound() throws Throwable {
+    void verifyLocalizedFileFound() {
         val props = new EmailProperties().setText("classpath:/EmailTemplate.html");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -53,7 +53,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyLocalizedFileNotFound() throws Throwable {
+    void verifyLocalizedFileNotFound() {
         val props = new EmailProperties().setText("classpath:/EmailTemplate.html");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -66,7 +66,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val props = new EmailProperties().setText("${key1}, ${key2}");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -79,7 +79,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyTemplateOperation() throws Throwable {
+    void verifyTemplateOperation() {
         val props = new EmailProperties().setText("classpath:/GroovyEmailTemplate.gtemplate");
 
         val results = EmailMessageBodyBuilder.builder()
@@ -95,7 +95,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyInlineGroovyOperation() throws Throwable {
+    void verifyInlineGroovyOperation() {
         val props = new EmailProperties().setText("groovy { key + ', ' + key2 }");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -108,7 +108,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyGroovyOperation() throws Throwable {
+    void verifyGroovyOperation() {
         val props = new EmailProperties().setText("classpath:/GroovyMessageBody.groovy");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)

@@ -71,7 +71,7 @@ class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataT
     }
 
     @AfterAll
-    public static void cleanUp() throws Exception {
+    public static void cleanUp() {
         val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-metadata-data");
         if (gitRepoDir.exists()) {
             FunctionUtils.doAndHandle(

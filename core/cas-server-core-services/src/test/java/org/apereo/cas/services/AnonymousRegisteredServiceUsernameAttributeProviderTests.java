@@ -58,7 +58,7 @@ class AnonymousRegisteredServiceUsernameAttributeProviderTests {
     }
 
     @Test
-    void verifyEquality() throws Throwable {
+    void verifyEquality() {
         val provider = new AnonymousRegisteredServiceUsernameAttributeProvider(
             new ShibbolethCompatiblePersistentIdGenerator(CASROX));
         val provider2 = new AnonymousRegisteredServiceUsernameAttributeProvider(

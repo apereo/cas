@@ -15,7 +15,7 @@ import org.springframework.aot.hint.RuntimeHints;
 class JpaRuntimeHintsTests {
 
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new JpaRuntimeHints().registerHints(hints, getClass().getClassLoader());
     }

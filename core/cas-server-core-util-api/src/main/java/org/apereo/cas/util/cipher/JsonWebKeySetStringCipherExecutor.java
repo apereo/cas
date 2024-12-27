@@ -2,13 +2,11 @@ package org.apereo.cas.util.cipher;
 
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.lambda.Unchecked;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.HttpsJwks;
@@ -16,7 +14,6 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.springframework.beans.factory.DisposableBean;
-
 import java.io.File;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -57,10 +54,10 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
                                              final String httpsJwksEndpointUrl) {
 
         val json = FunctionUtils.doUnchecked(() -> FileUtils.readFileToString(jwksKeystore, StandardCharsets.UTF_8));
-        keystorePatchWatcherService = new FileWatcherService(jwksKeystore, Unchecked.consumer(file -> {
+        keystorePatchWatcherService = new FileWatcherService(jwksKeystore, file -> {
             val reloadedJson = FileUtils.readFileToString(jwksKeystore, StandardCharsets.UTF_8);
             this.webKeySet = new JsonWebKeySet(reloadedJson);
-        }));
+        });
 
         this.webKeySet = FunctionUtils.doUnchecked(() -> new JsonWebKeySet(json));
         this.keyIdToUse = keyId;

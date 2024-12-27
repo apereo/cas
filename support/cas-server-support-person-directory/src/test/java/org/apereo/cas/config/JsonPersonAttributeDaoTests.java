@@ -37,7 +37,7 @@ class JsonPersonAttributeDaoTests {
     
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val repository = jsonAttributeRepositories.first();
         assertNotNull(repository.getPossibleUserAttributeNames(PersonAttributeDaoFilter.alwaysChoose()));
         assertNotNull(repository.getAvailableQueryAttributes(PersonAttributeDaoFilter.alwaysChoose()));

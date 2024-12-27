@@ -49,7 +49,7 @@ class StatelessTicketManagementTests extends AbstractCentralAuthenticationServic
     private CipherExecutor statelessTicketRegistryCipherExecutor;
 
     @Test
-    void verifyStatelessCipher() throws Exception {
+    void verifyStatelessCipher() {
         val value = UUID.randomUUID().toString();
         val encoded = statelessTicketRegistryCipherExecutor.encode(value.getBytes(StandardCharsets.UTF_8));
         val decoded = (byte[]) statelessTicketRegistryCipherExecutor.decode(encoded);

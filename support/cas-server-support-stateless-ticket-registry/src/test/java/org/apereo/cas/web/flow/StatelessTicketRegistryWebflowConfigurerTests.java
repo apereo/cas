@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
 class StatelessTicketRegistryWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         val state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);

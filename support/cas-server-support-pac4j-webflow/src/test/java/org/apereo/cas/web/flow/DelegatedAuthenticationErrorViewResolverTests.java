@@ -36,7 +36,7 @@ class DelegatedAuthenticationErrorViewResolverTests {
     private Action delegatedAuthenticationAction;
 
     @Test
-    void verifyOperationWithEx() throws Throwable {
+    void verifyOperationWithEx() {
         assertNotNull(delegatedAuthenticationAction);
 
         val request = new MockHttpServletRequest();
@@ -48,7 +48,7 @@ class DelegatedAuthenticationErrorViewResolverTests {
     }
 
     @Test
-    void verifyOperationWithoutEx() throws Throwable {
+    void verifyOperationWithoutEx() {
         val request = new MockHttpServletRequest();
         val mv = resolver.resolveErrorView(request, HttpStatus.INTERNAL_SERVER_ERROR, Map.of());
         assertEquals(CasWebflowConstants.VIEW_ID_DELEGATED_AUTHENTICATION_STOP_WEBFLOW, mv.getViewName());

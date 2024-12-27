@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
 
     @Test
-    void verifyNoProviders() throws Throwable {
+    void verifyNoProviders() {
         try (val webServer = new MockWebServer(TestMultifactorAuthenticationProvider.ID, HttpStatus.OK)) {
             webServer.start();
 
@@ -42,7 +42,7 @@ class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorA
     }
 
     @Test
-    void verifyOperationByProvider() throws Throwable {
+    void verifyOperationByProvider() {
         try (val webServer = new MockWebServer(TestMultifactorAuthenticationProvider.ID, HttpStatus.OK)) {
             webServer.start();
             val props = new CasConfigurationProperties();
@@ -56,7 +56,7 @@ class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorA
     }
 
     @Test
-    void verifyFailProvider() throws Throwable {
+    void verifyFailProvider() {
         try (val webServer = new MockWebServer(TestMultifactorAuthenticationProvider.ID, HttpStatus.UNAUTHORIZED)) {
             webServer.start();
             val props = new CasConfigurationProperties();
@@ -70,7 +70,7 @@ class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorA
     }
 
     @Test
-    void verifyNoProvider() throws Throwable {
+    void verifyNoProvider() {
         val props = new CasConfigurationProperties();
         val trigger = new RestEndpointMultifactorAuthenticationTrigger(props,
             new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),

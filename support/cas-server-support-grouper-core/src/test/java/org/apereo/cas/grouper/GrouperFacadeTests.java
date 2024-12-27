@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Grouper")
 class GrouperFacadeTests {
     @Test
-    void verifyAttributes() throws Throwable {
+    void verifyAttributes() {
         val group = new WsGroup();
         group.setExtension("GroupExtension");
         group.setDisplayName("DisplayNameGroupExtension");
@@ -57,7 +57,7 @@ class GrouperFacadeTests {
     }
 
     @Test
-    void verifyGroupsFails() throws Throwable {
+    void verifyGroupsFails() {
         val facade = new DefaultGrouperFacade();
         assertThrows(RuntimeException.class, () -> facade.fetchGroupsFor("casuser"));
     }
@@ -85,7 +85,7 @@ class GrouperFacadeTests {
     }
 
     @Test
-    void verifyPermissionAssignments() throws Throwable {
+    void verifyPermissionAssignments() {
         val facade = new DefaultGrouperFacade();
         var body = "{ \"" + WsGetPermissionAssignmentsResults.class.getSimpleName() + "\": {}}";
         try (val webServer = new MockWebServer(8080,

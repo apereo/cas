@@ -70,18 +70,18 @@ class SamlUtilsTests {
     }
     
     @Test
-    void verifyCert() throws Throwable {
+    void verifyCert() {
         val x509 = SamlUtils.readCertificate(new ClassPathResource("idp-signing.crt"));
         assertNotNull(x509);
     }
 
     @Test
-    void verifyCertFails() throws Throwable {
+    void verifyCertFails() {
         assertThrows(IllegalArgumentException.class, () -> SamlUtils.readCertificate(mock(Resource.class)));
     }
 
     @Test
-    void verifyTransformFails() throws Throwable {
+    void verifyTransformFails() {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
         val attr = builder.newNameID(NameIDType.TRANSIENT, "value");
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, attr).toString();

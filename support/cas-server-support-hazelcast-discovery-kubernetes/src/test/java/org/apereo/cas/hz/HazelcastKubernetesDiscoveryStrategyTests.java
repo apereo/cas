@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(CasTestExtension.class)
 class HazelcastKubernetesDiscoveryStrategyTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val cluster = new HazelcastClusterProperties();
         val kb = cluster.getDiscovery().getKubernetes();
         val id = UUID.randomUUID().toString();

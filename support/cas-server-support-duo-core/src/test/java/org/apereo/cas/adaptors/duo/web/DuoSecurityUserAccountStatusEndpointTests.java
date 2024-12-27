@@ -38,7 +38,7 @@ class DuoSecurityUserAccountStatusEndpointTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyStatusOperation() throws Throwable {
+    void verifyStatusOperation() {
         assertEquals(DuoSecurityUserAccountStatus.AUTH, DuoSecurityUserAccountStatus.from("active"));
         assertEquals(DuoSecurityUserAccountStatus.ALLOW, DuoSecurityUserAccountStatus.from("bypass"));
         assertEquals(DuoSecurityUserAccountStatus.DENY, DuoSecurityUserAccountStatus.from("disabled"));
@@ -46,7 +46,7 @@ class DuoSecurityUserAccountStatusEndpointTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
 
         val account = new DuoSecurityUserAccount("casuser");

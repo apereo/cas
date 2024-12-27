@@ -50,7 +50,7 @@ class InweboAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailsOperation() throws Throwable {
+    void verifyFailsOperation() {
         val inweboService = mock(InweboService.class);
 
         val response = new InweboDeviceNameResponse();

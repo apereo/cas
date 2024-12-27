@@ -37,7 +37,7 @@ class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
     }
 
     @Test
-    void verifySAML2Type() throws Throwable {
+    void verifySAML2Type() {
         val handler = new CustomNamespaceWSFederationClaimsClaimsHandler("CAS", "https://apereo.org/cas",
             List.of("https://apereo.org/cas/givenName", "https://apereo.org/cas/email"));
 
@@ -60,7 +60,7 @@ class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
     }
 
     @Test
-    void verifySAML1Type() throws Throwable {
+    void verifySAML1Type() {
         val handler = new CustomNamespaceWSFederationClaimsClaimsHandler("CAS", "https://apereo.org/cas",
             List.of("https://apereo.org/cas/givenName", "https://apereo.org/cas/email"));
 

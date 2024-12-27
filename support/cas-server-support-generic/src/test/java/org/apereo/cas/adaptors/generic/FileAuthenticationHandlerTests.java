@@ -69,7 +69,7 @@ class FileAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailsUserNotInFileWithDefaultSeparator() throws Throwable {
+    void verifyFailsUserNotInFileWithDefaultSeparator() {
         val credential = new UsernamePasswordCredential();
 
         credential.setUsername("fds");
@@ -79,7 +79,7 @@ class FileAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailsNullUserName() throws Throwable {
+    void verifyFailsNullUserName() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(null);
         credential.assignPassword("user");
@@ -87,7 +87,7 @@ class FileAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailsNullUserNameAndPassword() throws Throwable {
+    void verifyFailsNullUserNameAndPassword() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername(null);
         credential.assignPassword(null);
@@ -95,7 +95,7 @@ class FileAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailsNullPassword() throws Throwable {
+    void verifyFailsNullPassword() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("scott");
         credential.assignPassword(null);
@@ -113,7 +113,7 @@ class FileAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailsUserNotInFileWithCommaSeparator() throws Throwable {
+    void verifyFailsUserNotInFileWithCommaSeparator() {
         val credential = new UsernamePasswordCredential();
 
         authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null,
@@ -125,7 +125,7 @@ class FileAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailsGoodUsernameBadPassword() throws Throwable {
+    void verifyFailsGoodUsernameBadPassword() {
         val credential = new UsernamePasswordCredential();
         authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null,
             PrincipalFactoryUtils.newPrincipalFactory(),
@@ -138,7 +138,7 @@ class FileAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyAuthenticateNoFileName() throws Throwable {
+    void verifyAuthenticateNoFileName() {
         val credential = new UsernamePasswordCredential();
         authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null,
             PrincipalFactoryUtils.newPrincipalFactory(),

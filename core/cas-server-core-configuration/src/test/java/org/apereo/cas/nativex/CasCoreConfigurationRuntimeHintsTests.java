@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CasCoreConfigurationRuntimeHintsTests {
 
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new CasCoreConfigurationRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.serialization().onType(CustomLoginFieldViewProperties.class).test(hints));

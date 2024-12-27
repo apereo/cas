@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 class ThrottledRequestFilterTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val filter = mock(ThrottledRequestFilter.class);
         when(filter.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.HIGHEST_PRECEDENCE, filter.getOrder());

@@ -27,7 +27,7 @@ class StubPersonAttributeDaoTests {
 
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         val map = new HashMap<String, List<Object>>();
         map.put("shirtColor", List.of("blue"));
         map.put("phone", List.of("777-7777"));

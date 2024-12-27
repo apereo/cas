@@ -54,7 +54,7 @@ class LdapPasswordSynchronizationConfigurationTests {
     private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
             .newTransaction(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertFalse(authenticationEventExecutionPlan.getAuthenticationPostProcessors(transaction).isEmpty());

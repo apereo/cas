@@ -40,7 +40,7 @@ class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests {
     }
 
     @Test
-    void verifyRequiredPlain() throws Throwable {
+    void verifyRequiredPlain() {
         val request = RegisteredServiceAccessStrategyRequest.builder()
             .principalId("casuser")
             .attributes(CollectionUtils.wrap("cn", List.of("name1")))
@@ -54,7 +54,7 @@ class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests {
     }
 
     @Test
-    void verifyRequiredRegex() throws Throwable {
+    void verifyRequiredRegex() {
         val request = RegisteredServiceAccessStrategyRequest.builder()
             .principalId("casuser")
             .attributes(CollectionUtils.wrap("cn", List.of("***")))

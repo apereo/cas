@@ -35,7 +35,7 @@ class GroovyShellScriptTests {
     @SetSystemProperty(key = ExecutableCompiledScriptFactory.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC, value = "true")
     class StaticCompilationTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() {
             val script =
                 """
                     def logger = (Logger) binding.getVariable('logger')

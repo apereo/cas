@@ -13,21 +13,21 @@ import org.junit.jupiter.api.Test;
 @Tag("Audits")
 class AllAuditActionResolverTests extends BaseAuditResolverTests {
     @Test
-    void verifyBoolean() throws Throwable {
+    void verifyBoolean() {
         val audit = getAuditAnnotation();
         val resolver = new BooleanAuditActionResolver("PASS", "FAIL");
         verifyAuditActionResolver(resolver, audit);
     }
 
     @Test
-    void verifyDefault() throws Throwable {
+    void verifyDefault() {
         val audit = getAuditAnnotation();
         val resolver = new DefaultAuditActionResolver();
         verifyAuditActionResolver(resolver, audit);
     }
 
     @Test
-    void verifyObjectCreation() throws Throwable {
+    void verifyObjectCreation() {
         val audit = getAuditAnnotation();
         val resolver = new ObjectCreationAuditActionResolver("PASS", "FAIL");
         verifyAuditActionResolver(resolver, audit);

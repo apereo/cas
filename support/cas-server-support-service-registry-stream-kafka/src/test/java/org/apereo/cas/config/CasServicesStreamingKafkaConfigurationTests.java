@@ -58,7 +58,7 @@ class CasServicesStreamingKafkaConfigurationTests {
     private PublisherIdentifier casRegisteredServiceStreamPublisherIdentifier;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(registeredServiceDistributedCacheManager);
         assertNotNull(casRegisteredServiceStreamPublisher);
     }
@@ -128,7 +128,7 @@ class CasServicesStreamingKafkaConfigurationTests {
     }
 
     @Test
-    void verifyPublisher() throws Throwable {
+    void verifyPublisher() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val clientInfo = ClientInfoHolder.getClientInfo();
         casRegisteredServiceStreamPublisher.publish(registeredService,

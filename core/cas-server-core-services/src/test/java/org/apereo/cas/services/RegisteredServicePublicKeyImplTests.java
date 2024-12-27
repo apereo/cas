@@ -32,7 +32,7 @@ class RegisteredServicePublicKeyImplTests {
     }
 
     @Test
-    void verifyInstance() throws Throwable {
+    void verifyInstance() {
         val key1 = new RegisteredServicePublicKeyImpl("classpath:keys/RSA1024Public.key", "RSA");
         assertNotNull(key1.createInstance());
 

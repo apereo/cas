@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AuthenticationMetadata")
 class DelegatedClientAuthenticationMetaDataPopulatorTests {
     @Test
-    void verifySupports() throws Throwable {
+    void verifySupports() {
         val populator = new DelegatedClientAuthenticationMetaDataPopulator();
         val clientCreds = new ClientCredential(
             new UsernamePasswordCredentials("casuser", "pa$$"), "CasClient");
@@ -28,7 +28,7 @@ class DelegatedClientAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    void verifyProfileWithCreds() throws Throwable {
+    void verifyProfileWithCreds() {
         val populator = new DelegatedClientAuthenticationMetaDataPopulator();
         val clientCreds = new ClientCredential("CasClient", new CommonProfile());
         assertNotNull(clientCreds.getUserProfile());
@@ -37,7 +37,7 @@ class DelegatedClientAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    void verifyAttribute() throws Throwable {
+    void verifyAttribute() {
         val populator = new DelegatedClientAuthenticationMetaDataPopulator();
         val credentials = new ClientCredential(
             new UsernamePasswordCredentials("casuser", "pa$$"), "CasClient");

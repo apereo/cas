@@ -43,7 +43,7 @@ class DefaultCommunicationsManagerTests {
     private CommunicationsManager communicationsManager;
 
     @Test
-    void verifyMailSender() throws Throwable {
+    void verifyMailSender() {
         assertTrue(communicationsManager.isMailSenderDefined());
 
         var props = new EmailProperties();
@@ -66,7 +66,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifyEmailWithLocalizedSubject() throws Throwable {
+    void verifyEmailWithLocalizedSubject() {
         val props = new EmailProperties();
         props.setText("Hello World");
         props.setSubject("#{my.subject}");
@@ -98,7 +98,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifyMailNoAtr() throws Throwable {
+    void verifyMailNoAtr() {
         assertTrue(communicationsManager.isMailSenderDefined());
         val emailRequest = EmailMessageRequest.builder()
             .principal(mock(Principal.class))
@@ -109,7 +109,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifySmsNoAtr() throws Throwable {
+    void verifySmsNoAtr() {
         assertFalse(communicationsManager.isSmsSenderDefined());
         val smsRequest = SmsRequest.builder()
             .principal(mock(Principal.class))
@@ -120,13 +120,13 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifyNoSmsSender() throws Throwable {
+    void verifyNoSmsSender() {
         assertFalse(communicationsManager.isSmsSenderDefined());
         assertFalse(communicationsManager.sms(SmsRequest.builder().build()));
     }
 
     @Test
-    void verifyValidate() throws Throwable {
+    void verifyValidate() {
         assertTrue(communicationsManager.validate());
     }
 }

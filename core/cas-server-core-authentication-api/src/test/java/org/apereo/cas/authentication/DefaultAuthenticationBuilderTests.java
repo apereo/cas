@@ -33,7 +33,7 @@ class DefaultAuthenticationBuilderTests {
     }
 
     @Test
-    void verifyMergeCredentialMetadata() throws Throwable {
+    void verifyMergeCredentialMetadata() {
         val credential1 = getCredential();
         credential1.setCredentialMetadata(new BasicCredentialMetadata(credential1, Map.of("P1", "V1")));
         val credential2 = getCredential();
@@ -59,7 +59,7 @@ class DefaultAuthenticationBuilderTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val credential = getCredential();
         credential.setCredentialMetadata(new BasicCredentialMetadata(credential));
 
@@ -97,7 +97,7 @@ class DefaultAuthenticationBuilderTests {
     }
 
     @Test
-    void verifyUpdateOperation() throws Throwable {
+    void verifyUpdateOperation() {
         val credential = getCredential();
         credential.setCredentialMetadata(new BasicCredentialMetadata(credential));
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
@@ -118,7 +118,7 @@ class DefaultAuthenticationBuilderTests {
     }
 
     @Test
-    void verifyMergeAttributes() throws Throwable {
+    void verifyMergeAttributes() {
         val authn = DefaultAuthenticationBuilder.newInstance(CoreAuthenticationTestUtils.getAuthentication(Map.of("cn", List.of("cn1"))))
             .mergeAttributes(Map.of("cn", List.of("cn2")))
             .build();

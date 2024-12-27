@@ -55,7 +55,7 @@ class DelegatedSaml2IdentityProviderTests {
     @Import(SamlMessageStoreTestConfiguration.class)
     class Saml2ClientsWithCustomMessageStore extends BaseTests {
         @Test
-        void verifyClient() throws Throwable {
+        void verifyClient() {
             val clients = delegatedIdentityProviderFactory.build();
             assertEquals(1, clients.size());
             val client = (SAML2Client) clients.iterator().next();
@@ -77,7 +77,7 @@ class DelegatedSaml2IdentityProviderTests {
     })
     class Saml2ClientsWithUnknownMessageStore extends BaseTests {
         @Test
-        void verifyClient() throws Throwable {
+        void verifyClient() {
             val clients = delegatedIdentityProviderFactory.build();
             assertEquals(1, clients.size());
         }
@@ -97,7 +97,7 @@ class DelegatedSaml2IdentityProviderTests {
     })
     class Saml2ClientsWithGroovyAttributeConverter extends BaseTests {
         @Test
-        void verifyClient() throws Throwable {
+        void verifyClient() {
             val saml2clients = delegatedIdentityProviderFactory.build();
             assertEquals(1, saml2clients.size());
             val client = (SAML2Client) saml2clients.stream().findFirst().orElseThrow();
@@ -119,7 +119,7 @@ class DelegatedSaml2IdentityProviderTests {
     })
     class Saml2ClientsWithCustomAttributeConverter extends BaseTests {
         @Test
-        void verifyClient() throws Throwable {
+        void verifyClient() {
 
             val saml2clients = delegatedIdentityProviderFactory.build();
             assertEquals(1, saml2clients.size());
@@ -163,7 +163,7 @@ class DelegatedSaml2IdentityProviderTests {
     })
     class Saml2Clients extends BaseTests {
         @Test
-        void verifyClient() throws Throwable {
+        void verifyClient() {
             val clients = delegatedIdentityProviderFactory.build();
             assertEquals(2, clients.size());
             clients.forEach(client -> {

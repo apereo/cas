@@ -15,7 +15,7 @@ import org.springframework.aot.hint.RuntimeHints;
 class YubiKeyRuntimeHintsTests {
 
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new YubiKeyRuntimeHints().registerHints(hints, getClass().getClassLoader());
     }

@@ -25,7 +25,7 @@ class TicketRegistryManagedResourceTests {
     private TicketRegistryManagedResource ticketRegistryManagedResource;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(this.ticketRegistryManagedResource);
         assertNotNull(this.ticketRegistryManagedResource.getTickets());
     }

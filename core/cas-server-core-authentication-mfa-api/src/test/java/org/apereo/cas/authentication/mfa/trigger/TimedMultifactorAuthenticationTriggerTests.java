@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @Tag("MFATrigger")
 class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
-    void verifyUndefined() throws Throwable {
+    void verifyUndefined() {
         val props = new CasConfigurationProperties();
         var trigger = new TimedMultifactorAuthenticationTrigger(props, applicationContext);
         var result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
@@ -34,7 +34,7 @@ class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenti
     }
 
     @Test
-    void verifyProvider() throws Throwable {
+    void verifyProvider() {
         val props = new CasConfigurationProperties();
         val timeProps = new TimeBasedAuthenticationProperties();
         timeProps.setProviderId(TestMultifactorAuthenticationProvider.ID);
@@ -54,7 +54,7 @@ class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenti
     }
 
     @Test
-    void verifyNoProviders() throws Throwable {
+    void verifyNoProviders() {
         val props = new CasConfigurationProperties();
 
         val appContext = new StaticApplicationContext();

@@ -29,7 +29,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
     @Nested
     class ClaimMappingTests extends AbstractOidcTests {
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(Map.of());
 
             val service = getOidcRegisteredService();
@@ -42,7 +42,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
         }
 
         @Test
-        void verifyChainOperation() throws Throwable {
+        void verifyChainOperation() {
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(Map.of());
 
             val service = getOidcRegisteredService();
@@ -62,7 +62,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
     @Nested
     class DefaultTests extends AbstractOidcTests {
         @Test
-        void verifyValueTypes() throws Throwable {
+        void verifyValueTypes() {
             val oidcRegisteredService = getOidcRegisteredService();
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(
                 CollectionUtils.wrap("active1", "status1", "active2", "status2",
@@ -79,7 +79,7 @@ class OidcDefaultAttributeToScopeClaimMapperTests {
         }
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             val mapper = new OidcDefaultAttributeToScopeClaimMapper(CollectionUtils.wrap("name", "givenName"));
             val oidcRegisteredService = getOidcRegisteredService();
             assertTrue(mapper.containsMappedAttribute("name", oidcRegisteredService));

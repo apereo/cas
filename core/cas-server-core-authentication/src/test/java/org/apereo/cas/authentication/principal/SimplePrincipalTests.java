@@ -27,7 +27,7 @@ class SimplePrincipalTests {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    void verifyEquality() throws Throwable {
+    void verifyEquality() {
         val p = new SimplePrincipal("id", new HashMap<>());
         assertNotEquals(null, p);
         assertNotEquals("HelloWorld", p);

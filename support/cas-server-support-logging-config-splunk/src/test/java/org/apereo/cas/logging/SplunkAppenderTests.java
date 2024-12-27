@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 class SplunkAppenderTests {
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         LOGGER.info("Testing splunk appender");
         assertTrue(LOGGER.isInfoEnabled());
     }

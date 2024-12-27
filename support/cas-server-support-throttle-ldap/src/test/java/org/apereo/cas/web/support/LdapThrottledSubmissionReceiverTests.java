@@ -61,7 +61,7 @@ class LdapThrottledSubmissionReceiverTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertDoesNotThrow(() -> {
             val submission = ThrottledSubmission.builder().username("throttled").build();
             ldapThrottledSubmissionReceiver.receive(submission);

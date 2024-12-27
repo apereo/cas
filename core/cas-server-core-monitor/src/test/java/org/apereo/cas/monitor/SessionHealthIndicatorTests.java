@@ -83,7 +83,7 @@ class SessionHealthIndicatorTests {
     }
 
     @Test
-    void verifyObserveOk() throws Throwable {
+    void verifyObserveOk() {
         addTicketsToRegistry(this.defaultRegistry, 5, 10);
         val monitor = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(defaultRegistry), -1, -1);
         val status = monitor.health();
@@ -91,7 +91,7 @@ class SessionHealthIndicatorTests {
     }
 
     @Test
-    void verifyObserveWarnSessionsExceeded() throws Throwable {
+    void verifyObserveWarnSessionsExceeded() {
         addTicketsToRegistry(this.defaultRegistry, 10, 1);
         val monitor = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(defaultRegistry), 0, 5);
         val status = monitor.health();
@@ -99,7 +99,7 @@ class SessionHealthIndicatorTests {
     }
 
     @Test
-    void verifyObserveWarnServiceTicketsExceeded() throws Throwable {
+    void verifyObserveWarnServiceTicketsExceeded() {
         addTicketsToRegistry(this.defaultRegistry, 1, 10);
         val monitor = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(defaultRegistry), 5, 0);
         val status = monitor.health();

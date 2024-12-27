@@ -30,7 +30,7 @@ class WebflowCipherBeanTests extends BaseWebflowConfigurerTests {
     private CipherExecutor webflowCipherExecutor;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val input = new WebflowCipherBean(webflowCipherExecutor);
         assertThrows(IllegalArgumentException.class,
             () -> input.encrypt(mock(InputStream.class), mock(OutputStream.class)));

@@ -34,7 +34,7 @@ class RestActuatorEndpointDiscovererTests extends AbstractCasEndpointTests {
     private RestActuatorEndpointDiscoverer controllerEndpointDiscoverer;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         assertNotNull(myEndpoint);
         assertEquals(1, controllerEndpointDiscoverer.getEndpoints().size());
         val endpoint = controllerEndpointDiscoverer.getEndpoints().iterator().next();

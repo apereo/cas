@@ -43,7 +43,7 @@ class ChainingPrincipalAttributesRepositoryTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val repo1 = new DefaultPrincipalAttributesRepository();
         repo1.setAttributeRepositoryIds(Set.of(UUID.randomUUID().toString()));
         val repo2 = new DefaultPrincipalAttributesRepository();

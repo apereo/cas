@@ -38,7 +38,7 @@ class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -49,7 +49,7 @@ class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    void verifyOperationClientsWithSameRedirectUri() throws Throwable {
+    void verifyOperationClientsWithSameRedirectUri() {
         addRegisteredService();
         val newRegisteredService = addRegisteredService();
         addRegisteredService();
@@ -64,7 +64,7 @@ class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    void verifyOperationWithoutRedirectUri() throws Throwable {
+    void verifyOperationWithoutRedirectUri() {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         val response = new MockHttpServletResponse();
@@ -74,7 +74,7 @@ class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    void verifyOperationWithoutClientId() throws Throwable {
+    void verifyOperationWithoutClientId() {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         val response = new MockHttpServletResponse();
@@ -84,7 +84,7 @@ class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    void verifyOperationBadClientId() throws Throwable {
+    void verifyOperationBadClientId() {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, "badClientId");
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -95,7 +95,7 @@ class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tes
     }
 
     @Test
-    void verifyOperationBadRedirectUri() throws Throwable {
+    void verifyOperationBadRedirectUri() {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.REDIRECT_URI, "http://badredirecturi");

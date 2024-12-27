@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * @since 6.4.0
  */
 @FunctionalInterface
-public interface PrincipalElectionStrategyConflictResolver {
+public interface PrincipalElectionStrategyConflictResolver extends Serializable {
 
     /**
      * Default bean name.

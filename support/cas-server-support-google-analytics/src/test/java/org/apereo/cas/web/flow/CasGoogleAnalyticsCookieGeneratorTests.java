@@ -58,7 +58,7 @@ class CasGoogleAnalyticsCookieGeneratorTests {
     }
 
     @Test
-    void verifyCookieValue() throws Throwable {
+    void verifyCookieValue() {
         val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
 

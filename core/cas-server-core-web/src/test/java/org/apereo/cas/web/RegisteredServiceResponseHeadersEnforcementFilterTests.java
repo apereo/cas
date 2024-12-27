@@ -106,7 +106,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyActuatorPathIgnored() throws Throwable {
+    void verifyActuatorPathIgnored() {
         val filter = getFilterForProperty(UUID.randomUUID().toString(), RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
@@ -120,7 +120,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyServiceUnauthorized() throws Throwable {
+    void verifyServiceUnauthorized() {
         val filter = getFilterForProperty(UUID.randomUUID().toString(), RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
@@ -133,7 +133,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyCacheControl() throws Throwable {
+    void verifyCacheControl() {
         val id = UUID.randomUUID().toString();
         val filter = getFilterForProperty(id, RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
         val response = new MockHttpServletResponse();
@@ -148,7 +148,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyCacheControlDisabled() throws Throwable {
+    void verifyCacheControlDisabled() {
         val id = UUID.randomUUID().toString();
         val filter = getFilterForProperty(id, Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL, "false"));
         filter.setEnableCacheControl(true);
@@ -160,7 +160,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyContentSecurityPolicy() throws Throwable {
+    void verifyContentSecurityPolicy() {
         val id = UUID.randomUUID().toString();
         val filter = getFilterForProperty(id, RegisteredServiceProperties.HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY);
         val response = new MockHttpServletResponse();
@@ -173,7 +173,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyContentSecurityPolicyDisabled() throws Throwable {
+    void verifyContentSecurityPolicyDisabled() {
         val id = UUID.randomUUID().toString();
         val filter = getFilterForProperty(id, Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY, "false"));
         filter.setContentSecurityPolicy(null);
@@ -187,7 +187,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyStrictTransport() throws Throwable {
+    void verifyStrictTransport() {
         val id = UUID.randomUUID().toString();
         val filter = getFilterForProperty(id, RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY);
         filter.setStrictTransportSecurityHeader("max-age=1");
@@ -201,7 +201,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyStrictTransportDisabled() throws Throwable {
+    void verifyStrictTransportDisabled() {
         val id = UUID.randomUUID().toString();
         val filter = getFilterForProperty(id, Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY, "false"));
         filter.setEnableStrictTransportSecurity(true);
@@ -214,7 +214,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyXContentOptions() throws Throwable {
+    void verifyXContentOptions() {
         val id = UUID.randomUUID().toString();
         val filter = getFilterForProperty(id, RegisteredServiceProperties.HTTP_HEADER_ENABLE_XCONTENT_OPTIONS);
         val response = new MockHttpServletResponse();
@@ -225,7 +225,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyXContentOptionsDisabled() throws Throwable {
+    void verifyXContentOptionsDisabled() {
         val id = UUID.randomUUID().toString();
         val filter = getFilterForProperty(id, Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XCONTENT_OPTIONS, "false"));
         filter.setEnableXContentTypeOptions(true);
@@ -237,7 +237,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyOptionForUnknownService() throws Throwable {
+    void verifyOptionForUnknownService() {
         val id = UUID.randomUUID().toString();
         val filter = getFilterForProperty(id, Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XCONTENT_OPTIONS, "false"));
         filter.setEnableXContentTypeOptions(true);
@@ -249,7 +249,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyXframeOptions() throws Throwable {
+    void verifyXframeOptions() {
         val id = UUID.randomUUID().toString();
         val filter = getFilterForProperty(id, Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS, "true"),
             Pair.of(RegisteredServiceProperties.HTTP_HEADER_XFRAME_OPTIONS, "sameorigin"));
@@ -268,7 +268,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyXframeOptionsDisabled() throws Throwable {
+    void verifyXframeOptionsDisabled() {
         val id = UUID.randomUUID().toString();
         val filter = getFilterForProperty(id, Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS, "false"));
 
@@ -287,7 +287,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyXssProtection() throws Throwable {
+    void verifyXssProtection() {
         val id = UUID.randomUUID().toString();
         val filter = getFilterForProperty(id, RegisteredServiceProperties.HTTP_HEADER_ENABLE_XSS_PROTECTION);
         val response = new MockHttpServletResponse();
@@ -298,7 +298,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyXssProtectionDisabled() throws Throwable {
+    void verifyXssProtectionDisabled() {
         val id = UUID.randomUUID().toString();
         val filter = getFilterForProperty(id, Pair.of(RegisteredServiceProperties.HTTP_HEADER_ENABLE_XSS_PROTECTION, "false"));
         filter.setEnableXSSProtection(true);

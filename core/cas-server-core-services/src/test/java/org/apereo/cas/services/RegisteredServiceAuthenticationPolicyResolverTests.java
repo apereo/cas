@@ -152,7 +152,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
     }
 
     @Test
-    void checkDisabledPolicy() throws Throwable {
+    void checkDisabledPolicy() {
         val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(RegisteredServiceTestUtils.getService("not-found-service"),

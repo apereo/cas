@@ -77,7 +77,7 @@ class PersonDirectoryPrincipalResolverTests {
     private AttributeDefinitionStore attributeDefinitionStore;
 
     @BeforeEach
-    public void before() throws Exception {
+    public void before() {
         servicesManager = mock(ServicesManager.class);
     }
 
@@ -410,7 +410,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyPrincipalIdViaCurrentPrincipal() throws Throwable {
+    void verifyPrincipalIdViaCurrentPrincipal() {
         Stream.of(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE, PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED)
             .map(merger -> getPrincipalResolutionContextBuilder(merger, CoreAuthenticationTestUtils.getAttributeRepository())
                 .returnNullIfNoAttributes(true)
@@ -432,7 +432,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyAttributeRepositoryByService() throws Throwable {
+    void verifyAttributeRepositoryByService() {
         Stream.of(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED)
             .map(merger -> getPrincipalResolutionContextBuilder(merger, CoreAuthenticationTestUtils.getAttributeRepository())
                 .returnNullIfNoAttributes(true)
@@ -476,7 +476,7 @@ class PersonDirectoryPrincipalResolverTests {
     }
 
     @Test
-    void verifyPersonDirectoryOverrides() throws Throwable {
+    void verifyPersonDirectoryOverrides() {
         val principal = new PersonDirectoryPrincipalResolverProperties();
         val personDirectory = new PersonDirectoryPrincipalResolverProperties();
         val principalResolutionContext = buildPrincipalResolutionContext(principal, personDirectory);

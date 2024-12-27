@@ -46,7 +46,7 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyUnrecognizedParam() throws Throwable {
+    void verifyUnrecognizedParam() {
         filterConfig.addInitParameter("bad-param", "bad-value");
         assertThrows(RuntimeException.class, () -> filter.init(filterConfig));
     }
@@ -66,7 +66,7 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyParam() throws Throwable {
+    void verifyParam() {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();
@@ -86,7 +86,7 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyNoCacheParamJpeg() throws Throwable {
+    void verifyNoCacheParamJpeg() {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();
@@ -101,7 +101,7 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyNoCacheParamPng() throws Throwable {
+    void verifyNoCacheParamPng() {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();
@@ -116,7 +116,7 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyDynamicNonce() throws Throwable {
+    void verifyDynamicNonce() {
         val servletContext = new MockServletContext();
         val specificFilterConfig = new MockFilterConfig(servletContext);
         specificFilterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_CONTENT_SECURITY_POLICY, "script-src '@nonce@';");
@@ -135,7 +135,7 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyDynamicNonceAlreadyGenerated() throws Throwable {
+    void verifyDynamicNonceAlreadyGenerated() {
         val servletContext = new MockServletContext();
         val specificFilterConfig = new MockFilterConfig(servletContext);
         specificFilterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_CONTENT_SECURITY_POLICY, "script-src '@nonce@';");

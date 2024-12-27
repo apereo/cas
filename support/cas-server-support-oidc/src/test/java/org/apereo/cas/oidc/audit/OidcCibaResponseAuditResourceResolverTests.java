@@ -27,7 +27,7 @@ class OidcCibaResponseAuditResourceResolverTests extends AbstractOidcTests {
     private AuditResourceResolver oidcCibaResponseResourceResolver;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val jp = mock(JoinPoint.class);
         val responseEntity = ResponseEntity.ok().body(new OidcCibaResponse(UUID.randomUUID().toString(), 1));
         val results = oidcCibaResponseResourceResolver.resolveFrom(jp, responseEntity);

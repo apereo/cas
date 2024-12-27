@@ -36,7 +36,7 @@ class DefaultTransientSessionTicketFactoryTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifyById() throws Throwable {
+    void verifyById() {
         val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(UUID.randomUUID().toString(), Map.of());
         assertNotNull(ticket);
@@ -44,7 +44,7 @@ class DefaultTransientSessionTicketFactoryTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifyByServiceById() throws Throwable {
+    void verifyByServiceById() {
         val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(UUID.randomUUID().toString(),
             RegisteredServiceTestUtils.getService("example"), Map.of("key", "value"));

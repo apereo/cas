@@ -11,7 +11,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 import java.util.Collection;
@@ -42,7 +41,7 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
         
         if (ResourceUtils.isFile(this.jsonResource) && watchResource) {
             this.watcherService = new FileWatcherService(jsonResource.getFile(),
-                Unchecked.consumer(__ -> setDevices(getDevicesFromJsonResource(jsonResource))));
+                __ -> setDevices(getDevicesFromJsonResource(jsonResource)));
             this.watcherService.start(getClass().getSimpleName());
         }
     }

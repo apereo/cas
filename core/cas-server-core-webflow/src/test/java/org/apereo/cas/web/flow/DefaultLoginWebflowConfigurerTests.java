@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = "cas.view.custom-login-form-fields.field1.required=false")
 class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val interceptors = casWebflowExecutionPlan.getWebflowInterceptors();
         assertEquals(2, interceptors.size());
@@ -53,7 +53,7 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     }
 
     @Test
-    void verifyRenderAction() throws Throwable {
+    void verifyRenderAction() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val cfg = casWebflowExecutionPlan.getWebflowConfigurers().iterator().next();
         assertNotNull(cfg.createRenderAction("ExampleRenderAction"));
@@ -83,7 +83,7 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     }
 
     @Test
-    void verifyStorageStates() throws Exception {
+    void verifyStorageStates() {
         val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         val writeState = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
         assertNotNull(writeState);

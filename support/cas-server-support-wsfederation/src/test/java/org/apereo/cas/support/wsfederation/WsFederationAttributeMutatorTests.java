@@ -26,7 +26,7 @@ class WsFederationAttributeMutatorTests extends AbstractWsFederationTests {
     private static final String UPN_PARAM = "upn";
 
     @Test
-    void verifyModifyAttributes() throws Throwable {
+    void verifyModifyAttributes() {
         val attributes = new HashMap<String, List<Object>>();
 
         val values = new ArrayList<>();

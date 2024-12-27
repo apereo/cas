@@ -79,7 +79,7 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
         }
 
         @Test
-        void verifyProps() throws Throwable {
+        void verifyProps() {
             val status = AcceptableUsagePolicyStatus.accepted(CoreAuthenticationTestUtils.getPrincipal());
             status.clearProperties();
             status.addProperty("example", "cas");

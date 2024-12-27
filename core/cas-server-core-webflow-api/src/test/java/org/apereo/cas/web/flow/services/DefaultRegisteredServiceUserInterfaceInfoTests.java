@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @Tag("RegisteredService")
 class DefaultRegisteredServiceUserInterfaceInfoTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val info = new DefaultRegisteredServiceUserInterfaceInfo(mock(WebBasedRegisteredService.class)) {
             @Serial
             private static final long serialVersionUID = 2331519665722637762L;
@@ -59,7 +59,7 @@ class DefaultRegisteredServiceUserInterfaceInfoTests {
     }
 
     @Test
-    void verifySpecialCases() throws Throwable {
+    void verifySpecialCases() {
         val service = mock(WebBasedRegisteredService.class);
         when(service.getInformationUrl()).thenReturn("https://apereo.org/cas");
         when(service.getPrivacyUrl()).thenReturn("https://apereo.org/cas");
@@ -102,7 +102,7 @@ class DefaultRegisteredServiceUserInterfaceInfoTests {
     }
 
     @Test
-    void verifyDefault() throws Throwable {
+    void verifyDefault() {
         val service = mock(WebBasedRegisteredService.class);
         val info = new DefaultRegisteredServiceUserInterfaceInfo(service) {
             @Serial

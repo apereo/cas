@@ -52,7 +52,7 @@ class DefaultAttributeRepositoryResolverTests {
         private ServicesManager servicesManager;
 
         @Test
-        void verifyRepositoriesByServiceAssignment() throws Throwable {
+        void verifyRepositoriesByServiceAssignment() {
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             val releasePolicy = new DenyAllAttributeReleasePolicy();
             releasePolicy.setPrincipalAttributesRepository(new DefaultPrincipalAttributesRepository().setAttributeRepositoryIds(Set.of("stub")));
@@ -72,7 +72,7 @@ class DefaultAttributeRepositoryResolverTests {
         }
 
         @Test
-        void verifyRepositoriesRequestedByQuery() throws Throwable {
+        void verifyRepositoriesRequestedByQuery() {
             val query = AttributeRepositoryResolver.AttributeRepositoryQuery.builder()
                 .activeRepositoryIds(Set.of("stub", "ldap"))
                 .authenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("simpleHandler"))
@@ -85,7 +85,7 @@ class DefaultAttributeRepositoryResolverTests {
         }
 
         @Test
-        void verifyRepositoriesUndefinedInQuery() throws Throwable {
+        void verifyRepositoriesUndefinedInQuery() {
             val query = AttributeRepositoryResolver.AttributeRepositoryQuery.builder()
                 .authenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("simpleHandler"))
                 .principal(RegisteredServiceTestUtils.getPrincipal())
@@ -113,7 +113,7 @@ class DefaultAttributeRepositoryResolverTests {
         private AttributeRepositoryResolver attributeRepositoryResolver;
         
         @Test
-        void verifyRepositoriesRequestedByHandler() throws Throwable {
+        void verifyRepositoriesRequestedByHandler() {
             var query = AttributeRepositoryResolver.AttributeRepositoryQuery.builder()
                 .activeRepositoryIds(Set.of("stub", "ldap", "other"))
                 .authenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("handler1"))

@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
 
     @Test
-    void verifyRedirect() throws Throwable {
+    void verifyRedirect() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -51,7 +51,7 @@ class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyPromptNoneWithProfile() throws Throwable {
+    void verifyPromptNoneWithProfile() {
         val request = new MockHttpServletRequest();
         val url = "https://cas.org/something?" + OAuth20Constants.PROMPT + "=none";
         val response = new MockHttpServletResponse();
@@ -69,7 +69,7 @@ class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyPromptNoneWithoutProfile() throws Throwable {
+    void verifyPromptNoneWithoutProfile() {
         val request = new MockHttpServletRequest();
         val url = "https://cas.org/something?" + OAuth20Constants.PROMPT + "=none";
         val response = new MockHttpServletResponse();
@@ -107,7 +107,7 @@ class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyPromptNoneWithoutProfileWithRedirectParam() throws Throwable {
+    void verifyPromptNoneWithoutProfileWithRedirectParam() {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.REDIRECT_URI, "https://google.com");
         val url = "https://cas.org/something?" + OAuth20Constants.PROMPT + "=none";
@@ -121,7 +121,7 @@ class OidcCallbackAuthorizeViewResolverTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyPromptLogin() throws Throwable {
+    void verifyPromptLogin() {
         val request = new MockHttpServletRequest();
         val url = "https://cas.org/something?" + OAuth20Constants.PROMPT + "=login";
         val response = new MockHttpServletResponse();

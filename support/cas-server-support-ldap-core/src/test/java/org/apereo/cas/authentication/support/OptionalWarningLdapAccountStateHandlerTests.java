@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 @Tag("LdapAuthentication")
 class OptionalWarningLdapAccountStateHandlerTests {
     @Test
-    void verifyWarningOnMatch() throws Throwable {
+    void verifyWarningOnMatch() {
         val h = new OptionalWarningLdapAccountStateHandler();
         h.setWarnAttributeName("attribute");
         h.setWarningAttributeValue("value");
@@ -45,7 +45,7 @@ class OptionalWarningLdapAccountStateHandlerTests {
     }
 
     @Test
-    void verifyWarningNoAttr() throws Throwable {
+    void verifyWarningNoAttr() {
         val h = new OptionalWarningLdapAccountStateHandler();
         h.setDisplayWarningOnMatch(true);
         val response = mock(AuthenticationResponse.class);
@@ -65,7 +65,7 @@ class OptionalWarningLdapAccountStateHandlerTests {
 
     
     @Test
-    void verifyAlwaysWarningOnMatch() throws Throwable {
+    void verifyAlwaysWarningOnMatch() {
         val h = new OptionalWarningLdapAccountStateHandler();
         h.setWarnAttributeName("attribute");
         h.setWarningAttributeValue("value");
@@ -83,7 +83,7 @@ class OptionalWarningLdapAccountStateHandlerTests {
     }
 
     @Test
-    void verifyNoWarningOnMatch() throws Throwable {
+    void verifyNoWarningOnMatch() {
         val h = new OptionalWarningLdapAccountStateHandler();
         h.setWarnAttributeName("attribute");
         h.setWarningAttributeValue("value");

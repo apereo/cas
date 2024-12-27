@@ -36,7 +36,7 @@ class ProtocolSpecificationValidationAuditResourceResolverTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val resolver = new ProtocolSpecificationValidationAuditResourceResolver(casProperties);
         val assertion = mock(Assertion.class);
         when(assertion.getService()).thenReturn(RegisteredServiceTestUtils.getService());
@@ -49,7 +49,7 @@ class ProtocolSpecificationValidationAuditResourceResolverTests {
     }
 
     @Test
-    void verifyNoOp() throws Throwable {
+    void verifyNoOp() {
         val resolver = new ProtocolSpecificationValidationAuditResourceResolver(casProperties);
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(ArrayUtils.EMPTY_OBJECT_ARRAY);

@@ -56,7 +56,7 @@ class RemoteCookieAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyFailsAuthn() throws Throwable {
+    void verifyFailsAuthn() {
         val credential = new RemoteAuthenticationCredential(null, UUID.randomUUID().toString());
         assertThrows(FailedLoginException.class,
             () -> remoteCookieAuthenticationHandler.authenticate(credential, mock(Service.class)));

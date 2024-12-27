@@ -90,7 +90,7 @@ class OidcPhoneScopeAttributeReleasePolicyTests {
         }
 
         @Test
-        void verifySerialization() throws Throwable {
+        void verifySerialization() {
             val policy = new OidcPhoneScopeAttributeReleasePolicy();
             val chain = new ChainingAttributeReleasePolicy();
             chain.addPolicies(policy);

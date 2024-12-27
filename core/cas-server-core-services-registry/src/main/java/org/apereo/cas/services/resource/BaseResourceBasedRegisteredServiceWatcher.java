@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jooq.lambda.fi.util.function.CheckedConsumer;
 
 import java.io.File;
 import java.util.function.Consumer;
@@ -17,7 +18,7 @@ import java.util.function.Consumer;
  */
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class BaseResourceBasedRegisteredServiceWatcher implements Consumer<File> {
+public abstract class BaseResourceBasedRegisteredServiceWatcher implements CheckedConsumer<File> {
     /**
      * Consumer to log warnings for duplicate service defns.
      */

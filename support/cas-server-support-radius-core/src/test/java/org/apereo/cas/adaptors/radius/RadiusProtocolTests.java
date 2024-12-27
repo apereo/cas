@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Radius")
 class RadiusProtocolTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         Arrays.stream(RadiusProtocol.values()).forEach(protocol -> assertNotNull(protocol.getName()));
     }
 }

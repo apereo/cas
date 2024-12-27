@@ -124,7 +124,8 @@ public abstract class AbstractServiceRegistryTests {
     void verifySaveAndLoad() {
         getRegisteredServiceTypes().forEach(type -> {
             serviceRegistry.deleteAll();
-            for (var i = 0; i < getLoadSize(); i++) {
+            val loadSize = getLoadSize();
+            for (var i = 0; i < loadSize; i++) {
                 val svc = buildRegisteredServiceInstance(i, type)
                     .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
                 serviceRegistry.save(svc);
@@ -145,7 +146,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    void verifyNonExistingService() throws Throwable {
+    void verifyNonExistingService() {
         assertNull(serviceRegistry.findServiceById(9999991));
     }
 

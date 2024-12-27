@@ -28,7 +28,7 @@ class CasConfigurationMetadataServerEndpointTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val repository = new CasConfigurationMetadataRepository();
         val endpoint = new CasConfigurationMetadataServerEndpoint(casProperties, repository);
         val result = endpoint.properties();

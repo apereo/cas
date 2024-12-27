@@ -29,7 +29,7 @@ class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth
     private OAuth20DeviceUserCodeApprovalEndpointController callbackAuthorizeController;
     
     @Test
-    void verifyGet() throws Throwable {
+    void verifyGet() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val mv = callbackAuthorizeController.handleGetRequest(request, response);
@@ -39,7 +39,7 @@ class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth
     }
 
     @Test
-    void verifyPostNoCode() throws Throwable {
+    void verifyPostNoCode() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         var mv = callbackAuthorizeController.handlePostRequest(request, response);

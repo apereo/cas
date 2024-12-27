@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @Tag("MFATrigger")
 class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
-    void verifyNoProvider() throws Throwable {
+    void verifyNoProvider() {
         val appContext = new StaticApplicationContext();
         appContext.refresh();
         
@@ -43,7 +43,7 @@ class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthent
     }
 
     @Test
-    void verifyOperationByManyProviders() throws Throwable {
+    void verifyOperationByManyProviders() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getGlobal().setGlobalProviderId(TestMultifactorAuthenticationProvider.ID + ",mfa-invalid");
         val trigger = getTrigger(props, applicationContext);
@@ -67,7 +67,7 @@ class GlobalMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthent
     }
 
     @Test
-    void verifyOperationByUnresolvedProvider() throws Throwable {
+    void verifyOperationByUnresolvedProvider() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getGlobal().setGlobalProviderId("does-not-exist");
         val trigger = getTrigger(props, applicationContext);

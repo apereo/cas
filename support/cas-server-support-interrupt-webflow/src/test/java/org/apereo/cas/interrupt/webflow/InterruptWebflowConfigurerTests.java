@@ -42,7 +42,7 @@ class InterruptWebflowConfigurerTests {
     class InterruptAfterAuthentication extends BaseWebflowConfigurerTests {
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
@@ -62,7 +62,7 @@ class InterruptWebflowConfigurerTests {
     @Tag("WebflowConfig")
     class InterruptAfterSingleSignOn extends BaseWebflowConfigurerTests {
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);

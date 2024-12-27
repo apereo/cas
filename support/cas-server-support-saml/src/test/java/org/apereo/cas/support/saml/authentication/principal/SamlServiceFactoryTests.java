@@ -47,7 +47,7 @@ class SamlServiceFactoryTests extends AbstractOpenSamlTests {
     private ServiceFactory<SamlService> samlServiceFactory;
 
     @Test
-    void verifyObtainService() throws Throwable {
+    void verifyObtainService() {
         val request = new MockHttpServletRequest();
         request.setMethod(HttpMethod.POST.name());
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "test");
@@ -57,14 +57,14 @@ class SamlServiceFactoryTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifyServiceDoesNotExist() throws Throwable {
+    void verifyServiceDoesNotExist() {
         val request = new MockHttpServletRequest();
         request.setMethod(HttpMethod.POST.name());
         assertNull(samlServiceFactory.createService(request));
     }
 
     @Test
-    void verifyPayloadCanBeParsedProperly() throws Throwable {
+    void verifyPayloadCanBeParsedProperly() {
         val request = new MockHttpServletRequest();
         request.setMethod(HttpMethod.POST.name());
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "test");
@@ -74,7 +74,7 @@ class SamlServiceFactoryTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifyPayloadAsAttr() throws Throwable {
+    void verifyPayloadAsAttr() {
         val request = new MockHttpServletRequest();
         request.setMethod(HttpMethod.POST.name());
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "test");
@@ -85,7 +85,7 @@ class SamlServiceFactoryTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifyEmptyBody() throws Throwable {
+    void verifyEmptyBody() {
         val body = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" "
             + "xmlns=\"urn:oasis:names:tc:SAML:1.0:protocol\"><soap:Header/></soap:Envelope>";
         val request = new MockHttpServletRequest();
@@ -99,7 +99,7 @@ class SamlServiceFactoryTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifyNoReqIdBody() throws Throwable {
+    void verifyNoReqIdBody() {
         val body = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" "
             + "xmlns=\"urn:oasis:names:tc:SAML:1.0:protocol\"><soap:Header/><soap:Body>"
             + "<Request MajorVersion=\"1\" MinorVersion=\"1\" IssueInstant=\"2018-05-10T16:39:46Z\">"
@@ -116,7 +116,7 @@ class SamlServiceFactoryTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifyArtifactInBody() throws Throwable {
+    void verifyArtifactInBody() {
         val body = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" "
             + "xmlns=\"urn:oasis:names:tc:SAML:1.0:protocol\"><soap:Header/><soap:Body>"
             + "<Request MajorVersion=\"1\" MinorVersion=\"1\" IssueInstant=\"2018-05-10T16:39:46Z\">"
@@ -131,7 +131,7 @@ class SamlServiceFactoryTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    void verifyBadBody() throws Throwable {
+    void verifyBadBody() {
         val body = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" "
             + "xmlns=\"urn:oasis:names:tc:SAML:1.0:protocol\"><soap:Header/><soap:Body>"
             + "</Request></soap:Envelope>";

@@ -27,7 +27,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     @Nested
     class DefaultTests extends BaseLdapPasswordSynchronizationTests {
         @Test
-        void verifySyncFindsNoUser() throws Throwable {
+        void verifySyncFindsNoUser() {
             assertThrows(AuthenticationException.class, () -> {
                 val sync = ldapPasswordSynchronizers.first();
                 val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("unknown123456", "password");
@@ -38,7 +38,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
         }
 
         @Test
-        void verifyBadCredential() throws Throwable {
+        void verifyBadCredential() {
             assertThrows(AuthenticationException.class, () -> {
                 val sync = new LdapPasswordSynchronizationAuthenticationPostProcessor(casProperties.getAuthn().getPasswordSync().getLdap().getFirst());
                 val credentials = mock(Credential.class);
@@ -57,7 +57,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     })
     class UnicodeAttributeTests extends BaseLdapPasswordSynchronizationTests {
         @Test
-        void verifySyncFailsWithUnicodePswd() throws Throwable {
+        void verifySyncFailsWithUnicodePswd() {
             assertDoesNotThrow(() -> {
                 val sync = ldapPasswordSynchronizers.first();
                 val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casTest", "password");

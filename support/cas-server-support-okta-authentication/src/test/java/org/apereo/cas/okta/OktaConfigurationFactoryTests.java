@@ -41,7 +41,7 @@ class OktaConfigurationFactoryTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         try (val webServer = new MockWebServer(8923, HttpStatus.OK)) {
             webServer.start();
             assertNotNull(OktaConfigurationFactory.buildAuthenticationClient(casProperties.getAuthn().getOkta()));

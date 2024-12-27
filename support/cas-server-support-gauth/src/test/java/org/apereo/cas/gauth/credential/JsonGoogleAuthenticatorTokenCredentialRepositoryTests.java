@@ -72,7 +72,7 @@ class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeT
     }
 
     @Test
-    void verifyNotExists() throws Throwable {
+    void verifyNotExists() {
         val repo = new JsonGoogleAuthenticatorTokenCredentialRepository(new ClassPathResource("acct-bad.json"),
             googleAuthenticatorInstance,
             CipherExecutor.noOpOfStringToString(),

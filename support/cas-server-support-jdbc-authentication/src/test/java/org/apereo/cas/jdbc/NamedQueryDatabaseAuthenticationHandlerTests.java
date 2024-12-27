@@ -95,7 +95,7 @@ class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentic
     }
 
     @Test
-    void verifyFailsWithMissingTotalField() throws Throwable {
+    void verifyFailsWithMissingTotalField() {
         val sql = "SELECT count(*) FROM CAS_NAMED_USERS where username=:username AND password=:password";
         val properties = new QueryJdbcAuthenticationProperties().setSql(sql).setFieldPassword("password");
         properties.setName("namedHandler");

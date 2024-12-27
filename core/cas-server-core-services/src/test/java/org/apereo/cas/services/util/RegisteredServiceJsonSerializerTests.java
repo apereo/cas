@@ -49,20 +49,20 @@ class RegisteredServiceJsonSerializerTests {
     }
     
     @Test
-    void verifyPrinter() throws Throwable {
+    void verifyPrinter() {
         assertFalse(serializer.supports(new File("bad-file")));
         assertFalse(serializer.getContentTypes().isEmpty());
     }
 
     @Test
-    void verifyWriter() throws Throwable {
+    void verifyWriter() {
         val writer = new StringWriter();
         serializer.to(writer, new CasRegisteredService());
         assertNotNull(serializer.from(writer));
     }
 
     @Test
-    void verifyList() throws Throwable {
+    void verifyList() {
         val registeredService = new CasRegisteredService();
         registeredService.setName("CasService");
         val results = serializer.fromList(CollectionUtils.wrapList(registeredService));
@@ -89,7 +89,7 @@ class RegisteredServiceJsonSerializerTests {
     }
 
     @Test
-    void verifySsoPolicySerialization() throws Throwable {
+    void verifySsoPolicySerialization() {
         val policyWritten = new DefaultRegisteredServiceAcceptableUsagePolicy();
         policyWritten.setEnabled(true);
         policyWritten.setMessageCode("example.code");
@@ -109,7 +109,7 @@ class RegisteredServiceJsonSerializerTests {
     }
 
     @Test
-    void verifyEmptyStringAsNull() throws Throwable {
+    void verifyEmptyStringAsNull() {
         val json = """
               {
                   "@class" : "org.apereo.cas.services.CasRegisteredService",

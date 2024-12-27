@@ -28,7 +28,7 @@ class ShibbolethCompatiblePersistentIdGeneratorTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyGenerator() throws Throwable {
+    void verifyGenerator() {
         val generator = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
         assertNotNull(generator.toString());
         val p = mock(Principal.class);
@@ -38,7 +38,7 @@ class ShibbolethCompatiblePersistentIdGeneratorTests {
     }
 
     @Test
-    void verifyGeneratorByPrincipal() throws Throwable {
+    void verifyGeneratorByPrincipal() {
         val attrs = (Map) Map.of("uid", List.of("testuser"));
         val generator = new ShibbolethCompatiblePersistentIdGenerator();
         generator.setAttribute("uid");

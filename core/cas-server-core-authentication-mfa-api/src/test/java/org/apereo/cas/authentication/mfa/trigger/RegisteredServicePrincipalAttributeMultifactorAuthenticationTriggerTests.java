@@ -121,7 +121,7 @@ class RegisteredServicePrincipalAttributeMultifactorAuthenticationTriggerTests e
     }
 
     @Test
-    void verifyMismatchAttributesMustDeny() throws Throwable {
+    void verifyMismatchAttributesMustDeny() {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getPrincipalAttributeNameTrigger()).thenReturn("bad-attribute");
         when(policy.getPrincipalAttributeValueToMatch()).thenReturn(".+@example.*");

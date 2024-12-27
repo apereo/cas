@@ -34,7 +34,7 @@ class SurrogateAuthenticationMetaDataPopulatorTests {
     private AuthenticationMetaDataPopulator surrogateAuthenticationMetadataPopulator;
     
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         assertFalse(surrogateAuthenticationMetadataPopulator.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
 
         val credential = new UsernamePasswordCredential();

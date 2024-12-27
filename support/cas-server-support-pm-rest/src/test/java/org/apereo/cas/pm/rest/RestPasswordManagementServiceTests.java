@@ -210,7 +210,7 @@ class RestPasswordManagementServiceTests {
 
 
         @Test
-        void verifyUpdateSecurityQuestions() throws Throwable {
+        void verifyUpdateSecurityQuestions() {
             val query = PasswordManagementQuery.builder().username("casuser").build();
             query.securityQuestion("Q1", "A1");
             try (val webServer = new MockWebServer(9308, HttpStatus.OK)) {
@@ -237,7 +237,7 @@ class RestPasswordManagementServiceTests {
         }
 
         @Test
-        void verifyUnlockAccount() throws Throwable {
+        void verifyUnlockAccount() {
             try (val webServer = new MockWebServer(9308, HttpStatus.OK)) {
                 webServer.start();
                 val props = new CasConfigurationProperties();

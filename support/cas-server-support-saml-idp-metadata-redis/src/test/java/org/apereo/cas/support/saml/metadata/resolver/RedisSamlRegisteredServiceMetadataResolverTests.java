@@ -77,7 +77,7 @@ class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetad
     }
 
     @Test
-    void verifyResolverDoesNotSupport() throws Throwable {
+    void verifyResolverDoesNotSupport() {
         assertFalse(resolver.supports(null));
     }
 }

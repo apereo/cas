@@ -33,7 +33,7 @@ class DelegatedClientsSaml2EndpointContributorTests {
 
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val saml2Client = (BaseClient) identityProviders.findClient("SAML2Client").orElseThrow();
         assertTrue(delegatedClientsSaml2EndpointContributor.supports(saml2Client));
         val results = delegatedClientsSaml2EndpointContributor.contribute(saml2Client);

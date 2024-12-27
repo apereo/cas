@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @Tag("CAS")
 class CasProtocolVersionValidationSpecificationTests extends BaseCasCoreTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val spec = new CasProtocolVersionValidationSpecification(
             Set.of(CasProtocolVersions.CAS10));
         val registeredService = mock(RegisteredService.class);
@@ -34,7 +34,7 @@ class CasProtocolVersionValidationSpecificationTests extends BaseCasCoreTests {
     }
 
     @Test
-    void verifySupportOperations() throws Throwable {
+    void verifySupportOperations() {
         val spec = new CasProtocolVersionValidationSpecification(
             Set.of(CasProtocolVersions.CAS10, CasProtocolVersions.CAS20));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();

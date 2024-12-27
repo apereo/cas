@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DelegatedAuthenticationSaml2WebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         var flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT));

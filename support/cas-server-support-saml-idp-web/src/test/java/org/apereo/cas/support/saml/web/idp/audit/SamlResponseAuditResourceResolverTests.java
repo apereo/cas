@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 @Tag("SAML2")
 class SamlResponseAuditResourceResolverTests {
     @Test
-    void verifyActionUnknown() throws Throwable {
+    void verifyActionUnknown() {
         val r = new SamlResponseAuditResourceResolver();
         val result = r.resolveFrom(mock(JoinPoint.class), new Object());
         assertNotNull(result);
@@ -34,7 +34,7 @@ class SamlResponseAuditResourceResolverTests {
     }
 
     @Test
-    void verifyActionEmptyEnvelope() throws Throwable {
+    void verifyActionEmptyEnvelope() {
         val r = new SamlResponseAuditResourceResolver();
         val envelope = mock(Envelope.class);
         val body = mock(Body.class);
@@ -47,7 +47,7 @@ class SamlResponseAuditResourceResolverTests {
     }
 
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val r = new SamlResponseAuditResourceResolver();
         val response = mock(Response.class);
         val issuer = mock(Issuer.class);

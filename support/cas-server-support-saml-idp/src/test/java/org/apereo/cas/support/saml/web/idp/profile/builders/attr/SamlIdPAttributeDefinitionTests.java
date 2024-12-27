@@ -28,7 +28,7 @@ class SamlIdPAttributeDefinitionTests extends BaseSamlIdPConfigurationTests {
     private AttributeDefinitionStore attributeDefinitionStore;
 
     @Test
-    void verifyStoreIsLoaded() throws Throwable {
+    void verifyStoreIsLoaded() {
         assertTrue(attributeDefinitionStore.locateAttributeDefinition("eduPersonUniqueId").isPresent());
         assertTrue(attributeDefinitionStore.locateAttributeDefinition("organizationName").isPresent());
         assertTrue(attributeDefinitionStore.locateAttributeDefinition("displayName").isPresent());

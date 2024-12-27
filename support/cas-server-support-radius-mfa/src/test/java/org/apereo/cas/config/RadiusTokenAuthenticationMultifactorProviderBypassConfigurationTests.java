@@ -39,7 +39,7 @@ class RadiusTokenAuthenticationMultifactorProviderBypassConfigurationTests {
     private MultifactorAuthenticationProviderBypassEvaluator radiusBypassEvaluator;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(radiusBypassEvaluator);
         assertEquals(8, radiusBypassEvaluator.size());
     }

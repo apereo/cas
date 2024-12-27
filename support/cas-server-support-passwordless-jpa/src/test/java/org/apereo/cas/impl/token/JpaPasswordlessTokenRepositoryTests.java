@@ -40,7 +40,7 @@ class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountSto
     private PasswordlessTokenRepository passwordlessTokenRepository;
 
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val uid = UUID.randomUUID().toString();
 
         val passwordlessUserAccount = PasswordlessUserAccount.builder().username(uid).build();
@@ -58,7 +58,7 @@ class JpaPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccountSto
 
 
     @Test
-    void verifyCleaner() throws Throwable {
+    void verifyCleaner() {
         val uid = UUID.randomUUID().toString();
         val passwordlessUserAccount = PasswordlessUserAccount.builder().username(uid).build();
         val passwordlessRequest = PasswordlessAuthenticationRequest.builder().username(uid).build();

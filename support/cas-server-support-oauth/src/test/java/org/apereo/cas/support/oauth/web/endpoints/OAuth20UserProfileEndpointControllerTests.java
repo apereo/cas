@@ -112,7 +112,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyEndpoints() throws Throwable {
+    void verifyEndpoints() {
         assertFalse(oauth20ProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 

@@ -41,7 +41,7 @@ class DefaultServicesManagerTests {
     @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
     class DefaultTests extends AbstractServicesManagerTests {
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             val mock = mock(ServicesManager.class);
             when(mock.findServiceBy(anyLong(), any())).thenCallRealMethod();
             when(mock.findServiceByName(anyString(), any())).thenCallRealMethod();
@@ -55,7 +55,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifySupports() throws Throwable {
+        void verifySupports() {
             val registeredService = new CasRegisteredService();
             registeredService.setId(RandomUtils.nextLong());
             registeredService.setName("domainService1");
@@ -67,7 +67,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifySaveWithDomains() throws Throwable {
+        void verifySaveWithDomains() {
             val svc = new CasRegisteredService();
             svc.setId(RandomUtils.nextLong());
             svc.setName("domainService2");
@@ -78,7 +78,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifySaveInBulk() throws Throwable {
+        void verifySaveInBulk() {
             servicesManager.deleteAll();
             servicesManager.save(() -> {
                 val svc = new CasRegisteredService();
@@ -92,7 +92,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifySaveInStreams() throws Throwable {
+        void verifySaveInStreams() {
             servicesManager.deleteAll();
             val s1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
             val s2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
@@ -102,7 +102,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifyFindByQuery() throws Throwable {
+        void verifyFindByQuery() {
             val service = new CasRegisteredService();
             service.setId(RandomUtils.nextLong());
             service.setName("%s%d".formatted(UUID.randomUUID().toString(), service.getId()));
@@ -117,7 +117,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifyFindByName() throws Throwable {
+        void verifyFindByName() {
             val registeredService = new CasRegisteredService();
             registeredService.setId(RandomUtils.nextLong());
             registeredService.setName(UUID.randomUUID().toString());
@@ -133,7 +133,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifyFindByNameAndType() throws Throwable {
+        void verifyFindByNameAndType() {
             val registeredService = new CasRegisteredService();
             registeredService.setId(RandomUtils.nextLong());
             registeredService.setName(UUID.randomUUID().toString());
@@ -159,7 +159,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifyEmptyCacheFirst() throws Throwable {
+        void verifyEmptyCacheFirst() {
             val registeredService = new CasRegisteredService();
             registeredService.setId(RandomUtils.nextLong());
             registeredService.setName(UUID.randomUUID().toString());
@@ -180,7 +180,7 @@ class DefaultServicesManagerTests {
         private ChainingServicesManager servicesManager;
         
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             val indexedServicesManager = (IndexableServicesManager) servicesManager.getServiceManagers().getFirst();
             indexedServicesManager.clearIndexedServices();
             assertEquals(0, indexedServicesManager.countIndexedServices());

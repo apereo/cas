@@ -92,13 +92,13 @@ class EncryptedTranscoderTests {
     }
 
     @Test
-    void verifyBadDecoding() throws Throwable {
+    void verifyBadDecoding() {
         val encoder = new EncryptedTranscoder(mock(CipherBean.class));
         assertThrows(IOException.class, () -> encoder.decode(null));
     }
 
     @Test
-    void verifyBadCipher() throws Throwable {
+    void verifyBadCipher() {
         val bean = mock(CipherBean.class);
         when(bean.decrypt(any())).thenThrow(IllegalArgumentException.class);
         when(bean.encrypt(any())).thenThrow(IllegalArgumentException.class);
@@ -108,7 +108,7 @@ class EncryptedTranscoderTests {
     }
 
     @Test
-    void verifyProxy() throws Throwable {
+    void verifyProxy() {
         val bean = mock(CipherBean.class);
         val factory = new ProxyFactoryBean();
         factory.setTargetClass(CipherBean.class);

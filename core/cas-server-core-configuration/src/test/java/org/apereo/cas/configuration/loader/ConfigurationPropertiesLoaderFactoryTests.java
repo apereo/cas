@@ -36,7 +36,7 @@ class ConfigurationPropertiesLoaderFactoryTests {
     private Environment environment;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val resource = new ClassPathResource("directory/cas.groovy");
         val configurationLoaders = CasConfigurationPropertiesSourceLocator.getConfigurationPropertiesLoaders();
         val foundLoader = configurationLoaders

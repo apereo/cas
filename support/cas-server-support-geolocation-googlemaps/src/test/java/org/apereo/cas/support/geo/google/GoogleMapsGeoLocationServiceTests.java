@@ -51,7 +51,7 @@ class GoogleMapsGeoLocationServiceTests {
     }
 
     @Test
-    void verifyGeocode() throws Throwable {
+    void verifyGeocode() {
         val service = new GoogleMapsGeoLocationService(mock(GeoApiContext.class)) {
             @Override
             protected GeocodingResult[] reverseGeocode(final LatLng latlng) {

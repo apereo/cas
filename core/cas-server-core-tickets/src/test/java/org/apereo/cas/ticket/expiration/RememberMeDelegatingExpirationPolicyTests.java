@@ -101,7 +101,7 @@ class RememberMeDelegatingExpirationPolicyTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifyTicketExpirationWithoutRememberMe() throws Throwable {
+    void verifyTicketExpirationWithoutRememberMe() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertFalse(t.isExpired());
@@ -121,7 +121,7 @@ class RememberMeDelegatingExpirationPolicyTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifyTicketTTLWithoutRememberMe() throws Throwable {
+    void verifyTicketTTLWithoutRememberMe() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertEquals(DEFAULT_TTL, expirationPolicy.getTimeToLive(t));
@@ -136,7 +136,7 @@ class RememberMeDelegatingExpirationPolicyTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, RememberMeDelegatingExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);

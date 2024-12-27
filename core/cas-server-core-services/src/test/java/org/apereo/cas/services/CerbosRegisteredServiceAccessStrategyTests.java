@@ -46,7 +46,7 @@ class CerbosRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val requestId = UUID.randomUUID().toString();
         val strategy = new CerbosRegisteredServiceAccessStrategy();
         strategy.setApiUrl("http://localhost:3592");

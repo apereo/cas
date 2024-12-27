@@ -88,7 +88,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyCasAuthenticationWithNoClientInfo() throws Throwable {
+    void verifyCasAuthenticationWithNoClientInfo() {
         assertRepositoryIsEmpty();
         ClientInfoHolder.setClientInfo(null);
         val event = new CasAuthenticationTransactionFailureEvent(this,
@@ -99,7 +99,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyCasAuthenticationWithGeo() throws Throwable {
+    void verifyCasAuthenticationWithGeo() {
         request.addHeader("geolocation", "34,45,1,12345");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
@@ -114,7 +114,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyCasAuthenticationTransactionFailureEvent() throws Throwable {
+    void verifyCasAuthenticationTransactionFailureEvent() {
         val event = new CasAuthenticationTransactionFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
@@ -126,7 +126,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyTicketGrantingTicketCreated() throws Throwable {
+    void verifyTicketGrantingTicketCreated() {
         assertRepositoryIsEmpty();
         val tgt = new MockTicketGrantingTicket("casuser");
         val event = new CasTicketGrantingTicketCreatedEvent(this, tgt, ClientInfoHolder.getClientInfo());
@@ -135,7 +135,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyCasAuthenticationPolicyFailureEvent() throws Throwable {
+    void verifyCasAuthenticationPolicyFailureEvent() {
         assertRepositoryIsEmpty();
 
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
@@ -150,7 +150,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyCasRiskyAuthenticationDetectedEvent() throws Throwable {
+    void verifyCasRiskyAuthenticationDetectedEvent() {
         assertRepositoryIsEmpty();
         val event = new CasRiskyAuthenticationDetectedEvent(this,
             CoreAuthenticationTestUtils.getAuthentication(),
@@ -161,7 +161,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyCasTicketGrantingTicketDestroyed() throws Throwable {
+    void verifyCasTicketGrantingTicketDestroyed() {
         assertRepositoryIsEmpty();
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
             new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
@@ -171,7 +171,7 @@ class CasAuthenticationEventListenerTests {
 
 
     @Test
-    void verifyEventRepositoryHasOneEventOnly() throws Throwable {
+    void verifyEventRepositoryHasOneEventOnly() {
         assertRepositoryIsEmpty();
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
             new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
@@ -182,7 +182,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyCasTicketGrantingTicketDestroyedHasClientInfo() throws Throwable {
+    void verifyCasTicketGrantingTicketDestroyedHasClientInfo() {
         assertRepositoryIsEmpty();
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
             new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());

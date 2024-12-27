@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Attributes")
 class HashCodeCacheKeyTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val key = new HashCodeCacheKey(System.nanoTime(), RandomUtils.nextInt());
         assertEquals(key, key);
         assertNotEquals(key, new Object());

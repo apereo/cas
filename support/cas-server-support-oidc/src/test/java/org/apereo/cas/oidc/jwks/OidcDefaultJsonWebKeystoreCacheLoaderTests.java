@@ -48,7 +48,7 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyNoWebKeys() throws Throwable {
+    void verifyNoWebKeys() {
         val jwks = new JsonWebKeySet();
         val loader = mock(OidcDefaultJsonWebKeystoreCacheLoader.class);
         when(loader.buildJsonWebKeySet(any(OidcJsonWebKeyCacheKey.class))).thenReturn(Optional.of(jwks));
@@ -77,7 +77,7 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val publicJsonWebKey1 = oidcDefaultJsonWebKeystoreCache.get(
             new OidcJsonWebKeyCacheKey("https://sso.example.org/cas/oidc", OidcJsonWebKeyUsage.SIGNING));
         assertNotNull(publicJsonWebKey1);

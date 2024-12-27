@@ -53,7 +53,7 @@ class MultifactorAuthnTrustedDeviceFingerprintConfigurationTests {
     private DeviceFingerprintExtractor deviceFingerprintUserAgentComponentExtractor;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(deviceFingerprintClientIpComponentExtractor);
         assertNotNull(deviceFingerprintGeoLocationComponentExtractor);
         assertNotNull(deviceFingerprintUserAgentComponentExtractor);

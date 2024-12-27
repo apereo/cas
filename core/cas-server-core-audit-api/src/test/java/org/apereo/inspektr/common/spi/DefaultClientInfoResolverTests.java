@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class DefaultClientInfoResolverTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("223.456.789.000");
         request.setLocalAddr("123.456.789.000");

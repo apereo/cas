@@ -51,7 +51,7 @@ class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTo
     }
     
     @Test
-    void verifyCreateUniqueNames() throws Throwable {
+    void verifyCreateUniqueNames() {
         var acct1 = getAccount("verifyCreateUniqueNames", UUID.randomUUID().toString());
         assertNotNull(acct1);
         val repo = getRegistry("verifyCreate");

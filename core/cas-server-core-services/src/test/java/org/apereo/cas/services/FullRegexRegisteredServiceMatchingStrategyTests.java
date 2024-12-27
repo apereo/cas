@@ -36,7 +36,7 @@ class FullRegexRegisteredServiceMatchingStrategyTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val service = RegisteredServiceTestUtils.getRegisteredService("https://.*");
         val strategy = new FullRegexRegisteredServiceMatchingStrategy();
         assertTrue(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL));
@@ -44,7 +44,7 @@ class FullRegexRegisteredServiceMatchingStrategyTests {
     }
 
     @Test
-    void verifyPattern2() throws Throwable {
+    void verifyPattern2() {
         val service = RegisteredServiceTestUtils.getRegisteredService("\\d\\d\\d");
         val strategy = new FullRegexRegisteredServiceMatchingStrategy();
         assertFalse(strategy.matches(service, "https://google123.com"));

@@ -64,7 +64,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    void verifyCookiePathNotModified() throws Throwable {
+    void verifyCookiePathNotModified() {
         val request = new MockHttpServletRequest();
         var response = new MockHttpServletResponse();
         var gen1 = CookieUtils.buildCookieRetrievingGenerator(getCookieGenerationContext("/custom/path/"));
@@ -77,7 +77,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    void verifyRemoveAllCookiesByName() throws Throwable {
+    void verifyRemoveAllCookiesByName() {
         val request = new MockHttpServletRequest();
         var response = new MockHttpServletResponse();
 
@@ -98,7 +98,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    void verifyExistingCookieInResponse() throws Throwable {
+    void verifyExistingCookieInResponse() {
         val context = getCookieGenerationContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
@@ -118,7 +118,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    void verifyOtherSetCookieHeaderIsNotDiscarded() throws Throwable {
+    void verifyOtherSetCookieHeaderIsNotDiscarded() {
         val context = getCookieGenerationContext();
 
         val gen = CookieUtils.buildCookieRetrievingGenerator(context);
@@ -141,7 +141,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    void verifyCookieValueMissing() throws Throwable {
+    void verifyCookieValueMissing() {
         val context = getCookieGenerationContext();
         context.setName(StringUtils.EMPTY);
 
@@ -169,7 +169,7 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
-    void verifyCookieValueByHeader() throws Throwable {
+    void verifyCookieValueByHeader() {
         val context = getCookieGenerationContext();
 
         val gen = CookieUtils.buildCookieRetrievingGenerator(context);
@@ -217,7 +217,7 @@ class CookieRetrievingCookieGeneratorTests {
 
     @ParameterizedTest
     @ValueSource(strings = {"-1", "5000", "PT1H"})
-    void verifyCookieMaxAge(final String maxAge) throws Throwable {
+    void verifyCookieMaxAge(final String maxAge) {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = CookieUtils.buildCookieGenerationContext(new CookieProperties()

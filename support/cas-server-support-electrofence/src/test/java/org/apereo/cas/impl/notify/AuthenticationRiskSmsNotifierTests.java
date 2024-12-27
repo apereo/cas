@@ -48,7 +48,7 @@ class AuthenticationRiskSmsNotifierTests extends BaseAuthenticationRequestRiskCa
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         authenticationRiskSmsNotifier.setClientInfo(ClientInfoHolder.getClientInfo());
         authenticationRiskSmsNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone", List.of("3487244312")));

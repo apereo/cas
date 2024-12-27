@@ -52,7 +52,7 @@ class ChainingRegisteredServiceAttributeReleaseActivationCriteriaTests {
     }
 
     @Test
-    void verifyPolicyWithAND() throws Throwable {
+    void verifyPolicyWithAND() {
         val chain = new ChainingRegisteredServiceAttributeReleaseActivationCriteria().setOperator(LogicalOperatorTypes.AND);
         val criteria1 = new AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria()
             .setRequiredAttributes(Map.of("memberOf", List.of("sports")));
@@ -63,7 +63,7 @@ class ChainingRegisteredServiceAttributeReleaseActivationCriteriaTests {
     }
 
     @Test
-    void verifyPolicyWithOR() throws Throwable {
+    void verifyPolicyWithOR() {
         val chain = new ChainingRegisteredServiceAttributeReleaseActivationCriteria().setOperator(LogicalOperatorTypes.OR);
         val criteria2 = new AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria()
             .setRequiredAttributes(Map.of("memberOf", List.of("staff")));

@@ -94,7 +94,7 @@ class DuoSecurityAdminApiEndpointTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val endpoint = new DuoSecurityAdminApiEndpoint(casProperties, this.applicationContext);
         try (val webServer = new MockWebServer(8443,
             new ByteArrayResource("{\"stat\": \"OK\" }".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
@@ -135,7 +135,7 @@ class DuoSecurityAdminApiEndpointTests {
     }
 
     @Test
-    void verifyUserUpdates() throws Throwable {
+    void verifyUserUpdates() {
         val endpoint = new DuoSecurityAdminApiEndpoint(casProperties, this.applicationContext);
         try (val webServer = new MockWebServer(8443)) {
             webServer.responseBodySupplier(() -> new ClassPathResource("duoAdminApiResponse-user.json"));
@@ -148,7 +148,7 @@ class DuoSecurityAdminApiEndpointTests {
     }
 
     @Test
-    void verifyDuoDeviceManager() throws Exception {
+    void verifyDuoDeviceManager() {
         try (val webServer = new MockWebServer(8443)) {
             webServer.responseBodySupplier(() -> new ClassPathResource("duoAdminApiResponse-user.json"));
             webServer.start();

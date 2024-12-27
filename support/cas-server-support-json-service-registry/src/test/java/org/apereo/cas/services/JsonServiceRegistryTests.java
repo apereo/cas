@@ -160,7 +160,7 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
             WSFederationRegisteredService.class);
     }
 
-    private AbstractResourceBasedServiceRegistry buildResourceBasedServiceRegistry(final Resource location) throws Exception {
+    private AbstractResourceBasedServiceRegistry buildResourceBasedServiceRegistry(final Resource location) {
         return new JsonServiceRegistry(location, WatcherService.noOp(),
             applicationContext,
             new NoOpRegisteredServiceReplicationStrategy(),

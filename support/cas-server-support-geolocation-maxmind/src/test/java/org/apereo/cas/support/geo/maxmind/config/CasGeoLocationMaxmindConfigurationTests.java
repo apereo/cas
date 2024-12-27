@@ -32,7 +32,7 @@ class CasGeoLocationMaxmindConfigurationTests {
     private GeoLocationService geoLocationService;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(geoLocationService);
     }
 }

@@ -107,13 +107,13 @@ class X509SubjectDNPrincipalResolverTests {
 
 
     @Test
-    void verifySupport() throws Throwable {
+    void verifySupport() {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
 
     @Test
-    void verifySupportFalse() throws Throwable {
+    void verifySupportFalse() {
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 }

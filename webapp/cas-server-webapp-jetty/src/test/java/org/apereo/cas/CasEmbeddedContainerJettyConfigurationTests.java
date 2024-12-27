@@ -34,7 +34,7 @@ class CasEmbeddedContainerJettyConfigurationTests {
     private JettyServerCustomizer casJettyServerCustomizer;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         assertNotNull(casJettyServerCustomizer);
     }
 

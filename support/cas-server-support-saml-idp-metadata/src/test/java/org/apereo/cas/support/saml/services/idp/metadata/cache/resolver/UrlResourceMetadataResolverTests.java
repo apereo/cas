@@ -36,7 +36,7 @@ class UrlResourceMetadataResolverTests {
     class ForceMetadatRefreshTests extends BaseSamlIdPServicesTests {
 
         @Test
-        void verifyResolverSupports() throws Throwable {
+        void verifyResolverSupports() {
             try (val webServer = new MockWebServer(new ClassPathResource("sample-metadata.xml"))) {
                 webServer.start();
                 val resolver = getMetadataResolver();
@@ -84,7 +84,7 @@ class UrlResourceMetadataResolverTests {
         }
 
         @Test
-        void verifyResolverResolvesFailsAccess() throws Throwable {
+        void verifyResolverResolvesFailsAccess() {
             val resolver = getMetadataResolver();
             try (val webServer = new MockWebServer(new ClassPathResource("sample-metadata.xml"))) {
                 webServer.start();

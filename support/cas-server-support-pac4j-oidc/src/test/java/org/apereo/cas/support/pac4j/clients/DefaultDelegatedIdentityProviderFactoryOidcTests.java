@@ -34,7 +34,7 @@ class DefaultDelegatedIdentityProviderFactoryOidcTests {
     })
     class GitHubClients extends BaseTests {
         @Test
-        void verifyGithubClient() throws Throwable {
+        void verifyGithubClient() {
             val clients = delegatedIdentityProviderFactory.build();
             assertEquals(1, clients.size());
             val client = (GitHubClient) clients.iterator().next();
@@ -50,7 +50,7 @@ class DefaultDelegatedIdentityProviderFactoryOidcTests {
     })
     class OAuth20Clients extends BaseTests {
         @Test
-        void verifyFactory() throws Throwable {
+        void verifyFactory() {
             val clients = delegatedIdentityProviderFactory.build();
             assertEquals(1, clients.size());
         }
@@ -72,7 +72,7 @@ class DefaultDelegatedIdentityProviderFactoryOidcTests {
     })
     class AppleClients extends BaseTests {
         @Test
-        void verifyClient() throws Throwable {
+        void verifyClient() {
             val clients = delegatedIdentityProviderFactory.build();
 
             assertEquals(1, clients.size());
@@ -113,7 +113,7 @@ class DefaultDelegatedIdentityProviderFactoryOidcTests {
     })
     class OidcClients extends BaseTests {
         @Test
-        void verifyClient() throws Throwable {
+        void verifyClient() {
             val clients = delegatedIdentityProviderFactory.build();
             assertEquals(4, clients.size());
         }
@@ -129,7 +129,7 @@ class DefaultDelegatedIdentityProviderFactoryOidcTests {
     })
     class EagerInitialization extends BaseTests {
         @Test
-        void verifyEagerInit() throws Throwable {
+        void verifyEagerInit() {
             val clients1 = List.copyOf(delegatedIdentityProviderFactory.build());
             assertEquals(2, clients1.size());
             val clients2 = List.copyOf(delegatedIdentityProviderFactory.build());
@@ -188,7 +188,7 @@ class DefaultDelegatedIdentityProviderFactoryOidcTests {
     })
     class IdentifiableClients extends BaseTests {
         @Test
-        void verifyFactoryForIdentifiableClients() throws Throwable {
+        void verifyFactoryForIdentifiableClients() {
             val clients = delegatedIdentityProviderFactory.build();
             assertEquals(13, clients.size());
         }
@@ -204,7 +204,7 @@ class DefaultDelegatedIdentityProviderFactoryOidcTests {
     })
     class LazyInitialization extends BaseTests {
         @Test
-        void verifyLaziness() throws Throwable {
+        void verifyLaziness() {
             val clients1 = List.copyOf(delegatedIdentityProviderFactory.build());
             assertEquals(2, clients1.size());
             val clients2 = List.copyOf(delegatedIdentityProviderFactory.build());

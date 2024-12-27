@@ -16,20 +16,20 @@ import static org.junit.jupiter.api.Assertions.*;
 class InvalidTicketExceptionTests {
 
     @Test
-    void verifyCodeOnlyMessageNotNull() throws Throwable {
+    void verifyCodeOnlyMessageNotNull() {
         val t = new InvalidTicketException("ST-InvalidTicketId");
         assertEquals("INVALID_TICKET", t.getCode());
         assertNotNull(t.getMessage());
     }
 
     @Test
-    void verifyCodeNoThrowable() throws Throwable {
+    void verifyCodeNoThrowable() {
         val t = new InvalidTicketException(new IllegalArgumentException("FailsOp"), "InvalidTicket");
         assertEquals("INVALID_TICKET", t.getCode());
     }
 
     @Test
-    void verifyCodeWithCause() throws Throwable {
+    void verifyCodeWithCause() {
         val cause = new InvalidCookieException("forbidden");
         val t = new InvalidTicketException(cause, "InvalidTicketId");
         assertEquals(cause.getCode(), t.getCode());

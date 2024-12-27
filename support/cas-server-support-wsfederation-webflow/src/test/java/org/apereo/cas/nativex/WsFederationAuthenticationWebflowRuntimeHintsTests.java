@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class WsFederationAuthenticationWebflowRuntimeHintsTests {
 
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new WsFederationAuthenticationWebflowRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.serialization().onType(WsFedClient.class).test(hints));

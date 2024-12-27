@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 @Tag("Authentication")
 class ServiceTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val policy = mock(Service.class);
         doCallRealMethod().when(policy).setPrincipal(anyString());
         assertDoesNotThrow(() -> policy.setPrincipal("casuser"));

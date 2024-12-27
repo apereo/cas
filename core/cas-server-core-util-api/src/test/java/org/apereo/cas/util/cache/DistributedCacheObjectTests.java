@@ -39,7 +39,7 @@ class DistributedCacheObjectTests {
 
 
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val o = DistributedCacheObject.<String>builder()
             .value("objectValue")
             .publisherIdentifier(new PublisherIdentifier())
@@ -55,7 +55,7 @@ class DistributedCacheObjectTests {
     }
 
     @Test
-    void verifyNullValue() throws Throwable {
+    void verifyNullValue() {
         val o = DistributedCacheObject.<String>builder()
             .value("objectValue")
             .publisherIdentifier(new PublisherIdentifier())

@@ -57,7 +57,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
     private TicketRegistry ticketRegistry;
 
     @Test
-    void verifyNoWa() throws Throwable {
+    void verifyNoWa() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         assertThrows(UnauthorizedAuthenticationException.class,
@@ -65,7 +65,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
     }
 
     @Test
-    void verifyLogoutWithReply() throws Throwable {
+    void verifyLogoutWithReply() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -85,7 +85,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
     }
 
     @Test
-    void verifyUnauthzServicesWithUnknownRealm() throws Throwable {
+    void verifyUnauthzServicesWithUnknownRealm() {
         val request = new MockHttpServletRequest();
 
         val registeredService = getWsFederationRegisteredService();
@@ -99,7 +99,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
     }
 
     @Test
-    void verifyUnauthzServicesWithMismatchedRealm() throws Throwable {
+    void verifyUnauthzServicesWithMismatchedRealm() {
         val request = new MockHttpServletRequest();
 
         val registeredService = getWsFederationRegisteredService("custom-realm");
@@ -114,7 +114,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
 
 
     @Test
-    void verifyLogoutWithoutReply() throws Throwable {
+    void verifyLogoutWithoutReply() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

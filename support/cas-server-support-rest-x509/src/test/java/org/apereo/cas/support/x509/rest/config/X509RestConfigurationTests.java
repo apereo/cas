@@ -75,7 +75,7 @@ class X509RestConfigurationTests {
     private RestHttpRequestCredentialFactory x509RestTlsClientCert;
     
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(x509RestMultipartBody);
         assertNotNull(x509RestRequestHeader);
         assertNotNull(x509RestTlsClientCert);

@@ -56,7 +56,7 @@ class DefaultAuditPrincipalResolverTests {
     
     @ParameterizedTest
     @MethodSource("getAuditParameters")
-    void verifyOperation(final Object argument, final Object returnValue) throws Exception {
+    void verifyOperation(final Object argument, final Object returnValue) {
         if (argument instanceof final MockRequestContext ctx) {
             ctx.setApplicationContext(applicationContext);
         }
@@ -67,7 +67,7 @@ class DefaultAuditPrincipalResolverTests {
 
     @ParameterizedTest
     @MethodSource("getAuditReturnValueParameters")
-    void verifyReturnValue(final Object returnValue) throws Exception {
+    void verifyReturnValue(final Object returnValue) {
         val jp = mockJoinPointWithFirstArg(new Object());
         val principalId = auditablePrincipalResolver.resolveFrom(jp, returnValue);
         assertNotEquals(PrincipalResolver.UNKNOWN_USER, principalId);

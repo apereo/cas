@@ -27,7 +27,7 @@ class InterruptTrackingCookieCipherExecutorTests {
     private PropertyBoundCipherExecutor interruptCookieCipherExecutor;
 
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val encoded = interruptCookieCipherExecutor.encode("ST-1234567890");
         assertEquals("ST-1234567890", interruptCookieCipherExecutor.decode(encoded));
         assertNotNull(interruptCookieCipherExecutor.getName());

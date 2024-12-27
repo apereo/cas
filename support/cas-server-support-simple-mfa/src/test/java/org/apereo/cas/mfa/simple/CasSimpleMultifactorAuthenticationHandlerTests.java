@@ -64,7 +64,7 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
     private ServicesManager servicesManager;
 
     @Test
-    void verifyFailsToFindToken() throws Throwable {
+    void verifyFailsToFindToken() {
         val id = UUID.randomUUID().toString();
         val credential = new CasSimpleMultifactorTokenCredential(id);
         assertThrows(MultifactorAuthenticationFailedException.class,

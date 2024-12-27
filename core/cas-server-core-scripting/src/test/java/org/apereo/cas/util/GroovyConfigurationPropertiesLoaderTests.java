@@ -35,7 +35,7 @@ class GroovyConfigurationPropertiesLoaderTests {
     private Environment environment;
     
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val loaders = CasConfigurationPropertiesSourceLocator.getConfigurationPropertiesLoaders();
         val groovyLoader = loaders
             .stream()

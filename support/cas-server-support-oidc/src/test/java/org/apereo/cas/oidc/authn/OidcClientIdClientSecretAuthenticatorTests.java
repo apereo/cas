@@ -38,7 +38,7 @@ class OidcClientIdClientSecretAuthenticatorTests extends AbstractOidcTests {
     private Authenticator authenticator;
 
     @Test
-    void verifyWithoutRequestingScopes() throws Throwable {
+    void verifyWithoutRequestingScopes() {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
         servicesManager.save(registeredService);
         val credentials = new UsernamePasswordCredentials(registeredService.getClientId(), registeredService.getClientSecret());
@@ -54,7 +54,7 @@ class OidcClientIdClientSecretAuthenticatorTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyWithRequestingScopes() throws Throwable {
+    void verifyWithRequestingScopes() {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
         registeredService.setScopes(Set.of("openid", "MyScope"));
         servicesManager.save(registeredService);

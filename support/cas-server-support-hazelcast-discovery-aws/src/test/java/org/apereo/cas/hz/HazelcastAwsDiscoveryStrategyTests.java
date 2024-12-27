@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(CasTestExtension.class)
 class HazelcastAwsDiscoveryStrategyTests {
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val strategy = new HazelcastAwsDiscoveryStrategy();
         val properties = new HazelcastClusterProperties();
         val aws = properties.getDiscovery().getAws();

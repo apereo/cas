@@ -44,7 +44,7 @@ class CasPersonDirectoryConfigurationMergeAggregationTests {
     private PersonAttributeDao aggregatingAttributeRepository;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(aggregatingAttributeRepository);
         val person = aggregatingAttributeRepository.getPerson("casuser");
         assertNotNull(person);

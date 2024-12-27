@@ -44,7 +44,7 @@ class JpaPersistenceUnitProviderTests {
 
     @Test
     @SetSystemProperty(key = CasRuntimeHintsRegistrar.SYSTEM_PROPERTY_SPRING_AOT_PROCESSING, value = "true")
-    void verifyNullableEntityManager() throws Exception {
+    void verifyNullableEntityManager() {
         val unitProvider = new DummyJpaPersistenceUnitProvider(applicationContext, null);
         val entityManager = unitProvider.recreateEntityManagerIfNecessary("DummyUnit");
         assertNotNull(entityManager);

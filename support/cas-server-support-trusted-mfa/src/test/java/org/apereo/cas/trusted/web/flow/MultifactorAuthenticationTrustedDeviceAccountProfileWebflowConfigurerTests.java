@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ImportAutoConfiguration(CasMultifactorAuthnTrustAutoConfiguration.class)
 class MultifactorAuthenticationTrustedDeviceAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val accountFlow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         assertNotNull(accountFlow);
         val state = (ViewState) accountFlow.getState(CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);

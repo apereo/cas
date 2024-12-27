@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SimpleUrlValidatorFactoryBeanTests {
 
     @Test
-    void verifyValidation() throws Throwable {
+    void verifyValidation() {
         val validator = new SimpleUrlValidatorFactoryBean(false).getObject();
         assertNotNull(validator);
         assertTrue(validator.isValid("http://www.demo.com/logout"));
@@ -22,7 +22,7 @@ class SimpleUrlValidatorFactoryBeanTests {
     }
 
     @Test
-    void verifyValidationWithLocalUrlAllowed() throws Throwable {
+    void verifyValidationWithLocalUrlAllowed() {
         val validator = new SimpleUrlValidatorFactoryBean(true).getObject();
         assertNotNull(validator);
         assertTrue(validator.isValid("http://www.demo.com/logout"));
@@ -30,7 +30,7 @@ class SimpleUrlValidatorFactoryBeanTests {
     }
 
     @Test
-    void verifyValidationWithRegEx() throws Throwable {
+    void verifyValidationWithRegEx() {
         val validator = new SimpleUrlValidatorFactoryBean(false, "\\w{2}\\.\\w{4}\\.authority", true).getObject();
         assertNotNull(validator);
         assertTrue(validator.isValid("http://my.test.authority/logout"));
@@ -40,7 +40,7 @@ class SimpleUrlValidatorFactoryBeanTests {
     }
 
     @Test
-    void verifyValidationWithRegExCaseInsensitiv() throws Throwable {
+    void verifyValidationWithRegExCaseInsensitiv() {
         val validator = new SimpleUrlValidatorFactoryBean(false, "\\w{2}\\.\\w{4}\\.authority", false).getObject();
         assertNotNull(validator);
         assertTrue(validator.isValid("http://my.test.authority/logout"));
@@ -50,7 +50,7 @@ class SimpleUrlValidatorFactoryBeanTests {
     }
 
     @Test
-    void verifyValidationWithRegExAndLocalUrlAllowed() throws Throwable {
+    void verifyValidationWithRegExAndLocalUrlAllowed() {
         val validator = new SimpleUrlValidatorFactoryBean(true, "\\w{2}\\.\\w{4}\\.authority", true).getObject();
         assertNotNull(validator);
         assertTrue(validator.isValid("http://my.test.authority/logout"));

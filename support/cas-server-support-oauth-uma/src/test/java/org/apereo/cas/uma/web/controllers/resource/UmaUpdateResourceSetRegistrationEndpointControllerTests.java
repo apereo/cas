@@ -68,7 +68,7 @@ class UmaUpdateResourceSetRegistrationEndpointControllerTests extends BaseUmaEnd
     }
 
     @Test
-    void verifyNoAuth() throws Throwable {
+    void verifyNoAuth() {
         var body = createUmaResourceRegistrationRequest(1000).toJson();
         val response = umaUpdateResourceSetRegistrationEndpointController.updateResourceSet(1000, body,
             new MockHttpServletRequest(), new MockHttpServletResponse());

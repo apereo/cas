@@ -75,7 +75,7 @@ class ConfigurationTests {
     private AuthenticationHandler rejectUsersAuthenticationHandler;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(fileAuthenticationHandler);
         assertNotNull(groovyResourceAuthenticationHandler);
         assertNotNull(jsonResourceAuthenticationHandler);

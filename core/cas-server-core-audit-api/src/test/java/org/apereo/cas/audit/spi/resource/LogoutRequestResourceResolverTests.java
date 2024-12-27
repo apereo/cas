@@ -24,7 +24,7 @@ class LogoutRequestResourceResolverTests {
     private static final String TGT_ID = "TGT-0";
 
     @Test
-    void verifyLogoutRequest() throws Throwable {
+    void verifyLogoutRequest() {
         val resolver = getResolver();
         val jp = mock(JoinPoint.class);
         val tgt = mock(TicketGrantingTicket.class);
@@ -34,7 +34,7 @@ class LogoutRequestResourceResolverTests {
     }
 
     @Test
-    void verifyException() throws Throwable {
+    void verifyException() {
         val resolver = getResolver();
         val jp = mock(JoinPoint.class);
         val tgt = mock(TicketGrantingTicket.class);

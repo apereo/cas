@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowConfig")
 class CasWebflowConfigurerTests {
     @Test
-    void verifyNoAutoConfig() throws Throwable {
+    void verifyNoAutoConfig() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -61,7 +61,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyFailAutoConfig() throws Throwable {
+    void verifyFailAutoConfig() {
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             mock(FlowDefinitionRegistry.class), new StaticApplicationContext(), new CasConfigurationProperties()) {
             @Override
@@ -73,7 +73,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyMissingFlow() throws Throwable {
+    void verifyMissingFlow() {
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             null, new StaticApplicationContext(), new CasConfigurationProperties()) {
         };
@@ -82,7 +82,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyNoLoginFlow() throws Throwable {
+    void verifyNoLoginFlow() {
         val registry = mock(FlowDefinitionRegistry.class);
         when(registry.getFlowDefinitionIds()).thenReturn(ArrayUtils.EMPTY_STRING_ARRAY);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
@@ -92,7 +92,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyTransition() throws Throwable {
+    void verifyTransition() {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
@@ -112,7 +112,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyNoEvalAction() throws Throwable {
+    void verifyNoEvalAction() {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(null,
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
@@ -122,7 +122,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyDuplicateDecisionState() throws Throwable {
+    void verifyDuplicateDecisionState() {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
@@ -136,7 +136,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyDuplicateEndState() throws Throwable {
+    void verifyDuplicateEndState() {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
@@ -150,7 +150,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyDuplicateViewState() throws Throwable {
+    void verifyDuplicateViewState() {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
@@ -165,7 +165,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifySubflowState() throws Throwable {
+    void verifySubflowState() {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
@@ -178,7 +178,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyDuplicateSubflowState() throws Throwable {
+    void verifyDuplicateSubflowState() {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
@@ -192,7 +192,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyRedirectEndState() throws Throwable {
+    void verifyRedirectEndState() {
         val registry = mock(FlowDefinitionRegistry.class);
         val services = mock(FlowBuilderServices.class);
         val viewFactory = mock(ViewFactory.class);
@@ -212,7 +212,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyDefaultTransition() throws Throwable {
+    void verifyDefaultTransition() {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
@@ -224,7 +224,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyMapping() throws Throwable {
+    void verifyMapping() {
         val registry = mock(FlowDefinitionRegistry.class);
         val fbs = mock(FlowBuilderServices.class);
         val parser = mock(ExpressionParser.class);
@@ -240,7 +240,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyContains() throws Throwable {
+    void verifyContains() {
         val registry = mock(FlowDefinitionRegistry.class);
         val fbs = mock(FlowBuilderServices.class);
         val cfg = new AbstractCasWebflowConfigurer(fbs,
@@ -252,7 +252,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyViewBinder() throws Throwable {
+    void verifyViewBinder() {
         val registry = mock(FlowDefinitionRegistry.class);
         val fbs = mock(FlowBuilderServices.class);
         val cfg = new AbstractCasWebflowConfigurer(fbs,
@@ -266,7 +266,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyCriteria() throws Throwable {
+    void verifyCriteria() {
         val registry = mock(FlowDefinitionRegistry.class);
         val fbs = mock(FlowBuilderServices.class);
         val cfg = new AbstractCasWebflowConfigurer(fbs,
@@ -282,7 +282,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyExpression() throws Throwable {
+    void verifyExpression() {
         val registry = mock(FlowDefinitionRegistry.class);
         val fbs = mock(FlowBuilderServices.class);
         when(fbs.getConversionService()).thenReturn(mock(ConversionService.class));
@@ -294,7 +294,7 @@ class CasWebflowConfigurerTests {
     }
 
     @Test
-    void verifyTransitionCreate() throws Throwable {
+    void verifyTransitionCreate() {
         val registry = mock(FlowDefinitionRegistry.class);
 
         val fbs = mock(FlowBuilderServices.class);

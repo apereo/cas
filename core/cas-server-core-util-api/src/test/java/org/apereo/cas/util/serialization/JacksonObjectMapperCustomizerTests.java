@@ -25,7 +25,7 @@ class JacksonObjectMapperCustomizerTests {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val customizer = JacksonObjectMapperCustomizer.mappedInjectableValues(Map.of());
         assertEquals(Ordered.LOWEST_PRECEDENCE, customizer.getOrder());
         assertDoesNotThrow(() -> customizer.customize(MAPPER));

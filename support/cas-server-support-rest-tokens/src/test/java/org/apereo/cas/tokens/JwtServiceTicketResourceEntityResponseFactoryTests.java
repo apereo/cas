@@ -30,7 +30,7 @@ class JwtServiceTicketResourceEntityResponseFactoryTests extends BaseTicketResou
     private CasWebSecurityConfigurer<Void> restProtocolEndpointConfigurer;
 
     @Test
-    void verifyEndpoints() throws Throwable {
+    void verifyEndpoints() {
         assertFalse(restProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
     

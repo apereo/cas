@@ -37,7 +37,7 @@ class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlIdPConfi
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(samlRegisteredServiceMetadataHealthIndicator);
         servicesManager.save(SamlIdPTestUtils.getSamlRegisteredService());
         val health = samlRegisteredServiceMetadataHealthIndicator.health();
@@ -45,7 +45,7 @@ class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlIdPConfi
     }
 
     @Test
-    void verifyFailsOperation() throws Throwable {
+    void verifyFailsOperation() {
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         samlRegisteredService.setMetadataLocation("unknown-metadata-location");
         servicesManager.save(samlRegisteredService);
@@ -54,7 +54,7 @@ class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlIdPConfi
     }
 
     @Test
-    void verifyFailsOperationWithMultiple() throws Throwable {
+    void verifyFailsOperationWithMultiple() {
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService(UUID.randomUUID().toString());
         samlRegisteredService.setMetadataLocation("unknown-metadata-location");
         servicesManager.save(samlRegisteredService);

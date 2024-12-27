@@ -46,7 +46,7 @@ class DelegatedAuthenticationSamlIdPResponseCustomizerTests {
     private ServicesManager servicesManager;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val assertion = mock(Assertion.class);
         val authnStatement = mock(AuthnStatement.class);
         val authnContext = mock(AuthnContext.class);

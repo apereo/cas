@@ -1,5 +1,6 @@
 package org.apereo.cas.util.function;
 
+import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -22,7 +23,7 @@ public interface ComposableFunction<T, R> extends Function<T, R> {
      * @param after Consumer that will receive the output of the function
      * @return after consumer with the output of the function passed in
      */
-    default Consumer<T> andNext(final Consumer<R> after) {
+    default CheckedConsumer<T> andNext(final Consumer<R> after) {
         Objects.requireNonNull(after);
         return t -> after.accept(apply(t));
     }

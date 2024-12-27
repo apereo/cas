@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DelegatedClientNameExtractorTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val extractor = DelegatedClientNameExtractor.fromHttpRequest();
         val request = new MockHttpServletRequest();
         request.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "CasClient");
@@ -29,7 +29,7 @@ class DelegatedClientNameExtractorTests {
     }
 
     @Test
-    void verifyRelayState() throws Exception {
+    void verifyRelayState() {
         val extractor = DelegatedClientNameExtractor.fromHttpRequest();
         val request = new MockHttpServletRequest();
         request.addParameter("RelayState", "https://example.org?client_name=CasClient");
@@ -38,7 +38,7 @@ class DelegatedClientNameExtractorTests {
     }
 
     @Test
-    void verifyBadRelayState() throws Exception {
+    void verifyBadRelayState() {
         val extractor = DelegatedClientNameExtractor.fromHttpRequest();
         val request = new MockHttpServletRequest();
         request.addParameter("RelayState", "https://....");

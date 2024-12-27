@@ -71,7 +71,7 @@ class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyNoTicket() throws Throwable {
+    void verifyNoTicket() {
         val request = new MockHttpServletRequest();
         assertTrue(singleSignOnSessionStatusEndpoint.ssoStatus(null, request).getStatusCode().is4xxClientError());
 

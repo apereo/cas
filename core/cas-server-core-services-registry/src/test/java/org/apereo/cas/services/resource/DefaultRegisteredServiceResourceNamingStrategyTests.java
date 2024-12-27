@@ -27,7 +27,7 @@ class DefaultRegisteredServiceResourceNamingStrategyTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val service = mock(RegisteredService.class);
         when(service.getId()).thenReturn(1000L);
         when(service.getName()).thenReturn("Test");

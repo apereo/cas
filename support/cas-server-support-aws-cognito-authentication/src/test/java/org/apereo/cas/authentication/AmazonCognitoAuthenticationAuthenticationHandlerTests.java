@@ -91,7 +91,7 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyHandler() throws Throwable {
+    void verifyHandler() {
         assertNotNull(amazonCognitoAuthenticationHandler);
     }
 

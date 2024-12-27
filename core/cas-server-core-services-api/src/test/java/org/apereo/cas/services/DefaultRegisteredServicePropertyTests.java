@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultRegisteredServicePropertyTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val prop = new DefaultRegisteredServiceProperty(List.of("p1", "p2"));
         prop.setValues(null);
         assertFalse(prop.contains("p2"));

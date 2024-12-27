@@ -54,7 +54,7 @@ class RestfulDelegatedIdentityProviderFactoryTests {
     })
     class InvalidStatusCodeTests extends BaseTests {
         @Test
-        void verifyBadStatusCode() throws Throwable {
+        void verifyBadStatusCode() {
             val props = casProperties.getAuthn().getPac4j().getRest();
             val port = URI.create(props.getUrl()).getPort();
             try (val webServer = new MockWebServer(port, HttpStatus.EXPECTATION_FAILED)) {

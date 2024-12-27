@@ -51,7 +51,7 @@ class OidcAssuranceScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val policy = new OidcAssuranceScopeAttributeReleasePolicy();
         val chain = new ChainingAttributeReleasePolicy();
         chain.addPolicies(policy);

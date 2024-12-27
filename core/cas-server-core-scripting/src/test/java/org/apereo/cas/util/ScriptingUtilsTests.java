@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 class ScriptingUtilsTests {
 
     @Test
-    void verifyInlineGroovyScript() throws Throwable {
+    void verifyInlineGroovyScript() {
         assertTrue(ScriptingUtils.isInlineGroovyScript("groovy {return 0}"));
         val script = ScriptingUtils.parseGroovyShellScript("return authentication.principal.id + ' @ ' + authentication.authenticationDate");
         val authn = mock(Authentication.class);
@@ -45,19 +45,19 @@ class ScriptingUtilsTests {
     }
 
     @Test
-    void verifyExternalGroovyScript() throws Throwable {
+    void verifyExternalGroovyScript() {
         assertTrue(ScriptingUtils.isExternalGroovyScript("file:/somefolder/sample.groovy"));
     }
 
     @Test
-    void verifyGroovyScriptShellExecution() throws Throwable {
+    void verifyGroovyScriptShellExecution() {
         val script = ScriptingUtils.parseGroovyShellScript("return name");
         val result = ScriptingUtils.executeGroovyShellScript(script, CollectionUtils.wrap("name", "casuser"), String.class);
         assertEquals("casuser", result);
     }
 
     @Test
-    void verifyGroovyExecutionFails() throws Throwable {
+    void verifyGroovyExecutionFails() {
         var result = ScriptingUtils.executeGroovyShellScript(Mockito.mock(Script.class), CollectionUtils.wrap("name", "casuser"), String.class);
         assertNull(result);
 
@@ -95,7 +95,7 @@ class ScriptingUtilsTests {
     }
 
     @Test
-    void verifyGroovyResourceFileNotFound() throws Throwable{
+    void verifyGroovyResourceFileNotFound() {
         val resource = new FileSystemResource(new File("missing.groovy"));
 
         val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
@@ -103,7 +103,7 @@ class ScriptingUtilsTests {
     }
 
     @Test
-    void verifyGroovyResourceClasspathExecution() throws Throwable {
+    void verifyGroovyResourceClasspathExecution() {
         val resource = new ClassPathResource("ScriptingUtilsTestGroovyScript.groovy");
 
         val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
@@ -111,14 +111,14 @@ class ScriptingUtilsTests {
     }
 
     @Test
-    void verifyGroovyResourceClasspathNotFound() throws Throwable {
+    void verifyGroovyResourceClasspathNotFound() {
         val resource = new ClassPathResource("missing.groovy");
         val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
         assertNull(result);
     }
 
     @Test
-    void verifyGetObject() throws Throwable {
+    void verifyGetObject() {
         var result = ScriptingUtils.getObjectInstanceFromGroovyResource(null, null, null, null);
         assertNull(result);
         result = ScriptingUtils.getObjectInstanceFromGroovyResource(mock(Resource.class), null, null, null);

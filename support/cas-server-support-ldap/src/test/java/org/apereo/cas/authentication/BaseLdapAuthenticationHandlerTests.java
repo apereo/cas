@@ -54,7 +54,7 @@ public abstract class BaseLdapAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyAuthenticateFailure() throws Throwable {
+    void verifyAuthenticateFailure() {
         assertNotEquals(0, ldapAuthenticationHandlers.size());
         assertThrowsWithRootCause(UncheckedException.class, FailedLoginException.class,
             () -> ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(handler ->

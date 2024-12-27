@@ -39,7 +39,7 @@ class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySavingSamlService() throws Throwable {
+    void verifySavingSamlService() {
         var service = new SamlRegisteredService();
         service.setName("SAML");
         service.setServiceId("http://mmoayyed.example.net");

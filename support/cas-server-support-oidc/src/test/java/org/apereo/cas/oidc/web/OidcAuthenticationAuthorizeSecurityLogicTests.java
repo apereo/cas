@@ -47,7 +47,7 @@ class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -64,7 +64,7 @@ class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyMaxAgeOperation() throws Throwable {
+    void verifyMaxAgeOperation() {
         val request = new MockHttpServletRequest();
         request.addParameter(OidcConstants.MAX_AGE, "5");
         val response = new MockHttpServletResponse();
@@ -85,7 +85,7 @@ class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyLoadNoProfileWhenNoTgtAvailable() throws Throwable {
+    void verifyLoadNoProfileWhenNoTgtAvailable() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 

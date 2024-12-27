@@ -97,11 +97,12 @@ class CasWebflowContextConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casDefaultFlowIdExtractor")
         public CasWebflowIdExtractor casDefaultFlowIdExtractor(
+            final CasConfigurationProperties casProperties,
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,
             @Qualifier(TenantsManager.BEAN_NAME)
             final TenantsManager tenantsManager) {
-            return new DefaultCasWebflowIdExtractor(tenantExtractor, tenantsManager);
+            return new DefaultCasWebflowIdExtractor(tenantExtractor, tenantsManager, casProperties);
         }
         
         @Bean

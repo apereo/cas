@@ -103,7 +103,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @Test
     @Order(3)
-    void verifyPutRequest() throws Throwable {
+    void verifyPutRequest() {
         val request = new MockHttpServletRequest();
         request.setMethod("PUT");
         val response = new MockHttpServletResponse();
@@ -113,7 +113,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @Test
     @Order(3)
-    void verifyBadRequest() throws Throwable {
+    void verifyBadRequest() {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
         val response = new MockHttpServletResponse();
@@ -124,7 +124,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @Test
     @Order(4)
-    void verifyPostRequest() throws Throwable {
+    void verifyPostRequest() {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
         val response = new MockHttpServletResponse();
@@ -178,7 +178,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
     @Test
     @Order(7)
-    void verifyPostRequestWithUnknownCookie() throws Throwable {
+    void verifyPostRequestWithUnknownCookie() {
         val response = new MockHttpServletResponse();
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());

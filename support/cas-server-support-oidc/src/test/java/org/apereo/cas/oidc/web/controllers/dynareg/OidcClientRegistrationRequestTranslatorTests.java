@@ -31,7 +31,7 @@ class OidcClientRegistrationRequestTranslatorTests {
         private OidcClientRegistrationRequestTranslator oidcClientRegistrationRequestTranslator;
 
         @Test
-        void verifyBadLogo() throws Throwable {
+        void verifyBadLogo() {
             val registrationRequest = new OidcClientRegistrationRequest();
             registrationRequest.setRedirectUris(List.of("https://apereo.github.io"));
             registrationRequest.setLogo("https://github.com/apereo.can");
@@ -40,7 +40,7 @@ class OidcClientRegistrationRequestTranslatorTests {
         }
 
         @Test
-        void verifyBadPolicy() throws Throwable {
+        void verifyBadPolicy() {
             val registrationRequest = new OidcClientRegistrationRequest();
             registrationRequest.setRedirectUris(List.of("https://apereo.github.io"));
             registrationRequest.setPolicyUri("https://github.com/apereo.can");

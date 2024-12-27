@@ -57,7 +57,7 @@ class OidcClientConfigurationEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyGetOperation() throws Throwable {
+    void verifyGetOperation() {
         val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();
@@ -97,7 +97,7 @@ class OidcClientConfigurationEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyBadRequest() throws Throwable {
+    void verifyBadRequest() {
         val request = getHttpRequestForEndpoint(OidcConstants.CLIENT_CONFIGURATION_URL);
         val response = new MockHttpServletResponse();
         val clientId = UUID.randomUUID().toString();

@@ -50,13 +50,13 @@ class RemoteAddressAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyAccountFails() throws Throwable {
+    void verifyAccountFails() {
         val credential = new RemoteAuthenticationCredential("---");
         assertThrows(FailedLoginException.class, () -> remoteAddressAuthenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
-    void verifyBadRange() throws Throwable {
+    void verifyBadRange() {
         val credential = new RemoteAuthenticationCredential("---");
         val handler = new RemoteAddressAuthenticationHandler(casProperties.getAuthn().getRemote(),
             servicesManager, PrincipalFactoryUtils.newPrincipalFactory());
@@ -65,7 +65,7 @@ class RemoteAddressAuthenticationHandlerTests {
     }
 
     @Test
-    void verifySupports() throws Throwable {
+    void verifySupports() {
         val credential = new RemoteAuthenticationCredential("172.217.12.206");
         assertTrue(remoteAddressAuthenticationHandler.supports(credential));
         assertTrue(remoteAddressAuthenticationHandler.supports(credential.getClass()));

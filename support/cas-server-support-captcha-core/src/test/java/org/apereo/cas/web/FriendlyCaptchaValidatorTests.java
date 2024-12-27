@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 class FriendlyCaptchaValidatorTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         try (val webServer = new MockWebServer(HttpStatus.OK, "{\"success\": true}")) {
             webServer.start();
             val response = UUID.randomUUID().toString();

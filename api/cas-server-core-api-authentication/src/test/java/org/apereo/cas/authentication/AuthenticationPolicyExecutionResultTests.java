@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AuthenticationPolicyExecutionResultTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertTrue(AuthenticationPolicyExecutionResult.success(true).isSuccess());
         assertTrue(AuthenticationPolicyExecutionResult.success().isSuccess());
         assertFalse(AuthenticationPolicyExecutionResult.failure().isSuccess());

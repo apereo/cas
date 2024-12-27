@@ -67,7 +67,7 @@ class OpenFGAAuthorizationPolicyTests {
     }
 
     @Test
-    void verifyStatusCode4xx() throws Throwable {
+    void verifyStatusCode4xx() {
         val strategy = new OpenFGAAuthorizationPolicy();
         strategy.setRelation("reader");
         strategy.setStoreId("01GFTZWEZZMAM0NHQQZWE6AN3H");

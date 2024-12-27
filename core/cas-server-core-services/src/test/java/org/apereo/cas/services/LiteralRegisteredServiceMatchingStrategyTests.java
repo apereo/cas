@@ -37,7 +37,7 @@ class LiteralRegisteredServiceMatchingStrategyTests {
     }
 
     @Test
-    void verifyOperationCaseInsensitive() throws Throwable {
+    void verifyOperationCaseInsensitive() {
         val service = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL);
         val strategy = new LiteralRegisteredServiceMatchingStrategy().setCaseInsensitive(true);
         assertTrue(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL));
@@ -46,7 +46,7 @@ class LiteralRegisteredServiceMatchingStrategyTests {
     }
 
     @Test
-    void verifyOperationCaseSensitive() throws Throwable {
+    void verifyOperationCaseSensitive() {
         val service = RegisteredServiceTestUtils.getRegisteredService(RegisteredServiceTestUtils.CONST_TEST_URL);
         val strategy = new LiteralRegisteredServiceMatchingStrategy().setCaseInsensitive(false);
         assertFalse(strategy.matches(service, RegisteredServiceTestUtils.CONST_TEST_URL.toUpperCase(Locale.ENGLISH)));

@@ -84,7 +84,7 @@ class GoogleCloudPubSubTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(1)
     @Tag("DisableTicketRegistryTestWithEncryption")
-    void verifyConverter() throws Throwable {
+    void verifyConverter() {
         val cmd = new AddTicketMessageQueueCommand(new PublisherIdentifier(),
             new TicketGrantingTicketImpl(UUID.randomUUID().toString(),
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE));

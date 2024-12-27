@@ -45,23 +45,23 @@ import static org.mockito.Mockito.*;
 @Tag("OAuth")
 class OAuth20UtilsTests extends AbstractOAuth20Tests {
     @Test
-    void verifyRequestHeaderBad() throws Throwable {
+    void verifyRequestHeaderBad() {
         assertNull(OAuth20Utils.getClientIdFromAuthenticatedProfile(new CommonProfile()));
     }
 
     @Test
-    void verifyUnauthzView() throws Throwable {
+    void verifyUnauthzView() {
         val mv = OAuth20Utils.produceUnauthorizedErrorView();
         assertEquals(HttpStatus.UNAUTHORIZED, mv.getStatus());
     }
 
     @Test
-    void verifyNoClientId() throws Throwable {
+    void verifyNoClientId() {
         assertNull(OAuth20Utils.getRegisteredOAuthServiceByClientId(mock(ServicesManager.class), null));
     }
 
     @Test
-    void verifyRequestParams() throws Throwable {
+    void verifyRequestParams() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -71,7 +71,7 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyRequestParam() throws Throwable {
+    void verifyRequestParam() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -83,7 +83,7 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyRequestParamJwt() throws Throwable {
+    void verifyRequestParamJwt() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -104,7 +104,7 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyScopes() throws Throwable {
+    void verifyScopes() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -114,7 +114,7 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyPostResponse() throws Throwable {
+    void verifyPostResponse() {
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");
         registeredService.setResponseMode("post");
@@ -123,7 +123,7 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyGrants() throws Throwable {
+    void verifyGrants() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -137,7 +137,7 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyCheckCallbackValid() throws Throwable {
+    void verifyCheckCallbackValid() {
         val registeredService = new OAuthRegisteredService();
         registeredService.setServiceId("http://test.org/.*");
         registeredService.setMatchingStrategy(null);
@@ -149,7 +149,7 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
 
 
     @Test
-    void verifyServiceHeader() throws Throwable {
+    void verifyServiceHeader() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -174,7 +174,7 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
 
 
     @Test
-    void verifyIsAuthorizedResponseTypeForService() throws Throwable {
+    void verifyIsAuthorizedResponseTypeForService() {
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.ID_TOKEN.getType());
         val response = new MockHttpServletResponse();
@@ -195,7 +195,7 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyFindStatelessRequest() throws Throwable {
+    void verifyFindStatelessRequest() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val context = new JEEContext(request, response);
@@ -213,7 +213,7 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyAccessTokenTimeout() throws Throwable {
+    void verifyAccessTokenTimeout() {
         val accessToken = getAccessToken();
         when(accessToken.getExpiresIn()).thenReturn(60L);
         val result = OAuth20TokenGeneratedResult.builder().accessToken(accessToken).build();
@@ -222,7 +222,7 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyStatelessAccessTokenTimeout() throws Throwable {
+    void verifyStatelessAccessTokenTimeout() {
         val accessToken = getAccessToken();
         when(accessToken.getExpiresIn()).thenReturn(60L);
         when(accessToken.isStateless()).thenReturn(Boolean.TRUE);

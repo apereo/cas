@@ -29,7 +29,7 @@ class GroovySmsSenderTests {
     private CommunicationsManager communicationsManager;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertTrue(communicationsManager.isSmsSenderDefined());
         val smsRequest = SmsRequest.builder().from("CAS")
             .to(List.of("1234567890")).text("Hello CAS").build();

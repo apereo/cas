@@ -31,13 +31,13 @@ class SurrogatePasswordlessAuthenticationRequestParserTests extends BaseSurrogat
     private PasswordlessRequestParser passwordlessRequestParser;
 
     @Test
-    void verifySurrogateRequest() throws Throwable {
+    void verifySurrogateRequest() {
         val results = passwordlessRequestParser.parse("user3+casuser");
         assertEquals("casuser", results.getUsername());
     }
 
     @Test
-    void verifyDefaultRequest() throws Throwable {
+    void verifyDefaultRequest() {
         val results = passwordlessRequestParser.parse("casuser@example.org");
         assertEquals("casuser@example.org", results.getUsername());
     }

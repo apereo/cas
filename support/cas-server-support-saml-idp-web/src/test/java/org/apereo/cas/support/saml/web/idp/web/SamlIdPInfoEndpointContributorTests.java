@@ -28,7 +28,7 @@ class SamlIdPInfoEndpointContributorTests {
     private CasConfigurationProperties casProperties;
     
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val contributor = new SamlIdPInfoEndpointContributor(casProperties);
         val builder = new Info.Builder();
         contributor.contribute(builder);

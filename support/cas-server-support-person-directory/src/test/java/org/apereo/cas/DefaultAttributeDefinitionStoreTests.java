@@ -120,7 +120,7 @@ class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    void verifyMappedToMultipleNames() throws Throwable {
+    void verifyMappedToMultipleNames() {
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
             val defn = DefaultAttributeDefinition.builder()
@@ -141,7 +141,7 @@ class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    void verifyEncryptedAttributeDefinitions() throws Throwable {
+    void verifyEncryptedAttributeDefinitions() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         val servicePublicKey = new RegisteredServicePublicKeyImpl("classpath:keys/RSA1024Public.key", "RSA");
         when(service.getPublicKey()).thenReturn(servicePublicKey);
@@ -169,7 +169,7 @@ class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    void verifyPredicateAttributeDefinitions() throws Throwable {
+    void verifyPredicateAttributeDefinitions() {
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
             val defn = DefaultAttributeDefinition.builder()
@@ -191,7 +191,7 @@ class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    void verifyAttrDefnNotFound() throws Throwable {
+    void verifyAttrDefnNotFound() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
@@ -215,7 +215,7 @@ class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    void verifyAttributeDefinitionsAsMap() throws Throwable {
+    void verifyAttributeDefinitionsAsMap() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
@@ -240,7 +240,7 @@ class DefaultAttributeDefinitionStoreTests {
 
 
     @Test
-    void verifyScopedAttrDefn() throws Throwable {
+    void verifyScopedAttrDefn() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
@@ -264,7 +264,7 @@ class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    void verifyScriptedEmbeddedAttrDefn() throws Throwable {
+    void verifyScriptedEmbeddedAttrDefn() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
@@ -290,7 +290,7 @@ class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    void verifyScriptedExternalAttrDefn() throws Throwable {
+    void verifyScriptedExternalAttrDefn() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("system.org");
@@ -316,7 +316,7 @@ class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    void verifyFormattedAttrDefn() throws Throwable {
+    void verifyFormattedAttrDefn() {
         val service = CoreAuthenticationTestUtils.getRegisteredService();
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
@@ -341,7 +341,7 @@ class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
             val defn = DefaultAttributeDefinition.builder()
@@ -390,7 +390,7 @@ class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    void verifyDefinitions() throws Throwable {
+    void verifyDefinitions() {
         val defn1 = DefaultAttributeDefinition.builder()
             .key("cn")
             .encrypted(true)
@@ -424,7 +424,7 @@ class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    void verifyDefinitionsReload() throws Throwable {
+    void verifyDefinitionsReload() {
         val resource = casProperties.getAuthn().getAttributeRepository().getAttributeDefinitionStore().getJson().getLocation();
         assertDoesNotThrow(() -> {
             try (val store = new DefaultAttributeDefinitionStore(resource)) {
@@ -447,7 +447,7 @@ class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    void verifyRemoveDefinition() throws Throwable {
+    void verifyRemoveDefinition() {
         try (val store = new DefaultAttributeDefinitionStore()) {
             store.setScope("example.org");
             val defn = DefaultAttributeDefinition.builder()
@@ -464,7 +464,7 @@ class DefaultAttributeDefinitionStoreTests {
     }
 
     @Test
-    void verifyLocateAttributeDefnByName() throws Throwable {
+    void verifyLocateAttributeDefnByName() {
         assertTrue(attributeDefinitionStore.locateAttributeDefinitionByName("interesting-attribute", AttributeDefinition.class).isPresent());
     }
 

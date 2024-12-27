@@ -10,7 +10,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
 
 /**
@@ -41,11 +40,11 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
             if (ResourceUtils.isFile(script) && enableWatcher) {
                 watcherService = FunctionUtils.doUnchecked(
                     () -> new FileWatcherService(script.getFile(),
-                        Unchecked.consumer(file -> {
+                        file -> {
                             LOGGER.debug("Reloading script at [{}]", file);
                             compileScriptResource(script);
                             LOGGER.info("Reloaded script at [{}]", file);
-                        })));
+                        }));
                 watcherService.start(script.getFilename());
             }
             compileScriptResource(script);

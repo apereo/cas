@@ -26,7 +26,7 @@ class DefaultSamlArtifactTicketFactoryTests extends BaseSamlIdPConfigurationTest
     private SamlArtifactTicketFactory samlArtifactTicketFactory;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val tgt = new MockTicketGrantingTicket("casuser");
         val ticketId = samlArtifactTicketFactory.create(UUID.randomUUID().toString(), tgt.getAuthentication(),
             tgt, casProperties.getAuthn().getSamlIdp().getCore().getEntityId(),

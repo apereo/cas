@@ -56,7 +56,7 @@ class DockerSecretsPropertySourceLocatorTests {
     }
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val results = casCoreBootstrapPropertySourceLocator.locate(environment);
         val value = results.getProperty("cas.authn.accept.name");
         assertEquals("Static", value);

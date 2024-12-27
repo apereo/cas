@@ -59,7 +59,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyUnsuccessfulAuthenticationWithExceptionOnProcess() throws Throwable {
+    void verifyUnsuccessfulAuthenticationWithExceptionOnProcess() {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockUnsuccessfulJcifsAuthentication(true)));
@@ -79,7 +79,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyUnsuccessfulAuthentication() throws Throwable {
+    void verifyUnsuccessfulAuthentication() {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockUnsuccessfulJcifsAuthentication(false)));
@@ -89,7 +89,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
     }
 
     @Test
-    void verifySupports() throws Throwable {
+    void verifySupports() {
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true), null, null, queue);

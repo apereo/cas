@@ -29,7 +29,7 @@ class ChainingRegisteredServiceAccessStrategyActivationCriteriaTests {
 
 
     @Test
-    void verifyOrOperation() throws Throwable {
+    void verifyOrOperation() {
         val request = RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build();
 
@@ -42,7 +42,7 @@ class ChainingRegisteredServiceAccessStrategyActivationCriteriaTests {
     }
 
     @Test
-    void verifyAndOperation() throws Throwable {
+    void verifyAndOperation() {
         val request = RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build();
         val chain = new ChainingRegisteredServiceAccessStrategyActivationCriteria();

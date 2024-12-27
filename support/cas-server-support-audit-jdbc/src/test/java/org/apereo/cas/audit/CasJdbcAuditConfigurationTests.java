@@ -56,12 +56,12 @@ class CasJdbcAuditConfigurationTests extends BaseAuditConfigurationTests {
     private AuditTrailManager auditTrailManager;
 
     @Test
-    void verifyCleaner() throws Throwable {
+    void verifyCleaner() {
         inspektrAuditTrailCleaner.clean();
     }
 
     @Test
-    void verifyLargeResource() throws Throwable {
+    void verifyLargeResource() {
         val headers = new HashMap<String, String>();
         IntStream.rangeClosed(1, 100).forEach(i -> headers.put(
             i + "-" + UUID.randomUUID(),

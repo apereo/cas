@@ -101,7 +101,7 @@ class RegisteredServicesEventListenerTests {
     }
 
     @Test
-    void verifyServiceExpirationEventWithContact() throws Throwable {
+    void verifyServiceExpirationEventWithContact() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val contact = new DefaultRegisteredServiceContact();
         contact.setName("Test");
@@ -114,7 +114,7 @@ class RegisteredServicesEventListenerTests {
     }
 
     @Test
-    void verifyServiceExpirationWithRemovalEvent() throws Throwable {
+    void verifyServiceExpirationWithRemovalEvent() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val contact = new DefaultRegisteredServiceContact();
         contact.setName("Test");

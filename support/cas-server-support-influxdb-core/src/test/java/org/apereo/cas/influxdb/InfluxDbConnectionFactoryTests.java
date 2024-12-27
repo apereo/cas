@@ -51,7 +51,7 @@ class InfluxDbConnectionFactoryTests {
     }
 
     @Test
-    void verifyWritePoint() throws Throwable {
+    void verifyWritePoint() {
         factory.deleteAll();
         factory.write("events", Map.of("value", 1234.5678), Map.of("hostname", "cas.example.org"));
         val result = factory.query(InfluxEvent.class);

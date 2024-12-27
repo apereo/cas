@@ -31,7 +31,7 @@ class ConcurrentThrottledSubmissionsStoreTests {
     private ThrottledSubmissionsStore<ThrottledSubmission> throttleSubmissionStore;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val key = UUID.randomUUID().toString();
         throttleSubmissionStore.put(ThrottledSubmission.builder().key(key).build());
         assertNotNull(throttleSubmissionStore.get(key));
@@ -42,7 +42,7 @@ class ConcurrentThrottledSubmissionsStoreTests {
     }
 
     @Test
-    void verifyExpiredSubmissions() throws Throwable {
+    void verifyExpiredSubmissions() {
         val submission = ThrottledSubmission
             .builder()
             .key(UUID.randomUUID().toString())
@@ -63,7 +63,7 @@ class ConcurrentThrottledSubmissionsStoreTests {
     }
 
     @Test
-    void verifyExpirationWindowDuringRelease() throws Throwable {
+    void verifyExpirationWindowDuringRelease() {
         val submission = ThrottledSubmission
             .builder()
             .key(UUID.randomUUID().toString())

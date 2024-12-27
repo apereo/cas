@@ -46,18 +46,18 @@ class HardTimeoutExpirationPolicyTests {
     }
 
     @Test
-    void verifyTicketIsNull() throws Throwable {
+    void verifyTicketIsNull() {
         assertTrue(expirationPolicy.isExpired(null));
     }
 
     @Test
-    void verifyTicketIsNotExpired() throws Throwable {
+    void verifyTicketIsNotExpired() {
         expirationPolicy.setClock(Clock.fixed(ticket.getCreationTime().toInstant().plusSeconds(TIMEOUT).minusNanos(1), ZoneOffset.UTC));
         assertFalse(ticket.isExpired());
     }
 
     @Test
-    void verifyTicketIsExpired() throws Throwable {
+    void verifyTicketIsExpired() {
         expirationPolicy.setClock(Clock.fixed(ticket.getCreationTime().toInstant().plusSeconds(TIMEOUT).plusNanos(1), ZoneOffset.UTC));
         assertTrue(ticket.isExpired());
     }
@@ -72,7 +72,7 @@ class HardTimeoutExpirationPolicyTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val policyWritten = new HardTimeoutExpirationPolicy();
         val result = SerializationUtils.serialize(policyWritten);
         val policyRead = SerializationUtils.deserialize(result, HardTimeoutExpirationPolicy.class);

@@ -84,7 +84,7 @@ class CasSpringBootAdminServerTests {
     }
 
     @Test
-    void verifyInstanceIdGeneration() throws Throwable {
+    void verifyInstanceIdGeneration() {
         val registration1 = Registration.create("Cas1", "https://localhost:8443/cas/actuator/health")
             .metadata("name", "CASInstance").build();
         val registration2 = Registration.create("Cas2", "https://localhost:8443/cas/actuator/health").build();

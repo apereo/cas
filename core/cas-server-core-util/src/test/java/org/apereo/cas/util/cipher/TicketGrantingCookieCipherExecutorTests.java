@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TicketGrantingCookieCipherExecutorTests {
 
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val cipher = new TicketGrantingCookieCipherExecutor();
         val encoded = cipher.encode("ST-1234567890");
         assertEquals("ST-1234567890", cipher.decode(encoded));

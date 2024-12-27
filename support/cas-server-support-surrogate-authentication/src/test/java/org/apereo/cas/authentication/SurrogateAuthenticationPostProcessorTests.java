@@ -45,7 +45,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    void verifySurrogateCredentialNotFound() throws Throwable {
+    void verifySurrogateCredentialNotFound() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");
@@ -58,7 +58,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    void verifyProcessorWorks() throws Throwable {
+    void verifyProcessorWorks() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");
@@ -70,7 +70,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    void verifyNoPrimaryCredential() throws Throwable {
+    void verifyNoPrimaryCredential() {
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(
             RegisteredServiceTestUtils.getService("service"));
         val builder = mock(AuthenticationBuilder.class);
@@ -81,7 +81,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    void verifyAuthN() throws Throwable {
+    void verifyAuthN() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");
@@ -98,7 +98,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    void verifyFailAuthN() throws Throwable {
+    void verifyFailAuthN() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");

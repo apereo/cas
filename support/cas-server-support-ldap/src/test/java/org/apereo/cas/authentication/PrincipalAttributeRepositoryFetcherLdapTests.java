@@ -25,7 +25,7 @@ class PrincipalAttributeRepositoryFetcherLdapTests {
     @EnabledIfListeningOnPort(port = 10389)
     class MultipleFiltersTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)
                 .principalId(UID)
@@ -43,7 +43,7 @@ class PrincipalAttributeRepositoryFetcherLdapTests {
     @EnabledIfListeningOnPort(port = 10389)
     class MultipleFiltersByParameterNameTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             val principal = CoreAuthenticationTestUtils.getPrincipal("cas", Map.of("title", List.of(UID)));
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)
@@ -62,7 +62,7 @@ class PrincipalAttributeRepositoryFetcherLdapTests {
     @EnabledIfListeningOnPort(port = 10389)
     class MultipleFiltersByExtraQueryAttributesTests extends BasePrincipalAttributeRepositoryFetcherLdapTests {
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             val principal = CoreAuthenticationTestUtils.getPrincipal("cas", Map.of());
             val attributes = PrincipalAttributeRepositoryFetcher.builder()
                 .attributeRepository(aggregatingAttributeRepository)

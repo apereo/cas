@@ -28,7 +28,7 @@ class ExecutableObserverTests {
         assertEquals("OK", result);
     }
 
-    private static ExecutableObserver getExecutableObserver() throws Throwable {
+    private static ExecutableObserver getExecutableObserver() {
         val observer = mock(ExecutableObserver.class);
         when(observer.supply(any(), any(CheckedSupplier.class))).thenAnswer(args -> {
             val supplier = args.getArgument(1, CheckedSupplier.class);

@@ -48,7 +48,7 @@ class AmazonCloudWatchMonitoringTests {
     private MeterRegistry cloudWatchMeterRegistry;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val startTime = System.currentTimeMillis();
         val execTimer = cloudWatchMeterRegistry.timer("cas.test.Execution", "tag1", "tag2");
         assertEquals(HttpStatus.OK, HttpRequestUtils.pingUrl("http://127.0.0.1:4566/_localstack/health"));

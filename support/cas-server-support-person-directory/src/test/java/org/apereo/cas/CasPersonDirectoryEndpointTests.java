@@ -41,7 +41,7 @@ class CasPersonDirectoryEndpointTests extends AbstractCasEndpointTests {
     private CasPersonDirectoryEndpoint personDirectoryEndpoint;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         var person = personDirectoryEndpoint.showCachedAttributesFor("casuser");
         assertNotNull(person);
         assertEquals("123456789", person.getAttributeValue("phone"));

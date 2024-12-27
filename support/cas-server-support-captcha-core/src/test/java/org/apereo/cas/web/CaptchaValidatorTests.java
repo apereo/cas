@@ -61,7 +61,7 @@ class CaptchaValidatorTests {
     }
 
     @Test
-    void verifyBadResponse() throws Throwable {
+    void verifyBadResponse() {
         try (val webServer = new MockWebServer()) {
             webServer.start();
             val secret = UUID.randomUUID().toString();
@@ -78,7 +78,7 @@ class CaptchaValidatorTests {
 
     @ParameterizedTest
     @EnumSource(GoogleRecaptchaProperties.RecaptchaVersions.class)
-    void verifyInstance(final GoogleRecaptchaProperties.RecaptchaVersions version) throws Throwable {
+    void verifyInstance(final GoogleRecaptchaProperties.RecaptchaVersions version) {
         val googleRecaptcha = new GoogleRecaptchaProperties()
             .setSiteKey(UUID.randomUUID().toString())
             .setSecret(UUID.randomUUID().toString())

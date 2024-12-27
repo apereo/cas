@@ -53,7 +53,7 @@ class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    void verifyEncodeNamesCorrectly() throws Throwable {
+    void verifyEncodeNamesCorrectly() {
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put("user@name", "casuser");
         attributes.put("user:name", "casuser");
@@ -63,7 +63,7 @@ class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    void verifyEncodeNamesUnnecessary() throws Throwable {
+    void verifyEncodeNamesUnnecessary() {
         when(webApplicationService.getFormat()).thenReturn(ValidationResponseType.JSON);
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put("user@name", "casuser");
@@ -74,7 +74,7 @@ class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    void verifyEncodeNamesWithNoService() throws Throwable {
+    void verifyEncodeNamesWithNoService() {
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put("user@name", "casuser");
         attributes.put("user:name", "casuser");
@@ -83,7 +83,7 @@ class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    void verifyEncodeBinaryValuesCorrectly() throws Throwable {
+    void verifyEncodeBinaryValuesCorrectly() {
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put("user", "casuser".getBytes(StandardCharsets.UTF_8));
         val results = encoder.encodeAttributes(Map.of(), attributes, registeredService, webApplicationService);
@@ -93,7 +93,7 @@ class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    void verifyEncodedWithPrefix() throws Throwable {
+    void verifyEncodedWithPrefix() {
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put("_MAIL_", "casuser@example.org");
         val results = encoder.encodeAttributes(Map.of(), attributes, registeredService, webApplicationService);
@@ -101,7 +101,7 @@ class DefaultCasProtocolAttributeEncoderTests {
     }
 
     @Test
-    void verifyProxyGrantingTicket() throws Throwable {
+    void verifyProxyGrantingTicket() {
         val pgt = mock(Ticket.class);
         val pgtId = UUID.randomUUID().toString();
         when(pgt.getId()).thenReturn(pgtId);

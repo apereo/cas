@@ -96,7 +96,7 @@ class DuoSecurityPasswordlessUserAccountStoreTests {
     @TestConfiguration(value = "DuoSecurityTestConfiguration", proxyBeanMethods = false)
     static class DuoSecurityTestConfiguration {
         @Bean
-        public Client duoUniversalPromptAuthenticationClient() throws Exception {
+        public Client duoUniversalPromptAuthenticationClient() {
             return mock(Client.class);
         }
 

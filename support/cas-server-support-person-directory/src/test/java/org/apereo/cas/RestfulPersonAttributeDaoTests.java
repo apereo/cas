@@ -61,7 +61,7 @@ class RestfulPersonAttributeDaoTests {
     }
 
     @Test
-    void verifyGetPerson() throws Throwable {
+    void verifyGetPerson() {
         assertNotNull(attributeRepository);
         val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
@@ -73,7 +73,7 @@ class RestfulPersonAttributeDaoTests {
     }
 
     @Test
-    void verifyGetPeople() throws Throwable {
+    void verifyGetPeople() {
         val person = attributeRepository.getPeople(Map.of("cn", "casuser"))
             .iterator().next();
         assertNotNull(person);

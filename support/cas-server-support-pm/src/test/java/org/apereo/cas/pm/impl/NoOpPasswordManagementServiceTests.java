@@ -30,14 +30,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class NoOpPasswordManagementServiceTests {
 
     @Test
-    void verifyChange() throws Throwable {
+    void verifyChange() {
         val properties = new PasswordManagementProperties();
         val service = new NoOpPasswordManagementService(CipherExecutor.noOpOfSerializableToString(), "CAS", properties);
         assertFalse(service.changeInternal(new PasswordChangeRequest()));
     }
 
     @Test
-    void verifyTokenParsing() throws Throwable {
+    void verifyTokenParsing() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");

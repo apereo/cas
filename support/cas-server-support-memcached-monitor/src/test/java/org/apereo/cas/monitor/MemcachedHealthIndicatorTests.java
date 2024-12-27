@@ -50,7 +50,7 @@ class MemcachedHealthIndicatorTests {
     private HealthIndicator monitor;
 
     @Test
-    void verifyMonitorNotRunning() throws Throwable {
+    void verifyMonitorNotRunning() {
         val health = monitor.health();
         assertEquals(Status.OUT_OF_SERVICE, health.getStatus());
     }

@@ -66,7 +66,7 @@ class MultifactorAuthenticationTrustedDevicesReportEndpointTests extends Abstrac
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(endpoint);
         var record = MultifactorAuthenticationTrustRecord.newInstance(UUID.randomUUID().toString(), "geography", "fingerprint");
         record = mfaTrustEngine.save(record);

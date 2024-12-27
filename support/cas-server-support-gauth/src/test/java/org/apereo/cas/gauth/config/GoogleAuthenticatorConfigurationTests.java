@@ -28,7 +28,7 @@ class GoogleAuthenticatorConfigurationTests {
     private IGoogleAuthenticator googleAuthenticatorInstance;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(googleAuthenticatorInstance);
     }
 }

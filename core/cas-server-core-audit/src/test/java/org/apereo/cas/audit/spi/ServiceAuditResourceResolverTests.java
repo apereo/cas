@@ -32,7 +32,7 @@ class ServiceAuditResourceResolverTests {
         private AuditResourceResolver serviceAuditResourceResolver;
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             val jp = mock(JoinPoint.class);
             when(jp.getArgs()).thenReturn(new Object[]{"something", RegisteredServiceTestUtils.getService()});
             var input = serviceAuditResourceResolver.resolveFrom(jp, new Object());
@@ -52,7 +52,7 @@ class ServiceAuditResourceResolverTests {
         private AuditResourceResolver serviceAuditResourceResolver;
 
         @Test
-        void verifyJsonOperation() throws Throwable {
+        void verifyJsonOperation() {
             val jp = mock(JoinPoint.class);
             when(jp.getArgs()).thenReturn(new Object[]{"something", RegisteredServiceTestUtils.getService()});
             var input = serviceAuditResourceResolver.resolveFrom(jp, new Object());

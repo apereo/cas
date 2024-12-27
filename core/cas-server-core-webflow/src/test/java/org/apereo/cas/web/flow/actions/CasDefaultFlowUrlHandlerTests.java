@@ -25,7 +25,7 @@ class CasDefaultFlowUrlHandlerTests extends BaseWebflowConfigurerTests {
     private FlowUrlHandler loginFlowUrlHandler;
 
     @Test
-    void verifyFlowExecutionKeyInRequestBody() throws Throwable {
+    void verifyFlowExecutionKeyInRequestBody() {
         val request = setupRequest("/cas", "/app", "/foo");
         request.setMethod("POST");
         request.setContentType("application/x-www-form-urlencoded");
@@ -36,7 +36,7 @@ class CasDefaultFlowUrlHandlerTests extends BaseWebflowConfigurerTests {
     }
 
     @Test
-    void verifyCreateFlowExecutionUrlWithSingleValuedAttributes() throws Throwable {
+    void verifyCreateFlowExecutionUrlWithSingleValuedAttributes() {
         val request = setupRequest("/cas", "/app", "/foo");
         request.setParameter("bar", "baz");
         request.setParameter("qux", "quux");
@@ -48,7 +48,7 @@ class CasDefaultFlowUrlHandlerTests extends BaseWebflowConfigurerTests {
     }
 
     @Test
-    void verifyFlowIdWithAnchorTag() throws Throwable {
+    void verifyFlowIdWithAnchorTag() {
         val request = setupRequest("/cas", "/app", "/foo#this-exists-here");
         request.setParameter("bar", "baz");
         request.setParameter("qux", "quux");
@@ -57,7 +57,7 @@ class CasDefaultFlowUrlHandlerTests extends BaseWebflowConfigurerTests {
     }
 
     @Test
-    void verifyCreateFlowExecutionUrlWithMultiValuedAttributes() throws Throwable {
+    void verifyCreateFlowExecutionUrlWithMultiValuedAttributes() {
         val request = setupRequest("/cas", "/app", "/foo");
         request.setParameter("bar", "baz1", "baz2");
         request.setParameter("qux", "quux");

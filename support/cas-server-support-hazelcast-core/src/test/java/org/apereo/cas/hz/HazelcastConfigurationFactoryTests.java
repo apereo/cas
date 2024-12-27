@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 class HazelcastConfigurationFactoryTests {
     @Test
-    void verifyReplicationMaps() throws Throwable {
+    void verifyReplicationMaps() {
         val hz = new BaseHazelcastProperties();
         hz.getCluster().getCore().setReplicated(true);
         hz.getCluster().getCore().setPartitionMemberGroupType("ZONE_AWARE");
@@ -34,7 +34,7 @@ class HazelcastConfigurationFactoryTests {
     }
 
     @Test
-    void verifyMergePolicy() throws Throwable {
+    void verifyMergePolicy() {
         val policies = new String[]{"discard", "pass_through", "expiration_time", "higher_hits",
             "latest_update", "latest_access", "put_if_absent", "other"};
         Arrays.stream(policies).forEach(policy -> {
@@ -47,7 +47,7 @@ class HazelcastConfigurationFactoryTests {
     }
 
     @Test
-    void verifyLocalPublic() throws Throwable {
+    void verifyLocalPublic() {
         val hz = new BaseHazelcastProperties();
         hz.getCluster().getNetwork().setLocalAddress("127.0.0.1");
         hz.getCluster().getNetwork().setPublicAddress("127.0.0.1");
@@ -58,7 +58,7 @@ class HazelcastConfigurationFactoryTests {
     }
 
     @Test
-    void verifyDefaultJoinConfig() throws Throwable {
+    void verifyDefaultJoinConfig() {
         val hz = new BaseHazelcastProperties();
         hz.getCluster().getDiscovery().getMulticast().setEnabled(true);
         hz.getCluster().getDiscovery().getMulticast().setGroup("127.0.0.1");
@@ -69,7 +69,7 @@ class HazelcastConfigurationFactoryTests {
     }
 
     @Test
-    void verifyDiscoveryConfig() throws Throwable {
+    void verifyDiscoveryConfig() {
         val hz = new BaseHazelcastProperties();
         hz.getCluster().getDiscovery().setEnabled(true);
         val result = HazelcastConfigurationFactory.build(hz);
@@ -77,7 +77,7 @@ class HazelcastConfigurationFactoryTests {
     }
 
     @Test
-    void verifyWAN() throws Throwable {
+    void verifyWAN() {
         val hz = new BaseHazelcastProperties();
         hz.getCluster().getWanReplication().setEnabled(true);
         assertThrows(IllegalArgumentException.class, () -> HazelcastConfigurationFactory.build(hz));

@@ -29,7 +29,7 @@ class CasConfigurationEndpointTests extends AbstractCasEndpointTests {
     private CasConfigurationEndpoint casConfigurationEndpoint;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val value = UUID.randomUUID().toString();
         val encoded = casConfigurationEndpoint.encrypt(value).getBody();
         assertEquals(casConfigurationEndpoint.decrypt(encoded).getBody(), value);

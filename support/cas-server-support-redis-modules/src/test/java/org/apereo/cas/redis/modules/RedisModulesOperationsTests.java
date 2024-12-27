@@ -65,7 +65,7 @@ class RedisModulesOperationsTests {
     }
 
     @Test
-    void verifyConnectionWithPassword() throws Throwable {
+    void verifyConnectionWithPassword() {
         val props = new BaseRedisProperties();
         props.setHost("localhost");
         props.setPort(16389);

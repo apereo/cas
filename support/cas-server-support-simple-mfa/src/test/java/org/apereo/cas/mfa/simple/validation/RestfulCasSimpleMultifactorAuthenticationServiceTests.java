@@ -81,7 +81,7 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     }
 
     @Test
-    void verifyStoreToken() throws Throwable {
+    void verifyStoreToken() {
         val props = casProperties.getAuthn().getMfa().getSimple().getToken().getRest();
         val port = URI.create(props.getUrl()).getPort();
 

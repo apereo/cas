@@ -133,7 +133,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    void verifyDisabledService() throws Throwable {
+    void verifyDisabledService() {
         val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
 
         val attrs = new HashMap<String, List<Object>>();
@@ -189,7 +189,7 @@ class PrincipalAttributeRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    void verifyEquality() throws Throwable {
+    void verifyEquality() {
         val provider = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
         val provider2 = new PrincipalAttributeRegisteredServiceUsernameProvider("cn");
         assertEquals(provider, provider2);

@@ -54,7 +54,7 @@ class SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests extends Base
     }
 
     @Test
-    void verifyPostSignRequest() throws Throwable {
+    void verifyPostSignRequest() {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
         val response = new MockHttpServletResponse();
@@ -66,7 +66,7 @@ class SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests extends Base
     }
 
     @Test
-    void verifyUnknownBindingLocation() throws Throwable {
+    void verifyUnknownBindingLocation() {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
         val response = new MockHttpServletResponse();

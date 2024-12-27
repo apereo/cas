@@ -20,7 +20,7 @@ class OidcRestfulWebFingerUserInfoRepositoryTests {
     private MockWebServer webServer;
 
     @Test
-    void verifyBadPayload() throws Throwable {
+    void verifyBadPayload() {
         try (val webServer = new MockWebServer("-@@-")) {
             this.webServer = webServer;
             this.webServer.start();
@@ -34,7 +34,7 @@ class OidcRestfulWebFingerUserInfoRepositoryTests {
     }
 
     @Test
-    void verifyFindByEmail() throws Throwable {
+    void verifyFindByEmail() {
         try (val webServer = new MockWebServer(CollectionUtils.wrap("email", "cas@example.org"))) {
             this.webServer = webServer;
             this.webServer.start();
@@ -51,7 +51,7 @@ class OidcRestfulWebFingerUserInfoRepositoryTests {
     }
 
     @Test
-    void verifyFindByUsername() throws Throwable {
+    void verifyFindByUsername() {
         try (val webServer = new MockWebServer(CollectionUtils.wrap("username", "casuser"))) {
             this.webServer = webServer;
             this.webServer.start();

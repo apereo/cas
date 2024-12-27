@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 class MultifactorAuthenticationFailureModeEvaluatorTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val input = mock(MultifactorAuthenticationFailureModeEvaluator.class);
         when(input.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());

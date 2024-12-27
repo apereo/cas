@@ -43,7 +43,7 @@ class AccountManagementRegistrationCaptchaWebflowConfigurerTests extends BaseWeb
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         val state = (TransitionableState) flow.getState(STATE_ID_SUBMIT_ACCOUNT_REGISTRATION);
         assertEquals(STATE_ID_VIEW_ACCOUNT_SIGNUP,

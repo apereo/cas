@@ -53,7 +53,7 @@ class ExceptionOnlyFilterTests {
     }
 
     @Test
-    void verifyFilters() throws Throwable {
+    void verifyFilters() {
         val filter = new ExceptionOnlyFilter();
         assertEquals(Filter.Result.ACCEPT,
             filter.filter(mock(Logger.class), Level.INFO, mock(Marker.class), mock(Message.class), new Throwable()));

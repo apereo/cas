@@ -31,7 +31,7 @@ class DefaultAssuranceVerifiedClaimsProducerTests {
     @TestPropertySource(properties = "cas.authn.oidc.discovery.verified-claims-supported=false")
     class NoVerification extends BaseTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() {
             val results = assuranceVerifiedClaimsProducer.produce(new JwtClaims(), "name", "eidas");
             assertTrue(results.isEmpty());
         }
@@ -44,7 +44,7 @@ class DefaultAssuranceVerifiedClaimsProducerTests {
     })
     class NoTrustFramework extends BaseTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() {
             val results = assuranceVerifiedClaimsProducer.produce(new JwtClaims(), "name", "eidas");
             assertTrue(results.isEmpty());
         }
@@ -60,7 +60,7 @@ class DefaultAssuranceVerifiedClaimsProducerTests {
     })
     class NoEvidence extends BaseTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() {
             val results = assuranceVerifiedClaimsProducer.produce(new JwtClaims(), "name", "it_spid");
             assertTrue(results.containsKey(DefaultAssuranceVerifiedClaimsProducer.CLAIM_NAME_VERIFIED_CLAIMS));
         }

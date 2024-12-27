@@ -53,7 +53,7 @@ class OpenLdapPasswordManagementServiceTests extends BaseLdapPasswordManagementS
     }
 
     @Test
-    void verifyTokenCreationAndParsing() throws Throwable {
+    void verifyTokenCreationAndParsing() {
         val token = passwordChangeService.createToken(PasswordManagementQuery.builder().username("casuser").build());
         assertNotNull(token);
         val result = passwordChangeService.parseToken(token);

@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 @Tag("Native")
 class DefaultNativeImageFeatureTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val results = new DefaultNativeImageFeature();
         assertDoesNotThrow(() -> results.afterRegistration(mock(Feature.AfterRegistrationAccess.class)));
     }

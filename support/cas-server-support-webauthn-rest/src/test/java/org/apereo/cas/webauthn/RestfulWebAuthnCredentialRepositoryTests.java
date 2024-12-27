@@ -46,7 +46,7 @@ class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRep
     }
 
     @Test
-    void verifyUpdate() throws Throwable {
+    void verifyUpdate() {
         val props = casProperties.getAuthn().getMfa().getWebAuthn().getRest();
         val port = URI.create(props.getUrl()).getPort();
         try (val webServer = new MockWebServer(port, HttpStatus.OK)) {

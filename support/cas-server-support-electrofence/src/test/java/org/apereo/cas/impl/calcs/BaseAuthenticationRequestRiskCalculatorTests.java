@@ -76,7 +76,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     protected AuthenticationRiskNotifier authenticationRiskSmsNotifier;
 
     @BeforeEach
-    public void prepTest() throws Throwable {
+    public void prepTest() {
         MockTicketGrantingTicketCreatedEventProducer.createEvents(this.casEventRepository);
         HttpsURLConnection.setDefaultHostnameVerifier(CasSSLContext.disabled().getHostnameVerifier());
         HttpsURLConnection.setDefaultSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());

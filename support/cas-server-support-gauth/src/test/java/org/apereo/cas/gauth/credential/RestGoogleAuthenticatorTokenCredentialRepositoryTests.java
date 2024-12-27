@@ -78,7 +78,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyDelete() throws Throwable {
+    void verifyDelete() {
         try (val webServer = new MockWebServer("1")) {
             webServer.start();
             val props = new GoogleAuthenticatorMultifactorProperties();
@@ -142,7 +142,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyCount() throws Throwable {
+    void verifyCount() {
         try (val webServer = new MockWebServer("1")) {
             val props = new GoogleAuthenticatorMultifactorProperties();
             props.getRest().setUrl("http://localhost:" + webServer.getPort());
@@ -154,7 +154,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyCountByUser() throws Throwable {
+    void verifyCountByUser() {
 
         try (val webServer = new MockWebServer("1")) {
             val props = new GoogleAuthenticatorMultifactorProperties();
@@ -191,7 +191,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifySaveFail() throws Throwable {
+    void verifySaveFail() {
         try (val webServer = new MockWebServer(HttpStatus.BAD_REQUEST)) {
             val props = new GoogleAuthenticatorMultifactorProperties();
             props.getRest().setUrl("http://localhost:" + webServer.getPort());

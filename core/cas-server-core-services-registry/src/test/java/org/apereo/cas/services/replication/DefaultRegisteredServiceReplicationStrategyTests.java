@@ -51,7 +51,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifySetInCache() throws Throwable {
+    void verifySetInCache() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -68,7 +68,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyGetInCacheAndRemove() throws Throwable {
+    void verifyGetInCacheAndRemove() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -92,7 +92,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyGetInCacheAndSave() throws Throwable {
+    void verifyGetInCacheAndSave() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -114,7 +114,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyGetInCacheAndUpdate() throws Throwable {
+    void verifyGetInCacheAndUpdate() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -139,7 +139,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyGetInCacheAndMatch() throws Throwable {
+    void verifyGetInCacheAndMatch() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -162,7 +162,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyUpdateWithMatch() throws Throwable {
+    void verifyUpdateWithMatch() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -188,7 +188,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyUpdateWithNoMatch() throws Throwable {
+    void verifyUpdateWithNoMatch() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();

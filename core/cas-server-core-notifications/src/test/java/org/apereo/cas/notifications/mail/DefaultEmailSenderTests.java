@@ -33,7 +33,7 @@ class DefaultEmailSenderTests {
     private EmailSender emailSender;
 
     @Test
-    void verifySubjectCanExpandWithVariables() throws Exception {
+    void verifySubjectCanExpandWithVariables() {
         val emailRequest = EmailMessageRequest.builder()
             .context(CollectionUtils.wrap("name", "casuser"))
             .emailProperties(new EmailProperties().setSubject("Hello ${name}"))

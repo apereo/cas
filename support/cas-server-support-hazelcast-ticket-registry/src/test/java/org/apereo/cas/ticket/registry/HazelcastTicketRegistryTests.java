@@ -88,7 +88,7 @@ class HazelcastTicketRegistryTests {
         private ConfigurableApplicationContext applicationContext;
 
         @RepeatedTest(1)
-        void verifyBadExpPolicyValue() throws Throwable {
+        void verifyBadExpPolicyValue() {
             val ticket = new MockTicketGrantingTicket("casuser");
 
             val instance = mock(HazelcastInstance.class);
@@ -103,7 +103,7 @@ class HazelcastTicketRegistryTests {
         }
 
         @RepeatedTest(1)
-        void verifyBadTicketInCatalog() throws Throwable {
+        void verifyBadTicketInCatalog() {
             val ticket = new MockTicketGrantingTicket("casuser");
 
             val instance = mock(HazelcastInstance.class);
@@ -141,7 +141,7 @@ class HazelcastTicketRegistryTests {
 
         @RepeatedTest(1)
         @Tag("TicketRegistryTestWithEncryption")
-        void verifyLargeDataset() throws Throwable {
+        void verifyLargeDataset() {
             val username = UUID.randomUUID().toString();
             val ticketGrantingTickets = Stream.generate(() -> {
                 val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY).getNewTicketId(TicketGrantingTicket.PREFIX);

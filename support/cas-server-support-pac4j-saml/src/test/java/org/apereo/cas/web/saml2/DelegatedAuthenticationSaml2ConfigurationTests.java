@@ -42,7 +42,7 @@ class DelegatedAuthenticationSaml2ConfigurationTests {
     private SAMLMessageStoreFactory hazelcastSAMLMessageStoreFactory;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(hazelcastSAMLMessageStoreFactory);
     }
 

@@ -40,7 +40,7 @@ class CasHibernatePhysicalNamingStrategyTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyMappedTable() throws Throwable {
+    void verifyMappedTable() {
         val strategy = new CasHibernatePhysicalNamingStrategy();
         strategy.setApplicationContext(this.applicationContext);
         val id = strategy.toPhysicalTableName(
@@ -49,7 +49,7 @@ class CasHibernatePhysicalNamingStrategyTests {
     }
 
     @Test
-    void verifyMappedTableViaGroovy() throws Throwable {
+    void verifyMappedTableViaGroovy() {
         val strategy = new CasHibernatePhysicalNamingStrategy();
         strategy.setApplicationContext(this.applicationContext);
         val id = strategy.toPhysicalTableName(Identifier.toIdentifier("GroovyTable"), mock(JdbcEnvironment.class));

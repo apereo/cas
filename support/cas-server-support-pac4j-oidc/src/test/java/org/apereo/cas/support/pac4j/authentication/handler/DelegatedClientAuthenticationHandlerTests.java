@@ -91,7 +91,7 @@ class DelegatedClientAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyMissingClient() throws Throwable {
+    void verifyMissingClient() {
         val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         fbClient.setProfileCreator((callContext, sessionStore) -> Optional.of(facebookProfile));
@@ -113,7 +113,7 @@ class DelegatedClientAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyNoProfile() throws Throwable {
+    void verifyNoProfile() {
         Assertions.assertThrows(PreventedException.class, () -> {
             fbClient.setProfileCreator((callContext, sessionStore) -> Optional.empty());
             handler.authenticate(clientCredential, Mockito.mock(Service.class));

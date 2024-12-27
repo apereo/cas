@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
 
     @Test
-    void verifyNoProviders() throws Throwable {
+    void verifyNoProviders() {
         val appContext = new StaticApplicationContext();
         appContext.refresh();
         
@@ -65,7 +65,7 @@ class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthe
 
 
     @Test
-    void verifyMissingProviders() throws Throwable {
+    void verifyMissingProviders() {
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-xyz", ".+London.+");
         val trigger = new AdaptiveMultifactorAuthenticationTrigger(null, props, this.applicationContext);

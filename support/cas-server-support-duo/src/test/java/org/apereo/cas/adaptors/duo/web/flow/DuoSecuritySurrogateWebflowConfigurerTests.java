@@ -45,7 +45,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
     class DefaultTests extends BaseWebflowConfigurerTests {
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
@@ -78,7 +78,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
         private CasMultifactorWebflowCustomizer surrogateDuoSecurityMultifactorWebflowCustomizer;
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             assertNotNull(surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer);
             assertNotNull(surrogateDuoSecurityMultifactorWebflowCustomizer);
             val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);

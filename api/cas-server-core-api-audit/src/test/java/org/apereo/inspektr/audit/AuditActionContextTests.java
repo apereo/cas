@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Audits")
 class AuditActionContextTests {
     @Test
-    void verifyAuditContext() throws Throwable {
+    void verifyAuditContext() {
         val original = new AuditActionContext()
             .withPrincipal("casuser")
             .withResourceOperatedUpon("Resource")

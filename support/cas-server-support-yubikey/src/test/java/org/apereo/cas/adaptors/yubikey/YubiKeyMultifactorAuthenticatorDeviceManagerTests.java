@@ -32,7 +32,7 @@ class YubiKeyMultifactorAuthenticatorDeviceManagerTests {
     private MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser");
         val devices = yubikeyMultifactorAuthenticationProvider.getDeviceManager()
             .findRegisteredDevices(principal);

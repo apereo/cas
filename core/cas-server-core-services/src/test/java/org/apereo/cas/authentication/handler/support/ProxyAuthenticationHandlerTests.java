@@ -29,13 +29,13 @@ class ProxyAuthenticationHandlerTests {
     }
 
     @Test
-    void verifySupportsProperUserCredentials() throws Throwable {
+    void verifySupportsProperUserCredentials() {
         assertTrue(authenticationHandler.supports(RegisteredServiceTestUtils.getHttpBasedServiceCredentials()));
         assertTrue(authenticationHandler.supports(RegisteredServiceTestUtils.getHttpBasedServiceCredentials().getClass()));
     }
 
     @Test
-    void verifyDoesntSupportBadUserCredentials() throws Throwable {
+    void verifyDoesntSupportBadUserCredentials() {
         assertFalse(authenticationHandler.supports(
             RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test2")));
     }
@@ -50,7 +50,7 @@ class ProxyAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyRejectsInProperCertificateCredentials() throws Throwable {
+    void verifyRejectsInProperCertificateCredentials() {
         assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials(
             "https://clearinghouse.ja-sig.org"), RegisteredServiceTestUtils.getService()));
     }
@@ -62,7 +62,7 @@ class ProxyAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyNoAcceptableStatusCode() throws Throwable {
+    void verifyNoAcceptableStatusCode() {
         assertThrows(FailedLoginException.class,
             () -> authenticationHandler.authenticate(
                 RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu"),
@@ -70,7 +70,7 @@ class ProxyAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyNoAcceptableStatusCodeButOneSet() throws Throwable {
+    void verifyNoAcceptableStatusCodeButOneSet() {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(900));
         val httpClient = clientFactory.getObject();

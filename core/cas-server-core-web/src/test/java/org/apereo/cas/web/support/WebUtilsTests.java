@@ -116,7 +116,7 @@ class WebUtilsTests {
     }
 
     @Test
-    void verifyFindService() throws Throwable {
+    void verifyFindService() {
         val casArgumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
@@ -162,7 +162,7 @@ class WebUtilsTests {
     }
 
     @Test
-    void verifyErrorViewWithRootCause() throws Throwable {
+    void verifyErrorViewWithRootCause() {
         val view = WebUtils.produceErrorView(new RuntimeException(new AuthenticationException("error")));
         val error = (Exception) view.getModel().get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION);
         assertInstanceOf(AuthenticationException.class, error);

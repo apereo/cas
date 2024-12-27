@@ -69,7 +69,7 @@ class KafkaTicketRegistryTests extends BaseTicketRegistryTests {
         }
 
         @EventListener
-        public void handleKafkaMessageReceivedEvent(final QueueableTicketRegistryMessageReceivedEvent event) throws Exception {
+        public void handleKafkaMessageReceivedEvent(final QueueableTicketRegistryMessageReceivedEvent event) {
             latch.countDown();
         }
     }

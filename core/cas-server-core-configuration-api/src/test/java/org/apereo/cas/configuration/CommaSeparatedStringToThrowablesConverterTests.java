@@ -15,14 +15,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("CasConfiguration")
 class CommaSeparatedStringToThrowablesConverterTests {
     @Test
-    void verifyConverters() throws Throwable {
+    void verifyConverters() {
         val converter = new CommaSeparatedStringToThrowablesConverter();
         val list = converter.convert(Exception.class.getName() + ',' + RuntimeException.class.getName());
         assertEquals(2, list.size());
     }
 
     @Test
-    void verifyConverter() throws Throwable {
+    void verifyConverter() {
         val converter = new CommaSeparatedStringToThrowablesConverter();
         val list = converter.convert(Exception.class.getName());
         assertEquals(1, list.size());

@@ -65,7 +65,7 @@ class LdapConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     }
 
     @Test
-    void verifyConsentNotFound() throws Throwable {
+    void verifyConsentNotFound() {
         assertNotNull(consentLdapConnectionFactory);
         assertTrue(getRepository().findConsentDecisions("unknown-user").isEmpty());
     }

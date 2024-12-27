@@ -89,7 +89,7 @@ class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTest
     }
 
     @Test
-    void verifyAttributeDefinitions() throws Throwable {
+    void verifyAttributeDefinitions() {
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val policy = new InCommonRSAttributeReleasePolicy();
         policy.setUseUniformResourceName(true);

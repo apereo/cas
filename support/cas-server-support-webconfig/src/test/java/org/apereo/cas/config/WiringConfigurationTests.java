@@ -86,7 +86,7 @@ class WiringConfigurationTests {
     }
 
     @Test
-    void verifyLocale() throws Throwable {
+    void verifyLocale() {
         var request = new MockHttpServletRequest();
         request.setPreferredLocales(List.of(Locale.ENGLISH));
         assertEquals(Locale.ENGLISH, localeResolver.resolveLocale(request));

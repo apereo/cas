@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcServicesManagerTests extends AbstractOidcTests {
 
     @Test
-    void verifyParallelLoading() throws Throwable {
+    void verifyParallelLoading() {
         for (var i = 0; i < 250; i++) {
             val redirectUri = "https://cas.oidc.org/%s".formatted(RandomUtils.randomAlphabetic(8));
             val oidcService = getOidcRegisteredService(UUID.randomUUID().toString(), redirectUri).setId(i);

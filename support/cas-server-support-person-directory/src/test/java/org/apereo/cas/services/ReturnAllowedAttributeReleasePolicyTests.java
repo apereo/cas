@@ -127,7 +127,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        void verifyVirtualAttributesInChain() throws Throwable {
+        void verifyVirtualAttributesInChain() {
             val policy = new ReturnAllowedAttributeReleasePolicy();
             policy.setAllowedAttributes(CollectionUtils.wrapList("displayName"));
             policy.setOrder(0);
@@ -232,7 +232,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         }
 
         @Test
-        void verifyRequestedDefinitions() throws Throwable {
+        void verifyRequestedDefinitions() {
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("uid");
             allowedAttributes.add("cn");

@@ -30,7 +30,7 @@ class RegisteredServicePublicKeyCipherExecutorTests {
     }
 
     @Test
-    void verifyCipherUnableToEncodeForStringIsTooLong() throws Throwable {
+    void verifyCipherUnableToEncodeForStringIsTooLong() {
         val svc = getService("classpath:keys/RSA1024Public.key");
         val ticketId = RandomUtils.randomAlphanumeric(120);
         val e = new RegisteredServicePublicKeyCipherExecutor();
@@ -38,7 +38,7 @@ class RegisteredServicePublicKeyCipherExecutorTests {
     }
 
     @Test
-    void verifyCipherAbleToEncode() throws Throwable {
+    void verifyCipherAbleToEncode() {
         val svc = getService("classpath:keys/RSA4096Public.key");
         val ticketId = RandomUtils.randomAlphanumeric(120);
         val e = new RegisteredServicePublicKeyCipherExecutor();
@@ -47,7 +47,7 @@ class RegisteredServicePublicKeyCipherExecutorTests {
     }
 
     @Test
-    void verifyCipherNoKey() throws Throwable {
+    void verifyCipherNoKey() {
         val svc = getService(StringUtils.EMPTY);
         val ticketId = RandomUtils.randomAlphanumeric(120);
         val e = new RegisteredServicePublicKeyCipherExecutor();

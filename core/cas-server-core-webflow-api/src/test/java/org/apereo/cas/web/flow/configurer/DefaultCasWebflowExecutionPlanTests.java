@@ -32,7 +32,7 @@ class DefaultCasWebflowExecutionPlanTests {
     private ConfigurableApplicationContext applicationContext;
     
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val plan = new DefaultCasWebflowExecutionPlan(applicationContext);
 
         val p1 = mock(CasWebflowLoginContextProvider.class);

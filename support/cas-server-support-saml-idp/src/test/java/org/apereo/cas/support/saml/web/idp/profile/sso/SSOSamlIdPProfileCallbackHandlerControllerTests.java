@@ -87,7 +87,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
         }
 
         @Test
-        void verifyNoRequest() throws Throwable {
+        void verifyNoRequest() {
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             assertThrowsWithRootCause(RuntimeException.class, MissingSamlAuthnRequestException.class,

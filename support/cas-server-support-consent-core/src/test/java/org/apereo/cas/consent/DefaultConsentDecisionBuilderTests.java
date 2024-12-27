@@ -30,7 +30,7 @@ class DefaultConsentDecisionBuilderTests {
     private ConsentDecisionBuilder consentDecisionBuilder;
 
     @Test
-    void verifyUnableToDecodeConsentDecision() throws Throwable {
+    void verifyUnableToDecodeConsentDecision() {
         val consentDecision = mock(ConsentDecision.class);
         when(consentDecision.getAttributes()).thenCallRealMethod();
         val builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
@@ -38,7 +38,7 @@ class DefaultConsentDecisionBuilderTests {
     }
 
     @Test
-    void verifyNewConsentDecision() throws Throwable {
+    void verifyNewConsentDecision() {
         val consentDecision = getConsentDecision();
         assertNotNull(consentDecision);
         assertEquals("casuser", consentDecision.getPrincipal());
@@ -46,7 +46,7 @@ class DefaultConsentDecisionBuilderTests {
     }
 
     @Test
-    void verifyBadDecision() throws Throwable {
+    void verifyBadDecision() {
         val consentDecision = new ConsentDecision();
         consentDecision.setPrincipal("casuser");
         consentDecision.setService(RegisteredServiceTestUtils.getService().getId());
@@ -57,7 +57,7 @@ class DefaultConsentDecisionBuilderTests {
     }
 
     @Test
-    void verifyAttributesRequireConsent() throws Throwable {
+    void verifyAttributesRequireConsent() {
         val consentDecision = getConsentDecision();
         assertTrue(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision,
             CollectionUtils.wrap("attr2", List.of("value2"))));
@@ -66,7 +66,7 @@ class DefaultConsentDecisionBuilderTests {
     }
 
     @Test
-    void verifyAttributeValuesRequireConsent() throws Throwable {
+    void verifyAttributeValuesRequireConsent() {
         val consentDecision = getConsentDecision();
         consentDecision.setOptions(ConsentReminderOptions.ATTRIBUTE_VALUE);
         assertTrue(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision,
@@ -74,7 +74,7 @@ class DefaultConsentDecisionBuilderTests {
     }
 
     @Test
-    void verifyAttributesAreRetrieved() throws Throwable {
+    void verifyAttributesAreRetrieved() {
         val consentDecision = getConsentDecision();
         val attrs = consentDecisionBuilder.getConsentableAttributesFrom(consentDecision);
         assertTrue(attrs.containsKey("attr1"));

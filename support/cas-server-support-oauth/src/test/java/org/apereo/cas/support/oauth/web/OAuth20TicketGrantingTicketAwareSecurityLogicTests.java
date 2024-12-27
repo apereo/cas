@@ -37,7 +37,7 @@ class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends AbstractOAuth20
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Test
-    void verifyStatelessOperation() throws Exception {
+    void verifyStatelessOperation() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val assertion = mock(Assertion.class);

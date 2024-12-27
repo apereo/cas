@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Cipher")
 class YubiKeyAccountCipherExecutorTests {
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val cipher = new YubikeyAccountCipherExecutor(null, null,
             EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, 512,
             EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);

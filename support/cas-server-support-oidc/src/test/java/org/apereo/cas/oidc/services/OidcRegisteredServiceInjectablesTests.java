@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OidcRegisteredServiceInjectablesTests extends AbstractOidcTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         assertNull(registeredService.getJwksKeyId());
         assertNull(registeredService.getIdTokenSigningAlg());

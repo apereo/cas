@@ -82,7 +82,7 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyQuery() throws Throwable {
+    void verifyQuery() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
         val ticketGrantingTicketToAdd = Stream.generate(() -> {
                 val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
@@ -108,7 +108,7 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyCount() throws Throwable {
+    void verifyCount() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
         val ticketGrantingTicketToAdd = Stream.generate(() -> {
                 val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
@@ -148,7 +148,7 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyGetSessionsFor() throws Throwable {
+    void verifyGetSessionsFor() {
         val principalId = UUID.randomUUID().toString();
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
         val ticketGrantingTicketToAdd = Stream.generate(() -> {
@@ -170,7 +170,7 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyDeleteSessionsFor() throws Throwable {
+    void verifyDeleteSessionsFor() {
         val principalId = UUID.randomUUID().toString();
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
         val ticketGrantingTicketToAdd = Stream.generate(() -> {

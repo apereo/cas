@@ -35,7 +35,7 @@ class RegisteredServiceMultifactorAuthenticationProviderBypassEvaluatorTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val eval = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         eval.addMultifactorAuthenticationProviderBypassEvaluator(

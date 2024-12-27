@@ -60,7 +60,7 @@ class MultifactorAuthenticationPrincipalResolverTests {
     }
 
     @Test
-    void verifyDefaultOperation() throws Throwable {
+    void verifyDefaultOperation() {
         val resolver = MultifactorAuthenticationPrincipalResolver.identical();
         assertEquals(Ordered.LOWEST_PRECEDENCE, resolver.getOrder());
 

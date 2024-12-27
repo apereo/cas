@@ -178,7 +178,7 @@ class RedisServerTicketRegistryTests {
         private static final int COUNT = 50;
 
         @RepeatedTest(2)
-        void verifyLargeDataset() throws Throwable {
+        void verifyLargeDataset() {
             LOGGER.info("Current repetition: [{}]", useEncryption ? "Encrypted" : "Plain");
             val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
             val ticketGrantingTicketToAdd = Stream.generate(() -> {
@@ -208,7 +208,7 @@ class RedisServerTicketRegistryTests {
         }
 
         @RepeatedTest(2)
-        void verifyRegistryQuery() throws Throwable {
+        void verifyRegistryQuery() {
             LOGGER.info("Current repetition: [{}]", useEncryption ? "Encrypted" : "Plain");
             val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
             val ticketGrantingTicketToAdd = Stream.generate(() -> {
@@ -236,7 +236,7 @@ class RedisServerTicketRegistryTests {
         }
 
         @RepeatedTest(2)
-        void verifyRegistryCount() throws Throwable {
+        void verifyRegistryCount() {
             LOGGER.info("Current repetition: [{}]", useEncryption ? "Encrypted" : "Plain");
             val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
             val ticketGrantingTicketToAdd = Stream.generate(() -> {
@@ -271,7 +271,7 @@ class RedisServerTicketRegistryTests {
         }
 
         @RepeatedTest(2)
-        void verifyHealthOperation() throws Throwable {
+        void verifyHealthOperation() {
             val health = redisHealthIndicator.health();
             val section = (Map) health.getDetails().get("redisTicketConnectionFactory");
             assertTrue(section.containsKey("server"));
@@ -426,7 +426,7 @@ class RedisServerTicketRegistryTests {
         private TicketRegistry ticketRegistry;
 
         @Test
-        void verifyConcurrentAddTicket() throws Throwable {
+        void verifyConcurrentAddTicket() {
             val principalId = UUID.randomUUID().toString();
             val testHasFailed = new AtomicBoolean();
             val threads = new ArrayList<Thread>();

@@ -37,7 +37,7 @@ class ChainingSingleLogoutServiceLogoutUrlBuilderTests {
     protected ServicesManager servicesManager;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val builder = new ChainingSingleLogoutServiceLogoutUrlBuilder(
             List.of(new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, SimpleUrlValidator.getInstance())));
         val service = CoreAuthenticationTestUtils.getWebApplicationService();

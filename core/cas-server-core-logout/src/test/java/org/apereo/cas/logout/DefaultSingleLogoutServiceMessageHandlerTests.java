@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 class DefaultSingleLogoutServiceMessageHandlerTests {
 
     @Test
-    void verifyEmpty() throws Throwable {
+    void verifyEmpty() {
         val servicesManager = mock(ServicesManager.class);
         val service = new CasRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());

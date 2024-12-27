@@ -50,7 +50,7 @@ class DelegatedClientsOidcEndpointContributorTests {
     private DelegatedIdentityProviders identityProviders;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val oauthClient = identityProviders.findClient("OAuth20Client").map(BaseClient.class::cast).orElseThrow();
         val googleClient = identityProviders.findClient("GoogleClient").map(BaseClient.class::cast).orElseThrow();
         assertTrue(delegatedClientsOidcEndpointContributor.supports(googleClient));

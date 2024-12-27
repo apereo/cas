@@ -27,7 +27,7 @@ class DefaultOidcAttributeReleasePolicyFactoryTests extends AbstractOidcTests {
     private OidcAttributeReleasePolicyFactory oidcAttributeReleasePolicyFactory;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(oidcAttributeReleasePolicyFactory.get(OidcConstants.StandardScopes.EMAIL));
         assertNotNull(oidcAttributeReleasePolicyFactory.get(OidcConstants.StandardScopes.ADDRESS));
         assertNotNull(oidcAttributeReleasePolicyFactory.get(OidcConstants.StandardScopes.PHONE));
@@ -37,7 +37,7 @@ class DefaultOidcAttributeReleasePolicyFactoryTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyEffectivePolicies() throws Throwable {
+    void verifyEffectivePolicies() {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
 
         val chain = new ChainingAttributeReleasePolicy();
@@ -60,7 +60,7 @@ class DefaultOidcAttributeReleasePolicyFactoryTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyEffectivePoliciesWithChain() throws Throwable {
+    void verifyEffectivePoliciesWithChain() {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         val chain = new ChainingAttributeReleasePolicy()
             .addPolicies(new OidcCustomScopeAttributeReleasePolicy("eduPerson", List.of("uid")));

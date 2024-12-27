@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDCAttributes")
 class OidcOpenIdScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val policy = new OidcOpenIdScopeAttributeReleasePolicy();
         assertEquals(OidcConstants.StandardScopes.OPENID.getScope(), policy.getScopeType());
         assertTrue(policy.getAllowedAttributes().isEmpty());
@@ -37,7 +37,7 @@ class OidcOpenIdScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val policy = new OidcOpenIdScopeAttributeReleasePolicy();
         val chain = new ChainingAttributeReleasePolicy();
         chain.addPolicies(policy);

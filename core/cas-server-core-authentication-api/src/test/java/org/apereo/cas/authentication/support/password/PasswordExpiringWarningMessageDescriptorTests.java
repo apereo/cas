@@ -29,7 +29,7 @@ class PasswordExpiringWarningMessageDescriptorTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val d = new PasswordExpiringWarningMessageDescriptor("DefaultMessage", 30);
         assertEquals(30, d.getDaysToExpiration());
         assertEquals("DefaultMessage", d.getDefaultMessage());
