@@ -13,7 +13,6 @@ import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -21,12 +20,12 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * This is {@link JsonTenantsManager}.
+ * This is {@link DefaultTenantsManager}.
  *
  * @author Misagh Moayyed
  * @since 7.2.0
  */
-public class JsonTenantsManager implements TenantsManager, DisposableBean {
+public class DefaultTenantsManager implements TenantsManager, DisposableBean {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -36,24 +35,30 @@ public class JsonTenantsManager implements TenantsManager, DisposableBean {
 
     private final List<TenantDefinition> tenantDefinitionList = new ArrayList<>();
 
-    public JsonTenantsManager(final Resource resource) throws Exception {
+    public DefaultTenantsManager() {
+        this(null);
+    }
+
+    public DefaultTenantsManager(final Resource resource) {
         jsonResource = resource;
         tenantDefinitionList.addAll(readFromJsonResource());
         initializeWatchService();
     }
 
-    private void initializeWatchService() throws IOException {
-        if (ResourceUtils.isFile(jsonResource)) {
-            watcherService = new FileWatcherService(jsonResource.getFile(),
-                Unchecked.consumer(__ -> {
-                    val resources = readFromJsonResource();
-                    if (resources.isEmpty()) {
-                        tenantDefinitionList.clear();
-                        tenantDefinitionList.addAll(resources);
-                    }
-                }));
-            watcherService.start(getClass().getSimpleName());
-        }
+    private void initializeWatchService() {
+        FunctionUtils.doAndHandle(__ -> {
+            if (ResourceUtils.isFile(jsonResource)) {
+                watcherService = new FileWatcherService(jsonResource.getFile(),
+                    Unchecked.consumer(file -> {
+                        val resources = readFromJsonResource();
+                        if (resources.isEmpty()) {
+                            tenantDefinitionList.clear();
+                            tenantDefinitionList.addAll(resources);
+                        }
+                    }));
+                watcherService.start(getClass().getSimpleName());
+            }
+        });
     }
 
     @Override
@@ -79,8 +84,7 @@ public class JsonTenantsManager implements TenantsManager, DisposableBean {
                 }
             }
             return new ArrayList<>();
-        }, throwable -> new ArrayList<>())
-        .get();
+        }, throwable -> new ArrayList<>()).get();
     }
 
 }

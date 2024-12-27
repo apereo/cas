@@ -12,6 +12,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
+import org.apereo.cas.multitenancy.DefaultTenantExtractor;
+import org.apereo.cas.multitenancy.DefaultTenantsManager;
 import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAuthenticationPolicy;
@@ -269,6 +271,7 @@ public class CoreAuthenticationTestUtils {
                                                                              final ServicesManager servicesManager) {
         val publisher = mock(ApplicationEventPublisher.class);
         val principalElectionStrategy = new DefaultPrincipalElectionStrategy();
+        val tenantsManager = new DefaultTenantsManager();
         return new DefaultAuthenticationSystemSupport(
             new DefaultAuthenticationTransactionManager(publisher, authenticationManager),
             principalElectionStrategy,
@@ -276,7 +279,8 @@ public class CoreAuthenticationTestUtils {
             getAuthenticationTransactionFactory(servicesManager),
             servicesManager,
             new EchoingPrincipalResolver(),
-            PrincipalFactoryUtils.newPrincipalFactory());
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            new DefaultTenantExtractor(tenantsManager), tenantsManager);
     }
 
     public static AuthenticationTransactionFactory getAuthenticationTransactionFactory(final ServicesManager servicesManager) {

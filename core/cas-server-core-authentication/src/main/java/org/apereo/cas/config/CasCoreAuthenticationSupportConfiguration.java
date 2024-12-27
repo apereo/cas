@@ -24,6 +24,8 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.cache.DefaultPrincipalAttributesRepositoryCache;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.multitenancy.TenantsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -128,13 +130,23 @@ class CasCoreAuthenticationSupportConfiguration {
             @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier("authenticationTransactionManager") final AuthenticationTransactionManager authenticationTransactionManager,
-            @Qualifier(PrincipalElectionStrategy.BEAN_NAME) final PrincipalElectionStrategy principalElectionStrategy,
-            @Qualifier("authenticationResultBuilderFactory") final AuthenticationResultBuilderFactory authenticationResultBuilderFactory,
-            @Qualifier(AuthenticationTransactionFactory.BEAN_NAME) final AuthenticationTransactionFactory authenticationTransactionFactory) {
+            @Qualifier("authenticationTransactionManager")
+            final AuthenticationTransactionManager authenticationTransactionManager,
+            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
+            final PrincipalElectionStrategy principalElectionStrategy,
+            @Qualifier("authenticationResultBuilderFactory")
+            final AuthenticationResultBuilderFactory authenticationResultBuilderFactory,
+            @Qualifier(AuthenticationTransactionFactory.BEAN_NAME)
+            final AuthenticationTransactionFactory authenticationTransactionFactory,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
+            @Qualifier(TenantsManager.BEAN_NAME)
+            final TenantsManager tenantsManager) {
             return new DefaultAuthenticationSystemSupport(authenticationTransactionManager,
                 principalElectionStrategy, authenticationResultBuilderFactory,
-                authenticationTransactionFactory, servicesManager, defaultPrincipalResolver, principalFactory);
+                authenticationTransactionFactory, servicesManager,
+                defaultPrincipalResolver, principalFactory,
+                tenantExtractor, tenantsManager);
         }
     }
 

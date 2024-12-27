@@ -44,7 +44,7 @@ if [[ ! -f "apache-tomcat-${tomcatVersion}.zip" ]]; then
       echo "Attempt $i - Downloading Apache Tomcat from ${tomcatUrl}"
       wget --no-check-certificate --timeout=30 --tries=3 "${tomcatUrl}" > /dev/null 2>&1 && success=true && break
       echo "Download failed. Retrying..."
-      sleep 5
+      sleep 10
   done
 fi
 if [ "$success" = false ]; then
