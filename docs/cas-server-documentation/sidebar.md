@@ -135,7 +135,6 @@ layout: null
         *   [Okta](/cas/{{ version }}/authentication/Okta-Authentication.html)
         *   [Permissive](/cas/{{ version }}/authentication/Permissive-Authentication.html)
         *   [Reject](/cas/{{ version }}/authentication/Reject-Authentication.html)
-        *   [SOAP](/cas/{{ version }}/authentication/SOAP-Authentication.html)
         *   [Custom](/cas/{{ version }}/authentication/Configuring-Custom-Authentication.html)
     *   [Authentication Policy](#authnpolicies)
         *   [Overview](/cas/{{ version }}/authentication/Configuring-Authentication-Policy.html)
