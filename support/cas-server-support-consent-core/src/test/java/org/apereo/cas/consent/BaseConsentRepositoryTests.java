@@ -128,6 +128,7 @@ public abstract class BaseConsentRepositoryTests {
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
+        CasWebAppAutoConfiguration.class,
         CasCoreAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
