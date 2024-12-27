@@ -4,11 +4,9 @@ import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.EncodingUtils;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +15,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
-
 import java.io.Serial;
 
 /**
@@ -72,9 +69,7 @@ public class DefaultEncodedTicket implements EncodedTicket {
     }
 
     @Override
-    @CanIgnoreReturnValue
-    public Ticket markTicketStateless() {
+    public void markTicketStateless() {
         stateless = true;
-        return this;
     }
 }
