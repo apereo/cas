@@ -24,6 +24,7 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasReportsAutoConfiguration;
+import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
@@ -101,6 +102,7 @@ public abstract class AbstractCasEndpointTests {
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
+        CasWebAppAutoConfiguration.class,
         CasCoreValidationAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)

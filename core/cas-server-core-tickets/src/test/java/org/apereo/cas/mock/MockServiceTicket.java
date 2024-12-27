@@ -38,6 +38,8 @@ public class MockServiceTicket implements ServiceTicket, RenewableServiceTicket,
     private static final long serialVersionUID = 8203377063087967768L;
 
     private final String id;
+    
+    private String tenantId;
 
     private final ZonedDateTime creationTime;
 

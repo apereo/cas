@@ -31,6 +31,7 @@ public abstract class BaseEntityHistoryTests {
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
+        CasWebAppAutoConfiguration.class,
         JaversMongoAutoConfiguration.class,
         CasJaversAutoConfiguration.class
     })

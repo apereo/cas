@@ -58,6 +58,9 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
     @Getter
     private String id;
 
+    @Getter
+    private String tenantId;
+
     /**
      * The last time this ticket was used.
      */

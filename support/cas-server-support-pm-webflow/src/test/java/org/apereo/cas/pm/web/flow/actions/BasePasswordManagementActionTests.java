@@ -128,6 +128,7 @@ public abstract class BasePasswordManagementActionTests {
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
+        CasWebAppAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)

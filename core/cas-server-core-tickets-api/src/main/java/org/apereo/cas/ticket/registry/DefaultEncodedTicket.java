@@ -36,13 +36,15 @@ public class DefaultEncodedTicket implements EncodedTicket {
     private static final long serialVersionUID = -7078771807487764116L;
 
     private final String id;
-
+    
     private final byte[] encodedTicket;
 
     private final String prefix;
 
     private boolean stateless;
 
+    private String tenantId;
+    
     @Setter
     private ExpirationPolicy expirationPolicy;
 
