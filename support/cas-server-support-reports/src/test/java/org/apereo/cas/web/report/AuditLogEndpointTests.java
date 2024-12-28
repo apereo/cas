@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(classes = AbstractCasEndpointTests.SharedTestConfiguration.class,
     properties = {
-        "server.port=8282",
+        "server.port=${random.int[8000,9999]}",
         "cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
         "cas.audit.engine.number-of-days-in-history=30",
         "management.endpoint.auditLog.access=UNRESTRICTED",

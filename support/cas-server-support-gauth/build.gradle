@@ -41,6 +41,8 @@ dependencies {
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
     testImplementation project(":support:cas-server-support-reports")
+    testImplementation project(":support:cas-server-support-webconfig")
+    
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-authentication")
