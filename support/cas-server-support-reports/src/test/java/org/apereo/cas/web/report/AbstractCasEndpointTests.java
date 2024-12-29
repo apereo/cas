@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreLoggingAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
@@ -24,6 +25,8 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasReportsAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
+import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -85,6 +88,7 @@ public abstract class AbstractCasEndpointTests {
     
     @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
+        CasCoreEnvironmentBootstrapAutoConfiguration.class,
         CasReportsAutoConfiguration.class,
         CasCoreLoggingAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
@@ -103,7 +107,9 @@ public abstract class AbstractCasEndpointTests {
         CasCoreWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasWebAppAutoConfiguration.class,
-        CasCoreValidationAutoConfiguration.class
+        CasCoreValidationAutoConfiguration.class,
+        CasValidationAutoConfiguration.class,
+        CasThymeleafAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({

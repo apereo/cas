@@ -182,7 +182,9 @@ class CasWebSecurityConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
         public SecurityFilterChain casWebSecurityConfigurerAdapter(
-            @Qualifier("securityContextRepository") final SecurityContextRepository securityContextRepository,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("securityContextRepository")
+            final SecurityContextRepository securityContextRepository,
             final HttpSecurity http,
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
             final List<CasWebSecurityConfigurer> configurersList,
@@ -193,7 +195,7 @@ class CasWebSecurityConfiguration {
             val adapter = new CasWebSecurityConfigurerAdapter(casProperties,
                 webEndpointProperties, pathMappedEndpoints, configurersList,
                 securityContextRepository, webProperties);
-            return adapter.configureHttpSecurity(http).build();
+            return adapter.configureHttpSecurity(http, applicationContext).build();
         }
     }
 

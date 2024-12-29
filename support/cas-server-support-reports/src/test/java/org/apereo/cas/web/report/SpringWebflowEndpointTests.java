@@ -5,9 +5,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
-
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +15,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Transition;
@@ -28,9 +27,9 @@ import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.execution.AnnotatedAction;
 import org.springframework.webflow.execution.ViewFactory;
-
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link SpringWebflowEndpointTests}.
@@ -47,15 +46,23 @@ class SpringWebflowEndpointTests extends AbstractCasEndpointTests {
     private SpringWebflowEndpoint springWebflowEndpoint;
 
     @Test
-    void verifyOperation() {
-        val login = springWebflowEndpoint.getReport("login", null);
-        assertNotNull(login);
+    void verifyOperation() throws Exception {
+        mockMvc.perform(get("/actuator/springWebflow")
+            .queryParam("flowId", CasWebflowConfigurer.FLOW_ID_LOGIN)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
 
-        val logout = springWebflowEndpoint.getReport("logout", null);
-        assertNotNull(logout);
+        mockMvc.perform(get("/actuator/springWebflow")
+            .queryParam("flowId", CasWebflowConfigurer.FLOW_ID_LOGIN)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
 
-        val all = springWebflowEndpoint.getReport(StringUtils.EMPTY, null);
-        assertNotNull(all);
+        mockMvc.perform(get("/actuator/springWebflow")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
     }
 
     @TestConfiguration(value = "SpringWebflowEndpointTestConfiguration", proxyBeanMethods = false)
@@ -76,8 +83,7 @@ class SpringWebflowEndpointTests extends AbstractCasEndpointTests {
 
         @Bean
         public CasWebflowExecutionPlanConfigurer testWebflowExecutionPlanConfigurer(
-            @Qualifier("testCasWebflowConfigurer")
-            final CasWebflowConfigurer testCasWebflowConfigurer) {
+            @Qualifier("testCasWebflowConfigurer") final CasWebflowConfigurer testCasWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(testCasWebflowConfigurer);
         }
 

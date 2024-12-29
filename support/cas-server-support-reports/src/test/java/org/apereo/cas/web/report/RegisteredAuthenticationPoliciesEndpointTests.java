@@ -1,14 +1,12 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link RegisteredAuthenticationPoliciesEndpointTests}.
@@ -20,13 +18,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ActuatorEndpoint")
 class RegisteredAuthenticationPoliciesEndpointTests extends AbstractCasEndpointTests {
 
-    @Autowired
-    @Qualifier("registeredAuthenticationPoliciesEndpoint")
-    private RegisteredAuthenticationPoliciesEndpoint endpoint;
-
     @Test
-    void verifyOperation() {
-        assertFalse(endpoint.handle().isEmpty());
-        assertNotNull(endpoint.fetchPolicy(AtLeastOneCredentialValidatedAuthenticationPolicy.class.getSimpleName()));
+    void verifyOperation() throws Exception {
+        mockMvc.perform(get("/actuator/authenticationPolicies")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+        mockMvc.perform(get("/actuator/authenticationPolicies/"
+            + AtLeastOneCredentialValidatedAuthenticationPolicy.class.getSimpleName())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
     }
 }

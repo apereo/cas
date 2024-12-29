@@ -63,6 +63,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-surrogate-authentication")
     testImplementation project(":support:cas-server-support-surrogate-webflow")
     testImplementation project(":support:cas-server-support-reports")
+    testImplementation project(":support:cas-server-support-webconfig")
 
     testImplementation project(path: ":core:cas-server-core-webflow-mfa-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")
