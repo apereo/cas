@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasConsentRestAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.val;
@@ -42,11 +43,8 @@ import java.util.stream.Collectors;
     RestfulConsentRepositoryTests.RestConsentRepositoryTestConfiguration.class,
     CasConsentRestAutoConfiguration.class,
     BaseConsentRepositoryTests.SharedTestConfiguration.class
-}, properties = {
-    "server.port=9988",
-    "cas.consent.rest.url=http://localhost:9988"
-},
-    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+}, properties = "cas.consent.rest.url=http://localhost:${#applicationContext.get().getEnvironment().getProperty('local.server.port')}/consent",
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Getter
 @ExtendWith(CasTestExtension.class)
 class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
@@ -79,8 +77,18 @@ class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
             return new RestConsentRepositoryStorage();
         }
 
+        @Bean
+        public CasWebSecurityConfigurer<Void> consentEndpointConfigurer() {
+            return new CasWebSecurityConfigurer<>() {
+                @Override
+                public List<String> getIgnoredEndpoints() {
+                    return List.of("/consent");
+                }
+            };
+        }
+        
         @RestController("consentController")
-        @RequestMapping("/")
+        @RequestMapping("/consent")
         static class ConsentController {
 
             @Autowired

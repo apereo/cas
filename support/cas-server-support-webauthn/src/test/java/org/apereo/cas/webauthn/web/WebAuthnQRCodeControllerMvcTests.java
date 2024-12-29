@@ -52,10 +52,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = {
     BaseWebSecurityTests.SharedTestConfiguration.class,
     BaseWebAuthnWebflowTests.SharedTestConfiguration.class
-}, properties = {
-    "server.port=8377",
-    "cas.authn.mfa.web-authn.core.qr-code-authentication-enabled=true"
-}, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+}, properties = "cas.authn.mfa.web-authn.core.qr-code-authentication-enabled=true",
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFAProvider")
 @ExtendWith(CasTestExtension.class)

@@ -34,12 +34,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = BaseEntityHistoryTests.SharedTestConfiguration.class,
     properties = {
-        "server.port=8080",
         "management.endpoints.access.default=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*",
         "management.endpoint.entityHistory.access=UNRESTRICTED",
         "cas.javers.mongo.client-uri=mongodb://root:secret@localhost:27017/cas?authSource=admin"
-    }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+    }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class EntityHistoryEndpointTests extends BaseEntityHistoryTests {
     @Autowired

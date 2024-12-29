@@ -48,11 +48,10 @@ import org.springframework.web.bind.annotation.RestController;
     CasCoreWebflowAutoConfiguration.class
 },
     properties = {
-        "server.port=9303",
-        "cas.service-registry.rest.url=http://localhost:9303",
+        "cas.service-registry.rest.url=http://localhost:${#applicationContext.get().getEnvironment().getProperty('local.server.port')}",
         "cas.service-registry.core.init-from-json=false"
     },
-    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("RestfulApi")
 @ExtendWith(CasTestExtension.class)

@@ -43,8 +43,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         BaseWebSecurityTests.SharedTestConfiguration.class
     },
     properties = {
-        "server.port=8080",
-
         "spring.security.user.name=casuser",
         "spring.security.user.password=Mellon",
         "spring.web.resources.static-locations=file:${java.io.tmpdir}/static",
@@ -63,7 +61,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "cas.monitor.endpoints.endpoint.health.required-ip-addresses[2]=172.16.0.0/16",
         "cas.monitor.endpoints.endpoint.health.required-ip-addresses[3]=200\\\\.0\\\\.0\\\\....",
         "cas.monitor.endpoints.form-login-enabled=true"
-    }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+    }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebApp")
 @ExtendWith(CasTestExtension.class)
