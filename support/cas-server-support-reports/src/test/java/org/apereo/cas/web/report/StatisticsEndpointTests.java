@@ -2,16 +2,17 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link StatisticsEndpointTests}.
@@ -22,10 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "management.endpoint.statistics.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 class StatisticsEndpointTests extends AbstractCasEndpointTests {
-    @Autowired
-    @Qualifier("statisticsReportEndpoint")
-    private StatisticsEndpoint statisticsEndpoint;
-
     @Autowired
     @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
@@ -47,9 +44,11 @@ class StatisticsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyOperation() {
-        val results = statisticsEndpoint.statistics();
-        assertFalse(results.isEmpty());
+    void verifyOperation() throws Throwable {
+        mockMvc.perform(get("/actuator/statistics")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
     }
 }
 

@@ -45,7 +45,7 @@ Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContext
             <AppenderRef ref="casFile"/>
             <AppenderRef ref="casConsole"/>
         </Logger>
-        <Logger name="org.springframework.security" level="debug" additivity="false">
+        <Logger name="org.springframework.security" level="info" additivity="false">
             <AppenderRef ref="casFile"/>
             <AppenderRef ref="casConsole"/>
         </Logger>

@@ -50,7 +50,7 @@ public class CasResolveAttributesReportEndpoint extends BaseCasActuatorEndpoint 
         val map = new HashMap<String, Object>();
         val principal = defaultPrincipalResolver.getObject().resolve(new BasicIdentifiableCredential(username));
         if (!(principal instanceof NullPrincipal)) {
-            map.put("uid", principal.getId());
+            map.put("username", principal.getId());
             map.put("attributes", principal.getAttributes());
         }
         return map;

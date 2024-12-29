@@ -17,9 +17,11 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.boot.autoconfigure.web.WebProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
@@ -38,6 +40,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -109,7 +112,7 @@ public class CasWebSecurityConfigurerAdapter {
      * @return the http security
      * @throws Exception the exception
      */
-    public HttpSecurity configureHttpSecurity(final HttpSecurity http) throws Exception {
+    public HttpSecurity configureHttpSecurity(final HttpSecurity http, final ApplicationContext applicationContext) throws Exception {
         http
             .cors(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
@@ -134,7 +137,7 @@ public class CasWebSecurityConfigurerAdapter {
             endpointProps.getAccess().forEach(Unchecked.consumer(
                 access -> configureEndpointAccess(requests, access, endpointProps, endpoint)));
         }));
-        configureEndpointAccessToDenyUndefined(requests);
+        configureEndpointAccessToDenyUndefined(requests, applicationContext);
         configureEndpointAccessForStaticResources(requests);
         configureEndpointAccessByFormLogin(requests);
 
@@ -175,24 +178,33 @@ public class CasWebSecurityConfigurerAdapter {
     }
 
     protected void configureEndpointAccessToDenyUndefined(
-        final HttpSecurity http) {
+        final HttpSecurity http, final ApplicationContext applicationContext) {
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
-        val endpointDefaults = casProperties.getMonitor().getEndpoints().getDefaultEndpointProperties();
         pathMappedEndpoints.getObject()
             .stream()
             .filter(BeanSupplier::isNotProxy)
-            .forEach(endpoint -> {
+            .forEach(Unchecked.consumer(endpoint -> {
                 val rootPath = endpoint.getRootPath();
+                val endpointMatcher = EndpointRequest.to(rootPath).excludingLinks();
                 if (endpoints.contains(rootPath)) {
                     LOGGER.trace("Endpoint security is defined for endpoint [{}]", rootPath);
                 } else {
-                    val defaultAccessRules = endpointDefaults.getAccess();
-                    LOGGER.trace("Endpoint security is NOT defined for endpoint [{}]. Using default security rules [{}]", rootPath, endpointDefaults);
-                    val endpointRequest = EndpointRequest.to(rootPath).excludingLinks();
-                    defaultAccessRules.forEach(Unchecked.consumer(access ->
-                        configureEndpointAccess(http, access, endpointDefaults, endpointRequest)));
+                    val accessLevel = applicationContext.getEnvironment().getProperty("management.endpoint.%s.access".formatted(rootPath));
+                    if (StringUtils.isNotBlank(accessLevel)) {
+                        val access = Access.valueOf(accessLevel.toUpperCase(Locale.ENGLISH));
+                        switch (access) {
+                            case UNRESTRICTED, READ_ONLY -> configureEndpointAccessPermitAll(http, endpointMatcher);
+                            case NONE -> configureEndpointAccessToDenyAll(http, endpointMatcher);
+                        }
+                    } else {
+                        val endpointDefaults = casProperties.getMonitor().getEndpoints().getDefaultEndpointProperties();
+                        val defaultAccessRules = endpointDefaults.getAccess();
+                        LOGGER.trace("Endpoint security is NOT defined for endpoint [{}]. Using default security rules [{}]", rootPath, endpointDefaults);
+                        defaultAccessRules.forEach(Unchecked.consumer(access ->
+                            configureEndpointAccess(http, access, endpointDefaults, endpointMatcher)));
+                    }
                 }
-            });
+            }));
     }
 
     protected void configureEndpointAccessForStaticResources(final HttpSecurity requests) throws Exception {

@@ -2,14 +2,11 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import java.util.Map;
 import java.util.Set;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -22,20 +19,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 7.1.0
  */
 @Tag("ActuatorEndpoint")
-@ExtendWith(CasTestExtension.class)
-@AutoConfigureMockMvc
-@SpringBootTest(classes = AbstractCasEndpointTests.SharedTestConfiguration.class,
-    properties = {
-        "cas.authn.attribute-repository.stub.attributes.uid=cas",
-        "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
-        "cas.authn.attribute-repository.stub.attributes.phone=123456789",
-        "server.port=8181",
-
-        "cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-        "management.endpoint.serviceAccess.access=UNRESTRICTED",
-        "management.endpoints.web.exposure.include=*"
-    },
-    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@TestPropertySource(properties = {
+    "cas.authn.attribute-repository.stub.attributes.uid=cas",
+    "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
+    "cas.authn.attribute-repository.stub.attributes.phone=123456789",
+    "management.endpoint.serviceAccess.access=UNRESTRICTED",
+    "cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS"
+})
 class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTests {
     @Test
     void verifyForbiddenOperation() throws Throwable {

@@ -24,7 +24,6 @@ dependencies {
     api project(":api:cas-server-core-api-web")
     
     implementation libraries.nimbus
-
     
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-web")
@@ -44,6 +43,7 @@ dependencies {
 
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-webconfig")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")

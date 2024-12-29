@@ -1,9 +1,11 @@
 package org.apereo.cas.util.feature;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,6 +20,8 @@ import java.io.Serializable;
 @EqualsAndHashCode(of = {"name", "version"})
 @ToString
 @Getter
+@Jacksonized
+@AllArgsConstructor
 public class CasRuntimeModule implements Serializable {
     @Serial
     private static final long serialVersionUID = -1581604787854700568L;
