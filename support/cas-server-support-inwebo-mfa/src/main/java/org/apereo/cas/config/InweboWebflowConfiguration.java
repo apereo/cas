@@ -77,7 +77,7 @@ class InweboWebflowConfiguration {
     @ConditionalOnMissingBean(name = "inweboMultifactorAuthenticationWebflowEventResolver")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowEventResolver inweboMultifactorAuthenticationWebflowEventResolver(
-        @Qualifier("casWebflowConfigurationContext")
+        @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
         final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
         return new FinalMultifactorAuthenticationTransactionWebflowEventResolver(casWebflowConfigurationContext);
     }

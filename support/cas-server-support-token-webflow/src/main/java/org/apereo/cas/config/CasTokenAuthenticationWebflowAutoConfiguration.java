@@ -81,7 +81,7 @@ public class CasTokenAuthenticationWebflowAutoConfiguration {
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
         @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
         final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan,

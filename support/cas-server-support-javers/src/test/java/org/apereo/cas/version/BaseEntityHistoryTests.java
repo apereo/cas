@@ -30,7 +30,6 @@ public abstract class BaseEntityHistoryTests {
         CasCoreWebAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasCoreWebflowAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,

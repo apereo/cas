@@ -53,7 +53,7 @@ class SpnegoWebflowActionsConfiguration {
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
         @Qualifier("serviceTicketRequestWebflowEventResolver")
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-        @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,

@@ -12,6 +12,15 @@ package org.apereo.cas.web.flow.resolver;
 public interface CasDelegatingWebflowEventResolver extends CasWebflowEventResolver {
 
     /**
+     * The bean name for the initial authentication attempt resolution.
+     */
+    String BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER = "initialAuthenticationAttemptWebflowEventResolver";
+    /**
+     * The bean name for the selective authentication event resolver.
+     */
+    String BEAN_NAME_SELECTIVE_AUTHENTICATION_EVENT_RESOLVER = "selectiveAuthenticationProviderWebflowEventResolver";
+
+    /**
      * Add delegate.
      *
      * @param r the resolver to delegate

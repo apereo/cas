@@ -127,7 +127,8 @@ class WebAuthnWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("casWebflowConfigurationContext") final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+            @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
+            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
             return BeanSupplier.of(CasWebflowEventResolver.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new FinalMultifactorAuthenticationTransactionWebflowEventResolver(casWebflowConfigurationContext))

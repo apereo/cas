@@ -225,11 +225,11 @@ public class CasRadiusAutoConfiguration {
     @Lazy(false)
     public CasWebflowEventResolver radiusAccessChallengedAuthenticationWebflowEventResolver(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
         @Qualifier("radiusAccessChallengedMultifactorAuthenticationTrigger")
         final MultifactorAuthenticationTrigger radiusAccessChallengedMultifactorAuthenticationTrigger,
-        @Qualifier("casWebflowConfigurationContext")
+        @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
         final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
         return BeanSupplier.of(CasWebflowEventResolver.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))

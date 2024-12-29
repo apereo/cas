@@ -82,13 +82,13 @@ class ElectronicFenceWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver(
-            @Qualifier("casWebflowConfigurationContext")
+            @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
             @Qualifier("authenticationRiskMitigator")
             final AuthenticationRiskMitigator authenticationRiskMitigator,
             @Qualifier("authenticationRiskEvaluator")
             final AuthenticationRiskEvaluator authenticationRiskEvaluator,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
             val resolver = new RiskAwareAuthenticationWebflowEventResolver(casWebflowConfigurationContext,
                 authenticationRiskEvaluator, authenticationRiskMitigator);

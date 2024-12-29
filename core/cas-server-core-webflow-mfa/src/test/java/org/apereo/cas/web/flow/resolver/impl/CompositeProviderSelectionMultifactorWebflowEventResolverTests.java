@@ -14,6 +14,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -74,7 +75,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
     @TestPropertySource(properties = "cas.authn.mfa.core.provider-selection.provider-selection-enabled=true")
     class BypassTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
-        @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_SELECTIVE_AUTHENTICATION_EVENT_RESOLVER)
         private CasWebflowEventResolver compositeResolver;
 
         @Test
@@ -99,7 +100,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
     @TestPropertySource(properties = "cas.authn.mfa.core.provider-selection.provider-selection-enabled=true")
     class DefaultTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
-        @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_SELECTIVE_AUTHENTICATION_EVENT_RESOLVER)
         private CasWebflowEventResolver compositeResolver;
 
         @Autowired

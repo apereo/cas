@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -37,12 +38,12 @@ class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests {
     @Nested
     class WithMultipleProviders extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
-        @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_SELECTIVE_AUTHENTICATION_EVENT_RESOLVER)
         private CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver;
 
         @Test
         void verifyOperation() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             servicesManager.save(service);
@@ -83,12 +84,12 @@ class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests {
     @Nested
     class WithProvider extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
-        @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_SELECTIVE_AUTHENTICATION_EVENT_RESOLVER)
         private CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver;
 
         @Test
         void verifyOperation() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             servicesManager.save(service);
@@ -120,13 +121,12 @@ class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests {
     @Nested
     class WithoutProvider extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
-        @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_SELECTIVE_AUTHENTICATION_EVENT_RESOLVER)
         private CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver;
-
-
+        
         @Test
         void verifyEmptyOperation() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             servicesManager.save(service);
             WebUtils.putRegisteredService(context, service);

@@ -75,7 +75,7 @@ public class CasX509AuthenticationWebflowAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action x509Check(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
         @Qualifier("x509CertificateExtractor")
         final X509CertificateExtractor x509CertificateExtractor,
