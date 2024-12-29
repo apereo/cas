@@ -43,7 +43,7 @@ class DefaultCasDelegatingWebflowEventResolverTests {
     @Nested
     class DefaultTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
-        @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
         private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
         @Test
@@ -122,7 +122,7 @@ class DefaultCasDelegatingWebflowEventResolverTests {
     @TestPropertySource(properties = "cas.authn.mfa.triggers.global.global-provider-id=mfa-dummy")
     class MfaTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
-        @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
         private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
         @Test

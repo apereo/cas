@@ -69,7 +69,7 @@ public class SomethingConfiguration {
     
     @Bean
     public CasWebflowEventResolver exampleMultifactorAuthenticationWebflowEventResolver(
-        @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
         final CasDelegatingWebflowEventResolver initialEventResolver) {
         val resolver = new DefaultMultifactorAuthenticationProviderEventResolver(
             authenticationSystemSupport.getObject(),

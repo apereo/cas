@@ -126,7 +126,7 @@ public class CasSupportActionsAutoConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("serviceTicketRequestWebflowEventResolver")
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
             @Qualifier("adaptiveAuthenticationPolicy")
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
@@ -205,7 +205,7 @@ public class CasSupportActionsAutoConfiguration {
         public Action createTicketGrantingTicketAction(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("casWebflowConfigurationContext")
+            @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)

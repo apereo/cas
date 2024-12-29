@@ -161,9 +161,9 @@ class SamlIdPWebflowConfiguration {
         public CasWebflowEventResolver samlIdPAuthenticationContextWebflowEventResolver(
             @Qualifier("samlIdPMultifactorAuthenticationTrigger")
             final MultifactorAuthenticationTrigger samlIdPMultifactorAuthenticationTrigger,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
-            @Qualifier("casWebflowConfigurationContext")
+            @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
             val r = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(casWebflowConfigurationContext,
                 samlIdPMultifactorAuthenticationTrigger);

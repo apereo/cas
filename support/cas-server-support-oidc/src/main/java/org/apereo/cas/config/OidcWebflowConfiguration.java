@@ -84,9 +84,12 @@ class OidcWebflowConfiguration {
     @Bean
     @Lazy(false)
     public CasWebflowEventResolver oidcAuthenticationContextWebflowEventResolver(
-        @Qualifier("initialAuthenticationAttemptWebflowEventResolver") final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
-        @Qualifier("casWebflowConfigurationContext") final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
-        @Qualifier("oidcMultifactorAuthenticationTrigger") final MultifactorAuthenticationTrigger oidcMultifactorAuthenticationTrigger) {
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
+        final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+        @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
+        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
+        @Qualifier("oidcMultifactorAuthenticationTrigger")
+        final MultifactorAuthenticationTrigger oidcMultifactorAuthenticationTrigger) {
         val resolver = new DefaultMultifactorAuthenticationProviderWebflowEventResolver(
             casWebflowConfigurationContext, oidcMultifactorAuthenticationTrigger);
         initialAuthenticationAttemptWebflowEventResolver.addDelegate(resolver);

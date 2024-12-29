@@ -86,7 +86,7 @@ class YubiKeyAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "yubikeyAuthenticationWebflowEventResolver")
         public CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver(
-            @Qualifier("casWebflowConfigurationContext")
+            @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
             return new FinalMultifactorAuthenticationTransactionWebflowEventResolver(casWebflowConfigurationContext);
         }

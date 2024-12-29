@@ -167,7 +167,7 @@ public class CasTrustedAuthenticationAutoConfiguration {
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
             @Qualifier("serviceTicketRequestWebflowEventResolver")
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
             return new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver,
@@ -188,7 +188,7 @@ public class CasTrustedAuthenticationAutoConfiguration {
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
             @Qualifier("serviceTicketRequestWebflowEventResolver")
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
             return new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver,
@@ -210,7 +210,7 @@ public class CasTrustedAuthenticationAutoConfiguration {
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
             @Qualifier("serviceTicketRequestWebflowEventResolver")
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
             val trusted = casProperties.getAuthn().getTrusted();
             return new PrincipalFromRequestHeaderNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
@@ -239,7 +239,7 @@ public class CasTrustedAuthenticationAutoConfiguration {
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
             @Qualifier("serviceTicketRequestWebflowEventResolver")
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
             val chain = new ChainingPrincipalFromRequestNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver,

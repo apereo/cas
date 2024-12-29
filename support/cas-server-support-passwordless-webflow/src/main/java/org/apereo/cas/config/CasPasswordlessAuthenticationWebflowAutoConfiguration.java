@@ -157,7 +157,7 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("serviceTicketRequestWebflowEventResolver")
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)

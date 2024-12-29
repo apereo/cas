@@ -38,6 +38,11 @@ import java.util.List;
 @Setter
 @SuperBuilder
 public class CasWebflowEventResolutionConfigurationContext {
+    /**
+     * The bean name of this component in the Spring context.
+     */
+    public static final String BEAN_NAME = "casWebflowConfigurationContext";
+    
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
     private final CentralAuthenticationService centralAuthenticationService;

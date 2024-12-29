@@ -85,7 +85,8 @@ public class CasWsFederationAuthenticationWebflowAutoConfiguration {
         @Qualifier("wsFederationResponseValidator") final WsFederationResponseValidator wsFederationResponseValidator,
         @Qualifier("adaptiveAuthenticationPolicy") final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
         @Qualifier("serviceTicketRequestWebflowEventResolver") final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-        @Qualifier("initialAuthenticationAttemptWebflowEventResolver") final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
+        final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
         return WebflowActionBeanSupplier.builder()
             .withApplicationContext(applicationContext)
             .withProperties(casProperties)

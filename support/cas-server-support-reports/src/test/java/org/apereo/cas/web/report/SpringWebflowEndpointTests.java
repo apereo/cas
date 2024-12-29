@@ -41,9 +41,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(SpringWebflowEndpointTests.SpringWebflowEndpointTestConfiguration.class)
 @TestPropertySource(properties = "management.endpoint.springWebflow.access=UNRESTRICTED")
 class SpringWebflowEndpointTests extends AbstractCasEndpointTests {
-    @Autowired
-    @Qualifier("springWebflowEndpoint")
-    private SpringWebflowEndpoint springWebflowEndpoint;
 
     @Test
     void verifyOperation() throws Exception {
