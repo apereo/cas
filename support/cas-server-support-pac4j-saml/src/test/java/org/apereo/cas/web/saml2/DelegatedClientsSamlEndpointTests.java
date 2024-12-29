@@ -1,14 +1,13 @@
 package org.apereo.cas.web.saml2;
 
-import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpoint;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link DelegatedClientsSamlEndpointTests}.
@@ -29,13 +28,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ActuatorEndpoint")
 @Import(BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class)
 class DelegatedClientsSamlEndpointTests extends AbstractCasEndpointTests {
-    @Autowired
-    @Qualifier("delegatedClientsEndpoint")
-    private DelegatedClientsEndpoint endpoint;
-
     @Test
-    void verifyOperation() {
-        assertFalse(endpoint.getClients().isEmpty());
-        assertFalse(endpoint.reload().isEmpty());
+    void verifyOperation() throws Exception {
+        mockMvc.perform(get("/actuator/delegatedClients")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+        mockMvc.perform(delete("/actuator/delegatedClients")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
     }
 }

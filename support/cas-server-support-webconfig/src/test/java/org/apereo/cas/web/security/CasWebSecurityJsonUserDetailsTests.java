@@ -28,8 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 7.2.0
  */
 @SpringBootTest(classes = BaseWebSecurityTests.SharedTestConfiguration.class, properties = {
-    "server.port=8181",
-
     "management.endpoints.access.default=UNRESTRICTED",
     "management.endpoints.web.exposure.include=*",
 
@@ -37,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "cas.monitor.endpoints.endpoint.defaults.requiredRoles=ADMIN",
 
     "cas.monitor.endpoints.json.location=classpath:/StaticUserDetails.json"
-}, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebApp")
 @ExtendWith(CasTestExtension.class)

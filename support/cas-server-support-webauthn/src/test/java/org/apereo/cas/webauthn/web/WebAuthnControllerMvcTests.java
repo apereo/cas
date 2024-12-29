@@ -51,7 +51,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     BaseWebAuthnWebflowTests.SharedTestConfiguration.class
 },
     properties = {
-        "server.port=8080",
         "management.endpoints.access.default=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*",
 
@@ -60,7 +59,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
         "cas.monitor.endpoints.endpoint.env.access=AUTHENTICATED",
         "cas.monitor.endpoints.endpoint.info.access=ANONYMOUS"
-    }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+    }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFAProvider")
 @ExtendWith(CasTestExtension.class)

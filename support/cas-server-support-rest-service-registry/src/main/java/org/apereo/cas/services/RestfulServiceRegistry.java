@@ -7,6 +7,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -64,7 +65,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
-                .url(properties.getUrl())
+                .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
                 .headers(getRequestHeaders(properties))
                 .entity(entity)
                 .build();
@@ -87,7 +88,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
     public boolean delete(final RegisteredService registeredService) {
         HttpResponse response = null;
         try {
-            val completeUrl = StringUtils.appendIfMissing(properties.getUrl(), "/")
+            val completeUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/")
                 .concat(Long.toString(registeredService.getId()));
             invokeServiceRegistryListenerPreSave(registeredService);
             val exec = HttpExecutionRequest.builder()
@@ -115,7 +116,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
-                .url(properties.getUrl())
+                .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
                 .headers(getRequestHeaders(properties))
                 .build();
             response = HttpUtils.execute(exec);
@@ -133,7 +134,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.GET)
-                .url(properties.getUrl())
+                .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
                 .headers(getRequestHeaders(properties))
                 .build();
             response = HttpUtils.execute(exec);

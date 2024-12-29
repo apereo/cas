@@ -8,6 +8,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -58,7 +59,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.GET)
-                    .url(properties.getUrl())
+                    .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
@@ -90,7 +91,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.GET)
-                    .url(properties.getUrl())
+                    .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
@@ -125,7 +126,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.GET)
-                    .url(properties.getUrl())
+                    .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
@@ -156,7 +157,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.POST)
-                    .url(properties.getUrl())
+                    .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
                     .headers(headers)
                     .entity(MAPPER.writeValueAsString(decision))
                     .build();
@@ -185,7 +186,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.DELETE)
-                    .url(properties.getUrl())
+                    .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
@@ -208,7 +209,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
-                .url(properties.getUrl())
+                .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
@@ -227,7 +228,8 @@ public class RestfulConsentRepository implements ConsentRepository {
                 headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
                 headers.put("principal", principal);
                 headers.putAll(properties.getHeaders());
-                val deleteEndpoint = properties.getUrl().concat('/' + Long.toString(decisionId));
+                val deleteEndpoint = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl())
+                    .concat('/' + Long.toString(decisionId));
                 val exec = HttpExecutionRequest.builder()
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())

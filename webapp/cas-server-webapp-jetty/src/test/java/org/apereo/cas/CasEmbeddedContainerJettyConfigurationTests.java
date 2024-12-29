@@ -21,10 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = CasEmbeddedContainerJettyAutoConfiguration.class, properties = {
-    "server.port=${random.int[8000,9999]}",
     "server.ssl.enabled=false",
     "cas.server.jetty.sni-host-check=false"
-}, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Getter
 @Tag("WebApp")
 @ExtendWith(CasTestExtension.class)
