@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import org.apereo.cas.util.http.HttpRequestUtils;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -11,6 +10,7 @@ import org.springframework.binding.message.MessageContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -160,7 +160,7 @@ public class MockRequestContext extends MockRequestControlContext {
 
     @CanIgnoreReturnValue
     public MockRequestContext withUserAgent(final String s) {
-        addHeader(HttpRequestUtils.USER_AGENT_HEADER, s);
+        addHeader(HttpHeaders.USER_AGENT, s);
         return this;
     }
 

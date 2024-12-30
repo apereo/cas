@@ -9,7 +9,6 @@ import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.web.CasEventsReportEndpoint;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -78,7 +78,7 @@ class CasEventsReportEndpointTests {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("223.456.789.100");
         request.setLocalAddr("223.456.789.100");
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+        request.addHeader(HttpHeaders.USER_AGENT, "test");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 

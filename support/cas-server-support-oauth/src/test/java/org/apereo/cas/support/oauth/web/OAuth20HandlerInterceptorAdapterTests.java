@@ -4,11 +4,11 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.jee.context.JEEContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.UUID;
@@ -33,7 +33,7 @@ class OAuth20HandlerInterceptorAdapterTests extends AbstractOAuth20Tests {
         val clientId = UUID.randomUUID().toString();
         request.setRequestURI('/' + OAuth20Constants.AUTHORIZE_URL);
         request.setParameter(OAuth20Constants.CLIENT_ID, clientId);
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         request.setParameter(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org");
         request.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.getType());
 

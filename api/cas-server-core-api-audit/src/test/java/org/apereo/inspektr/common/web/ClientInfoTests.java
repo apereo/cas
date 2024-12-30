@@ -3,6 +3,7 @@ package org.apereo.inspektr.common.web;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import jakarta.annotation.Nonnull;
 import java.util.HashMap;
@@ -88,7 +89,7 @@ class ClientInfoTests {
             val clientInfo = ClientInfo.from(request, options);
             assertTrue(clientInfo.getHeaders().containsKey("server-header"));
             assertTrue(clientInfo.getHeaders().containsKey("client-header"));
-            assertTrue(clientInfo.getHeaders().containsKey("user-agent"));
+            assertTrue(clientInfo.getHeaders().containsKey(HttpHeaders.USER_AGENT));
         } finally {
             ClientInfoHolder.clear();
         }
@@ -102,12 +103,12 @@ class ClientInfoTests {
                 .useServerHostAddress(true)
                 .alternateServerAddrHeaderName("server-header")
                 .alternateLocalAddrHeaderName("client-header")
-                .httpRequestHeaders(List.of("user-agent"))
+                .httpRequestHeaders(List.of(HttpHeaders.USER_AGENT))
                 .build();
             val clientInfo = ClientInfo.from(request, options);
             assertFalse(clientInfo.getHeaders().containsKey("server-header"));
             assertFalse(clientInfo.getHeaders().containsKey("client-header"));
-            assertTrue(clientInfo.getHeaders().containsKey("user-agent"));
+            assertTrue(clientInfo.getHeaders().containsKey(HttpHeaders.USER_AGENT));
         } finally {
             ClientInfoHolder.clear();
         }
@@ -137,7 +138,7 @@ class ClientInfoTests {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
-        request.addHeader("user-agent", "firefox");
+        request.addHeader(HttpHeaders.USER_AGENT, "firefox");
         request.addHeader("server-header", "1.2.3.4");
         request.addHeader("client-header", "5.6.7.8");
         return request;

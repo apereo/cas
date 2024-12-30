@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.test.CasTestExtension;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -20,6 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.List;
@@ -78,7 +78,7 @@ public abstract class BaseMultifactorAuthenticationTriggerTests {
         this.httpRequest = new MockHttpServletRequest();
         this.httpRequest.setRemoteAddr("185.86.151.11");
         this.httpRequest.setLocalAddr("185.88.151.12");
-        this.httpRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        this.httpRequest.addHeader(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         var clientInfo = ClientInfo.from(this.httpRequest);
         ClientInfoHolder.setClientInfo(clientInfo);
 

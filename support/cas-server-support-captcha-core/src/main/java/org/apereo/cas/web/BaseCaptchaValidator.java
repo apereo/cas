@@ -58,7 +58,7 @@ public abstract class BaseCaptchaValidator implements CaptchaValidator {
     
     protected HttpResponse executeCaptchaVerification(final String recaptchaResponse, final String userAgent) {
         val headers = CollectionUtils.<String, String>wrap(
-            "User-Agent", userAgent,
+            HttpHeaders.USER_AGENT, userAgent,
             HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             "Accept-Language", "en-US,en;q=0.5");
         headers.putAll(recaptchaProperties.getHeaders());

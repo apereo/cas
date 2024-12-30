@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import jakarta.servlet.http.Cookie;
 import java.util.UUID;
@@ -46,7 +46,7 @@ class DefaultCasCookieValueManagerTests {
         httpServletRequest = new MockHttpServletRequest();
         httpServletRequest.setRemoteAddr(CLIENT_IP);
         httpServletRequest.setLocalAddr(CLIENT_IP);
-        httpServletRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, USER_AGENT);
+        httpServletRequest.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
         ClientInfoHolder.setClientInfo(ClientInfo.from(httpServletRequest));
         cookieValueManager = getCookieValueManager(new TicketGrantingCookieProperties());
     }
@@ -58,7 +58,7 @@ class DefaultCasCookieValueManagerTests {
 
     @Test
     void verifySessionPinning() {
-        httpServletRequest.removeHeader(HttpRequestUtils.USER_AGENT_HEADER);
+        httpServletRequest.removeHeader(HttpHeaders.USER_AGENT);
         val props = new TicketGrantingCookieProperties().setPinToSession(true);
         assertThrows(IllegalStateException.class,
             () -> getCookieValueManager(props).buildCookieValue(VALUE, httpServletRequest));

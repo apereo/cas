@@ -5,7 +5,6 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +20,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -67,7 +67,7 @@ class SSOSamlIdPPostProfileHandlerControllerWithTicketRegistryTests extends Base
     void verifyPostSignRequest() {
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Firefox");
+        request.addHeader(HttpHeaders.USER_AGENT, "Firefox");
         samlIdPDistributedSessionCookieGenerator.setCookiePath(StringUtils.EMPTY);
         request.setContextPath("/custompath");
         val response = new MockHttpServletResponse();

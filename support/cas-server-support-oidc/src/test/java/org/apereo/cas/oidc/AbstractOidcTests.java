@@ -81,7 +81,6 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.CasEventListener;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -104,6 +103,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -405,7 +405,7 @@ public abstract class AbstractOidcTests {
         request.setServerName("sso.example.org");
         request.setServerPort(443);
         request.setRequestURI("/cas/oidc/" + endpoint);
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         return request;
     }
 

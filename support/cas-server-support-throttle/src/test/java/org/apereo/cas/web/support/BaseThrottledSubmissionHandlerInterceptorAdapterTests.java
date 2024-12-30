@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -117,7 +118,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         context.setParameter(CasProtocolConstants.PARAMETER_USERNAME, username);
         context.setParameter(CasProtocolConstants.PARAMETER_PASSWORD, password);
         request.setRemoteAddr(fromAddress);
-        request.addHeader("User-Agent", "Firefox");
+        request.addHeader(HttpHeaders.USER_AGENT, "Firefox");
         request.setAttribute("flowRequestContext", context);
         request.setRequestURI("/cas/login");
         context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));

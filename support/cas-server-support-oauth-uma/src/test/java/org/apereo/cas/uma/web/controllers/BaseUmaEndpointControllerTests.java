@@ -24,7 +24,6 @@ import org.apereo.cas.uma.web.controllers.resource.UmaResourceRegistrationReques
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.SecurityLogicInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -208,7 +207,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.POST.name(), CONTEXT + OAuth20Constants.UMA_REGISTRATION_URL);
         mockRequest.addHeader(HttpHeaders.AUTHORIZATION, String.format("%s %s", OAuth20Constants.TOKEN_TYPE_BEARER, accessToken));
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         val mockResponse = new MockHttpServletResponse();
         interceptor.preHandle(mockRequest, mockResponse, null);
         return Triple.of(mockRequest, mockResponse, accessToken);

@@ -8,7 +8,6 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,6 +16,7 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.Set;
@@ -59,7 +59,7 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
         servicesManager.save(service);
 
         val request = new MockHttpServletRequest();
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         request.addParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
