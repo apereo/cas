@@ -19,6 +19,7 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -144,7 +145,7 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
         storeProfileIntoSession(request, profile);
 
         val response = new MockHttpServletResponse();
-        request.addHeader("Authorization",
+        request.addHeader(HttpHeaders.AUTHORIZATION,
             "Basic " + EncodingUtils.encodeBase64(SUPPORTING_CLIENT_ID + ':' + RequestValidatorTestUtils.SHARED_SECRET));
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType());
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, SUPPORTING_TICKET);
@@ -153,16 +154,16 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
 
         profile.setId(NON_SUPPORTING_CLIENT_ID);
         storeProfileIntoSession(request, profile);
-        request.removeHeader("Authorization");
-        request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64(NON_SUPPORTING_CLIENT_ID
+        request.removeHeader(HttpHeaders.AUTHORIZATION);
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64(NON_SUPPORTING_CLIENT_ID
             + ':' + RequestValidatorTestUtils.SHARED_SECRET));
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, NON_SUPPORTING_TICKET);
         assertFalse(validator.validate(new JEEContext(request, response)));
 
         profile.setId(PROMISCUOUS_CLIENT_ID);
         storeProfileIntoSession(request, profile);
-        request.removeHeader("Authorization");
-        request.addHeader("Authorization",
+        request.removeHeader(HttpHeaders.AUTHORIZATION);
+        request.addHeader(HttpHeaders.AUTHORIZATION,
             "Basic " + EncodingUtils.encodeBase64(PROMISCUOUS_CLIENT_ID + ':' + RequestValidatorTestUtils.SHARED_SECRET));
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, PROMISCUOUS_TICKET);
         assertTrue(validator.validate(new JEEContext(request, response)));

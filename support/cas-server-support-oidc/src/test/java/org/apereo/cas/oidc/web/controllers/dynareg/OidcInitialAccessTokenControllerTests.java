@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -56,7 +57,7 @@ class OidcInitialAccessTokenControllerTests {
             val request = getHttpRequestForEndpoint("unknown/issuer");
             request.setRequestURI("unknown/issuer");
             val response = new MockHttpServletResponse();
-            request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("casuser:Mellon"));
+            request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("casuser:Mellon"));
             val entity = controller.handleRequestInternal(request, response);
             assertEquals(HttpStatus.BAD_REQUEST, entity.getStatus());
         }
@@ -65,7 +66,7 @@ class OidcInitialAccessTokenControllerTests {
         void verifyPasses() {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
-            request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("casuser:Mellon"));
+            request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("casuser:Mellon"));
             val entity = controller.handleRequestInternal(request, response);
             assertEquals(HttpStatus.OK, entity.getStatus());
             assertTrue(entity.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
@@ -75,7 +76,7 @@ class OidcInitialAccessTokenControllerTests {
         void verifyAuthFails() {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
-            request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("casuser:unknown"));
+            request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("casuser:unknown"));
             val entity = controller.handleRequestInternal(request, response);
             assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatus());
         }

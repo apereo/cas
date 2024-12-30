@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.PropertyResolver;
 import java.io.Serializable;
 import java.util.ArrayDeque;
@@ -29,7 +30,7 @@ class CompoundCondition implements BeanCondition {
     private static final Pattern EXPRESSION_PATTERN = RegexUtils.createPattern("\\$\\{.+\\}");
 
     private final Deque<Condition> conditionList = new ArrayDeque<>();
-
+    
     CompoundCondition(final String name) {
         and(name);
     }
@@ -39,16 +40,19 @@ class CompoundCondition implements BeanCondition {
     }
 
     private static String resolvePropertyValue(final PropertyResolver propertyResolver, final PropertyCondition condition) {
+        val spelResolver = SpringExpressionLanguageValueResolver.getInstance();
         try {
             val result = propertyResolver.getProperty(condition.getPropertyName(), condition.getDefaultValue());
-            return SpringExpressionLanguageValueResolver.getInstance().resolve(result);
+            return spelResolver.resolve(result);
         } catch (final IllegalArgumentException e) {
-            var placeholder = StringUtils.substringBetween(e.getMessage(), "\"", "\"");
+            val placeholder = StringUtils.substringBetween(e.getMessage(), "\"", "\"");
             val matcher = EXPRESSION_PATTERN.matcher(placeholder);
             if (matcher.find()) {
                 val match = matcher.group();
-                val result = SpringExpressionLanguageValueResolver.getInstance().resolve(match);
-                return placeholder.replaceAll(matcher.pattern().pattern(), result);
+                val result = spelResolver.resolve(match);
+                return StringUtils.isNotBlank(result)
+                    ? placeholder.replaceAll(matcher.pattern().pattern(), result)
+                    : placeholder;
             }
             return null;
         }
@@ -128,6 +132,12 @@ class CompoundCondition implements BeanCondition {
     public BeanCondition and(final Condition... condition) {
         Arrays.stream(condition).forEach(conditionList::push);
         return this;
+    }
+
+    @Override
+    public Supplier<Boolean> given(final ApplicationContext applicationContext) {
+        SpringExpressionLanguageValueResolver.getInstance().withApplicationContext(applicationContext);
+        return given(applicationContext.getEnvironment());
     }
 
     @Override

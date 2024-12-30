@@ -26,6 +26,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -112,9 +113,9 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
                 .auxData(this.auxData)
                 .build();
             val headers = new HashMap<String, String>();
-            headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             if (StringUtils.isNotBlank(token)) {
-                headers.put("Authorization", "Bearer " + SpringExpressionLanguageValueResolver.getInstance().resolve(this.token));
+                headers.put(HttpHeaders.AUTHORIZATION, "Bearer " + SpringExpressionLanguageValueResolver.getInstance().resolve(this.token));
             }
 
             val givenUrl = StringUtils.defaultIfBlank(SpringExpressionLanguageValueResolver.getInstance()

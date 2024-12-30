@@ -24,6 +24,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import java.util.ArrayList;
@@ -68,7 +69,7 @@ class CasPersonDirectoryRestConfiguration {
                             dao.setMethod(Objects.requireNonNull(HttpMethod.valueOf(rest.getMethod())).name());
                             dao.setEnabled(rest.getState() != AttributeRepositoryStates.DISABLED);
 
-                            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+                            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
                             headers.putAll(rest.getHeaders());
                             dao.setHeaders(headers);
                             dao.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider(rest.getUsernameAttribute()));

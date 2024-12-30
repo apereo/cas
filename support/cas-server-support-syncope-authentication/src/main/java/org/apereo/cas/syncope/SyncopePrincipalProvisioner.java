@@ -19,6 +19,7 @@ import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -57,8 +58,8 @@ public class SyncopePrincipalProvisioner implements PrincipalProvisioner {
         try {
             val syncopeRestUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users/" + principal.getId());
             val headers = CollectionUtils.<String, String>wrap("X-Syncope-Domain", properties.getDomain(),
-                "Accept", MediaType.APPLICATION_JSON_VALUE,
-                "Content-Type", MediaType.APPLICATION_JSON_VALUE);
+                HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
+                HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
 
             val entity = MAPPER.writeValueAsString(SyncopeUtils.convertToUserUpdateEntity(principal, getSyncopeRealm(principal)));
@@ -91,8 +92,8 @@ public class SyncopePrincipalProvisioner implements PrincipalProvisioner {
         try {
             val syncopeRestUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users");
             val headers = CollectionUtils.<String, String>wrap("X-Syncope-Domain", properties.getDomain(),
-                "Accept", MediaType.APPLICATION_JSON_VALUE,
-                "Content-Type", MediaType.APPLICATION_JSON_VALUE);
+                HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
+                HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
 
             val entity = MAPPER.writeValueAsString(SyncopeUtils.convertToUserCreateEntity(principal, getSyncopeRealm(principal)));

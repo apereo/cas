@@ -20,7 +20,7 @@ public class ProxyValidateController extends AbstractServiceValidateController {
         super(serviceValidateConfigurationContext);
     }
 
-    @GetMapping(path = "/**/" + CasProtocolConstants.ENDPOINT_PROXY_VALIDATE)
+    @GetMapping(path = { CasProtocolConstants.ENDPOINT_PROXY_VALIDATE, "/tenants/{tenant}/" + CasProtocolConstants.ENDPOINT_PROXY_VALIDATE })
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request,
                                               final HttpServletResponse response) throws Exception {

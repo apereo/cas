@@ -2,6 +2,7 @@ package org.apereo.cas.test;
 
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
 
 /**
  * This is {@link CasTestExtension}. This extension controls global settings
@@ -13,7 +14,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class CasTestExtension implements BeforeAllCallback {
     @Override
     public void beforeAll(final ExtensionContext extensionContext) {
-        System.setProperty("spring.mvc.pathmatch.matching-strategy", "ant-path-matcher");
+        System.setProperty("spring.mvc.pathmatch.matching-strategy", WebMvcProperties.MatchingStrategy.ANT_PATH_MATCHER.name());
         System.setProperty("spring.main.allow-bean-definition-overriding", "true");
         System.setProperty("spring.main.banner-mode", "off");
     }

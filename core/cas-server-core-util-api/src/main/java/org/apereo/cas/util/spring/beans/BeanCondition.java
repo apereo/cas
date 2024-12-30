@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring.beans;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.PropertyResolver;
 import java.io.Serializable;
 import java.util.Collection;
@@ -12,7 +13,6 @@ import java.util.function.Supplier;
  * @since 6.5.0
  */
 public interface BeanCondition {
-
     /**
      * Always true bean condition.
      *
@@ -31,7 +31,7 @@ public interface BeanCondition {
     static BeanCondition on(final String name) {
         return new CompoundCondition(name);
     }
-
+    
     /**
      * Copy bean condition into a new instance.
      *
@@ -143,6 +143,14 @@ public interface BeanCondition {
      * @return the supplier
      */
     Supplier<Boolean> given(PropertyResolver applicationContext);
+
+    /**
+     * Given application context, resolve.
+     *
+     * @param applicationContext the application context
+     * @return the supplier
+     */
+    Supplier<Boolean> given(ApplicationContext applicationContext);
 
     interface Condition {}
 }

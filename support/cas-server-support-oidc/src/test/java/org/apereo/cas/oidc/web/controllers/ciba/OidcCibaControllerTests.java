@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.test.context.TestPropertySource;
@@ -87,7 +88,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
         servicesManager.save(registeredService);
         mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
-                .header("Authorization", "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
+                .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                     registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name()))
             .andExpect(status().isBadRequest());
@@ -100,7 +101,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
         servicesManager.save(registeredService);
         mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
-                .header("Authorization", "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
+                .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                     registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
@@ -117,7 +118,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
         servicesManager.save(registeredService);
         mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
-                .header("Authorization", "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
+                .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                     registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
@@ -130,7 +131,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
         servicesManager.save(registeredService);
         mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
-                .header("Authorization", "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
+                .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                     registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
@@ -147,7 +148,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
         servicesManager.save(registeredService);
         mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
-                .header("Authorization", "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
+                .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                     registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
@@ -166,7 +167,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
         servicesManager.save(registeredService);
         mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
-                .header("Authorization", "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
+                .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                     registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
@@ -200,7 +201,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
 
         mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
-                .header("Authorization", "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
+                .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                     registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
@@ -223,7 +224,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
             val userCode = UUID.randomUUID().toString();
             var response = mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                     .secure(true)
-                    .header("Authorization", "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
+                    .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                         registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                     .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())

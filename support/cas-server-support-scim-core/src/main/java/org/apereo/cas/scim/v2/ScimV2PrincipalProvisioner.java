@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -107,7 +108,7 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
             }
         }
         if (StringUtils.isNotBlank(token)) {
-            headersMap.put("Authorization", "Bearer " + token);
+            headersMap.put(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         }
 
         var username = scimProperties.getUsername();

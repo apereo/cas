@@ -25,6 +25,7 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.hjson.JsonValue;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import java.nio.charset.StandardCharsets;
@@ -56,7 +57,7 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
         HttpResponse response = null;
         try {
             val rest = samlIdPProperties.getMetadata().getRest();
-            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_XML_VALUE);
+            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE);
             headers.putAll(rest.getHeaders());
 
             val exec = HttpExecutionRequest.builder()

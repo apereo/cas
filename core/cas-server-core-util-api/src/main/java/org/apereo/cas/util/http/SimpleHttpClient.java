@@ -1,7 +1,6 @@
 package org.apereo.cas.util.http;
 
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -16,7 +15,7 @@ import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.springframework.beans.factory.DisposableBean;
-
+import org.springframework.http.HttpHeaders;
 import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
@@ -46,7 +45,7 @@ public record SimpleHttpClient(List<Integer> acceptableCodes, CloseableHttpClien
     public boolean sendMessageToEndPoint(final HttpMessage message) {
         try {
             val request = new HttpPost(message.getUrl().toURI());
-            request.addHeader("Content-Type", message.getContentType());
+            request.addHeader(HttpHeaders.CONTENT_TYPE, message.getContentType());
             val entity = new StringEntity(message.getMessage(), ContentType.create(message.getContentType()));
             request.setEntity(entity);
 

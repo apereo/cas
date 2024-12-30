@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.core.context.HttpConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -46,7 +47,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
     void verifyOperationWithValidTicketAsJwtSignedEncrypted() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
-        request.addHeader("Accept", OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE);
+        request.addHeader(HttpHeaders.ACCEPT, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE);
 
         val accessToken = getAccessToken(UUID.randomUUID().toString());
         val value = EncodingUtils.encodeBase64((accessToken.getClientId() + ":secret").getBytes(StandardCharsets.UTF_8));
@@ -68,7 +69,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
     void verifyOperationWithValidTicketAsJwtSigned() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
-        request.addHeader("Accept", OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE);
+        request.addHeader(HttpHeaders.ACCEPT, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE);
 
         val accessToken = getAccessToken(UUID.randomUUID().toString());
         val value = EncodingUtils.encodeBase64((accessToken.getClientId() + ":secret").getBytes(StandardCharsets.UTF_8));
@@ -87,7 +88,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
     void verifyOperationWithValidTicketAsJwtSignedWithNone() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
-        request.addHeader("Accept", OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE);
+        request.addHeader(HttpHeaders.ACCEPT, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE);
 
         val accessToken = getAccessToken(UUID.randomUUID().toString());
         val value = EncodingUtils.encodeBase64((accessToken.getClientId() + ":secret").getBytes(StandardCharsets.UTF_8));
@@ -106,7 +107,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
     void verifyOperationWithValidTicketAsJwtSignedWithNoneEncryption() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
-        request.addHeader("Accept", OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE);
+        request.addHeader(HttpHeaders.ACCEPT, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE);
 
         val accessToken = getAccessToken(UUID.randomUUID().toString());
         val value = EncodingUtils.encodeBase64((accessToken.getClientId() + ":secret").getBytes(StandardCharsets.UTF_8));
@@ -125,7 +126,7 @@ class OidcIntrospectionEndpointControllerTests extends AbstractOidcTests {
     void verifyOperationWithValidTicketAsJwtPlain() throws Throwable {
         val request = getHttpRequestForEndpoint(OidcConstants.INTROSPECTION_URL);
         val response = new MockHttpServletResponse();
-        request.addHeader("Accept", OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE);
+        request.addHeader(HttpHeaders.ACCEPT, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE);
 
         val accessToken = getAccessToken(UUID.randomUUID().toString());
         val value = EncodingUtils.encodeBase64((accessToken.getClientId() + ":secret").getBytes(StandardCharsets.UTF_8));

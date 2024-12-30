@@ -15,6 +15,7 @@ import lombok.val;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.util.ReflectionUtils;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -82,7 +83,7 @@ public class MicrosoftGraphPersonAttributeDao extends BasePersonAttributeDao {
             val token = getToken();
             val client = new OkHttpClient.Builder()
                 .addInterceptor(chain -> {
-                    val request = chain.request().newBuilder().header("Authorization", "Bearer " + token).build();
+                    val request = chain.request().newBuilder().header(HttpHeaders.AUTHORIZATION, "Bearer " + token).build();
                     return chain.proceed(request);
                 })
                 .addInterceptor(loggingInterceptor)

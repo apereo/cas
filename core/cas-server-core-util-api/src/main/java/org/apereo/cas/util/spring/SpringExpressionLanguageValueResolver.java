@@ -1,7 +1,6 @@
 package org.apereo.cas.util.spring;
 
 import org.apereo.cas.util.RandomUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -13,7 +12,6 @@ import org.springframework.expression.spel.SpelCompilerMode;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -60,7 +58,7 @@ public class SpringExpressionLanguageValueResolver implements Function {
 
         evaluationContext.setVariable("tempDir", FileUtils.getTempDirectoryPath());
         evaluationContext.setVariable("zoneId", ZoneId.systemDefault().getId());
-        evaluationContext.setVariable("applicationContext", (Supplier<ApplicationContext>) ApplicationContextProvider::getApplicationContext);
+        withApplicationContext(ApplicationContextProvider.getApplicationContext());
     }
 
     /**
@@ -110,6 +108,17 @@ public class SpringExpressionLanguageValueResolver implements Function {
         return resolve(o.toString());
     }
 
+    /**
+     * With application context.
+     *
+     * @param applicationContext the application context
+     * @return the spring expression language value resolver
+     */
+    public SpringExpressionLanguageValueResolver withApplicationContext(final ApplicationContext applicationContext) {
+        evaluationContext.setVariable("applicationContext", (Supplier<ApplicationContext>) () -> applicationContext);
+        return this;
+    }
+    
     private void initializeDynamicVariables() {
         evaluationContext.setVariable("randomNumber2", RandomUtils.randomNumeric(2));
         evaluationContext.setVariable("randomNumber4", RandomUtils.randomNumeric(4));
