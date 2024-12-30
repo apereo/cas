@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.webflow.execution.RequestContext;
@@ -66,7 +67,7 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
             if (StringUtils.isNotBlank(acceptedLanguage)) {
                 headers.put("Accept-Language", acceptedLanguage);
             }
-            headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(restProperties.getHeaders());
 
             val exec = HttpExecutionRequest.builder()

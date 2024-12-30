@@ -16,6 +16,7 @@ import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import java.nio.charset.StandardCharsets;
@@ -65,7 +66,7 @@ public class RestfulPropertySourceLocator implements PropertySourceLocator {
             val basicAuthUsername = getPropertyFromEnvironment(environment, "basic-auth-username");
             val basicAuthPassword = getPropertyFromEnvironment(environment, "basic-auth-password");
 
-            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             val method = StringUtils.defaultIfBlank(getPropertyFromEnvironment(environment, "method"), HttpMethod.GET.name());
 
             val exec = HttpExecutionRequest.builder()

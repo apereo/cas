@@ -23,6 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -71,9 +72,9 @@ public class OpenFGARegisteredServiceAccessStrategy extends BaseRegisteredServic
         HttpResponse response = null;
         try {
             val headers = new HashMap<String, String>();
-            headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             if (StringUtils.isNotBlank(token)) {
-                headers.put("Authorization", "Bearer " + SpringExpressionLanguageValueResolver.getInstance().resolve(this.token));
+                headers.put(HttpHeaders.AUTHORIZATION, "Bearer " + SpringExpressionLanguageValueResolver.getInstance().resolve(this.token));
             }
             val url = StringUtils.removeEnd(SpringExpressionLanguageValueResolver.getInstance().resolve(this.apiUrl), "/");
             val store = StringUtils.removeEnd(SpringExpressionLanguageValueResolver.getInstance().resolve(this.storeId), "/");

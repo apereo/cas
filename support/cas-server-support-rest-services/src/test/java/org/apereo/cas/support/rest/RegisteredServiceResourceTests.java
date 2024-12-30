@@ -18,6 +18,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
@@ -108,7 +109,7 @@ class RegisteredServiceResourceTests {
             configureMockMvcFor(registeredServiceResource)
                 .perform(post("/cas/v1/services")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .header("Authorization", "Basic " + EncodingUtils.encodeBase64(credentials))
+                    .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64(credentials))
                     .content(writer.toString()))
                 .andExpect(result);
         }

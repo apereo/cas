@@ -8,6 +8,7 @@ import org.apereo.cas.util.http.HttpUtils;
 import lombok.Getter;
 import lombok.val;
 import org.apache.hc.core5.http.HttpResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class FriendlyCaptchaValidator extends BaseCaptchaValidator {
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .url(recaptchaProperties.getVerifyUrl())
-                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .headers(CollectionUtils.wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
                 .entity(json)
                 .build();
             return HttpUtils.execute(exec);

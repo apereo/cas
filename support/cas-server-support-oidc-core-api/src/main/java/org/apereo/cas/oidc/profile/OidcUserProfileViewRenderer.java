@@ -95,7 +95,7 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
             "Content Type", response.getContentType());
         LoggingUtils.protocolMessage("OpenID Connect User Profile Response", context, result);
         val headers = new HttpHeaders();
-        headers.put("Content-Type", CollectionUtils.wrapList(response.getContentType()));
+        headers.put(HttpHeaders.CONTENT_TYPE, CollectionUtils.wrapList(response.getContentType()));
         return ResponseEntity.ok().headers(headers).body(result);
     }
 }

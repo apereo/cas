@@ -26,6 +26,7 @@ import lombok.val;
 import org.apache.hc.core5.http.HttpResponse;
 import org.jose4j.jwt.ReservedClaimNames;
 import org.pac4j.core.util.CommonHelper;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import java.util.Collection;
@@ -102,7 +103,7 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
                 .method(HttpMethod.POST)
                 .url(msg.getUrl().toExternalForm())
                 .entity("logout_token=" + payload)
-                .headers(CollectionUtils.wrap("Content-Type", msg.getContentType()))
+                .headers(CollectionUtils.wrap(HttpHeaders.CONTENT_TYPE, msg.getContentType()))
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && !Objects.requireNonNull(HttpStatus.resolve(response.getCode())).isError()) {

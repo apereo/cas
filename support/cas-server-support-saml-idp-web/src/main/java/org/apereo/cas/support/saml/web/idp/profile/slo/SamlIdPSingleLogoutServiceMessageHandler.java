@@ -35,6 +35,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.LogoutRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import java.nio.charset.StandardCharsets;
@@ -138,7 +139,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                     .method(HttpMethod.POST)
                     .url(msg.getUrl().toExternalForm())
                     .parameters(CollectionUtils.wrap(SamlProtocolConstants.PARAMETER_SAML_REQUEST, message))
-                    .headers(CollectionUtils.wrap("Content-Type", msg.getContentType()))
+                    .headers(CollectionUtils.wrap(HttpHeaders.CONTENT_TYPE, msg.getContentType()))
                     .httpClient(getHttpClient())
                     .build();
                 response = HttpUtils.execute(exec);

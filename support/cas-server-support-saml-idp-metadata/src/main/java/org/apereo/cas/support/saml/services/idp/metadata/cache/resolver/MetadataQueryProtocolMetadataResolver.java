@@ -23,6 +23,7 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import java.io.File;
@@ -93,8 +94,8 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
                                          final String metadataLocation, final CriteriaSet criteriaSet, final File backupFile) {
         val metadata = samlIdPProperties.getMetadata().getMdq();
         val headers = new LinkedHashMap<String, String>();
-        headers.put("Content-Type", metadata.getSupportedContentType());
-        headers.put("Accept", "*/*");
+        headers.put(HttpHeaders.CONTENT_TYPE, metadata.getSupportedContentType());
+        headers.put(HttpHeaders.ACCEPT, "*/*");
         val path = backupFile.toPath();
         FunctionUtils.doAndHandle(p -> {
             if (Files.exists(path)) {

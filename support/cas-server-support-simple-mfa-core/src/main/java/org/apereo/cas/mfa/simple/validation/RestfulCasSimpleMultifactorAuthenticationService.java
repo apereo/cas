@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,7 +57,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
             val parameters = new LinkedHashMap<String, String>();
             Optional.ofNullable(service).ifPresent(s -> parameters.put("service", s.getId()));
 
-            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
             
             val exec = HttpExecutionRequest.builder()
@@ -92,7 +93,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
         try (val writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, token);
 
-            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
@@ -118,7 +119,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
         HttpResponse response = null;
         try (val writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, resolvedPrincipal);
-            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
@@ -146,7 +147,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
     public Principal fetch(final CasSimpleMultifactorTokenCredential tokenCredential) throws Exception {
         HttpResponse response = null;
         try {
-            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)

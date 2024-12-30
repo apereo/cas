@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,7 +46,7 @@ public class RestfulSmsSender implements SmsSender {
             parameters.put("from", from);
             parameters.put("to", to);
 
-            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(restProperties.getHeaders());
 
             var exec = HttpExecutionRequest.builder()

@@ -11,6 +11,7 @@ import org.cryptacular.io.ClassPathResource;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import javax.net.ssl.KeyManagerFactory;
@@ -433,7 +434,7 @@ public class MockWebServer implements Closeable {
                 val statusLine = String.format("HTTP/1.1 %s %s%s", status.value(), status.getReasonPhrase(), SEPARATOR);
                 out.write(statusLine.getBytes(StandardCharsets.UTF_8));
                 out.write(header("Content-Length", this.resource.contentLength()));
-                out.write(header("Content-Type", this.contentType));
+                out.write(header(HttpHeaders.CONTENT_TYPE, this.contentType));
                 headers.forEach(Unchecked.biConsumer((key, value) -> out.write(header(key, value))));
                 out.write(SEPARATOR.getBytes(StandardCharsets.UTF_8));
 

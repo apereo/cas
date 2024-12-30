@@ -16,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,8 +51,8 @@ public class RestfulConsentRepository implements ConsentRepository {
             HttpResponse response = null;
             try {
                 val headers = new HashMap<String, String>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
                 headers.put("principal", principal);
                 headers.putAll(properties.getHeaders());
 
@@ -83,8 +84,8 @@ public class RestfulConsentRepository implements ConsentRepository {
             HttpResponse response = null;
             try {
                 val headers = new HashMap<String, String>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
                 headers.putAll(properties.getHeaders());
 
                 val exec = HttpExecutionRequest.builder()
@@ -116,8 +117,8 @@ public class RestfulConsentRepository implements ConsentRepository {
             HttpResponse response = null;
             try {
                 val headers = new HashMap<String, String>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
                 headers.put("service", service.getId());
                 headers.put("principal", authentication.getPrincipal().getId());
                 headers.putAll(properties.getHeaders());
@@ -149,8 +150,8 @@ public class RestfulConsentRepository implements ConsentRepository {
             HttpResponse response = null;
             try {
                 val headers = new HashMap<String, String>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
                 headers.putAll(properties.getHeaders());
 
                 val exec = HttpExecutionRequest.builder()
@@ -178,8 +179,8 @@ public class RestfulConsentRepository implements ConsentRepository {
             HttpResponse response = null;
             try {
                 val headers = new HashMap<String, String>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
                 headers.put("principal", principal);
                 headers.putAll(properties.getHeaders());
                 val exec = HttpExecutionRequest.builder()
@@ -202,8 +203,8 @@ public class RestfulConsentRepository implements ConsentRepository {
         HttpResponse response = null;
         try {
             val headers = new HashMap<String, String>();
-            headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-            headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+            headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
@@ -224,8 +225,8 @@ public class RestfulConsentRepository implements ConsentRepository {
             HttpResponse response = null;
             try {
                 val headers = new HashMap<String, String>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
                 headers.put("principal", principal);
                 headers.putAll(properties.getHeaders());
                 val deleteEndpoint = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl())

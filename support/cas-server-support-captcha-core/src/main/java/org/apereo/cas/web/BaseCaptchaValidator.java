@@ -14,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -58,7 +59,7 @@ public abstract class BaseCaptchaValidator implements CaptchaValidator {
     protected HttpResponse executeCaptchaVerification(final String recaptchaResponse, final String userAgent) {
         val headers = CollectionUtils.<String, String>wrap(
             "User-Agent", userAgent,
-            "Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             "Accept-Language", "en-US,en;q=0.5");
         headers.putAll(recaptchaProperties.getHeaders());
         val exec = HttpExecutionRequest.builder()

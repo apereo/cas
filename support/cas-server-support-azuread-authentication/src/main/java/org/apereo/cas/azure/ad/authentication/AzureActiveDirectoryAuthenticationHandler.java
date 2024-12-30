@@ -22,6 +22,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import javax.security.auth.login.FailedLoginException;
@@ -59,8 +60,8 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
         val conn = (HttpURLConnection) url.openConnection();
 
         conn.setRequestMethod("GET");
-        conn.setRequestProperty("Authorization", "Bearer " + authenticationResult.accessToken());
-        conn.setRequestProperty("Accept", MediaType.APPLICATION_JSON_VALUE);
+        conn.setRequestProperty(HttpHeaders.AUTHORIZATION, "Bearer " + authenticationResult.accessToken());
+        conn.setRequestProperty(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
 
         LOGGER.debug("Fetching user info from [{}] using access token [{}]", url.toExternalForm(), authenticationResult.accessToken());
         val httpResponseCode = conn.getResponseCode();

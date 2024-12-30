@@ -5,6 +5,7 @@ import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import jakarta.servlet.http.HttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,7 +36,7 @@ class SpnegoNegotiateCredentialsActionTests extends AbstractSpnegoTests {
     @Test
     void verifyBadAuthzHeader() throws Throwable {
         val context = MockRequestContext.create(applicationContext).withUserAgent("Firefox");
-        context.addHeader(SpnegoConstants.HEADER_AUTHORIZATION, SpnegoConstants.NEGOTIATE + " XYZ");
+        context.addHeader(HttpHeaders.AUTHORIZATION, SpnegoConstants.NEGOTIATE + " XYZ");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, negociateSpnegoAction.execute(context).getId());
     }
 }

@@ -26,6 +26,7 @@ import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -103,7 +104,7 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
             val rest = casProperties.getAuthn().getMfa().getTriggers().getRest();
             val entity = new RestEndpointEntity(principal.getId(), resolvedService.getId());
 
-            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(rest.getHeaders());
 
             val exec = HttpExecutionRequest.builder()

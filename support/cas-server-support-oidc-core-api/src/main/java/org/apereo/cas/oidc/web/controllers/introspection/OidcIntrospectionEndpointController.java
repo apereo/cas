@@ -91,7 +91,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     protected ResponseEntity buildIntrospectionEntityResponse(final WebContext context,
                                                               final OAuth20IntrospectionAccessTokenResponse introspect) {
         val responseEntity = super.buildIntrospectionEntityResponse(context, introspect);
-        return context.getRequestHeader("Accept")
+        return context.getRequestHeader(HttpHeaders.ACCEPT)
             .filter(headerValue -> StringUtils.equalsAnyIgnoreCase(headerValue, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE))
             .map(headerValue -> {
                 val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
@@ -142,12 +142,12 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     private static ResponseEntity<String> buildResponseEntity(final String result,
                                                               final OAuthRegisteredService registeredService) {
         val context = CollectionUtils.<String, Object>wrap(
-            "Content-Type", OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE,
+            HttpHeaders.CONTENT_TYPE, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE,
             "Client ID", registeredService.getClientId(),
             "Service", registeredService.getName());
         LoggingUtils.protocolMessage("OpenID Connect Introspection Response", context, result);
         val headers = new HttpHeaders();
-        headers.put("Content-Type", CollectionUtils.wrapList(OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE));
+        headers.put(HttpHeaders.CONTENT_TYPE, CollectionUtils.wrapList(OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE));
         return ResponseEntity.ok().headers(headers).body(result);
     }
 }

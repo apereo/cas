@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.http.HttpResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -76,7 +77,7 @@ public class CibaPushTokenDeliveryHandler implements CibaTokenDeliveryHandler {
                         .url(registeredService.getBackchannelClientNotificationEndpoint())
                         .entity(MAPPER.writeValueAsString(payload))
                         .httpClient(configurationContext.getHttpClient())
-                        .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                        .headers(CollectionUtils.wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
                         .build();
                     LOGGER.debug("Sending a POST request to [{}] with payload [{}]", exec.getUrl(), exec.getEntity());
                     response = HttpUtils.execute(exec);
