@@ -72,6 +72,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-mfa")
     
     testImplementation project(":support:cas-server-support-webconfig")
+    testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-jpa-util")
     testImplementation project(":support:cas-server-support-jdbc-drivers")
     testImplementation project(":support:cas-server-support-saml-idp-core")
