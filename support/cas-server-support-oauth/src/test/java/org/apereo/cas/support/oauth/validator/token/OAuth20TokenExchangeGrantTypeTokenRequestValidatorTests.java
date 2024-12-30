@@ -9,7 +9,6 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +23,7 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import java.time.Clock;
@@ -53,7 +53,7 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
     @BeforeEach
     public void setup() {
         request = new MockHttpServletRequest();
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Firefox");
+        request.addHeader(HttpHeaders.USER_AGENT, "Firefox");
         val response = new MockHttpServletResponse();
         context = new JEEContext(request, response);
         val profile = new CommonProfile();

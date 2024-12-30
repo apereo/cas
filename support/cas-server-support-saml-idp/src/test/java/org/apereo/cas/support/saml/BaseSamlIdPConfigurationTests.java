@@ -47,7 +47,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObj
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -98,6 +97,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
@@ -343,7 +343,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         saml2Client.init();
 
         val httpRequest = new MockHttpServletRequest();
-        httpRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        httpRequest.addHeader(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
 
         val response = new MockHttpServletResponse();
         val ctx = new JEEContext(httpRequest, response);

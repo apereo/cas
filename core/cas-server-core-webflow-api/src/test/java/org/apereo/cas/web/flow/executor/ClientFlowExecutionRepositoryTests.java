@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.executor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowProperties;
 import org.apereo.cas.test.CasTestExtension;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -25,6 +24,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.config.FlowBuilderServicesBuilder;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
@@ -71,7 +71,7 @@ class ClientFlowExecutionRepositoryTests {
             val request1 = new MockHttpServletRequest();
             request1.setRemoteAddr("223.456.789.000");
             request1.setLocalAddr("123.456.789.000");
-            request1.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+            request1.addHeader(HttpHeaders.USER_AGENT, "test");
             ClientInfoHolder.setClientInfo(ClientInfo.from(request1));
 
             val launchResult = flowExecutor.launchExecution("test-flow", new LocalAttributeMap<>(), new MockExternalContext());
@@ -82,7 +82,7 @@ class ClientFlowExecutionRepositoryTests {
             val request2 = new MockHttpServletRequest();
             request2.setRemoteAddr("223.456.789.000");
             request2.setLocalAddr("123.456.789.000");
-            request2.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test-another");
+            request2.addHeader(HttpHeaders.USER_AGENT, "test-another");
             ClientInfoHolder.setClientInfo(ClientInfo.from(request2));
             assertThrows(ClientFlowExecutionRepositoryException.class, () -> flowExecutor.resumeExecution(launchResult.getPausedKey(), context));
         }

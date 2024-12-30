@@ -9,6 +9,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.http.HttpHeaders;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serial;
 import java.io.Serializable;
@@ -311,7 +312,7 @@ public class ClientInfo implements Serializable {
                     ? request.getHeader(options.getAlternateLocalAddrHeaderName())
                     : request.getRemoteAddr();
             }
-            val header = request.getHeader("user-agent");
+            val header = request.getHeader(HttpHeaders.USER_AGENT);
             userAgent = header == null ? UNKNOWN : header;
 
             var geo = request.getParameter("geolocation");
@@ -319,7 +320,6 @@ public class ClientInfo implements Serializable {
                 geo = request.getHeader("geolocation");
             }
             geoLocation = geo == null ? UNKNOWN : geo;
-
             deviceFingerprint = StringUtils.defaultIfBlank(request.getParameter("deviceFingerprint"), UNKNOWN);
         }
 

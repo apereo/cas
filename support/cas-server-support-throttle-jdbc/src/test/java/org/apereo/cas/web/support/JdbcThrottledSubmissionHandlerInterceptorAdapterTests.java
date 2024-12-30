@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
@@ -49,7 +50,7 @@ class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottle
         request.setRemoteAddr("1.2.3.4");
         request.setLocalAddr("4.5.6.7");
         request.setRemoteUser("cas");
-        request.addHeader("User-Agent", "Firefox");
+        request.addHeader(HttpHeaders.USER_AGENT, "Firefox");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         throttle.recordSubmissionFailure(request);
     }

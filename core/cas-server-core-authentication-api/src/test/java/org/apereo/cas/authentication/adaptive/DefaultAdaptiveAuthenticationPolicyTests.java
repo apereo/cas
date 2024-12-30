@@ -7,12 +7,12 @@ import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceRespons
 import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,7 +32,7 @@ class DefaultAdaptiveAuthenticationPolicyTests {
         val request = context.getHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, USER_AGENT);
+        request.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val props = new AdaptiveAuthenticationProperties();
@@ -55,7 +55,7 @@ class DefaultAdaptiveAuthenticationPolicyTests {
         val request = context.getHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, USER_AGENT);
+        request.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val props = new AdaptiveAuthenticationProperties();
@@ -71,7 +71,7 @@ class DefaultAdaptiveAuthenticationPolicyTests {
         val request = context.getHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, USER_AGENT);
+        request.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val geoRequest = new GeoLocationRequest(51.5, -0.118);

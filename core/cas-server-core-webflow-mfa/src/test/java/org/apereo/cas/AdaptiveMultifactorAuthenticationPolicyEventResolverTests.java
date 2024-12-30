@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
@@ -19,6 +18,7 @@ import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Transition;
@@ -64,7 +64,7 @@ class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasW
 
     @Test
     void verifyOperationNeedsMfa() throws Throwable {
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val event = resolver.resolve(context);
         assertEquals(1, event.size());
@@ -73,7 +73,7 @@ class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasW
 
     @Test
     void verifyOperationNeedsMfaByGeo() throws Throwable {
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "FIREFOX");
+        request.addHeader(HttpHeaders.USER_AGENT, "FIREFOX");
         request.addParameter("geolocation", "1000,1000,1000,1000");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val event = resolver.resolve(context);

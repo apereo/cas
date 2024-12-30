@@ -13,7 +13,6 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -30,6 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -83,7 +83,7 @@ class CasAuthenticationEventListenerTests {
         request = new MockHttpServletRequest();
         request.setRemoteAddr(REMOTE_ADDR_IP);
         request.setLocalAddr(LOCAL_ADDR_IP);
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+        request.addHeader(HttpHeaders.USER_AGENT, "test");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 

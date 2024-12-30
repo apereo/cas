@@ -28,6 +28,7 @@ import org.apache.logging.log4j.message.ObjectMessage;
 import org.apache.logging.log4j.util.SortedArrayStringMap;
 import org.apache.logging.log4j.util.StringMap;
 import org.slf4j.MDC;
+import org.springframework.http.HttpHeaders;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -153,7 +154,7 @@ public class GoogleCloudAppender extends AbstractAppender {
                 "requestMethod", StringUtils.defaultString(contextData.getValue("method")),
                 "requestUrl", requestUrl,
                 "protocol", StringUtils.defaultString(contextData.getValue("protocol")),
-                "userAgent", StringUtils.defaultString(contextData.getValue("user-agent")),
+                "userAgent", StringUtils.defaultString(contextData.getValue(HttpHeaders.USER_AGENT)),
                 "remoteIp", StringUtils.defaultString(contextData.getValue("remoteAddress")));
             contextData.putValue("httpRequest", httpRequest);
             httpRequest.forEach((key, value) -> contextData.putValue("httpRequest-%s".formatted(key), value));

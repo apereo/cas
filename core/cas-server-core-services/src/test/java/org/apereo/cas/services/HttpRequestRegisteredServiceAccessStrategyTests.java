@@ -3,7 +3,6 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -12,6 +11,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,7 +33,7 @@ class HttpRequestRegisteredServiceAccessStrategyTests {
     public void setup() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("192.861.151.163");
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome/Mozilla");
+        request.addHeader(HttpHeaders.USER_AGENT, "Chrome/Mozilla");
         request.addHeader("CustomHeader", "abcd-12-xyz#");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }

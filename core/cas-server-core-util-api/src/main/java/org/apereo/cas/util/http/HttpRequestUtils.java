@@ -9,6 +9,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -32,11 +33,6 @@ import java.util.Optional;
 @UtilityClass
 @Slf4j
 public class HttpRequestUtils {
-    /**
-     * Constant representing the request header for user agent.
-     */
-    public static final String USER_AGENT_HEADER = "user-agent";
-
     private static final int GEO_LOC_LONG_INDEX = 1;
 
     private static final int GEO_LOC_ACCURACY_INDEX = 2;
@@ -136,7 +132,7 @@ public class HttpRequestUtils {
      */
     public static String getHttpServletRequestUserAgent(final HttpServletRequest request) {
         if (request != null) {
-            return request.getHeader(USER_AGENT_HEADER);
+            return request.getHeader(HttpHeaders.USER_AGENT);
         }
         return null;
     }

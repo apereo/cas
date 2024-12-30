@@ -18,7 +18,6 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +32,7 @@ import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -130,7 +130,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         val mockResponse = new MockHttpServletResponse();
         val callContext = new CallContext(new JEEContext(mockRequest, mockResponse),
             oauthDistributedSessionStore, ProfileManagerFactory.DEFAULT);
@@ -140,8 +140,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         val callbackUrl = ((WithLocationAction) redirect.get()).getLocation();
         val callback = RegisteredServiceTestUtils.getRegisteredService(callbackUrl);
         servicesManager.save(callback);
-
-
+        
         val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
         ticketRegistry.addTicket(tgt);
 
@@ -206,7 +205,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         authorizeController.getConfigurationContext().getServicesManager().save(service);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH));
@@ -237,7 +236,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         authorizeController.getConfigurationContext().getServicesManager().save(service);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH));
@@ -269,7 +268,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         authorizeController.getConfigurationContext().getServicesManager().save(service);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH));
@@ -320,7 +319,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         servicesManager.save(service);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));
@@ -374,7 +373,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         servicesManager.save(service);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));
@@ -423,7 +422,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         servicesManager.save(service);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH));
@@ -469,7 +468,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         servicesManager.save(service);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));
@@ -518,7 +517,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH));
         mockRequest.setServerName(CAS_SERVER);
@@ -561,7 +560,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         servicesManager.save(service);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));
@@ -607,7 +606,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         servicesManager.save(service);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.CODE.name().toLowerCase(Locale.ENGLISH));
@@ -643,7 +642,7 @@ class OAuth20AuthorizeEndpointControllerTests extends AbstractOAuth20Tests {
         servicesManager.save(service);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuth20Constants.RESPONSE_TYPE, OAuth20ResponseTypes.TOKEN.name().toLowerCase(Locale.ENGLISH));

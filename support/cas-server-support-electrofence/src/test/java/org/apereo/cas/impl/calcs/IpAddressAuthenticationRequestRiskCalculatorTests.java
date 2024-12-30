@@ -10,6 +10,7 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 import java.time.Clock;
@@ -54,7 +55,7 @@ class IpAddressAuthenticationRequestRiskCalculatorTests extends BaseAuthenticati
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("157.181.99.223");
         request.setLocalAddr("227.4.6.1");
-        request.addHeader("User-Agent", "Firefox");
+        request.addHeader(HttpHeaders.USER_AGENT, "Firefox");
         val clientInfo = ClientInfo.from(request);
         ClientInfoHolder.setClientInfo(clientInfo);
         val score = authenticationRiskEvaluator.evaluate(authentication, service, ClientInfo.from(request));

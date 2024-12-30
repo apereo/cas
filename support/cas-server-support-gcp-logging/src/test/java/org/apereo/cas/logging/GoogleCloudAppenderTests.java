@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -57,7 +58,7 @@ class GoogleCloudAppenderTests {
         request.addHeader(GoogleCloudLoggingWebInterceptor.HEADER_B3_TRACE_ID, UUID.randomUUID().toString());
         val response = new MockHttpServletResponse();
         ThreadContext.put("protocol", "HTTP 1.1");
-        ThreadContext.put("user-agent", "Firefox");
+        ThreadContext.put(HttpHeaders.USER_AGENT, "Firefox");
         ThreadContext.put("remoteIp", "127.0.0.1");
         ThreadContext.put("method", request.getMethod());
         googleCloudLoggingInterceptor.preHandle(request, response, this);

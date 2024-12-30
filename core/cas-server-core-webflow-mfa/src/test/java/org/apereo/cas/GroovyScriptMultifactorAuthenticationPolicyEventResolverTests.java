@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
@@ -19,6 +18,7 @@ import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
@@ -48,7 +48,7 @@ class GroovyScriptMultifactorAuthenticationPolicyEventResolverTests extends Base
         val request = context.getHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("195.88.151.11");
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
