@@ -15,10 +15,10 @@ const cas = require("../../cas.js");
     
     let mockServer = null;
     const browser = await cas.newBrowser(cas.browserOptions());
+    const service = "https://localhost:9859/anything/cas";
     try {
         mockServer = await cas.mockJsonServer(payload, 5423);
         const page = await cas.newPage(browser);
-        const service = "https://apereo.github.io";
         await cas.gotoLogin(page, service);
 
         await cas.loginWith(page);

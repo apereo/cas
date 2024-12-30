@@ -7,7 +7,7 @@ const path = require("path");
 (async () => {
     await cas.doGet("https://localhost:8443/cas/actuator/resolveAttributes/casuser",
         async (res) => {
-            assert(res.data.uid !== undefined);
+            assert(res.data.username !== undefined);
             assert(res.data.attributes !== undefined);
             assert(Object.keys(res.data.attributes).length === 0);
         }, async (error) => {
@@ -16,7 +16,7 @@ const path = require("path");
 
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
-    const service = "https://apereo.github.io";
+    const service = "https://localhost:9859/anything/cas";
     await cas.gotoLogin(page, service);
 
     await cas.loginWith(page);

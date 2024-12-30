@@ -1,6 +1,8 @@
 {
   "dependencies": "generic,reports",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -28,6 +30,7 @@
     "--cas.authn.attribute-repository.core.merger=multivalued",
 
     "--cas.person-directory.attribute-resolution-enabled=false"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
 
