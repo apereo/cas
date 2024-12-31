@@ -53,9 +53,15 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
             return result;
         }
 
-        if (registeredService instanceof OidcRegisteredService) {
-            val jwks = OidcJsonWebKeyStoreUtils.fetchJsonWebKeySetForSigning(registeredService, this, true);
-            return jwks.map(keys -> keys.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE));
+        if (registeredService instanceof OidcRegisteredService oidcRegisteredService) {
+            val jsonWebKeySet = OidcJsonWebKeyStoreUtils.fetchJsonWebKeySetForSigning(registeredService, this, true);
+            if (jsonWebKeySet.isPresent()) {
+                val signingKey = jsonWebKeySet.get().findJsonWebKey(oidcRegisteredService.getJwksKeyId(), null, null,
+                    oidcRegisteredService.getJwtAccessTokenSigningAlg());
+                return Optional.ofNullable(signingKey)
+                    .map(key -> key.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE))
+                    .or(() -> Optional.of(jsonWebKeySet.get().toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE)));
+            }
         }
         return Optional.empty();
     }

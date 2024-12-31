@@ -67,12 +67,12 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
         val cipher = new InternalJwtAccessTokenCipherExecutor(encryptionKey, signingKey, cipherExecutor);
         Unchecked.consumer(__ -> {
             if (EncodingUtils.isJsonWebKey(encryptionKey)) {
-                val jsonWebKey = toJsonWebKey(encryptionKey);
+                val jsonWebKey = toJsonWebKey(encryptionKey, registeredService);
                 cipher.setEncryptionKey(jsonWebKey.getPublicKey());
                 cipher.setEncryptionWebKey(jsonWebKey);
             }
             if (EncodingUtils.isJsonWebKey(signingKey)) {
-                val jsonWebKey = toJsonWebKey(signingKey);
+                val jsonWebKey = toJsonWebKey(signingKey, registeredService);
 
                 /*
                  * Use the private key as the primary key to handle signing operations.
@@ -122,7 +122,7 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
     }
 
 
-    private static PublicJsonWebKey toJsonWebKey(final String key) throws Exception {
+    private static PublicJsonWebKey toJsonWebKey(final String key, final RegisteredService registeredService) throws Exception {
         val details = EncodingUtils.parseJsonWebKey(key);
         if (details.containsKey(JsonWebKeySet.JWK_SET_MEMBER_NAME)) {
             return (PublicJsonWebKey) new JsonWebKeySet(key).getJsonWebKeys().getFirst();
