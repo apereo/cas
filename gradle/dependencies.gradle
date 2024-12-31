@@ -562,9 +562,8 @@ ext.libraries = [
             exclude(group: "log4j", module: "log4j")
         },
         cqengine                   : [
-                dependencies.create("com.googlecode.cqengine:cqengine:$cqEngineVersion") {
-                    exclude(group: 'org.xerial', module: "sqlite-jdbc")
-                    exclude(group: "org.javassist", module: "javassist")
+                dependencies.create("com.googlecode.cqengine:cqengine:$cqEngineVersion:all") {
+                    transitive = false
                 }
         ],
         maxmind                    : [
