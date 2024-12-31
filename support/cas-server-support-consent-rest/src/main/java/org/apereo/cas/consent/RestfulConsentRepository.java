@@ -42,7 +42,6 @@ public class RestfulConsentRepository implements ConsentRepository {
     @Serial
     private static final long serialVersionUID = 6583408864586270206L;
 
-    private final ConfigurableApplicationContext applicationContext;
     private final RestfulConsentProperties properties;
 
     @Override
