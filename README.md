@@ -9,6 +9,7 @@
 [![Slack](https://img.shields.io/badge/Slack-join%20chat-blue.svg?style=for-the-badge&logo=slack)][casslack]
 [![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg?style=for-the-badge&logo=stackoverflow)](http://stackoverflow.com/questions/tagged/cas)
 [![Support](https://img.shields.io/badge/Support-Mailing%20Lists-green.svg?colorB=ff69b4&style=for-the-badge)][cassupport]
+[![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20CAS%20Guru-006BFF?style=for-the-badge)](https://gurubase.io/g/cas)
 
 ## Introduction
 
