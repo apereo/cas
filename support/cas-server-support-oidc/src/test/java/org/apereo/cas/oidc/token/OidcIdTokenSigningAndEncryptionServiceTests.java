@@ -1,7 +1,14 @@
 package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenResponseEncoder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
+import org.apereo.cas.token.JwtBuilder;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -10,6 +17,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,6 +54,37 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
 
             val result3 = oidcTokenSigningAndEncryptionService.encode(getOidcRegisteredService(), claims);
             assertNotNull(result3);
+        }
+
+        @Test
+        void verifyJwtAccessTokenOperation() throws Throwable {
+            val registeredService = getOidcRegisteredService("ES512");
+            registeredService.setIdTokenSigningAlg(AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
+            registeredService.setJwksKeyId("EC");
+            registeredService.setJwtAccessToken(true);
+            registeredService.setJwtAccessTokenSigningAlg(AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
+            registeredService.setEncryptIdToken(false);
+
+            val accessTokenContext = AccessTokenRequestContext.builder()
+                .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
+                .responseType(OAuth20ResponseTypes.NONE)
+                .registeredService(registeredService)
+                .generateRefreshToken(true)
+                .service(RegisteredServiceTestUtils.getService(registeredService.getServiceId()))
+                .authentication(RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString()))
+                .scopes(Set.of(OidcConstants.StandardScopes.OPENID.getScope()))
+                .build();
+            val accessTokenResult = oauthTokenGenerator.generate(accessTokenContext);
+            assertNotNull(accessTokenResult);
+
+            val encodedModelAndView = new OAuth20AccessTokenResponseEncoder(oidcConfigurationContext)
+                .encode(accessTokenContext, accessTokenResult);
+            assertNotNull(encodedModelAndView);
+            val accessToken = (String) encodedModelAndView.getModel().get(OAuth20Constants.ACCESS_TOKEN);
+            val header = JwtBuilder.parseHeader(accessToken);
+            assertNotNull(header);
+            assertEquals(registeredService.getJwtAccessTokenSigningAlg(), header.getAlgorithm().getName());
+            assertEquals(registeredService.getJwksKeyId(), header.getKeyID());
         }
     }
 
