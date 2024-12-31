@@ -33,7 +33,7 @@ class GatewayServicesManagementCheckActionTests extends AbstractWebflowActionsTe
     private ServicesManager servicesManager;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         servicesManager.deleteAll();
     }
 

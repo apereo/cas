@@ -41,7 +41,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
     private Service service;
 
     @BeforeEach
-    public void onSetUp() throws Throwable {
+    void onSetUp() throws Throwable {
         this.service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
         getServicesManager().save(registeredService);

@@ -38,7 +38,7 @@ class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
     private TicketRegistrySupport ticketRegistrySupport;
 
     @BeforeEach
-    public void onSetUp() throws Throwable {
+    void onSetUp() throws Throwable {
         ticketRegistrySupport = mock(TicketRegistrySupport.class);
         verifyRequiredServiceAction = new VerifyRequiredServiceAction(getServicesManager(),
             getTicketGrantingTicketCookieGenerator(), casProperties, ticketRegistrySupport);

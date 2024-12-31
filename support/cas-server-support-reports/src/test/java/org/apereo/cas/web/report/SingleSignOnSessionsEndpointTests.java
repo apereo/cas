@@ -57,7 +57,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     private TicketRegistry ticketRegistry;
 
     @BeforeEach
-    public void setup() throws Throwable {
+    void setup() throws Throwable {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult();
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
         val st = centralAuthenticationService.grantServiceTicket(tgt.getId(), CoreAuthenticationTestUtils.getWebApplicationService(), result);

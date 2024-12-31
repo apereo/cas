@@ -82,7 +82,7 @@ class JdbcPasswordManagementServiceTests extends BaseJdbcPasswordManagementServi
     }
 
     @BeforeEach
-    public void before() {
+    void before() {
         this.jdbcPasswordManagementTransactionTemplate.executeWithoutResult(action -> {
             val jdbcTemplate = new JdbcTemplate(this.jdbcPasswordManagementDataSource);
             dropTablesBeforeTest(jdbcTemplate);

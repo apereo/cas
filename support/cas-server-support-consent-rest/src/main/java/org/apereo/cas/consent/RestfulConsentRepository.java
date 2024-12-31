@@ -16,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -36,13 +37,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RestfulConsentRepository implements ConsentRepository {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true)
-        .build()
-        .toObjectMapper();
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Serial
     private static final long serialVersionUID = 6583408864586270206L;
 
+    private final ConfigurableApplicationContext applicationContext;
     private final RestfulConsentProperties properties;
 
     @Override
@@ -60,7 +60,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.GET)
-                    .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
+                    .url(resolveUrl())
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
@@ -77,7 +77,7 @@ public class RestfulConsentRepository implements ConsentRepository {
             return new ArrayList<>(0);
         });
     }
-
+    
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions() {
         return FunctionUtils.doUnchecked(() -> {
@@ -92,7 +92,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.GET)
-                    .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
+                    .url(resolveUrl())
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
@@ -127,7 +127,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.GET)
-                    .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
+                    .url(resolveUrl())
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
@@ -145,57 +145,53 @@ public class RestfulConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
-        return FunctionUtils.doUnchecked(() -> {
-            HttpResponse response = null;
-            try {
-                val headers = new HashMap<String, String>();
-                headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-                headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-                headers.putAll(properties.getHeaders());
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) throws Throwable {
+        HttpResponse response = null;
+        try {
+            val headers = new HashMap<String, String>();
+            headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(properties.getHeaders());
 
-                val exec = HttpExecutionRequest.builder()
-                    .basicAuthPassword(properties.getBasicAuthPassword())
-                    .basicAuthUsername(properties.getBasicAuthUsername())
-                    .method(HttpMethod.POST)
-                    .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
-                    .headers(headers)
-                    .entity(MAPPER.writeValueAsString(decision))
-                    .build();
-                response = HttpUtils.execute(exec);
-                if (HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
-                    return decision;
-                }
-            } finally {
-                HttpUtils.close(response);
+            val exec = HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.POST)
+                .url(resolveUrl())
+                .headers(headers)
+                .entity(MAPPER.writeValueAsString(decision))
+                .build();
+            response = HttpUtils.execute(exec);
+            if (HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
+                return decision;
             }
-            return null;
-        });
+        } finally {
+            HttpUtils.close(response);
+        }
+        return null;
     }
 
     @Override
     public boolean deleteConsentDecisions(final String principal) {
-        return FunctionUtils.doUnchecked(() -> {
-            HttpResponse response = null;
-            try {
-                val headers = new HashMap<String, String>();
-                headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-                headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-                headers.put("principal", principal);
-                headers.putAll(properties.getHeaders());
-                val exec = HttpExecutionRequest.builder()
-                    .basicAuthPassword(properties.getBasicAuthPassword())
-                    .basicAuthUsername(properties.getBasicAuthUsername())
-                    .method(HttpMethod.DELETE)
-                    .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
-                    .headers(headers)
-                    .build();
-                response = HttpUtils.execute(exec);
-                return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
-            } finally {
-                HttpUtils.close(response);
-            }
-        });
+        HttpResponse response = null;
+        try {
+            val headers = new HashMap<String, String>();
+            headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+            headers.put("principal", principal);
+            headers.putAll(properties.getHeaders());
+            val exec = HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(resolveUrl())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
+            return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
+        } finally {
+            HttpUtils.close(response);
+        }
     }
 
     @Override
@@ -210,7 +206,7 @@ public class RestfulConsentRepository implements ConsentRepository {
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
-                .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
+                .url(resolveUrl())
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
@@ -221,28 +217,30 @@ public class RestfulConsentRepository implements ConsentRepository {
 
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
-        return FunctionUtils.doUnchecked(() -> {
-            HttpResponse response = null;
-            try {
-                val headers = new HashMap<String, String>();
-                headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-                headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-                headers.put("principal", principal);
-                headers.putAll(properties.getHeaders());
-                val deleteEndpoint = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl())
-                    .concat('/' + Long.toString(decisionId));
-                val exec = HttpExecutionRequest.builder()
-                    .basicAuthPassword(properties.getBasicAuthPassword())
-                    .basicAuthUsername(properties.getBasicAuthUsername())
-                    .method(HttpMethod.DELETE)
-                    .url(deleteEndpoint)
-                    .headers(headers)
-                    .build();
-                response = HttpUtils.execute(exec);
-                return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
-            } finally {
-                HttpUtils.close(response);
-            }
-        });
+        HttpResponse response = null;
+        try {
+            val headers = new HashMap<String, String>();
+            headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+            headers.put("principal", principal);
+            headers.putAll(properties.getHeaders());
+            val deleteEndpoint = resolveUrl().concat('/' + Long.toString(decisionId));
+            val exec = HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(deleteEndpoint)
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
+            return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+
+    private String resolveUrl() {
+        return SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl());
     }
 }

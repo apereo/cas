@@ -49,7 +49,7 @@ class DefaultDelegatedClientIdentityProviderAuthorizerTests {
     private ServicesManager servicesManager;
     
     @BeforeEach
-    public void setup() {
+    void setup() {
         servicesManager.deleteAll();
     }
 

@@ -70,7 +70,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         private MockMvc mvc;
 
         @BeforeEach
-        public void setup() {
+        void setup() {
             mvc = MockMvcBuilders
                 .webAppContextSetup(applicationContext)
                 .defaultRequest(get("/")
@@ -271,7 +271,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         }
 
         @BeforeEach
-        public void initialize() {
+        void initialize() {
             ticketRegistry.deleteAll();
         }
 

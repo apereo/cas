@@ -44,7 +44,7 @@ class ThrottledUseAndTimeoutExpirationPolicyTests extends BaseTicketFactoryTests
     private TicketGrantingTicketImpl ticket;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         expirationPolicy = new ThrottledUseAndTimeoutExpirationPolicy();
         expirationPolicy.setTimeToKillInSeconds(TIMEOUT);
         expirationPolicy.setTimeInBetweenUsesInSeconds(TIMEOUT / 5);

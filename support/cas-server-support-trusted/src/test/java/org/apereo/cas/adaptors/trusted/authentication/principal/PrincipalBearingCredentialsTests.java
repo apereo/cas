@@ -30,7 +30,7 @@ class PrincipalBearingCredentialsTests {
     private PrincipalBearingCredential principalBearingCredentials;
 
     @BeforeEach
-    public void initialize() throws Throwable {
+    void initialize() throws Throwable {
         this.principalBearingCredentials = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
     }
 

@@ -63,7 +63,7 @@ class TokenAuthenticationActionTests extends AbstractCentralAuthenticationServic
     private ServicesManager servicesManager;
 
     @BeforeEach
-    public void before() {
+    void before() {
         val svc = RegisteredServiceTestUtils.getRegisteredService("https://example.token.org");
         svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         val prop = new DefaultRegisteredServiceProperty();

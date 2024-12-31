@@ -43,7 +43,7 @@ class RestfulPersonAttributeDaoTests {
     private MockWebServer webServer;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         val data = '{'
             + "   \"name\" :\"casuser\","
             + "\"age\" : 29,"

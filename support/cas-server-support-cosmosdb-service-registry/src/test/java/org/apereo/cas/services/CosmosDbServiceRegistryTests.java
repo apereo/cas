@@ -48,7 +48,7 @@ class CosmosDbServiceRegistryTests extends AbstractServiceRegistryTests {
     private ServiceRegistry newServiceRegistry;
 
     @BeforeEach
-    public void deleteAll() throws Exception {
+    void deleteAll() throws Exception {
         Thread.sleep(3000);
         newServiceRegistry.deleteAll();
         assertTrue(newServiceRegistry.load().isEmpty());

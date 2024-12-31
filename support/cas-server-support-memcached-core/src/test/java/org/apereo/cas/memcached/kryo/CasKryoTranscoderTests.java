@@ -111,7 +111,7 @@ class CasKryoTranscoderTests {
     private ComponentSerializationPlan componentSerializationPlan;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         val classesToRegister = new ArrayList<Class>();
         classesToRegister.add(MockServiceTicket.class);
         classesToRegister.add(MockTicketGrantingTicket.class);

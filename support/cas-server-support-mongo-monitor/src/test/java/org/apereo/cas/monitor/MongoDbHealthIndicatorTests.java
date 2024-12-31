@@ -73,7 +73,7 @@ class MongoDbHealthIndicatorTests {
     private BeanContainer<CasMongoOperations> mongoHealthIndicatorTemplate;
 
     @BeforeEach
-    public void bootstrap() {
+    void bootstrap() {
         val template = mongoHealthIndicatorTemplate.first();
         template.save(new AuditActionContext("casuser", "resource",
             "action", "appcode", LocalDateTime.now(Clock.systemUTC()),

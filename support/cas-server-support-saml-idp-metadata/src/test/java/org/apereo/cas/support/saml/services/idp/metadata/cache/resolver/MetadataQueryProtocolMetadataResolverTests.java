@@ -24,7 +24,7 @@ class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServicesTest
     private String fileSystemMetadataPath;
 
     @BeforeEach
-    public void setup() throws Throwable {
+    void setup() throws Throwable {
         val file = new File(FileUtils.getTempDirectory(), "metadata-%s".formatted(RandomUtils.randomAlphanumeric(6)));
         if (!file.mkdirs()) {
             fail(() -> "Unable to create directory " + file);

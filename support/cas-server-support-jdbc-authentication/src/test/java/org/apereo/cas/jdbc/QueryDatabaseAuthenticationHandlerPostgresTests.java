@@ -60,7 +60,7 @@ class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthen
     private DataSource dataSource;
 
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         try (val c = this.dataSource.getConnection()) {
             c.setAutoCommit(true);
             try (val pstmt = c.prepareStatement("insert into caspgusers (username, password, locations) values(?,?,?);")) {

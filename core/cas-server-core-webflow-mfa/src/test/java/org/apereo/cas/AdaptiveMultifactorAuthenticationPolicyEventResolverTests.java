@@ -45,7 +45,7 @@ class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasW
     private MockHttpServletRequest request;
 
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         this.context = MockRequestContext.create(applicationContext);
 
         request = this.context.getHttpServletRequest();

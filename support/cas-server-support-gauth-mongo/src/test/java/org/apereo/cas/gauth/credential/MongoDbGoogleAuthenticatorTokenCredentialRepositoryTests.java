@@ -48,7 +48,7 @@ class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTi
     private OneTimeTokenCredentialRepository registry;
 
     @BeforeEach
-    public void cleanUp() {
+    void cleanUp() {
         registry.deleteAll();
     }
 }

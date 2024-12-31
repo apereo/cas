@@ -61,7 +61,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerOidcTests {
     private MockRequestContext requestContext;
     
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         val service = RegisteredServiceTestUtils.getService();
         requestContext = MockRequestContext.create(applicationContext)
             .withUserAgent("Chrome")

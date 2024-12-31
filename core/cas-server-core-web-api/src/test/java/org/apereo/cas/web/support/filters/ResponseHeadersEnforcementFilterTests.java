@@ -32,7 +32,7 @@ class ResponseHeadersEnforcementFilterTests {
     private MockFilterConfig filterConfig;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         val servletContext = new MockServletContext();
         this.filterConfig = new MockFilterConfig(servletContext);
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_CACHE_CONTROL, "true");

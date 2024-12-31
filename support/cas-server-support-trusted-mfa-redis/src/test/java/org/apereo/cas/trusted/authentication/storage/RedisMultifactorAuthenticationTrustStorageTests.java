@@ -45,7 +45,7 @@ class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMultifacto
     private CasRedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisMfaTrustedAuthnTemplate;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         val key = RedisMultifactorAuthenticationTrustStorage.CAS_PREFIX + '*';
         try (val keys = redisMfaTrustedAuthnTemplate.scan(key, 0L)) {
             redisMfaTrustedAuthnTemplate.delete(keys.collect(Collectors.toSet()));
@@ -88,7 +88,7 @@ class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMultifacto
     }
 
     @BeforeEach
-    public void emptyTrustEngine() {
+    void emptyTrustEngine() {
         getMfaTrustEngine().getAll().forEach(r -> getMfaTrustEngine().remove(r.getRecordKey()));
     }
 }

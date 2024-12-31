@@ -69,7 +69,7 @@ class InitialFlowSetupActionTests {
         private CasCookieBuilder tgtCookieGenerator;
 
         @BeforeEach
-        public void initialize() throws Exception {
+        void initialize() throws Exception {
             val warn = CookieGenerationContext.builder()
                 .name(CasWebflowConstants.ATTRIBUTE_WARN_ON_REDIRECT)
                 .path(StringUtils.EMPTY)

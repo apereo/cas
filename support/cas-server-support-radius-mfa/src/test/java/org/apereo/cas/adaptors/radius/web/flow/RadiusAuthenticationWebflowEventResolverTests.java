@@ -46,7 +46,7 @@ class RadiusAuthenticationWebflowEventResolverTests extends BaseCasWebflowMultif
     private MockRequestContext context;
 
     @BeforeEach
-    public void initialize() throws Throwable {
+    void initialize() throws Throwable {
         this.context = MockRequestContext.create(applicationContext);
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);

@@ -41,7 +41,7 @@ class ServiceTicketImplTests extends BaseTicketFactoryTests {
     private final DefaultUniqueTicketIdGenerator idGenerator = new DefaultUniqueTicketIdGenerator();
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         tgt = new TicketGrantingTicketImpl(ID, CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
     }
 

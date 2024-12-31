@@ -40,7 +40,7 @@ class DefaultCasCookieValueManagerTests {
     private MockHttpServletRequest httpServletRequest;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         cookie = mock(Cookie.class);
 
         httpServletRequest = new MockHttpServletRequest();

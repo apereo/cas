@@ -33,7 +33,7 @@ public abstract class BaseBucket4jThrottledRequestTests {
     protected ThrottledRequestExecutor throttledRequestExecutor;
 
     @BeforeEach
-    public void onSetUp() {
+    void onSetUp() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("223.456.789.100");
         request.setLocalAddr("223.456.789.200");

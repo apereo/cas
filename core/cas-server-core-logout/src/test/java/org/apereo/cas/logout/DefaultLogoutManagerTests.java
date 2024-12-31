@@ -80,7 +80,7 @@ class DefaultLogoutManagerTests {
     }
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         tgt = new MockTicketGrantingTicket("casuser");
 
         when(client.isValidEndPoint(any(String.class))).thenReturn(true);

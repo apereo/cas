@@ -58,12 +58,12 @@ class X509SubjectDNPrincipalResolverTests {
     private ConfigurableApplicationContext applicationContext;
     
     @BeforeEach
-    public void before() throws Exception {
+    void before() throws Exception {
         MockitoAnnotations.openMocks(this).close();
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         val context = PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)
             .attributeDefinitionStore(attributeDefinitionStore)

@@ -49,7 +49,7 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
     private SLOSamlIdPRedirectProfileHandlerController controller;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         servicesManager.deleteAll();
     }
 

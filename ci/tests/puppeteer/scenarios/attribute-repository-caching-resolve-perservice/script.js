@@ -7,7 +7,7 @@ const path = require("path");
 (async () => {
     await cas.doGet("https://localhost:8443/cas/actuator/resolveAttributes/casuser",
         async  (res) => {
-            assert(res.data.uid !== undefined);
+            assert(res.data.username !== undefined);
             assert(res.data.attributes !== undefined);
             assert(Object.keys(res.data.attributes).length === 0);
         }, async (error) => {

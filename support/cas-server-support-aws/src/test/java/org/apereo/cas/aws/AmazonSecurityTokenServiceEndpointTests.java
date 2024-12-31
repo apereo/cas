@@ -62,7 +62,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
 
         @BeforeEach
-        public void beforeEach() {
+        void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         }
@@ -88,7 +88,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
 
         @BeforeEach
-        public void beforeEach() {
+        void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         }
@@ -117,7 +117,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
 
         @BeforeEach
-        public void beforeEach() {
+        void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         }
@@ -185,7 +185,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
 
         @BeforeEach
-        public void beforeEach() {
+        void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         }
@@ -216,7 +216,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
 
         @BeforeEach
-        public void beforeEach() {
+        void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         }

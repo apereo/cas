@@ -63,7 +63,7 @@ class RegisteredServiceKafkaDistributedCacheManagerTests {
 
 
     @BeforeEach
-    public void tearDown() {
+    void tearDown() {
         registeredServiceDistributedCacheManager.clear();
     }
 

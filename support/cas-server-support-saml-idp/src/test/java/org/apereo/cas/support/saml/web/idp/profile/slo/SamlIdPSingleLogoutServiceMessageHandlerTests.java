@@ -51,7 +51,7 @@ class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigura
     private SamlRegisteredService samlRegisteredService;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         samlRegisteredService = getSamlRegisteredServiceForTestShib();
         servicesManager.save(samlRegisteredService);
 

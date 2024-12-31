@@ -53,7 +53,7 @@ class SpnegoCredentialsToPrincipalResolverTests {
     private AttributeRepositoryResolver attributeRepositoryResolver;
 
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         MockitoAnnotations.openMocks(this).close();
         val context = PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)

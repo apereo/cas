@@ -60,7 +60,7 @@ public abstract class BaseInweboActionTests {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         var authenticationSystemSupport = ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,

@@ -45,7 +45,7 @@ class DynamoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
     private DynamoDbCasEventsFacilitator dynamoDbCasEventsFacilitator;
 
     @BeforeEach
-    public void beforeEach() throws Exception {
+    void beforeEach() throws Exception {
         dynamoDbCasEventsFacilitator.deleteAll();
     }
 }

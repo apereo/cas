@@ -39,7 +39,7 @@ class DefaultCasProtocolAttributeEncoderTests {
     private WebApplicationService webApplicationService;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         this.registeredService = mock(RegisteredService.class);
         when(registeredService.getId()).thenReturn(1L);
         when(registeredService.getServiceId()).thenReturn("https://www.google.com/.+");

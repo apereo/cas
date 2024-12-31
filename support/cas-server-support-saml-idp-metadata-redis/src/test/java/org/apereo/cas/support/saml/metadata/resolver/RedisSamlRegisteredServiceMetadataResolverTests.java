@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 6379)
 class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetadataTests {
     @BeforeEach
-    public void setup() {
+    void setup() {
         val key = RedisSamlRegisteredServiceMetadataResolver.CAS_PREFIX + '*';
         try (val keys = redisSamlRegisteredServiceMetadataResolverTemplate.scan(key, 0L)) {
             redisSamlRegisteredServiceMetadataResolverTemplate.delete(keys.collect(Collectors.toSet()));

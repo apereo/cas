@@ -32,7 +32,7 @@ class RegisteredServiceScriptedAttributeFilterTests {
     private Map<String, List<Object>> givenAttributesMap;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         this.givenAttributesMap = new HashMap<>();
         this.givenAttributesMap.put("employeeId", List.of("E1234"));
         this.givenAttributesMap.put("memberOf", Arrays.asList("math101", "science", "chemistry", "marathon101"));

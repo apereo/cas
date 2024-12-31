@@ -33,7 +33,7 @@ class JaasAuthenticationHandlerTests {
     private File fileName;
 
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         val resource = new ClassPathResource("jaas.conf");
         this.fileName = new File(FileUtils.getTempDirectory(), "jaas-custom.conf");
         try (val writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {

@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasConsentRestAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
     RestfulConsentRepositoryTests.RestConsentRepositoryTestConfiguration.class,
     CasConsentRestAutoConfiguration.class,
     BaseConsentRepositoryTests.SharedTestConfiguration.class
-}, properties = "cas.consent.rest.url=http://localhost:${#applicationContext.get().getEnvironment().getProperty('local.server.port')}/consent",
+}, properties = "cas.consent.rest.url=http://localhost:${#applicationContext.get().environment.getProperty('local.server.port')}/consent",
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Getter
 @ExtendWith(CasTestExtension.class)
@@ -60,7 +61,8 @@ class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
     protected ConsentRepository repository;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
+        SpringExpressionLanguageValueResolver.getInstance().withApplicationContext(applicationContext);
         storage.getRecords().clear();
     }
 
@@ -86,7 +88,7 @@ class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
                 }
             };
         }
-        
+
         @RestController("consentController")
         @RequestMapping("/consent")
         static class ConsentController {
@@ -98,10 +100,11 @@ class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
             @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
             public ResponseEntity<String> find(@RequestHeader(value = "principal", required = false) final String principal,
                                                @RequestHeader(value = "service", required = false) final String service) throws Exception {
-                if (StringUtils.isNotBlank(principal) && StringUtils.isNotBlank(service)) {
-                    val results = storage.getRecords().get(principal)
+                val consentDecisions = storage.getRecords().get(principal);
+                if (consentDecisions != null && StringUtils.isNotBlank(principal) && StringUtils.isNotBlank(service)) {
+                    val results = consentDecisions
                         .stream()
-                        .filter(d -> d.getService().equals(service))
+                        .filter(consentDecision -> consentDecision.getService().equals(service))
                         .findFirst();
 
                     if (results.isPresent()) {
@@ -111,7 +114,7 @@ class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
                 }
 
                 if (StringUtils.isNotBlank(principal)) {
-                    return ResponseEntity.ok(MAPPER.writeValueAsString(storage.getRecords().get(principal)));
+                    return ResponseEntity.ok(MAPPER.writeValueAsString(consentDecisions));
                 }
                 val results = storage.getRecords().values()
                     .stream()
@@ -124,7 +127,7 @@ class RestfulConsentRepositoryTests extends BaseConsentRepositoryTests {
             public ResponseEntity store(@RequestBody final ConsentDecision decision) {
                 if (storage.getRecords().containsKey(decision.getPrincipal())) {
                     val decisions = storage.getRecords().get(decision.getPrincipal());
-                    decisions.removeIf(d -> d.getId() == decision.getId());
+                    decisions.removeIf(consentDecision -> consentDecision.getId() == decision.getId());
                     decisions.add(decision);
                 } else {
                     storage.getRecords().put(decision.getPrincipal(), CollectionUtils.wrapList(decision));

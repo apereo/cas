@@ -67,7 +67,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     }
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr(IP_ADDRESS);
         request.setLocalAddr(IP_ADDRESS);

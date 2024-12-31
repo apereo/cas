@@ -35,7 +35,7 @@ class PasswordEncoderUtilsTests {
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
     }

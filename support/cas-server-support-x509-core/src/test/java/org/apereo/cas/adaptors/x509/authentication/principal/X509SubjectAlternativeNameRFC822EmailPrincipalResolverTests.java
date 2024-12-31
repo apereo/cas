@@ -58,7 +58,7 @@ class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
     private AttributeRepositoryResolver attributeRepositoryResolver;
 
     @BeforeEach
-    public void before() throws Exception {
+    void before() throws Exception {
         MockitoAnnotations.openMocks(this).close();
     }
 

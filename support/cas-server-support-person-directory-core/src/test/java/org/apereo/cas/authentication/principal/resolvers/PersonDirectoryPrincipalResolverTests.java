@@ -77,7 +77,7 @@ class PersonDirectoryPrincipalResolverTests {
     private AttributeDefinitionStore attributeDefinitionStore;
 
     @BeforeEach
-    public void before() {
+    void before() {
         servicesManager = mock(ServicesManager.class);
     }
 

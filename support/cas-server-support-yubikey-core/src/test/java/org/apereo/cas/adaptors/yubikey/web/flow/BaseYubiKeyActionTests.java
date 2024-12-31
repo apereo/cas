@@ -19,7 +19,7 @@ public abstract class BaseYubiKeyActionTests {
     protected ConfigurableApplicationContext applicationContext;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, new YubiKeyMultifactorAuthenticationProvider());

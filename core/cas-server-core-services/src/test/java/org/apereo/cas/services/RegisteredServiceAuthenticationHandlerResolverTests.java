@@ -42,7 +42,7 @@ class RegisteredServiceAuthenticationHandlerResolverTests {
     private Set<AuthenticationHandler> authenticationHandlers;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         val svc = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
         svc.getAuthenticationPolicy().getRequiredAuthenticationHandlers().addAll(CollectionUtils.wrapHashSet("handler1", "handler2"));
         servicesManager.save(svc);

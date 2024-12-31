@@ -54,7 +54,7 @@ class RestfulSmsSenderTests {
         private CasConfigurationProperties casProperties;
         
         @BeforeEach
-        public void initialize() {
+        void initialize() {
             val request = new MockHttpServletRequest();
             request.setRemoteAddr("185.86.151.11");
             request.setLocalAddr("185.88.151.11");
@@ -101,7 +101,7 @@ class RestfulSmsSenderTests {
         private MockWebServer webServer;
 
         @BeforeEach
-        public void initialize() {
+        void initialize() {
             val request = new MockHttpServletRequest();
             request.setRemoteAddr("185.86.151.11");
             request.setLocalAddr("185.88.151.11");

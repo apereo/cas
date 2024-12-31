@@ -37,7 +37,7 @@ class ValidatePasswordResetTokenActionTests extends BasePasswordManagementAction
     private static final String TOKEN = "token";
 
     @BeforeEach
-    public void onSetUp() {
+    void onSetUp() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");

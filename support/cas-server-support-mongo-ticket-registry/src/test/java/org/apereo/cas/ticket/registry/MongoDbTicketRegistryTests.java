@@ -68,7 +68,7 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     private ConfigurableApplicationContext applicationContext;
 
     @BeforeEach
-    public void before() {
+    void before() {
         newTicketRegistry.deleteAll();
     }
 

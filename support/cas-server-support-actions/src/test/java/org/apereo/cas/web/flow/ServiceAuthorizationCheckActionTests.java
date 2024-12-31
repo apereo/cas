@@ -34,7 +34,7 @@ class ServiceAuthorizationCheckActionTests extends AbstractWebflowActionsTests {
     private ServicesManager servicesManager;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         servicesManager.deleteAll();
     }
 

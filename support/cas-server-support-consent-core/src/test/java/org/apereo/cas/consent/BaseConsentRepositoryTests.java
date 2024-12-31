@@ -30,9 +30,11 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +60,9 @@ public abstract class BaseConsentRepositoryTests {
 
     protected static final Map<String, List<Object>> ATTR = CollectionUtils.wrap("attribute", List.of("value"));
 
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+    
     public abstract ConsentRepository getRepository();
     
     @Test

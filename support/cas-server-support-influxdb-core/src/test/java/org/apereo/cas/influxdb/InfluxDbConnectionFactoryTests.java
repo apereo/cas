@@ -33,7 +33,7 @@ class InfluxDbConnectionFactoryTests {
     private InfluxDbConnectionFactory factory;
 
     @BeforeEach
-    public void init() {
+    void init() {
         val props = new InfluxDbEventsProperties()
             .setDatabase("casEventsDatabase")
             .setOrganization("CAS")

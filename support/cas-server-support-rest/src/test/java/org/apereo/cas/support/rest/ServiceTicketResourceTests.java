@@ -66,7 +66,7 @@ class ServiceTicketResourceTests {
     private MockMvc mockMvc;
 
     @BeforeEach
-    public void initialize() throws Throwable {
+    void initialize() throws Throwable {
         val mgmr = mock(AuthenticationManager.class);
         lenient().when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         lenient().when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());

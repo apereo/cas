@@ -49,7 +49,7 @@ class SearchModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAut
     }
 
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         val props = new SearchJdbcAuthenticationProperties().setFieldUser("username")
             .setFieldPassword("password").setTableUsers("cassearchusers");
         this.handler = new SearchModeSearchDatabaseAuthenticationHandler(props, null,

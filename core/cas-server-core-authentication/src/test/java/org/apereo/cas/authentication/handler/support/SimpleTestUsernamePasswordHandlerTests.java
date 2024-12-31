@@ -27,7 +27,7 @@ class SimpleTestUsernamePasswordHandlerTests {
     private AuthenticationHandler authenticationHandler;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
     }
 

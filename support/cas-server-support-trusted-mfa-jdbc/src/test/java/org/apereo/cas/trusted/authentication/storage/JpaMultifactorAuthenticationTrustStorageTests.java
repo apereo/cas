@@ -54,7 +54,7 @@ class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorA
     private static final String DEVICE_FINGERPRINT = "deviceFingerprint";
 
     @BeforeEach
-    public void clearEngine() {
+    void clearEngine() {
         getMfaTrustEngine().getAll().forEach(r -> getMfaTrustEngine().remove(r.getRecordKey()));
     }
 

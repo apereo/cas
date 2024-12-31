@@ -47,7 +47,7 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
         private MockRequestContext context;
 
         @BeforeEach
-        public void beforeEach() throws Throwable {
+        void beforeEach() throws Throwable {
             context = MockRequestContext.create(applicationContext);
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap()));
@@ -81,7 +81,7 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
         private MockRequestContext context;
         
         @BeforeEach
-        public void beforeEach() throws Exception {
+        void beforeEach() throws Exception {
             context = MockRequestContext.create(applicationContext);
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap()));

@@ -57,7 +57,7 @@ class X509SerialNumberAndIssuerDNPrincipalResolverTests {
     private AttributeRepositoryResolver attributeRepositoryResolver;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         MockitoAnnotations.openMocks(this).close();
         val context = PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)

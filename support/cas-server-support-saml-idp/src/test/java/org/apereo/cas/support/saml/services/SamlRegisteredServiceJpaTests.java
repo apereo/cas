@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach
-    public void before() {
+    void before() {
         this.servicesManager.deleteAll();
     }
 

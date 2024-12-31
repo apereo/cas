@@ -48,7 +48,7 @@ class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlM
     private MongoOperations mongoDbSamlIdPMetadataTemplate;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         mongoDbSamlIdPMetadataTemplate.remove(new Query(), SamlMetadataDocument.class,
             casProperties.getAuthn().getSamlIdp().getMetadata().getMongo().getCollection());
     }

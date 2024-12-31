@@ -53,7 +53,7 @@ class RememberMeDelegatingExpirationPolicyTests extends BaseTicketFactoryTests {
     private RememberMeDelegatingExpirationPolicy expirationPolicy;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         val rememberMe = new MultiTimeUseOrTimeoutExpirationPolicy(1, REMEMBER_ME_TTL);
         expirationPolicy = new RememberMeDelegatingExpirationPolicy();
         expirationPolicy.addPolicy(RememberMeDelegatingExpirationPolicy.POLICY_NAME_REMEMBER_ME, rememberMe);

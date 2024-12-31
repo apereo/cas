@@ -39,7 +39,7 @@ class HardTimeoutExpirationPolicyTests {
     private TicketGrantingTicket ticket;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         expirationPolicy = new HardTimeoutExpirationPolicy(TIMEOUT);
         ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils
             .getAuthentication(), expirationPolicy);

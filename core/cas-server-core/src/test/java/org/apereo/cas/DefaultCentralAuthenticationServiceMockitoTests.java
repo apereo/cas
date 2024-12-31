@@ -129,7 +129,7 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
     }
 
     @BeforeEach
-    public void prepareNewCAS() throws Throwable {
+    void prepareNewCAS() throws Throwable {
         this.ticketGrantingTicketId = UUID.randomUUID().toString();
         this.ticketGrantingTicketId2 = UUID.randomUUID().toString();
         this.serviceTicketId = UUID.randomUUID().toString();

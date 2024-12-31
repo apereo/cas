@@ -77,7 +77,7 @@ class SessionHealthIndicatorTests {
     }
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         this.defaultRegistry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog(),
                 mock(ConfigurableApplicationContext.class));
     }

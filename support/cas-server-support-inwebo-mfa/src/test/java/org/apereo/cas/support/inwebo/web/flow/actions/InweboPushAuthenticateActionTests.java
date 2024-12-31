@@ -25,7 +25,7 @@ class InweboPushAuthenticateActionTests extends BaseInweboActionTests {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         super.setUp();
 
         action = new InweboPushAuthenticateAction(service);

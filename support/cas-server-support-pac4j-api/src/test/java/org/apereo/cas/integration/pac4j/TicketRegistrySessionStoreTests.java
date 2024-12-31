@@ -61,7 +61,7 @@ class TicketRegistrySessionStoreTests {
     private CasCookieBuilder cookieGenerator;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         ticketRegistry.deleteAll();
 
         val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();

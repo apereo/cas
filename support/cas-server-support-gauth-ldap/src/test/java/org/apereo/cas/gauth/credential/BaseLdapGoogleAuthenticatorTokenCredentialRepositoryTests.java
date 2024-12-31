@@ -43,7 +43,7 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
     private CasConfigurationProperties casProperties;
 
     @BeforeEach
-    public void cleanUp() {
+    void cleanUp() {
         getRegistry().deleteAll();
     }
 

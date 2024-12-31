@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
 
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);

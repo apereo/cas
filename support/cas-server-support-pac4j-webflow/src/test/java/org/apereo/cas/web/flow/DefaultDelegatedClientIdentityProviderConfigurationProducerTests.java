@@ -58,7 +58,7 @@ class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
         protected MockHttpServletResponse httpServletResponse;
 
         @BeforeEach
-        public void setup() throws Exception {
+        void setup() throws Exception {
             requestContext = MockRequestContext.create(applicationContext);
             httpServletResponse = requestContext.getHttpServletResponse();
             httpServletRequest = requestContext.getHttpServletRequest();

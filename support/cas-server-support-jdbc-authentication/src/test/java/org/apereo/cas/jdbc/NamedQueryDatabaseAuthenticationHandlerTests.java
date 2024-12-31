@@ -47,7 +47,7 @@ class NamedQueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentic
     }
 
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         try (val c = this.dataSource.getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);

@@ -32,7 +32,7 @@ class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
     protected OAuthRegisteredService registeredService;
 
     @BeforeEach
-    public void init() {
+    void init() {
         this.registeredService = addRegisteredService();
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());

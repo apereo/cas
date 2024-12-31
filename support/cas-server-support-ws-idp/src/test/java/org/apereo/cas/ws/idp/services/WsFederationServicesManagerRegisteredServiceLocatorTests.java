@@ -52,7 +52,7 @@ class WsFederationServicesManagerRegisteredServiceLocatorTests extends BaseCoreW
     private ServicesManager servicesManager;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         servicesManager.deleteAll();
     }
 

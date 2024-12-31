@@ -74,7 +74,7 @@ class CasJdbcAuthenticationConfigurationTests {
     private AuthenticationManager authenticationManager;
 
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         val props = casProperties.getAuthn().getJdbc().getQuery().getFirst();
         val dataSource = JpaBeans.newDataSource(props.getDriverClass(), props.getUser(),
             props.getPassword(), props.getUrl());

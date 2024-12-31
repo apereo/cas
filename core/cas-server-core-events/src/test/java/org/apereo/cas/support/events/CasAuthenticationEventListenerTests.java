@@ -79,7 +79,7 @@ class CasAuthenticationEventListenerTests {
     private MockHttpServletRequest request;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         request = new MockHttpServletRequest();
         request.setRemoteAddr(REMOTE_ADDR_IP);
         request.setLocalAddr(LOCAL_ADDR_IP);

@@ -85,7 +85,7 @@ class WebAuthnQRCodeControllerMvcTests {
     private SessionManager webAuthnSessionManager;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         mvc = MockMvcBuilders
             .webAppContextSetup(webApplicationContext)
             .apply(springSecurity())

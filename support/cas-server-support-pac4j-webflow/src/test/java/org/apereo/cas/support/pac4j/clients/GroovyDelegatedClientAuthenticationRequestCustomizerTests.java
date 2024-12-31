@@ -51,7 +51,7 @@ class GroovyDelegatedClientAuthenticationRequestCustomizerTests {
     private ConfigurableApplicationContext applicationContext;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         val service = RegisteredServiceTestUtils.getService();
         requestContext = MockRequestContext.create(applicationContext);
         httpServletResponse = requestContext.getHttpServletResponse();

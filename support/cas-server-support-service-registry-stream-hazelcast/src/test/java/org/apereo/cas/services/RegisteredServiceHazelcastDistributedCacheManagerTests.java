@@ -36,7 +36,7 @@ class RegisteredServiceHazelcastDistributedCacheManagerTests {
     private RegisteredServiceHazelcastDistributedCacheManager mgr;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         val properties = new BaseHazelcastProperties();
         properties.getCluster().getCore().setInstanceName(getClass().getSimpleName());
         val config = HazelcastConfigurationFactory.build(properties,

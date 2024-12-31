@@ -62,7 +62,7 @@ class SurrogateAuthenticationEventListenerTests {
     private ClientInfo clientInfo;
 
     @BeforeEach
-    public void setup(){
+    void setup(){
         clientInfo = ClientInfoHolder.getClientInfo();
     }
 

@@ -61,7 +61,7 @@ class SamlIdPServicesManagerRegisteredServiceLocatorTests extends BaseSamlIdPCon
                                                       + "DiS4Bug6W2ty5aB6nYu9iHAKZCFrZ3wGtthxPQynDNeU95iF1Xcoh2Us7uLJrlscfE6j58X61U7PJCx8N4Lg876cOnHP8U7x+kdyxFxfb/9e2Z/AA==";
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         servicesManager.deleteAll();
     }
 

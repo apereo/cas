@@ -26,7 +26,7 @@ class SamlAuthenticationMetaDataPopulatorTests {
     private SamlAuthenticationMetaDataPopulator populator;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         this.populator = new SamlAuthenticationMetaDataPopulator();
     }
 

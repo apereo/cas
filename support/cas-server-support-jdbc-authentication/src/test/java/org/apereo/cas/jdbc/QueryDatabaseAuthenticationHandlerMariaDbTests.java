@@ -56,7 +56,7 @@ class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabaseAuthent
     private DataSource dataSource;
 
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         try (val connection = this.dataSource.getConnection()) {
             connection.setAutoCommit(true);
             try (val pstmt = connection.prepareStatement("insert into casmariadbusers (username, password, location) values(?,?,?);")) {

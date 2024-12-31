@@ -33,7 +33,7 @@ class InweboCheckUserActionTests extends BaseInweboActionTests {
 
     @Override
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         super.setUp();
 
         inwebo = new InweboMultifactorAuthenticationProperties();

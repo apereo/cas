@@ -59,7 +59,7 @@ class DefaultQRAuthenticationTokenValidatorServiceTests {
     private QRAuthenticationDeviceRepository qrAuthenticationDeviceRepository;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         qrAuthenticationDeviceRepository.removeAll();
     }
 

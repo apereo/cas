@@ -74,7 +74,7 @@ class CasEventsReportEndpointTests {
     private CasConfigurationProperties casProperties;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("223.456.789.100");
         request.setLocalAddr("223.456.789.100");

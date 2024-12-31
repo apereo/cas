@@ -48,7 +48,7 @@ class TicketGrantingTicketExpirationPolicyTests extends BaseTicketFactoryTests {
     private TicketGrantingTicketImpl ticketGrantingTicket;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         expirationPolicy = new TicketGrantingTicketExpirationPolicy(HARD_TIMEOUT, SLIDING_TIMEOUT);
         ticketGrantingTicket = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), expirationPolicy);
     }

@@ -32,7 +32,7 @@ class OAuth20CallbackAuthorizeEndpointControllerTests extends AbstractOAuth20Tes
     private OAuthRegisteredService registeredService;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
 
         registeredService = addRegisteredService();
     }

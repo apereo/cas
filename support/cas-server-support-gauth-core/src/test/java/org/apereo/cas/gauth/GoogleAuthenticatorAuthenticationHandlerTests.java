@@ -58,7 +58,7 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
     private OneTimeTokenCredentialRepository tokenCredentialRepository;
 
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         val servicesManager = mock(ServicesManager.class);
         val builder = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         googleAuthenticator = new GoogleAuthenticator(builder.build());

@@ -24,7 +24,7 @@ class ProxyAuthenticationHandlerTests {
     private AuthenticationHandler authenticationHandler;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         authenticationHandler = new ProxyAuthenticationHandler(StringUtils.EMPTY, null, null, 0, new SimpleHttpClientFactoryBean().getObject());
     }
 
