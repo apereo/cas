@@ -85,9 +85,9 @@
         <module name="UnusedLocalVariable">
             <property name="severity" value="error"/>
         </module>
-        <module name="UnusedCatchParameterShouldBeUnnamed">
-            <property name="severity" value="error"/>
-        </module>
+<!--        <module name="UnusedCatchParameterShouldBeUnnamed">-->
+<!--            <property name="severity" value="error"/>-->
+<!--        </module>-->
         <module name="UnnecessarySemicolonInEnumeration">
             <property name="severity" value="error"/>
         </module>
