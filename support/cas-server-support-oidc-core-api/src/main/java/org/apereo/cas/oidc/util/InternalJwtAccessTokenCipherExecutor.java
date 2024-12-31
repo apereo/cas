@@ -122,7 +122,7 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
     }
 
 
-    private static PublicJsonWebKey toJsonWebKey(final String key, final RegisteredService registeredService) throws Exception {
+    protected static PublicJsonWebKey toJsonWebKey(final String key, final RegisteredService registeredService) throws Exception {
         val details = EncodingUtils.parseJsonWebKey(key);
         if (details.containsKey(JsonWebKeySet.JWK_SET_MEMBER_NAME)) {
             return (PublicJsonWebKey) new JsonWebKeySet(key).getJsonWebKeys().getFirst();
