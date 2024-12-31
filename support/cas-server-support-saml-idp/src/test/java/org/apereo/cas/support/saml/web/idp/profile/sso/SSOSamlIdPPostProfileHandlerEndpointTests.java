@@ -35,7 +35,7 @@ class SSOSamlIdPPostProfileHandlerEndpointTests extends BaseSamlIdPConfiguration
     private SamlRegisteredService samlRegisteredService;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         this.samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         servicesManager.save(samlRegisteredService);
     }

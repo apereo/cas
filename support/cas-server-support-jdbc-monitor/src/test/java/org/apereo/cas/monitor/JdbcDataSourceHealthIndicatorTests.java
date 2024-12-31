@@ -37,7 +37,7 @@ class JdbcDataSourceHealthIndicatorTests {
     private CasConfigurationProperties casProperties;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         val props = casProperties.getMonitor().getJdbc();
         this.dataSource = JpaBeans.newDataSource(props);
     }

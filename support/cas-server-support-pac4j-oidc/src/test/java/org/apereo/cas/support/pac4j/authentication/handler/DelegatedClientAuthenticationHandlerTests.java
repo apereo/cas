@@ -54,7 +54,7 @@ class DelegatedClientAuthenticationHandlerTests {
     private ClientCredential clientCredential;
 
     @BeforeEach
-    public void initialize() throws Throwable {
+    void initialize() throws Throwable {
         val ctx = new StaticApplicationContext();
         ctx.refresh();
 

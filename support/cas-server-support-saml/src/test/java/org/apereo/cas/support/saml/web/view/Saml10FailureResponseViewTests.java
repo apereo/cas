@@ -33,7 +33,7 @@ class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
     private Saml10FailureResponseView view;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
 
         val builder = new Saml10ObjectBuilder(this.configBean);
         val samlResponseBuilder = new SamlResponseBuilder(builder, null,

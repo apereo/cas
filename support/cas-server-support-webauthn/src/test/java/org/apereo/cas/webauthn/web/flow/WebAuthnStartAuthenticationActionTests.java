@@ -54,7 +54,7 @@ class WebAuthnStartAuthenticationActionTests {
     private ConfigurableApplicationContext applicationContext;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         webAuthnCredentialRepository.removeAllRegistrations(USER);
     }
 

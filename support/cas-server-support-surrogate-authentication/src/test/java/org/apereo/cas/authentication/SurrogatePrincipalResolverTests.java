@@ -65,7 +65,7 @@ class SurrogatePrincipalResolverTests {
     private AttributeDefinitionStore attributeDefinitionStore;
     
     @BeforeEach
-    public void before() {
+    void before() {
         this.attributeDefinitionStore = mock(AttributeDefinitionStore.class);
     }
 

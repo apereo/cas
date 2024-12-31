@@ -47,7 +47,7 @@ class SSOSamlIdPPostProfileHandlerControllerWithBrowserStorageTests extends Base
     private SamlRegisteredService samlRegisteredService;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         samlRegisteredService = getSamlRegisteredServiceFor(false, false,
             false, "https://cassp.example.org");
         servicesManager.save(samlRegisteredService);

@@ -59,7 +59,7 @@ class SendPasswordResetInstructionsActionTests {
     class DefaultTests extends BasePasswordManagementActionTests {
 
         @BeforeEach
-        public void setup() {
+        void setup() {
             val request = new MockHttpServletRequest();
             request.setRemoteAddr("223.456.789.000");
             request.setLocalAddr("123.456.789.000");

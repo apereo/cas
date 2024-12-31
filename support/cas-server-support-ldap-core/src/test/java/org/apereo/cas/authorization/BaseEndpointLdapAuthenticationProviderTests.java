@@ -54,7 +54,7 @@ public abstract class BaseEndpointLdapAuthenticationProviderTests {
     }
 
     @BeforeEach
-    public void init() {
+    void init() {
         val request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
     }

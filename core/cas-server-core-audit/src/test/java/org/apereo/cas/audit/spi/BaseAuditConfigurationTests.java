@@ -66,7 +66,7 @@ public abstract class BaseAuditConfigurationTests {
     public abstract AuditTrailManager getAuditTrailManager();
 
     @BeforeEach
-    public void onSetUp() {
+    void onSetUp() {
         val auditTrailManager = getAuditTrailManager();
         auditTrailManager.removeAll();
         val clientInfo = new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London")

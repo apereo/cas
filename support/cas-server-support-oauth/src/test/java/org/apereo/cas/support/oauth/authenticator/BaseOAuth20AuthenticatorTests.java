@@ -137,7 +137,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
     protected CasConfigurationProperties casProperties;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         service = new OAuthRegisteredService();
         service.setName("OAuth");
         service.setId(RandomUtils.nextLong());

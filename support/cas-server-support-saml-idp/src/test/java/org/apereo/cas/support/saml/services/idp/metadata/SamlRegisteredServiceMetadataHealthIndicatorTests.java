@@ -32,7 +32,7 @@ class SamlRegisteredServiceMetadataHealthIndicatorTests extends BaseSamlIdPConfi
     private HealthIndicator samlRegisteredServiceMetadataHealthIndicator;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         this.servicesManager.deleteAll();
     }
 

@@ -38,7 +38,7 @@ class Cas10ResponseViewTests {
     private Map<String, Object> model;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         this.model = new HashMap<>();
         val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication("someothername"));

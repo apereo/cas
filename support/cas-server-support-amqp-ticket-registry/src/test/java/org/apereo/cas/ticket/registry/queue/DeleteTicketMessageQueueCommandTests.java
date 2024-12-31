@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DeleteTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         ticketRegistry.deleteAll();
     }
 

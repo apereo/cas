@@ -30,7 +30,7 @@ class HttpRequestRegisteredServiceAccessStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("192.861.151.163");
         request.addHeader(HttpHeaders.USER_AGENT, "Chrome/Mozilla");

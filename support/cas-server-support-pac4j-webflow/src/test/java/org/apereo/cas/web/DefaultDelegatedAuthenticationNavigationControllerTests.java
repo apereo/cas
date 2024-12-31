@@ -44,7 +44,7 @@ class DefaultDelegatedAuthenticationNavigationControllerTests {
     private ServicesManager servicesManager;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         servicesManager.deleteAll();
     }
 

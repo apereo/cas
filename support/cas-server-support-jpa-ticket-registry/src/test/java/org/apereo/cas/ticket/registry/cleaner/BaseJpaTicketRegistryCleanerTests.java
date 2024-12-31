@@ -94,7 +94,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     private TicketRegistryCleaner ticketRegistryCleaner;
 
     @BeforeEach
-    public void cleanup() {
+    void cleanup() {
         ticketRegistry.deleteAll();
     }
 

@@ -33,7 +33,7 @@ class FileAuthenticationHandlerTests {
     private FileAuthenticationHandler authenticationHandler;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null, new ClassPathResource("authentication.txt"),
             FileAuthenticationHandler.DEFAULT_SEPARATOR);
         val p = new PasswordEncoderProperties();

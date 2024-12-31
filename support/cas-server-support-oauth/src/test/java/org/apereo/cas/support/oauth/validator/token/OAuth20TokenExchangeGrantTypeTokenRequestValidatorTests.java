@@ -51,7 +51,7 @@ class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOA
     private MockHttpServletRequest request;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         request = new MockHttpServletRequest();
         request.addHeader(HttpHeaders.USER_AGENT, "Firefox");
         val response = new MockHttpServletResponse();

@@ -39,7 +39,7 @@ public abstract class BaseConsentActivationStrategyTests {
     private ConsentActivationStrategy consentActivationStrategy;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         servicesManager.deleteAll();
     }
 

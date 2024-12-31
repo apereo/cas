@@ -55,7 +55,7 @@ class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     private Saml10SuccessResponseView response;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
         val protocolAttributeEncoder = new DefaultCasProtocolAttributeEncoder(servicesManager,
             RegisteredServicePublicKeyCipherExecutor.INSTANCE, CipherExecutor.noOpOfStringToString());

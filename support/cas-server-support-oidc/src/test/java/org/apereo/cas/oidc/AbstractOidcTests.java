@@ -410,7 +410,7 @@ public abstract class AbstractOidcTests {
     }
 
     @BeforeEach
-    public void initialize() throws Throwable {
+    protected void initialize() throws Throwable {
         servicesManager.save(getOidcRegisteredService());
         ticketRegistry.deleteAll();
     }

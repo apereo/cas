@@ -42,7 +42,7 @@ class GroovyScriptMultifactorAuthenticationPolicyEventResolverTests extends Base
     private MockRequestContext context;
 
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         this.context = MockRequestContext.create(applicationContext);
 
         val request = context.getHttpServletRequest();

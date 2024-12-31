@@ -97,7 +97,7 @@ class TicketGrantingTicketResourceTests {
     private MockMvc mockMvc;
 
     @BeforeEach
-    public void initialize() throws Throwable {
+    void initialize() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

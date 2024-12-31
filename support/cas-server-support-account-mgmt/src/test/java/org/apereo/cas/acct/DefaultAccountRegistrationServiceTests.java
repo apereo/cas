@@ -40,7 +40,7 @@ class DefaultAccountRegistrationServiceTests {
     private CasConfigurationProperties casProperties;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         this.accountRegistrationService = new DefaultAccountRegistrationService(
             mock(AccountRegistrationPropertyLoader.class),
             casProperties, CipherExecutor.noOpOfSerializableToString(),

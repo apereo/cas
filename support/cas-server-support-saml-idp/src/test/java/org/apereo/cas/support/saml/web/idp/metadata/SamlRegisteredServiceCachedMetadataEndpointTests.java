@@ -38,7 +38,7 @@ class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfig
     private SamlRegisteredService samlRegisteredService;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         servicesManager.save(samlRegisteredService);
     }

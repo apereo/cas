@@ -47,7 +47,7 @@ class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
     }
 
     @BeforeEach
-    public void beforeEach() throws Exception {
+    void beforeEach() throws Exception {
         val properties = new SamlIdPProperties();
         val path = new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath();
         properties.getMetadata().getFileSystem().setLocation(path);

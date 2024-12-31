@@ -42,7 +42,7 @@ class RegisteredServiceMutantRegexAttributeFilterTests {
     private Map<String, List<Object>> givenAttributesMap;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         this.filter = new RegisteredServiceMutantRegexAttributeFilter();
         this.givenAttributesMap = new HashMap<>();
         this.givenAttributesMap.put("employeeId", List.of("E1234"));

@@ -63,7 +63,7 @@ class OidcDefaultJsonWebKeystoreGeneratorServiceTests {
         private File keystore;
 
         @BeforeEach
-        public void setup() {
+        void setup() {
             keystore = new File(FileUtils.getTempDirectoryPath(), "something.jwks");
             if (keystore.exists()) {
                 assertTrue(keystore.delete());

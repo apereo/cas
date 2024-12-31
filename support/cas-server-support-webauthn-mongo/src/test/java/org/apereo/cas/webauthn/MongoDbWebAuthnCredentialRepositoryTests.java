@@ -42,7 +42,7 @@ class MongoDbWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRep
     private MongoOperations mongoTemplate;
 
     @BeforeEach
-    public void cleanUp() {
+    void cleanUp() {
         val query = new Query();
         query.addCriteria(Criteria.where(MongoDbWebAuthnCredentialRegistration.FIELD_USERNAME).exists(true));
         val collection = casProperties.getAuthn().getMfa().getWebAuthn().getMongo().getCollection();

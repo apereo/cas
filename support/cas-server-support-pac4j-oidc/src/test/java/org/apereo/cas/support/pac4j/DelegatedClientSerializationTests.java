@@ -53,7 +53,7 @@ class DelegatedClientSerializationTests {
 
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         tstSerializer = new TransientSessionTicketStringSerializer(applicationContext);
         tgtSerializer = new TicketGrantingTicketStringSerializer(applicationContext);
     }

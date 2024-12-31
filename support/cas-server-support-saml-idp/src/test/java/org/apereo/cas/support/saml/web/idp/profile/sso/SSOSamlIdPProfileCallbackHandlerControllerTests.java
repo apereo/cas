@@ -80,7 +80,7 @@ class SSOSamlIdPProfileCallbackHandlerControllerTests {
         private SamlRegisteredService samlRegisteredService;
 
         @BeforeEach
-        public void beforeEach() {
+        void beforeEach() {
             samlRegisteredService = getSamlRegisteredServiceFor(false, false,
                 false, "https://cassp.example.org");
             servicesManager.save(samlRegisteredService);

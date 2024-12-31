@@ -54,7 +54,7 @@ class AuthnRequestRequesterIdAttributeReleasePolicyTests extends BaseSamlIdPConf
     private SAML2MessageContext saml2MessageContext;
 
     @BeforeEach
-    public void initialize() throws Throwable {
+    void initialize() throws Throwable {
         this.saml2MessageContext = buildSamlMessageContext();
     }
 

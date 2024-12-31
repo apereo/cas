@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RandomUtilsTests {
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         System.setProperty(RandomUtils.SYSTEM_PROPERTY_SECURE_RANDOM_ALG, StringUtils.EMPTY);
     }
 

@@ -61,7 +61,7 @@ class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifac
     }
 
     @BeforeEach
-    public void emptyTrustEngine() {
+    void emptyTrustEngine() {
         getMfaTrustEngine().getAll().forEach(r -> getMfaTrustEngine().remove(r.getRecordKey()));
     }
 }

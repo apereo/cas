@@ -52,7 +52,7 @@ class InweboServiceTests {
     private int serviceApiPort;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         val casProperties = new CasConfigurationProperties();
 
         val certificate = new SpringResourceProperties();

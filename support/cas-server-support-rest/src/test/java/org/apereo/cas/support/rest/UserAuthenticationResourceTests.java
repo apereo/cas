@@ -72,7 +72,7 @@ class UserAuthenticationResourceTests {
     private MockMvc mockMvc;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         val httpRequestCredentialFactory = new UsernamePasswordRestHttpRequestCredentialFactory() {
             @Override
             public List<Credential> fromAuthentication(final HttpServletRequest request,

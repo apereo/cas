@@ -61,7 +61,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     }
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         this.google = new GoogleAuthenticator(bldr.build());
     }

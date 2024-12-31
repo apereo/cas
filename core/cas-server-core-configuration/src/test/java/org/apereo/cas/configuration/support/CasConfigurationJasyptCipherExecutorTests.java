@@ -41,7 +41,7 @@ class CasConfigurationJasyptCipherExecutorTests {
     private CasConfigurationJasyptCipherExecutor jasypt;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         this.jasypt = new CasConfigurationJasyptCipherExecutor(this.environment);
     }
 

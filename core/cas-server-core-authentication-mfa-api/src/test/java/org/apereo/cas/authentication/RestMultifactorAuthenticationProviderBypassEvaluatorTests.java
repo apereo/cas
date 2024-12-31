@@ -28,7 +28,7 @@ class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
     private StaticApplicationContext applicationContext;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);

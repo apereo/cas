@@ -37,7 +37,7 @@ public abstract class AbstractServicesManagerTests{
     protected ServicesManager servicesManager;
     
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setServiceId("https://app.example.org/cas");

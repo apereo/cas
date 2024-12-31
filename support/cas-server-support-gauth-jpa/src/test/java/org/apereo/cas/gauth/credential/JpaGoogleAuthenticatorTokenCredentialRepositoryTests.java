@@ -46,7 +46,7 @@ class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTo
     private OneTimeTokenCredentialRepository registry;
 
     @BeforeEach
-    public void cleanUp() {
+    void cleanUp() {
         this.getRegistry().deleteAll();
     }
     

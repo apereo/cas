@@ -35,7 +35,7 @@ class JaasAuthenticationHandlerSystemConfigurationTests {
     private JaasAuthenticationHandler handler;
 
     @BeforeEach
-        public void initialize() throws Exception {
+        void initialize() throws Exception {
         val resource = new ClassPathResource("jaas-system.conf");
         val fileName = new File(FileUtils.getTempDirectoryPath(), "jaas-system.conf");
         try (val writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {

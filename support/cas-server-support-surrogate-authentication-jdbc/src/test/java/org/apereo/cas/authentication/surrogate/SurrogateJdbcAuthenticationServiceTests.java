@@ -42,7 +42,7 @@ class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthenticatio
     private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
-    public void before() {
+    void before() {
         jdbcTemplate = new JdbcTemplate(this.surrogateAuthenticationJdbcDataSource);
         jdbcTemplate.execute("drop table surrogate_accounts if exists;");
         jdbcTemplate.execute("create table surrogate_accounts (id int, username varchar(255), surrogateAccount varchar(255));");

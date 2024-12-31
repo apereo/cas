@@ -135,7 +135,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @BeforeEach
-    public void initialize(final TestInfo info, final RepetitionInfo repetitionInfo) {
+    void initialize(final TestInfo info, final RepetitionInfo repetitionInfo) {
         if (info.getTags().contains("TicketRegistryTestWithEncryption")) {
             useEncryption = true;
         } else if (info.getTags().contains("TicketRegistryTestWithoutEncryption")) {

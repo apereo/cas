@@ -56,7 +56,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @BeforeEach
-    public void onSetUp() {
+    void onSetUp() {
         val context = new StaticApplicationContext();
         context.refresh();
         this.serviceValidateController = getServiceValidateControllerInstance();

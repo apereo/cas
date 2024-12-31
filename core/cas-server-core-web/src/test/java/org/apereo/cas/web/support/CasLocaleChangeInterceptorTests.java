@@ -37,7 +37,7 @@ class CasLocaleChangeInterceptorTests {
     private ArgumentExtractor argumentExtractor;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         this.argumentExtractor = mock(ArgumentExtractor.class);
         this.servicesManager = mock(ServicesManager.class);
     }

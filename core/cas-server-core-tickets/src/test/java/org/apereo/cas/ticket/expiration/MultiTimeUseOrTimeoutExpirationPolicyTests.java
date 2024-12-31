@@ -46,7 +46,7 @@ class MultiTimeUseOrTimeoutExpirationPolicyTests extends BaseTicketFactoryTests 
 
     
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         expirationPolicy = new MultiTimeUseOrTimeoutExpirationPolicy(NUMBER_OF_USES, TIMEOUT_SECONDS);
         ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(), expirationPolicy);
     }

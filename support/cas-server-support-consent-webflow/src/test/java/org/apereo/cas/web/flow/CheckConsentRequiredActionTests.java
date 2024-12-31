@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CheckConsentRequiredActionTests extends BaseConsentActionTests {
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         servicesManager.deleteAll();
     }
 

@@ -33,7 +33,7 @@ class CasReleaseAttributesReportEndpointTests extends AbstractCasEndpointTests {
     private RegisteredService registeredService;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
     }

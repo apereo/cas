@@ -57,7 +57,7 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
     private OAuth20TokenRequestValidator validator;
 
     @BeforeEach
-    public void before() throws Throwable {
+    void before() throws Throwable {
         val supportingService = RequestValidatorTestUtils.getService(
             RegisteredServiceTestUtils.CONST_TEST_URL,
             SUPPORTING_CLIENT_ID,

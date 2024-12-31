@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml3382")
 class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     @BeforeEach
-    public void setup() {
+    void setup() {
         servicesManager.deleteAll();
         ApplicationContextProvider.holdApplicationContext(applicationContext);
     }

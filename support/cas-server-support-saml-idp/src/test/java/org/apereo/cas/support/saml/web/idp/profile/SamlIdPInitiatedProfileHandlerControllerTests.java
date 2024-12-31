@@ -35,7 +35,7 @@ class SamlIdPInitiatedProfileHandlerControllerTests extends BaseSamlIdPConfigura
     private SamlRegisteredService samlRegisteredService;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         this.samlRegisteredService = getSamlRegisteredServiceForTestShib();
         this.samlRegisteredService.setSignUnsolicitedAuthnRequest(true);
         servicesManager.save(samlRegisteredService);

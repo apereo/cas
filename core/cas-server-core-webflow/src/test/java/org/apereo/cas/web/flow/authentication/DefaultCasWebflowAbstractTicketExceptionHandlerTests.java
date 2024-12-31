@@ -30,7 +30,7 @@ class DefaultCasWebflowAbstractTicketExceptionHandlerTests {
     private RequestContext context;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         val errors = new LinkedHashSet<Class<? extends Throwable>>();
         errors.add(InvalidTicketException.class);
         errors.add(InvalidProxyGrantingTicketForServiceTicketException.class);

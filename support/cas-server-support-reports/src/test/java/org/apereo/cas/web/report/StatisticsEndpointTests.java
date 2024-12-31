@@ -28,7 +28,7 @@ class StatisticsEndpointTests extends AbstractCasEndpointTests {
     private CentralAuthenticationService centralAuthenticationService;
 
     @BeforeEach
-    public void setup() throws Throwable {
+    void setup() throws Throwable {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult();
         val tgt1 = centralAuthenticationService.createTicketGrantingTicket(result);
         val st1 = centralAuthenticationService.grantServiceTicket(tgt1.getId(),

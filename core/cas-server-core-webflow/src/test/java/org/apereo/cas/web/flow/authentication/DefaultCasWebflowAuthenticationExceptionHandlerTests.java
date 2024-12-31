@@ -34,7 +34,7 @@ class DefaultCasWebflowAuthenticationExceptionHandlerTests {
     private RequestContext context;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         val errors = new LinkedHashSet<Class<? extends Throwable>>();
         errors.add(UnauthorizedServiceForPrincipalException.class);
         errors.add(UnauthorizedAuthenticationException.class);

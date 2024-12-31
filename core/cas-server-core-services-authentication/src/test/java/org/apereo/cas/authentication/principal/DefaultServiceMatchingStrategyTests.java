@@ -22,7 +22,7 @@ class DefaultServiceMatchingStrategyTests {
     private ServiceMatchingStrategy strategy;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         val mgr = mock(ServicesManager.class);
         this.strategy = new DefaultServiceMatchingStrategy(mgr);
     }

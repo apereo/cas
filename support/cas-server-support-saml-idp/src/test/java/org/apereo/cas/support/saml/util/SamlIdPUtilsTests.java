@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
 class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach
-    public void before() {
+    void before() {
         servicesManager.deleteAll();
     }
 

@@ -39,7 +39,7 @@ class OidcAuthenticationAuthorizeSecurityLogicTests extends AbstractOidcTests {
 
     @Override
     @BeforeEach
-    public void initialize() throws Throwable {
+    protected void initialize() throws Throwable {
         super.initialize();
         ticketGrantingTicketCookieGenerator = mock(CasCookieBuilder.class);
         ticketGrantingTicket = new MockTicketGrantingTicket("casuser");

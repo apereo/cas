@@ -57,7 +57,7 @@ class YubiKeyAuthenticationHandlerTests {
     private ConfigurableApplicationContext applicationContext;
     
     @BeforeEach
-    public void before() throws Exception {
+    void before() throws Exception {
         val context = MockRequestContext.create(applicationContext);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
     }

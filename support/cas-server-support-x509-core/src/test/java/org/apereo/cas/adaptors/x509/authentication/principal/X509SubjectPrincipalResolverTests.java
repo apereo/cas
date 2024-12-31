@@ -60,7 +60,7 @@ class X509SubjectPrincipalResolverTests {
     private ConfigurableApplicationContext applicationContext;
 
     @BeforeEach
-    public void before() throws Exception {
+    void before() throws Exception {
         MockitoAnnotations.openMocks(this).close();
     }
 

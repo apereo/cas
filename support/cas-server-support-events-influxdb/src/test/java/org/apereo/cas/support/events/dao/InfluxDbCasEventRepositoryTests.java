@@ -41,7 +41,7 @@ class InfluxDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
     private CasEventRepository eventRepository;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         influxDbEventsConnectionFactory.deleteAll();
     }
 }

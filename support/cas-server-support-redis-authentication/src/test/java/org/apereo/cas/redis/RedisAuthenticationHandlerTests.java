@@ -76,7 +76,7 @@ class RedisAuthenticationHandlerTests {
     private CasRedisTemplate authenticationRedisTemplate;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         createUser("casuser", RedisUserAccount.AccountStatus.OK);
         createUser("casdisabled", RedisUserAccount.AccountStatus.DISABLED);
         createUser("caslocked", RedisUserAccount.AccountStatus.LOCKED);

@@ -32,7 +32,7 @@ public abstract class AbstractYubiKeyAccountRegistryTests {
     public abstract CipherExecutor getYubikeyAccountCipherExecutor();
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         getYubiKeyAccountRegistry().deleteAll();
     }
 

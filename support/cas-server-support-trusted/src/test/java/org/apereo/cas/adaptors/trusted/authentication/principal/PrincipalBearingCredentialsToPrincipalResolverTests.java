@@ -50,7 +50,7 @@ class PrincipalBearingCredentialsToPrincipalResolverTests {
     private AttributeRepositoryResolver attributeRepositoryResolver;
     
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         MockitoAnnotations.openMocks(this).close();
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)

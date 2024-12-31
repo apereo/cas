@@ -26,7 +26,7 @@ class OidcSingleLogoutServiceLogoutUrlBuilderTests extends AbstractOidcTests {
 
     @Override
     @BeforeEach
-    public void initialize() throws Throwable {
+    protected void initialize() throws Throwable {
         servicesManager.deleteAll();
         super.initialize();
     }

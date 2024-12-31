@@ -46,7 +46,7 @@ class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
     }
 
     @BeforeEach
-    public void before() {
+    void before() {
         this.attributes = new HashMap<>();
         IntStream.range(0, 3).forEach(i -> this.attributes.put("attr%d".formatted(i), newSingleAttribute("value%d".formatted(i))));
         this.attributes.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, newSingleAttribute("PGT-1234567"));

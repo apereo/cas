@@ -56,7 +56,7 @@ public abstract class BaseMultifactorAuthenticationTriggerTests {
     protected CasConfigurationProperties casProperties;
 
     @BeforeEach
-    public void setup(final TestInfo info) {
+    void setup(final TestInfo info) {
         if (!info.getTags().contains("DisableProviderRegistration")) {
             this.multifactorAuthenticationProvider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         }

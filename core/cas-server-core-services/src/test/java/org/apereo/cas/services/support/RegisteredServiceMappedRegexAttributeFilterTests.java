@@ -60,7 +60,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
     }
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         this.filter = new RegisteredServiceMappedRegexAttributeFilter();
     }
 

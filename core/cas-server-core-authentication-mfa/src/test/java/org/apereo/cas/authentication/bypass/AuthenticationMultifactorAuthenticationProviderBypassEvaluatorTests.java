@@ -35,7 +35,7 @@ class AuthenticationMultifactorAuthenticationProviderBypassEvaluatorTests {
     private ConfigurableApplicationContext applicationContext;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.holdApplicationContext(applicationContext);

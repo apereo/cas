@@ -89,7 +89,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         serviceRegistry = getNewServiceRegistry();
         clearServiceRegistry();
         initializeServiceRegistry();

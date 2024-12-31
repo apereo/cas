@@ -36,7 +36,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
     protected ServicesManager servicesManager;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         val svc1 = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
         val p1 = new DefaultRegisteredServiceAuthenticationPolicy();
         val cr1 = new AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria();

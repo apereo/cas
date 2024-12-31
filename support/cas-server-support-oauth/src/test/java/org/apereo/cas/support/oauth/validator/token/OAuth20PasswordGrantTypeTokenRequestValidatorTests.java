@@ -45,7 +45,7 @@ class OAuth20PasswordGrantTypeTokenRequestValidatorTests extends AbstractOAuth20
     private OAuthRegisteredService promiscuousService;
 
     @BeforeEach
-    public void before() {
+    void before() {
         supportingService = RequestValidatorTestUtils.getService(
             RegisteredServiceTestUtils.CONST_TEST_URL,
             UUID.randomUUID().toString(),

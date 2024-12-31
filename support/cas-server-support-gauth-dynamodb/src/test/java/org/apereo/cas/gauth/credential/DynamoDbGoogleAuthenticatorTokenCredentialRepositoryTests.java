@@ -50,7 +50,7 @@ class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneT
     private OneTimeTokenCredentialRepository registry;
 
     @BeforeEach
-    public void cleanUp() {
+    void cleanUp() {
         registry.deleteAll();
     }
 }

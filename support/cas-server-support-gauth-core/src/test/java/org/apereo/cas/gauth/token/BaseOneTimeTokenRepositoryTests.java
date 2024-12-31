@@ -39,7 +39,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     }
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         this.userId = RandomUtils.randomAlphabetic(6);
     }
 
