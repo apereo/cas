@@ -1,5 +1,4 @@
 
-const assert = require("assert");
 const cas = require("../../cas.js");
 
 async function startAuthFlow(page, username) {
@@ -8,8 +7,8 @@ async function startAuthFlow(page, username) {
     
     await cas.log(`Starting authentication flow for ${username}`);
     await cas.gotoLogin(page);
-    const pswd = await page.$("#password");
-    assert(pswd === null);
+    await cas.assertElementDoesNotExist(page, "#password");
+    
     await cas.screenshot(page);
     await cas.type(page, "#username", username);
     await cas.sleep(1000);

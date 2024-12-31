@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Julien Huon
  * @since 6.1.0
  */
-@Tag("OIDC")
+@Tag("OIDCWeb")
 class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcLogoutEndpointController")

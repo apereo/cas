@@ -1,12 +1,12 @@
 package org.apereo.cas.notifications.mail;
 
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 /**
@@ -23,7 +23,13 @@ public class DefaultEmailSender implements EmailSender {
 
     @Override
     public boolean canSend() {
-        return mailSender != null;
+        return FunctionUtils.doAndHandle(() -> {
+            if (mailSender != null && mailSender instanceof final JavaMailSenderImpl impl) {
+                impl.testConnection();
+                return true;
+            }
+            return false;
+        }, ex -> false).get();
     }
 
     @Override

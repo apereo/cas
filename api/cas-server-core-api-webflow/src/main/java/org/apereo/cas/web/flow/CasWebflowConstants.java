@@ -146,6 +146,14 @@ public interface CasWebflowConstants {
      * The transition state 'prompt'.
      */
     String TRANSITION_ID_PROMPT = "prompt";
+    /**
+     * The transition state 'display'.
+     */
+    String TRANSITION_ID_DISPLAY = "display";
+    /**
+     * The transition state 'mfa'.
+     */
+    String TRANSITION_ID_MFA = "mfa";
 
     /**
      * The transition state 'create'.
@@ -1213,6 +1221,10 @@ public interface CasWebflowConstants {
      * State id 'determineDelegatedAuthentication'.
      */
     String STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN = "determineDelegatedAuthentication";
+    /**
+     * State id 'passwordlessDisplaySelectionMenu'.
+     */
+    String STATE_ID_PASSWORDLESS_DISPLAY_SELECTION_MENU = "passwordlessDisplaySelectionMenu";
 
     /**
      * State id 'passwordlessVerifyAccount'.
@@ -1228,6 +1240,11 @@ public interface CasWebflowConstants {
      * State id 'passwordlessGetUserIdView'.
      */
     String STATE_ID_PASSWORDLESS_GET_USERID = "passwordlessGetUserIdView";
+
+    /**
+     * State id 'passwordlessAcceptSelectionMenu'.
+     */
+    String STATE_ID_PASSWORDLESS_ACCEPT_SELECTION_MENU = "passwordlessAcceptSelectionMenu";
 
     /**
      * State id 'sendSimpleToken'.
@@ -1289,6 +1306,15 @@ public interface CasWebflowConstants {
      * The view state 'dynamicHtmlView'.
      */
     String VIEW_ID_DYNAMIC_HTML = "dynamicHtmlView";
+
+    /**
+     * The view id 'casWebAuthnQRCodeVerifyView'.
+     */
+    String VIEW_ID_WEBAUTHN_QRCODE_VERIFY = "webauthn/casWebAuthnQRCodeVerifyView";
+    /**
+     * The view id 'casWebAuthnQRCodeVerifyDoneView'.
+     */
+    String VIEW_ID_WEBAUTHN_QRCODE_VERIFY_DONE = "webauthn/casWebAuthnQRCodeVerifyDoneView";
 
     /*
      ****************************************
@@ -1873,9 +1899,19 @@ public interface CasWebflowConstants {
     String ACTION_ID_DETERMINE_PASSWORDLESS_MULTIFACTOR_AUTHN = "determineMultifactorPasswordlessAuthenticationAction";
 
     /**
-     * Action id 'determineMultifactorPasswordlessAuthenticationAction .
+     * Action id 'acceptPasswordlessAuthenticationAction .
      */
     String ACTION_ID_ACCEPT_PASSWORDLESS_AUTHN = "acceptPasswordlessAuthenticationAction";
+
+    /**
+     * Action id 'acceptPasswordlessSelectionMenuAction .
+     */
+    String ACTION_ID_PASSWORDLESS_ACCEPT_SELECTION_MENU = "acceptPasswordlessSelectionMenuAction";
+
+    /**
+     * Action id 'preparePasswordlessSelectionMenuAction .
+     */
+    String ACTION_ID_PASSWORDLESS_PREPARE_SELECTION_MENU = "preparePasswordlessSelectionMenuAction";
 
     /**
      * Action id 'webAuthnStartAuthenticationAction .

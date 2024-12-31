@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.auth.ApiKeyCredentials;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.spring.autoconfigure.core.GcpContextAutoConfiguration;
 import com.google.cloud.spring.autoconfigure.firestore.GcpFirestoreAutoConfiguration;
@@ -95,7 +96,7 @@ class GoogleCloudFirestoreTicketRegistryTests extends BaseTicketRegistryTests {
         @Bean
         public FirestoreOptions firestoreOptions(final GcpFirestoreProperties properties) {
             return FirestoreOptions.getDefaultInstance().toBuilder()
-                .setCredentials(new FirestoreOptions.EmulatorCredentials())
+                .setCredentials(ApiKeyCredentials.create(UUID.randomUUID().toString()))
                 .setProjectId(properties.getProjectId())
                 .setChannelProvider(InstantiatingGrpcChannelProvider.newBuilder()
                     .setEndpoint(properties.getHostPort())

@@ -24,7 +24,6 @@ Support is enabled by including the following module in the WAR overlay:
 
 {% include_cached casproperties.html properties="cas.authn.mfa.web-authn" includes=".bypass" %}
 
-
 ## Discoverable Credentials
 
 It is possible to allow WebAuthN to act as a standalone authentication strategy for primary authentication. Using this approach,

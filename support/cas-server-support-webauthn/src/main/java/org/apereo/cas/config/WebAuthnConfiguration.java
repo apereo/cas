@@ -15,7 +15,10 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.logout.SessionTerminationHandler;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
@@ -32,16 +35,20 @@ import org.apereo.cas.webauthn.WebAuthnCredential;
 import org.apereo.cas.webauthn.WebAuthnCredentialRegistrationCipherExecutor;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationDeviceManager;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
+import org.apereo.cas.webauthn.logout.WebAuthnSessionTerminationHandler;
 import org.apereo.cas.webauthn.metadata.CompositeAttestationTrustSource;
 import org.apereo.cas.webauthn.storage.JsonResourceWebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
+import org.apereo.cas.webauthn.web.BaseWebAuthnController;
 import org.apereo.cas.webauthn.web.WebAuthnController;
+import org.apereo.cas.webauthn.web.WebAuthnQRCodeController;
 import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpoint;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.yubico.core.DefaultSessionManager;
 import com.yubico.core.InMemoryRegistrationStorage;
+import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
 import com.yubico.core.WebAuthnServer;
 import com.yubico.fido.metadata.FidoMetadataDownloader;
@@ -71,9 +78,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
@@ -173,7 +182,7 @@ class WebAuthnConfiguration {
     @Configuration(value = "WebAuthnCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class WebAuthnCoreConfiguration {
-        @ConditionalOnMissingBean(name = "webAuthnSessionManager")
+        @ConditionalOnMissingBean(name = SessionManager.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public SessionManager webAuthnSessionManager(final ConfigurableApplicationContext applicationContext) {
@@ -237,7 +246,7 @@ class WebAuthnConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final WebAuthnCredentialRepository webAuthnCredentialRepository,
             @Qualifier("webAuthnMetadataService") final AttestationTrustSource webAuthnMetadataService,
-            @Qualifier("webAuthnSessionManager") final SessionManager webAuthnSessionManager) throws Exception {
+            @Qualifier(SessionManager.BEAN_NAME) final SessionManager webAuthnSessionManager) throws Exception {
 
             val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn().getCore();
             val serverName = casProperties.getServer().getName();
@@ -283,7 +292,7 @@ class WebAuthnConfiguration {
             @Qualifier("webAuthnPrincipalFactory") final PrincipalFactory webAuthnPrincipalFactory,
             @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final WebAuthnCredentialRepository webAuthnCredentialRepository,
             @Qualifier("webAuthnMultifactorAuthenticationProvider") final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
-            @Qualifier("webAuthnSessionManager") final SessionManager webAuthnSessionManager,
+            @Qualifier(SessionManager.BEAN_NAME) final SessionManager webAuthnSessionManager,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return BeanSupplier.of(AuthenticationHandler.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
@@ -396,7 +405,8 @@ class WebAuthnConfiguration {
             final ObjectProvider<MultifactorAuthenticationProvider> webAuthnMultifactorAuthenticationProvider,
             @Qualifier("webAuthnCredentialRepository")
             final WebAuthnCredentialRepository webAuthnCredentialRepository) {
-            return new WebAuthnMultifactorAuthenticationDeviceManager(webAuthnCredentialRepository, webAuthnMultifactorAuthenticationProvider);
+            return new WebAuthnMultifactorAuthenticationDeviceManager(
+                webAuthnCredentialRepository, webAuthnMultifactorAuthenticationProvider);
         }
         
         @Configuration(value = "WebAuthnMultifactorProviderConfiguration", proxyBeanMethods = false)
@@ -454,6 +464,26 @@ class WebAuthnConfiguration {
                 return new WebAuthnController(webAuthnServer);
             }
 
+            @ConditionalOnMissingBean(name = "webAuthnQRCodeController")
+            @Bean
+            @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+            public WebAuthnQRCodeController webAuthnQRCodeController(
+                @Qualifier(SessionManager.BEAN_NAME)
+                final SessionManager webAuthnSessionManager,
+                final CasConfigurationProperties casProperties,
+                @Qualifier(TicketFactory.BEAN_NAME)
+                final TicketFactory ticketFactory,
+                @Qualifier(TicketRegistry.BEAN_NAME)
+                final TicketRegistry ticketRegistry,
+                final ConfigurableApplicationContext applicationContext,
+                @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
+                final RegistrationStorage webAuthnCredentialRepository,
+                @Qualifier("securityContextRepository")
+                final SecurityContextRepository securityContextRepository) {
+                return new WebAuthnQRCodeController(casProperties, ticketRegistry,
+                    ticketFactory, webAuthnCredentialRepository,
+                    webAuthnSessionManager, securityContextRepository);
+            }
         }
 
         @Configuration(value = "WebAuthnCryptoConfiguration", proxyBeanMethods = false)
@@ -485,10 +515,21 @@ class WebAuthnConfiguration {
         static class WebAuthnSecurityConfiguration {
 
             @Bean
+            @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+            @ConditionalOnMissingBean(name = "webAuthnSessionTerminationHandler")
+            public SessionTerminationHandler webAuthnSessionTerminationHandler(
+                @Qualifier(SessionManager.BEAN_NAME)
+                final SessionManager webAuthnSessionManager,
+                @Qualifier("webAuthnCsrfTokenRepository")
+                final CsrfTokenRepository webAuthnCsrfTokenRepository) {
+                return new WebAuthnSessionTerminationHandler(webAuthnSessionManager, webAuthnCsrfTokenRepository);
+            }
+            
+            @Bean
             @ConditionalOnMissingBean(name = "webAuthnCsrfTokenRepository")
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             public CsrfTokenRepository webAuthnCsrfTokenRepository() {
-                val repository = new CookieCsrfTokenRepository();
+                val repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
                 repository.setHeaderName("X-CSRF-TOKEN");
                 return repository;
             }
@@ -497,27 +538,31 @@ class WebAuthnConfiguration {
             @ConditionalOnMissingBean(name = "webAuthnProtocolEndpointConfigurer")
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             public CasWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer(
-                @Qualifier("webAuthnCsrfTokenRepository") final ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository) {
+                @Qualifier("webAuthnCsrfTokenRepository")
+                final ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository) {
                 return new CasWebSecurityConfigurer<>() {
                     @Override
                     @CanIgnoreReturnValue
                     @SuppressWarnings("UnnecessaryMethodReference")
                     public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
                         http.csrf(customizer -> webAuthnCsrfTokenRepository.ifAvailable(repository -> {
-                            val pattern = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
+                            val pattern = new AntPathRequestMatcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
                             val delegate = new XorCsrfTokenRequestAttributeHandler();
                             delegate.setSecureRandom(RandomUtils.getNativeInstance());
-                            customizer.requireCsrfProtectionMatcher(pattern)
+                            customizer
+                                .ignoringRequestMatchers(matcher -> HttpMethod.GET.matches(matcher.getMethod()))
+                                .requireCsrfProtectionMatcher(pattern)
                                 .csrfTokenRequestHandler(delegate::handle)
                                 .csrfTokenRepository(repository);
 
                         }));
                         http.authorizeHttpRequests(customizer -> {
-                            val regEndpoints = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**");
-                            val authEndpoints = new AntPathRequestMatcher(WebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**");
+                            val regEndpoints = new AntPathRequestMatcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**");
+                            val authEndpoints = new AntPathRequestMatcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**");
+                            val qrAuthEndpoints = new AntPathRequestMatcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnQRCodeController.ENDPOINT_QR_VERIFY + "/**");
                             customizer.requestMatchers(regEndpoints)
                                 .access(new WebExpressionAuthorizationManager("hasRole('USER') and isAuthenticated()"));
-                            customizer.requestMatchers(authEndpoints).permitAll();
+                            customizer.requestMatchers(authEndpoints, qrAuthEndpoints).permitAll();
                         });
                         return this;
                     }

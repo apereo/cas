@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@Tag("OIDC")
+@Tag("OIDCWeb")
 @TestPropertySource(properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",

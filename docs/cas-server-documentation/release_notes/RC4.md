@@ -41,5 +41,61 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
+### OpenRewrite Recipes
+
+CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
+in place from one version to the next. [See this guide](../installation/OpenRewrite-Upgrade-Recipes.html) to learn more.
+
+### Graal VM Native Images
+
+A CAS server installation and deployment process can be tuned to build and run
+as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html). We continue to polish native runtime hints.
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
+to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
+
+### Testing Strategy
+
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
+and scenarios. At the moment, the total number of jobs stands at approximately `507` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`.
+   
+## WebAuthN via QR Codes
+
+CAS can be configured to support FIDO2 WebAuthn authentication using QR codes. Once 
+enabled, [this feature](../mfa/FIDO2-WebAuthn-Authentication-QRCode.html) allows users to authenticate
+using a secondary FIDO2-enabled secondary device by scanning a QR code presented by CAS.
+  
+## Passwordless Authentication Selection
+
+[Passwordless Authentication](../authentication/Passwordless-Authentication-UserSelectionMenu.html) at the direction of the
+account store can now be instructed to allow the user to select from a menu of available authentication options.
+   
+## Mailgun Integration
+
+Support for [Mailgun](../notifications/Sending-Email-Configuration-Mailgun.html) is now available for sending email messages.
+
+## Other Stuff
+   
+- [OAuth Refresh Tokens](../authentication/OAuth-Authentication-Clients.html) can optionally be generated as JWTs. 
+- [Email notifications](../notifications/Sending-Email-Configuration.html) now test the connection to the email server before sending the actual message.
+
 ## Library Upgrades
 
+- Spring Boot
+- Spring
+- Apache Tomcat
+- Java Melody
+- Apache CXF
+- Spring Retry
+- Zipkin Brave
+- Spring Shell
+- Micrometer
+- Thymeleaf
+- Amazon SDK
+- Jetty
+- Gradle
+- Spring Data
+- Apache Log4j
+- Apache CXF
+- Sentry
+- GCP Logging

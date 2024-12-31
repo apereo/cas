@@ -53,6 +53,7 @@ a:hover, a:visited, a:active {
 
 h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
+    margin-bottom: 3px;
 }
 
 aside, section, main {
@@ -357,6 +358,16 @@ form button i.mdi {
     border-bottom: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));
 }
 
+.cas-card {
+    border-radius: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: lightskyblue;
+    flex-direction: column;
+    flex-grow: 1;
+    grid-column-end: span 6 !important;
+}
+
 .mdc-dialog__title::before {
     display: none;
 }
@@ -442,6 +453,10 @@ form button i.mdi {
 
 .pr-4 {
     padding-right: 1.2rem;
+}
+
+.pb-2 {
+    padding-bottom: 0.8rem;
 }
 
 .bg-primary {
@@ -740,6 +755,18 @@ span button.toolbar {
 
 .mt-0 {
     margin-top: 0;
+}
+
+.mt-2 {
+    margin-top: 2px;
+}
+
+.mt-4 {
+    margin-top: 4px;
+}
+
+.mt-auto {
+    margin-top: auto;
 }
 
 .ml-2 {

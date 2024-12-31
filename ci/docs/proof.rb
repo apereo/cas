@@ -13,7 +13,6 @@ puts "Root directory is #{TARGET_DIRECTORY}"
 
 CURRENT_DIR=Dir.pwd
 SOURCE_DIRECTORY="#{CURRENT_DIR}/gh-pages/_site"
- 
 
 options = {
   :typhoeus => {
@@ -23,7 +22,10 @@ options = {
     :ssl_verifypeer => false,
     :ssl_verifyhost => 0,
     :cookiefile => ".cookies",
-    :cookiejar => ".cookies"
+    :cookiejar => ".cookies",
+    :headers =>{
+      "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
+    }
   },
   :disable_external => false,
   :allow_hash_href => true,

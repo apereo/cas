@@ -8,11 +8,11 @@ ext {
 apply from: rootProject.file("gradle/springboot.gradle")
 
 javadoc {
-    enabled(false)
+    enabled = false
 }
 
 test {
-    enabled(false)
+    enabled = false
 }
 
 tasks.named("bootJar") {

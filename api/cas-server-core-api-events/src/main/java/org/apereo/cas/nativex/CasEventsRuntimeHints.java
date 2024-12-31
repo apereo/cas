@@ -15,7 +15,7 @@ import org.springframework.context.ApplicationEventPublisherAware;
 public class CasEventsRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        registerSpringProxy(hints, CasEventRepository.class, ApplicationEventPublisherAware.class);
+        registerSpringProxyHints(hints, CasEventRepository.class, ApplicationEventPublisherAware.class);
         registerSerializationHints(hints, findSubclassesOf(AbstractCasEvent.class));
     }
 }

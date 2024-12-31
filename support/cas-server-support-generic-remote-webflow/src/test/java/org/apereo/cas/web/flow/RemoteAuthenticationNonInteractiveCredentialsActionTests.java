@@ -72,7 +72,7 @@ class RemoteAuthenticationNonInteractiveCredentialsActionTests {
         @Test
         void verifyOperation() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-            context.getHttpServletRequest().setCookies(new Cookie("MyRemoteCookie", "1234567890"));
+            context.setHttpRequestCookies(new Cookie("MyRemoteCookie", "1234567890"));
             assertNotNull(remoteAuthenticationCheck.execute(context));
         }
     }

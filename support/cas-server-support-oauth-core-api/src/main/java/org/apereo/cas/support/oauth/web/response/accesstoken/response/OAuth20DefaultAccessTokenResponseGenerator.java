@@ -11,6 +11,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -90,7 +91,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator<T extends OAuth20Configu
             .ifPresent(token -> {
                 val accessToken = resolveToken(token, OAuth20AccessToken.class);
                 if (result.getResponseType() != OAuth20ResponseTypes.ID_TOKEN && accessToken.getExpiresIn() > 0) {
-                    val encodedAccessTokenId = encodeAccessToken(accessToken, result);
+                    val encodedAccessTokenId = encodeOAuthToken(accessToken, result);
                     if (StringUtils.equals(encodedAccessTokenId, accessToken.getId()) && token.isStateless()) {
                         model.put(OAuth20Constants.ACCESS_TOKEN, token.getId());
                     } else {
@@ -112,7 +113,16 @@ public class OAuth20DefaultAccessTokenResponseGenerator<T extends OAuth20Configu
                     }
                 }
             });
-        generatedToken.getRefreshToken().ifPresent(rt -> model.put(OAuth20Constants.REFRESH_TOKEN, rt.getId()));
+        generatedToken.getRefreshToken().ifPresent(ticket -> {
+            val refreshToken = resolveToken(ticket, OAuth20RefreshToken.class);
+            val encodedRefreshToken = encodeOAuthToken(refreshToken, result);
+
+            if (StringUtils.equals(encodedRefreshToken, refreshToken.getId()) && ticket.isStateless()) {
+                model.put(OAuth20Constants.REFRESH_TOKEN, ticket.getId());
+            } else {
+                model.put(OAuth20Constants.REFRESH_TOKEN, encodedRefreshToken);
+            }
+        });
         return model;
     }
 
@@ -122,9 +132,9 @@ public class OAuth20DefaultAccessTokenResponseGenerator<T extends OAuth20Configu
             : (token.isStateless() ? configurationContext.getObject().getTicketRegistry().getTicket(token.getId(), clazz) : (TokenType) token);
     }
 
-    protected String encodeAccessToken(final OAuth20AccessToken accessToken,
-                                       final OAuth20AccessTokenResponseResult result) {
-        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext.getObject(), result, accessToken);
-        return cipher.encode(accessToken.getId(), new Object[]{accessToken, result});
+    protected String encodeOAuthToken(final OAuth20Token token,
+                                      final OAuth20AccessTokenResponseResult result) {
+        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext.getObject(), result, token);
+        return cipher.encode(token.getId(), new Object[]{token, result});
     }
 }

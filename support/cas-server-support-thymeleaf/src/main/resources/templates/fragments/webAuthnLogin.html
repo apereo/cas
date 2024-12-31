@@ -20,15 +20,21 @@
         <script type="text/javascript" th:src="@{#{webjars.whatwg-fetch.js}}"></script>
         <script type="text/javascript" th:src="@{#{webjars.base64.js}}"></script>
 
+        <script type="text/javascript" th:src="@{#{webjars.sweet-alert.js}}"></script>
+        <script type="text/javascript" th:src="@{#{webjars.highlight.js}}"></script>
+        <link rel="stylesheet" type="text/css" th:href="@{#{webjars.sweet-alert.css}}" />
+        <link rel="stylesheet" type="text/css" th:href="@{#{webjars.animate.css}}" />
+        <link rel="stylesheet" type="text/css" th:href="@{#{webjars.highlight.css}}"/>
+        
         <script type="text/javascript" th:inline="javascript">
             /*<![CDATA[*/
-            let appId = /*[[${webauthnApplicationId}]]*/;
+            const appId = /*[[${webauthnApplicationId}]]*/;
             /*]]>*/
         </script>
 
         <script type="text/javascript" th:inline="javascript">
-            let authFailTitle = [[#{ screen.authentication.webauthn.authn.fail.title }]];
-            let authFailDesc = [[#{ screen.authentication.webauthn.authn.fail.desc }]];
+            const authFailTitle = [[#{ screen.authentication.webauthn.authn.fail.title }]];
+            const authFailDesc = [[#{ screen.authentication.webauthn.authn.fail.desc }]];
         </script>
 
         <script th:src="@{/js/webauthn/webauthn.js}"></script>
@@ -69,14 +75,14 @@
             </div>
         </div>
 
-        <div class="d-flex justify-content-center flex-column mdc-card card p-4 m-auto">
+        <div id="webauthnContainer" class="d-flex justify-content-center flex-column mdc-card card p-4 m-auto">
             <div class="d-flex justify-content-center flex-column align-items-center">
                 <h2 id="status" th:text="#{screen.authentication.webauthn.login.title}" />
             </div>
-            <p th:text="#{screen.authentication.webauthn.login.desc}">Login</p>
+            <p id="description" th:text="#{screen.authentication.webauthn.login.desc}">Login</p>
 
             <div id="errorPanel" class="banner banner-danger alert alert-danger alert-dismissible mb-4"
-                 th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+                 th:if="${flowRequestContext != null && flowRequestContext.messageContext.hasErrorMessages()}">
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
                    th:utext="#{${message.text}}">
                     Error Message Text
@@ -100,6 +106,86 @@
                           th:text="#{screen.welcome.button.login}">Login</span>
                 </button>
             </div>
+
+            <div id="QRCodeSection" class="row mt-2" th:if="${QRCode}">
+                <p th:utext="#{screen.authentication.webauthn.qr.info}">Scan the QR code with your mobile device to authenticate.</p>
+
+                <div class="mt-2 text-center">
+                    <img alt="QR Code" id="imageQRCode" th:src="@{'data:image/jpeg;base64,' + ${QRCode}}">
+                    <br>
+
+                    <form id="webauthnQRCodeForm" th:action="${QRCodeUri + '/' + QRCodeTicket.id}" method="GET" target="_blank">
+                        <div th:replace="~{fragments/submitbutton :: submitButton (
+                            messageKey='screen.welcome.button.continue',
+                            iconClass='mdi-qrcode fa-qrcode',
+                            id='qrCodeButton', name='qrCodeButton')}"/>
+                    </form>
+
+                    <div id="QRCodeLinkContainer">
+                        <pre>
+                            <code th:text="${QRCodeUri + '/' + QRCodeTicket.id}"
+                                  id="QRCodeLink" class="border-rounded language-html" />
+                        </pre>
+                    </div>
+
+                    <script type="text/javascript" th:inline="javascript">
+                        const endpointUrl = /*[[${QRCodeUri + '/' + QRCodeTicket.id + '/status'}]]*/;
+                        const interval = 3000;
+                        function verifyAuthenticationStatus() {
+                            console.log(`Checking operation status at ${endpointUrl}`);
+                            $.ajax({
+                                url: endpointUrl,
+                                method: 'GET',
+                                success: (response, status, xhr) => {
+                                    console.log(`Operation status: ${xhr.status}`);
+                                    if (xhr.status === 200) {
+                                        $('#token').val(response.sessionToken);
+                                        const form = $('#webauthnLoginForm');
+                                        console.log(`Submitting authentication form ${form.serialize()}`);
+                                        clearMessages();
+                                        hideDeviceInfo();
+                                        Swal.close();
+                                        form.submit();
+                                    } else {
+                                        setTimeout(verifyAuthenticationStatus, interval);
+                                    }
+                                },
+                                error: xhr => {
+                                    const errorResponse = JSON.parse(xhr.responseText);
+                                    console.error(`Error: ${xhr.status} ${errorResponse.message}`);
+                                    setTimeout(verifyAuthenticationStatus, interval);
+                                }
+                            });
+                        }
+
+                        verifyAuthenticationStatus();
+                    </script>
+                </div>
+
+                <script type="text/javascript">
+                    $("form#webauthnQRCodeForm").submit(() => {
+                        resetDisplays();
+                        $("#QRCodeSection").hide();
+                        $("#authnButton").hide();
+                        $("#diagnostics").hide();
+                        $("#status").hide();
+                        $("#description").hide();
+                        $("#webauthnContainer").hide();
+                        $("main#main-content").hide();
+
+                        Swal.fire({
+                            icon: "info",
+                            title: "Please Wait...",
+                            text: "Your authentication attempt is in progress. Do not close this window!",
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                        return true;
+                    });
+                </script>
         </div>
         <div>
             <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divDeviceInfo" style="display: none">
@@ -116,6 +202,12 @@
             </div>
         </div>
 
+        <form th:if="${QRCodeAuthentication}" method="POST" id="webauthnQRCodeVerifyForm" class="fm-v clearfix" th:action="@{/webauthn/qrverify}">
+            <input type="hidden" id="token" name="token"/>
+            <input type="hidden" id="principal" name="principal" th:value="${principal.id}"/>
+            <input type="hidden" id="ticket" name="ticket" th:value="${QRCodeTicket.id}"/>
+        </form>
+
         <form method="POST" id="webauthnLoginForm" class="fm-v clearfix" th:action="@{/login}">
             <input type="hidden" name="_eventId" value="validate"/>
             <input type="hidden" id="token" name="token"/>
@@ -124,23 +216,41 @@
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>
 
-        <input type="hidden" id="loginCsrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <script type="text/javascript" th:inline="javascript">
+            const csrfToken = getCookie('XSRF-TOKEN');
 
-        <script type="text/javascript">
-            const csrfToken = $('#loginCsrfToken').val();
+            /*<![CDATA[*/
+            let QRCodeAuthentication = /*[[${QRCodeAuthentication}]]*/;
+            const QRCodeTicket = /*[[${QRCodeTicket?.id}]]*/;
+            const csrfParameterName = /*[[${_csrf.parameterName}]]*/;
+            /*]]>*/
+            if (QRCodeTicket !== undefined && QRCodeTicket !== null) {
+                $(`#webauthnQRCodeVerifyForm input[name=${csrfParameterName}]`).val(csrfToken);
+            }
+            if (QRCodeAuthentication === undefined || QRCodeAuthentication === null) {
+                QRCodeAuthentication = false;
+            }
+
+            console.log(`Using CSRF token: ${csrfToken}`);
+            console.log(`QR Code Authentication: ${QRCodeAuthentication}`);
             
-            let btn = document.getElementById('authnButton');
+            const url = window.location.href;
+            const btn = document.getElementById('authnButton');
             btn.addEventListener('click', event => {
                 $("#errorPanel").hide();
-                let username = '[[${principal?.id}]]';
-                if (username === '') {
+                let username = /*[[${principal?.id}]]*/;
+                if (username === '' || username === null) {
                    username = $("#fm1 #username").val();
                 }
+                if (username === '' || username === null) {
+                    $("#fm1 #username").focus();
+                    return;
+                }
+                console.log(`Authenticating user: ${username}`);
                 authenticate(username);
             }, false);
-
         </script>
-
+        
     </div>
 </main>
 </body>

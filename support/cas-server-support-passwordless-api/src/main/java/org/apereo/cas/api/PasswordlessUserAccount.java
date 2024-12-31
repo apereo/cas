@@ -13,6 +13,7 @@ import lombok.ToString;
 import lombok.With;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.StringUtils;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -72,6 +73,18 @@ public class PasswordlessUserAccount implements Serializable {
     @JsonProperty("requestPassword")
     private boolean requestPassword;
 
+    @JsonProperty("allowSelectionMenu")
+    private boolean allowSelectionMenu;
+
     @JsonProperty("source")
     private String source;
+
+    /**
+     * Has contact information.
+     *
+     * @return the boolean
+     */
+    public boolean hasContactInformation() {
+        return StringUtils.isNotBlank(getPhone()) || StringUtils.isNotBlank(getEmail());
+    }
 }

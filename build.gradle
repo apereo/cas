@@ -8,11 +8,11 @@ buildscript {
         mavenCentral()
         gradlePluginPortal()
         maven {
-            url "https://repo.spring.io/milestone"
+            url = "https://repo.spring.io/milestone"
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://repo.spring.io/snapshot"
+            url = "https://repo.spring.io/snapshot"
             mavenContent { snapshotsOnly() }
         }
     }
@@ -406,9 +406,9 @@ subprojects {
                     "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml")
             ]
             configFile = new File(rootDir, "style/checkstyle-rules.xml")
-            ignoreFailures false
-            showViolations true
-            toolVersion "${checkstyleVersion}"
+            ignoreFailures = false
+            showViolations = true
+            toolVersion = "${checkstyleVersion}"
         }
     }
 

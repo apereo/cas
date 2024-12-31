@@ -22,8 +22,7 @@ public class DefaultSessionManager implements SessionManager {
 
     @Override
     public Optional<ByteArray> getSession(
-        @NonNull final ByteArray token) {
-        return Optional.ofNullable(sessionIdsToUsers.getIfPresent(token));
+        @NonNull final ByteArray sessionId) {
+        return Optional.ofNullable(sessionIdsToUsers.getIfPresent(sessionId));
     }
-
 }

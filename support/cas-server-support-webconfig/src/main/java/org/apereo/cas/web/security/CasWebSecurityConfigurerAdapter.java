@@ -24,7 +24,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.ObjectPostProcessor;
+import org.springframework.security.config.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -265,7 +265,7 @@ public class CasWebSecurityConfigurerAdapter {
         final HttpSecurity http,
         final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
         http.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint).authenticated())
-            .httpBasic(customizer -> customizer.withObjectPostProcessor(basicAuthFilterPostProcessor));
+            .httpBasic(customizer -> customizer.addObjectPostProcessor(basicAuthFilterPostProcessor));
     }
 
     protected void configureEndpointAccessByRole(
@@ -274,7 +274,7 @@ public class CasWebSecurityConfigurerAdapter {
         final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
         http.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint)
                 .hasAnyRole(properties.getRequiredRoles().toArray(ArrayUtils.EMPTY_STRING_ARRAY)))
-            .httpBasic(customizer -> customizer.withObjectPostProcessor(basicAuthFilterPostProcessor));
+            .httpBasic(customizer -> customizer.addObjectPostProcessor(basicAuthFilterPostProcessor));
     }
 
     protected void configureEndpointAccessByAuthority(
@@ -283,6 +283,6 @@ public class CasWebSecurityConfigurerAdapter {
         final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
         http.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint)
                 .hasAnyAuthority(properties.getRequiredAuthorities().toArray(ArrayUtils.EMPTY_STRING_ARRAY)))
-            .httpBasic(customizer -> customizer.withObjectPostProcessor(basicAuthFilterPostProcessor));
+            .httpBasic(customizer -> customizer.addObjectPostProcessor(basicAuthFilterPostProcessor));
     }
 }

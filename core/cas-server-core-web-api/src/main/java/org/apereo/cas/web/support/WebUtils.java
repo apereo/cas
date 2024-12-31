@@ -1055,12 +1055,12 @@ public class WebUtils {
      * Produce error view.
      *
      * @param request    the request
-     * @param badRequest the bad request
+     * @param status the bad request
      * @param message    the message
      */
-    public static void produceErrorView(final HttpServletRequest request, final HttpStatus badRequest, final String message) {
-        request.setAttribute("status", HttpStatus.BAD_REQUEST.value());
-        request.setAttribute("error", HttpStatus.BAD_REQUEST.name());
+    public static void produceErrorView(final HttpServletRequest request, final HttpStatus status, final String message) {
+        request.setAttribute("status", status.value());
+        request.setAttribute("error", status.name());
         request.setAttribute("message", message);
     }
 

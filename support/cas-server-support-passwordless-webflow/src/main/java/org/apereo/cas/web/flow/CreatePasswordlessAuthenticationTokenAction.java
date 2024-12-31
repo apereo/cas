@@ -3,6 +3,9 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -37,8 +40,11 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
 
     public CreatePasswordlessAuthenticationTokenAction(final CasConfigurationProperties casProperties,
                                                        final PasswordlessTokenRepository passwordlessTokenRepository,
-                                                       final CommunicationsManager communicationsManager) {
-        super(casProperties);
+                                                       final CommunicationsManager communicationsManager,
+                                                       final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+                                                       final PrincipalFactory passwordlessPrincipalFactory,
+                                                       final AuthenticationSystemSupport authenticationSystemSupport) {
+        super(casProperties, multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory, authenticationSystemSupport);
         this.passwordlessTokenRepository = passwordlessTokenRepository;
         this.communicationsManager = communicationsManager;
     }

@@ -42,6 +42,8 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
     private boolean renewRefreshToken;
 
     private boolean jwtAccessToken;
+    
+    private boolean jwtRefreshToken;
 
     private String jwtAccessTokenSigningAlg;
 

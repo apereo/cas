@@ -14,7 +14,7 @@
 
     <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
-        let appId = /*[[${webauthnApplicationId}]]*/;
+        const appId = /*[[${webauthnApplicationId}]]*/;
         /*]]>*/
     </script>
     <script th:src="@{/js/webauthn/webauthn.js}"></script>
@@ -141,22 +141,22 @@
             <input type="hidden" id="execution" name="execution" th:value="${flowExecutionKey}"/>
         </form>
 
-        <script type="text/javascript">
+        <script type="text/javascript" th:inline="javascript">
             const csrfToken = $('#registerCsrfToken').val();
 
             document.getElementById("credentialNickname").value = randomWord();
             let btn = document.getElementById('registerButton');
             btn.addEventListener('click', event => {
-                const username = '[[${principal.id}]]';
-                const displayName = '[[${displayName}]]';
+                const username = /*[[${principal?.id}]]*/
+                const displayName = /*[[${displayName}]]*/;
                 const credentialNickname = $('#credentialNickname').val();
                 register(username, displayName, credentialNickname, csrfToken);
             }, false);
 
             let btnResident = document.getElementById('registerDiscoverableCredentialButton');
             btnResident.addEventListener('click', event => {
-                const username = '[[${principal.id}]]';
-                const displayName = '[[${displayName}]]';
+                const username = /*[[${principal?.id}]]*/;
+                const displayName = /*[[${displayName}]]*/;
                 const credentialNickname = $('#credentialNickname').val();
                 register(username, displayName, credentialNickname, csrfToken, true);
             }, false);

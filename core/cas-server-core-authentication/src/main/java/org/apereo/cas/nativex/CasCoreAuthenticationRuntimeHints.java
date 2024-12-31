@@ -62,8 +62,8 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
         val credentials = findSubclassesInPackage(Credential.class, CentralAuthenticationService.NAMESPACE);
         registerReflectionHints(hints, credentials);
 
-        registerSpringProxy(hints, PrePostAuthenticationHandler.class, AuthenticationHandler.class);
-        registerSpringProxy(hints, WebApplicationService.class);
+        registerSpringProxyHints(hints, PrePostAuthenticationHandler.class, AuthenticationHandler.class);
+        registerSpringProxyHints(hints, WebApplicationService.class);
 
         registerProxyHints(hints, List.of(
             AuthenticationMetaDataPopulator.class,
@@ -84,6 +84,6 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
                 SimplePrincipal.class,
                 DefaultAuthentication.class));
 
-        registerSpringProxy(hints, AttributeDefinitionStore.class, DisposableBean.class, AutoCloseable.class);
+        registerSpringProxyHints(hints, AttributeDefinitionStore.class, DisposableBean.class, AutoCloseable.class);
     }
 }
