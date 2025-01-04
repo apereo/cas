@@ -482,7 +482,7 @@ class SamlIdPConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPObjectEncrypter samlObjectEncrypter(
-            @Qualifier("samlIdPMetadataLocator")
+            @Qualifier(SamlIdPMetadataLocator.BEAN_NAME)
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
             final CasConfigurationProperties casProperties) {
             return new SamlIdPObjectEncrypter(casProperties.getAuthn().getSamlIdp(), samlIdPMetadataLocator);
@@ -495,7 +495,7 @@ class SamlIdPConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
-            @Qualifier("samlIdPMetadataLocator")
+            @Qualifier(SamlIdPMetadataLocator.BEAN_NAME)
             final SamlIdPMetadataLocator samlIdPMetadataLocator) {
             return new DefaultSamlIdPObjectSigner(casSamlIdPMetadataResolver, casProperties, samlIdPMetadataLocator);
         }

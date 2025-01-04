@@ -74,6 +74,11 @@ account store can now be instructed to allow the user to select from a menu of a
 
 Support for [Mailgun](../notifications/Sending-Email-Configuration-Mailgun.html) is now available for sending email messages.
 
+### SAML2 Metadata via DynamoDb
+
+SAML2 metadata for service providers and CAS as the identity provider 
+can now be stored and fetched from [Amazon DynamoDb](../installation/Configuring-SAML2-DynamicMetadata-DynamoDb.html).
+
 ## Other Stuff
    
 - [OAuth Refresh Tokens](../authentication/OAuth-Authentication-Clients.html) can optionally be generated as JWTs. 

@@ -620,6 +620,7 @@ layout: null
                     *   [JPA](/cas/{{ version }}/installation/Configuring-SAML2-DynamicMetadata-JPA.html)
                     *   [Groovy](/cas/{{ version }}/installation/Configuring-SAML2-DynamicMetadata-Groovy.html)
                     *   [Amazon S3](/cas/{{ version }}/installation/Configuring-SAML2-DynamicMetadata-AmazonS3.html)
+                    *   [DynamoDb](/cas/{{ version }}/installation/Configuring-SAML2-DynamicMetadata-DynamoDb.html)
                 *   [Metadata Filtering](/cas/{{ version }}/installation/SAML2-ServiceProvider-Metadata-Filtering.html)  
             *   [Attribute Release](#saml2attrrelease)
                 *   [Attribute Policies](/cas/{{ version }}/installation/Configuring-SAML2-Attribute-Release.html)

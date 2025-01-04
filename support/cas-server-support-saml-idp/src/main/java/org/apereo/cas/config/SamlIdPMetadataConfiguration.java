@@ -110,7 +110,7 @@ class SamlIdPMetadataConfiguration {
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
-            @Qualifier("samlIdPMetadataLocator")
+            @Qualifier(SamlIdPMetadataLocator.BEAN_NAME)
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
@@ -290,7 +290,7 @@ class SamlIdPMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MetadataResolver casSamlIdPMetadataResolver(
             final CasConfigurationProperties casProperties,
-            @Qualifier("samlIdPMetadataLocator")
+            @Qualifier(SamlIdPMetadataLocator.BEAN_NAME)
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
             @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
@@ -344,7 +344,7 @@ class SamlIdPMetadataConfiguration {
     @Configuration(value = "SamlIdPMetadataLocatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class SamlIdPMetadataLocatorConfiguration {
-        @ConditionalOnMissingBean(name = "samlIdPMetadataLocator")
+        @ConditionalOnMissingBean(name = SamlIdPMetadataLocator.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPMetadataLocator samlIdPMetadataLocator(
@@ -419,7 +419,7 @@ class SamlIdPMetadataConfiguration {
         public SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("samlIdPMetadataLocator")
+            @Qualifier(SamlIdPMetadataLocator.BEAN_NAME)
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
             @Qualifier("samlSelfSignedCertificateWriter")
             final SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter,

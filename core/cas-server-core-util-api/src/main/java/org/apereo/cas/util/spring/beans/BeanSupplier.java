@@ -6,6 +6,8 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jooq.lambda.Unchecked;
+import org.jooq.lambda.fi.util.function.CheckedSupplier;
 
 import jakarta.annotation.Nonnull;
 
@@ -147,6 +149,14 @@ public interface BeanSupplier<T> extends Supplier<T> {
     BeanSupplier<T> supply(Supplier<T> beanSupplier);
 
     /**
+     * Provide bean supplier.
+     *
+     * @param beanSupplier the bean supplier
+     * @return the bean supplier
+     */
+    BeanSupplier<T> supplyUnchecked(CheckedSupplier<T> beanSupplier);
+
+    /**
      * Create the proxy bean via a given supplier when the condition fails.
      *
      * @param beanSupplier the bean supplier
@@ -208,6 +218,12 @@ public interface BeanSupplier<T> extends Supplier<T> {
         @CanIgnoreReturnValue
         public BeanSupplier<T> supply(final Supplier<T> beanSupplier) {
             this.beanSupplier = beanSupplier;
+            return this;
+        }
+
+        @Override
+        public BeanSupplier<T> supplyUnchecked(final CheckedSupplier<T> beanSupplier) {
+            this.beanSupplier = Unchecked.supplier(beanSupplier);
             return this;
         }
 

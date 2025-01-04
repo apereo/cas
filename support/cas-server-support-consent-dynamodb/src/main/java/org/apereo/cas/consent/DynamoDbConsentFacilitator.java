@@ -38,10 +38,15 @@ import java.util.stream.Stream;
  * @since 6.5.0
  */
 @Slf4j
-public record DynamoDbConsentFacilitator(DynamoDbConsentProperties dynamoDbProperties, DynamoDbClient amazonDynamoDBClient) {
-
+@RequiredArgsConstructor
+@Getter
+public class DynamoDbConsentFacilitator {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
+
+    private final DynamoDbConsentProperties dynamoDbProperties;
+    private final DynamoDbClient amazonDynamoDBClient;
+
 
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final ConsentDecision record) {
         val values = new HashMap<String, AttributeValue>();

@@ -54,6 +54,12 @@ public class SamlIdPMetadataProperties implements Serializable {
     private MongoDbSamlMetadataProperties mongo = new MongoDbSamlMetadataProperties();
 
     /**
+     * Properties pertaining to dynamo-db saml metadata resolvers.
+     */
+    @NestedConfigurationProperty
+    private DynamoDbSamlMetadataProperties dynamoDb = new DynamoDbSamlMetadataProperties();
+
+    /**
      * Properties pertaining to redis saml metadata resolvers.
      */
     @NestedConfigurationProperty
