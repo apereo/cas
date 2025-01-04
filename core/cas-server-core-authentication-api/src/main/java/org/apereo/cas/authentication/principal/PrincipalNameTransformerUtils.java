@@ -10,10 +10,10 @@ import org.apereo.cas.util.transforms.ConvertCasePrincipalNameTransformer;
 import org.apereo.cas.util.transforms.GroovyPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.RegexPrincipalNameTransformer;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import java.util.ServiceLoader;
 
 /**
  * This is {@link PrincipalNameTransformerUtils}.
@@ -67,6 +67,11 @@ public class PrincipalNameTransformerUtils {
             chain.addTransformer(t);
         }
 
+        val transformers = ServiceLoader.load(PrincipalNameTransformer.class)
+            .stream()
+            .map(ServiceLoader.Provider::get)
+            .toList();
+        chain.addTransformers(transformers);
         return chain;
     }
 }
