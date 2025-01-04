@@ -27,7 +27,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
 
-
     testImplementation project(":support:cas-server-support-oauth")
     testImplementation project(":support:cas-server-support-oauth-api")
     testImplementation project(":support:cas-server-support-oauth-core-api")

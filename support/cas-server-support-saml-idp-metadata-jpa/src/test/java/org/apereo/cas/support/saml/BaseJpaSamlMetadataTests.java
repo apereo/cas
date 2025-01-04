@@ -44,7 +44,7 @@ public abstract class BaseJpaSamlMetadataTests {
     protected SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
     @Autowired
-    @Qualifier("samlIdPMetadataLocator")
+    @Qualifier(SamlIdPMetadataLocator.BEAN_NAME)
     protected SamlIdPMetadataLocator samlIdPMetadataLocator;
 
     @Autowired

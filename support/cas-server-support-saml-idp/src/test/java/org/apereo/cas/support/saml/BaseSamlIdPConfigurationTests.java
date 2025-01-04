@@ -221,7 +221,7 @@ public abstract class BaseSamlIdPConfigurationTests {
     protected SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
 
     @Autowired
-    @Qualifier("samlIdPMetadataLocator")
+    @Qualifier(SamlIdPMetadataLocator.BEAN_NAME)
     protected SamlIdPMetadataLocator samlIdPMetadataLocator;
 
     @Autowired

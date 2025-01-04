@@ -66,5 +66,7 @@ public interface SamlRegisteredServiceMetadataResolver extends NamedObject {
      * @param service the service
      * @return true /false
      */
-    boolean isAvailable(SamlRegisteredService service);
+    default boolean isAvailable(final SamlRegisteredService service) {
+        return supports(service);
+    }
 }

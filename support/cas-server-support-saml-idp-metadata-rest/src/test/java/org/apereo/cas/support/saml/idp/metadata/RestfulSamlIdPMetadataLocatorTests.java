@@ -49,7 +49,7 @@ class RestfulSamlIdPMetadataLocatorTests extends BaseRestfulSamlMetadataTests {
     private static MockWebServer SERVER;
 
     @Autowired
-    @Qualifier("samlIdPMetadataLocator")
+    @Qualifier(SamlIdPMetadataLocator.BEAN_NAME)
     protected SamlIdPMetadataLocator samlIdPMetadataLocator;
 
     @BeforeAll

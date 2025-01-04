@@ -62,6 +62,7 @@ Service provider or identity provider metadata can also be managed using any one
 | JPA                     | [See this guide](Configuring-SAML2-DynamicMetadata-JPA.html).      |
 | Groovy                  | [See this guide](Configuring-SAML2-DynamicMetadata-Groovy.html).   |
 | Amazon S3               | [See this guide](Configuring-SAML2-DynamicMetadata-AmazonS3.html). |
+| DynamoDb                | [See this guide](Configuring-SAML2-DynamicMetadata-DynamoDb.html). |
 
 ## SAML Services
 
