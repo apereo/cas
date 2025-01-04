@@ -2,6 +2,7 @@ package org.apereo.cas.util.transforms;
 
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.ToString;
 import lombok.val;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,8 +40,23 @@ public class ChainingPrincipalNameTransformer implements PrincipalNameTransforme
      * Add transformer.
      *
      * @param transformer the transformer
+     * @return the chaining principal name transformer
      */
-    public void addTransformer(final PrincipalNameTransformer transformer) {
-        this.transformers.add(transformer);
+    @CanIgnoreReturnValue
+    public ChainingPrincipalNameTransformer addTransformer(final PrincipalNameTransformer transformer) {
+        return addTransformers(List.of(transformer));
     }
+
+    /**
+     * Add transformers chaining principal name transformer.
+     *
+     * @param input the input
+     * @return the chaining principal name transformer
+     */
+    @CanIgnoreReturnValue
+    public ChainingPrincipalNameTransformer addTransformers(final List<PrincipalNameTransformer> input) {
+        transformers.addAll(input);
+        return this;
+    }
+    
 }
