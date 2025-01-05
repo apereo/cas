@@ -79,6 +79,10 @@ Support for [Mailgun](../notifications/Sending-Email-Configuration-Mailgun.html)
 SAML2 metadata for service providers and CAS as the identity provider 
 can now be stored and fetched from [Amazon DynamoDb](../installation/Configuring-SAML2-DynamicMetadata-DynamoDb.html).
 
+### Google Cloud Storage Service Registry
+
+CAS can now store service and application definitions in [Google Cloud Storage](../services/GCP-Storage-Service-Management.html).
+
 ## Other Stuff
    
 - [OAuth Refresh Tokens](../authentication/OAuth-Authentication-Clients.html) can optionally be generated as JWTs. 
