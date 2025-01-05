@@ -28,7 +28,7 @@ import java.util.List;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "gcp")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "gcp-firestore")
 @AutoConfiguration
 public class CasGoogleCloudFirestoreServiceRegistryAutoConfiguration {
     @Bean

@@ -33,7 +33,7 @@ import java.util.function.Function;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableScheduling
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "gcp")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "gcp-firestore")
 @AutoConfiguration
 public class CasGoogleCloudFirestoreTicketRegistryAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

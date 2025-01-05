@@ -521,6 +521,7 @@ layout: null
         *   [Git](/cas/{{ version }}/services/Git-Service-Management.html)
         *   [MongoDb](/cas/{{ version }}/services/MongoDb-Service-Management.html)
         *   [Google Cloud Firestore](/cas/{{ version }}/services/GCP-Firestore-Service-Management.html)
+        *   [Google Cloud Storage](/cas/{{ version }}/services/GCP-Storage-Service-Management.html)
         *   [LDAP](/cas/{{ version }}/services/LDAP-Service-Management.html)
         *   [JPA](/cas/{{ version }}/services/JPA-Service-Management.html)
         *   [Redis](/cas/{{ version }}/services/Redis-Service-Management.html)

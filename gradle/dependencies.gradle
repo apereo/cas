@@ -12,6 +12,22 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
+        googlecloudstorage          : [
+                dependencies.create("com.google.cloud:spring-cloud-gcp-starter-storage:$googleCloudSdkVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                },
+                dependencies.create("com.google.cloud:google-cloud-monitoring:$googleCloudMonitorVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                }
+        ],
         googlecloudpubsub          : [
                 dependencies.create("com.google.cloud:spring-cloud-gcp-starter-pubsub:$googleCloudSdkVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")

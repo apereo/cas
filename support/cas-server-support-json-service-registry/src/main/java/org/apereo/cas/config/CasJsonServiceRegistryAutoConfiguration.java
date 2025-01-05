@@ -42,7 +42,7 @@ public class CasJsonServiceRegistryAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "jsonServiceRegistry")
     public ServiceRegistry jsonServiceRegistry(
-        @Qualifier("registeredServiceResourceNamingStrategy")
+        @Qualifier(RegisteredServiceResourceNamingStrategy.BEAN_NAME)
         final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
