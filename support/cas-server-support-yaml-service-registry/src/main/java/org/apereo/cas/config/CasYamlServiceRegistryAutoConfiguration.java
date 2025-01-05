@@ -44,7 +44,7 @@ public class CasYamlServiceRegistryAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "yamlServiceRegistry")
         public ServiceRegistry yamlServiceRegistry(
-            @Qualifier("registeredServiceResourceNamingStrategy")
+            @Qualifier(RegisteredServiceResourceNamingStrategy.BEAN_NAME)
             final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,

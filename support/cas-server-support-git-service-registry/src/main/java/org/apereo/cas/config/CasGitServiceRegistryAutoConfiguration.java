@@ -62,7 +62,7 @@ public class CasGitServiceRegistryAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("gitServiceRegistryRepositoryInstance")
         final GitRepository gitServiceRegistryRepositoryInstance,
-        @Qualifier("registeredServiceResourceNamingStrategy")
+        @Qualifier(RegisteredServiceResourceNamingStrategy.BEAN_NAME)
         final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
 
         return BeanSupplier.of(ServiceRegistry.class)

@@ -431,7 +431,7 @@ $(() => $("h2, h3, h4, h5, h6").each((i, el) => {
   id = $el.attr('id');
   icon = '<i class="fa fa-link"></i>';
   if (id) {
-    return $el.prepend($("<a />").addClass("header-link").attr("href", "#" + id).html(icon));
+    return $el.prepend($("<a />").addClass("header-link").attr("href", `#${id}`).html(icon));
   }
 }));
 
@@ -442,12 +442,14 @@ codes.forEach((code) => {
 
   code.setAttribute("id", `code${countID}`);
   
-  let btn = document.createElement('button');
-  btn.innerHTML = "Copy";
+  const btn = document.createElement('button');
+  btn.innerHTML = "<i class=\"fa fa-copy\" style=\"color: cornflowerblue;\"></i>";
   btn.className = "btn-copy-code";
+  
+  btn.setAttribute("title", "Copy Code");
   btn.setAttribute("data-clipboard-action", "copy");
   btn.setAttribute("data-clipboard-target", `#code${countID}`);
-  btn.setAttribute("onclick", "this.innerHTML='Copied';");
+  // btn.setAttribute("onclick", "this.innerHTML='Copied';");
 
   let div = document.createElement('div');
   div.className = "div-code-button";

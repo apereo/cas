@@ -41,3 +41,16 @@ function runContainer() {
 
 runContainer "firestore"
 runContainer "pubsub"
+
+echo "Running GCP storage server..."
+docker run -d --name gcp-storage-server -p 4553:4443 -p 8100:8000 \
+  fsouza/fake-gcs-server -scheme both
+sleep 5
+docker ps | grep "gcp-storage-server"
+retVal=$?
+if [ $retVal == 0 ]; then
+   echo "GCP storage docker container is running."
+else
+   echo "GCP storage docker container failed to start."
+   exit $retVal
+fi
