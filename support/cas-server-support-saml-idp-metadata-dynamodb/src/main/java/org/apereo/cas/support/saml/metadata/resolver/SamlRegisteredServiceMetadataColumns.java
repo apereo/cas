@@ -12,8 +12,18 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum SamlRegisteredServiceMetadataColumns {
+    /**
+     * Name column.
+     */
     NAME("name"),
+    /**
+     * Value column.
+     */
     VALUE("value"),
+    /**
+     * Signature column.
+     */
     SIGNATURE("signature");
+    
     private final String columnName;
 }
