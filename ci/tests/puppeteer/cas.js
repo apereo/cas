@@ -113,9 +113,7 @@ exports.log = async (text, ...args) => {
     await LOGGER.debug(`🔷 ${colors.blue(toLog)}`, args);
 };
 
-exports.separator = async() => {
-    console.log("*".repeat(100));
-};
+exports.separator = async() => console.log("*".repeat(100));
 
 exports.logy = async (text) => {
     const toLog = inspect(text);
@@ -153,25 +151,23 @@ exports.removeDirectoryOrFile = async (directory) => {
     }
 };
 
-exports.click = async (page, button) => {
+exports.click = async (page, button) =>
     await page.evaluate((button) => {
         const buttonNode = document.querySelector(button);
         console.log(`Clicking element ${button} with href ${buttonNode.href}`);
         buttonNode.click();
     }, button);
-};
 
 exports.asciiart = async (text) => {
     const art = figlet.textSync(text);
     console.log(colors.blue(art));
 };
 
-exports.clickLast = async (page, button) => {
+exports.clickLast = async (page, button) =>
     await page.evaluate((button) => {
         const buttons = document.querySelectorAll(button);
         buttons[buttons.length - 1].click();
     }, button);
-};
 
 exports.innerHTML = async (page, selector) => {
     const text = await page.$eval(selector, (el) => el.innerHTML.trim());
@@ -270,9 +266,7 @@ exports.isVisible = async (page, selector) => {
     }
 };
 
-exports.assertVisibility = async (page, selector) => {
-    assert(await this.isVisible(page, selector), `The element ${selector} must be visible but it's not.`);
-};
+exports.assertVisibility = async (page, selector) => assert(await this.isVisible(page, selector), `The element ${selector} must be visible but it's not.`);
 
 exports.assertInvisibility = async (page, selector) => {
     const element = await page.$(selector);
@@ -620,12 +614,8 @@ exports.waitFor = async (url, successHandler, failureHandler) => {
         timeout: 120000
     };
     await waitOn(opts)
-        .then(() => {
-            successHandler("good");
-        })
-        .catch((err) => {
-            failureHandler(err);
-        });
+        .then(() => successHandler("good"))
+        .catch((err) => failureHandler(err));
 };
 
 exports.runGradle = async (workdir, opts = [], exitFunc) => {
@@ -635,12 +625,8 @@ exports.runGradle = async (workdir, opts = [], exitFunc) => {
     }
     const exec = spawn(gradleCmd, opts, {cwd: workdir});
     await this.logg(`Spawned ${gradleCmd} process ID: ${exec.pid}`);
-    exec.stdout.on("data", (data) => {
-        this.log(data.toString());
-    });
-    exec.stderr.on("data", (data) => {
-        console.error(data.toString());
-    });
+    exec.stdout.on("data", (data) => this.log(data.toString()));
+    exec.stderr.on("data", (data) => console.error(data.toString()));
     exec.on("exit", exitFunc);
     return exec;
 };
@@ -880,7 +866,7 @@ exports.httpServer = async (root,
 exports.randomNumber = async (min = 1, max = 100) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
 
-exports.killProcess = async (command, args) => {
+exports.killProcess = async (command, args) =>
     ps.lookup({
         command: command,
         arguments: args
@@ -902,7 +888,6 @@ exports.killProcess = async (command, args) => {
             }
         });
     });
-};
 
 exports.sha256 = async (value) => CryptoJS.SHA256(value);
 
@@ -1077,11 +1062,10 @@ exports.createZipFile = async (file, callback) => {
     await archive.finalize();
 };
 
-exports.unzipFile = async (file, targetDirectory) => {
-    await fs.createReadStream(file)
+exports.unzipFile = async (file, targetDirectory) =>
+    fs.createReadStream(file)
         .pipe(unzipper.Extract({path: targetDirectory}))
         .on("close", () => this.log(`Files unzipped successfully @ ${targetDirectory}`));
-};
 
 exports.prepareChromium = async () => {
     this.log(`Chromium directory: ${CHROMIUM_USER_DATA_DIR}`);
