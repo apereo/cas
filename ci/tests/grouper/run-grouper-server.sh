@@ -13,9 +13,17 @@ sleep 120
 docker ps | grep "grouper"
 retVal=$?
 if [ $retVal == 0 ]; then
+  max_attempts=5
+  attempt=1
   until curl -k -L -u "GrouperSystem:@4HHXr6SS42@IHz2" --fail https://localhost:7443/grouper; do
+    if [ $attempt -ge $max_attempts ]; then
+      echo "Reached maximum attempts ($max_attempts). Exiting."
+      docker ps | grep "grouper"
+      exit 0
+    fi
     echo -n '.'
     sleep 2
+    attempt=$((attempt + 1))
   done
   echo "Grouper docker container is now running"
 else
