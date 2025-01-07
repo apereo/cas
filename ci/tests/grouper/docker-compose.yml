@@ -8,7 +8,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pass
   grouper:
-    image: "i2incommon/grouper:5.15.0"
+    image: "i2incommon/grouper:5.15.1"
     restart: always
     ports:
       - '7443:8443'
@@ -24,7 +24,7 @@ services:
       - GROUPER_AUTO_DDL_UPTOVERSION=5.*.*
       - GROUPER_RUN_HSQLDB=false
   grouper-ws:
-    image: "i2incommon/grouper:5.15.0"
+    image: "i2incommon/grouper:5.15.1"
     restart: always
     ports:
       - '9443:8443'
