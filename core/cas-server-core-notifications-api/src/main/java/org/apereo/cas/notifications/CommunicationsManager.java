@@ -5,7 +5,6 @@ import org.apereo.cas.notifications.call.PhoneCallRequest;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.sms.SmsRequest;
-import lombok.val;
 import java.util.List;
 
 /**
@@ -82,12 +81,7 @@ public interface CommunicationsManager {
      * @throws Throwable the throwable
      */
     default boolean sms(final List<SmsRequest> requests) throws Throwable {
-        for (val request : requests) {
-            if (sms(request)) {
-                return true;
-            }
-        }
-        return false;
+        return requests.stream().anyMatch(this::sms);
     }
 
     /**
