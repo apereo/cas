@@ -19,6 +19,8 @@ if [ $retVal == 0 ]; then
     if [ $attempt -ge $max_attempts ]; then
       echo "Reached maximum attempts ($max_attempts). Exiting."
       docker ps | grep "grouper"
+      docker logs grouper-core &
+      docker logs grouper-ws &
       exit 0
     fi
     echo -n '.'

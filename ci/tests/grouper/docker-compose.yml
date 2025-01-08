@@ -10,6 +10,7 @@ services:
   grouper:
     image: "i2incommon/grouper:5.15.1"
     restart: always
+    container_name: grouper-core
     ports:
       - '7443:8443'
       - '7080:8080'
@@ -25,6 +26,7 @@ services:
       - GROUPER_RUN_HSQLDB=false
   grouper-ws:
     image: "i2incommon/grouper:5.15.1"
+    container_name: grouper-ws
     restart: always
     depends_on:
       - grouper
