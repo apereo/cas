@@ -2064,6 +2064,7 @@ ext.libraries = [
         pac4jcore                  : [
                 dependencies.create("org.pac4j:pac4j-config:$pac4jVersion") {
                     exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
+                    exclude(group: "com.google.code.findbugs", module: "findbugs-annotations")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.zaxxer", module: "HikariCP")
@@ -2111,6 +2112,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "com.zaxxer", module: "HikariCP")
                     exclude(group: "org.projectlombok", module: "lombok")
+                    exclude(group: "com.google.code.findbugs", module: "findbugs-annotations")
                 },
                 dependencies.create("org.pac4j:pac4j-http:$pac4jVersion") {
                     exclude(group: "org.apache.commons", module: "commons-lang3")
@@ -2121,6 +2123,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.projectlombok", module: "lombok")
+                    exclude(group: "com.google.code.findbugs", module: "findbugs-annotations")
                 },
                 dependencies.create("org.pac4j:pac4j-core:$pac4jVersion") {
                     exclude(group: "org.apache.commons", module: "commons-lang3")
@@ -2131,6 +2134,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.projectlombok", module: "lombok")
+                    exclude(group: "com.google.code.findbugs", module: "findbugs-annotations")
                 }
         ],
         pac4jjwt                   : [
@@ -2146,6 +2150,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.projectlombok", module: "lombok")
+                    exclude(group: "com.google.code.findbugs", module: "findbugs-annotations")
                 }
         ],
         pac4jcas                   : [
@@ -2163,6 +2168,7 @@ ext.libraries = [
                     exclude(group: "org.jasig.cas.client", module: "cas-client-core")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "org.projectlombok", module: "lombok")
+                    exclude(group: "com.google.code.findbugs", module: "findbugs-annotations")
                 }
         ],
         pac4jsaml                  : [
@@ -2229,6 +2235,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "org.apache.velocity", module: "velocity")
                     exclude(group: "org.projectlombok", module: "lombok")
+                    exclude(group: "com.google.code.findbugs", module: "findbugs-annotations")
                 }
         ],
         pac4joidcoauth             : [
