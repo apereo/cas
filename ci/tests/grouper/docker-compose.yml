@@ -40,7 +40,7 @@ services:
       - GROUPER_DATABASE_PASSWORD=pass
       - GROUPER_DATABASE_USERNAME=postgres
       - GROUPER_DATABASE_URL=jdbc:postgresql://postgres:5432/postgres
-#      - GROUPER_AUTO_DDL_UPTOVERSION=v5.*.*
+      - GROUPER_AUTO_DDL_UPTOVERSION=v5.*.*
       - GROUPER_RUN_HSQLDB=false
       - GROUPER_UI_GROUPER_AUTH=true
       - GROUPER_WS_GROUPER_AUTH=true
