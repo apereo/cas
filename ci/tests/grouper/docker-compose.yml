@@ -27,6 +27,7 @@ services:
   grouper-ws:
     image: "i2incommon/grouper:5.15.2"
     restart: always
+    container_name: grouper-ws
     depends_on:
       - grouper
     ports:
