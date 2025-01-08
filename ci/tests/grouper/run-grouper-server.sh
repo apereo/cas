@@ -9,7 +9,7 @@ docker compose -f $COMPOSE_FILE down >/dev/null 2>/dev/null || true
 docker compose -f $COMPOSE_FILE up -d
 docker compose -f $COMPOSE_FILE logs &
 echo "Waiting for Grouper server to come online..."
-sleep 120
+sleep 30
 docker ps | grep "grouper"
 retVal=$?
 if [ $retVal == 0 ]; then
@@ -21,7 +21,7 @@ if [ $retVal == 0 ]; then
       docker ps | grep "grouper"
       docker logs grouper-core &
       docker logs grouper-ws &
-      exit 0
+      exit 1
     fi
     echo -n '.'
     sleep 2
