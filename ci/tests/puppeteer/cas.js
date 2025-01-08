@@ -24,7 +24,7 @@ const archiver = require("archiver");
 const unzipper = require("unzipper");
 const puppeteer = require("puppeteer");
 const speakeasy = require("speakeasy");
-const {createCanvas, loadImage} = require("canvas");
+const {createCanvas, loadImage} = require("@napi-rs/canvas");
 const jsQR = require("jsqr");
 
 const LOGGER = pino({
@@ -152,7 +152,7 @@ exports.removeDirectoryOrFile = async (directory) => {
 };
 
 exports.click = async (page, button) =>
-    await page.evaluate((button) => {
+    page.evaluate((button) => {
         const buttonNode = document.querySelector(button);
         console.log(`Clicking element ${button} with href ${buttonNode.href}`);
         buttonNode.click();
@@ -164,7 +164,7 @@ exports.asciiart = async (text) => {
 };
 
 exports.clickLast = async (page, button) =>
-    await page.evaluate((button) => {
+    page.evaluate((button) => {
         const buttons = document.querySelectorAll(button);
         buttons[buttons.length - 1].click();
     }, button);
