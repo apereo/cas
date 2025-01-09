@@ -24,12 +24,19 @@ services:
       - GROUPER_DATABASE_URL=jdbc:postgresql://postgres:5432/postgres
       - GROUPER_AUTO_DDL_UPTOVERSION=v5.*.*
       - GROUPER_RUN_HSQLDB=false
+      - GROUPER_START_DELAY_SECONDS=1
+    healthcheck:
+      test: curl -k https://localhost:8443/grouper/status?diagnosticType=trivial || exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 5
   grouper-ws:
     image: "i2incommon/grouper:5.15.3"
     restart: always
     container_name: grouper-ws
     depends_on:
-      - grouper
+      grouper:
+        condition: service_healthy
     ports:
       - '9443:8443'
     command:
@@ -40,8 +47,9 @@ services:
       - GROUPER_DATABASE_PASSWORD=pass
       - GROUPER_DATABASE_USERNAME=postgres
       - GROUPER_DATABASE_URL=jdbc:postgresql://postgres:5432/postgres
-      - GROUPER_AUTO_DDL_UPTOVERSION=v5.*.*
+#      - GROUPER_AUTO_DDL_UPTOVERSION=v5.*.*
       - GROUPER_RUN_HSQLDB=false
       - GROUPER_UI_GROUPER_AUTH=true
       - GROUPER_WS_GROUPER_AUTH=true
       - GROUPER_SCIM_GROUPER_AUTH=true
+      - GROUPER_START_DELAY_SECONDS=10
