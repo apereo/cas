@@ -1449,31 +1449,31 @@ async function initializeSystemOperations() {
     async function configureHealthChart() {
         if (actuatorEndpoints.health) {
             $.get(actuatorEndpoints.health, response => {
-
-                const payload = {
-                    labels: [],
-                    data: [],
-                    colors: []
-                };
-                Object.keys(response.components).forEach(key => {
-                    payload.labels.push(key.charAt(0).toUpperCase() + key.slice(1).toLowerCase());
-                    payload.data.push(response.components[key].status === "UP" ? 1 : 0);
-                    payload.colors.push(response.components[key].status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)");
-                });
-                systemHealthChart.data.labels = payload.labels;
-                systemHealthChart.data.datasets[0].data = payload.data;
-                systemHealthChart.data.datasets[0].backgroundColor = payload.colors;
-                systemHealthChart.data.datasets[0].borderColor = payload.colors;
-                systemHealthChart.options.plugins.legend.labels.generateLabels = (chart => {
-                    const originalLabels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
-                    originalLabels.forEach(label => {
-                        label.fillStyle = response.status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)";
-                        label.lineWidth = 0;
+                if (response.components !== undefined) {
+                    const payload = {
+                        labels: [],
+                        data: [],
+                        colors: []
+                    };
+                    Object.keys(response.components).forEach(key => {
+                        payload.labels.push(key.charAt(0).toUpperCase() + key.slice(1).toLowerCase());
+                        payload.data.push(response.components[key].status === "UP" ? 1 : 0);
+                        payload.colors.push(response.components[key].status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)");
                     });
-                    return originalLabels;
-                });
-
-                systemHealthChart.update();
+                    systemHealthChart.data.labels = payload.labels;
+                    systemHealthChart.data.datasets[0].data = payload.data;
+                    systemHealthChart.data.datasets[0].backgroundColor = payload.colors;
+                    systemHealthChart.data.datasets[0].borderColor = payload.colors;
+                    systemHealthChart.options.plugins.legend.labels.generateLabels = (chart => {
+                        const originalLabels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                        originalLabels.forEach(label => {
+                            label.fillStyle = response.status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)";
+                            label.lineWidth = 0;
+                        });
+                        return originalLabels;
+                    });
+                    systemHealthChart.update();
+                }
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);
