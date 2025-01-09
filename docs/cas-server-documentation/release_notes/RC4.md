@@ -83,6 +83,10 @@ can now be stored and fetched from [Amazon DynamoDb](../installation/Configuring
 
 CAS can now store service and application definitions in [Google Cloud Storage](../services/GCP-Storage-Service-Management.html).
 
+### Database Authentication via Stored Procedures
+
+CAS can now authenticate users by invoking [stored procedures](../authentication/Database-Authentication-StoredProcedure.html) in SQL databases.
+
 ## Other Stuff
    
 - [OAuth Refresh Tokens](../authentication/OAuth-Authentication-Clients.html) can optionally be generated as JWTs. 

@@ -20,7 +20,11 @@ import org.springframework.context.annotation.Import;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Authentication, module = "jdbc")
 @AutoConfiguration
 @Import({
-    CasJdbcAuthenticationConfiguration.class,
+    CasJdbcBindAuthenticationConfiguration.class,
+    CasJdbcQueryAuthenticationConfiguration.class,
+    CasJdbcQueryEncodeAuthenticationConfiguration.class,
+    CasJdbcSearchAuthenticationConfiguration.class,
+    CasJdbcStoredProcedureAuthenticationConfiguration.class,
     CasPersonDirectoryJdbcConfiguration.class
 })
 public class CasJdbcAuthenticationAutoConfiguration {

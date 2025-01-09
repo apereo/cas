@@ -36,17 +36,17 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 @Accessors(chain = true)
 public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEventExecutionPlan {
-    private final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>(0);
+    private final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>();
 
-    private final List<AuthenticationPostProcessor> authenticationPostProcessors = new ArrayList<>(0);
+    private final List<AuthenticationPostProcessor> authenticationPostProcessors = new ArrayList<>();
 
-    private final List<AuthenticationPreProcessor> authenticationPreProcessors = new ArrayList<>(0);
+    private final List<AuthenticationPreProcessor> authenticationPreProcessors = new ArrayList<>();
 
-    private final List<AuthenticationPolicy> authenticationPolicies = new ArrayList<>(0);
+    private final List<AuthenticationPolicy> authenticationPolicies = new ArrayList<>();
 
-    private final List<AuthenticationHandlerResolver> authenticationHandlerResolvers = new ArrayList<>(0);
+    private final List<AuthenticationHandlerResolver> authenticationHandlerResolvers = new ArrayList<>();
 
-    private final List<AuthenticationPolicyResolver> authenticationPolicyResolvers = new ArrayList<>(0);
+    private final List<AuthenticationPolicyResolver> authenticationPolicyResolvers = new ArrayList<>();
 
     private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
 

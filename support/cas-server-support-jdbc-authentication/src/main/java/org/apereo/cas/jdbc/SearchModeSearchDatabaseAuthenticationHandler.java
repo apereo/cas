@@ -52,7 +52,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
                 throw new FailedLoginException(username + " not found with SQL query.");
             }
             val principal = principalFactory.createPrincipal(username);
-            return createHandlerResult(credential, principal, new ArrayList<>(0));
+            return createHandlerResult(credential, principal, new ArrayList<>());
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException(e.getMessage());
