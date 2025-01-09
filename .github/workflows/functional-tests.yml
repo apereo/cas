@@ -33,7 +33,7 @@ env:
   NODE_CURRENT: '23.6.0'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 8
-  SCENARIO_REGEX: ".*grouper.*"
+  SCENARIO_REGEX: ".*"
 
 on:
   workflow_dispatch:
