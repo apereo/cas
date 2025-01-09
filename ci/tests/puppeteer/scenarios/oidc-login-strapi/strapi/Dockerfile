@@ -1,5 +1,5 @@
 # renovate: ignore
-FROM node:20
+FROM node:23
 RUN apt-get update > /dev/null && apt-get install iproute2 iputils-ping -y > /dev/null
 
 RUN mkdir /srv/app && chown 1000:1000 -R /srv/app
