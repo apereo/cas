@@ -23,6 +23,27 @@ psql -v ON_ERROR_STOP=1 --username "postgres" --dbname "users" <<-EOSQL
 
 EOSQL
 
+printgreen "Creating stored procedures..."
+psql -v ON_ERROR_STOP=1 --username "postgres" --dbname "users" <<-EOSQL
+  CREATE OR REPLACE FUNCTION sp_authenticate(
+      username IN VARCHAR,
+      password IN VARCHAR,
+      OUT status BOOLEAN,
+      OUT color VARCHAR
+  )
+  AS \$\$
+  BEGIN
+      IF username = 'casuser' AND password = 'Mellon' THEN
+          status := TRUE;
+          color := 'blue';
+      ELSE
+          status := FALSE;
+          color := NULL;
+      END IF;
+  END;
+  \$\$ LANGUAGE plpgsql;
+EOSQL
+
 printgreen "Creating impersonation table and data..."
 psql -v ON_ERROR_STOP=1 --username "postgres" --dbname "impersonation" <<-EOSQL
   DROP TABLE IF EXISTS surrogate_accounts;

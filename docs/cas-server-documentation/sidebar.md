@@ -106,6 +106,7 @@ layout: null
             *   [Bind](/cas/{{ version }}/authentication/Database-Authentication-Bind.html)
             *   [Search](/cas/{{ version }}/authentication/Database-Authentication-Search.html)
             *   [Encode](/cas/{{ version }}/authentication/Database-Authentication-Encode.html)
+            *   [Stored Procedures](/cas/{{ version }}/authentication/Database-Authentication-StoredProcedure.html)
             *   [Password Policy](/cas/{{ version }}/installation/Password-Policy-Enforcement.html)
         *   [JAAS](/cas/{{ version }}/authentication/JAAS-Authentication.html)
         *   [X.509](#x509authn)
