@@ -194,76 +194,133 @@ function preventFormResubmission() {
     });
 }
 
+/**
+ * Checks if a specified storage type is available for use.
+ * Attempts to perform a read and write operation to verify availability.
+ * 
+ * @param {string} type - The storage type to test (e.g., 'localStorage', 'sessionStorage').
+ * @returns {boolean} True if the specified storage type is available, otherwise false.
+ */
+function isStorageAvailable(type) {
+    try {
+        const storage = window[type];
+        const testKey = '__storage_test__';
+        storage.setItem(testKey, testKey);
+        storage.removeItem(testKey);
+        return true;
+    } catch (e) {
+        return e instanceof DOMException && (
+            e.code === 22 || // Chrome-specific error code for storage quota exceeded
+            e.code === 1014 || // Firefox-specific error code for storage quota exceeded
+            e.name === 'QuotaExceededError' || 
+            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+            storage && storage.length !== 0;
+    }
+}
+
+/**
+ * Determines the most suitable storage mechanism for use.
+ * Prioritises `localStorage` if available, falling back to `sessionStorage` when necessary.
+ * 
+ * @returns {Storage|null} The chosen storage object, or null if no storage is available.
+ */
+function getStorage() {
+    if (isStorageAvailable('localStorage')) {
+        return window.localStorage;
+    }
+    if (isStorageAvailable('sessionStorage')) {
+        console.warn('Falling back to sessionStorage as localStorage is unavailable.');
+        return window.sessionStorage;
+    }
+    console.error('No available storage detected.');
+    return null;
+}
+
+/**
+ * Writes a value to the specified storage with a nested context key.
+ * The value is stored in JSON format, enabling support for complex payloads.
+ * 
+ * @param {Storage} storage - The storage object to write to.
+ * @param {string} key - The key under which the data should be stored.
+ * @param {object} browserStorage - An object containing `context` (sub-key) and `payload` (value) to store.
+ */
+function writeToStorage(storage, key, browserStorage) {
+    if (!storage) {
+        console.error("No storage available for write-ops.");
+        return;
+    }
+    try {
+        const payload = readFromStorage(storage, key) || {};
+        payload[browserStorage.context] = browserStorage.payload;
+        storage.setItem(key, JSON.stringify(payload));
+        console.log(`Stored payload for context "${browserStorage.context}": ${browserStorage.payload}`);
+    } catch (e) {
+        console.error(`Failed to write to storage: ${e.message}`);
+    }
+}
+
+/**
+ * Reads a value from the specified storage.
+ * Parses JSON payloads and handles corrupted data gracefully by removing it.
+ * 
+ * @param {Storage} storage - The storage object to read from.
+ * @param {string} key - The key to read data from.
+ * @returns {object} The parsed data object, or an empty object if no data is found or an error occurs.
+ */
+function readFromStorage(storage, key) {
+    if (!storage) {
+        console.error("No storage available for read-ops.");
+        return {};
+    }
+    try {
+        const payload = storage.getItem(key);
+        if (!payload) {
+            console.log(`No data found under key "${key}".`);
+            return {};
+        }
+        console.log(`Read payload for key "${key}": ${payload}`);
+        return JSON.parse(payload);
+    } catch (e) {
+        console.error(`Failed to read from storage: ${e.message}`);
+        storage.removeItem(key); // Clean up corrupted data
+        return {};
+    }
+}
+
+/**
+ * The key used for storing CAS-specific data in localStorage or sessionStorage.
+ */
+const STORAGE_KEY = "CAS";
+
+/**
+ * Writes a value to the appropriate storage (localStorage or sessionStorage).
+ * 
+ * @param {object} browserStorage - An object containing `context` (sub-key) and `payload` (value) to store.
+ */
 function writeToLocalStorage(browserStorage) {
-    if (typeof (Storage) === "undefined") {
-        console.log("Browser does not support local storage for write-ops");
+    writeToStorage(getStorage(), STORAGE_KEY, browserStorage);
+}
+
+/**
+ * Reads a value from the appropriate storage (localStorage or sessionStorage).
+ * 
+ * @returns {object} The data object stored under the `STORAGE_KEY`, or an empty object if no data is found.
+ */
+function readFromLocalStorage() {
+    return readFromStorage(getStorage(), STORAGE_KEY);
+}
+
+/**
+ * Clears the CAS-specific data stored in the given storage (localStorage or sessionStorage).
+ * 
+ * @param {Storage} storage - The storage object to clear data from.
+ */
+function clearStorage(storage) {
+    if (storage) {
+        storage.removeItem(STORAGE_KEY); // Clears only the CAS-specific data
+        console.log("Cleared CAS data from storage.");
     } else {
-        let payload = readFromLocalStorage(browserStorage);
-        window.localStorage.removeItem("CAS");
-        payload[browserStorage.context] = browserStorage.payload;
-        window.localStorage.setItem("CAS", JSON.stringify(payload));
-        console.log(`Stored ${browserStorage.payload} in local storage under key ${browserStorage.context}`);
-    }
-}
-
-function readFromLocalStorage(browserStorage) {
-    if (typeof (Storage) === "undefined") {
-        console.log("Browser does not support local storage for read-ops");
-        return null;
-    }
-    try {
-        let payload = window.localStorage.getItem("CAS");
-        console.log(`Read ${payload} in local storage`);
-        return payload === null ? {} : JSON.parse(payload);
-    } catch (e) {
-        console.log(`Failed to read from local storage: ${e}`);
-        window.localStorage.removeItem("CAS");
-        return {};
-    }
-}
-
-function clearLocalStorage() {
-    if (typeof (Storage) === "undefined") {
-        console.log("Browser does not support local storage for write-ops");
-    } else {
-        window.localStorage.clear();
-    }
-}
-
-function writeToSessionStorage(browserStorage) {
-    if (typeof (Storage) === "undefined") {
-        console.log("Browser does not support session storage for write-ops");
-    } else {
-        let payload = readFromSessionStorage(browserStorage);
-        window.sessionStorage.removeItem("CAS");
-        payload[browserStorage.context] = browserStorage.payload;
-        window.sessionStorage.setItem("CAS", JSON.stringify(payload));
-        console.log(`Stored ${browserStorage.payload} in session storage under key ${browserStorage.context}`);
-    }
-}
-
-function clearSessionStorage() {
-    if (typeof (Storage) === "undefined") {
-        console.log("Browser does not support session storage for write-ops");
-    } else {
-        window.sessionStorage.clear();
-        console.log("Cleared session storage");
-    }
-}
-
-function readFromSessionStorage(browserStorage) {
-    if (typeof (Storage) === "undefined") {
-        console.log("Browser does not support session storage for read-ops");
-        return null;
-    }
-    try {
-        let payload = window.sessionStorage.getItem("CAS");
-        console.log(`Read ${payload} in session storage`);
-        return payload === null ? {} : JSON.parse(payload);
-    } catch (e) {
-        console.log(`Failed to read from session storage: ${e}`);
-        window.sessionStorage.removeItem("CAS");
-        return {};
+        console.error("No storage available to clear.");
     }
 }
 
