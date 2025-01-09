@@ -1,5 +1,9 @@
 {
-  "dependencies": "reports,palantir",
+  "dependencies": "reports,palantir,oidc,saml-idp,audit-jdbc,pac4j-cas,trusted-mfa,heimdall,duo",
+  "conditions": {
+    "docker": "true",
+    "env": "DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY,DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST"
+  },
   "properties": [
     
     "--cas.server.name=https://localhost:8443",
@@ -12,9 +16,27 @@
     "--spring.security.user.password=password",
 
     "--cas.http-web-request.header.content-security-policy=",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+
+    "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
+    "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
+
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[0].protocol=CAS30",
+    "--cas.authn.pac4j.cas[0].client-name=CasClient",
+
+    "--cas.authn.mfa.duo[0].duo-admin-secret-key=${#environmentVars['DUO_SECURITY_ADMIN_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-admin-integration-key=${#environmentVars['DUO_SECURITY_ADMIN_IKEY']}",
+
+    "--cas.authn.mfa.duo[0].duo-secret-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-integration-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_IKEY']}",
+    "--cas.authn.mfa.duo[0].duo-api-host=${#environmentVars['DUO_SECURITY_API_HOST']}",
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.access.default=UNRESTRICTED"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

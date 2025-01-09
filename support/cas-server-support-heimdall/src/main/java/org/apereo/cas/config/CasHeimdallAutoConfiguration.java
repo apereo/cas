@@ -16,6 +16,7 @@ import org.apereo.cas.heimdall.engine.DefaultAuthorizationPrincipalParser;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import lombok.val;
@@ -29,6 +30,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.io.Resource;
 import java.util.List;
 
 /**
@@ -84,8 +86,12 @@ public class CasHeimdallAutoConfiguration {
     @ConditionalOnMissingBean(name = "authorizableResourceRepository")
     public AuthorizableResourceRepository authorizableResourceRepository(
         final CasConfigurationProperties casProperties) throws Exception {
-        val directory = casProperties.getHeimdall().getJson().getLocation().getFile();
-        return new JsonAuthorizableResourceRepository(directory);
+        val location = casProperties.getHeimdall().getJson().getLocation();
+        return BeanSupplier.of(AuthorizableResourceRepository.class)
+            .when(() -> location != null)
+            .supplyUnchecked(() -> new JsonAuthorizableResourceRepository(location.getFile()))
+            .otherwiseProxy()
+            .get();
     }
 
     @Bean
