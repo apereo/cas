@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication.clients;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -8,6 +9,7 @@ import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
+
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -97,8 +99,9 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
             FunctionUtils.doIfNotBlank(clientProperties.getDisplayName(),
                 __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, clientProperties.getDisplayName()));
             if (client instanceof final IndirectClient indirectClient) {
-                val callbackUrl = StringUtils.defaultIfBlank(clientProperties.getCallbackUrl(), casProperties.getServer().getLoginUrl());
+                val callbackUrl = StringUtils.defaultIfBlank(clientProperties.getCallbackUrl(), CasProtocolConstants.ENDPOINT_LOGIN);
                 indirectClient.setCallbackUrl(callbackUrl);
+                indirectClient.setUrlResolver(new MultiHostUrlResolver(casProperties));
                 LOGGER.trace("Client [{}] will use the callback URL [{}]", client.getName(), callbackUrl);
                 val resolver = switch (clientProperties.getCallbackUrlType()) {
                     case PATH_PARAMETER -> new PathParameterCallbackUrlResolver();

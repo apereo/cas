@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.controller;
 
+import org.apereo.cas.util.multihost.MultiHostUtils;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 
 import lombok.Getter;
@@ -83,7 +84,7 @@ public class DefaultDelegatedAuthenticationNavigationController {
      * @throws Exception the exception
      */
     protected View buildRedirectViewBackToFlow(final String clientName, final HttpServletRequest request) throws Exception {
-        val urlBuilder = new URIBuilder(configurationContext.getCasProperties().getServer().getLoginUrl());
+        val urlBuilder = new URIBuilder(MultiHostUtils.computeLoginUrl(configurationContext.getCasProperties()));
         request.getParameterMap().forEach((name, v) -> {
             val value = request.getParameter(name);
             urlBuilder.addParameter(name, value);

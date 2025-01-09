@@ -38,6 +38,7 @@ import org.apereo.cas.support.oauth.validator.authorization.OAuth20Authorization
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.multihost.MultiHostUtils;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.CasProtocolViewFactory;
@@ -188,7 +189,7 @@ class OidcEndpointsConfiguration {
         private static String getOidcBaseEndpoint(final OidcIssuerService issuerService,
                                                   final CasConfigurationProperties casProperties) {
             val issuer = issuerService.determineIssuer(Optional.empty());
-            val endpoint = StringUtils.remove(issuer, casProperties.getServer().getPrefix());
+            val endpoint = StringUtils.remove(issuer, MultiHostUtils.computeServerPrefix(casProperties));
             return StringUtils.prependIfMissing(endpoint, "/");
         }
 

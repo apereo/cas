@@ -68,8 +68,16 @@ public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServi
                 .map(String.class::cast)
                 .orElse(StringUtils.EMPTY);
             val callbackService = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
-            return StringUtils.isBlank(source) || StringUtils.startsWith(source, callbackService)
-                || OAuth20Utils.checkCallbackValid(registeredService, source);
+            if (StringUtils.startsWith(source, callbackService)) {
+                return true;
+            }
+            for (val host : casProperties.getMultiHosts()) {
+                val currentCallbackService = OAuth20Utils.casOAuthCallbackUrl(host.getServerPrefix());
+                if (StringUtils.startsWith(source, currentCallbackService)) {
+                    return true;
+                }
+            }
+            return StringUtils.isBlank(source) || OAuth20Utils.checkCallbackValid(registeredService, source);
         }
         return false;
     }

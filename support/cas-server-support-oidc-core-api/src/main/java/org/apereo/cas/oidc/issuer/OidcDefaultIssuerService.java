@@ -5,6 +5,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.multihost.MultiHostUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,10 +31,11 @@ public class OidcDefaultIssuerService implements OidcIssuerService {
 
     @Override
     public String determineIssuer(final Optional<OidcRegisteredService> registeredService) {
+        val currentOidcIssuer = MultiHostUtils.computeOidcIssuer(properties);
         val issuer = registeredService
             .filter(svc -> StringUtils.isNotBlank(svc.getIdTokenIssuer()))
             .map(OidcRegisteredService::getIdTokenIssuer)
-            .orElseGet(() -> properties.getCore().getIssuer());
+            .orElseGet(() -> currentOidcIssuer);
         LOGGER.trace("Determined issuer as [{}] for [{}]", issuer,
             registeredService.map(RegisteredService::getName).orElse("CAS"));
         return StringUtils.removeEnd(issuer, "/");

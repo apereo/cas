@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
@@ -63,6 +64,7 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20RevocationRequestVali
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenExchangeGrantTypeTokenRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.DefaultOAuth20RequestParameterResolver;
+import org.apereo.cas.support.oauth.web.MultiHostSecurityClientFinder;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import org.apereo.cas.support.oauth.web.OAuth20DistributedSessionCookieCipherExecutor;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
@@ -144,6 +146,7 @@ import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
@@ -169,6 +172,7 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.profile.CasProfile;
 import org.pac4j.core.client.Client;
+import org.pac4j.core.client.finder.ClientFinder;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -448,6 +452,12 @@ class CasOAuth20Configuration {
     static class CasOAuth20ClientConfiguration {
 
         @Bean
+        @ConditionalOnMissingBean(name = "multiHostSecurityClientFinder")
+        public ClientFinder multiHostSecurityClientFinder(final CasConfigurationProperties casProperties) {
+            return new MultiHostSecurityClientFinder(casProperties);
+        }
+
+        @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Client oauthCasClient(
             @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
@@ -458,8 +468,21 @@ class CasOAuth20Configuration {
             final CasConfigurationProperties casProperties,
             @Qualifier(CentralAuthenticationService.BEAN_NAME) final CentralAuthenticationService centralAuthenticationService,
             @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME) final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
-            val server = casProperties.getServer();
-            val cfg = new CasConfiguration(server.getLoginUrl());
+            return buildOAuthCasClient(casSslContext, oauthCasClientRedirectActionBuilder, casCallbackUrlResolver,
+                    servicesManager, webApplicationServiceFactory, casProperties.getServer().getPrefix(), centralAuthenticationService,
+                    authenticationAttributeReleasePolicy);
+        }
+
+        private static Client buildOAuthCasClient(
+            final CasSSLContext casSslContext,
+            final OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder,
+            final UrlResolver casCallbackUrlResolver,
+            final ServicesManager servicesManager,
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            final String prefix,
+            final CentralAuthenticationService centralAuthenticationService,
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
+            val cfg = new CasConfiguration(prefix.concat(CasProtocolConstants.ENDPOINT_LOGIN));
             val validator = new InternalTicketValidator(centralAuthenticationService,
                 webApplicationServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
             cfg.setDefaultTicketValidator(new CASOAuth20TicketValidator(validator, authenticationAttributeReleasePolicy));
@@ -468,9 +491,10 @@ class CasOAuth20Configuration {
             val oauthCasClient = new CasClient(cfg);
             oauthCasClient.setRedirectionActionBuilder(callContext ->
                 oauthCasClientRedirectActionBuilder.build(oauthCasClient, callContext.webContext()));
-            oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT);
-            oauthCasClient.setUrlResolver(casCallbackUrlResolver);
-            oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(server.getPrefix()));
+            oauthCasClient.setName(Authenticators.CAS_OAUTH_CLIENT + EncodingUtils.hexEncode(prefix));
+            val oauthCasCallbackUrlResolver = (OAuth20CasCallbackUrlResolver) casCallbackUrlResolver;
+            oauthCasClient.setUrlResolver(oauthCasCallbackUrlResolver.duplicateWithNewCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(prefix)));
+            oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(prefix));
             oauthCasClient.setCheckAuthenticationAttempt(false);
             oauthCasClient.setProfileCreator((callContext, credentials) -> {
                 val initialUserProfile = (CasProfile) credentials.getUserProfile();
@@ -587,13 +611,33 @@ class CasOAuth20Configuration {
             @Qualifier("oauthCasClient") final Client oauthCasClient,
             @Qualifier("userFormClient") final Client userFormClient,
             @Qualifier("accessTokenClient") final Client accessTokenClient,
-            final ObjectProvider<List<OAuth20AuthenticationClientProvider>> providers) {
+            final ObjectProvider<List<OAuth20AuthenticationClientProvider>> providers,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
+            @Qualifier("oauthCasClientRedirectActionBuilder") final OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder,
+            @Qualifier("casCallbackUrlResolver") final UrlResolver casCallbackUrlResolver,
+            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME) final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME) final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
             
             val clientProviders = Optional.ofNullable(providers.getIfAvailable()).orElseGet(ArrayList::new);
             AnnotationAwareOrderComparator.sort(clientProviders);
             val clientList = new ArrayList<Client>();
             clientProviders.forEach(p -> clientList.add(p.createClient()));
             clientList.add(oauthCasClient);
+            for (val host : casProperties.getMultiHosts()) {
+                clientList.add(buildOAuthCasClient(
+                    casSslContext,
+                    oauthCasClientRedirectActionBuilder,
+                    casCallbackUrlResolver,
+                    servicesManager,
+                    webApplicationServiceFactory,
+                    host.getServerPrefix(),
+                    centralAuthenticationService,
+                    authenticationAttributeReleasePolicy
+                ));
+            }
             clientList.add(basicAuthClient);
             clientList.add(pkceAuthnFormClient);
             clientList.add(pkceBasicAuthClient);

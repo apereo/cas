@@ -89,6 +89,7 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20AuthenticationClientPro
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
@@ -140,6 +141,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.pac4j.core.client.finder.ClientFinder;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -226,9 +228,13 @@ class OidcConfiguration {
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry) {
-            return new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator,
+            final TicketRegistry ticketRegistry,
+            @Qualifier("multiHostSecurityClientFinder")
+            final ClientFinder multiHostSecurityClientFinder) {
+            val logic = new OidcAuthenticationAuthorizeSecurityLogic(ticketGrantingTicketCookieGenerator,
                 ticketRegistry, oauthRequestParameterResolver);
+            logic.setClientFinder(multiHostSecurityClientFinder);
+            return logic;
         }
 
         @Bean
@@ -286,7 +292,7 @@ class OidcConfiguration {
             return BeanSupplier.of(OidcWebFingerDiscoveryService.class)
                 .when(CONDITION_WEBFINGER.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> new OidcDefaultWebFingerDiscoveryService(oidcWebFingerUserInfoRepository,
-                    oidcServerDiscoverySettingsFactory.getObject())))
+                    (OidcServerDiscoverySettingsFactory) oidcServerDiscoverySettingsFactory)))
                 .otherwiseProxy()
                 .get();
         }
@@ -891,7 +897,8 @@ class OidcConfiguration {
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             final CasConfigurationProperties casProperties) {
-            return new OidcCasCallbackUrlResolver(casProperties, oauthRequestParameterResolver);
+            return new OidcCasCallbackUrlResolver(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()),
+                    oauthRequestParameterResolver);
         }
 
         @Bean

@@ -28,9 +28,19 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class OAuth20CasCallbackUrlResolver implements UrlResolver {
-    private final String callbackUrl;
+    protected final String callbackUrl;
 
-    private final OAuth20RequestParameterResolver requestParameterResolver;
+    protected final OAuth20RequestParameterResolver requestParameterResolver;
+
+    /**
+     * Duplicate the current URL resolver with a new callback URL.
+     *
+     * @param callbackUrl the new callback URL
+     * @return the new URL resolver
+     */
+    public OAuth20CasCallbackUrlResolver duplicateWithNewCallbackUrl(final String callbackUrl) {
+        return new OAuth20CasCallbackUrlResolver(callbackUrl, requestParameterResolver);
+    }
 
     @Override
     public String compute(final String url, final WebContext context) {

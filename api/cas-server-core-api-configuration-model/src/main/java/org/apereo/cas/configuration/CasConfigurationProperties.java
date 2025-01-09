@@ -14,6 +14,7 @@ import org.apereo.cas.configuration.model.core.events.EventsProperties;
 import org.apereo.cas.configuration.model.core.logging.LoggingProperties;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
+import org.apereo.cas.configuration.model.core.multihost.SimpleHostProperties;
 import org.apereo.cas.configuration.model.core.rest.RestProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.core.slo.SingleLogoutProperties;
@@ -65,6 +66,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -392,6 +395,12 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private MultitenancyProperties multitenancy = new MultitenancyProperties();
+
+    /**
+     * Multi-hosts settings.
+     */
+    @NestedConfigurationProperty
+    private List<SimpleHostProperties> multiHosts = new ArrayList<>();
 
     /**
      * Bind from map.

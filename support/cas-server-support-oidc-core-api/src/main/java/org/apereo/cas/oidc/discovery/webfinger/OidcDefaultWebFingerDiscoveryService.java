@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.discovery.webfinger;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
+import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
@@ -59,7 +60,12 @@ public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscov
 
     private final OidcWebFingerUserInfoRepository userInfoRepository;
 
-    private final OidcServerDiscoverySettings discovery;
+    private final OidcServerDiscoverySettingsFactory serverDiscoverySettingsFactory;
+
+    @Override
+    public OidcServerDiscoverySettings getDiscovery() {
+        return serverDiscoverySettingsFactory.getObject();
+    }
 
     @Override
     public ResponseEntity<Map> handleRequest(final String resource, final String rel) throws Throwable {
@@ -67,7 +73,7 @@ public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscov
             LOGGER.warn("Handling discovery request for a non-standard OIDC relation [{}]", rel);
         }
 
-        val issuer = discovery.getIssuer();
+        val issuer = getDiscovery().getIssuer();
         if (!StringUtils.equalsIgnoreCase(resource, issuer)) {
             val resourceUri = normalize(resource);
             if (resourceUri == null) {

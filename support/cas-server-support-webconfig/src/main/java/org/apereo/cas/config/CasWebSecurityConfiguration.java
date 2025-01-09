@@ -3,7 +3,9 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.model.core.multihost.SimpleHostProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.multihost.MultiHostClientInfoThreadLocalFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -144,7 +146,9 @@ class CasWebSecurityConfiguration {
                 .useServerHostAddress(audit.isUseServerHostAddress())
                 .httpRequestHeaders(audit.getHttpRequestHeaders())
                 .build();
-            bean.setFilter(new ClientInfoThreadLocalFilter(options));
+            val server = casProperties.getServer();
+            val primaryHost = new SimpleHostProperties(server.getName(), server.getPrefix(), casProperties.getAuthn().getOidc().getCore().getIssuer());
+            bean.setFilter(new MultiHostClientInfoThreadLocalFilter(options, primaryHost, casProperties.getMultiHosts()));
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
             bean.setName("CAS Client Info Logging Filter");
             bean.setAsyncSupported(true);

@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.discovery.webfinger;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
+import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettingsFactory;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -50,7 +51,7 @@ class OidcDefaultWebFingerDiscoveryServiceTests extends AbstractOidcTests {
         when(repository.findByEmailAddress(anyString())).thenReturn(Map.of());
         when(repository.findByUsername(anyString())).thenReturn(Map.of());
         val service = new OidcDefaultWebFingerDiscoveryService(repository,
-            new OidcServerDiscoverySettings("https://apereo.org/cas"));
+                new MockOidcServerDiscoverySettingsFactory(new OidcServerDiscoverySettings("https://apereo.org/cas")));
         val entity = service.handleRequest(
             "okta:acct:joe.stormtrooper@sso.example.org", OidcConstants.WEBFINGER_REL);
         assertEquals(HttpStatus.SC_NOT_FOUND, entity.getStatusCode().value());
@@ -61,5 +62,20 @@ class OidcDefaultWebFingerDiscoveryServiceTests extends AbstractOidcTests {
         val entity = oidcWebFingerDiscoveryService.handleRequest(
             StringUtils.EMPTY, OidcConstants.WEBFINGER_REL);
         assertEquals(HttpStatus.SC_NOT_FOUND, entity.getStatusCode().value());
+    }
+
+    private static final class MockOidcServerDiscoverySettingsFactory extends OidcServerDiscoverySettingsFactory {
+
+        private final OidcServerDiscoverySettings oidcServerDiscoverySettings;
+
+        private MockOidcServerDiscoverySettingsFactory(final OidcServerDiscoverySettings oidcServerDiscoverySettings) {
+            super(null, null, null);
+            this.oidcServerDiscoverySettings = oidcServerDiscoverySettings;
+        }
+
+        @Override
+        public OidcServerDiscoverySettings getObject() {
+            return oidcServerDiscoverySettings;
+        }
     }
 }

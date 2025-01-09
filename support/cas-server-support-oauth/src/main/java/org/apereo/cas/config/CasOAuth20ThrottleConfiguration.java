@@ -19,6 +19,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.DirectClient;
+import org.pac4j.core.client.finder.ClientFinder;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.engine.DefaultSecurityLogic;
@@ -131,8 +132,10 @@ class CasOAuth20ThrottleConfiguration {
             @Qualifier("oauthSecConfig") final Config oauthSecConfig,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
+            @Qualifier("multiHostSecurityClientFinder") final ClientFinder multiHostSecurityClientFinder) {
             val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
+            logic.setClientFinder(multiHostSecurityClientFinder);
             return new SecurityLogicInterceptor(oauthSecConfig.withSecurityLogic(logic), Authenticators.CAS_OAUTH_CLIENT);
         }
 
