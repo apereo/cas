@@ -1276,6 +1276,10 @@ public interface CasWebflowConstants {
      * The view id 'casServiceErrorView'.
      */
     String VIEW_ID_SERVICE_ERROR = "error/casServiceErrorView";
+    /**
+     * The view id 'casUnknownTenantView'.
+     */
+    String VIEW_ID_UNKNOWN_TENANT = "error/casUnknownTenantView";
 
     /**
      * The view id 'casWebflowConfigErrorView'.

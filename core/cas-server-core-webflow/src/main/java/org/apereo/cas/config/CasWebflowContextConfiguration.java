@@ -68,7 +68,6 @@ import org.springframework.webflow.engine.model.builder.DefaultFlowModelHolder;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser;
-import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,9 +132,11 @@ class CasWebflowContextConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerMapping loginFlowHandlerMapping(
+            @Qualifier("loginFlowUrlHandler") final FlowUrlHandler loginFlowUrlHandler,
             @Qualifier(CasWebflowExecutionPlan.BEAN_NAME) final CasWebflowExecutionPlan webflowExecutionPlan,
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowRegistry) {
             val handler = new CasFlowHandlerMapping();
+            handler.setFlowUrlHandler(loginFlowUrlHandler);
             handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER - 1);
             handler.setFlowRegistry(loginFlowRegistry);
             handler.setInterceptors(webflowExecutionPlan.getWebflowInterceptors().toArray());
@@ -158,10 +159,15 @@ class CasWebflowContextConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerMapping logoutFlowHandlerMapping(
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry logoutFlowRegistry,
-            @Qualifier("localeChangeInterceptor") final HandlerInterceptor localeChangeInterceptor,
-            @Qualifier("resourceUrlProviderExposingInterceptor") final HandlerInterceptor resourceUrlProviderExposingInterceptor) {
-            val handler = new FlowHandlerMapping();
+            @Qualifier("logoutFlowUrlHandler") final FlowUrlHandler logoutFlowUrlHandler,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry logoutFlowRegistry,
+            @Qualifier("localeChangeInterceptor")
+            final HandlerInterceptor localeChangeInterceptor,
+            @Qualifier("resourceUrlProviderExposingInterceptor")
+            final HandlerInterceptor resourceUrlProviderExposingInterceptor) {
+            val handler = new CasFlowHandlerMapping();
+            handler.setFlowUrlHandler(logoutFlowUrlHandler);
             handler.setOrder(LOGOUT_FLOW_HANDLER_ORDER);
             handler.setFlowRegistry(logoutFlowRegistry);
             handler.setInterceptors(localeChangeInterceptor, resourceUrlProviderExposingInterceptor);

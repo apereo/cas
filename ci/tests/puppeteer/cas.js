@@ -961,6 +961,11 @@ exports.gotoLogout = async (page, service = undefined, port = 8443) => {
     return this.goto(page, url);
 };
 
+exports.gotoLogoutForTenant = async (page, tenant, service = undefined, port = 8443) => {
+    const url = `https://localhost:${port}/cas/tenants/${tenant}/logout${service === undefined ? "" : `?service=${service}`}`;
+    return this.goto(page, url);
+};
+
 exports.parseXML = async (xml, options = {}) => {
     let parsedXML = undefined;
     const parser = new xml2js.Parser(options);

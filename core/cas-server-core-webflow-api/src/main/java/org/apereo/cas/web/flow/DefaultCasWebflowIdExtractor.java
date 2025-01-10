@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -27,12 +28,20 @@ public class DefaultCasWebflowIdExtractor implements CasWebflowIdExtractor {
 
     @Override
     public String extract(final HttpServletRequest request, final String flowId) {
-        if (casProperties.getMultitenancy().getCore().isEnabled()) {
+        if (casProperties.getMultitenancy().getCore().isEnabled() && isValidFlowId(flowId)) {
             val tenant = tenantExtractor.extract(request).orElseThrow(
                 () -> new UnknownTenantException("Unknown tenant definition for flow id " + flowId));
             request.setAttribute(TenantDefinition.class.getName(), tenant);
             return flowId.substring(flowId.lastIndexOf('/') + 1);
         }
         return flowId;
+    }
+
+    private static boolean isValidFlowId(final String flowId) {
+        return !StringUtils.startsWithIgnoreCase(flowId, "webjars/")
+            && !StringUtils.startsWithIgnoreCase(flowId, "css/")
+            && !StringUtils.startsWithIgnoreCase(flowId, "favicon")
+            && !StringUtils.startsWithIgnoreCase(flowId, "images/")
+            && !StringUtils.startsWithIgnoreCase(flowId, "js/");
     }
 }
