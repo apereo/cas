@@ -46,10 +46,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
 
     private final CookieGenerationContext cookieGenerationContext;
 
-    public CookieRetrievingCookieGenerator(final CookieGenerationContext context) {
-        this(context, CookieValueManager.noOp());
-    }
-
     public CookieRetrievingCookieGenerator(final CookieGenerationContext context,
                                            final CookieValueManager casCookieValueManager) {
         setCookieName(context.getName());
@@ -106,8 +102,8 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     public Cookie addCookie(final HttpServletRequest request, final HttpServletResponse response,
                             final boolean rememberMe, final String cookieValue) {
         val theCookieValue = casCookieValueManager.buildCookieValue(cookieValue, request);
-        val cookie = createCookie(theCookieValue);
-
+        val cookie = createTenantCookie(createCookie(theCookieValue), request);
+        
         if (rememberMe) {
             LOGGER.trace("Creating CAS cookie [{}] for remember-me authentication", getCookieName());
             cookie.setMaxAge(cookieGenerationContext.getRememberMeMaxAge());
@@ -228,5 +224,12 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                 return StringUtils.defaultIfBlank(path, "/");
             },
             () -> StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH)).get();
+    }
+
+    private Cookie createTenantCookie(final Cookie cookie, final HttpServletRequest request) {
+        val tenantDefinition = casCookieValueManager.getTenantExtractor().extract(request);
+        tenantDefinition.ifPresent(tenant -> cookie.setPath(
+            StringUtils.appendIfMissing(cookie.getPath(), "/") + "tenants/" + tenant.getId()));
+        return cookie;
     }
 }

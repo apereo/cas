@@ -15,6 +15,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegatedCookieProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.attributes.GroovyWsFederationAttributeMutator;
@@ -113,7 +114,8 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
             val cookie = wsfed.getCookie();
             val cipher = getCipherExecutorForWsFederationConfig(cookie);
             val geoLocationService = applicationContext.getBeanProvider(GeoLocationService.class);
-            val valueManager = new DefaultCasCookieValueManager(cipher, geoLocationService,
+            val tenantExtractor = applicationContext.getBean(TenantExtractor.BEAN_NAME, TenantExtractor.class);
+            val valueManager = new DefaultCasCookieValueManager(cipher, tenantExtractor, geoLocationService,
                 DefaultCookieSameSitePolicy.INSTANCE, cookie);
             return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(cookie), valueManager);
         }

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.mgmr;
 
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.cookie.CookieSameSitePolicy;
 import org.apereo.cas.web.cookie.CookieValueManager;
@@ -32,6 +33,9 @@ public class EncryptedCookieValueManager implements CookieValueManager {
      * The cipher exec that is responsible for encryption and signing of the cookie.
      */
     private final CipherExecutor<Serializable, Serializable> cipherExecutor;
+
+    @Getter
+    private final TenantExtractor tenantExtractor;
 
     @Getter
     private final CookieSameSitePolicy cookieSameSitePolicy;

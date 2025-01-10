@@ -51,27 +51,7 @@ public class CookieUtils {
                                                                                   final CookieGenerationContext context) {
         return new CookieRetrievingCookieGenerator(context, cookieValueManager);
     }
-
-    /**
-     * Build cookie retrieving generator cookie.
-     *
-     * @param context the context
-     * @return the cookie retrieving cookie generator
-     */
-    public static CookieRetrievingCookieGenerator buildCookieRetrievingGenerator(final CookieGenerationContext context) {
-        return buildCookieRetrievingGenerator(CookieValueManager.noOp(), context);
-    }
-
-    /**
-     * Build cookie retrieving generator.
-     *
-     * @param cookie the cookie
-     * @return the cookie retrieving cookie generator
-     */
-    public static CasCookieBuilder buildCookieRetrievingGenerator(final CookieProperties cookie) {
-        return buildCookieRetrievingGenerator(cookie, CookieValueManager.noOp());
-    }
-
+    
     /**
      * Gets ticket granting ticket from request.
      *
