@@ -1,0 +1,25 @@
+{
+    "dependencies": "webapp",
+    "server": "tomcat",
+    "conditions": {
+      "docker": false,
+      "env": ""
+    },
+    "properties": [
+      "--cas.server.name=https://localhost:8443",
+      "--cas.server.prefix=${cas.server.name}/cas",
+  
+      "--cas.authn.attribute-repository.core.default-attributes-to-release=cn,mail",
+      "--cas.authn.attribute-repository.stub.attributes.cn=casuser",
+      "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+  
+      "--cas.ticket.st.time-to-kill-in-seconds=30",
+  
+      "--cas.authn.attribute-repository.attribute-definition-store.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/definitions.json"
+    ],
+    "initScript": "",
+    "buildScript": "",
+    "bootstrapScript": "",
+    "readyScript": "",
+    "exitScript": ""
+  }
