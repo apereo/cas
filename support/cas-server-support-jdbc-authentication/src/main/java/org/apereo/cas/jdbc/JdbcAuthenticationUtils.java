@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.model.support.jdbc.authn.BaseJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.authn.BindJdbcAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.jdbc.authn.ProcedureJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryEncodeJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.authn.SearchJdbcAuthenticationProperties;
@@ -154,6 +155,27 @@ public class JdbcAuthenticationUtils {
                                                                  final ServicesManager servicesManager,
                                                                  final PasswordPolicyContext searchModePasswordPolicyConfiguration) {
         val handler = new SearchModeSearchDatabaseAuthenticationHandler(properties, servicesManager,
+            jdbcPrincipalFactory, JpaBeans.newDataSource(properties));
+        configureJdbcAuthenticationHandler(handler, searchModePasswordPolicyConfiguration, properties, applicationContext);
+        return handler;
+    }
+
+    /**
+     * New authentication handler.
+     *
+     * @param properties                            the properties
+     * @param applicationContext                    the application context
+     * @param jdbcPrincipalFactory                  the jdbc principal factory
+     * @param servicesManager                       the services manager
+     * @param searchModePasswordPolicyConfiguration the search mode password policy configuration
+     * @return the authentication handler
+     */
+    public static AuthenticationHandler newAuthenticationHandler(final ProcedureJdbcAuthenticationProperties properties,
+                                                                 final ConfigurableApplicationContext applicationContext,
+                                                                 final PrincipalFactory jdbcPrincipalFactory,
+                                                                 final ServicesManager servicesManager,
+                                                                 final PasswordPolicyContext searchModePasswordPolicyConfiguration) {
+        val handler = new StoredProcedureAuthenticationHandler(properties, servicesManager,
             jdbcPrincipalFactory, JpaBeans.newDataSource(properties));
         configureJdbcAuthenticationHandler(handler, searchModePasswordPolicyConfiguration, properties, applicationContext);
         return handler;
