@@ -12,6 +12,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.client.ChainingDelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.pac4j.client.DefaultDelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationFailureEvaluator;
@@ -86,6 +87,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.session.SessionStore;
@@ -329,9 +331,14 @@ class DelegatedAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "delegatedAuthenticationCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasCookieBuilder delegatedAuthenticationCookieGenerator(final CasConfigurationProperties casProperties) {
+        public CasCookieBuilder delegatedAuthenticationCookieGenerator(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
+            final CasConfigurationProperties casProperties) {
             val props = casProperties.getAuthn().getPac4j().getCookie();
-            return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
+            return new CookieRetrievingCookieGenerator(
+                CookieUtils.buildCookieGenerationContext(props),
+                new NoOpCookieValueManager(tenantExtractor));
         }
 
         @ConditionalOnMissingBean(name = "groovyDelegatedClientAuthenticationRequestCustomizer")

@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -22,6 +23,7 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,6 +64,10 @@ class InitialFlowSetupActionTests {
         @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
         private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
+        @Autowired
+        @Qualifier(TenantExtractor.BEAN_NAME)
+        private TenantExtractor tenantExtractor;
+        
         private InitialFlowSetupAction action;
 
         private CasCookieBuilder warnCookieGenerator;
@@ -88,9 +94,10 @@ class InitialFlowSetupActionTests {
                 .httpOnly(false)
                 .build();
 
-            warnCookieGenerator = CookieUtils.buildCookieRetrievingGenerator(warn);
+            val cookieValueManager = new NoOpCookieValueManager(tenantExtractor);
+            warnCookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookieValueManager, warn);
             warnCookieGenerator.setCookiePath(StringUtils.EMPTY);
-            tgtCookieGenerator = CookieUtils.buildCookieRetrievingGenerator(tgt);
+            tgtCookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookieValueManager, tgt);
             tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
 
             val argExtractors = Collections.<ArgumentExtractor>singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
@@ -107,7 +114,6 @@ class InitialFlowSetupActionTests {
 
         @Test
         void verifySettingContextPath() throws Throwable {
-            
             val context = MockRequestContext.create(applicationContext);
             context.setContextPath(CONST_CONTEXT_PATH);
 

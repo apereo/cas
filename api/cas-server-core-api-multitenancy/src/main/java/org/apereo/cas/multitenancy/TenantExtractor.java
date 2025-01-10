@@ -12,12 +12,18 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 7.2.0
  */
-@FunctionalInterface
 public interface TenantExtractor {
     /**
      * Tenant extractor bean name.
      */
     String BEAN_NAME = "tenantExtractor";
+
+    /**
+     * Gets tenants manager.
+     *
+     * @return the tenants manager
+     */
+    TenantsManager getTenantsManager();
 
     /**
      * Extract tenant id from request.
