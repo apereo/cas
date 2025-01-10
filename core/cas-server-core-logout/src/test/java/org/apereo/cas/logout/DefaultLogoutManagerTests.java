@@ -8,6 +8,7 @@ import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
@@ -57,26 +58,29 @@ class DefaultLogoutManagerTests {
     @Mock
     private HttpClient client;
 
+    @Mock
+    private TenantExtractor tenantExtractor;
+    
     private DefaultSingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
 
     DefaultLogoutManagerTests() throws Exception {
         MockitoAnnotations.openMocks(this).close();
     }
 
-    public static BaseRegisteredService getRegisteredService(final String id) {
-        val s = new CasRegisteredService();
-        s.setServiceId(id);
-        s.setName("Test registered service " + id);
-        s.setDescription("Registered service description");
-        s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy().setPattern("^https?://.+"));
-        s.setId(RandomUtils.getNativeInstance().nextInt());
-        return s;
+    private static BaseRegisteredService getRegisteredService(final String id) {
+        val service = new CasRegisteredService();
+        service.setServiceId(id);
+        service.setName("Test registered service " + id);
+        service.setDescription("Registered service description");
+        service.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy().setPattern("^https?://.+"));
+        service.setId(RandomUtils.getNativeInstance().nextInt());
+        return service;
     }
 
-    public static AbstractWebApplicationService getService(final String url) {
+    private AbstractWebApplicationService getService(final String url) {
         val request = new MockHttpServletRequest();
         request.addParameter("service", url);
-        return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
+        return (AbstractWebApplicationService) new WebApplicationServiceFactory(tenantExtractor).createService(request);
     }
 
     @BeforeEach

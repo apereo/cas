@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
@@ -498,8 +497,7 @@ public abstract class AbstractOidcTests {
                                   final OAuthRegisteredService registeredService) throws Throwable {
         val ticketGrantingTicket = new MockTicketGrantingTicket("casuser");
         val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService(registeredService.getClientId());
+        val service = webApplicationServiceFactory.createService(registeredService.getClientId());
         val scopes = List.of(OidcConstants.StandardScopes.OPENID.getScope());
         val code = defaultOAuthCodeFactory.create(service, authentication,
             ticketGrantingTicket, scopes, registeredService.getClientId(),
@@ -511,8 +509,7 @@ public abstract class AbstractOidcTests {
     protected OAuth20Code addCode(final TicketGrantingTicket ticketGrantingTicket,
                                   final OAuthRegisteredService registeredService) throws Throwable {
         val authentication = ticketGrantingTicket.getAuthentication();
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService(registeredService.getClientId());
+        val service = webApplicationServiceFactory.createService(registeredService.getClientId());
         val scopes = List.of(OidcConstants.StandardScopes.OPENID.getScope());
         val code = defaultOAuthCodeFactory.create(service, authentication,
             ticketGrantingTicket, scopes, registeredService.getClientId(),

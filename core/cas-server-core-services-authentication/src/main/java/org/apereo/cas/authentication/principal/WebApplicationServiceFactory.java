@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.validation.ValidationResponseType;
@@ -21,7 +22,11 @@ import java.util.Optional;
  */
 @Slf4j
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
-    
+
+    public WebApplicationServiceFactory(final TenantExtractor tenantExtractor) {
+        super(tenantExtractor);
+    }
+
     private static AbstractWebApplicationService determineWebApplicationFormat(
         final HttpServletRequest request,
         final AbstractWebApplicationService webApplicationService) {

@@ -4,7 +4,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.multitenancy.TenantExtractor;
@@ -21,7 +20,6 @@ import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
-import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 import lombok.val;
@@ -37,7 +35,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 import java.net.URI;
-import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -68,6 +66,10 @@ class InitialFlowSetupActionTests {
         @Qualifier(TenantExtractor.BEAN_NAME)
         private TenantExtractor tenantExtractor;
         
+        @Autowired
+        @Qualifier(ArgumentExtractor.BEAN_NAME)
+        private ArgumentExtractor argumentExtractor;
+
         private InitialFlowSetupAction action;
 
         private CasCookieBuilder warnCookieGenerator;
@@ -100,11 +102,10 @@ class InitialFlowSetupActionTests {
             tgtCookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookieValueManager, tgt);
             tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
 
-            val argExtractors = Collections.<ArgumentExtractor>singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
             val servicesManager = mock(ServicesManager.class);
             when(servicesManager.findServiceBy(any(Service.class))).thenReturn(RegisteredServiceTestUtils.getRegisteredService("test"));
             val sso = new SingleSignOnProperties().setCreateSsoCookieOnRenewAuthn(true).setRenewAuthnEnabled(true);
-            action = new InitialFlowSetupAction(argExtractors, servicesManager,
+            action = new InitialFlowSetupAction(List.of(argumentExtractor), servicesManager,
                 authenticationRequestServiceSelectionStrategies, tgtCookieGenerator,
                 warnCookieGenerator, casProperties, authenticationEventExecutionPlan,
                 new DefaultSingleSignOnParticipationStrategy(servicesManager, sso, mock(TicketRegistrySupport.class), mock(AuthenticationServiceSelectionPlan.class)),

@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
@@ -103,7 +102,7 @@ class OidcIdTokenGeneratorServiceTests {
             val callback = casProperties.getServer().getPrefix()
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
                 + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-            val service = new WebApplicationServiceFactory().createService(callback);
+            val service = webApplicationServiceFactory.createService(callback);
             tgt.getServices().putAll(CollectionUtils.wrap("service", service));
 
             val accessToken = buildAccessToken(tgt);
@@ -150,7 +149,7 @@ class OidcIdTokenGeneratorServiceTests {
             val callback = casProperties.getServer().getPrefix()
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
                 + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-            val service = new WebApplicationServiceFactory().createService(callback);
+            val service = webApplicationServiceFactory.createService(callback);
             tgt.getServices().putAll(CollectionUtils.wrap("service", service));
 
             val accessToken = buildAccessToken(tgt);
@@ -197,7 +196,7 @@ class OidcIdTokenGeneratorServiceTests {
             val callback = casProperties.getServer().getPrefix()
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
                 + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-            val service = new WebApplicationServiceFactory().createService(callback);
+            val service = webApplicationServiceFactory.createService(callback);
             tgt.getServices().putAll(CollectionUtils.wrap("service", service));
 
             val accessToken = buildAccessToken(tgt);
@@ -256,7 +255,7 @@ class OidcIdTokenGeneratorServiceTests {
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
                 + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
-            val service = new WebApplicationServiceFactory().createService(callback);
+            val service = webApplicationServiceFactory.createService(callback);
             tgt.getServices().putAll(CollectionUtils.wrap("service", service));
 
             val accessToken = buildAccessToken(tgt);
@@ -340,7 +339,7 @@ class OidcIdTokenGeneratorServiceTests {
             val callback = casProperties.getServer().getPrefix()
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
                 + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-            val service = new WebApplicationServiceFactory().createService(callback);
+            val service = webApplicationServiceFactory.createService(callback);
             tgt.getServices().putAll(CollectionUtils.wrap("service", service));
             ticketRegistry.addTicket(tgt);
             
@@ -400,7 +399,7 @@ class OidcIdTokenGeneratorServiceTests {
             val callback = casProperties.getServer().getPrefix()
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
                 + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-            val service = new WebApplicationServiceFactory().createService(callback);
+            val service = webApplicationServiceFactory.createService(callback);
             tgt.getServices().putAll(CollectionUtils.wrap("service", service));
             ticketRegistry.addTicket(tgt);
 
@@ -455,7 +454,7 @@ class OidcIdTokenGeneratorServiceTests {
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
                 + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
-            val service = new WebApplicationServiceFactory().createService(callback);
+            val service = webApplicationServiceFactory.createService(callback);
             tgt.getServices().putAll(CollectionUtils.wrap("service", service));
 
             val accessToken = buildAccessToken(tgt);

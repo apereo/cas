@@ -9,7 +9,6 @@ import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,9 +40,12 @@ class CasCoreServicesAuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public ProtocolAttributeEncoder casAttributeEncoder(
-        @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-        @Qualifier("cacheCredentialsCipherExecutor") final CipherExecutor cacheCredentialsCipherExecutor,
-        @Qualifier(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME) final RegisteredServiceCipherExecutor registeredServiceCipherExecutor) {
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager,
+        @Qualifier("cacheCredentialsCipherExecutor")
+        final CipherExecutor cacheCredentialsCipherExecutor,
+        @Qualifier(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME)
+        final RegisteredServiceCipherExecutor registeredServiceCipherExecutor) {
         return new DefaultCasProtocolAttributeEncoder(servicesManager, registeredServiceCipherExecutor, cacheCredentialsCipherExecutor);
     }
 }

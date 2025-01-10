@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
 import org.apereo.cas.AbstractOAuth20Tests;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -35,7 +34,7 @@ class OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidatorTests exten
 
         servicesManager.save(service);
 
-        val validator = new OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator(servicesManager, new WebApplicationServiceFactory(),
+        val validator = new OAuth20IdTokenAndTokenResponseTypeAuthorizationRequestValidator(servicesManager, serviceFactory,
             new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext), oauthRequestParameterResolver);
 
         val request = new MockHttpServletRequest();

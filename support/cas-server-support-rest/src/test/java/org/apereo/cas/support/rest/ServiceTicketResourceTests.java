@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.rest.factory.CasProtocolServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -31,6 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import javax.security.auth.login.LoginException;
 import java.util.HashMap;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -60,6 +62,9 @@ class ServiceTicketResourceTests {
     @Mock
     private TicketRegistrySupport ticketSupport;
 
+    @Mock
+    private TenantExtractor tenantExtractor;
+    
     @InjectMocks
     private ServiceTicketResource serviceTicketResource;
 
@@ -71,7 +76,7 @@ class ServiceTicketResourceTests {
         lenient().when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         lenient().when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         this.serviceTicketResource = new ServiceTicketResource(CoreAuthenticationTestUtils.getAuthenticationSystemSupport(mgmr, mock(ServicesManager.class)),
-            ticketSupport, new DefaultArgumentExtractor(new WebApplicationServiceFactory()),
+            ticketSupport, new DefaultArgumentExtractor(List.of(new WebApplicationServiceFactory(tenantExtractor))),
             new CasProtocolServiceTicketResourceEntityResponseFactory(casMock),
             new UsernamePasswordRestHttpRequestCredentialFactory(),
             new GenericApplicationContext());

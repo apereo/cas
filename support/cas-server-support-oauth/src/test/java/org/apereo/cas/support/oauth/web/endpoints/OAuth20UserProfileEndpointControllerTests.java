@@ -90,7 +90,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
         val principal = CoreAuthenticationTestUtils.getPrincipal(ID, new HashMap<>());
         val authentication = getAuthentication(principal);
         val jwtBuilder = new JwtBuilder(new OAuth20JwtAccessTokenCipherExecutor(), applicationContext, servicesManager,
-            principalResolver, new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor(), casProperties);
+            principalResolver, new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor(), serviceFactory, casProperties);
         val expiringAccessTokenFactory = new OAuth20DefaultAccessTokenFactory(
             ticketRegistry, alwaysExpiresExpirationPolicyBuilder(),
             jwtBuilder, servicesManager, descendantTicketsTrackingPolicy);

@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
-import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
@@ -17,6 +16,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,7 +40,7 @@ class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
             null, "0", "PT30S",
             new NoOpProtocolAttributeEncoder(), null);
         view = new Saml10FailureResponseView(new NoOpProtocolAttributeEncoder(), null,
-            new DefaultArgumentExtractor(new SamlServiceFactory()),
+            new DefaultArgumentExtractor(List.of(webApplicationServiceFactory)),
             null,
             new DefaultAuthenticationServiceSelectionPlan(),
             NoOpProtocolAttributesRenderer.INSTANCE,

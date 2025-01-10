@@ -258,6 +258,8 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public JwtBuilder accessTokenJwtBuilder(
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("oauthRegisteredServiceJwtAccessTokenCipherExecutor")
@@ -269,7 +271,7 @@ class CasOAuth20Configuration {
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver principalResolver) {
             return new OAuth20JwtBuilder(oauthAccessTokenJwtCipherExecutor, applicationContext, servicesManager,
-                oauthRegisteredServiceJwtAccessTokenCipherExecutor, casProperties, principalResolver);
+                oauthRegisteredServiceJwtAccessTokenCipherExecutor, casProperties, principalResolver, webApplicationServiceFactory);
         }
     }
 

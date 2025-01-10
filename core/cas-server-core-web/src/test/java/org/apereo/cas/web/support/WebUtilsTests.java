@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockRequestContext;
@@ -117,7 +118,7 @@ class WebUtilsTests {
 
     @Test
     void verifyFindService() {
-        val casArgumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
+        val casArgumentExtractor = new DefaultArgumentExtractor(List.of(new WebApplicationServiceFactory(mock(TenantExtractor.class))));
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
         val service = HttpRequestUtils.getService(List.of(casArgumentExtractor), request);

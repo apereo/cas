@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
@@ -42,6 +43,9 @@ class RegisteredServiceResourceTests {
     @Mock
     private ServicesManager servicesManager;
 
+    @Mock
+    private TenantExtractor tenantExtractor;
+    
     @Test
     void checkNoCredentials() throws Throwable {
         runTest("memberOf", "something", StringUtils.EMPTY, status().isBadRequest());
@@ -93,7 +97,7 @@ class RegisteredServiceResourceTests {
         lenient().when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("testfail"))))
             .thenThrow(AuthenticationException.class);
         val authSystemSupport = CoreAuthenticationTestUtils.getAuthenticationSystemSupport(mgmr, servicesManager);
-        return new RegisteredServiceResource(authSystemSupport, new WebApplicationServiceFactory(),
+        return new RegisteredServiceResource(authSystemSupport, new WebApplicationServiceFactory(tenantExtractor),
             servicesManager, attrName, attrValue);
     }
 

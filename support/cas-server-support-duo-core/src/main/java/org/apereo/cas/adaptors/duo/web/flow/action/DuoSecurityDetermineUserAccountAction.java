@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationRegistrationCi
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.JwtBuilder;
@@ -39,6 +40,8 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
     private final ServicesManager servicesManager;
 
     private final PrincipalResolver principalResolver;
+
+    private final ServiceFactory serviceFactory;
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
@@ -85,7 +88,8 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
             DuoSecurityAuthenticationRegistrationCipherExecutor.class);
         val builder = new URIBuilder(provider.getRegistration().getRegistrationUrl());
         if (cipher.isEnabled()) {
-            val jwtBuilder = new JwtBuilder(cipher, applicationContext, servicesManager, principalResolver, casProperties);
+            val jwtBuilder = new JwtBuilder(cipher, applicationContext, servicesManager,
+                principalResolver, casProperties, serviceFactory);
             val jwtRequest = JwtBuilder.JwtRequest
                 .builder()
                 .serviceAudience(Set.of(builder.getHost()))

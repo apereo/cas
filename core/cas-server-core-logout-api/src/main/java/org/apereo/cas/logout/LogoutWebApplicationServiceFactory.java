@@ -3,8 +3,8 @@ package org.apereo.cas.logout;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -19,10 +19,14 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@RequiredArgsConstructor
 @Slf4j
 public class LogoutWebApplicationServiceFactory extends WebApplicationServiceFactory {
     private final LogoutProperties logoutProperties;
+
+    public LogoutWebApplicationServiceFactory(final TenantExtractor tenantExtractor, final LogoutProperties logoutProperties) {
+        super(tenantExtractor);
+        this.logoutProperties = logoutProperties;
+    }
 
     @Override
     protected String getRequestedService(final HttpServletRequest request) {

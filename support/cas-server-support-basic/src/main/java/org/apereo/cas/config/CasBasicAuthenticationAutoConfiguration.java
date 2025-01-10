@@ -42,9 +42,9 @@ public class CasBasicAuthenticationAutoConfiguration {
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_BASIC_AUTHENTICATION)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action basicAuthenticationAction(
-        @Qualifier("adaptiveAuthenticationPolicy")
+        @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-        @Qualifier("serviceTicketRequestWebflowEventResolver")
+        @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
         @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
