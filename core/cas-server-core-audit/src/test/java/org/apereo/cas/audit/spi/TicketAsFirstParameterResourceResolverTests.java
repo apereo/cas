@@ -60,7 +60,8 @@ class TicketAsFirstParameterResourceResolverTests {
         @Test
         void verifyTicketWithService() {
             val jp = mock(JoinPoint.class);
-            when(jp.getArgs()).thenReturn(new Object[]{"ST-123434", RegisteredServiceTestUtils.getService()});
+            val args = new Object[]{"ST-123434", RegisteredServiceTestUtils.getService()};
+            when(jp.getArgs()).thenReturn(args);
             val input = ticketResourceResolver.resolveFrom(jp, null);
             assertTrue(input.length > 0);
         }
@@ -68,7 +69,8 @@ class TicketAsFirstParameterResourceResolverTests {
         @Test
         void verifyTicketWithServiceAsJson() {
             val jp = mock(JoinPoint.class);
-            when(jp.getArgs()).thenReturn(new Object[]{"ST-123434", RegisteredServiceTestUtils.getService()});
+            val args = new Object[]{"ST-123434", RegisteredServiceTestUtils.getService()};
+            when(jp.getArgs()).thenReturn(args);
             val input = ticketResourceResolver.resolveFrom(jp, null);
             assertTrue(input.length > 0);
         }

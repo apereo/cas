@@ -2,6 +2,7 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
@@ -96,7 +97,8 @@ class RegisteredServiceCorsConfigurationSourceTests {
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
 
         val argumentExtractor = mock(ArgumentExtractor.class);
-        when(argumentExtractor.extractService(any())).thenReturn(RegisteredServiceTestUtils.getService());
+        val service = RegisteredServiceTestUtils.getService();
+        when(argumentExtractor.extractService(any())).thenReturn(service);
 
         val source = new RegisteredServiceCorsConfigurationSource(casProperties,
             servicesManager, argumentExtractor);
