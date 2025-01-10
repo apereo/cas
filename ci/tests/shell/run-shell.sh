@@ -35,6 +35,11 @@ printgreen "Launched CAS command-line shell under process id ${pid}. Waiting for
 sleep 8
 exitRequest="org.springframework.shell.ExitRequest"
 while :; do
+    if grep -q "APPLICATION FAILED TO START" "cas-shell.out"; then
+        printred "CAS command-line shell failed to start successfully"
+        kill -9 ${pid} &> /dev/null
+        exit 1
+    fi
     if grep -q ${exitRequest} "cas-shell.out"; then
         line_number=$(grep -n ${exitRequest} "cas-shell.out" | cut -d: -f1)
         printf "Found ${GREEN}${exitRequest}${ENDCOLOR} at line ${GREEN}${line_number}${ENDCOLOR} in CAS command-line shell output\n"

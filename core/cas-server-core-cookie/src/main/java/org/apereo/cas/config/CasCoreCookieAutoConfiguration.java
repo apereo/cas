@@ -53,8 +53,12 @@ public class CasCoreCookieAutoConfiguration {
             final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
             @Qualifier("cookieCipherExecutor") final CipherExecutor cookieCipherExecutor) {
-            return new DefaultCasCookieValueManager(cookieCipherExecutor, tenantExtractor, geoLocationService,
-                DefaultCookieSameSitePolicy.INSTANCE, casProperties.getTgc());
+            if (casProperties.getTgc().getCrypto().isEnabled()) {
+                return new DefaultCasCookieValueManager(cookieCipherExecutor,
+                    tenantExtractor, geoLocationService,
+                    DefaultCookieSameSitePolicy.INSTANCE, casProperties.getTgc());
+            }
+            return new NoOpCookieValueManager(tenantExtractor);
         }
 
         @ConditionalOnMissingBean(name = "cookieCipherExecutor")
@@ -92,7 +96,8 @@ public class CasCoreCookieAutoConfiguration {
             final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties) {
             val props = casProperties.getWarningCookie();
-            return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props),
+            return new CookieRetrievingCookieGenerator(
+                CookieUtils.buildCookieGenerationContext(props),
                 new NoOpCookieValueManager(tenantExtractor));
         }
 

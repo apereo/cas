@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.servlet.ThemeResolver;
 
 /**
@@ -35,6 +36,9 @@ public abstract class BaseThemeTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+    
     @BeforeEach
     void setup() {
         servicesManager.deleteAll();

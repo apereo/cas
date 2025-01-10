@@ -40,7 +40,7 @@ class RegisteredServiceThemeResolverTests {
     class ExternalThemeTests extends BaseThemeTests {
         @Test
         void verifyCustomSource() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             registeredService.setTheme("my-theme");
@@ -59,7 +59,7 @@ class RegisteredServiceThemeResolverTests {
     class ExampleThemeTests extends BaseThemeTests {
         @Test
         void verifyNoAccess() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             context.withUserAgent();
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             val strategy = new DefaultRegisteredServiceAccessStrategy(false, true);
@@ -72,7 +72,7 @@ class RegisteredServiceThemeResolverTests {
 
         @Test
         void verifyNoTheme() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             registeredService.setTheme(null);
             servicesManager.save(registeredService);
@@ -84,7 +84,7 @@ class RegisteredServiceThemeResolverTests {
 
         @Test
         void verifyGroovyTheme() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
 
             val file = File.createTempFile("Theme", ".groovy");
@@ -101,7 +101,7 @@ class RegisteredServiceThemeResolverTests {
         void verifyUrlTheme() throws Throwable {
             try (val webServer = new MockWebServer("custom-theme")) {
                 webServer.start();
-                val context = MockRequestContext.create();
+                val context = MockRequestContext.create(applicationContext);
                 val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
                 registeredService.setTheme("http://localhost:%s".formatted(webServer.getPort()));
                 servicesManager.save(registeredService);
@@ -116,7 +116,7 @@ class RegisteredServiceThemeResolverTests {
 
         @Test
         void verifyCustomTheme() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             registeredService.setTheme("custom-theme");
             servicesManager.save(registeredService);

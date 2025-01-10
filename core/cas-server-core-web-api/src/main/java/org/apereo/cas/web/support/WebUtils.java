@@ -560,7 +560,8 @@ public class WebUtils {
             val foundParameter = context.getRequestParameters().contains(CasWebflowConstants.ATTRIBUTE_WARN_ON_REDIRECT);
             if (foundParameter && context.getRequestParameters().getBoolean(CasWebflowConstants.ATTRIBUTE_WARN_ON_REDIRECT)) {
                 val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-                warnCookieGenerator.addCookie(response, "true");
+                val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+                warnCookieGenerator.addCookie(request, response, "true");
             }
         } else {
             LOGGER.trace("No warning cookie generator is defined");

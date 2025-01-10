@@ -58,7 +58,7 @@ class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
 
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
-        ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
+        ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(response.getCookies());
         val entity = singleSignOnSessionStatusEndpoint.ssoStatus(null, request);
         assertTrue(entity.getStatusCode().is2xxSuccessful());
@@ -74,10 +74,9 @@ class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {
     void verifyNoTicket() {
         val request = new MockHttpServletRequest();
         assertTrue(singleSignOnSessionStatusEndpoint.ssoStatus(null, request).getStatusCode().is4xxClientError());
-
         val response = new MockHttpServletResponse();
         val tgt = new MockTicketGrantingTicket("casuser");
-        ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
+        ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(response.getCookies());
         assertTrue(singleSignOnSessionStatusEndpoint.ssoStatus(null, request).getStatusCode().is4xxClientError());
     }

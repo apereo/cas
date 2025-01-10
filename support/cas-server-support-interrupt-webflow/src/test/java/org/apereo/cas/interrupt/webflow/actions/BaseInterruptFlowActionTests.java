@@ -16,6 +16,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasInterruptAutoConfiguration;
 import org.apereo.cas.config.CasInterruptWebflowAutoConfiguration;
+import org.apereo.cas.config.CasMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.springframework.boot.SpringBootConfiguration;
@@ -47,6 +48,7 @@ public abstract class BaseInterruptFlowActionTests {
         CasCoreUtilAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class,
         CasInterruptAutoConfiguration.class,
+        CasMultitenancyAutoConfiguration.class,
         CasInterruptWebflowAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
