@@ -151,11 +151,11 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
             final PasswordlessUserAccountStore passwordlessUserAccountStore,
             @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
             final PasswordlessTokenRepository passwordlessTokenRepository,
-            @Qualifier("adaptiveAuthenticationPolicy")
+            @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
             final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
             @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {

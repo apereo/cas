@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowEvents")
 class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
-    @Qualifier("serviceTicketRequestWebflowEventResolver")
+    @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
     private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
     
     @Test

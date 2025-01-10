@@ -2,17 +2,16 @@ package org.apereo.cas.support.oauth.services;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.nio.file.Files;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
@@ -32,7 +31,7 @@ class OAuth20WebApplicationServiceTests {
         service.setServiceId("testId");
         service.setTheme("theme");
         service.setDescription("description");
-        val factory = new WebApplicationServiceFactory();
+        val factory = new WebApplicationServiceFactory(mock(TenantExtractor.class));
         val serviceWritten = factory.createService(service.getServiceId());
         MAPPER.writeValue(jsonFile, serviceWritten);
         val serviceRead = MAPPER.readValue(jsonFile, WebApplicationService.class);

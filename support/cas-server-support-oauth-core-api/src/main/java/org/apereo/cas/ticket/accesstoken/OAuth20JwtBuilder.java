@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.accesstoken;
 
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
@@ -30,9 +31,10 @@ public class OAuth20JwtBuilder extends JwtBuilder {
                              final ServicesManager servicesManager,
                              final RegisteredServiceCipherExecutor registeredServiceCipherExecutor,
                              final CasConfigurationProperties casProperties,
-                             final PrincipalResolver principalResolver) {
+                             final PrincipalResolver principalResolver,
+                             final ServiceFactory serviceFactory) {
         super(defaultTokenCipherExecutor, applicationContext, servicesManager, principalResolver,
-            registeredServiceCipherExecutor, casProperties);
+            registeredServiceCipherExecutor, serviceFactory, casProperties);
     }
 
     @Override

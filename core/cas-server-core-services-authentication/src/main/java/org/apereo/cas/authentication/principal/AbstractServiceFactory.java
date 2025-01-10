@@ -1,9 +1,12 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +41,7 @@ import java.util.stream.StreamSupport;
 @Getter
 @Setter
 @Slf4j
+@RequiredArgsConstructor
 public abstract class AbstractServiceFactory<T extends Service> implements ServiceFactory<T> {
     private static final List<String> IGNORED_ATTRIBUTES_PARAMS = List.of(
         CasProtocolConstants.PARAMETER_PASSWORD,
@@ -46,7 +50,10 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         CasProtocolConstants.PARAMETER_TICKET,
         CasProtocolConstants.PARAMETER_FORMAT);
 
+    private final TenantExtractor tenantExtractor;
+
     private int order = Ordered.LOWEST_PRECEDENCE;
+
 
     /**
      * Cleanup the url. Removes jsession ids and query strings.
@@ -141,6 +148,9 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
 
         LOGGER.trace("Extracted attributes [{}] for service [{}]", attributes, service.getId());
         service.setAttributes(attributes);
+        tenantExtractor.extract(request)
+            .map(TenantDefinition::getId)
+            .ifPresent(service::setTenant);
         return service;
     }
 

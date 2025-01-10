@@ -107,7 +107,7 @@ class CasCoreWebflowConfiguration {
     @Configuration(value = "CasCoreWebflowEventResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasCoreWebflowEventResolutionConfiguration {
-        @ConditionalOnMissingBean(name = "serviceTicketRequestWebflowEventResolver")
+        @ConditionalOnMissingBean(name = CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver(

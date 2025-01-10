@@ -3,7 +3,6 @@ package org.apereo.cas.web;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
@@ -23,7 +22,7 @@ import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnfor
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
-import org.apereo.cas.web.support.DefaultArgumentExtractor;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
@@ -72,6 +71,10 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     protected ServicesManager servicesManager;
 
     @Autowired
+    @Qualifier(ArgumentExtractor.BEAN_NAME)
+    private ArgumentExtractor argumentExtractor;
+
+    @Autowired
     private WebEndpointProperties webEndpointProperties;
     
     @Autowired
@@ -85,7 +88,6 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     private RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(
         final String serviceId,
         final Pair<RegisteredServiceProperties, String>... properties) {
-        val argumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
 
         val service = RegisteredServiceTestUtils.getRegisteredService(serviceId, Map.of());
         val props1 = new LinkedHashMap<String, RegisteredServiceProperty>();

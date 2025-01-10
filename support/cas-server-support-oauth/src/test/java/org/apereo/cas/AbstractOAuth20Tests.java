@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
@@ -619,8 +618,7 @@ public abstract class AbstractOAuth20Tests {
                                                final String codeChallenge, final String codeChallengeMethod,
                                                final Collection<String> scopes) throws Throwable {
         val authentication = getAuthentication(principal);
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService(registeredService.getClientId());
+        val service = serviceFactory.createService(registeredService.getClientId());
 
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
@@ -639,8 +637,7 @@ public abstract class AbstractOAuth20Tests {
     protected OAuth20RefreshToken addRefreshToken(final Principal principal,
                                                   final OAuthRegisteredService registeredService) throws Throwable {
         val authentication = getAuthentication(principal);
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService(registeredService.getServiceId());
+        val service = serviceFactory.createService(registeredService.getServiceId());
         val refreshToken = defaultRefreshTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(), registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>(),
@@ -653,8 +650,7 @@ public abstract class AbstractOAuth20Tests {
                                                   final OAuthRegisteredService registeredService,
                                                   final OAuth20AccessToken accessToken) throws Throwable {
         val authentication = getAuthentication(principal);
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService(registeredService.getServiceId());
+        val service = serviceFactory.createService(registeredService.getServiceId());
         val refreshToken = defaultRefreshTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(), registeredService.getClientId(), accessToken.getId(), new HashMap<>(),
@@ -673,8 +669,7 @@ public abstract class AbstractOAuth20Tests {
                                                 final OAuthRegisteredService registeredService,
                                                 final String codeId) throws Throwable {
         val authentication = getAuthentication(principal);
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService(registeredService.getServiceId());
+        val service = serviceFactory.createService(registeredService.getServiceId());
         val accessToken = defaultAccessTokenFactory.create(service, authentication,
             new MockTicketGrantingTicket("casuser"),
             new ArrayList<>(), codeId, registeredService.getClientId(), new HashMap<>(),

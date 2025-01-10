@@ -79,9 +79,9 @@ public class CasX509AuthenticationWebflowAutoConfiguration {
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
         @Qualifier("x509CertificateExtractor")
         final X509CertificateExtractor x509CertificateExtractor,
-        @Qualifier("serviceTicketRequestWebflowEventResolver")
+        @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-        @Qualifier("adaptiveAuthenticationPolicy")
+        @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
         final CasConfigurationProperties casProperties) {
         return WebflowActionBeanSupplier.builder()

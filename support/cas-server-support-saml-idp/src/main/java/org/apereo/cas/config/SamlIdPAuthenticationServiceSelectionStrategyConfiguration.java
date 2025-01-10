@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.authentication.SamlIdPServiceFactory;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationServiceSelectionStrategy;
@@ -77,8 +78,9 @@ class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPServiceFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ServiceFactory samlIdPServiceFactory() {
-            return new SamlIdPServiceFactory();
+        public ServiceFactory samlIdPServiceFactory(@Qualifier(TenantExtractor.BEAN_NAME)
+                                                    final TenantExtractor tenantExtractor) {
+            return new SamlIdPServiceFactory(tenantExtractor);
         }
 
         @Bean

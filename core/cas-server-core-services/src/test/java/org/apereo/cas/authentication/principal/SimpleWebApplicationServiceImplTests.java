@@ -40,11 +40,15 @@ class SimpleWebApplicationServiceImplTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+    protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+    
     @Test
     void verifySerializeACompletePrincipalToJson() throws IOException {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
-        val serviceWritten = new WebApplicationServiceFactory().createService(request);
+        val serviceWritten = webApplicationServiceFactory.createService(request);
         MAPPER.writeValue(JSON_FILE, serviceWritten);
         val serviceRead = MAPPER.readValue(JSON_FILE, SimpleWebApplicationServiceImpl.class);
         assertEquals(serviceWritten, serviceRead);
@@ -54,7 +58,7 @@ class SimpleWebApplicationServiceImplTests {
     void verifyResponse() {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
-        val service = new WebApplicationServiceFactory().createService(request);
+        val service = webApplicationServiceFactory.createService(request);
         assertFalse(service.getAttributes().isEmpty());
         assertFalse(service.getAttributeAs("service", List.class).isEmpty());
         assertFalse(service.getFirstAttribute("service", String.class).isEmpty());
@@ -69,7 +73,7 @@ class SimpleWebApplicationServiceImplTests {
     void verifyCreateSimpleWebApplicationServiceImplFromServiceAttribute() {
         val request = new MockHttpServletRequest();
         request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
-        val impl = new WebApplicationServiceFactory().createService(request);
+        val impl = webApplicationServiceFactory.createService(request);
         assertNotNull(impl);
     }
 
@@ -77,7 +81,7 @@ class SimpleWebApplicationServiceImplTests {
     void verifyResponseForJsession() {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://www.cnn.com/;jsession=test");
-        val impl = new WebApplicationServiceFactory().createService(request);
+        val impl = webApplicationServiceFactory.createService(request);
 
         assertEquals("http://www.cnn.com/", impl.getId());
     }
@@ -86,7 +90,7 @@ class SimpleWebApplicationServiceImplTests {
     void verifyResponseWithNoTicket() {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
-        val impl = new WebApplicationServiceFactory().createService(request);
+        val impl = webApplicationServiceFactory.createService(request);
 
         val response = new WebApplicationServiceResponseBuilder(servicesManager, SimpleUrlValidator.getInstance())
             .build(impl, null, RegisteredServiceTestUtils.getAuthentication());
@@ -99,7 +103,7 @@ class SimpleWebApplicationServiceImplTests {
     void verifyResponseWithNoTicketAndNoParameterInServiceURL() {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://foo.com/");
-        val impl = new WebApplicationServiceFactory().createService(request);
+        val impl = webApplicationServiceFactory.createService(request);
         val response = new WebApplicationServiceResponseBuilder(servicesManager, SimpleUrlValidator.getInstance())
             .build(impl, null,
                 RegisteredServiceTestUtils.getAuthentication());
@@ -113,7 +117,7 @@ class SimpleWebApplicationServiceImplTests {
     void verifyResponseWithNoTicketAndOneParameterInServiceURL() {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://foo.com/?param=test");
-        val impl = new WebApplicationServiceFactory().createService(request);
+        val impl = webApplicationServiceFactory.createService(request);
         val response = new WebApplicationServiceResponseBuilder(servicesManager, SimpleUrlValidator.getInstance())
             .build(impl, null, RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);

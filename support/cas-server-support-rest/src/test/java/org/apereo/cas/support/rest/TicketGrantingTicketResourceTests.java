@@ -18,6 +18,7 @@ import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
 import org.apereo.cas.logout.DefaultLogoutManager;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutRequestExecutor;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.rest.authentication.DefaultRestAuthenticationService;
 import org.apereo.cas.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
@@ -89,6 +90,9 @@ class TicketGrantingTicketResourceTests {
     private ServicesManager servicesManager;
 
     @Mock
+    private TenantExtractor tenantExtractor;
+    
+    @Mock
     private RequestedAuthenticationContextValidator requestedContextValidator;
 
     @InjectMocks
@@ -125,7 +129,7 @@ class TicketGrantingTicketResourceTests {
         val authenticationSystemSupport = CoreAuthenticationTestUtils.getAuthenticationSystemSupport(manager, mock(ServicesManager.class));
         val api = new DefaultRestAuthenticationService(authenticationSystemSupport,
             httpRequestCredentialFactory,
-            new WebApplicationServiceFactory(),
+            new WebApplicationServiceFactory(tenantExtractor),
             multifactorTriggerSelectionStrategy,
             servicesManager,
             requestedContextValidator,

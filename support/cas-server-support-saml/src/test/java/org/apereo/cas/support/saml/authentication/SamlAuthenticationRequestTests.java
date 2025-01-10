@@ -2,7 +2,6 @@ package org.apereo.cas.support.saml.authentication;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
-import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
@@ -49,7 +48,7 @@ class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
 
     @Test
     void verifyFoundNoService() {
-        val casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory());
+        val casArgumentExtractor = new DefaultArgumentExtractor(List.of(webApplicationServiceFactory));
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
         val service = HttpRequestUtils.getService(List.of(casArgumentExtractor), request);

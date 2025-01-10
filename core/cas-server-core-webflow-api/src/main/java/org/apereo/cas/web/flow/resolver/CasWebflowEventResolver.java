@@ -16,6 +16,11 @@ import java.util.Set;
 public interface CasWebflowEventResolver extends NamedObject {
 
     /**
+     * The bean name for the webflow event resolver that handles service ticket requests.
+     */
+    String BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER = "serviceTicketRequestWebflowEventResolver";
+
+    /**
      * Resolve event.
      *
      * @param context the context
