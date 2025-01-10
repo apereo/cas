@@ -1,0 +1,15 @@
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "description": "This is the Shire tenant definition"
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "moria",
+      "description": "This is the Moria tenant definition"
+    }
+  ]
+]

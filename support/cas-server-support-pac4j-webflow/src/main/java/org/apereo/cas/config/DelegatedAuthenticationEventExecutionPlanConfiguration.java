@@ -23,6 +23,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.discovery.CasServerProfileCustomizer;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.TicketRegistrySessionStore;
 import org.apereo.cas.pac4j.client.DelegatedClientNameExtractor;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
@@ -152,7 +153,10 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder delegatedClientDistributedSessionCookieGenerator(
-            @Qualifier(GeoLocationService.BEAN_NAME) final ObjectProvider<GeoLocationService> geoLocationService,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
+            @Qualifier(GeoLocationService.BEAN_NAME)
+            final ObjectProvider<GeoLocationService> geoLocationService,
             @Qualifier("delegatedClientDistributedSessionCookieCipherExecutor")
             final CipherExecutor delegatedClientDistributedSessionCookieCipherExecutor,
             final CasConfigurationProperties casProperties) {
@@ -162,7 +166,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
             }
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
                 new DefaultCasCookieValueManager(delegatedClientDistributedSessionCookieCipherExecutor,
-                    geoLocationService, DefaultCookieSameSitePolicy.INSTANCE, cookie));
+                    tenantExtractor, geoLocationService, DefaultCookieSameSitePolicy.INSTANCE, cookie));
         }
 
         @ConditionalOnMissingBean(name = "clientPrincipalFactory")
