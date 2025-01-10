@@ -64,6 +64,9 @@ public class ClientInfo implements Serializable {
 
     @JsonProperty("locale")
     private Locale locale;
+    
+    @JsonProperty("tenant")
+    private String tenant = "Default";
 
     public ClientInfo(final String clientIpAddress, final String serverIpAddress,
                       final String userAgent, final String geoLocation) {
@@ -137,6 +140,15 @@ public class ClientInfo implements Serializable {
     }
 
     /**
+     * Gets tenant.
+     *
+     * @return the tenant
+     */
+    public String getTenant() {
+        return Objects.requireNonNullElse(this.tenant, "Default");
+    }
+
+    /**
      * Sets headers.
      *
      * @param headers the headers
@@ -197,6 +209,18 @@ public class ClientInfo implements Serializable {
     }
 
     /**
+     * Sets tenant.
+     *
+     * @param tenant the tenant
+     * @return the tenant id
+     */
+    @CanIgnoreReturnValue
+    public ClientInfo setTenant(final String tenant) {
+        this.tenant = tenant;
+        return this;
+    }
+
+    /**
      * Sets device fingerprint.
      *
      * @param value the fingerprint
@@ -207,8 +231,7 @@ public class ClientInfo implements Serializable {
         this.deviceFingerprint = value;
         return this;
     }
-
-
+    
     /**
      * Sets locale.
      *
