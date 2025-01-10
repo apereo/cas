@@ -14,9 +14,9 @@ import org.apereo.cas.interrupt.JsonResourceInterruptInquirer;
 import org.apereo.cas.interrupt.RegexAttributeInterruptInquirer;
 import org.apereo.cas.interrupt.RestEndpointInterruptInquirer;
 import org.apereo.cas.interrupt.SimpleInterruptTrackingEngine;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -85,16 +85,16 @@ public class CasInterruptAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CookieValueManager interruptCookieValueManager(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(GeoLocationService.BEAN_NAME)
             final ObjectProvider<GeoLocationService> geoLocationService,
             final CasConfigurationProperties casProperties,
             @Qualifier("interruptCookieCipherExecutor") final CipherExecutor cookieCipherExecutor) {
 
             val props = casProperties.getInterrupt().getCookie();
-            return FunctionUtils.doIf(props.getCrypto().isEnabled(),
-                () -> new DefaultCasCookieValueManager(cookieCipherExecutor, geoLocationService,
-                    DefaultCookieSameSitePolicy.INSTANCE, props),
-                CookieValueManager::noOp).get();
+            return new DefaultCasCookieValueManager(cookieCipherExecutor, tenantExtractor,
+                geoLocationService, DefaultCookieSameSitePolicy.INSTANCE, props);
         }
 
         @Bean

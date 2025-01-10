@@ -1,0 +1,23 @@
+{
+  "dependencies": "multitenancy",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.multitenancy.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/tenants.json",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.attributes.name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.gender=female",
+    "--cas.authn.attribute-repository.stub.attributes.preferred_username=casuser",
+
+    "--cas.http-client.host-name-verifier=none"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

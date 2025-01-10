@@ -24,6 +24,7 @@ import org.apereo.cas.authentication.mfa.trigger.ScriptedRegisteredServiceMultif
 import org.apereo.cas.authentication.mfa.trigger.TimedMultifactorAuthenticationTrigger;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -57,6 +58,7 @@ import org.apereo.cas.web.flow.resolver.impl.SelectiveMultifactorAuthenticationP
 import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -631,13 +633,15 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder multifactorAuthenticationProviderSelectionCookieGenerator(
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(CasCookieBuilder.class)
                 .when(COOKIE_CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val cookie = casProperties.getAuthn().getMfa().getCore().getProviderSelection().getCookie();
                     val context = CookieUtils.buildCookieGenerationContext(cookie);
-                    return new CookieRetrievingCookieGenerator(context);
+                    return new CookieRetrievingCookieGenerator(context, new NoOpCookieValueManager(tenantExtractor));
                 })
                 .otherwiseProxy()
                 .get();

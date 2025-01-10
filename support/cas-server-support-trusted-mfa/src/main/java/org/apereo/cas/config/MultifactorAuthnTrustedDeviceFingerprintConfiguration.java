@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.trusted.util.cipher.CookieDeviceFingerprintComponentCipherExecutor;
 import org.apereo.cas.trusted.web.flow.fingerprint.BrowserDeviceFingerprintExtractor;
 import org.apereo.cas.trusted.web.flow.fingerprint.ClientIpDeviceFingerprintExtractor;
@@ -188,10 +189,12 @@ class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         @ConditionalOnMissingBean(name = "deviceFingerprintCookieValueManager")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CookieValueManager deviceFingerprintCookieValueManager(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier("deviceFingerprintCookieCipherExecutor")
             final CipherExecutor deviceFingerprintCookieCipherExecutor) {
             return new EncryptedCookieValueManager(deviceFingerprintCookieCipherExecutor,
-                DefaultCookieSameSitePolicy.INSTANCE);
+                tenantExtractor, DefaultCookieSameSitePolicy.INSTANCE);
         }
 
         @ConditionalOnMissingBean(name = "deviceFingerprintCookieCipherExecutor")

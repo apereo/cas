@@ -1,6 +1,7 @@
 package org.apereo.cas.integration.pac4j;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.TicketRegistrySessionStore;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketFactory;
@@ -9,6 +10,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.InvalidCookieException;
+import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -51,6 +53,10 @@ class TicketRegistrySessionStoreTests {
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
+    @Autowired
+    @Qualifier(TenantExtractor.BEAN_NAME)
+    private TenantExtractor tenantExtractor;
+    
     private HttpServletRequest request;
     private MockHttpServletResponse response;
 
@@ -62,11 +68,13 @@ class TicketRegistrySessionStoreTests {
 
     @BeforeEach
     void setup() {
+        val cookieValueManager = new NoOpCookieValueManager(tenantExtractor);
+        
         ticketRegistry.deleteAll();
 
         val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
         cookie.setName("DISSESSIONxxx");
-        this.cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie);
+        this.cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie, cookieValueManager);
 
         this.request = new MockHttpServletRequest();
         this.response = new MockHttpServletResponse();

@@ -942,6 +942,12 @@ exports.gotoLoginWithAuthnMethod = async (page, service, authnMethod = undefined
     return this.goto(page, url);
 };
 
+exports.gotoLoginForTenant = async (page, tenantId, service = undefined, port = 8443) => {
+    const queryString = (service === undefined ? "" : `service=${service}&`);
+    const url = `https://localhost:${port}/cas/tenants/${tenantId.toLowerCase()}/login?${queryString}`;
+    return this.goto(page, url);
+};
+
 exports.gotoLogin = async (page, service = undefined, port = 8443, renew = undefined, method = undefined) => {
     let queryString = (service === undefined ? "" : `service=${service}&`);
     queryString += (renew === undefined ? "" : "renew=true&");
