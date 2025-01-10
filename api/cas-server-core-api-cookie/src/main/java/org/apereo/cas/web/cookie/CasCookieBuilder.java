@@ -46,14 +46,6 @@ public interface CasCookieBuilder {
     Cookie addCookie(HttpServletRequest request, HttpServletResponse response, String cookieValue);
 
     /**
-     * Add cookie.
-     *
-     * @param response    the response
-     * @param cookieValue the cookie value
-     */
-    void addCookie(HttpServletResponse response, String cookieValue);
-
-    /**
      * Retrieve cookie value.
      *
      * @param request the request

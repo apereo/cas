@@ -111,6 +111,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
         void verifyCompositeWithCookie() throws Throwable {
             val context = MockRequestContext.create();
             multifactorAuthenticationProviderSelectionCookieGenerator.addCookie(
+                context.getHttpServletRequest(),
                 context.getHttpServletResponse(), TestMultifactorAuthenticationProvider.ID);
             context.setRequestCookiesFromResponse();
 

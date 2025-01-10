@@ -204,7 +204,7 @@ class InitialFlowSetupActionTests {
             val context = MockRequestContext.create(applicationContext);
             val tgt = new MockTicketGrantingTicket("casuser");
             getTicketRegistry().addTicket(tgt);
-            getTicketGrantingTicketCookieGenerator().addCookie(context.getHttpServletResponse(), tgt.getId());
+            getTicketGrantingTicketCookieGenerator().addCookie(context.getHttpServletRequest(), context.getHttpServletResponse(), tgt.getId());
             context.setRequestCookiesFromResponse();
 
             val event = action.execute(context);

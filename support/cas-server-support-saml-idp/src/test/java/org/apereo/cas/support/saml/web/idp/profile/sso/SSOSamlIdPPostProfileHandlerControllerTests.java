@@ -138,11 +138,11 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
     @Test
     @Order(5)
     void verifyPostRequestWithSso() throws Throwable {
+        val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
-        ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
-        val request = new MockHttpServletRequest();
+        ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(response.getCookies());
         request.setMethod("POST");
         val authnRequest = getAuthnRequest();
@@ -159,11 +159,11 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
     @Test
     @Order(6)
     void verifyPostRequestWithSsoForcedAuthn() throws Throwable {
+        val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
-        ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
-        val request = new MockHttpServletRequest();
+        ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(response.getCookies());
         request.setMethod("POST");
         val authnRequest = getAuthnRequest();
@@ -179,10 +179,10 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
     @Test
     @Order(7)
     void verifyPostRequestWithUnknownCookie() {
+        val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val tgt = new MockTicketGrantingTicket("casuser");
-        ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
-        val request = new MockHttpServletRequest();
+        ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(response.getCookies());
         request.setMethod("POST");
         val authnRequest = getAuthnRequest();
@@ -201,10 +201,10 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
         servicesManager.save(samlRegisteredService);
 
         val response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
-        ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
-        val request = new MockHttpServletRequest();
+        ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(response.getCookies());
         request.setMethod("POST");
         val authnRequest = getAuthnRequest();

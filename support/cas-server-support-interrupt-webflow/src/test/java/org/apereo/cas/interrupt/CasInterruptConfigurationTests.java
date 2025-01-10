@@ -1,6 +1,7 @@
 package org.apereo.cas.interrupt;
 
 import org.apereo.cas.config.CasInterruptAutoConfiguration;
+import org.apereo.cas.config.CasMultitenancyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -20,13 +21,17 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = CasInterruptAutoConfiguration.class, properties = {
-    "cas.interrupt.regex.attribute-name=attr-name",
-    "cas.interrupt.regex.attribute-value=attr-value",
-    "cas.interrupt.json.location=classpath:/interrupt.json",
-    "cas.interrupt.groovy.location=classpath:/interrupt.groovy",
-    "cas.interrupt.rest.url=http://localhost:1234"
-})
+@SpringBootTest(classes = {
+    CasMultitenancyAutoConfiguration.class,
+    CasInterruptAutoConfiguration.class
+},
+    properties = {
+        "cas.interrupt.regex.attribute-name=attr-name",
+        "cas.interrupt.regex.attribute-value=attr-value",
+        "cas.interrupt.json.location=classpath:/interrupt.json",
+        "cas.interrupt.groovy.location=classpath:/interrupt.groovy",
+        "cas.interrupt.rest.url=http://localhost:1234"
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CasConfiguration")
 @ExtendWith(CasTestExtension.class)
