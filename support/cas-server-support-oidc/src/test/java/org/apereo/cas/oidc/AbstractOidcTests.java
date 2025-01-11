@@ -389,7 +389,8 @@ public abstract class AbstractOidcTests {
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("email", List.of("casuser@example.org")));
         val token = mock(OAuth20RefreshToken.class);
         when(token.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
-        when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService("https://oauth.example.org"));
+        val service = RegisteredServiceTestUtils.getService("https://oauth.example.org");
+        when(token.getService()).thenReturn(service);
         when(token.getId()).thenReturn("RT-123456");
         when(token.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(token.getScopes()).thenReturn(Set.of(OidcConstants.StandardScopes.EMAIL.getScope(),

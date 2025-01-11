@@ -27,6 +27,7 @@ import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
+import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -90,11 +91,14 @@ public class CasInterruptAutoConfiguration {
             @Qualifier(GeoLocationService.BEAN_NAME)
             final ObjectProvider<GeoLocationService> geoLocationService,
             final CasConfigurationProperties casProperties,
-            @Qualifier("interruptCookieCipherExecutor") final CipherExecutor cookieCipherExecutor) {
-
+            @Qualifier("interruptCookieCipherExecutor")
+            final CipherExecutor cookieCipherExecutor) {
             val props = casProperties.getInterrupt().getCookie();
-            return new DefaultCasCookieValueManager(cookieCipherExecutor, tenantExtractor,
-                geoLocationService, DefaultCookieSameSitePolicy.INSTANCE, props);
+            if (props.getCrypto().isEnabled()) {
+                return new DefaultCasCookieValueManager(cookieCipherExecutor, tenantExtractor,
+                    geoLocationService, DefaultCookieSameSitePolicy.INSTANCE, props);
+            }
+            return new NoOpCookieValueManager(tenantExtractor);
         }
 
         @Bean
