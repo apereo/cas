@@ -173,7 +173,8 @@ class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests extends AbstractOAu
         val tgt = new MockTicketGrantingTicket("casuser");
         val token = mock(OAuth20RefreshToken.class);
         when(token.getId()).thenReturn(name);
-        when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService(name));
+        val service = RegisteredServiceTestUtils.getService(name);
+        when(token.getService()).thenReturn(service);
         when(token.isExpired()).thenReturn(false);
         when(token.getAuthentication()).thenReturn(tgt.getAuthentication());
         when(token.getTicketGrantingTicket()).thenReturn(tgt);

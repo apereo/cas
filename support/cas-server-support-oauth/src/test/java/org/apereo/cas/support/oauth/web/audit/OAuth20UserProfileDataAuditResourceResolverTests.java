@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.web.audit;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
