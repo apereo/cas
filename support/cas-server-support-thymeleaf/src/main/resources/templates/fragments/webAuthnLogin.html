@@ -230,10 +230,8 @@
             if (QRCodeAuthentication === undefined || QRCodeAuthentication === null) {
                 QRCodeAuthentication = false;
             }
-
             console.log(`Using CSRF token: ${csrfToken}`);
             console.log(`QR Code Authentication: ${QRCodeAuthentication}`);
-            
             const url = window.location.href;
             const btn = document.getElementById('authnButton');
             btn.addEventListener('click', event => {
@@ -241,10 +239,6 @@
                 let username = /*[[${principal?.id}]]*/;
                 if (username === '' || username === null) {
                    username = $("#fm1 #username").val();
-                }
-                if (username === '' || username === null) {
-                    $("#fm1 #username").focus();
-                    return;
                 }
                 console.log(`Authenticating user: ${username}`);
                 authenticate(username);
