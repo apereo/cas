@@ -8,20 +8,20 @@ import org.apereo.cas.support.inwebo.service.response.InweboPushAuthenticateResp
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import java.net.HttpURLConnection;
 import java.net.URI;
-
-import static org.apereo.cas.support.inwebo.web.flow.actions.WebflowConstants.*;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.BROWSER_AUTHENTICATION_STATUS;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.PUSH_AND_BROWSER_AUTHENTICATION_STATUS;
 
 /**
  * The Inwebo service.
@@ -30,9 +30,15 @@ import static org.apereo.cas.support.inwebo.web.flow.actions.WebflowConstants.*;
  * @since 6.4.0
  */
 @Slf4j
-public record InweboService(CasConfigurationProperties casProperties, InweboConsoleAdmin consoleAdmin, SSLContext context) {
+@RequiredArgsConstructor
+@Getter
+public class InweboService {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
+
+    private final CasConfigurationProperties casProperties;
+    private final InweboConsoleAdmin consoleAdmin;
+    private final SSLContext context;
 
     /**
      * Retrieve device name.
@@ -95,7 +101,7 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
     public InweboPushAuthenticateResponse pushAuthenticate(final String login) {
         return FunctionUtils.doUnchecked(() -> {
             val inwebo = casProperties.getAuthn().getMfa().getInwebo();
-            val url = UriComponentsBuilder.fromHttpUrl(inwebo.getServiceApiUrl())
+            val url = UriComponentsBuilder.fromUriString(inwebo.getServiceApiUrl())
                 .queryParam("action", "pushAuthenticate")
                 .queryParam("serviceId", inwebo.getServiceId())
                 .queryParam("userId", login)
@@ -127,7 +133,7 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
     public InweboDeviceNameResponse checkPushResult(final String login, final String sessionId) {
         return FunctionUtils.doUnchecked(() -> {
             val inwebo = casProperties.getAuthn().getMfa().getInwebo();
-            val url = UriComponentsBuilder.fromHttpUrl(inwebo.getServiceApiUrl())
+            val url = UriComponentsBuilder.fromUriString(inwebo.getServiceApiUrl())
                 .queryParam("action", "checkPushResult")
                 .queryParam("serviceId", inwebo.getServiceId())
                 .queryParam("userId", login)
@@ -154,7 +160,7 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
     public InweboDeviceNameResponse authenticateExtended(final String login, final String token) {
         return FunctionUtils.doUnchecked(() -> {
             val inwebo = casProperties.getAuthn().getMfa().getInwebo();
-            val url = UriComponentsBuilder.fromHttpUrl(inwebo.getServiceApiUrl())
+            val url = UriComponentsBuilder.fromUriString(inwebo.getServiceApiUrl())
                 .queryParam("action", "authenticateExtended")
                 .queryParam("serviceId", inwebo.getServiceId())
                 .queryParam("userId", login)
@@ -215,4 +221,5 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
         }
         return response;
     }
+
 }

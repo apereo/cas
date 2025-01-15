@@ -19,6 +19,7 @@ import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolve
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.TriStateBoolean;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -125,13 +126,13 @@ class CasCoreAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier("defaultAuthenticationHandlerResolver")
             final AuthenticationHandlerResolver defaultAuthenticationHandlerResolver,
             final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
 
-            val plan = new DefaultAuthenticationEventExecutionPlan();
-            plan.setDefaultAuthenticationHandlerResolver(defaultAuthenticationHandlerResolver);
-            
+            val plan = new DefaultAuthenticationEventExecutionPlan(defaultAuthenticationHandlerResolver, tenantExtractor);
             val sortedConfigurers = new ArrayList<>(configurers);
             sortedConfigurers.removeIf(BeanSupplier::isProxy);
             AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);

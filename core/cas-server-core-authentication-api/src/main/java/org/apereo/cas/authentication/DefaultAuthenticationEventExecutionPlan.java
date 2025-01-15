@@ -1,14 +1,14 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolver;
-import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -49,9 +49,11 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     private final List<AuthenticationPolicyResolver> authenticationPolicyResolvers = new ArrayList<>();
 
     private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
+    
+    private final AuthenticationHandlerResolver defaultAuthenticationHandlerResolver;
 
-    @Setter
-    private AuthenticationHandlerResolver defaultAuthenticationHandlerResolver = new DefaultAuthenticationHandlerResolver();
+    @Getter
+    private final TenantExtractor tenantExtractor;
 
     @Override
     public boolean registerAuthenticationHandler(final AuthenticationHandler handler) {

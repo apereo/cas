@@ -48,4 +48,13 @@ public interface Credential extends Serializable {
      * @return the credential metadata
      */
     CredentialMetadata getCredentialMetadata();
+
+    /**
+     * Gets tenant.
+     *
+     * @return the tenant
+     */
+    default String getTenant() {
+        return getCredentialMetadata() != null ? getCredentialMetadata().getTenant() : null;
+    }
 }

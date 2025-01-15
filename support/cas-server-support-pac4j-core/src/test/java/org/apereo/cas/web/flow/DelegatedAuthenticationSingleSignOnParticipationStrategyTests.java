@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -14,7 +15,6 @@ import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPo
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.InvalidTicketException;
-import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
@@ -38,13 +38,13 @@ import static org.mockito.Mockito.*;
 class DelegatedAuthenticationSingleSignOnParticipationStrategyTests extends BaseDelegatedAuthenticationTests {
     private SingleSignOnParticipationStrategy getSingleSignOnStrategy(final RegisteredService registeredService) {
 
-        val authenticationExecutionPlan = new DefaultAuthenticationEventExecutionPlan();
+        val authenticationExecutionPlan = new DefaultAuthenticationEventExecutionPlan(new DefaultAuthenticationHandlerResolver(), tenantExtractor);
         authenticationExecutionPlan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler());
 
         servicesManager.save(registeredService);
         return new DelegatedAuthenticationSingleSignOnParticipationStrategy(servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
-            new DefaultTicketRegistrySupport(ticketRegistry));
+            ticketRegistrySupport);
     }
 
     @Test

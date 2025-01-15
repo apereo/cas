@@ -3,13 +3,12 @@ package org.apereo.cas.authentication.metadata;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetadata;
 import org.apereo.cas.authentication.CredentialTrait;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+import lombok.Setter;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -46,6 +45,9 @@ public class BasicCredentialMetadata implements CredentialMetadata {
     private final List<CredentialTrait> traits = new ArrayList<>();
 
     private final Map<String, Serializable> properties = new HashMap<>();
+
+    @Setter
+    private String tenant;
 
     public BasicCredentialMetadata(final Credential credential, final Map<String, ? extends Serializable> properties) {
         this.id = credential.getId();
