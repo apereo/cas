@@ -6,7 +6,7 @@ package org.apereo.cas.support.inwebo.web.flow.actions;
  * @author Jerome LELEU
  * @since 6.4.0
  */
-public interface WebflowConstants {
+public interface InweboWebflowConstants {
     /**
      * The pending transition.
      */

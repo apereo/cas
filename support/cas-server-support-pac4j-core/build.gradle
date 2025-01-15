@@ -17,7 +17,6 @@ dependencies {
 
     compileOnly project(":support:cas-server-support-scim-core")
     compileOnly project(":support:cas-server-support-ldap-core")
-
     
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
@@ -44,5 +43,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services-registry")
+    testImplementation project(":core:cas-server-core-multitenancy")
     testImplementation project(":support:cas-server-support-scim-core")
 }

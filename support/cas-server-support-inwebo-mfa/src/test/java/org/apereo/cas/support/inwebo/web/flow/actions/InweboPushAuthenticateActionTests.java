@@ -5,9 +5,11 @@ import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.webflow.execution.Action;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -21,16 +23,10 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowMfaActions")
 class InweboPushAuthenticateActionTests extends BaseInweboActionTests {
 
-    private InweboPushAuthenticateAction action;
-
-    @Override
-    @BeforeEach
-    void setUp() throws Exception {
-        super.setUp();
-
-        action = new InweboPushAuthenticateAction(service);
-    }
-
+    @Autowired
+    @Qualifier(CasWebflowConstants.ACTION_ID_INWEBO_PUSH_AUTHENTICATION)
+    private Action action;
+    
     private static InweboPushAuthenticateResponse pushAuthenticateResponse(final InweboResult result) {
         val response = new InweboPushAuthenticateResponse();
         response.setResult(result);
@@ -46,7 +42,7 @@ class InweboPushAuthenticateActionTests extends BaseInweboActionTests {
 
         val event = action.execute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
-        assertEquals(SESSION_ID, requestContext.getFlowScope().get(WebflowConstants.INWEBO_SESSION_ID));
+        assertEquals(SESSION_ID, requestContext.getFlowScope().get(InweboWebflowConstants.INWEBO_SESSION_ID));
     }
 
     @Test
@@ -55,6 +51,6 @@ class InweboPushAuthenticateActionTests extends BaseInweboActionTests {
 
         val event = action.execute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
-        assertFalse(requestContext.getFlowScope().contains(WebflowConstants.INWEBO_SESSION_ID));
+        assertFalse(requestContext.getFlowScope().contains(InweboWebflowConstants.INWEBO_SESSION_ID));
     }
 }

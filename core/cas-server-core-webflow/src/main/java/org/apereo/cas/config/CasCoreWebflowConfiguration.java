@@ -22,6 +22,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -150,6 +151,7 @@ class CasCoreWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
         public CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
@@ -183,6 +185,8 @@ class CasCoreWebflowConfiguration {
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(CasWebflowExceptionCatalog.BEAN_NAME)
             final CasWebflowExceptionCatalog casWebflowExceptionCatalog,
             @Qualifier(CasWebflowCredentialProvider.BEAN_NAME)
@@ -211,6 +215,7 @@ class CasCoreWebflowConfiguration {
                 .principalFactory(principalFactory)
                 .multifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector)
                 .casWebflowExceptionCatalog(casWebflowExceptionCatalog)
+                .tenantExtractor(tenantExtractor)
                 .build();
         }
     }

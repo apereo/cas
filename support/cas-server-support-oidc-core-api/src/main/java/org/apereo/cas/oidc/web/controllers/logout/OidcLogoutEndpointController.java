@@ -140,7 +140,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
                                                final HttpServletRequest request,
                                                final HttpServletResponse response) throws Exception {
         redirectUrl.ifPresent(url -> {
-            val builder = UriComponentsBuilder.fromHttpUrl(url);
+            val builder = UriComponentsBuilder.fromUriString(url);
             state.ifPresent(st -> builder.queryParam(OAuth20Constants.STATE, st));
             clientId.ifPresent(id -> builder.queryParam(OAuth20Constants.CLIENT_ID, id));
             val logoutUrl = builder.build().toUriString();

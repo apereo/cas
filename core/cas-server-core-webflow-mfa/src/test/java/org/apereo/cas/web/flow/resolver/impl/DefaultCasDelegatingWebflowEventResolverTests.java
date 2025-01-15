@@ -10,14 +10,11 @@ import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +26,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
+import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,10 +40,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultCasDelegatingWebflowEventResolverTests {
     @Nested
     class DefaultTests extends BaseCasWebflowMultifactorAuthenticationTests {
-        @Autowired
-        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
-        private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-
         @Test
         void verifyOperationNoCredential() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
@@ -56,7 +50,6 @@ class DefaultCasDelegatingWebflowEventResolverTests {
         @Test
         void verifyAuthFails() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-
             val id = "https://app.%s.org#helloworld".formatted(UUID.randomUUID().toString());
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(id));
             context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, id);
@@ -121,10 +114,6 @@ class DefaultCasDelegatingWebflowEventResolverTests {
     @Import(MfaTests.MfaTestConfiguration.class)
     @TestPropertySource(properties = "cas.authn.mfa.triggers.global.global-provider-id=mfa-dummy")
     class MfaTests extends BaseCasWebflowMultifactorAuthenticationTests {
-        @Autowired
-        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
-        private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-
         @Test
         void verifyOperationResolvesToEvent() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
@@ -148,6 +137,28 @@ class DefaultCasDelegatingWebflowEventResolverTests {
             public MultifactorAuthenticationProvider dummyProvider() {
                 return new TestMultifactorAuthenticationProvider();
             }
+        }
+    }
+
+    @Nested
+    @TestPropertySource(properties = "cas.multitenancy.json.location=classpath:/tenants.json")
+    class TenantTests extends BaseCasWebflowMultifactorAuthenticationTests {
+
+        @Test
+        void verifyTenantCaptured() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            context.setContextPath("/tenants/shire/login");
+            val id = "https://app.%s.org#helloworld".formatted(UUID.randomUUID().toString());
+            WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(id));
+            context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, id);
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(id, Map.of());
+            servicesManager.save(registeredService);
+
+            val credential = RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword(id);
+            WebUtils.putCredential(context, credential);
+            val event = initialAuthenticationAttemptWebflowEventResolver.resolveSingle(context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+            assertEquals("shire", credential.getCredentialMetadata().getTenant());
         }
     }
 }

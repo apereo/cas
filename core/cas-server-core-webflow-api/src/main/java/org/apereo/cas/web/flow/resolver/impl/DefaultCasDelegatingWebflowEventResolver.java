@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflowEventResolver
     implements CasDelegatingWebflowEventResolver {
 
-    private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>(0);
+    private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>();
 
     private final CasWebflowEventResolver selectiveResolver;
 
@@ -66,9 +66,14 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             if (credentials != null && !credentials.isEmpty()) {
                 val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(context);
                 val geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext(context);
-                val properties = CollectionUtils.<String, Serializable>wrap(CredentialMetadata.PROPERTY_USER_AGENT, agent,
+                val properties = CollectionUtils.<String, Serializable>wrap(
+                    CredentialMetadata.PROPERTY_USER_AGENT, agent,
                     CredentialMetadata.PROPERTY_GEO_LOCATION, geoLocation);
-                credentials.forEach(cred -> cred.getCredentialMetadata().putProperties(properties));
+                credentials.forEach(cred -> {
+                    cred.getCredentialMetadata().putProperties(properties);
+                    getConfigurationContext().getTenantExtractor().extract(context).ifPresent(tenant ->
+                        cred.getCredentialMetadata().setTenant(tenant.getId()));
+                });
                 val builder = getConfigurationContext().getAuthenticationSystemSupport()
                     .handleInitialAuthenticationTransaction(service, credentials.toArray(Credential.EMPTY_CREDENTIALS_ARRAY));
                 builder.collect(credentials.toArray(Credential.EMPTY_CREDENTIALS_ARRAY));
@@ -208,7 +213,6 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
         }
         if (serviceFromRequest != null) {
             val fragment = serviceFromRequest.getFragment();
-
             if (fragment != null) {
                 serviceFromFlow.setFragment(fragment);
             }

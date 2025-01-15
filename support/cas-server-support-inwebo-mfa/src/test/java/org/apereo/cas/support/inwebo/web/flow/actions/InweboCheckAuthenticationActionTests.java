@@ -4,9 +4,10 @@ import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.execution.Action;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,15 +24,10 @@ class InweboCheckAuthenticationActionTests extends BaseInweboActionTests {
 
     private static final String OTP = "4q5dslf";
 
+    @Autowired
+    @Qualifier(CasWebflowConstants.ACTION_ID_INWEBO_CHECK_AUTHENTICATION)
     private Action action;
-
-    @Override
-    @BeforeEach
-    void setUp() throws Exception {
-        super.setUp();
-        action = new InweboCheckAuthenticationAction(service, resolver);
-    }
-
+        
     @Test
     void verifyGoodOtp() throws Throwable {
         requestContext.setParameter("otp", OTP);
@@ -54,7 +50,7 @@ class InweboCheckAuthenticationActionTests extends BaseInweboActionTests {
 
     @Test
     void verifyPushValidated() throws Throwable {
-        requestContext.getFlowScope().put(WebflowConstants.INWEBO_SESSION_ID, SESSION_ID);
+        requestContext.getFlowScope().put(InweboWebflowConstants.INWEBO_SESSION_ID, SESSION_ID);
         when(service.checkPushResult(LOGIN, SESSION_ID)).thenReturn(deviceResponse(InweboResult.OK));
 
         val event = action.execute(requestContext);
@@ -64,17 +60,17 @@ class InweboCheckAuthenticationActionTests extends BaseInweboActionTests {
 
     @Test
     void verifyPushNotValidatedYet() throws Throwable {
-        requestContext.getFlowScope().put(WebflowConstants.INWEBO_SESSION_ID, SESSION_ID);
+        requestContext.getFlowScope().put(InweboWebflowConstants.INWEBO_SESSION_ID, SESSION_ID);
         when(service.checkPushResult(LOGIN, SESSION_ID)).thenReturn(deviceResponse(InweboResult.WAITING));
 
         val event = action.execute(requestContext);
-        assertEquals(WebflowConstants.PENDING, event.getId());
+        assertEquals(InweboWebflowConstants.PENDING, event.getId());
         assertNoMfa();
     }
 
     @Test
     void verifyPushRefusedOrTimeout() throws Throwable {
-        requestContext.getFlowScope().put(WebflowConstants.INWEBO_SESSION_ID, SESSION_ID);
+        requestContext.getFlowScope().put(InweboWebflowConstants.INWEBO_SESSION_ID, SESSION_ID);
         when(service.checkPushResult(LOGIN, SESSION_ID)).thenReturn(deviceResponse(InweboResult.REFUSED));
 
         val event = action.execute(requestContext);
@@ -84,7 +80,7 @@ class InweboCheckAuthenticationActionTests extends BaseInweboActionTests {
 
     @Test
     void verifyPushError() throws Throwable {
-        requestContext.getFlowScope().put(WebflowConstants.INWEBO_SESSION_ID, SESSION_ID);
+        requestContext.getFlowScope().put(InweboWebflowConstants.INWEBO_SESSION_ID, SESSION_ID);
         when(service.checkPushResult(LOGIN, SESSION_ID)).thenReturn(deviceResponse(InweboResult.NOK));
 
         val event = action.execute(requestContext);

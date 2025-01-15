@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.multitenancy.TenantExtractor;
 
 import java.util.Collection;
 import java.util.List;
@@ -227,4 +228,11 @@ public interface AuthenticationEventExecutionPlan {
      * @return the authentication handler resolvers
      */
     Collection<AuthenticationPolicyResolver> getAuthenticationPolicyResolvers(AuthenticationTransaction transaction);
+
+    /**
+     * Gets tenant extractor.
+     *
+     * @return the tenant extractor
+     */
+    TenantExtractor getTenantExtractor();
 }
