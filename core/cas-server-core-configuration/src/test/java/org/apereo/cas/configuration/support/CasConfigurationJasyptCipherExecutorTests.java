@@ -106,7 +106,6 @@ class CasConfigurationJasyptCipherExecutorTests {
     }
 
     private boolean isAlgorithmFunctional(final String algorithm) {
-        System.out.println(algorithm);
         val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
         jasyptTest.setAlgorithm(algorithm);
         val testValue = "Testing_" + algorithm;
