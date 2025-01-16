@@ -1,11 +1,10 @@
 package org.apereo.cas.web.tomcat;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.catalina.connector.Connector;
-import org.apache.coyote.http11.AbstractHttp11JsseProtocol;
+import org.apache.coyote.http11.AbstractHttp11Protocol;
 import org.apache.tomcat.util.net.SSLHostConfig;
 import org.apache.tomcat.util.net.SSLHostConfigCertificate;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -43,7 +42,7 @@ public class X509TomcatServletWebServiceFactoryCustomizer extends ServletWebServ
             connector.setScheme("https");
             connector.setSecure(true);
             connector.setAllowTrace(true);
-            val protocol = (AbstractHttp11JsseProtocol) connector.getProtocolHandler();
+            val protocol = (AbstractHttp11Protocol) connector.getProtocolHandler();
             protocol.setSSLEnabled(true);
 
             val sslHostConfig = new SSLHostConfig();
