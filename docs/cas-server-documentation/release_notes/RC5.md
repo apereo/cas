@@ -65,8 +65,14 @@ test coverage of the CAS codebase is approximately `94%`.
 
 ## Other Stuff
 
+- NameID generation for SAML2 logout requests now uses the `usernameAttributeProvider` construct assigned to the SAML2 service definition.
+- [WebAuthN FIDO2 authentication](../mfa/FIDO2-WebAuthn-Authentication.html) has removed the requirement for a username from the CAS flow.
 
 ## Library Upgrades
 
 - Spring Boot
 - Apache Tomcat
+- Spring
+- BouncyCastle
+- PostgreSQL
+- Grouper
