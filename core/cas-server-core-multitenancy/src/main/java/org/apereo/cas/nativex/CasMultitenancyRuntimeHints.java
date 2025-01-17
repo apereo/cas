@@ -2,8 +2,10 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.multitenancy.TenantsManager;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.beans.factory.DisposableBean;
 
 /**
  * This is {@link CasMultitenancyRuntimeHints}.
@@ -17,5 +19,7 @@ public class CasMultitenancyRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSerializationHints(hints, classLoader, TenantDefinition.class);
         registerReflectionHints(hints, TenantDefinition.class);
         registerReflectionHints(hints, TenantExtractor.class);
+
+        registerSpringProxyHints(hints, TenantsManager.class, DisposableBean.class);
     }
 }
