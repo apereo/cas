@@ -18,8 +18,10 @@ import com.azure.cosmos.models.IndexingPolicy;
 import com.azure.cosmos.models.PartitionKeyDefinition;
 import com.azure.cosmos.models.PartitionKind;
 import com.azure.cosmos.models.ThroughputProperties;
+import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.util.ReflectionUtils;
@@ -65,13 +67,13 @@ public class CosmosDbObjectFactory {
                 .forClient()
                 .sslProvider(SslProvider.JDK)
                 .trustManager(casSSLContext.getTrustManagerFactory())
+                .keyManager(casSSLContext.getKeyManagerFactory())
                 .build();
-            val configsMethod = ReflectionUtils.findRequiredMethod(builder.getClass(), "configs");
-            configsMethod.trySetAccessible();
-            val configs = (Configs) configsMethod.invoke(builder);
-            val sslContextField = ReflectionUtils.findRequiredField(configs.getClass(), "sslContext");
-            sslContextField.trySetAccessible();
-            sslContextField.set(configs, sslContext);
+            val cosmosDbConfigs = new CosmosDbConfigs(sslContext);
+            val configs = ReflectionUtils.findRequiredField(builder.getClass(), "configs");
+            configs.trySetAccessible();
+            configs.set(builder, cosmosDbConfigs);
+            
         });
         this.client = builder.buildClient();
     }
@@ -139,5 +141,15 @@ public class CosmosDbObjectFactory {
      */
     public CosmosContainer createContainer(final String name, final String... partitionKey) {
         return createContainer(name, -1L, partitionKey);
+    }
+
+    @RequiredArgsConstructor
+    private static final class CosmosDbConfigs extends Configs {
+        private final SslContext sslContext;
+
+        @Override
+        public SslContext getSslContext(final boolean serverCertValidationDisabled, final boolean http2Enabled) {
+            return sslContext;
+        }
     }
 }
