@@ -10,6 +10,7 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
@@ -21,6 +22,7 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -95,11 +97,10 @@ public class SyncopeUtils {
         collectListableAttribute(attributes, user, "dynRealms", "syncopeUserDynRealms", attributeMappings);
 
         if (user.has("memberships")) {
-            val memberships = new ArrayList<>();
-            user.get("memberships").forEach(member -> memberships.add(member.get("groupName").asText()));
+            val memberships = mapSyncopeGroupMemberhips(user);
             if (!memberships.isEmpty()) {
                 name = attributeMappings.getOrDefault("memberships", "syncopeUserMemberships");
-                attributes.put(name, memberships);
+                attributes.put(name, new ArrayList<>(memberships));
             }
         }
 
@@ -127,6 +128,21 @@ public class SyncopeUtils {
         mapSyncopeUserAttributes(user, "virAttrs", attributeMappings, attributes);
 
         return attributes;
+    }
+    
+    private List<Map<String, String>> mapSyncopeGroupMemberhips(final JsonNode user){
+        val memberships = new ArrayList<Map<String, String>>();
+        user.get("memberships").forEach(member -> {
+            val membershipInfo = new HashMap<String, String>();
+            membershipInfo.put("groupName", member.get("groupName").asText());
+            if (member.has("plainAttrs")){
+                member.get("plainAttrs").forEach(attr ->
+                        membershipInfo.put(attr.get("schema").asText(), attr.get("values").toString())
+                );
+                memberships.add(membershipInfo);
+            }
+        });
+        return memberships;
     }
 
     private void mapSyncopeUserAttributes(final JsonNode user, final String attributeName,
