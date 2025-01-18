@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
+import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -87,7 +88,7 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
     }
 
     @Override
-    public SingleLogoutMessage create(final SingleLogoutRequestContext request) {
+    public SingleLogoutMessage create(final SingleLogoutRequestContext request) throws Throwable {
         val id = '_' + String.valueOf(RandomUtils.nextLong());
 
         val samlService = (SamlRegisteredService) request.getRegisteredService();
@@ -97,8 +98,15 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
 
         val issueInstant = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(skewAllowance);
 
-        val principalName = request.getExecutionRequest().getTicketGrantingTicket()
-            .getAuthentication().getPrincipal().getId();
+        val usernameContext = RegisteredServiceUsernameProviderContext
+                .builder()
+                .registeredService(samlService)
+                .service(request.getService())
+                .principal(request.getExecutionRequest().getTicketGrantingTicket().getAuthentication().getPrincipal())
+                .applicationContext(openSamlConfigBean.getApplicationContext())
+                .build();
+        
+        val principalName = samlService.getUsernameAttributeProvider().resolveUsername(usernameContext);
         LOGGER.trace("Preparing NameID attribute for principal [{}]", principalName);
 
         val nameFormat = StringUtils.defaultIfBlank(samlService.getRequiredNameIdFormat(), NameIDType.UNSPECIFIED);
