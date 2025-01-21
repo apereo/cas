@@ -17,7 +17,7 @@
         <p th:utext="#{cas.mfa.simple.registration.description}">Your account is not registered.</p>
         
         <form th:if="${allowRegisterEmail}" method="post" id="fmRegister" class="fm-v clearfix" th:action="@{/login}">
-            <div class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+            <div id="errorPanel" class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
                 <h3>Error</h3>
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
                    th:utext="${message.text}">Message Text</p>
