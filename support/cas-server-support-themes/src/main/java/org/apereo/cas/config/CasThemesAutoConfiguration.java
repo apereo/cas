@@ -35,7 +35,9 @@ import org.springframework.ui.context.ThemeSource;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.resource.ContentVersionStrategy;
 import org.springframework.web.servlet.resource.PathResourceResolver;
+import org.springframework.web.servlet.resource.VersionResourceResolver;
 import org.springframework.web.servlet.theme.CookieThemeResolver;
 import org.springframework.web.servlet.theme.FixedThemeResolver;
 import org.springframework.web.servlet.theme.SessionThemeResolver;
@@ -144,7 +146,14 @@ public class CasThemesAutoConfiguration {
                         .toArray(Resource[]::new);
                     LOGGER.debug("Adding resource handler for resources [{}]", (Object[]) resources);
                     resolver.setAllowedLocations(resources);
-
+                    
+                    val chainProperties = webProperties.getResources().getChain();
+                    if (chainProperties.getEnabled()) {
+                        val paths = chainProperties.getStrategy().getContent().getPaths();
+                        val versionResourceResolver = new VersionResourceResolver();
+                        versionResourceResolver.addVersionStrategy(new ContentVersionStrategy(), paths);
+                        chainRegistration.addResolver(versionResourceResolver);
+                    }
                     chainRegistration.addResolver(resolver);
                 }
             }

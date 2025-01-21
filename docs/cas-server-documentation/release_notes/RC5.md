@@ -62,11 +62,17 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
 and scenarios. At the moment, the total number of jobs stands at approximately `509` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
+ 
+### Simple Multifactor Authentication
+
+[Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication-Registration.html) now 
+allows users to register their email address when no contact information can be found for the user.
 
 ## Other Stuff
 
 - NameID generation for SAML2 logout requests now uses the `usernameAttributeProvider` construct assigned to the SAML2 service definition.
 - [WebAuthN FIDO2 authentication](../mfa/FIDO2-WebAuthn-Authentication.html) has removed the requirement for a username from the CAS flow.
+- Static resources are now resolved using a content hashing strategy that allows cache busting for static resources.
 
 ## Library Upgrades
 
