@@ -27,7 +27,8 @@ class CasSimpleMultifactorUpdateEmailActionTests {
 
         "cas.authn.mfa.simple.mail.from=admin@example.org",
         "cas.authn.mfa.simple.mail.subject=CAS Token",
-        "cas.authn.mfa.simple.mail.text=CAS Token is ${token}"
+        "cas.authn.mfa.simple.mail.text=CAS Token is ${token}",
+        "cas.authn.mfa.simple.mail.accepted-email-pattern=.+@example.org"
     })
     class DefaultTests extends BaseCasSimpleMultifactorSendTokenActionTests {
         @Test
