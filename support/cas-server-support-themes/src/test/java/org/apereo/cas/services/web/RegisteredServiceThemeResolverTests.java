@@ -32,6 +32,7 @@ class RegisteredServiceThemeResolverTests {
 
     @SpringBootTest(classes = BaseThemeTests.SharedTestConfiguration.class,
         properties = {
+            "spring.web.resources.chain.strategy.content.enabled=true",
             "cas.view.template-prefixes[0]=classpath:/ext-templates",
             "cas.theme.default-theme-name=example"
         })
