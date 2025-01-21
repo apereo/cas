@@ -1250,6 +1250,14 @@ public interface CasWebflowConstants {
      * State id 'sendSimpleToken'.
      */
     String STATE_ID_SIMPLE_MFA_SEND_TOKEN = "sendSimpleToken";
+    /**
+     * State id 'verifyEmail'.
+     */
+    String STATE_ID_SIMPLE_MFA_VERIFY_EMAIL = "verifyEmail";
+    /**
+     * State id 'updateEmail'.
+     */
+    String STATE_ID_SIMPLE_MFA_UPDATE_EMAIL = "updateEmail";
 
     /**
      * State id 'riskVerificationConfirmationView'.
@@ -2022,6 +2030,15 @@ public interface CasWebflowConstants {
      * Action id 'mfaSimpleMultifactorSendTokenAction'.
      */
     String ACTION_ID_MFA_SIMPLE_SEND_TOKEN = "mfaSimpleMultifactorSendTokenAction";
+    /**
+     * Action id 'mfaSimpleMultifactorVerifyEmailAction'.
+     */
+    String ACTION_ID_MFA_SIMPLE_VERIFY_EMAIL = "mfaSimpleMultifactorVerifyEmailAction";
+
+    /**
+     * Action id 'mfaSimpleMultifactorUpdateEmailAction'.
+     */
+    String ACTION_ID_MFA_SIMPLE_UPDATE_EMAIL = "mfaSimpleMultifactorUpdateEmailAction";
     /**
      * Action id 'loadAccountRegistrationPropertiesAction'.
      */

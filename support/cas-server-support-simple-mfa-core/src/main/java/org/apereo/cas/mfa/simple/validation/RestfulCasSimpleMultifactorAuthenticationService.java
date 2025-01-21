@@ -8,13 +8,14 @@ import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.JsonUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -26,10 +27,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.util.Assert;
 import javax.security.auth.login.FailedLoginException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -39,14 +42,21 @@ import java.util.Optional;
  * @since 6.6.0
  */
 @Slf4j
-@RequiredArgsConstructor
-public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimpleMultifactorAuthenticationService {
+public class RestfulCasSimpleMultifactorAuthenticationService extends BaseCasSimpleMultifactorAuthenticationService {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .singleValueAsArray(true).defaultTypingEnabled(true).build().toObjectMapper();
 
     private final RestfulCasSimpleMultifactorAuthenticationTokenProperties properties;
 
     private final TicketFactory ticketFactory;
+
+    public RestfulCasSimpleMultifactorAuthenticationService(final TicketRegistry ticketRegistry,
+                                                            final RestfulCasSimpleMultifactorAuthenticationTokenProperties properties,
+                                                            final TicketFactory ticketFactory) {
+        super(ticketRegistry);
+        this.properties = properties;
+        this.ticketFactory = ticketFactory;
+    }
 
     @Override
     public CasSimpleMultifactorAuthenticationTicket generate(final Principal principal, final Service service) throws Exception {
@@ -165,6 +175,27 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
                 }
             }
             throw new FailedLoginException("Unable to validate multifactor credential with status " + statusCode);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
+    public void update(final Principal principal, final Map<String, Object> attributes) {
+        HttpResponse response = null;
+        try {
+            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(properties.getHeaders());
+            val exec = HttpExecutionRequest.builder()
+                .method(HttpMethod.PUT)
+                .headers(headers)
+                .entity(JsonUtils.render(MAPPER, Map.of("principal", principal, "attributes", attributes)))
+                .url(properties.getUrl())
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .build();
+            response = HttpUtils.execute(exec);
+            Assert.isTrue(HttpStatus.valueOf(response.getCode()).is2xxSuccessful(), "Unable to update principal");
         } finally {
             HttpUtils.close(response);
         }

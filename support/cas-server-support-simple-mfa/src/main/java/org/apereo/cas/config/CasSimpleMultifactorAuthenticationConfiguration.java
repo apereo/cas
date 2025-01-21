@@ -16,6 +16,8 @@ import org.apereo.cas.mfa.simple.ticket.DefaultCasSimpleMultifactorAuthenticatio
 import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationService;
 import org.apereo.cas.mfa.simple.web.CasSimpleMultifactorAuthenticationEndpoint;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorSendTokenAction;
+import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorUpdateEmailAction;
+import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorVerifyEmailAction;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
@@ -73,11 +75,15 @@ class CasSimpleMultifactorAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action mfaSimpleMultifactorSendTokenAction(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasSimpleMultifactorAuthenticationService.BEAN_NAME) final CasSimpleMultifactorAuthenticationService casSimpleMultifactorAuthenticationService,
-            @Qualifier("mfaSimpleMultifactorTokenCommunicationStrategy") final CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy,
+            @Qualifier(CasSimpleMultifactorAuthenticationService.BEAN_NAME)
+            final CasSimpleMultifactorAuthenticationService casSimpleMultifactorAuthenticationService,
+            @Qualifier("mfaSimpleMultifactorTokenCommunicationStrategy")
+            final CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CommunicationsManager.BEAN_NAME) final CommunicationsManager communicationsManager,
-            @Qualifier("mfaSimpleMultifactorBucketConsumer") final BucketConsumer mfaSimpleMultifactorBucketConsumer) {
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final CommunicationsManager communicationsManager,
+            @Qualifier("mfaSimpleMultifactorBucketConsumer")
+            final BucketConsumer mfaSimpleMultifactorBucketConsumer) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -93,12 +99,73 @@ class CasSimpleMultifactorAuthenticationConfiguration {
                 .get();
         }
 
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_SIMPLE_UPDATE_EMAIL)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action mfaSimpleMultifactorUpdateEmailAction(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasSimpleMultifactorAuthenticationService.BEAN_NAME)
+            final CasSimpleMultifactorAuthenticationService casSimpleMultifactorAuthenticationService,
+            @Qualifier("mfaSimpleMultifactorTokenCommunicationStrategy")
+            final CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final CommunicationsManager communicationsManager,
+            @Qualifier("mfaSimpleMultifactorBucketConsumer")
+            final BucketConsumer mfaSimpleMultifactorBucketConsumer) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> {
+                    val simple = casProperties.getAuthn().getMfa().getSimple();
+                    return new CasSimpleMultifactorUpdateEmailAction(
+                        communicationsManager, casSimpleMultifactorAuthenticationService,
+                        simple,
+                        mfaSimpleMultifactorTokenCommunicationStrategy,
+                        mfaSimpleMultifactorBucketConsumer);
+                })
+                .withId(CasWebflowConstants.ACTION_ID_MFA_SIMPLE_UPDATE_EMAIL)
+                .build()
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_SIMPLE_VERIFY_EMAIL)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action mfaSimpleMultifactorVerifyEmailAction(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasSimpleMultifactorAuthenticationService.BEAN_NAME)
+            final CasSimpleMultifactorAuthenticationService casSimpleMultifactorAuthenticationService,
+            @Qualifier("mfaSimpleMultifactorTokenCommunicationStrategy")
+            final CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final CommunicationsManager communicationsManager,
+            @Qualifier("mfaSimpleMultifactorBucketConsumer")
+            final BucketConsumer mfaSimpleMultifactorBucketConsumer) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> {
+                    val simple = casProperties.getAuthn().getMfa().getSimple();
+                    return new CasSimpleMultifactorVerifyEmailAction(
+                        communicationsManager, casSimpleMultifactorAuthenticationService,
+                        simple,
+                        mfaSimpleMultifactorTokenCommunicationStrategy,
+                        mfaSimpleMultifactorBucketConsumer);
+                })
+                .withId(CasWebflowConstants.ACTION_ID_MFA_SIMPLE_VERIFY_EMAIL)
+                .build()
+                .get();
+        }
+
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorBucketConsumer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BucketConsumer mfaSimpleMultifactorBucketConsumer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("mfaSimpleMultifactorBucketStore") final BucketStore mfaSimpleMultifactorBucketStore,
+            @Qualifier("mfaSimpleMultifactorBucketStore")
+            final BucketStore mfaSimpleMultifactorBucketStore,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(BucketConsumer.class)
                 .when(CONDITION_BUCKET4J_ENABLED.given(applicationContext.getEnvironment()))
@@ -134,7 +201,8 @@ class CasSimpleMultifactorAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "mfaSimpleCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer mfaSimpleCasWebflowExecutionPlanConfigurer(
-            @Qualifier("mfaSimpleMultifactorWebflowConfigurer") final CasWebflowConfigurer mfaSimpleMultifactorWebflowConfigurer) {
+            @Qualifier("mfaSimpleMultifactorWebflowConfigurer")
+            final CasWebflowConfigurer mfaSimpleMultifactorWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(mfaSimpleMultifactorWebflowConfigurer);
         }
     }
@@ -165,8 +233,10 @@ class CasSimpleMultifactorAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasSimpleMultifactorAuthenticationTicketFactory casSimpleMultifactorAuthenticationTicketFactory(
-            @Qualifier("casSimpleMultifactorAuthenticationUniqueTicketIdGenerator") final UniqueTicketIdGenerator casSimpleMultifactorAuthenticationUniqueTicketIdGenerator,
-            @Qualifier("casSimpleMultifactorAuthenticationTicketExpirationPolicy") final ExpirationPolicyBuilder casSimpleMultifactorAuthenticationTicketExpirationPolicy) {
+            @Qualifier("casSimpleMultifactorAuthenticationUniqueTicketIdGenerator")
+            final UniqueTicketIdGenerator casSimpleMultifactorAuthenticationUniqueTicketIdGenerator,
+            @Qualifier("casSimpleMultifactorAuthenticationTicketExpirationPolicy")
+            final ExpirationPolicyBuilder casSimpleMultifactorAuthenticationTicketExpirationPolicy) {
             return new DefaultCasSimpleMultifactorAuthenticationTicketFactory(
                 casSimpleMultifactorAuthenticationTicketExpirationPolicy,
                 casSimpleMultifactorAuthenticationUniqueTicketIdGenerator);
@@ -207,7 +277,8 @@ class CasSimpleMultifactorAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketFactoryExecutionPlanConfigurer casSimpleMultifactorAuthenticationTicketFactoryConfigurer(
-            @Qualifier("casSimpleMultifactorAuthenticationTicketFactory") final CasSimpleMultifactorAuthenticationTicketFactory casSimpleMultifactorAuthenticationTicketFactory) {
+            @Qualifier("casSimpleMultifactorAuthenticationTicketFactory")
+            final CasSimpleMultifactorAuthenticationTicketFactory casSimpleMultifactorAuthenticationTicketFactory) {
             return () -> casSimpleMultifactorAuthenticationTicketFactory;
         }
     }

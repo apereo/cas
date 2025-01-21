@@ -8,6 +8,7 @@ import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,12 +57,12 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Test
     void verifyGenerateToken() throws Throwable {
         val props = casProperties.getAuthn().getMfa().getSimple().getToken().getRest();
         val port = URI.create(props.getUrl()).getPort();
-        
+
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
         val tokenId = UUID.randomUUID().toString();
         val service = RegisteredServiceTestUtils.getService();
@@ -147,6 +148,18 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
             webServer.start();
             val credential = new CasSimpleMultifactorTokenCredential(UUID.randomUUID().toString());
             assertNotNull(multifactorAuthenticationService.fetch(credential));
+        }
+    }
+
+    @Test
+    void verifyUpdatePrincipal() throws Throwable {
+        val props = casProperties.getAuthn().getMfa().getSimple().getToken().getRest();
+        val port = URI.create(props.getUrl()).getPort();
+
+        try (val webServer = new MockWebServer(port, HttpStatus.OK)) {
+            webServer.start();
+            val attributes = CollectionUtils.<String, Object>wrap("email", "casuser@example.org");
+            assertDoesNotThrow(() -> multifactorAuthenticationService.update(RegisteredServiceTestUtils.getPrincipal(), attributes));
         }
     }
 }
