@@ -2,8 +2,10 @@ package org.apereo.cas.mfa.simple.validation;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationConstants;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
+import java.util.Map;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationService}.
@@ -55,4 +57,29 @@ public interface CasSimpleMultifactorAuthenticationService {
      */
     Principal fetch(CasSimpleMultifactorTokenCredential tokenCredential) throws Exception;
 
+    /**
+     * Gets multifactor authentication ticket.
+     *
+     * @param credential the credential
+     * @return the multifactor authentication ticket
+     */
+    CasSimpleMultifactorAuthenticationTicket getMultifactorAuthenticationTicket(CasSimpleMultifactorTokenCredential credential);
+
+    /**
+     * Gets principal from ticket.
+     *
+     * @param acct the acct
+     * @return the principal from ticket
+     */
+    default Principal getPrincipalFromTicket(final CasSimpleMultifactorAuthenticationTicket acct) {
+        return (Principal) acct.getProperties().get(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL);
+    }
+
+    /**
+     * Update.
+     *
+     * @param principal  the principal
+     * @param attributes the attributes
+     */
+    void update(Principal principal, Map<String, Object> attributes);
 }

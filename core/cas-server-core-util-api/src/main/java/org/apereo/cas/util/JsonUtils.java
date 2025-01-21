@@ -34,7 +34,18 @@ public class JsonUtils {
      * @return the string
      */
     public String render(final Object model) {
-        return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(model));
+        return render(MAPPER, model);
+    }
+
+    /**
+     * Render string.
+     *
+     * @param mapper the mapper
+     * @param model  the model
+     * @return the string
+     */
+    public String render(final ObjectMapper mapper, final Object model) {
+        return FunctionUtils.doUnchecked(() -> mapper.writeValueAsString(model));
     }
 
     /**

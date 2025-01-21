@@ -347,6 +347,7 @@ layout: null
         *   [Simple](#simplemfaoverview)
             *   [Overview](/cas/{{ version }}/mfa/Simple-Multifactor-Authentication.html)
             *   [Communication Strategy](/cas/{{ version }}/mfa/Simple-Multifactor-Authentication-Communication.html)
+            *   [Registration](/cas/{{ version }}/mfa/Simple-Multifactor-Authentication-Registration.html)
             *   [Rate Limiting](/cas/{{ version }}/mfa/Simple-Multifactor-Authentication-RateLimiting.html)
             *   [Token Management](#simplemfatokens)
                 *  [Default](/cas/{{ version }}/mfa/Simple-Multifactor-Authentication-TokenManagement.html)

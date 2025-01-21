@@ -11,6 +11,7 @@ import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket
 import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationService;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
@@ -19,6 +20,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -26,6 +28,7 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.io.Serializable;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,10 +55,16 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
      */
     public static final String FLOW_SCOPE_ATTR_SMS_RECIPIENTS = "smsRecipients";
 
+    /**
+     * Event attribute to allow registration of email.
+     */
+    public static final String EVENT_ATTR_ALLOW_REGISTER_EMAIL = "allowRegisterEmail";
+
     private static final String MESSAGE_MFA_TOKEN_SENT = "cas.mfa.simple.label.tokensent";
 
     private static final String MESSAGE_MFA_CONTACT_FAILED_SMS = "cas.mfa.simple.label.contactfailed.sms";
     private static final String MESSAGE_MFA_CONTACT_FAILED_EMAIL = "cas.mfa.simple.label.contactfailed.email";
+
 
     protected final CommunicationsManager communicationsManager;
 
@@ -88,69 +97,22 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         val token = getOrCreateToken(requestContext, principal);
         LOGGER.debug("Using token [{}] created at [{}]", token.getId(), token.getCreationTime());
 
-        val mapOfAllRecipients = new LinkedHashMap<TokenSharingStrategyOptions, List<String>>();
+        val allRecipients = new LinkedHashMap<TokenSharingStrategyOptions, List<String>>();
         val communicationStrategy = tokenCommunicationStrategy.determineStrategy(token);
 
-        var smsSent = false;
-        if (communicationStrategy.contains(TokenSharingStrategyOptions.SMS)) {
-            val cmd = CasSimpleMultifactorSendSms.of(communicationsManager, properties);
-            val recipients = cmd.getSmsRecipients(principal);
-            mapOfAllRecipients.put(TokenSharingStrategyOptions.SMS, recipients);
+        val smsSent = tryToSendSms(requestContext, communicationStrategy, principal, allRecipients, token);
+        val emailSent = tryToSendEmail(requestContext, communicationStrategy, principal, allRecipients, token);
 
-            if (recipients.size() > 1) {
-                val selectedSmsRecipients = findSelectedSmsRecipients(requestContext, principal);
-                LOGGER.debug("Selected SMS recipients are [{}]", selectedSmsRecipients);
-                if (!selectedSmsRecipients.isEmpty()) {
-                    smsSent = cmd.send(principal, token, requestContext, selectedSmsRecipients);
-                    if (!smsSent) {
-                        WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_SMS);
-                    }
-                }
-            } else {
-                smsSent = cmd.send(principal, token, requestContext);
-                if (!smsSent) {
-                    WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_SMS);
-                }
+        if (!emailSent && !smsSent && (communicationsManager.isMailSenderDefined() || communicationsManager.isSmsSenderDefined())) {
+            if (allRecipients.isEmpty()) {
+                return routeToEmailRegistrationFlow(principal, authentication, allRecipients);
             }
-        }
+            val emailRecipients = allRecipients.getOrDefault(TokenSharingStrategyOptions.EMAIL, List.of());
+            val smsRecipients = allRecipients.getOrDefault(TokenSharingStrategyOptions.SMS, List.of());
 
-
-        var emailSent = false;
-        if (communicationStrategy.contains(TokenSharingStrategyOptions.EMAIL)) {
-            val cmd = CasSimpleMultifactorSendEmail.of(communicationsManager, properties);
-            val recipients = cmd.getEmailMessageRecipients(principal);
-            mapOfAllRecipients.put(TokenSharingStrategyOptions.EMAIL, recipients);
-
-            if (recipients.size() > 1) {
-                val selectedEmailRecipients = findSelectedEmailRecipients(requestContext, principal);
-                LOGGER.debug("Selected email recipients are [{}]", selectedEmailRecipients);
-                if (!selectedEmailRecipients.isEmpty()) {
-                    emailSent = cmd.send(principal, token, selectedEmailRecipients, requestContext).isAnyEmailSent();
-                    if (!emailSent) {
-                        WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_EMAIL);
-                    }
-                }
-            } else {
-                emailSent = cmd.send(principal, token, requestContext).isAnyEmailSent();
-                if (!emailSent) {
-                    WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_EMAIL);
-                }
-            }
-        }
-
-        if (!emailSent && !smsSent) {
-            if (mapOfAllRecipients.isEmpty()) {
-                LOGGER.debug("No recipients found for [{}]", principal.getId());
-                return getEventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER,
-                    new LocalAttributeMap<>(Map.of("principal", principal, "authentication", authentication)));
-            } else {
-                val emailRecipients = mapOfAllRecipients.getOrDefault(TokenSharingStrategyOptions.EMAIL, List.of());
-                val smsRecipients = mapOfAllRecipients.getOrDefault(TokenSharingStrategyOptions.SMS, List.of());
-
-                if (emailRecipients.size() > 1 || smsRecipients.size() > 1) {
-                    LOGGER.debug("Multiple recipients found for [{}]: [{}]", principal.getId(), mapOfAllRecipients);
-                    return buildSelectRecipientsEvent(requestContext, principal, mapOfAllRecipients);
-                }
+            if (emailRecipients.size() > 1 || smsRecipients.size() > 1) {
+                LOGGER.debug("Multiple recipients found for [{}]: [{}]", principal.getId(), allRecipients);
+                return buildSelectRecipientsEvent(requestContext, principal, allRecipients);
             }
         }
 
@@ -164,7 +126,109 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
             return buildSuccessEvent(token);
         }
         LOGGER.error("Communication strategies failed to submit token [{}] to user", token.getId());
+        return routeToErrorEvent();
+    }
+
+    private Event routeToErrorEvent() {
         return error();
+    }
+
+    private Event routeToEmailRegistrationFlow(final Principal principal, final Authentication authentication,
+                                               final Map<TokenSharingStrategyOptions, List<String>> allRecipients) {
+        if (properties.getMail().isRegistrationEnabled()) {
+            LOGGER.debug("No recipients found for [{}]", principal.getId());
+            val eventAttributes = new LocalAttributeMap<>(CollectionUtils.wrap(
+                "principal", principal,
+                "authentication", authentication)
+            );
+            val emailRecipients = allRecipients.get(TokenSharingStrategyOptions.EMAIL);
+            if (emailRecipients == null || emailRecipients.isEmpty()) {
+                LOGGER.debug("No email recipients found for [{}]", principal.getId());
+                eventAttributes.put(EVENT_ATTR_ALLOW_REGISTER_EMAIL, Boolean.TRUE);
+            }
+            return getEventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER, eventAttributes);
+        }
+        return routeToErrorEvent();
+    }
+
+    private boolean tryToSendEmail(final RequestContext requestContext, final EnumSet<TokenSharingStrategyOptions> communicationStrategy,
+                                   final Principal principal,
+                                   final Map<TokenSharingStrategyOptions, List<String>> mapOfAllRecipients,
+                                   final CasSimpleMultifactorAuthenticationTicket token) {
+        if (communicationStrategy.contains(TokenSharingStrategyOptions.EMAIL) && communicationsManager.isMailSenderDefined()) {
+            val cmd = CasSimpleMultifactorSendEmail.of(communicationsManager, properties);
+            val recipients = cmd.getEmailMessageRecipients(principal);
+
+            val currentEvent = requestContext.getCurrentEvent();
+            var registeredEmailAddress = StringUtils.EMPTY;
+            if (recipients.isEmpty() && currentEvent != null
+                && currentEvent.getId().equals(CasWebflowConstants.TRANSITION_ID_RESUME)) {
+                registeredEmailAddress = currentEvent.getAttributes().getRequiredString(CasSimpleMultifactorVerifyEmailAction.TOKEN_PROPERTY_EMAIL_TO_REGISTER);
+                recipients.add(registeredEmailAddress);
+            }
+
+            if (!recipients.isEmpty()) {
+                mapOfAllRecipients.put(TokenSharingStrategyOptions.EMAIL, recipients);
+            }
+
+            if (recipients.size() > 1) {
+                val selectedEmailRecipients = findSelectedEmailRecipients(requestContext, principal);
+                LOGGER.debug("Selected email recipients are [{}]", selectedEmailRecipients);
+                if (!selectedEmailRecipients.isEmpty()) {
+                    var emailSent = cmd.send(principal, token, selectedEmailRecipients, requestContext).isAnyEmailSent();
+                    if (!emailSent) {
+                        WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_EMAIL);
+                    }
+                    return emailSent;
+                }
+            } else if (StringUtils.isNotBlank(registeredEmailAddress)) {
+                var emailSent = cmd.send(principal, token, List.of(registeredEmailAddress), requestContext).isAnyEmailSent();
+                if (!emailSent) {
+                    WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_EMAIL);
+                }
+                return emailSent;
+            } else {
+                var emailSent = cmd.send(principal, token, requestContext).isAnyEmailSent();
+                if (!emailSent) {
+                    WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_EMAIL);
+                }
+                return emailSent;
+            }
+        }
+        return false;
+    }
+
+    private boolean tryToSendSms(final RequestContext requestContext,
+                                 final EnumSet<TokenSharingStrategyOptions> communicationStrategy,
+                                 final Principal principal,
+                                 final Map<TokenSharingStrategyOptions, List<String>> mapOfAllRecipients,
+                                 final CasSimpleMultifactorAuthenticationTicket token) {
+        if (communicationStrategy.contains(TokenSharingStrategyOptions.SMS) && communicationsManager.isSmsSenderDefined()) {
+            val cmd = CasSimpleMultifactorSendSms.of(communicationsManager, properties);
+            val recipients = cmd.getSmsRecipients(principal);
+            if (!recipients.isEmpty()) {
+                mapOfAllRecipients.put(TokenSharingStrategyOptions.SMS, recipients);
+            }
+
+            if (recipients.size() > 1) {
+                val selectedSmsRecipients = findSelectedSmsRecipients(requestContext, principal);
+                LOGGER.debug("Selected SMS recipients are [{}]", selectedSmsRecipients);
+                if (!selectedSmsRecipients.isEmpty()) {
+                    var smsSent = cmd.send(principal, token, requestContext, selectedSmsRecipients);
+                    if (!smsSent) {
+                        WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_SMS);
+                    }
+                    return smsSent;
+                }
+            } else {
+                var smsSent = cmd.send(principal, token, requestContext);
+                if (!smsSent) {
+                    WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_SMS);
+                }
+                return smsSent;
+            }
+        }
+        return false;
     }
 
     protected List<String> findSelectedEmailRecipients(final RequestContext requestContext, final Principal principal) {
