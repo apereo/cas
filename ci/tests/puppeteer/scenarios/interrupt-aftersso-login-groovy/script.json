@@ -1,0 +1,23 @@
+{
+  "dependencies": "reports,interrupt-webflow,scripting",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.interrupt.core.trigger-mode=AFTER_SSO",
+    "--cas.interrupt.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/interrupt.groovy",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoint.springWebflow.access=UNRESTRICTED",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
