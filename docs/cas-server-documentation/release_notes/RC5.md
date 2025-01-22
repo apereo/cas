@@ -82,3 +82,7 @@ allows users to register their email address when no contact information can be 
 - BouncyCastle
 - PostgreSQL
 - Grouper
+- Spring Kafka
+- Spring Rabbit
+- Sentry
+- MySQL Driver
