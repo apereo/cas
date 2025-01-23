@@ -37,9 +37,6 @@ plugins:
   install:
     - https://github.com/vaulttec/sonar-auth-oidc/releases/download/v2.1.1/sonar-auth-oidc-plugin-2.1.1.jar
 
-monitoring:
-  passcode: "secretpasscode"
-
 # If you browse to sonarqube the properties set here aren't reflected in UI, but they do work.
 # There is a chance that future sonarqube version will limit sonar.properties to system properties in which case helm
 # chart would likely need to set these settings in DB via api or something. This works for the time being.
