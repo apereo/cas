@@ -16,6 +16,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.support.CookieUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
@@ -148,7 +149,7 @@ public class CasThemesAutoConfiguration {
                     resolver.setAllowedLocations(resources);
                     
                     val chainProperties = webProperties.getResources().getChain();
-                    if (chainProperties.getEnabled()) {
+                    if (BooleanUtils.isTrue(chainProperties.getEnabled())) {
                         val paths = chainProperties.getStrategy().getContent().getPaths();
                         val versionResourceResolver = new VersionResourceResolver();
                         versionResourceResolver.addVersionStrategy(new ContentVersionStrategy(), paths);
