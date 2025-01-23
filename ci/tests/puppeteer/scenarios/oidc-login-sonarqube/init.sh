@@ -16,7 +16,8 @@ kubectl create secret generic -n sonarqube cas-cert --from-file=cas-cert.crt=${C
 helm upgrade sonarqube sonarqube/sonarqube -n sonarqube --install \
   --values ${SCENARIO_DIR}/sonarqube-test-values.yaml \
   --set annotations.releaseTime="$( date --rfc-3339=seconds)" \
-  --set monitoringPasscode="#RnzqvLa566eXXY2"
+  --set monitoringPasscode="#RnzqvLa566eXXY2" \
+  --set edition="developer"
 sleep 15
 # we don't want to stop after this point so if it times out coming up, we can see status and logs
 set +e
