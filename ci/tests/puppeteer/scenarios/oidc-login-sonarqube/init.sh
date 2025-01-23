@@ -15,7 +15,8 @@ kubectl create secret generic -n sonarqube cas-cert --from-file=cas-cert.crt=${C
 # adding date annotation to force re-start of pod since secret with cas cert probably changed due to it being deleted every time
 helm upgrade sonarqube sonarqube/sonarqube -n sonarqube --install \
   --values ${SCENARIO_DIR}/sonarqube-test-values.yaml \
-  --set annotations.releaseTime="$( date --rfc-3339=seconds)"
+  --set annotations.releaseTime="$( date --rfc-3339=seconds)" \
+  --set monitoringPasscode="#RnzqvLa566eXXY2"
 sleep 15
 # we don't want to stop after this point so if it times out coming up, we can see status and logs
 set +e

@@ -1,3 +1,4 @@
+
 const assert = require("assert");
 const axios = require("axios");
 const https = require("https");
@@ -162,6 +163,9 @@ exports.asciiart = async (text) => {
     const art = figlet.textSync(text);
     console.log(colors.blue(art));
 };
+
+exports.assertTextMatches = async(text, regExp) =>
+    assert(regExp.test(text), `Text ${text} does not match pattern ${regExp}`);
 
 exports.clickLast = async (page, button) =>
     page.evaluate((button) => {
