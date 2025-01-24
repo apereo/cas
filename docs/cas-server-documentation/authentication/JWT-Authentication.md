@@ -8,7 +8,7 @@ category: Authentication
 
 # JWT Authentication
 
-[JSON Web Tokens](https://jwt.io/) are an open, industry standard RFC 7519 method for representing claims securely between two parties.
+JSON Web Tokens are an open, industry standard RFC 7519 method for representing claims securely between two parties.
 CAS provides support for token-based authentication on top of JWT, where an authentication request can be granted an SSO session based
 on a form of credentials that are JWTs.
 

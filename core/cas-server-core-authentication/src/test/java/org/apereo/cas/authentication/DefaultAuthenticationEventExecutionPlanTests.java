@@ -37,7 +37,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.context.annotation.Import;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -58,7 +58,6 @@ class DefaultAuthenticationEventExecutionPlanTests {
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class
     }, properties = "cas.sso.proxy-authn-enabled=false")
-    @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
     @ExtendWith(CasTestExtension.class)
     abstract static class BaseTests {
         protected AttributeRepositoryResolver attributeRepositoryResolver;
@@ -84,16 +83,28 @@ class DefaultAuthenticationEventExecutionPlanTests {
     }
 
     @Nested
+    @Import(DuplicateHandlers.AuthenticationTestConfiguration.class)
     class DuplicateHandlers extends BaseTests {
+        @TestConfiguration(value = "AuthenticationTestConfiguration", proxyBeanMethods = false)
+        static class AuthenticationTestConfiguration {
+            @Bean
+            public AuthenticationEventExecutionPlanConfigurer authenticationPlanConfigurer() {
+                return plan -> {
+                    val h1 = new AcceptUsersAuthenticationHandler("Handler1");
+                    val h2 = new AcceptUsersAuthenticationHandler(h1.getName());
+                    assertEquals(h1, h2);
+
+                    assertTrue(plan.registerAuthenticationHandler(h1));
+                    assertFalse(plan.registerAuthenticationHandler(h2));
+                    h2.setState(AuthenticationHandlerStates.STANDBY);
+                    assertTrue(plan.registerAuthenticationHandler(h2));
+                };
+            }
+        }
+        
         @Test
         void verifyDuplicateHandlers() {
-            val h1 = new AcceptUsersAuthenticationHandler("Handler1");
-            val h2 = new AcceptUsersAuthenticationHandler(h1.getName());
-            assertEquals(h1, h2);
-            assertTrue(authenticationEventExecutionPlan.registerAuthenticationHandler(h1));
-            assertFalse(authenticationEventExecutionPlan.registerAuthenticationHandler(h2));
-            h2.setState(AuthenticationHandlerStates.STANDBY);
-            assertTrue(authenticationEventExecutionPlan.registerAuthenticationHandler(h2));
+            assertEquals(2, authenticationEventExecutionPlan.getAuthenticationHandlers().size());
         }
     }
 
@@ -138,16 +149,31 @@ class DefaultAuthenticationEventExecutionPlanTests {
     }
 
     @Nested
+    @Import(MatchingHandlers.AuthenticationTestConfiguration.class)
     class MatchingHandlers extends BaseTests {
+        @TestConfiguration(value = "AuthenticationTestConfiguration", proxyBeanMethods = false)
+        static class AuthenticationTestConfiguration {
+            @Bean
+            public AuthenticationEventExecutionPlanConfigurer authenticationPlanConfigurer() {
+                return plan -> {
+                    plan.registerAuthenticationHandlersWithPrincipalResolver(List.of(new SimpleTestUsernamePasswordAuthenticationHandler()), List.of());
+                };
+            }
+        }
+        
         @Test
         void verifyMismatchedCount() {
-            authenticationEventExecutionPlan.registerAuthenticationHandlersWithPrincipalResolver(List.of(new SimpleTestUsernamePasswordAuthenticationHandler()), List.of());
             assertTrue(authenticationEventExecutionPlan.getAuthenticationHandlers().isEmpty());
         }
     }
 
     @Nested
+    @Import(EmptyHandlers.AuthenticationTestConfiguration.class)
     class EmptyHandlers extends BaseTests {
+        @TestConfiguration(value = "AuthenticationTestConfiguration", proxyBeanMethods = false)
+        static class AuthenticationTestConfiguration {
+        }
+        
         @Test
         void verifyNoHandlerResolves() {
             val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
@@ -158,65 +184,79 @@ class DefaultAuthenticationEventExecutionPlanTests {
 
 
     @Nested
+    @Import(CredentialTypes.AuthenticationTestConfiguration.class)
     class CredentialTypes extends BaseTests {
+        @TestConfiguration(value = "AuthenticationTestConfiguration", proxyBeanMethods = false)
+        static class AuthenticationTestConfiguration {
+            @Bean
+            public AuthenticationEventExecutionPlanConfigurer authenticationPlanConfigurer() {
+                return plan -> {
+                    plan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("Handler1"));
+                    plan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("Handler2"));
+                };
+            }
+        }
+
         @Test
         void verifyByCredentialType() throws Throwable {
-            val h1 = new SimpleTestUsernamePasswordAuthenticationHandler("Handler1");
-            val h2 = new SimpleTestUsernamePasswordAuthenticationHandler("Handler2");
-          
-            assertTrue(authenticationEventExecutionPlan.registerAuthenticationHandler(h1));
-            assertTrue(authenticationEventExecutionPlan.registerAuthenticationHandler(h2));
-
             val credential = new UsernamePasswordCredential();
             credential.setUsername(UUID.randomUUID().toString());
             credential.assignPassword(credential.getUsername());
-            credential.setSource(h1.getName());
+            credential.setSource("Handler1");
 
             val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
                 .newTransaction(CoreAuthenticationTestUtils.getWebApplicationService(), credential);
 
             val handlers = authenticationEventExecutionPlan.getAuthenticationHandlers(transaction);
             assertEquals(1, handlers.size());
-            assertEquals(h1, handlers.iterator().next());
+            assertEquals("Handler1", handlers.iterator().next().getName());
         }
     }
 
     @Nested
+    @Import(CredentialTypeWithService.AuthenticationTestConfiguration.class)
     class CredentialTypeWithService extends BaseTests {
+        @TestConfiguration(value = "AuthenticationTestConfiguration", proxyBeanMethods = false)
+        static class AuthenticationTestConfiguration {
+            @Bean
+            public AuthenticationEventExecutionPlanConfigurer authenticationPlanConfigurer(
+                @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+                return plan -> {
+                    plan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("Handler1"));
+                    plan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("Handler2"));
+                    val h3 = mock(MultifactorAuthenticationHandler.class);
+                    when(h3.getName()).thenReturn("Handler3");
+                    plan.registerAuthenticationHandler(h3);
+
+                    plan.registerAuthenticationHandlerResolver(new ByCredentialSourceAuthenticationHandlerResolver());
+
+                    val serviceSelectionPlan = new DefaultAuthenticationServiceSelectionPlan();
+                    serviceSelectionPlan.registerStrategy(new DefaultAuthenticationServiceSelectionStrategy());
+
+                    plan.registerAuthenticationHandlerResolver(new RegisteredServiceAuthenticationHandlerResolver(servicesManager, serviceSelectionPlan));
+                };
+            }
+        }
+        
         @Test
         void verifyByCredentialTypeAndServiceByResolvers() throws Throwable {
-            val h1 = new SimpleTestUsernamePasswordAuthenticationHandler("Handler1");
-            val h2 = new SimpleTestUsernamePasswordAuthenticationHandler("Handler2");
-            val h3 = mock(MultifactorAuthenticationHandler.class);
-            when(h3.getName()).thenReturn("Handler3");
-            
-            assertTrue(authenticationEventExecutionPlan.registerAuthenticationHandler(h1));
-            assertTrue(authenticationEventExecutionPlan.registerAuthenticationHandler(h2));
-            assertTrue(authenticationEventExecutionPlan.registerAuthenticationHandler(h3));
-
             val credential = new UsernamePasswordCredential();
             credential.setUsername(UUID.randomUUID().toString());
             credential.assignPassword(credential.getUsername());
-            credential.setSource(h1.getName());
+            credential.setSource("Handler1");
 
             val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
             val authnPolicy = mock(RegisteredServiceAuthenticationPolicy.class);
-            when(authnPolicy.getRequiredAuthenticationHandlers()).thenReturn(Set.of(h2.getName()));
+            when(authnPolicy.getRequiredAuthenticationHandlers()).thenReturn(Set.of("Handler2"));
             when(registeredService.getAuthenticationPolicy()).thenReturn(authnPolicy);
 
             val service = CoreAuthenticationTestUtils.getWebApplicationService();
             val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(service, credential);
             when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
-
-            val serviceSelectionPlan = new DefaultAuthenticationServiceSelectionPlan();
-            serviceSelectionPlan.registerStrategy(new DefaultAuthenticationServiceSelectionStrategy());
-
-            authenticationEventExecutionPlan.registerAuthenticationHandlerResolver(new ByCredentialSourceAuthenticationHandlerResolver());
-            authenticationEventExecutionPlan.registerAuthenticationHandlerResolver(new RegisteredServiceAuthenticationHandlerResolver(servicesManager, serviceSelectionPlan));
-
             val handlers = authenticationEventExecutionPlan.getAuthenticationHandlers(transaction);
             assertEquals(2, handlers.size());
-            assertTrue(handlers.containsAll(Set.of(h1, h3)));
+            assertTrue(handlers.stream().anyMatch(h -> "Handler1".equalsIgnoreCase(h.getName())));
+            assertTrue(handlers.stream().anyMatch(h -> "Handler3".equalsIgnoreCase(h.getName())));
         }
     }
 
