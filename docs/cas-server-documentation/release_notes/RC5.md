@@ -70,8 +70,8 @@ allows users to register their email address when no contact information can be 
   
 ### Apache Tomcat 11
                                                                                         
-CAS is now able to build and run on Apache Tomcat `11` to some extent. This capability is for the moment experimental and  
-underlying libraries, mainly Spring Boot, do not *officially* support Tomcat `11` yet. We anticipate that this might get 
+CAS is now able to build and run on Apache Tomcat `11` to some extent. This capability is for the moment experimental 
+and underlying libraries, mainly Spring Boot, do not *officially* support Tomcat `11` yet. We anticipate that this might get 
 worked out and more thoroughly tested in the next CAS feature releases. You are invited to experiment and share results. 
 
 Please remember that the baseline requirement will remain unchanged and is based on Apache Tomcat `10.1.x`. This is just a preparatory step 
@@ -83,6 +83,7 @@ to ensure CAS is ready for the next version of Apache Tomcat and Spring Boot.
 - [WebAuthN FIDO2 authentication](../mfa/FIDO2-WebAuthn-Authentication.html) has removed the requirement for a username from the CAS flow.
 - Static resources are now resolved using a content hashing strategy that allows cache busting for static resources.
 - [Attribute definitions](../integration/Attribute-Definitions.html) can now produce hashed values based on an assigned hashing strategy. 
+- A [new actuator endpoint](../integration/Attribute-Definitions.html) allows one to fetch registered attribute definitions with CAS.
 
 ## Library Upgrades
 
