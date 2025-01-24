@@ -82,6 +82,7 @@ to ensure CAS is ready for the next version of Apache Tomcat and Spring Boot.
 - NameID generation for SAML2 logout requests now uses the `usernameAttributeProvider` construct assigned to the SAML2 service definition.
 - [WebAuthN FIDO2 authentication](../mfa/FIDO2-WebAuthn-Authentication.html) has removed the requirement for a username from the CAS flow.
 - Static resources are now resolved using a content hashing strategy that allows cache busting for static resources.
+- [Attribute definitions](../integration/Attribute-Definitions.html) can now produce hashed values based on an assigned hashing strategy. 
 
 ## Library Upgrades
 
