@@ -67,6 +67,15 @@ test coverage of the CAS codebase is approximately `94%`.
 
 [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication-Registration.html) now 
 allows users to register their email address when no contact information can be found for the user.
+  
+### Apache Tomcat 11
+                                                                                        
+CAS is now able to build and run on Apache Tomcat `11` to some extent. This capability is for the moment experimental and  
+underlying libraries, mainly Spring Boot, do not *officially* support Tomcat `11` yet. We anticipate that this might get 
+worked out and more thoroughly tested in the next CAS feature releases. You are invited to experiment and share results. 
+
+Please remember that the baseline requirement will remain unchanged and is based on Apache Tomcat `10.1.x`. This is just a preparatory step 
+to ensure CAS is ready for the next version of Apache Tomcat and Spring Boot.
 
 ## Other Stuff
 
