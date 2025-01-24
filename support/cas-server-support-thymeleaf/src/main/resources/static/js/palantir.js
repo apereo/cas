@@ -119,7 +119,7 @@ function fetchServices(callback) {
                     5: `${service.id}`
                 });
 
-
+                let metadataSourcesCount = 0;
                 if (serviceClass.includes("SamlRegisteredService")) {
                     const metadataLocation = service.metadataLocation;
                     saml2MetadataProvidersTable.row.add({
@@ -127,7 +127,9 @@ function fetchServices(callback) {
                         1: `<span serviceId='${service.id}' class="text-wrap">${service.name ?? ""}</span>`,
                         2: metadataLocation
                     });
+                    metadataSourcesCount++;
                 }
+                $("#saml2metadataproviders").toggle(metadataSourcesCount > 0);
             }
 
             applicationsTable.search("").draw();
