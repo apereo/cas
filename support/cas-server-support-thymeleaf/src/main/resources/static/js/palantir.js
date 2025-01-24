@@ -2142,6 +2142,14 @@ async function initializePersonDirectoryOperations() {
         }
     });
 
+    const attributeDefinitionsTable = $("#attributeDefinitionsTable").DataTable({
+        pageLength: 10,
+        drawCallback: settings => {
+            $("#attributeDefinitionsTable tr").addClass("mdc-data-table__row");
+            $("#attributeDefinitionsTable td").addClass("mdc-data-table__cell");
+        }
+    });
+    
     $("button[name=personDirectoryClearButton]").off().on("click", () => {
         if (actuatorEndpoints.persondirectory) {
             const form = document.getElementById("fmPersonDirectory");
@@ -2176,7 +2184,6 @@ async function initializePersonDirectoryOperations() {
         }
     });
 
-
     $("button[name=personDirectoryButton]").off().on("click", () => {
         if (actuatorEndpoints.persondirectory) {
             const form = document.getElementById("fmPersonDirectory");
@@ -2207,7 +2214,34 @@ async function initializePersonDirectoryOperations() {
             });
         }
     });
-
+    
+    attributeDefinitionsTable.clear();
+    let attributeDefinitions = 0;
+    if (actuatorEndpoints.attributeDefinitions) {
+        $.get(actuatorEndpoints.attributeDefinitions, response => {
+            for (const definition of response) {
+                attributeDefinitionsTable.row.add({
+                    0: `<code>${definition.key ?? "N/A"}</code>`,
+                    1: `<code>${definition.name ?? "N/A"}</code>`,
+                    2: `<code>${definition.scoped ?? "false"}</code>`,
+                    3: `<code>${definition.encrypted ?? "false"}</code>`,
+                    4: `<code>${definition.singleValue ?? "false"}</code>`,
+                    5: `<code>${definition.attribute ?? "N/A"}</code>`,
+                    6: `<code>${definition.patternFormat ?? "N/A"}</code>`,
+                    7: `<code>${definition.canonicalizationMode ?? "N/A"}</code>`,
+                    8: `<code>${definition.flattened ?? "false"}</code>`,
+                    9: `<code>${definition?.friendlyName ?? "N/A"}</code>`,
+                    10: `<code>${definition?.urn ?? "N/A"}</code>`
+                });
+                attributeDefinitions++;
+            }
+            attributeDefinitionsTable.draw();
+            $("#attributeDefinitionsTab").toggle(attributeDefinitions > 0);
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayBanner(xhr);
+        });
+    }
 }
 
 async function initializeAuthenticationOperations() {

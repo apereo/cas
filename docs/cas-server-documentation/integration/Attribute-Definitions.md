@@ -23,6 +23,12 @@ with special decorations to be considered during attribute resolution and releas
 optional and the store may not contain any attribute definitions.
 
 {% include_cached casproperties.html properties="cas.authn.attribute-repository.attribute-definition-store" %}
+   
+## Actuator Endpoint
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="attributeDefinitions" casModule="cas-server-support-reports" %}
 
 ## JSON Attribute Definitions
 

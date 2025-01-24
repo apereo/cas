@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -29,6 +30,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.report.AttributeDefinitionsEndpoint;
 import org.apereo.cas.web.report.AuditLogEndpoint;
 import org.apereo.cas.web.report.CasConfigurationEndpoint;
 import org.apereo.cas.web.report.CasFeaturesEndpoint;
@@ -85,6 +87,16 @@ public class CasReportsAutoConfiguration {
     @Configuration(value = "AttributesEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class AttributesEndpointsConfiguration {
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AttributeDefinitionsEndpoint attributeDefinitionsEndpoint(
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore,
+            final CasConfigurationProperties casProperties) {
+            return new AttributeDefinitionsEndpoint(casProperties, attributeDefinitionStore);
+        }
+        
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
