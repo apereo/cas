@@ -41,10 +41,6 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
-## New & Noteworthy
-
-The following items are new improvements and enhancements presented in this release.
-
 ### OpenRewrite Recipes
 
 CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
@@ -84,6 +80,7 @@ to ensure CAS is ready for the next version of Apache Tomcat and Spring Boot.
 - Static resources are now resolved using a content hashing strategy that allows cache busting for static resources.
 - [Attribute definitions](../integration/Attribute-Definitions.html) can now produce hashed values based on an assigned hashing strategy. 
 - A [new actuator endpoint](../integration/Attribute-Definitions.html) allows one to fetch registered attribute definitions with CAS.
+- A [new actuator endpoint](../integration/Attribute-Resolution.html) allows one to fetch registered attribute repositories with CAS.
 
 ## Library Upgrades
 
