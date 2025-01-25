@@ -1,6 +1,9 @@
 package org.apereo.cas.authentication.attribute;
 
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -34,11 +37,16 @@ public class SimplePersonAttributes implements PersonAttributes {
 
     private final String name;
 
-    public SimplePersonAttributes(final String name, final Map<String, List<Object>> attributes) {
+    @JsonCreator
+    public SimplePersonAttributes(
+        @JsonProperty("name")
+        final String name,
+        @JsonProperty("attributes")
+        final Map<String, List<Object>> attributes) {
         this.attributes = buildImmutableAttributeMap(attributes);
         this.name = name;
     }
-
+    
     public SimplePersonAttributes(final Map<String, List<Object>> attributes) {
         this.attributes = buildImmutableAttributeMap(attributes);
         this.name = attributes.containsKey("username")
@@ -106,6 +114,7 @@ public class SimplePersonAttributes implements PersonAttributes {
     }
 
     @Override
+    @JsonIgnore
     public Object getAttributeValue(final String name) {
         val values = this.attributes.get(name);
         if (values == null || values.isEmpty()) {
@@ -115,6 +124,7 @@ public class SimplePersonAttributes implements PersonAttributes {
     }
 
     @Override
+    @JsonIgnore
     public List<Object> getAttributeValues(final String name) {
         return this.attributes.get(name);
     }

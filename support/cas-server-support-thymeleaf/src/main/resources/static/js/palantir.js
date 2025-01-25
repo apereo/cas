@@ -2149,6 +2149,14 @@ async function initializePersonDirectoryOperations() {
             $("#attributeDefinitionsTable td").addClass("mdc-data-table__cell");
         }
     });
+
+    const attributeRepositoriesTable = $("#attributeRepositoriesTable").DataTable({
+        pageLength: 10,
+        drawCallback: settings => {
+            $("#attributeRepositoriesTable tr").addClass("mdc-data-table__row");
+            $("#attributeRepositoriesTable td").addClass("mdc-data-table__cell");
+        }
+    });
     
     $("button[name=personDirectoryClearButton]").off().on("click", () => {
         if (actuatorEndpoints.persondirectory) {
@@ -2237,6 +2245,26 @@ async function initializePersonDirectoryOperations() {
             }
             attributeDefinitionsTable.draw();
             $("#attributeDefinitionsTab").toggle(attributeDefinitions > 0);
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayBanner(xhr);
+        });
+    }
+
+    attributeRepositoriesTable.clear();
+    let attributeRepositories = 0;
+    if (actuatorEndpoints.persondirectory) {
+        $.get(`${actuatorEndpoints.persondirectory}/repositories`, response => {
+            for (const definition of response) {
+                attributeRepositoriesTable.row.add({
+                    0: `<code>${definition.id ?? "N/A"}</code>`,
+                    1: `<code>${definition.order ?? "0"}</code>`,
+                    2: `<code>${JSON.stringify(definition.tags)}</code>`
+                });
+                attributeRepositories++;
+            }
+            attributeRepositoriesTable.draw();
+            $("#attributeRepositoriesTab").toggle(attributeRepositories > 0);
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
             displayBanner(xhr);

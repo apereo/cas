@@ -12,6 +12,7 @@
             <ul>
                 <li><a id="attributeResolutionTab" href="#attributeresolution-tab">Attribute Resolution</a></li>
                 <li><a class="hide" id="attributeDefinitionsTab" href="#attributedefinitions-tab">Attribute Definitions</a></li>
+                <li><a class="hide" id="attributeRepositoriesTab" href="#attributerepositories-tab">Attribute Repositories</a></li>
             </ul>
             <div id="attributeresolution-tab">
                  <p>You can examine person attributes from the CAS attribute repositories.</p>
@@ -77,6 +78,24 @@
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Flattened</th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Friendly Name</th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">URN</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div id="attributerepositories-tab">
+                <p>
+                    You can examine attribute repositories registered with CAS that are responsible for fetching attributes for users.
+                </p>
+                <table id="attributeRepositoriesTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Order</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Tags</th>
                     </tr>
                     </thead>
                     <tbody class="mdc-data-table__content">

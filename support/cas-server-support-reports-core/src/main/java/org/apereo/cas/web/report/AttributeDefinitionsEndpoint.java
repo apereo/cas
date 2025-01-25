@@ -27,6 +27,11 @@ public class AttributeDefinitionsEndpoint extends BaseCasActuatorEndpoint {
         this.attributeDefinitionStore = attributeDefinitionStore;
     }
 
+    /**
+     * Produce all attribute definitions.
+     *
+     * @return the collection
+     */
     @ReadOperation
     @Operation(summary = "Get all attribute definitions registered with CAS")
     public Collection<AttributeDefinition> attributeDefinitions() {
