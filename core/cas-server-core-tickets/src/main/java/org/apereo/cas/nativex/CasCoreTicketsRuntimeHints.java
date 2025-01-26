@@ -28,6 +28,7 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         registerProxyHints(hints, TicketSerializationExecutionPlanConfigurer.class, TicketFactoryExecutionPlanConfigurer.class);
+        registerProxyHints(hints, CipherExecutor.class);
 
         registerSpringProxyHints(hints, Cleanable.class, TicketRegistry.class);
         registerSpringProxyHints(hints, PropertyBoundCipherExecutor.class, CipherExecutor.class);

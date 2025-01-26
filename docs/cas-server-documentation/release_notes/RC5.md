@@ -94,3 +94,7 @@ to ensure CAS is ready for the next version of Apache Tomcat and Spring Boot.
 - Spring Rabbit
 - Sentry
 - MySQL Driver
+- Gradle
+- Lettuce
+- LettuceMod
+- Groovy
