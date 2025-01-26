@@ -1,6 +1,5 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.authentication.attribute.AttributeDefinition;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.test.CasTestExtension;
