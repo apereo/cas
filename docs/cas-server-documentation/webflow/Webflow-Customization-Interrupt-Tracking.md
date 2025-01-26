@@ -18,7 +18,13 @@ and interrupt payload has changed since that last notification, CAS may interrup
 the most recent version of the interrupt payload.
 
 {% include_cached casproperties.html properties="cas.interrupt.cookie" %}
-       
+
+<div class="alert alert-warning">:warning: <strong>Pay Attention</strong><br /> 
+The interrupt tracking mechanism relies on a cookie by default to remember the previous interrupt payload for future comparisons.
+Be careful with the size of the interrupt payload you produce, as it may affect the
+overall size of the cookie accepted by the browser or the server container of choice.
+</div>
+
 ## Custom
  
 If you wish to design your own interrupt tracking mechanism, you
