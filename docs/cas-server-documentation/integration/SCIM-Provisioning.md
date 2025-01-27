@@ -37,24 +37,37 @@ attribute in the SCIM schema is mapped and populated from the `givenName` attrib
 
 The set of attributes that are mapped are as follows:
 
-| Attribute         | Description                                         
-|------------------------------------------------------------------------------------
-| `userName`        | Set to the principal id. 
-| `password`        | Set to the credential password, if available.
-| `nickName`        | Set to the principal attribute `nickName`.
-| `displayName`     | Set to the principal attribute `displayName`.
-| `givenName`       | Set to the principal attribute `givenName`.
-| `familyName`      | Set to the principal attribute `familyName`.
-| `email`           | Set to the principal attribute `email`.
-| `phoneNumber`     | Set to the principal attribute `phoneNumber`.
-| `externalId`      | Set to the principal attribute `externalId`.
+| Attribute        | Description                                      |
+|------------------|--------------------------------------------------|
+| `userName`       | Set to the principal id.                         |
+| `password`       | Set to the credential password, if available.    |
+| `nickName`       | Set to the principal attribute `nickName`.       |
+| `displayName`    | Set to the principal attribute `displayName`.    |
+| `givenName`      | Set to the principal attribute `givenName`.      |
+| `familyName`     | Set to the principal attribute `familyName`.     |
+| `middleName`     | Set to the principal attribute `middleName`.     |
+| `email`          | Set to the principal attribute `email`.          |
+| `phoneNumber`    | Set to the principal attribute `phoneNumber`.    |
+| `externalId`     | Set to the principal attribute `externalId`.     |
+| `entitlements`   | Set to the principal attribute `entitlements`.   |
+| `roles`          | Set to the principal attribute `roles`.          |
+| `addresses`      | Set to the principal attribute `addresses`.      |
+| `ims`            | Set to the principal attribute `ims`.            |
+| `employeeNumber` | Set to the principal attribute `employeeNumber`. |
+| `costCenter`     | Set to the principal attribute `costCenter`.     |
+| `division`       | Set to the principal attribute `division`.       |
+| `department`     | Set to the principal attribute `department`.     |
+| `organization`   | Set to the principal attribute `organization`.   |
+| `resourceType`   | Set to the principal attribute `resourceType`.   |
+
+The default mapping rules can be controlled and customized using CAS properties. 
 
 If the default mapping rules are not suitable, the mapping rules can always be adjusted 
 and customized using the following bean:   
 
 ```java
 @Bean
-public ScimV2PrincipalAttributeMapper scim2PrincipalAttributeMapper() {
+public ScimPrincipalAttributeMapper scim2PrincipalAttributeMapper() {
     return new MyPrincipalAttributeMapper();
 }
 ```

@@ -1,4 +1,4 @@
-package org.apereo.cas.scim.v2;
+package org.apereo.cas.scim.v2.provisioning;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -6,13 +6,13 @@ import org.apereo.cas.authentication.principal.Principal;
 import de.captaingoldfish.scim.sdk.common.resources.User;
 
 /**
- * This is {@link ScimV2PrincipalAttributeMapper}.
+ * This is {@link ScimPrincipalAttributeMapper}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
  */
 @FunctionalInterface
-public interface ScimV2PrincipalAttributeMapper {
+public interface ScimPrincipalAttributeMapper {
     /**
      * Map the user resource values and attributes from the given principal object.
      *

@@ -3,9 +3,9 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.scim.v2.DefaultScimV2PrincipalAttributeMapper;
-import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
-import org.apereo.cas.scim.v2.ScimV2PrincipalProvisioner;
+import org.apereo.cas.scim.v2.provisioning.DefaultScimPrincipalAttributeMapper;
+import org.apereo.cas.scim.v2.provisioning.ScimPrincipalAttributeMapper;
+import org.apereo.cas.scim.v2.provisioning.ScimPrincipalProvisioner;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -96,17 +96,19 @@ public class CasScimAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "scim2PrincipalAttributeMapper")
-        public ScimV2PrincipalAttributeMapper scim2PrincipalAttributeMapper() {
-            return new DefaultScimV2PrincipalAttributeMapper();
+        public ScimPrincipalAttributeMapper scim2PrincipalAttributeMapper(
+            final CasConfigurationProperties casProperties) {
+            return new DefaultScimPrincipalAttributeMapper(casProperties.getScim());
         }
+        
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = PrincipalProvisioner.BEAN_NAME)
         public PrincipalProvisioner principalProvisioner(
             final CasConfigurationProperties casProperties,
             @Qualifier("scim2PrincipalAttributeMapper")
-            final ScimV2PrincipalAttributeMapper scim2PrincipalAttributeMapper) {
-            return new ScimV2PrincipalProvisioner(casProperties.getScim(), scim2PrincipalAttributeMapper);
+            final ScimPrincipalAttributeMapper scim2PrincipalAttributeMapper) {
+            return new ScimPrincipalProvisioner(casProperties.getScim(), scim2PrincipalAttributeMapper);
         }
     }
 }

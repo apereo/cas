@@ -3,6 +3,7 @@ package org.apereo.cas.persondir;
 import org.apereo.cas.authentication.attribute.BasePersonAttributeDao;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
 import org.apereo.cas.authentication.attribute.SimpleUsernameAttributeProvider;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.UsernameAttributeProvider;
@@ -73,7 +74,7 @@ public class RestfulPersonAttributeDao extends BasePersonAttributeDao {
 
             val response = client.execute(request);
             val attributes = jacksonObjectMapper.readValue(response.getEntity().getContent(), Map.class);
-            return new SimplePersonAttributes(uid, stuffAttributesIntoList(attributes, filter));
+            return new SimplePersonAttributes(uid, PersonAttributeDao.stuffAttributesIntoList(attributes));
         } catch (final Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
@@ -83,7 +84,7 @@ public class RestfulPersonAttributeDao extends BasePersonAttributeDao {
     public Set<PersonAttributes> getPeople(final Map<String, Object> query,
                                            final PersonAttributeDaoFilter filter,
                                            final Set<PersonAttributes> resultPeople) {
-        val queryAttributes = stuffAttributesIntoList(query, filter);
+        val queryAttributes = PersonAttributeDao.stuffAttributesIntoList(query);
         return getPeopleWithMultivaluedAttributes(queryAttributes, filter, resultPeople);
     }
 

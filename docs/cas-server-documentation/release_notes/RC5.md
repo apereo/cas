@@ -72,6 +72,11 @@ worked out and more thoroughly tested in the next CAS feature releases. You are 
 
 Please remember that the baseline requirement will remain unchanged and is based on Apache Tomcat `10.1.x`. This is just a preparatory step 
 to ensure CAS is ready for the next version of Apache Tomcat and Spring Boot.
+  
+### SCIM Attribute Resolution
+         
+The attribute resolution machinery in CAS is now able to [contact SCIM servers](../integration/Attribute-Resolution-SCIM.html) 
+to fetch and retrieve attributes for users.
 
 ## Other Stuff
 
