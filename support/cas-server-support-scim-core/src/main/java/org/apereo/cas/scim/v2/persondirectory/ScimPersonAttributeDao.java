@@ -1,4 +1,4 @@
-package org.apereo.cas.redis;
+package org.apereo.cas.scim.v2.persondirectory;
 
 import org.apereo.cas.authentication.attribute.BasePersonAttributeDao;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.UsernameAttributeProvider;
-import org.apereo.cas.redis.core.CasRedisTemplate;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -18,24 +17,23 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This is {@link RedisPersonAttributeDao}.
+ * This is {@link ScimPersonAttributeDao}.
  *
  * @author Misagh Moayyed
- * @since 6.1.0
+ * @since 7.2.0
  */
 @RequiredArgsConstructor
 @Getter
-public class RedisPersonAttributeDao extends BasePersonAttributeDao {
-    @Setter
+@Setter
+public class ScimPersonAttributeDao extends BasePersonAttributeDao {
     private UsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider();
 
-    private final CasRedisTemplate redisTemplate;
-
-
+    private final ScimPersonAttributeService personAttributeService;
+    
     @Override
     public PersonAttributes getPerson(final String uid, final Set<PersonAttributes> resolvedPeople,
                                       final PersonAttributeDaoFilter filter) {
-        val attributes = redisTemplate.opsForHash().entries(uid);
+        val attributes = personAttributeService.getPerson(uid);
         return new SimplePersonAttributes(uid, PersonAttributeDao.stuffAttributesIntoList(attributes));
     }
 
@@ -58,4 +56,3 @@ public class RedisPersonAttributeDao extends BasePersonAttributeDao {
         return people;
     }
 }
-

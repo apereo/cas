@@ -14,18 +14,21 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasScimAutoConfiguration;
+import org.apereo.cas.config.CasScimPersonDirectoryAutoConfiguration;
+import org.apereo.cas.scim.v2.provisioning.ScimPrincipalAttributeMapper;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
 
 /**
- * This is {@link BaseScimProvisionerActionTests}.
+ * This is {@link BaseScimTests}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -36,7 +39,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreServicesAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreCookieAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreScriptingAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
@@ -46,10 +49,11 @@ import org.springframework.webflow.execution.Action;
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+    CasScimPersonDirectoryAutoConfiguration.class,
     CasScimAutoConfiguration.class
 })
 @ExtendWith(CasTestExtension.class)
-public abstract class BaseScimProvisionerActionTests {
+public abstract class BaseScimTests {
     @Autowired
     @Qualifier(PrincipalProvisioner.BEAN_NAME)
     protected PrincipalProvisioner principalProvisioner;
@@ -57,4 +61,11 @@ public abstract class BaseScimProvisionerActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SCIM_PROVISIONING_PRINCIPAL)
     protected Action principalScimProvisionerAction;
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("scim2PrincipalAttributeMapper")
+    protected ScimPrincipalAttributeMapper scim2PrincipalAttributeMapper;
 }

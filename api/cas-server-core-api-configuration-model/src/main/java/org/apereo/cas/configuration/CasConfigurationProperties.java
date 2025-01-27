@@ -46,7 +46,7 @@ import org.apereo.cas.configuration.model.support.multitenancy.MultitenancyPrope
 import org.apereo.cas.configuration.model.support.saml.SamlCoreProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
 import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
-import org.apereo.cas.configuration.model.support.scim.ScimProperties;
+import org.apereo.cas.configuration.model.support.scim.ScimProvisioningProperties;
 import org.apereo.cas.configuration.model.support.slack.SlackMessagingProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProvidersProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
@@ -133,7 +133,7 @@ public class CasConfigurationProperties implements Serializable {
      * SCIM functionality.
      */
     @NestedConfigurationProperty
-    private ScimProperties scim = new ScimProperties();
+    private ScimProvisioningProperties scim = new ScimProvisioningProperties();
 
     /**
      * General settings for authentication.

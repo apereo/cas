@@ -73,7 +73,7 @@ public class SyncopeAuthenticationProperties extends BaseSyncopeProperties {
      * For example, the convention {@code lastLoginDate->lastDate} will process the
      * Syncope attribute {@code lastLoginDate} and will internally rename that to {@code lastDate}.
      * If no mapping is specified, CAS defaults will be used instead.
-     * In other words, this settings allows one to virtually rename and remap Syncopen attributes
+     * In other words, this settings allows one to virtually rename and remap Syncope attributes
      * during the authentication event.
      */
     private Map<String, String> attributeMappings = new LinkedHashMap<>();

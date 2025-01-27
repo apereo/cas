@@ -3,23 +3,21 @@ package org.apereo.cas.okta;
 import org.apereo.cas.authentication.attribute.BasePersonAttributeDao;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
 import org.apereo.cas.authentication.attribute.SimpleUsernameAttributeProvider;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.UsernameAttributeProvider;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.okta.sdk.client.Client;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OktaPersonAttributeDao}.
@@ -34,12 +32,6 @@ public class OktaPersonAttributeDao extends BasePersonAttributeDao {
     private UsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider();
 
     private final Client oktaClient;
-
-    private static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> personAttributesMap) {
-        val entries = (Set<? extends Map.Entry<String, ?>>) personAttributesMap.entrySet();
-        return entries.stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, entry -> CollectionUtils.toCollection(entry.getValue(), ArrayList.class)));
-    }
 
     @Override
     public PersonAttributes getPerson(final String uid, final Set<PersonAttributes> resolvedPeople,
@@ -86,13 +78,13 @@ public class OktaPersonAttributeDao extends BasePersonAttributeDao {
         FunctionUtils.doIfNotNull(profile.getTitle(), attribute -> attributes.put("oktaTitle", attribute));
         FunctionUtils.doIfNotNull(profile.getLogin(), attribute -> attributes.put("oktaLogin", attribute));
 
-        return new SimplePersonAttributes(uid, stuffAttributesIntoList(attributes));
+        return new SimplePersonAttributes(uid, PersonAttributeDao.stuffAttributesIntoList(attributes));
     }
 
     @Override
     public Set<PersonAttributes> getPeople(final Map<String, Object> map, final PersonAttributeDaoFilter filter,
                                             final Set<PersonAttributes> resolvedPeople) {
-        return getPeopleWithMultivaluedAttributes(stuffAttributesIntoList(map), filter);
+        return getPeopleWithMultivaluedAttributes(PersonAttributeDao.stuffAttributesIntoList(map), filter);
     }
 
     @Override
@@ -101,7 +93,7 @@ public class OktaPersonAttributeDao extends BasePersonAttributeDao {
                                                                      final Set<PersonAttributes> resolvedPeople) {
         val people = new LinkedHashSet<PersonAttributes>();
         val username = usernameAttributeProvider.getUsernameFromQuery(map);
-        val person = this.getPerson(username, resolvedPeople, filter);
+        val person = getPerson(username, resolvedPeople, filter);
         if (person != null) {
             people.add(person);
         }

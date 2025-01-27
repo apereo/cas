@@ -267,6 +267,7 @@ layout: null
             *   [Redis](/cas/{{ version }}/integration/Attribute-Resolution-Redis.html)
             *   [Okta](/cas/{{ version }}/integration/Attribute-Resolution-Okta.html)
             *   [Apache Syncope](/cas/{{ version }}/integration/Attribute-Resolution-Syncope.html)
+            *   [SCIM](/cas/{{ version }}/integration/Attribute-Resolution-SCIM.html)
             *   [Microsoft Entra](/cas/{{ version }}/integration/Attribute-Resolution-AzureAD.html)
             *   [Custom](/cas/{{ version }}/integration/Attribute-Resolution-Custom.html)
             *   [Selection](/cas/{{ version }}/integration/Attribute-Resolution-RepositorySelection.html)
