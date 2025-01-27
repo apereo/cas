@@ -35,16 +35,28 @@ public class X509TomcatServletWebServiceFactoryCustomizer extends ServletWebServ
     public void customize(final ConfigurableServletWebServerFactory factory) {
         val webflow = casProperties.getAuthn().getX509().getWebflow();
         if (factory instanceof final TomcatServletWebServerFactory tomcat && webflow.getPort() > 0) {
-
             LOGGER.debug("Creating X509 configuration for the tomcat container...");
             val connector = new Connector("HTTP/1.1");
             connector.setPort(webflow.getPort());
             connector.setScheme("https");
             connector.setSecure(true);
             connector.setAllowTrace(true);
+            
+            val maxPostSize = Long.valueOf(serverProperties.getTomcat().getMaxHttpFormPostSize().toBytes());
+            connector.setMaxPostSize(maxPostSize.intValue());
+            LOGGER.debug("Configured max post size for the tomcat connector on port [{}] to be [{}]", webflow.getPort(), maxPostSize);
+
             val protocol = (AbstractHttp11Protocol) connector.getProtocolHandler();
             protocol.setSSLEnabled(true);
-
+            
+            val maxHeaderSize = Long.valueOf(serverProperties.getMaxHttpRequestHeaderSize().toBytes());
+            protocol.setMaxHttpRequestHeaderSize(maxHeaderSize.intValue());
+            LOGGER.debug("Configured max request header size for the tomcat connector on port [{}] to be [{}]", webflow.getPort(), maxHeaderSize);
+            
+            val maxResponseHeader = Long.valueOf(serverProperties.getTomcat().getMaxHttpResponseHeaderSize().toBytes());
+            protocol.setMaxHttpResponseHeaderSize(maxResponseHeader.intValue());
+            LOGGER.debug("Configured max response header size for the tomcat connector on port [{}] to be [{}]", webflow.getPort(), maxResponseHeader);
+            
             val sslHostConfig = new SSLHostConfig();
             sslHostConfig.setSslProtocol("TLS");
             sslHostConfig.setHostName(protocol.getDefaultSSLHostConfigName());
