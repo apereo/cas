@@ -65,7 +65,7 @@ public class MongoDbAuthenticationHandler extends AbstractUsernamePasswordAuthen
                     .collect(Collectors.toMap(Map.Entry::getKey,
                         entry -> CollectionUtils.toCollection(entry.getValue(), ArrayList.class), (__, b) -> b, () -> new HashMap<String, List<Object>>()));
                 val principal = this.principalFactory.createPrincipal(transformedCredential.getId(), attributes);
-                return createHandlerResult(transformedCredential, principal, new ArrayList<>(0));
+                return createHandlerResult(transformedCredential, principal, new ArrayList<>());
             }
             throw new AccountNotFoundException("Unable to locate user account");
         }

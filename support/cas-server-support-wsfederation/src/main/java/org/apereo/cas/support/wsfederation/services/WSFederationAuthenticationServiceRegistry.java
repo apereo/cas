@@ -19,6 +19,6 @@ public class WSFederationAuthenticationServiceRegistry extends ImmutableInMemory
 
     public WSFederationAuthenticationServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                                      final RegisteredService... services) {
-        super(Arrays.stream(services).collect(Collectors.toList()), applicationContext, new ArrayList<>(0));
+        super(Arrays.stream(services).collect(Collectors.toList()), applicationContext, new ArrayList<>());
     }
 }

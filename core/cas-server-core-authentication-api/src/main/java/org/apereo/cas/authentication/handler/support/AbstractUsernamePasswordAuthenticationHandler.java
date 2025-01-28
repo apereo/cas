@@ -41,7 +41,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     /**
      * Decide how to execute password policy handling, if at all.
      */
-    protected AuthenticationPasswordPolicyHandlingStrategy passwordPolicyHandlingStrategy = (o, o2) -> new ArrayList<>(0);
+    protected AuthenticationPasswordPolicyHandlingStrategy passwordPolicyHandlingStrategy = (o, o2) -> new ArrayList<>();
 
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 

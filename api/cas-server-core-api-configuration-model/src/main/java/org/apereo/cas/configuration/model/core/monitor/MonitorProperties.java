@@ -70,7 +70,7 @@ public class MonitorProperties implements Serializable {
     /**
      * Options for monitoring LDAP resources.
      */
-    private List<LdapMonitorProperties> ldap = new ArrayList<>(0);
+    private List<LdapMonitorProperties> ldap = new ArrayList<>();
 
     /**
      * Options for monitoring Memcached resources.

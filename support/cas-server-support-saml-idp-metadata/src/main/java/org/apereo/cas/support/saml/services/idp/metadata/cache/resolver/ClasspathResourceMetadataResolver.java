@@ -54,7 +54,7 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override

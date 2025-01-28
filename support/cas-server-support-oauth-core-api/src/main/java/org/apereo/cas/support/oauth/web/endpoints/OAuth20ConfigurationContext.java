@@ -68,6 +68,11 @@ import java.util.Optional;
 @Setter
 @SuperBuilder
 public class OAuth20ConfigurationContext {
+    /**
+     * Default bean name.
+     */
+    public static final String BEAN_NAME = "oauth20ConfigurationContext";
+
     private final ConfigurableApplicationContext applicationContext;
 
     private final ServicesManager servicesManager;

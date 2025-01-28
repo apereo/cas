@@ -51,7 +51,7 @@ public interface DistributedCacheManager<K extends Serializable, V extends Seria
      * @return the all
      */
     default Collection<V> getAll() {
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
 
@@ -120,7 +120,7 @@ public interface DistributedCacheManager<K extends Serializable, V extends Seria
      * @return the collection
      */
     default Collection<V> findAll(final Predicate<V> filter) {
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     /**

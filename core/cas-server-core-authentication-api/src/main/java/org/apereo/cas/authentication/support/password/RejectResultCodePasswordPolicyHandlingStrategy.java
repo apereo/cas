@@ -67,6 +67,6 @@ public class RejectResultCodePasswordPolicyHandlingStrategy<AuthnResponse> exten
      * @return the authentication response result codes
      */
     protected Collection<String> getAuthenticationResponseResultCodes(final AuthnResponse response) {
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

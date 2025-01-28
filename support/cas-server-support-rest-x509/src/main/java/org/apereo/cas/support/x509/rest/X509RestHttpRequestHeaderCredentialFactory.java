@@ -39,6 +39,6 @@ public class X509RestHttpRequestHeaderCredentialFactory implements RestHttpReque
             credentials.add(prepareCredential(request, new X509CertificateCredential(certFromHeader)));
             return credentials;
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

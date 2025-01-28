@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class SamlIdPServiceRegistry extends ImmutableInMemoryServiceRegistry {
     public SamlIdPServiceRegistry(final List<RegisteredService> services,
                                   final ConfigurableApplicationContext applicationContext) {
-        super(services, applicationContext, new ArrayList<>(0));
+        super(services, applicationContext, new ArrayList<>());
     }
 
     public SamlIdPServiceRegistry(final ConfigurableApplicationContext applicationContext,

@@ -12,9 +12,7 @@ import lombok.val;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import java.util.Map;
@@ -40,9 +38,8 @@ class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
     @Test
     void verifyOperation() throws Throwable {
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(new MockHttpServletRequest(), response);
         val accessToken = getAccessToken();
-        val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+        val data = oidcUserProfileDataCreator.createFrom(accessToken);
         val entity = oidcUserProfileViewRenderer.render(data, accessToken, response);
         assertNotNull(entity);
         assertNotNull(entity.getBody());
@@ -61,7 +58,6 @@ class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
     void verifyOperationJWS() throws Throwable {
         val clientId = UUID.randomUUID().toString();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(new MockHttpServletRequest(), response);
         val accessToken = getAccessToken(clientId);
         val service = getOidcRegisteredService(clientId);
         service.setUserInfoSigningAlg("RS256");
@@ -69,7 +65,7 @@ class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
         service.setEncryptIdToken(false);
         servicesManager.save(service);
 
-        val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+        val data = oidcUserProfileDataCreator.createFrom(accessToken);
         val entity = oidcUserProfileViewRenderer.render(data, accessToken, response);
         assertNotNull(entity);
         val body = (String) entity.getBody();
@@ -89,9 +85,8 @@ class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
         servicesManager.save(service);
 
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(new MockHttpServletRequest(), response);
         val accessToken = getAccessToken(id);
-        val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+        val data = oidcUserProfileDataCreator.createFrom(accessToken);
         val entity = oidcUserProfileViewRenderer.render(data, accessToken, response);
         assertNotNull(entity);
         assertEquals(HttpStatus.BAD_REQUEST, entity.getStatusCode());

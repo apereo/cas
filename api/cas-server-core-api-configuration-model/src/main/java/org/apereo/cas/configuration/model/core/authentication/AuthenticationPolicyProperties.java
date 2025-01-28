@@ -77,12 +77,12 @@ public class AuthenticationPolicyProperties implements Serializable {
     /**
      * Execute a groovy script to detect authentication policy.
      */
-    private List<GroovyAuthenticationPolicyProperties> groovy = new ArrayList<>(0);
+    private List<GroovyAuthenticationPolicyProperties> groovy = new ArrayList<>();
 
     /**
      * Execute a rest endpoint to detect authentication policy.
      */
-    private List<RestAuthenticationPolicyProperties> rest = new ArrayList<>(0);
+    private List<RestAuthenticationPolicyProperties> rest = new ArrayList<>();
 
     /**
      * Satisfied if an only if the authentication event is not blocked by a {@code PreventedException}.

@@ -67,7 +67,7 @@ public class YubiKeyAccount implements Serializable, Cloneable {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "YubiKeyRegisteredDevice")
     @Builder.Default
-    private List<YubiKeyRegisteredDevice> devices = new ArrayList<>(0);
+    private List<YubiKeyRegisteredDevice> devices = new ArrayList<>();
 
     @Column(nullable = false)
     @JsonProperty

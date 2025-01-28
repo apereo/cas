@@ -157,7 +157,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
         } finally {
             HttpUtils.close(response);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override

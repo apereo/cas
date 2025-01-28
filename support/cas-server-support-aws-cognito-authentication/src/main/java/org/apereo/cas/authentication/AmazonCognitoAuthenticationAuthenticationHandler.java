@@ -99,7 +99,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
             });
 
             val principal = principalFactory.createPrincipal(userResult.username(), attributes);
-            return createHandlerResult(credential, principal, new ArrayList<>(0));
+            return createHandlerResult(credential, principal, new ArrayList<>());
         } catch (final NotAuthorizedException e) {
             val message = e.getMessage();
             if (message.contains("expired")) {

@@ -85,6 +85,6 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
         } finally {
             HttpUtils.close(response);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

@@ -210,7 +210,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     @Override
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> predicate) {
         if (predicate == null) {
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         val results = configurationContext.getServiceRegistry().findServicePredicate(predicate)
             .stream()

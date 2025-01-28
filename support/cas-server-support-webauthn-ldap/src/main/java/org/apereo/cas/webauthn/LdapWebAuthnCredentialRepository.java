@@ -184,6 +184,6 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

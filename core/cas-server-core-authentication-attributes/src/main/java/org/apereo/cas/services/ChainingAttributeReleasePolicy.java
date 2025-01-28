@@ -40,7 +40,7 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceChaining
     @Serial
     private static final long serialVersionUID = 3795054936775326709L;
 
-    private List<RegisteredServiceAttributeReleasePolicy> policies = new ArrayList<>(0);
+    private List<RegisteredServiceAttributeReleasePolicy> policies = new ArrayList<>();
 
     private PrincipalAttributesCoreProperties.MergingStrategyTypes mergingPolicy =
         PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE;

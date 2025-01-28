@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 @ToString
 @Getter
 @Setter
+@RequiredArgsConstructor
 public class HttpMessage implements Serializable {
 
     @Serial
@@ -61,19 +63,6 @@ public class HttpMessage implements Serializable {
     }
 
     /**
-     * Prepare the sender with a given url and the message to send.
-     *
-     * @param url     the url to which the message will be sent.
-     * @param message the message itself.
-     * @param async   whether the message should be sent asynchronously.
-     */
-    public HttpMessage(final URL url, final String message, final boolean async) {
-        this.url = url;
-        this.message = formatOutputMessageInternal(message);
-        this.asynchronous = async;
-    }
-
-    /**
      * Encodes the message in UTF-8 format in preparation to send.
      *
      * @param message Message to format and encode
@@ -87,5 +76,9 @@ public class HttpMessage implements Serializable {
             LOGGER.warn(msg, e);
         }
         return message;
+    }
+
+    public String getMessage() {
+        return formatOutputMessageInternal(this.message);
     }
 }

@@ -1,42 +1,25 @@
 package org.apereo.cas.token.authentication;
 
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasCoreAutoConfiguration;
-import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
-import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.CasTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
-import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.profile.CommonProfile;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,40 +32,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SpringBootTestAutoConfigurations
-@SpringBootTest(classes = {
-    CasCoreAuthenticationAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasPersonDirectoryAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    CasCoreLogoutAutoConfiguration.class,
-    TokenAuthenticationHandlerTests.TokenAuthenticationTestConfiguration.class,
-    CasCoreAutoConfiguration.class,
-    CasTokenAuthenticationAutoConfiguration.class
-}, properties = "cas.authn.token.sso-token-enabled=true")
+@TestPropertySource(properties = "cas.authn.token.sso-token-enabled=true")
 @Tag("AuthenticationHandler")
-@ExtendWith(CasTestExtension.class)
-class TokenAuthenticationHandlerTests {
+@Import(TokenAuthenticationHandlerTests.TokenAuthenticationTestConfiguration.class)
+class TokenAuthenticationHandlerTests extends BaseTokenAuthenticationTests {
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
 
     private static final String SIGNING_SECRET = RANDOM_STRING_GENERATOR.getNewString(256);
 
     private static final String ENCRYPTION_SECRET = RANDOM_STRING_GENERATOR.getNewString(48);
-
-    @Autowired
-    @Qualifier("tokenAuthenticationHandler")
-    private AuthenticationHandler tokenAuthenticationHandler;
-
-    @Autowired
-    @Qualifier(ServicesManager.BEAN_NAME)
-    private ServicesManager servicesManager;
-
-    @Autowired
-    @Qualifier("tokenAuthenticationPostProcessor")
-    private AuthenticationPostProcessor tokenAuthenticationPostProcessor;
 
     @Test
     void verifyPostProcessorAuthentication() throws Throwable {

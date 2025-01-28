@@ -94,7 +94,7 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
     /**
      * Username attribute(s) to use when running the SQL query.
      */
-    private List<String> username = new ArrayList<>(0);
+    private List<String> username = new ArrayList<>();
 
     /**
      * The order of this attribute repository in the chain of repositories.
@@ -132,7 +132,7 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * case canonicalization override such as {@code username, attribute2}
      * in which case {@link #caseCanonicalization} will dictate the final outcome.
      */
-    private List<String> caseInsensitiveQueryAttributes = new ArrayList<>(0);
+    private List<String> caseInsensitiveQueryAttributes = new ArrayList<>();
 
     /**
      * Define a {@code Map} of query attribute names to data-layer attribute names to use when building the query.

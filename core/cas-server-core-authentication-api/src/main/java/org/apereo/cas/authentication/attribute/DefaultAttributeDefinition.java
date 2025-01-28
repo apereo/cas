@@ -97,12 +97,12 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         val publicKey = registeredService.getPublicKey();
         if (publicKey == null) {
             LOGGER.error("No public key is defined for service [{}]. No attributes will be released", registeredService);
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         val cipher = publicKey.toCipher();
         if (cipher == null) {
             LOGGER.error("Unable to initialize cipher given the public key algorithm [{}]", publicKey.getAlgorithm());
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
 
         return currentValues
@@ -129,7 +129,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             }
         }
         LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     private static List<Object> fetchAttributeValueAsInlineGroovyScript(final String attributeName,
@@ -142,7 +142,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                 return fetchAttributeValueFromScript(script, attributeName, currentValues, context);
             })).orElseGet(() -> {
                 LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
-                return new ArrayList<>(0);
+                return new ArrayList<>();
             });
     }
 
@@ -258,7 +258,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             return fetchAttributeValueFromExternalGroovyScript(attributeKey, currentValues, input, context);
         }
 
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     private static String getScriptedPatternedValue(final Object currentValue,

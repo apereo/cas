@@ -42,7 +42,7 @@ public class SamlIdPAuthenticationContextProperties implements Serializable {
      * <p>
      * Example might be {@code https://refeds.org/profile/mfa->http://schemas.microsoft.com/claims/multipleauthn}.
      */
-    private List<String> authenticationContextClassMappings = new ArrayList<>(0);
+    private List<String> authenticationContextClassMappings = new ArrayList<>();
 
     /**
      * The default authentication context class to include in the response

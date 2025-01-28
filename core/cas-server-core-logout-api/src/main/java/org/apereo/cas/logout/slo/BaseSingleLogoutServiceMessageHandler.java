@@ -52,7 +52,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
                                                          final SingleLogoutExecutionRequest context) {
         if (singleLogoutService.isLoggedOutAlready()) {
             LOGGER.debug("Service [{}] is already logged out.", singleLogoutService);
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         val selectedService = FunctionUtils.doUnchecked(() ->
             (WebApplicationService) authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService));
@@ -67,7 +67,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
         LOGGER.debug("Prepared logout url [{}] for service [{}]", logoutUrls, selectedService);
         if (logoutUrls == null || logoutUrls.isEmpty()) {
             LOGGER.debug("Service [{}] does not support logout operations given no logout url could be determined.", selectedService);
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
 
         LOGGER.trace("Creating logout request for [{}] and ticket id [{}]", selectedService, ticketId);

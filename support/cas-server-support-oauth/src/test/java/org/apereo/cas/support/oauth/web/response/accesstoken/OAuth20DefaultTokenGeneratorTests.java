@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
 import org.apereo.cas.AbstractOAuth20Tests;
+import org.apereo.cas.OAuth20TestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -326,7 +327,7 @@ class OAuth20DefaultTokenGeneratorTests {
             val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
 
             val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
-            val refreshToken = getRefreshToken(registeredService.getServiceId(), registeredService.getClientId());
+            val refreshToken = OAuth20TestUtils.getRefreshToken(registeredService.getServiceId(), registeredService.getClientId());
             when(refreshToken.getScopes()).thenReturn(Set.of("email", "openid"));
             ticketRegistry.addTicket(refreshToken);
 

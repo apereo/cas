@@ -91,7 +91,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * List arbitrary mappings of claims. Uses a "directed list" where the allowed
      * syntax would be {@code givenName->urn:oid:2.5.4.42}.
      */
-    private List<String> mappedAttributes = new ArrayList<>(0);
+    private List<String> mappedAttributes = new ArrayList<>();
 
     /**
      * The entity id of the SP/CAS that is used in the SP metadata generation process.
@@ -112,7 +112,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
     /**
      * Requested authentication context class in authn requests.
      */
-    private List<String> authnContextClassRef = new ArrayList<>(0);
+    private List<String> authnContextClassRef = new ArrayList<>();
 
     /**
      * Specifies the comparison rule that should be used to evaluate the specified authentication methods.
@@ -225,22 +225,22 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * List of attributes requested by the service provider
      * that would be put into the service provider metadata.
      */
-    private List<Pac4jSamlServiceProviderRequestedAttribute> requestedAttributes = new ArrayList<>(0);
+    private List<Pac4jSamlServiceProviderRequestedAttribute> requestedAttributes = new ArrayList<>();
 
     /**
      * Collection of signing signature blocked algorithms, if any, to override the global defaults.
      */
-    private List<String> blockedSignatureSigningAlgorithms = new ArrayList<>(0);
+    private List<String> blockedSignatureSigningAlgorithms = new ArrayList<>();
 
     /**
      * Collection of signing signature algorithms, if any, to override the global defaults.
      */
-    private List<String> signatureAlgorithms = new ArrayList<>(0);
+    private List<String> signatureAlgorithms = new ArrayList<>();
 
     /**
      * Collection of signing signature reference digest methods, if any, to override the global defaults.
      */
-    private List<String> signatureReferenceDigestMethods = new ArrayList<>(0);
+    private List<String> signatureReferenceDigestMethods = new ArrayList<>();
 
     /**
      * The signing signature canonicalization algorithm, if any, to override the global defaults.

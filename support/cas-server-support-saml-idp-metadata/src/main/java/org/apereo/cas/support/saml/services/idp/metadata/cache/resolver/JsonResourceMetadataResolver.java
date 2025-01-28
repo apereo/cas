@@ -100,7 +100,7 @@ public class JsonResourceMetadataResolver extends BaseSamlRegisteredServiceMetad
                 return CollectionUtils.wrap(resolver);
             });
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override

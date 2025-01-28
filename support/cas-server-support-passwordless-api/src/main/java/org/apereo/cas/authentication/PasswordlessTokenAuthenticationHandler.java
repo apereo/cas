@@ -45,7 +45,7 @@ public class PasswordlessTokenAuthenticationHandler extends AbstractPreAndPostPr
                 .allMatch(tk -> tk.equalsIgnoreCase(otc.getPassword()));
             if (passed) {
                 val principal = principalFactory.createPrincipal(otc.getId());
-                return createHandlerResult(credential, principal, new ArrayList<>(0));
+                return createHandlerResult(credential, principal, new ArrayList<>());
             }
         }
         throw new FailedLoginException("Passwordless authentication has failed");

@@ -72,7 +72,7 @@ public class RestfulConsentRepository implements ConsentRepository {
             } finally {
                 HttpUtils.close(response);
             }
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         });
     }
     
@@ -104,7 +104,7 @@ public class RestfulConsentRepository implements ConsentRepository {
             } finally {
                 HttpUtils.close(response);
             }
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         });
     }
 

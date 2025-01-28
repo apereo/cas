@@ -38,7 +38,7 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
 
     private final ConfigurableApplicationContext applicationContext;
 
-    private final List<MultifactorAuthenticationProviderBypassEvaluator> multifactorAuthenticationProviderBypassEvaluators = new ArrayList<>(0);
+    private final List<MultifactorAuthenticationProviderBypassEvaluator> multifactorAuthenticationProviderBypassEvaluators = new ArrayList<>();
 
     @Audit(action = AuditableActions.MULTIFACTOR_AUTHENTICATION_BYPASS,
         actionResolverName = AuditActionResolvers.MULTIFACTOR_AUTHENTICATION_BYPASS_ACTION_RESOLVER,

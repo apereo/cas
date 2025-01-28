@@ -24,7 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ChainingPrincipalNameTransformer implements PrincipalNameTransformer {
 
-    private List<PrincipalNameTransformer> transformers = new ArrayList<>(0);
+    private List<PrincipalNameTransformer> transformers = new ArrayList<>();
 
     @Override
     public String transform(final String formUserId) throws Throwable{

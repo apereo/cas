@@ -77,7 +77,7 @@ class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         val attributes = new HashMap<String, List<Object>>();
         attributes.put(TEST_ATTRIBUTE, List.of(TEST_VALUE));
-        attributes.put("testEmptyCollection", new ArrayList<>(0));
+        attributes.put("testEmptyCollection", new ArrayList<>());
         attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
         val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
 

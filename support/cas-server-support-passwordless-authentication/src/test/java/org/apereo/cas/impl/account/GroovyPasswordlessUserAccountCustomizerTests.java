@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.passwordless.core.passwordless-account-customizer-script.location=classpath:PasswordlessAccountCustomizer.groovy"
 })
 @Tag("GroovyMfa")
-public class GroovyPasswordlessUserAccountCustomizerTests extends BasePasswordlessUserAccountStoreTests {
+class GroovyPasswordlessUserAccountCustomizerTests extends BasePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
     private PasswordlessUserAccountStore passwordlessUserAccountStore;

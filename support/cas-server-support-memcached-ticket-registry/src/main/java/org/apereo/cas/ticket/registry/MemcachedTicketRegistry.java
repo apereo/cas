@@ -125,7 +125,7 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
     @Override
     public Collection<? extends Ticket> getTickets() {
         LOGGER.debug("getTickets() isn't supported. Returning empty list");
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override

@@ -97,7 +97,7 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     private Map<String, RegisteredServiceProperty> properties = new HashMap<>(0);
 
-    private List<RegisteredServiceContact> contacts = new ArrayList<>(0);
+    private List<RegisteredServiceContact> contacts = new ArrayList<>();
 
     @Override
     public int compareTo(@Nonnull final RegisteredService other) {

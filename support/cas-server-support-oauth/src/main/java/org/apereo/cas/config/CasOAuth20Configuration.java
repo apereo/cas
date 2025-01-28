@@ -415,7 +415,7 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20UserProfileDataCreator oauth2UserProfileDataCreator(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final ObjectProvider<OAuth20ConfigurationContext> context) {
             return new DefaultOAuth20UserProfileDataCreator(context);
         }
@@ -445,7 +445,7 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final ObjectProvider<OAuth20ConfigurationContext> context) {
             return new OAuth20DefaultAccessTokenResponseGenerator(context);
         }
@@ -684,7 +684,7 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenTokenExchangeGrantRequestExtractor(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             return new AccessTokenTokenExchangeGrantRequestExtractor(context);
         }
@@ -692,7 +692,7 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             return new AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(context);
         }
@@ -700,7 +700,7 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenAuthorizationCodeGrantRequestExtractor(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             return new AccessTokenAuthorizationCodeGrantRequestExtractor(context);
         }
@@ -708,7 +708,7 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenRefreshTokenGrantRequestExtractor(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             return new AccessTokenRefreshTokenGrantRequestExtractor(context);
         }
@@ -716,7 +716,7 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenPasswordGrantRequestExtractor(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             return new AccessTokenPasswordGrantRequestExtractor(context);
         }
@@ -724,7 +724,7 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenClientCredentialsGrantRequestExtractor(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             return new AccessTokenClientCredentialsGrantRequestExtractor(context);
         }
@@ -732,7 +732,7 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenDeviceCodeResponseRequestExtractor(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             return new AccessTokenDeviceCodeResponseRequestExtractor(context);
         }
@@ -1001,7 +1001,7 @@ class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             val grantTypesSupported = context.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
             return BeanSupplier.of(OAuth20TokenRequestValidator.class)
@@ -1015,7 +1015,7 @@ class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthAuthorizationCodeGrantTypeTokenRequestValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauthAuthorizationCodeGrantTypeTokenRequestValidator(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext oauth20ConfigurationContext) {
             val grantTypesSupported = oauth20ConfigurationContext.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
             return BeanSupplier.of(OAuth20TokenRequestValidator.class)
@@ -1063,7 +1063,7 @@ class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthRefreshTokenGrantTypeTokenRequestValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauthRefreshTokenGrantTypeTokenRequestValidator(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext oauth20ConfigurationContext) {
             val grantTypesSupported = oauth20ConfigurationContext.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
             return BeanSupplier.of(OAuth20TokenRequestValidator.class)
@@ -1077,7 +1077,7 @@ class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthTokenExchangeGrantTypeTokenRequestValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauthTokenExchangeGrantTypeTokenRequestValidator(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext oauth20ConfigurationContext) {
             val grantTypesSupported = oauth20ConfigurationContext.getCasProperties()
                 .getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
@@ -1092,7 +1092,7 @@ class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthPasswordGrantTypeTokenRequestValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauthPasswordGrantTypeTokenRequestValidator(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext oauth20ConfigurationContext) {
             val grantTypesSupported = oauth20ConfigurationContext.getCasProperties()
                 .getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
@@ -1107,7 +1107,7 @@ class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthClientCredentialsGrantTypeTokenRequestValidator")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauthClientCredentialsGrantTypeTokenRequestValidator(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext oauth20ConfigurationContext) {
             val grantTypesSupported = oauth20ConfigurationContext.getCasProperties().getAuthn().getOidc().getDiscovery().getGrantTypesSupported();
             return BeanSupplier.of(OAuth20TokenRequestValidator.class)
@@ -1452,7 +1452,7 @@ class CasOAuth20Configuration {
         public OAuth20AuthorizationResponseBuilder oauthResourceOwnerCredentialsResponseBuilder(
             @Qualifier("oauthAuthorizationModelAndViewBuilder")
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext oauth20ConfigurationContext) {
             return new OAuth20ResourceOwnerCredentialsResponseBuilder(oauth20ConfigurationContext,
                 oauthAuthorizationModelAndViewBuilder);
@@ -1464,7 +1464,7 @@ class CasOAuth20Configuration {
         public OAuth20AuthorizationResponseBuilder oauthClientCredentialsResponseBuilder(
             @Qualifier("oauthAuthorizationModelAndViewBuilder")
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext oauth20ConfigurationContext) {
             return new OAuth20ClientCredentialsResponseBuilder(oauth20ConfigurationContext,
                 oauthAuthorizationModelAndViewBuilder);
@@ -1476,7 +1476,7 @@ class CasOAuth20Configuration {
         public OAuth20AuthorizationResponseBuilder oauthTokenResponseBuilder(
             @Qualifier("oauthAuthorizationModelAndViewBuilder")
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext oauth20ConfigurationContext) {
             return new OAuth20TokenAuthorizationResponseBuilder(oauth20ConfigurationContext,
                 oauthAuthorizationModelAndViewBuilder);
@@ -1488,7 +1488,7 @@ class CasOAuth20Configuration {
         public OAuth20AuthorizationResponseBuilder oauthAuthorizationCodeResponseBuilder(
             @Qualifier("oauthAuthorizationModelAndViewBuilder")
             final OAuth20AuthorizationModelAndViewBuilder oauthAuthorizationModelAndViewBuilder,
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             return new OAuth20AuthorizationCodeAuthorizationResponseBuilder(context,
                 oauthAuthorizationModelAndViewBuilder);

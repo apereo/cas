@@ -16,7 +16,7 @@ import java.util.Collection;
  */
 @Getter
 public class DefaultSamlRegisteredServiceMetadataResolutionPlan implements SamlRegisteredServiceMetadataResolutionPlan {
-    private final Collection<SamlRegisteredServiceMetadataResolver> registeredMetadataResolvers = new ArrayList<>(0);
+    private final Collection<SamlRegisteredServiceMetadataResolver> registeredMetadataResolvers = new ArrayList<>();
 
     @Override
     public void registerMetadataResolver(final SamlRegisteredServiceMetadataResolver clazz) {

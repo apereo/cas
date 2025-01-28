@@ -278,23 +278,23 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         val fileName = file.getName();
         if (!file.canRead()) {
             LOGGER.warn("[{}] is not readable. Check file permissions", fileName);
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         if (!file.exists()) {
             LOGGER.warn("[{}] is not found at the path specified", fileName);
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         if (file.length() == 0) {
             LOGGER.debug("[{}] appears to be empty so no service definition will be loaded", fileName);
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         if (!fileName.isEmpty() && fileName.charAt(0) == '.') {
             LOGGER.debug("[{}] starts with ., ignoring", fileName);
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         if (Arrays.stream(getExtensions()).noneMatch(fileName::endsWith)) {
             LOGGER.debug("[{}] doesn't end with valid extension, ignoring", fileName);
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
 
         if (!RegexUtils.matches(this.serviceFileNamePattern, fileName)) {
@@ -321,7 +321,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             LOGGER.error("Error reading configuration file [{}]", fileName);
             LoggingUtils.error(LOGGER, e);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override

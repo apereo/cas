@@ -49,7 +49,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
 
     private final String rootDirectory;
 
-    private Collection<RegisteredService> registeredServices = new ArrayList<>(0);
+    private Collection<RegisteredService> registeredServices = new ArrayList<>();
 
     public GitServiceRegistry(final ConfigurableApplicationContext applicationContext,
                               final GitRepository gitRepository,
