@@ -23,7 +23,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
     private final List<RegisteredService> registeredServices;
 
     public InMemoryServiceRegistry(final ConfigurableApplicationContext applicationContext) {
-        this(applicationContext, new ArrayList<>(0), new ArrayList<>(0));
+        this(applicationContext, new ArrayList<>(), new ArrayList<>());
     }
 
     public InMemoryServiceRegistry(final ConfigurableApplicationContext applicationContext,

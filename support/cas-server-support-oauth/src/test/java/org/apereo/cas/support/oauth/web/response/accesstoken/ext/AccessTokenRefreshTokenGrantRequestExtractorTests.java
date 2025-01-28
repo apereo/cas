@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.AbstractOAuth20Tests;
+import org.apereo.cas.OAuth20TestUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -54,7 +55,7 @@ class AccessTokenRefreshTokenGrantRequestExtractorTests extends AbstractOAuth20T
         service.setScopes(Set.of("openid", "email", "profile"));
         servicesManager.save(service);
 
-        val refreshToken = getRefreshToken(service.getServiceId(), service.getClientId());
+        val refreshToken = OAuth20TestUtils.getRefreshToken(service.getServiceId(), service.getClientId());
         when(refreshToken.getScopes()).thenReturn(Set.of("openid", "email"));
         when(refreshToken.getId()).thenReturn("RT-1");
         ticketRegistry.addTicket(refreshToken);

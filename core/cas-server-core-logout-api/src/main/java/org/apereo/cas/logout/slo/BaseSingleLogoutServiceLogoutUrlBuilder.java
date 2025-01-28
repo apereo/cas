@@ -59,7 +59,7 @@ public abstract class BaseSingleLogoutServiceLogoutUrlBuilder implements SingleL
             }
         }
         LOGGER.debug("Logout request will not be sent; The URL [{}] for service [{}] is not valid", originalUrl, singleLogoutService);
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override

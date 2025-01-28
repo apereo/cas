@@ -32,7 +32,7 @@ public class RedisClusterProperties implements CasFeatureModule, Serializable {
     /**
      * List of nodes available in the redis cluster.
      */
-    private List<RedisClusterNodeProperties> nodes = new ArrayList<>(0);
+    private List<RedisClusterNodeProperties> nodes = new ArrayList<>();
 
     /**
      * The cluster connection's username.

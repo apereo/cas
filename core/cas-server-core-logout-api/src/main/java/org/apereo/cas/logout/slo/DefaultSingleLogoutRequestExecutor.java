@@ -62,6 +62,6 @@ public class DefaultSingleLogoutRequestExecutor implements SingleLogoutRequestEx
             val msg = String.format("Ticket-granting ticket [%s] cannot be found in the ticket registry.", ticketId);
             LOGGER.debug(msg, e);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

@@ -76,7 +76,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
                 return MAPPER.readValue(json, new TypeReference<>() {
                 });
             }
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         });
     }
 
@@ -107,7 +107,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
                     .collect(Collectors.toList());
             }
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override

@@ -78,6 +78,10 @@ to ensure CAS is ready for the next version of Apache Tomcat and Spring Boot.
 The attribute resolution machinery in CAS is now able to [contact SCIM servers](../integration/Attribute-Resolution-SCIM.html) 
 to fetch and retrieve attributes for users. [SCIM provisioning](../integration/SCIM-Provisioning.html) is also improved to allow better flexibility when it comes to 
 mapping CAS attributes to the SCIM user schema.
+ 
+### Token Authentication
+
+[JWT authentication](../authentication/JWT-Authentication.html) is now able to accept OpenID Connect access tokens as JWTs.
 
 ## Other Stuff
 

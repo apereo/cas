@@ -65,7 +65,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
                 val attributes = CollectionUtils.toMultiValuedMap(result.getValue().get());
                 return createHandlerResult(credential,
                     principalFactory.createPrincipal(username, attributes),
-                    new ArrayList<>(0));
+                    new ArrayList<>());
             }
             throw new FailedLoginException("Radius authentication failed for user " + username);
         } catch (final Throwable e) {

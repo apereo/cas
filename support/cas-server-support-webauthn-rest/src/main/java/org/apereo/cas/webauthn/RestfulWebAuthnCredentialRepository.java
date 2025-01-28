@@ -65,7 +65,7 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
         } finally {
             HttpUtils.close(response);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override

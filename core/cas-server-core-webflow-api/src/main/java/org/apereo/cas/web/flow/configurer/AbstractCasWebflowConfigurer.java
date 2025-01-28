@@ -634,7 +634,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         if (def.getExecutionCriteria() != null) {
             return CollectionUtils.wrapList(def.getExecutionCriteria());
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override

@@ -85,7 +85,7 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
                                                                                        final BaseClient client,
                                                                                        final Service service) throws Throwable {
         preFinalizeAuthenticationHandlerResult(credentials, principal, profile, client, service);
-        val result = createHandlerResult(credentials, principal, new ArrayList<>(0));
+        val result = createHandlerResult(credentials, principal, new ArrayList<>());
         return postFinalizeAuthenticationHandlerResult(result, credentials, principal, client, service);
     }
 

@@ -108,7 +108,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
     protected Authenticator oauthClientAuthenticator;
 
     @Autowired
-    @Qualifier("oauth20ConfigurationContext")
+    @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
     protected OAuth20ConfigurationContext configurationContext;
 
     @Autowired

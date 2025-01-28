@@ -56,7 +56,7 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
             LOGGER.info("Refreshed the following settings: [{}].", keys);
             rebind();
             LOGGER.info("CAS finished rebinding configuration with new settings [{}]",
-                ObjectUtils.defaultIfNull(keys, new ArrayList<>(0)));
+                ObjectUtils.defaultIfNull(keys, new ArrayList<>()));
         }
     }
 

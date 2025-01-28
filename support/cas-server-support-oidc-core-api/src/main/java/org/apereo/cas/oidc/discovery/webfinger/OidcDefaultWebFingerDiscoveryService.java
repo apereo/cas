@@ -99,7 +99,7 @@ public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscov
         val body = new LinkedHashMap<String, Object>();
         body.put("subject", resource);
 
-        val links = new ArrayList<>(0);
+        val links = new ArrayList<>();
         links.add(CollectionUtils.wrap("rel", OidcConstants.WEBFINGER_REL, "href", issuer));
         body.put("links", links);
 

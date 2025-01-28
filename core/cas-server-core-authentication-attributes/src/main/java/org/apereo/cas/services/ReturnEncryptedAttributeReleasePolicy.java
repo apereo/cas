@@ -50,7 +50,7 @@ public class ReturnEncryptedAttributeReleasePolicy extends AbstractRegisteredSer
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    private List<String> allowedAttributes = new ArrayList<>(0);
+    private List<String> allowedAttributes = new ArrayList<>();
 
     @Override
     public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,

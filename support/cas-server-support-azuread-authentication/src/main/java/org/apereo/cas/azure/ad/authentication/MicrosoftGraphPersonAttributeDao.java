@@ -215,11 +215,11 @@ public class MicrosoftGraphPersonAttributeDao extends BasePersonAttributeDao {
 
         private String preferredName;
 
-        private List<String> businessPhones = new ArrayList<>(0);
+        private List<String> businessPhones = new ArrayList<>();
 
-        private List<String> schools = new ArrayList<>(0);
+        private List<String> schools = new ArrayList<>();
 
-        private List<String> skills = new ArrayList<>(0);
+        private List<String> skills = new ArrayList<>();
 
         private String postalCode;
 

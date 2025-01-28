@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Getter
 public class DefaultInterruptInquiryExecutionPlan implements InterruptInquiryExecutionPlan {
-    private final List<InterruptInquirer> interruptInquirers = new ArrayList<>(0);
+    private final List<InterruptInquirer> interruptInquirers = new ArrayList<>();
 
     @Override
     public void registerInterruptInquirer(final InterruptInquirer inquirer) {

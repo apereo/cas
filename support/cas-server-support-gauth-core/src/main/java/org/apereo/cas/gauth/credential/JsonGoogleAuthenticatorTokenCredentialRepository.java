@@ -69,17 +69,17 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             try {
                 if (!location.getFile().exists()) {
                     LOGGER.warn("JSON account repository file [{}] is not found.", location.getFile());
-                    return new ArrayList<>(0);
+                    return new ArrayList<>();
                 }
 
                 if (location.getFile().length() <= 0) {
                     LOGGER.debug("JSON account repository file location [{}] is empty.", location.getFile());
-                    return new ArrayList<>(0);
+                    return new ArrayList<>();
                 }
                 val map = serializer.from(location.getFile());
                 if (map == null) {
                     LOGGER.debug("JSON account repository file [{}] is empty.", location.getFile());
-                    return new ArrayList<>(0);
+                    return new ArrayList<>();
                 }
 
                 val account = map.get(username.trim().toLowerCase(Locale.ENGLISH));
@@ -89,7 +89,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             } catch (final Exception e) {
                 LoggingUtils.error(LOGGER, e);
             }
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         });
     }
 
@@ -102,7 +102,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             } catch (final Exception e) {
                 LoggingUtils.error(LOGGER, e);
             }
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         });
     }
 

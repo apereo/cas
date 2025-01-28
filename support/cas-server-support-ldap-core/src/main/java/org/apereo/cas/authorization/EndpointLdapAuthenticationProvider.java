@@ -91,7 +91,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
                 LOGGER.debug("Required roles are [{}]", requiredRoles);
                 if (requiredRoles.isEmpty()) {
                     LOGGER.info("No user security roles are defined to enable authorization. User [{}] is considered authorized", username);
-                    return generateAuthenticationToken(authentication, new ArrayList<>(0));
+                    return generateAuthenticationToken(authentication, new ArrayList<>());
                 }
 
                 val entry = response.getLdapEntry();
@@ -164,7 +164,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
     private SearchOperation ldapAuthorizationGeneratorUserSearchOperation(final ConnectionFactory factory) {
         val properties = ldapProperties.getLdapAuthz();
         val searchOperation = LdapUtils.newLdaptiveSearchOperation(properties.getBaseDn(), properties.getSearchFilter(),
-            new ArrayList<>(0), CollectionUtils.wrap(properties.getRoleAttribute()));
+            new ArrayList<>(), CollectionUtils.wrap(properties.getRoleAttribute()));
         searchOperation.setConnectionFactory(factory);
         return searchOperation;
     }
@@ -172,7 +172,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
     private SearchOperation ldapAuthorizationGeneratorGroupSearchOperation(final ConnectionFactory factory) {
         val properties = ldapProperties.getLdapAuthz();
         val searchOperation = LdapUtils.newLdaptiveSearchOperation(properties.getGroupBaseDn(), properties.getGroupFilter(),
-            new ArrayList<>(0), CollectionUtils.wrap(properties.getGroupAttribute()));
+            new ArrayList<>(), CollectionUtils.wrap(properties.getGroupAttribute()));
         searchOperation.setConnectionFactory(factory);
         return searchOperation;
     }

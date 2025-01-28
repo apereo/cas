@@ -33,18 +33,18 @@ public class ActuatorEndpointProperties implements Serializable {
     /**
      * Required user roles.
      */
-    private List<String> requiredRoles = new ArrayList<>(0);
+    private List<String> requiredRoles = new ArrayList<>();
 
     /**
      * Required user authorities.
      */
-    private List<String> requiredAuthorities = new ArrayList<>(0);
+    private List<String> requiredAuthorities = new ArrayList<>();
 
     /**
      * Required IP addresses. CIDR ranges are accepted.
      */
     @RegularExpressionCapable
-    private List<String> requiredIpAddresses = new ArrayList<>(0);
+    private List<String> requiredIpAddresses = new ArrayList<>();
 
     /**
      * Define the security access level of the endpoint.

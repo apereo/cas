@@ -44,11 +44,11 @@ public class DuoSecurityRestHttpRequestCredentialFactory implements RestHttpRequ
                                         final MultiValueMap<String, String> requestBody) throws Throwable {
         if (requestBody == null || requestBody.isEmpty()) {
             LOGGER.debug("Skipping [{}] because the request body is null or empty", getClass().getSimpleName());
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         if (!requestBody.containsKey(RestHttpRequestCredentialFactory.PARAMETER_USERNAME) || !requestBody.containsKey(PARAMETER_NAME_PASSCODE)) {
             LOGGER.debug("No username or passcode provided");
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         val username = FunctionUtils.throwIfBlank(requestBody.getFirst(RestHttpRequestCredentialFactory.PARAMETER_USERNAME));
         val token = FunctionUtils.throwIfBlank(requestBody.getFirst(PARAMETER_NAME_PASSCODE));

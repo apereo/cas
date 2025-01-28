@@ -59,7 +59,7 @@ public class SamlMetadataUIProperties implements Serializable {
      * separator. Example: {@code classpath:/sp-metadata.xml::classpath:/pub.key}.
      */
     @RequiredProperty
-    private List<String> resources = new ArrayList<>(0);
+    private List<String> resources = new ArrayList<>();
 
     /**
      * Scheduler settings to indicate how often is metadata reloaded.

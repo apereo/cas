@@ -76,7 +76,7 @@ public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorA
     /**
      * YubiKey API urls to contact for verification of credentials.
      */
-    private List<String> apiUrls = new ArrayList<>(0);
+    private List<String> apiUrls = new ArrayList<>();
 
     /**
      * Indicates whether this provider should support trusted devices.

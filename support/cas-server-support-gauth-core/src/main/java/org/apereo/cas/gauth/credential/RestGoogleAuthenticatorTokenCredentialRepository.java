@@ -207,7 +207,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         } finally {
             HttpUtils.close(response);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override

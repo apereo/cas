@@ -82,7 +82,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogout
             LoggingUtils.error(LOGGER, e);
         }
         LOGGER.trace("Service [{}] is not a SAML service, or its logout url could not be determined", registeredService);
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override

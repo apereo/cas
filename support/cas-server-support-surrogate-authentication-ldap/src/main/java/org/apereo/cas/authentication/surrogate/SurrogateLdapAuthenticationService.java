@@ -74,7 +74,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
 
                 if (!LdapUtils.containsResultEntry(response)) {
                     LOGGER.warn("LDAP response is not found or does not contain a result entry for [{}]", username);
-                    return new ArrayList<>(0);
+                    return new ArrayList<>();
                 }
 
                 val ldapEntry = response.getEntry();
@@ -83,7 +83,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
 
                 if (attribute == null || attribute.getStringValues().isEmpty()) {
                     LOGGER.warn("Attribute [{}] not found or has no values", ldap.getMemberAttributeName());
-                    return new ArrayList<>(0);
+                    return new ArrayList<>();
                 }
 
                 val pattern = RegexUtils.createPattern(ldap.getMemberAttributeValueRegex());
@@ -107,7 +107,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
             }
         }
         LOGGER.debug("No accounts may be eligible for surrogate authentication");
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     protected boolean doesSurrogateAccountExistInLdap(final String surrogate,

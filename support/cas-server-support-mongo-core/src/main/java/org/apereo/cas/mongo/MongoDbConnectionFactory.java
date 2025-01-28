@@ -75,11 +75,11 @@ public class MongoDbConnectionFactory {
     private final SSLContext sslContext;
 
     public MongoDbConnectionFactory() {
-        this(new ArrayList<>(0), SSLContexts.createSystemDefault());
+        this(new ArrayList<>(), SSLContexts.createSystemDefault());
     }
 
     public MongoDbConnectionFactory(final SSLContext sslContext) {
-        this(new ArrayList<>(0), sslContext);
+        this(new ArrayList<>(), sslContext);
     }
 
     public MongoDbConnectionFactory(final Converter... converters) {

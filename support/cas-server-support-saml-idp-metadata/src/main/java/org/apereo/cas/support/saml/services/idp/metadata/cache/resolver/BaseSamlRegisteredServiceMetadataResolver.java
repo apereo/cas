@@ -195,7 +195,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
 
     protected void configureAndInitializeSingleMetadataResolver(final AbstractMetadataResolver metadataProvider,
                                                                 final SamlRegisteredService service) throws Exception {
-        configureAndInitializeSingleMetadataResolver(metadataProvider, service, new ArrayList<>(0));
+        configureAndInitializeSingleMetadataResolver(metadataProvider, service, new ArrayList<>());
     }
 
     protected void buildMetadataFilters(final SamlRegisteredService service, final AbstractMetadataResolver metadataProvider,

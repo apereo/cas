@@ -34,7 +34,7 @@ public interface StringSerializer<T> extends Serializable {
             list.add(elem);
             return list;
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     /**

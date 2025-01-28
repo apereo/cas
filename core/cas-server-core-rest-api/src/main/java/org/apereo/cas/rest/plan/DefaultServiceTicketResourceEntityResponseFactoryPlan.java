@@ -15,7 +15,7 @@ import java.util.List;
  * @since 5.3.0
  */
 public class DefaultServiceTicketResourceEntityResponseFactoryPlan implements ServiceTicketResourceEntityResponseFactoryPlan {
-    private final List<ServiceTicketResourceEntityResponseFactory> factories = new ArrayList<>(0);
+    private final List<ServiceTicketResourceEntityResponseFactory> factories = new ArrayList<>();
 
     @Override
     public void registerFactory(final ServiceTicketResourceEntityResponseFactory factory) {

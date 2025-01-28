@@ -108,7 +108,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             val duoAuthenticationService = multifactorAuthenticationProvider.getObject().getDuoAuthenticationService();
             if (duoAuthenticationService.authenticate(credential).isSuccess()) {
                 val principal = principalFactory.createPrincipal(credential.getId());
-                return createHandlerResult(credential, principal, new ArrayList<>(0));
+                return createHandlerResult(credential, principal, new ArrayList<>());
             }
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
@@ -124,7 +124,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             if (result.isSuccess()) {
                 val principal = principalFactory.createPrincipal(result.getUsername(), result.getAttributes());
                 LOGGER.debug("Duo Security Universal Prompt has successfully authenticated [{}]", principal.getId());
-                return createHandlerResult(credential, principal, new ArrayList<>(0));
+                return createHandlerResult(credential, principal, new ArrayList<>());
             }
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
@@ -139,7 +139,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             if (duoAuthenticationService.authenticate(credential).isSuccess()) {
                 val principal = resolvePrincipal(credential.getPrincipal());
                 LOGGER.debug("Duo Security has successfully authenticated [{}]", principal.getId());
-                return createHandlerResult(credential, principal, new ArrayList<>(0));
+                return createHandlerResult(credential, principal, new ArrayList<>());
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

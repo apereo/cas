@@ -66,7 +66,7 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
         if (s3Client.listBuckets(ListBucketsRequest.builder().build())
             .buckets().stream().noneMatch(b -> b.name().equalsIgnoreCase(bucketName))) {
             LOGGER.debug("S3 bucket [{}] does not exist", bucketName);
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
 
         val result = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucketName).build());

@@ -78,6 +78,6 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
     protected AuthenticationHandlerExecutionResult createHandlerResult(final @NonNull Credential credential,
                                                                        final @NonNull Principal principal) {
         return new DefaultAuthenticationHandlerExecutionResult(this, credential,
-            principal, new ArrayList<>(0));
+            principal, new ArrayList<>());
     }
 }

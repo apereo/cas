@@ -28,27 +28,27 @@ public class SamlIdentityProviderEntity implements Serializable, Comparable<Saml
 
     @JsonProperty("Descriptions")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private final List<SamlIdentityProviderBasicEntity> descriptions = new ArrayList<>(0);
+    private final List<SamlIdentityProviderBasicEntity> descriptions = new ArrayList<>();
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @JsonProperty("Logos")
-    private final List<SamlIdentityProviderLogoEntity> logos = new ArrayList<>(0);
+    private final List<SamlIdentityProviderLogoEntity> logos = new ArrayList<>();
 
     @JsonProperty("DisplayNames")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private final List<SamlIdentityProviderBasicEntity> displayNames = new ArrayList<>(0);
+    private final List<SamlIdentityProviderBasicEntity> displayNames = new ArrayList<>();
 
     @JsonProperty("PrivacyStatementURLs")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private final List<SamlIdentityProviderBasicEntity> privacyStatementUrls = new ArrayList<>(0);
+    private final List<SamlIdentityProviderBasicEntity> privacyStatementUrls = new ArrayList<>();
 
     @JsonProperty("InformationURLs")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private final List<SamlIdentityProviderBasicEntity> informationUrls = new ArrayList<>(0);
+    private final List<SamlIdentityProviderBasicEntity> informationUrls = new ArrayList<>();
 
     @JsonProperty("Keywords")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private final List<SamlIdentityProviderBasicEntity> keywords = new ArrayList<>(0);
+    private final List<SamlIdentityProviderBasicEntity> keywords = new ArrayList<>();
 
     private String entityID;
 

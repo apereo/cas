@@ -60,7 +60,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
 
         val facade = mock(SamlRegisteredServiceMetadataAdaptor.class);
         when(facade.getEntityId()).thenReturn(service.getServiceId());
-        when(facade.getSupportedNameIdFormats()).thenReturn(new ArrayList<>(0));
+        when(facade.getSupportedNameIdFormats()).thenReturn(new ArrayList<>());
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)
@@ -94,7 +94,7 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
 
         val facade = mock(SamlRegisteredServiceMetadataAdaptor.class);
         when(facade.getEntityId()).thenReturn(service.getServiceId());
-        when(facade.getSupportedNameIdFormats()).thenReturn(new ArrayList<>(0));
+        when(facade.getSupportedNameIdFormats()).thenReturn(new ArrayList<>());
 
         val buildContext = SamlProfileBuilderContext.builder()
             .samlRequest(authnRequest)

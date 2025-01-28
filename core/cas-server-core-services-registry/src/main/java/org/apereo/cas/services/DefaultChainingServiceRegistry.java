@@ -26,12 +26,12 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     private final List<ServiceRegistry> serviceRegistries;
 
     public DefaultChainingServiceRegistry(final ConfigurableApplicationContext applicationContext) {
-        this(applicationContext, new ArrayList<>(0));
+        this(applicationContext, new ArrayList<>());
     }
 
     public DefaultChainingServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                           final List<ServiceRegistry> serviceRegistries) {
-        super(applicationContext, new ArrayList<>(0));
+        super(applicationContext, new ArrayList<>());
         this.serviceRegistries = serviceRegistries;
     }
 

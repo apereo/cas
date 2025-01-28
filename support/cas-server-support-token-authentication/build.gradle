@@ -16,6 +16,14 @@ dependencies {
     implementation project(":support:cas-server-support-token-core")
     implementation project(":support:cas-server-support-pac4j-core")
     
+    compileOnly project(":support:cas-server-support-oauth-api")
+    compileOnly project(":support:cas-server-support-oauth-core-api")
+    compileOnly project(":support:cas-server-support-oidc-core-api")
+    compileOnly project(":support:cas-server-support-oidc-core")
+    compileOnly project(":support:cas-server-support-oidc-services")
+    compileOnly project(":support:cas-server-support-oauth-services")
+    compileOnly project(":support:cas-server-support-oidc")
+
     implementation libraries.pac4jcore
     implementation libraries.pac4jjwt
 
@@ -23,7 +31,15 @@ dependencies {
     implementation libraries.jose4j
     
     testImplementation project(":support:cas-server-support-person-directory")
-    
+    testImplementation project(":support:cas-server-support-oidc")
+    testImplementation project(":support:cas-server-support-oidc-core")
+    testImplementation project(":support:cas-server-support-oidc-services")
+    testImplementation project(":support:cas-server-support-oauth-core-api")
+    testImplementation project(":support:cas-server-support-oauth-services")
+    testImplementation project(":support:cas-server-support-oauth")
+    testImplementation project(":support:cas-server-support-oauth-api")
+    testImplementation project(":support:cas-server-support-thymeleaf")
+
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-tickets")
@@ -33,12 +49,17 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-cookie-api")
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-services-authentication")
+    
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-oauth", configuration: "tests")
 }
