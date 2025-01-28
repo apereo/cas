@@ -27,8 +27,8 @@ class OAuth20TokenHashGeneratorTests extends AbstractOAuth20Tests {
     }
 
     private String generateHashWithAlgorithm(final String alg) {
-        val accessToken = getAccessToken();
         val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
+        val accessToken = getAccessToken("123456", registeredService.getServiceId(), registeredService.getClientId());
 
         val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService,
             accessToken, accessToken.getService(), false).encode(accessToken.getId());
