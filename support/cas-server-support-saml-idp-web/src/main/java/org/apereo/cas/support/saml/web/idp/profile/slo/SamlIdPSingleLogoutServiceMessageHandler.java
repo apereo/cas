@@ -2,7 +2,6 @@ package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.slo.BaseSingleLogoutServiceMessageHandler;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
@@ -23,6 +22,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
+import org.apereo.cas.web.HttpMessage;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -94,7 +94,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
     }
 
     @Override
-    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg,
+    protected boolean sendMessageToEndpoint(final HttpMessage msg,
                                             final SingleLogoutRequestContext request,
                                             final SingleLogoutMessage logoutMessage) {
         if (request.getExecutionRequest().getHttpServletRequest().isPresent()) {

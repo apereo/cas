@@ -12,14 +12,14 @@ import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
-
+import org.apereo.cas.web.HttpMessage;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -82,9 +82,9 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
         val registeredService = (WebBasedRegisteredService) this.servicesManager.findServiceBy(selectedService);
 
         return registeredService != null
-               && registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, selectedService)
-               && registeredService.getLogoutType() != RegisteredServiceLogoutType.NONE
-               && supportsInternal(singleLogoutService, registeredService, context);
+            && registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, selectedService)
+            && registeredService.getLogoutType() != RegisteredServiceLogoutType.NONE
+            && supportsInternal(singleLogoutService, registeredService, context);
     }
 
     @Override
@@ -191,35 +191,21 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
     protected boolean sendSingleLogoutMessage(final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
         val logoutService = request.getService();
         LOGGER.trace("Preparing logout request for [{}] to [{}]", logoutService.getId(), request.getLogoutUrl());
-        val msg = getLogoutHttpMessageToSend(request, logoutMessage);
+        val msg = prepareLogoutHttpMessageToSend(request, logoutMessage);
         LOGGER.debug("Prepared logout message to send is [{}]. Sending...", msg);
         val result = sendMessageToEndpoint(msg, request, logoutMessage);
         logoutService.setLoggedOutAlready(result);
         return result;
     }
 
-    /**
-     * Send message to endpoint.
-     *
-     * @param msg           the msg
-     * @param request       the request
-     * @param logoutMessage the logout message
-     * @return true/false
-     */
-    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg,
+    protected boolean sendMessageToEndpoint(final HttpMessage msg,
                                             final SingleLogoutRequestContext request,
                                             final SingleLogoutMessage logoutMessage) {
         return this.httpClient.sendMessageToEndPoint(msg);
     }
-
-    /**
-     * Gets logout http message to send.
-     *
-     * @param request       the request
-     * @param logoutMessage the logout message
-     * @return the logout http message to send
-     */
-    protected LogoutHttpMessage getLogoutHttpMessageToSend(final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
+    
+    @Override
+    public HttpMessage prepareLogoutHttpMessageToSend(final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
         return new LogoutHttpMessage(request.getLogoutUrl(), logoutMessage.getPayload(), this.asynchronous);
     }
 }
