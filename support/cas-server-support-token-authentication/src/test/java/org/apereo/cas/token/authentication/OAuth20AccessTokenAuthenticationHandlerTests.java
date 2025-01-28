@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -35,6 +36,7 @@ import static org.mockito.Mockito.*;
     CasOAuth20AutoConfiguration.class,
     CasOidcAutoConfiguration.class
 })
+@TestPropertySource(properties = "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/tokenauthn.jwks")
 class OAuth20AccessTokenAuthenticationHandlerTests extends BaseTokenAuthenticationTests {
     @Autowired
     @Qualifier("oauthAccessTokenAuthenticationHandler")

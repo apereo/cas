@@ -118,4 +118,4 @@ CAS also allows OpenID Connect access tokens to be passed as the `token` paramet
 is encoded as a JWT. The token is decoded and then fetched as a valid access token from the ticket registry,
 allowing CAS establish an authenticated session and subsequently create a single sign-on session.
 
-To learn more about OpenID Connect, [please review this guide](../installation/Configure-OpenID-Connect.html).
+To learn more about OpenID Connect, [please review this guide](../authentication/OIDC-Authentication.html).
