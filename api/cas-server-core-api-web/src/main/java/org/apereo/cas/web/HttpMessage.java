@@ -1,6 +1,4 @@
-package org.apereo.cas.util.http;
-
-import org.apereo.cas.util.EncodingUtils;
+package org.apereo.cas.web;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,10 +6,11 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.MediaType;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link HttpMessage}.
@@ -82,7 +81,7 @@ public class HttpMessage implements Serializable {
      */
     protected String formatOutputMessageInternal(final String message) {
         try {
-            return EncodingUtils.urlEncode(message);
+            return URLEncoder.encode(message, StandardCharsets.UTF_8);
         } catch (final Exception e) {
             val msg = String.format("Unable to encode URL %s", message);
             LOGGER.warn(msg, e);

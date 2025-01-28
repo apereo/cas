@@ -1,11 +1,9 @@
 package org.apereo.cas.logout;
 
-import org.apereo.cas.util.http.HttpMessage;
-
+import org.apereo.cas.web.HttpMessage;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.MediaType;
-
 import java.io.Serial;
 import java.net.URL;
 
@@ -28,6 +26,8 @@ public class LogoutHttpMessage extends HttpMessage {
     @Serial
     private static final long serialVersionUID = 399581521957873727L;
 
+    private String logoutRequestParameter = LOGOUT_REQUEST_PARAMETER;
+
     public LogoutHttpMessage(final URL url, final String message, final boolean asynchronous) {
         super(url, message, asynchronous);
         setContentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE);
@@ -35,6 +35,6 @@ public class LogoutHttpMessage extends HttpMessage {
 
     @Override
     protected String formatOutputMessageInternal(final String message) {
-        return LOGOUT_REQUEST_PARAMETER + '=' + super.formatOutputMessageInternal(message);
+        return this.logoutRequestParameter + '=' + super.formatOutputMessageInternal(message);
     }
 }

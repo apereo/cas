@@ -1,5 +1,6 @@
 package org.apereo.cas.util.http;
 
+import org.apereo.cas.web.HttpMessage;
 import java.net.URL;
 
 /**

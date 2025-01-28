@@ -6,7 +6,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.http.HttpMessage;
+import org.apereo.cas.web.HttpMessage;
+
 
 import com.yubico.client.v2.YubicoClient;
 import lombok.AllArgsConstructor;
