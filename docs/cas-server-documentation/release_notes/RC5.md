@@ -76,16 +76,19 @@ to ensure CAS is ready for the next version of Apache Tomcat and Spring Boot.
 ### SCIM Attribute Resolution
          
 The attribute resolution machinery in CAS is now able to [contact SCIM servers](../integration/Attribute-Resolution-SCIM.html) 
-to fetch and retrieve attributes for users.
+to fetch and retrieve attributes for users. [SCIM provisioning](../integration/SCIM-Provisioning.html) is also improved to allow better flexibility when it comes to 
+mapping attributes to the SCIM user schema.
 
 ## Other Stuff
 
 - NameID generation for SAML2 logout requests now uses the `usernameAttributeProvider` construct assigned to the SAML2 service definition.
 - [WebAuthN FIDO2 authentication](../mfa/FIDO2-WebAuthn-Authentication.html) has removed the requirement for a username from the CAS flow.
-- Static resources are now resolved using a content hashing strategy that allows cache busting for static resources.
+- Static resources are now resolved using a content hashing strategy that allows cache busting for static resources to avoid browser caching issues.
 - [Attribute definitions](../integration/Attribute-Definitions.html) can now produce hashed values based on an assigned hashing strategy. 
 - A [new actuator endpoint](../integration/Attribute-Definitions.html) allows one to fetch registered attribute definitions with CAS.
 - A [new actuator endpoint](../integration/Attribute-Resolution.html) allows one to fetch registered attribute repositories with CAS.
+- [X509 connector](../authentication/X509-Authentication-WebServer-Configuration.html) for Apache Tomcat configures the maximum form post and header sizes for the connector.
+- CAS `<input/>` HTML elements that generate buttons are now able to render HTML content for the button label.
 
 ## Library Upgrades
 
