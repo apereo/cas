@@ -4,16 +4,23 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.scim.v2.access.ScimRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.BaseScimTests;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
@@ -26,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.2.0
  */
 @Tag("SCIM")
+@ExtendWith(CasTestExtension.class)
 class ScimRegisteredServiceAccessStrategyTests {
 
     @Nested
@@ -54,8 +62,7 @@ class ScimRegisteredServiceAccessStrategyTests {
             assertFalse(strategy.authorizeRequest(request));
         }
     }
-
-
+    
     @Nested
     @TestPropertySource(properties = {
         "cas.scim.target=http://localhost:${random.int[3000,9000]}",
@@ -63,6 +70,22 @@ class ScimRegisteredServiceAccessStrategyTests {
         "cas.scim.password=changeit"
     })
     class MockServerTests extends BaseScimTests {
+
+        private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+            .defaultTypingEnabled(true).build().toObjectMapper();
+
+        @Test
+        void verifySerializeToJson() throws IOException {
+            val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
+            val attributes = new HashMap<String, Set<String>>();
+            attributes.put("scimGroups", Set.of("Tour Guides"));
+            val strategyWritten = new ScimRegisteredServiceAccessStrategy();
+            strategyWritten.setRequiredAttributes(attributes);
+            MAPPER.writeValue(jsonFile, strategyWritten);
+            val credentialRead = MAPPER.readValue(jsonFile, ScimRegisteredServiceAccessStrategy.class);
+            assertEquals(strategyWritten, credentialRead);
+        }
+        
         @Test
         void checkAuthorizationFails() throws Throwable {
             val attributes = new HashMap<String, Set<String>>();
