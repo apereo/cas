@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
+import org.springframework.context.ApplicationContext;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -38,4 +39,6 @@ public class RegisteredServiceAccessStrategyRequest implements Serializable {
 
     @Builder.Default
     private final Map<String, List<Object>> attributes = new HashMap<>();
+
+    private final ApplicationContext applicationContext;
 }

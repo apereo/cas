@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.surrogate;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasSurrogateRestAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import java.net.URI;
@@ -44,11 +46,18 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder().build().toObjectMapper();
 
     @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
+    @Autowired
     @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
     private SurrogateAuthenticationService service;
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+    private RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
     
     @Override
     @Test
@@ -101,7 +110,7 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
 
             val props = new CasConfigurationProperties();
             props.getAuthn().getSurrogate().getRest().setUrl("http://localhost:%s".formatted(webServer.getPort()));
-            val surrogateService = new SurrogateRestAuthenticationService(servicesManager, props);
+            val surrogateService = new SurrogateRestAuthenticationService(servicesManager, props, principalAccessStrategyEnforcer, applicationContext);
 
             val application = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(application.getId(), Map.of());
@@ -125,7 +134,7 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
             webServer.start();
             val props = new CasConfigurationProperties();
             props.getAuthn().getSurrogate().getRest().setUrl("http://localhost:%s".formatted(webServer.getPort()));
-            val surrogateService = new SurrogateRestAuthenticationService(servicesManager, props);
+            val surrogateService = new SurrogateRestAuthenticationService(servicesManager, props, principalAccessStrategyEnforcer, applicationContext);
             val result = surrogateService.getImpersonationAccounts("cassurrogate", Optional.empty());
             assertTrue(result.isEmpty());
         }

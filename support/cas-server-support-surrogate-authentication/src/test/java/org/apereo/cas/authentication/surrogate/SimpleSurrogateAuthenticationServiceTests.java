@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceSurrogatePolicy;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,17 +45,23 @@ class SimpleSurrogateAuthenticationServiceTests {
         @Autowired
         private CasConfigurationProperties casProperties;
 
+        @Autowired
+        @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+        private RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
+
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
+        
         @Override
         public SurrogateAuthenticationService getService() {
             return new SimpleSurrogateAuthenticationService(
                 CollectionUtils.wrap(
                     "casuser", CollectionUtils.wrapList("banderson"),
                     "casadmin", CollectionUtils.wrapList(SurrogateAuthenticationService.WILDCARD_ACCOUNT)
-                ), servicesManager, casProperties);
+                ), servicesManager, casProperties, principalAccessStrategyEnforcer, applicationContext);
         }
     }
-
-
+    
     @Nested
     @SuppressWarnings("ClassCanBeStatic")
     @SpringBootTest(classes = BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class,
@@ -71,9 +79,17 @@ class SimpleSurrogateAuthenticationServiceTests {
         @Autowired
         private CasConfigurationProperties casProperties;
 
+        @Autowired
+        @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+        private RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
+
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
+        
         @Test
         void verifyOperation() throws Throwable {
-            val surrogateService = new SimpleSurrogateAuthenticationService(Map.of(), servicesManager, casProperties);
+            val surrogateService = new SimpleSurrogateAuthenticationService(Map.of(), servicesManager,
+                casProperties, principalAccessStrategyEnforcer, applicationContext);
             val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(),
                 Map.of("membership", List.of("faculty", "superadmin"),
                     SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, List.of(true)));

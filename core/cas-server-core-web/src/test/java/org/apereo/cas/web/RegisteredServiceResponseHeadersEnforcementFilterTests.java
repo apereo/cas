@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -80,6 +81,10 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+    private RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
+
     private RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final String serviceId,
                                                                                    final RegisteredServiceProperties property) {
         return getFilterForProperty(serviceId, Pair.of(property, "true"));
@@ -103,7 +108,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
             new DirectObjectProvider<>(servicesManager),
             new DirectObjectProvider<>(argumentExtractor),
             new DirectObjectProvider<>(new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())),
-            new DirectObjectProvider<>(new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext)),
+            new DirectObjectProvider<>(new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext, principalAccessStrategyEnforcer)),
             webEndpointProperties);
     }
 

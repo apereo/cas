@@ -15,6 +15,10 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
@@ -38,10 +42,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2
  */
 @Tag("Grouper")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 class GrouperRegisteredServiceAccessStrategyTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @BeforeAll
     public static void prepTests() throws Exception {
         FileUtils.cleanDirectory(RESOURCE.getFile());
@@ -119,7 +127,9 @@ class GrouperRegisteredServiceAccessStrategyTests {
         assertFalse(executeStrategy(strategy));
     }
 
-    private static boolean executeStrategy(final GrouperRegisteredServiceAccessStrategy strategy) {
-        return strategy.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("banderson").build());
+    private boolean executeStrategy(final GrouperRegisteredServiceAccessStrategy strategy) {
+        return strategy.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder()
+            .applicationContext(applicationContext)
+            .principalId("banderson").build());
     }
 }

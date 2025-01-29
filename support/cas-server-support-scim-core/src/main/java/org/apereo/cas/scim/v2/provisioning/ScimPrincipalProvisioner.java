@@ -9,7 +9,6 @@ import org.apereo.cas.scim.v2.BaseScimService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import de.captaingoldfish.scim.sdk.common.constants.EndpointPaths;
-import de.captaingoldfish.scim.sdk.common.constants.enums.Comparator;
 import de.captaingoldfish.scim.sdk.common.resources.User;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -50,13 +49,7 @@ public class ScimPrincipalProvisioner extends BaseScimService<ScimProvisioningPr
         try {
             LOGGER.info("Attempting to execute provisioning ops for [{}]", principal.getId());
             val scimService = getScimService(registeredService);
-            val response = scimService.list(User.class, EndpointPaths.USERS)
-                .count(1)
-                .filter("userName", Comparator.EQ, principal.getId())
-                .build()
-                .get()
-                .sendRequest();
-
+            val response = findUser(scimService, principal.getId());
             if (response.isSuccess() && response.getResource().getTotalResults() > 0) {
                 val user = response.getResource().getListedResources().getFirst();
                 return updateUserResource(user, principal, credential, registeredService);

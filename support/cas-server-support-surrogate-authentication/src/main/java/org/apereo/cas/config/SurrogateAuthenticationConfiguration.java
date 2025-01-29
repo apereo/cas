@@ -32,6 +32,7 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
@@ -193,6 +194,8 @@ class SurrogateAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "groovySurrogateAuthenticationService")
         public BeanSupplier<SurrogateAuthenticationService> groovySurrogateAuthenticationService(
+            @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+            final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -203,7 +206,7 @@ class SurrogateAuthenticationConfiguration {
                 .supply(Unchecked.supplier(() -> {
                     val su = casProperties.getAuthn().getSurrogate();
                     LOGGER.debug("Using Groovy resource [{}] to locate surrogate accounts", su.getGroovy().getLocation());
-                    return new GroovySurrogateAuthenticationService(servicesManager, casProperties);
+                    return new GroovySurrogateAuthenticationService(servicesManager, casProperties, principalAccessStrategyEnforcer, applicationContext);
                 }))
                 .otherwiseNull();
         }
@@ -212,6 +215,8 @@ class SurrogateAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jsonSurrogateAuthenticationService")
         public BeanSupplier<SurrogateAuthenticationService> jsonSurrogateAuthenticationService(
+            @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+            final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -222,7 +227,7 @@ class SurrogateAuthenticationConfiguration {
                 .supply(Unchecked.supplier(() -> {
                     val su = casProperties.getAuthn().getSurrogate();
                     LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
-                    return new JsonResourceSurrogateAuthenticationService(servicesManager, casProperties);
+                    return new JsonResourceSurrogateAuthenticationService(servicesManager, casProperties, principalAccessStrategyEnforcer, applicationContext);
                 }))
                 .otherwiseNull();
         }
@@ -231,6 +236,9 @@ class SurrogateAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "simpleSurrogateAuthenticationService")
         public BeanSupplier<SurrogateAuthenticationService> simpleSurrogateAuthenticationService(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+            final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties) {
@@ -241,7 +249,8 @@ class SurrogateAuthenticationConfiguration {
                     val accounts = new HashMap<String, List>();
                     su.getSimple().getSurrogates().forEach((user, v) -> accounts.put(user, new ArrayList<>(StringUtils.commaDelimitedListToSet(v))));
                     LOGGER.debug("Using accounts [{}] for surrogate authentication", accounts);
-                    return new SimpleSurrogateAuthenticationService(accounts, servicesManager, casProperties);
+                    return new SimpleSurrogateAuthenticationService(accounts, servicesManager,
+                        casProperties, principalAccessStrategyEnforcer, applicationContext);
                 });
         }
     }

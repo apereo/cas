@@ -8,6 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 
 import java.io.IOException;
@@ -20,10 +24,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("RegisteredService")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 class RemoteEndpointServiceAccessStrategyTests {
-
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifySerializeToJson() throws IOException {
@@ -41,7 +48,9 @@ class RemoteEndpointServiceAccessStrategyTests {
         try (val webServer = new MockWebServer(MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             strategy.setEndpointUrl("http://localhost:%s".formatted(webServer.getPort()));
-            assertTrue(strategy.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
+            assertTrue(strategy.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder()
+                .applicationContext(applicationContext)
+                .principalId("casuser").build()));
         }
     }
 
@@ -52,7 +61,9 @@ class RemoteEndpointServiceAccessStrategyTests {
         strategy.setAcceptableResponseCodes("600");
         try (val webServer = new MockWebServer(MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            assertFalse(strategy.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser").build()));
+            assertFalse(strategy.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder()
+                .applicationContext(applicationContext)
+                .principalId("casuser").build()));
         }
     }
 }

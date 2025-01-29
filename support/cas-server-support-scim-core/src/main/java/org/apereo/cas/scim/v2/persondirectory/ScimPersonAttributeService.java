@@ -2,8 +2,6 @@ package org.apereo.cas.scim.v2.persondirectory;
 
 import org.apereo.cas.configuration.model.support.scim.ScimPrincipalAttributesProperties;
 import org.apereo.cas.scim.v2.BaseScimService;
-import de.captaingoldfish.scim.sdk.common.constants.EndpointPaths;
-import de.captaingoldfish.scim.sdk.common.constants.enums.Comparator;
 import de.captaingoldfish.scim.sdk.common.resources.User;
 import de.captaingoldfish.scim.sdk.common.resources.multicomplex.MultiComplexNode;
 import lombok.val;
@@ -30,20 +28,14 @@ public class ScimPersonAttributeService extends BaseScimService<ScimPrincipalAtt
      */
     public Map<String, ?> getPerson(final String uid) {
         val scimService = getScimService(Optional.empty());
-        val response = scimService.list(User.class, EndpointPaths.USERS)
-            .count(1)
-            .filter("userName", Comparator.EQ, uid)
-            .build()
-            .get()
-            .sendRequest();
-
+        val response = findUser(scimService, uid);
         if (response.isSuccess() && response.getResource().getTotalResults() > 0) {
             val user = response.getResource().getListedResources().getFirst();
             return collectPersonAttributes(user);
         }
         return new HashMap<>();
     }
-
+    
     protected Map<String, ?> collectPersonAttributes(final User user) {
         val personAttributes = new HashMap<String, Object>();
         for (var i = 0; i < user.getAddresses().size(); i++) {

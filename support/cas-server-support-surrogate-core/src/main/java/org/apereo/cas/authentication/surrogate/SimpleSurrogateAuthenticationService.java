@@ -3,11 +3,13 @@ package org.apereo.cas.authentication.surrogate;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,8 +30,10 @@ public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthentic
 
     public SimpleSurrogateAuthenticationService(final Map<String, List> eligibleAccounts,
                                                 final ServicesManager servicesManager,
-                                                final CasConfigurationProperties casProperties) {
-        super(servicesManager, casProperties);
+                                                final CasConfigurationProperties casProperties,
+                                                final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
+                                                final ConfigurableApplicationContext applicationContext) {
+        super(servicesManager, casProperties, principalAccessStrategyEnforcer, applicationContext);
         this.eligibleAccounts = Map.copyOf(eligibleAccounts);
     }
 

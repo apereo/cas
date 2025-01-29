@@ -126,12 +126,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
 
         val allowedClaims = new LinkedHashSet<>(getAllowedAttributes());
         if (claimsMustBeDefinedViaDiscovery()) {
-            val applicationContext = ApplicationContextProvider.getApplicationContext();
-            if (applicationContext == null) {
-                LOGGER.warn("Could not locate the application context to process attributes and claims");
-                return new HashMap<>(0);
-            }
-            val properties = applicationContext.getBean(CasConfigurationProperties.class);
+            val properties = context.getApplicationContext().getBean(CasConfigurationProperties.class);
             val supportedClaims = properties.getAuthn().getOidc().getDiscovery().getClaims();
             allowedClaims.retainAll(supportedClaims);
             LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "

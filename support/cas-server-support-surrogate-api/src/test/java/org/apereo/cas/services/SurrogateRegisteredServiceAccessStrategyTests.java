@@ -6,6 +6,10 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,7 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("RegisteredService")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 class SurrogateRegisteredServiceAccessStrategyTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifySurrogateDisabled() throws Throwable {
         val strategy = new SurrogateRegisteredServiceAccessStrategy();
@@ -44,8 +52,8 @@ class SurrogateRegisteredServiceAccessStrategyTests {
         assertTrue(executeStrategy(strategy));
     }
 
-    private static boolean executeStrategy(final RegisteredServiceAccessStrategy strategy) throws Throwable {
-        val request = RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+    private boolean executeStrategy(final RegisteredServiceAccessStrategy strategy) throws Throwable {
+        val request = RegisteredServiceAccessStrategyRequest.builder().applicationContext(applicationContext).principalId("casuser")
             .attributes(CollectionUtils.wrap(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true))
             .build();
         return strategy.authorizeRequest(request);

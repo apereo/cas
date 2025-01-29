@@ -15,6 +15,7 @@ import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.DefaultChainingServiceRegistry;
+import org.apereo.cas.services.DefaultRegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.DefaultRegisteredServicesEventListener;
 import org.apereo.cas.services.DefaultRegisteredServicesTemplatesManager;
 import org.apereo.cas.services.DefaultServiceRegistryExecutionPlan;
@@ -26,6 +27,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.RegisteredServicesEventListener;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
@@ -160,10 +162,20 @@ class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditableExecution registeredServiceAccessStrategyEnforcer(final ConfigurableApplicationContext applicationContext) {
-            return new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext);
+        public AuditableExecution registeredServiceAccessStrategyEnforcer(
+            @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+            final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
+            final ConfigurableApplicationContext applicationContext) {
+            return new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext, principalAccessStrategyEnforcer);
         }
 
+        @ConditionalOnMissingBean(name = RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer(final ConfigurableApplicationContext applicationContext) {
+            return new DefaultRegisteredServicePrincipalAccessStrategyEnforcer(applicationContext);
+        }
+        
         @ConditionalOnMissingBean(name = "groovyRegisteredServiceAccessStrategyEnforcer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -20,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -41,6 +41,8 @@ public class GenericSuccessViewAction extends BaseCasWebflowAction {
 
     private final CasConfigurationProperties casProperties;
 
+    private final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
+    
     private Optional<Authentication> getAuthentication(final String ticketGrantingTicketId) {
         try {
             val ticketGrantingTicket = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
@@ -70,9 +72,14 @@ public class GenericSuccessViewAction extends BaseCasWebflowAction {
                         .stream()
                         .filter(registeredService -> {
                             try {
-                                return RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                                    registeredService, authn.getPrincipal().getId(),
-                                    (Map) CollectionUtils.merge(authn.getAttributes(), authn.getPrincipal().getAttributes()));
+                                return principalAccessStrategyEnforcer.authorize(
+                                    RegisteredServicePrincipalAccessStrategyEnforcer.PrincipalAccessStrategyContext.builder()
+                                        .registeredService(registeredService)
+                                        .principalId(authn.getPrincipal().getId())
+                                        .principalAttributes(CollectionUtils.merge(authn.getAttributes(), authn.getPrincipal().getAttributes()))
+                                        .service(service)
+                                        .applicationContext(requestContext.getActiveFlow().getApplicationContext())
+                                        .build());
                             } catch (final Throwable e) {
                                 LOGGER.info(e.getMessage(), e);
                                 return false;

@@ -6,9 +6,9 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="com.unboundid.scim" level="trace"  />
-        <Logger name="org.apereo.cas" level="info"  />
-        <Logger name="org.apereo.cas.web.flow" level="info" />
+        <Logger name="de.captaingoldfish" level="warn"  />
+        <Logger name="org.apereo.cas" level="warn"  />
+        <Logger name="org.apereo.cas.web.flow" level="warn" />
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
