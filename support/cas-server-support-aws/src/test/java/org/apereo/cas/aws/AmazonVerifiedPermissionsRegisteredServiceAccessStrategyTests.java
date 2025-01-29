@@ -10,6 +10,10 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import software.amazon.awssdk.core.SdkSystemSetting;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("AmazonWebServices")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 class AmazonVerifiedPermissionsRegisteredServiceAccessStrategyTests {
 
     static {
@@ -36,6 +41,9 @@ class AmazonVerifiedPermissionsRegisteredServiceAccessStrategyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifySerializeToJson() throws IOException {
         val strategy = new AmazonVerifiedPermissionsRegisteredServiceAccessStrategy();
@@ -57,6 +65,7 @@ class AmazonVerifiedPermissionsRegisteredServiceAccessStrategyTests {
 
         val accessRequest = RegisteredServiceAccessStrategyRequest.builder()
             .principalId("casuser")
+            .applicationContext(applicationContext)
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .service(RegisteredServiceTestUtils.getService())
             .attributes(CollectionUtils.wrap("key1", Set.of("value1")))

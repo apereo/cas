@@ -78,6 +78,7 @@ public abstract class BaseInweboActionTests {
     @BeforeEach
     void setUp() throws Exception {
         this.requestContext = MockRequestContext.create(applicationContext);
+        reset(this.service);
         setAuthenticationInContext(LOGIN);
     }
 

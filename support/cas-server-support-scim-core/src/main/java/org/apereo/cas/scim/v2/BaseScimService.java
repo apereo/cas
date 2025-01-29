@@ -5,6 +5,11 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import de.captaingoldfish.scim.sdk.client.ScimClientConfig;
 import de.captaingoldfish.scim.sdk.client.ScimRequestBuilder;
+import de.captaingoldfish.scim.sdk.client.response.ServerResponse;
+import de.captaingoldfish.scim.sdk.common.constants.EndpointPaths;
+import de.captaingoldfish.scim.sdk.common.constants.enums.Comparator;
+import de.captaingoldfish.scim.sdk.common.resources.User;
+import de.captaingoldfish.scim.sdk.common.response.ListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -21,10 +26,11 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-public abstract class BaseScimService<T extends ScimProperties> {
+public abstract class BaseScimService<T extends ScimProperties> implements ScimService {
     private final T scimProperties;
-
-    protected ScimRequestBuilder getScimService(final Optional<RegisteredService> givenService) {
+    
+    @Override
+    public ScimRequestBuilder getScimService(final Optional<RegisteredService> givenService) {
         val headersMap = new HashMap<String, String>();
 
         var token = scimProperties.getOauthToken();
@@ -72,4 +78,15 @@ public abstract class BaseScimService<T extends ScimProperties> {
             .build();
         return new ScimRequestBuilder(target, scimClientConfig);
     }
+    
+    @Override
+    public ServerResponse<ListResponse<User>> findUser(final ScimRequestBuilder scimService, final String uid) {
+        return scimService.list(User.class, EndpointPaths.USERS)
+            .count(1)
+            .filter("userName", Comparator.EQ, uid)
+            .build()
+            .get()
+            .sendRequest();
+    }
+
 }

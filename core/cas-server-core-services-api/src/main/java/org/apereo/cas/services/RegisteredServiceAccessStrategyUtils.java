@@ -1,15 +1,11 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import jakarta.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 /**
@@ -116,40 +112,6 @@ public class RegisteredServiceAccessStrategyUtils {
             ticketGrantingTicket.getId(), service.getId());
     }
 
-    /**
-     * Ensure principal access is allowed for service.
-     *
-     * @param service           the service
-     * @param registeredService the registered service
-     * @param principalId       the principal id
-     * @param attributes        the attributes
-     * @return true/false
-     * @throws Throwable the throwable
-     */
-    public static boolean ensurePrincipalAccessIsAllowedForService(final Service service,
-                                                                   final RegisteredService registeredService,
-                                                                   final String principalId,
-                                                                   final Map<String, List<Object>> attributes) throws Throwable {
-        ensureServiceAccessIsAllowed(service, registeredService);
-
-        val serviceId = service != null ? service.getId() : "unknown";
-        LOGGER.trace("Checking access strategy for service [{}], requested by [{}] with attributes [{}].", serviceId, principalId, attributes);
-        val accessRequest = RegisteredServiceAccessStrategyRequest.builder()
-            .service(service)
-            .principalId(principalId)
-            .attributes(attributes)
-            .registeredService(registeredService)
-            .build();
-        if (!registeredService.getAccessStrategy().authorizeRequest(accessRequest)) {
-            LOGGER.warn("Cannot grant access to service [{}]; it is not authorized for use by [{}].", serviceId, principalId);
-            val handlerErrors = new HashMap<String, Throwable>();
-            val message = String.format("Cannot authorize principal %s to access service %s, likely due to insufficient permissions", principalId, serviceId);
-            val exception = new UnauthorizedServiceForPrincipalException(message, registeredService, principalId, attributes);
-            handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(), exception);
-            throw new PrincipalException(message, handlerErrors, new HashMap<>(0));
-        }
-        return true;
-    }
 
 
     /**

@@ -9,6 +9,10 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
@@ -23,9 +27,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("RegisteredService")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 class PermitRegisteredServiceAccessStrategyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
     
     @Test
     void verifySerializeToJson() throws IOException {
@@ -59,6 +67,7 @@ class PermitRegisteredServiceAccessStrategyTests {
         val accessRequest = RegisteredServiceAccessStrategyRequest.builder()
             .principalId(username)
             .attributes(attributes)
+            .applicationContext(applicationContext)
             .registeredService(service)
             .build();
         assertFalse(strategy.authorizeRequest(accessRequest));

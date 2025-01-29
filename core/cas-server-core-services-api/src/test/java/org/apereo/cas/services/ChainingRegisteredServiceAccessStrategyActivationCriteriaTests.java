@@ -8,6 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.nio.file.Files;
 import java.util.List;
@@ -23,15 +27,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("RegisteredService")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 class ChainingRegisteredServiceAccessStrategyActivationCriteriaTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyOrOperation() {
-        val request = RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
-            .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build();
+        val request = RegisteredServiceAccessStrategyRequest.builder()
+            .principalId("casuser")
+            .attributes(CollectionUtils.wrap("key1", Set.of("value1")))
+            .applicationContext(applicationContext)
+            .build();
 
         val chain = new ChainingRegisteredServiceAccessStrategyActivationCriteria();
         chain.addConditions(RegisteredServiceAccessStrategyActivationCriteria.always(),
@@ -43,7 +53,9 @@ class ChainingRegisteredServiceAccessStrategyActivationCriteriaTests {
 
     @Test
     void verifyAndOperation() {
-        val request = RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+        val request = RegisteredServiceAccessStrategyRequest.builder()
+            .applicationContext(applicationContext)
+            .principalId("casuser")
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build();
         val chain = new ChainingRegisteredServiceAccessStrategyActivationCriteria();
         chain.addConditions(RegisteredServiceAccessStrategyActivationCriteria.always(),

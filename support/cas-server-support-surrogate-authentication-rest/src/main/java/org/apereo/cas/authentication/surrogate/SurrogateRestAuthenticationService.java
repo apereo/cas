@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.surrogate;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -16,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import java.nio.charset.StandardCharsets;
@@ -37,8 +39,10 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     public SurrogateRestAuthenticationService(final ServicesManager servicesManager,
-                                              final CasConfigurationProperties casProperties) {
-        super(servicesManager, casProperties);
+                                              final CasConfigurationProperties casProperties,
+                                              final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
+                                              final ConfigurableApplicationContext applicationContext) {
+        super(servicesManager, casProperties, principalAccessStrategyEnforcer, applicationContext);
     }
 
     @Override

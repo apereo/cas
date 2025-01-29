@@ -8,6 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.nio.file.Files;
 import java.util.List;
@@ -22,10 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("RegisteredService")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
-
+    
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @Test
     void verifySerializeToJson() throws Throwable {
@@ -44,6 +51,7 @@ class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests {
         val request = RegisteredServiceAccessStrategyRequest.builder()
             .principalId("casuser")
             .attributes(CollectionUtils.wrap("cn", List.of("name1")))
+            .applicationContext(applicationContext)
             .build();
         val criteria = new AttributeBasedRegisteredServiceAccessStrategyActivationCriteria()
             .setOperator(LogicalOperatorTypes.AND)
@@ -58,6 +66,7 @@ class AttributeBasedRegisteredServiceAccessStrategyActivationCriteriaTests {
         val request = RegisteredServiceAccessStrategyRequest.builder()
             .principalId("casuser")
             .attributes(CollectionUtils.wrap("cn", List.of("***")))
+            .applicationContext(applicationContext)
             .build();
         val criteria = new AttributeBasedRegisteredServiceAccessStrategyActivationCriteria()
             .setOperator(LogicalOperatorTypes.OR)

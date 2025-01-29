@@ -30,6 +30,7 @@ would be enacted and validated when an authentication request from the applicati
 | Open Policy Agent        | See [this guide](Service-Access-Strategy-OpenPolicyAgent.html).         |
 | Chaining                 | See [this guide](Service-Access-Strategy-Chain.html).                   |
 | Custom                   | See [this guide](Service-Access-Strategy-Custom.html).                  |
+| SCIM                     | See [this guide](Service-Access-Strategy-SCIM.html).                    |
 
 ## Actuator Endpoints
 

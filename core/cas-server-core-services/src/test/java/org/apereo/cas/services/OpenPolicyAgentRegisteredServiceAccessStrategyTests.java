@@ -9,6 +9,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 
@@ -29,10 +33,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("RegisteredService")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
 class OpenPolicyAgentRegisteredServiceAccessStrategyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifySerializeToJson() throws IOException {
         val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
@@ -60,6 +68,7 @@ class OpenPolicyAgentRegisteredServiceAccessStrategyTests {
             .service(RegisteredServiceTestUtils.getService())
             .principalId(principal.getId())
             .attributes(principal.getAttributes())
+            .applicationContext(applicationContext)
             .build();
         assertFalse(strategy.authorizeRequest(request));
 

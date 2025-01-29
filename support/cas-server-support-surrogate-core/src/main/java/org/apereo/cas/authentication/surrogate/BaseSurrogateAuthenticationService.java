@@ -3,13 +3,14 @@ package org.apereo.cas.authentication.surrogate;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.util.RegexUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.Optional;
 
 /**
@@ -22,6 +23,8 @@ import java.util.Optional;
 public abstract class BaseSurrogateAuthenticationService implements SurrogateAuthenticationService {
     protected final ServicesManager servicesManager;
     protected final CasConfigurationProperties casProperties;
+    protected final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
+    protected final ConfigurableApplicationContext applicationContext;
 
     @Override
     public final boolean canImpersonate(final String surrogate, final Principal principal,
@@ -38,8 +41,15 @@ public abstract class BaseSurrogateAuthenticationService implements SurrogateAut
         if (givenService.isPresent()) {
             val service = givenService.get();
             val registeredService = servicesManager.findServiceBy(service);
-            return RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                registeredService, principal.getId(), principal.getAttributes())
+            val accessGranted = principalAccessStrategyEnforcer.authorize(
+                RegisteredServicePrincipalAccessStrategyEnforcer.PrincipalAccessStrategyContext.builder()
+                    .registeredService(registeredService)
+                    .principalId(principal.getId())
+                    .principalAttributes(principal.getAttributes())
+                    .service(service)
+                    .applicationContext(applicationContext)
+                    .build());
+            return accessGranted
                 && registeredService instanceof final WebBasedRegisteredService wbrs
                 && wbrs.getSurrogatePolicy().isEnabled();
         }

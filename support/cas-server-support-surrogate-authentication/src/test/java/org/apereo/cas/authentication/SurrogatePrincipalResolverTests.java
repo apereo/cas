@@ -15,6 +15,7 @@ import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationServic
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
@@ -62,6 +63,10 @@ class SurrogatePrincipalResolverTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+    private RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
+    
     private AttributeDefinitionStore attributeDefinitionStore;
     
     @BeforeEach
@@ -190,7 +195,7 @@ class SurrogatePrincipalResolverTests {
     private SurrogateAuthenticationPrincipalBuilder getBuilder() {
         val surrogateAuthenticationService = new SimpleSurrogateAuthenticationService(
             Map.of("test", List.of("surrogate")),
-            servicesManager, casProperties);
+            servicesManager, casProperties, principalAccessStrategyEnforcer, applicationContext);
         return new DefaultSurrogateAuthenticationPrincipalBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),

@@ -3,6 +3,8 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.scim.v2.ScimService;
+import org.apereo.cas.scim.v2.access.DefaultScimService;
 import org.apereo.cas.scim.v2.provisioning.DefaultScimPrincipalAttributeMapper;
 import org.apereo.cas.scim.v2.provisioning.ScimPrincipalAttributeMapper;
 import org.apereo.cas.scim.v2.provisioning.ScimPrincipalProvisioner;
@@ -58,6 +60,7 @@ public class CasScimAutoConfiguration {
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "scimCasWebflowExecutionPlanConfigurer")
@@ -71,6 +74,7 @@ public class CasScimAutoConfiguration {
                 .otherwiseProxy()
                 .get();
         }
+
         @ConditionalOnMissingBean(name = "scimWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -89,7 +93,7 @@ public class CasScimAutoConfiguration {
                 .get();
         }
     }
-    
+
     @Configuration(value = "CasScimCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasScimCoreConfiguration {
@@ -100,7 +104,7 @@ public class CasScimAutoConfiguration {
             final CasConfigurationProperties casProperties) {
             return new DefaultScimPrincipalAttributeMapper(casProperties.getScim());
         }
-        
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = PrincipalProvisioner.BEAN_NAME)
@@ -109,6 +113,14 @@ public class CasScimAutoConfiguration {
             @Qualifier("scim2PrincipalAttributeMapper")
             final ScimPrincipalAttributeMapper scim2PrincipalAttributeMapper) {
             return new ScimPrincipalProvisioner(casProperties.getScim(), scim2PrincipalAttributeMapper);
+        }
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @ConditionalOnMissingBean(name = "defaultScimService")
+        public ScimService defaultScimService(
+            final CasConfigurationProperties casProperties) {
+            return new DefaultScimService(casProperties.getScim());
         }
     }
 }

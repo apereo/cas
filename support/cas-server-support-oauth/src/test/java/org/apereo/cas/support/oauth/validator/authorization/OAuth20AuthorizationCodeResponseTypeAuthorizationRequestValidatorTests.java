@@ -32,7 +32,7 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
         final ServicesManager serviceManager) {
         return new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(serviceManager,
             serviceFactory,
-            new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext),
+            new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext, principalAccessStrategyEnforcer),
             oauthRequestParameterResolver);
     }
 

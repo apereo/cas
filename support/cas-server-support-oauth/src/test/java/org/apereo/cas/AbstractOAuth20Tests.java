@@ -34,6 +34,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
@@ -254,6 +255,10 @@ public abstract class AbstractOAuth20Tests {
     @Qualifier("accessTokenController")
     protected OAuth20AccessTokenEndpointController accessTokenController;
 
+    @Autowired
+    @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+    protected RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
+    
     @Autowired
     @Qualifier("oauthDistributedSessionStore")
     protected SessionStore oauthDistributedSessionStore;
