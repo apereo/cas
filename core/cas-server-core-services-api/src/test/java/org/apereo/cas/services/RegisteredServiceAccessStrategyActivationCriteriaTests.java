@@ -1,8 +1,10 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -18,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 class RegisteredServiceAccessStrategyActivationCriteriaTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

@@ -3,6 +3,7 @@ package org.apereo.cas.aws;
 import org.apereo.cas.aws.authz.AmazonVerifiedPermissionsRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +11,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -29,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("AmazonWebServices")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 class AmazonVerifiedPermissionsRegisteredServiceAccessStrategyTests {
 
     static {

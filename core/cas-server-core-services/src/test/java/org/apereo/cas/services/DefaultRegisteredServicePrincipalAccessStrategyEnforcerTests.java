@@ -2,11 +2,12 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.config.BaseAutoConfigurationTests;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.2.0
  */
 @Tag("RegisteredService")
-@Nested
 @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 class DefaultRegisteredServicePrincipalAccessStrategyEnforcerTests {
     @Autowired
     @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
