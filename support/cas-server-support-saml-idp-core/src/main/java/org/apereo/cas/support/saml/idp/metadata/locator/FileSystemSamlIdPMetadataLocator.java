@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.Getter;
@@ -96,13 +97,16 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
         });
     }
 
-    protected Resource getMetadataArtifact(final Optional<SamlRegisteredService> result, final String artifactName) throws Throwable {
-        if (result.isPresent()) {
-            val serviceDirectory = new File(this.metadataLocation, getAppliesToFor(result));
-            LOGGER.trace("Metadata directory location for [{}] is [{}]", result.get().getName(), serviceDirectory);
+    protected Resource getMetadataArtifact(final Optional<SamlRegisteredService> registeredService, final String artifactName) throws Throwable {
+        if (registeredService.isPresent()) {
+            val samlRegisteredService = registeredService.get();
+            val serviceDirectory = StringUtils.isNotBlank(samlRegisteredService.getIdpMetadataLocation())
+                ? ResourceUtils.getRawResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(samlRegisteredService.getIdpMetadataLocation())).getFile()
+                : new File(this.metadataLocation, getAppliesToFor(registeredService));
+            LOGGER.debug("Metadata directory location for [{}] is [{}]", samlRegisteredService.getName(), serviceDirectory);
             if (serviceDirectory.exists()) {
                 val artifact = new File(serviceDirectory, artifactName);
-                LOGGER.trace("Artifact location for [{}] and [{}] is [{}]", artifactName, result.get().getName(), artifact);
+                LOGGER.trace("Artifact location for [{}] and [{}] is [{}]", artifactName, samlRegisteredService.getName(), artifact);
                 if (artifact.exists()) {
                     LOGGER.debug("Using metadata artifact [{}] at [{}]", artifactName, artifact);
                     return ResourceUtils.toFileSystemResource(artifact);
