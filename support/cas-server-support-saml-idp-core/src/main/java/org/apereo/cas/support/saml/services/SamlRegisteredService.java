@@ -45,6 +45,9 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     @ExpressionLanguageCapable
     private String metadataLocation;
 
+    @ExpressionLanguageCapable
+    private String idpMetadataLocation;
+
     private String metadataProxyLocation;
 
     /**
