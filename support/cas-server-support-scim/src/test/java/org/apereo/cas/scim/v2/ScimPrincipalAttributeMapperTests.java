@@ -46,7 +46,7 @@ class ScimPrincipalAttributeMapperTests extends BaseScimTests {
         user.setMeta(meta);
 
         assertDoesNotThrow(() ->
-            scim2PrincipalAttributeMapper.map(user, CoreAuthenticationTestUtils.getPrincipal(),
+            scim2PrincipalAttributeMapper.forCreate(CoreAuthenticationTestUtils.getPrincipal(),
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 }

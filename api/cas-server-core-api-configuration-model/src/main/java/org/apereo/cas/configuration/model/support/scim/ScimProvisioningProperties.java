@@ -34,6 +34,11 @@ public class ScimProvisioningProperties extends ScimProperties {
     private Map<String, String> schemaMappings = new LinkedHashMap<>();
 
     /**
+     * Indicate whether provisioning should be asynchronous.
+     */
+    private boolean asynchronous;
+    
+    /**
      * The Scim user schema.
      */
     @RequiredArgsConstructor
@@ -107,6 +112,10 @@ public class ScimProvisioningProperties extends ScimProperties {
          * Enterprise user organization.
          */
         ENTERPRISE_ORGANIZATION("organization"),
+        /**
+         * User groups in the user schema.
+         */
+        GROUPS("groups"),
         /**
          * Resource type in the user schema.
          */

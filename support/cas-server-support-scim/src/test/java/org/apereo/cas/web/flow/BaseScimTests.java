@@ -18,6 +18,7 @@ import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasScimAutoConfiguration;
 import org.apereo.cas.config.CasScimPersonDirectoryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.scim.v2.ScimService;
 import org.apereo.cas.scim.v2.provisioning.ScimPrincipalAttributeMapper;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -72,4 +73,8 @@ public abstract class BaseScimTests {
 
     @Autowired
     protected CasConfigurationProperties casProperties;
+
+    protected ScimService getPrincipalProvisioningScimService() {
+        return (ScimService) principalProvisioner;
+    }
 }

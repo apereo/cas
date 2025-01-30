@@ -29,7 +29,6 @@ import org.springframework.context.ApplicationEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -401,7 +400,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             }
         }
         val subQueries = serviceQueries.subList(2, serviceQueries.size());
-        val query = QueryFactory.and(serviceQueries.getFirst(), serviceQueries.get(1), (List) subQueries);
+        val query = QueryFactory.and(serviceQueries.getFirst(), serviceQueries.get(1), (Collection) subQueries);
         try (val results = indexedRegisteredServices.retrieve(query)) {
             return results.stream();
         }

@@ -27,7 +27,7 @@ public class ScimPersonAttributeService extends BaseScimService<ScimPrincipalAtt
      * @return the person
      */
     public Map<String, ?> getPerson(final String uid) {
-        val scimService = getScimService(Optional.empty());
+        val scimService = getScimRequestBuilder(Optional.empty());
         val response = findUser(scimService, uid);
         if (response.isSuccess() && response.getResource().getTotalResults() > 0) {
             val user = response.getResource().getListedResources().getFirst();
