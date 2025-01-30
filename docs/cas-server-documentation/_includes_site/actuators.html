@@ -490,18 +490,17 @@ management.endpoints.web.path-mapping.health=healthcheck
                                                 This option allows you to define a static list of users, passwords along with their role in a JSON file.
                                                 The JSON file should be formatted as follows:
 
-                                                {%- capture jsonauthfile -%}
-                                                ```json
-                                                [
-                                                {
-                                                "username": "casuser",
-                                                "password": "{sha512}<hashed-password>",
-                                                "authorities": [ "ROLE_ADMIN" ]
-                                                }
-                                                ]
-                                                ```
-                                                {%- endcapture -%}
-                                                <span>{{ jsonauthfile | markdownify }}</span>
+{% capture jsonauthfile %}
+```json
+[
+    {
+        "username": "casuser",
+        "password": "{sha512}<hashed-password>",
+        "authorities": [ "ROLE_ADMIN" ]
+    }
+]
+```{% endcapture %}
+<span>{{ jsonauthfile | markdownify }}</span>
 
                                                 <p>Supported password encoding schemes are:
                                                     <code>{sha512}</code>, <code>{sha256}</code>, <code>{bcrypt}</code>,
