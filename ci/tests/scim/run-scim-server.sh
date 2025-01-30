@@ -4,6 +4,12 @@ echo "Running SCIM docker container..."
 docker stop scim-server || true && docker rm scim-server || true
 docker run --rm --name="scim-server" -p 9666:8080 -d ${DOCKER_IMAGE}
 echo "Waiting for SCIM container to prepare..."
-sleep 10
+sleep 5
 docker ps | grep "scim-server"
-echo "SCIM docker container is running."
+retVal=$?
+if [ $retVal == 0 ]; then
+  echo "SCIM docker container is running."
+else
+  echo "SCIM docker container failed to start."
+  exit $retVal
+fi

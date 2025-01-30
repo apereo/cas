@@ -40,7 +40,7 @@ public class ScimRegisteredServiceAccessStrategy extends BaseRegisteredServiceAc
     @Override
     public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
         val service = request.getApplicationContext().getBean(ScimService.BEAN_NAME, ScimService.class);
-        val scimService = service.getScimService(Optional.of(request.getRegisteredService()));
+        val scimService = service.getScimRequestBuilder(Optional.of(request.getRegisteredService()));
         val response = service.findUser(scimService, request.getPrincipalId());
         val scimGroups = new ArrayList<>();
         if (response.isSuccess() && response.getResource().getTotalResults() > 0) {

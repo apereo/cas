@@ -58,12 +58,13 @@ class SyncopeWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action syncopePrincipalProvisionerAction(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(PrincipalProvisioner.BEAN_NAME)
             final PrincipalProvisioner principalProvisioner) {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new PrincipalProvisionerAction(principalProvisioner))
+                .supply(() -> new PrincipalProvisionerAction(principalProvisioner, casProperties.getScim()))
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }

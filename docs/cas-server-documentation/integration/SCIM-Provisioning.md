@@ -11,9 +11,8 @@ category: Integration
 The SCIM standard is created to simplify user management and provisioning in the cloud by
 defining a schema for representing users and groups and a REST API for all the necessary CRUD operations. SCIM 
 integrations with CAS allow deployers to auto-provision the authenticated CAS principal to a SCIM server/target 
-with additional support to map principal attributes into the appropriate claims and properties of the user resource.
-
-SCIM v2 is supported, thanks to the SDK provided by [UnboundID](https://github.com/PingIdentity).
+that supports the v2 specification of the SCIM protocol with additional support to map principal 
+attributes into the appropriate claims and properties of the user resource.
 
 Typical use case for enabling SCIM is to synchronize and provision user accounts, just in time, 
 to services and applications that are integrated with CAS for single sign-on. In cases where 
@@ -59,6 +58,7 @@ The set of attributes that are mapped are as follows:
 | `department`     | Set to the principal attribute `department`.     |
 | `organization`   | Set to the principal attribute `organization`.   |
 | `resourceType`   | Set to the principal attribute `resourceType`.   |
+| `groups`         | Set to the principal attribute `groups`.         |
 
 The default mapping rules can be controlled and customized using CAS properties. 
 
@@ -71,6 +71,11 @@ public ScimPrincipalAttributeMapper scim2PrincipalAttributeMapper() {
     return new MyPrincipalAttributeMapper();
 }
 ```
+  
+## Mapping Groups
+
+CAS can also provision groups to SCIM targets. The groups are populated from the principal attribute `groups`.
+Memberships can be dynamically created, updated or removed based on the principal's group memberships.
 
 ## Per Application
 

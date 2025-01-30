@@ -8,8 +8,9 @@ import org.apereo.cas.configuration.model.support.scim.ScimProvisioningPropertie
 import org.apereo.cas.scim.v2.BaseScimService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
-import de.captaingoldfish.scim.sdk.common.constants.EndpointPaths;
+import de.captaingoldfish.scim.sdk.client.response.ServerResponse;
 import de.captaingoldfish.scim.sdk.common.resources.User;
+import de.captaingoldfish.scim.sdk.common.response.ListResponse;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import java.util.Optional;
@@ -48,41 +49,66 @@ public class ScimPrincipalProvisioner extends BaseScimService<ScimProvisioningPr
                               final Principal principal) {
         try {
             LOGGER.info("Attempting to execute provisioning ops for [{}]", principal.getId());
-            val scimService = getScimService(registeredService);
+            val scimService = getScimRequestBuilder(registeredService);
             val response = findUser(scimService, principal.getId());
-            if (response.isSuccess() && response.getResource().getTotalResults() > 0) {
-                val user = response.getResource().getListedResources().getFirst();
-                return updateUserResource(user, principal, credential, registeredService);
-            }
-            return createUserResource(principal, credential, registeredService);
+            return createOrUpdate(credential, registeredService, principal, response);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return false;
     }
 
-    protected boolean updateUserResource(final User user, final Principal principal,
+    private boolean createOrUpdate(final Credential credential,
+                                   final Optional<RegisteredService> registeredService,
+                                   final Principal principal,
+                                   final ServerResponse<ListResponse<User>> response) {
+        if (response.isSuccess()) {
+            if (response.getResource().getTotalResults() > 0) {
+                val user = response.getResource().getListedResources().getFirst();
+                return updateUserResource(user, principal, credential, registeredService);
+            }
+            return createUserResource(principal, credential, registeredService);
+        }
+        return false;
+    }
+
+    protected boolean updateUserResource(final User user,
+                                         final Principal principal,
                                          final Credential credential,
                                          final Optional<RegisteredService> registeredService) {
-        mapper.map(user, principal, credential);
+        mapper.forUpdate(user, principal, credential);
         LOGGER.trace("Updating user resource [{}]", user);
-        val response = getScimService(registeredService)
-            .update(User.class, EndpointPaths.USERS, user.getId().orElseThrow())
-            .setResource(user)
-            .sendRequest();
-        return response.isSuccess();
+
+        val scimService = getScimRequestBuilder(registeredService);
+        val updatedResult = updateUser(scimService, user);
+        if (updatedResult.isPresent()) {
+            val updatedUser = updatedResult.get();
+            val groupsToCreateOrUpdate = mapper.forGroups(principal, updatedUser);
+            val currentGroups = findUserGroups(scimService, updatedUser.getId().orElseThrow()).getResource().getListedResources();
+            groupsToCreateOrUpdate.stream().parallel().forEach(group -> createOrUpdateGroups(scimService, group));
+            currentGroups
+                .stream()
+                .parallel()
+                .filter(group -> groupsToCreateOrUpdate.stream().noneMatch(g -> g.getDisplayName().equals(group.getDisplayName())))
+                .forEach(group -> removeUserFromGroup(scimService, group, updatedUser));
+        }
+        return updatedResult.isPresent();
     }
 
     protected boolean createUserResource(final Principal principal, final Credential credential,
                                          final Optional<RegisteredService> registeredService) {
-        val user = new User();
-        mapper.map(user, principal, credential);
+        val user = mapper.forCreate(principal, credential);
         LOGGER.trace("Creating user resource [{}]", user);
-        val response = getScimService(registeredService)
-            .create(User.class, EndpointPaths.USERS)
-            .setResource(user)
-            .sendRequest();
-        return response.isSuccess();
+        val scimRequestBuilder = getScimRequestBuilder(registeredService);
+        val createdResult = createUser(scimRequestBuilder, user);
+        if (createdResult.isPresent()) {
+            val createdUser = createdResult.get();
+            val groupsToCreateOrUpdate = mapper.forGroups(principal, createdUser);
+            groupsToCreateOrUpdate
+                .stream()
+                .parallel()
+                .forEach(group -> createOrUpdateGroups(scimRequestBuilder, group));
+        }
+        return createdResult.isPresent();
     }
-
 }

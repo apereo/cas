@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.scim.ScimProvisioningPropertie
 import org.apereo.cas.configuration.model.support.scim.ScimProvisioningProperties.ScimUserSchema;
 import org.apereo.cas.util.CollectionUtils;
 import de.captaingoldfish.scim.sdk.common.resources.EnterpriseUser;
+import de.captaingoldfish.scim.sdk.common.resources.Group;
 import de.captaingoldfish.scim.sdk.common.resources.User;
 import de.captaingoldfish.scim.sdk.common.resources.complex.Meta;
 import de.captaingoldfish.scim.sdk.common.resources.complex.Name;
@@ -14,6 +15,7 @@ import de.captaingoldfish.scim.sdk.common.resources.multicomplex.Address;
 import de.captaingoldfish.scim.sdk.common.resources.multicomplex.Email;
 import de.captaingoldfish.scim.sdk.common.resources.multicomplex.Entitlement;
 import de.captaingoldfish.scim.sdk.common.resources.multicomplex.Ims;
+import de.captaingoldfish.scim.sdk.common.resources.multicomplex.Member;
 import de.captaingoldfish.scim.sdk.common.resources.multicomplex.PersonRole;
 import de.captaingoldfish.scim.sdk.common.resources.multicomplex.PhoneNumber;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -37,7 +41,32 @@ public class DefaultScimPrincipalAttributeMapper implements ScimPrincipalAttribu
     private final ScimProvisioningProperties scimProperties;
 
     @Override
-    public void map(final User user, final Principal principal, final Credential credential) {
+    public User forCreate(final Principal principal, final Credential credential) {
+        val user = new User();
+        mapUser(user, principal, credential);
+        return user;
+    }
+
+    @Override
+    public User forUpdate(final User user, final Principal principal, final Credential credential) {
+        mapUser(user, principal, credential);
+        return user;
+    }
+    
+    @Override
+    public List<Group> forGroups(final Principal principal, final User... users) {
+        val members = Arrays.stream(users)
+            .map(user -> Member.builder()
+                .ref(user.getId().orElseThrow())
+                .build())
+            .toList();
+        val listOfGroups = new ArrayList<Group>();
+        mapAttributesToSchema(principal, ScimUserSchema.GROUPS, value -> listOfGroups.add(
+            Group.builder().displayName(value).members(members).build()));
+        return listOfGroups;
+    }
+    
+    private void mapUser(final User user, final Principal principal, final Credential credential) {
         user.setUserName(principal.getId());
         if (credential instanceof final UsernamePasswordCredential instance) {
             user.setPassword(instance.toPassword());
@@ -135,4 +164,5 @@ public class DefaultScimPrincipalAttributeMapper implements ScimPrincipalAttribu
         }
         return Set.of();
     }
+    
 }

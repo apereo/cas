@@ -44,6 +44,6 @@ class ScimPrincipalProvisionerTests extends BaseScimTests {
 
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getProperties()).thenReturn(props);
-        assertNotNull(((BaseScimService) principalProvisioner).getScimService(Optional.of(registeredService)));
+        assertNotNull(getPrincipalProvisioningScimService().getScimRequestBuilder(Optional.of(registeredService)));
     }
 }
