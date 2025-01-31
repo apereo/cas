@@ -55,12 +55,33 @@
       "datasourceTemplate": "ruby-version",
       "depNameTemplate": "ruby",
       "versioningTemplate": "semver"
+    },
+    {
+      "fileMatch": ["^gradle\\.properties$"],
+      "matchStrings": [
+        "^(?<depName>[a-zA-Z0-9_]+)\\s*=\\s*(?<currentValue>[0-9a-zA-Z.+-]+)$"
+      ],
+      "datasourceTemplate": "maven",
+      "versioningTemplate": "semver"
+    },
+    {
+      "fileMatch": ["^dependencies\\.gradle$"],
+      "matchStrings": [
+        "\"(?<group>[a-zA-Z0-9_.-]+):(?<packageName>[a-zA-Z0-9_.-]+):\\$(?<depVariable>[a-zA-Z0-9_]+)\""
+      ],
+      "datasourceTemplate": "maven",
+      "versioningTemplate": "semver",
+      "depNameTemplate": "{{group}}:{{packageName}}",
+      "currentValueTemplate": "UNVERSIONED"
     }
   ],
   "labels": ["Bot", "Renovate"],
   "schedule": [
     "after 10pm and before 6am every weekday"
   ],
+  "gradle": {
+    "enabled": true
+  },
   "docker": {
     "enabled": true
   },
