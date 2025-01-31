@@ -25,6 +25,7 @@ import org.apereo.cas.gauth.credential.JsonGoogleAuthenticatorTokenCredentialRep
 import org.apereo.cas.gauth.credential.RestGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorTokenRepositoryCleaner;
+import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorAccountCheckRegistrationAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorDeleteAccountAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorPrepareLoginAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorSaveRegistrationAction;
@@ -39,7 +40,6 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialDeviceMan
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
-import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountConfirmSelectionRegistrationAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCreateRegistrationAction;
 import org.apereo.cas.services.ServicesManager;
@@ -410,7 +410,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry))
+                .withAction(() -> new GoogleAuthenticatorAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry, casProperties))
                 .withId(CasWebflowConstants.ACTION_ID_GOOGLE_CHECK_ACCOUNT_REGISTRATION)
                 .build()
                 .get();

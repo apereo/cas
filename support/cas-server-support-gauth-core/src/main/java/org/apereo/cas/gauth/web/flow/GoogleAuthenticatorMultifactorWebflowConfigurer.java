@@ -55,7 +55,10 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
             createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION);
             createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_CONFIRM, "viewConfirmRegistration");
             createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+            createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_STOP, CasWebflowConstants.STATE_ID_REGISTRATION_REQUIRED);
 
+            createViewState(flow, CasWebflowConstants.STATE_ID_REGISTRATION_REQUIRED, "gauth/casGoogleAuthenticatorRegistrationRequiredView");
+            
             val acctRegSaveState = createActionState(flow, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION,
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_GOOGLE_SAVE_ACCOUNT_REGISTRATION));
             createTransitionForState(acctRegSaveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION);

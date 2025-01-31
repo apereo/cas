@@ -1136,6 +1136,10 @@ public interface CasWebflowConstants {
      * State id 'viewRegistration'.
      */
     String STATE_ID_VIEW_REGISTRATION = "viewRegistration";
+    /**
+     * State id 'viewRegistrationRequired'.
+     */
+    String STATE_ID_REGISTRATION_REQUIRED = "viewRegistrationRequired";
 
     /**
      * State id 'viewRegistrationWebAuthn'.
