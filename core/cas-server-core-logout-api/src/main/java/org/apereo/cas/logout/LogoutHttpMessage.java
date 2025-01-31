@@ -18,19 +18,15 @@ import java.net.URL;
 @Getter
 public class LogoutHttpMessage extends HttpMessage {
 
-    /**
-     * The parameter name that contains the logout request.
-     */
-    public static final String LOGOUT_REQUEST_PARAMETER = "logoutRequest";
-
     @Serial
     private static final long serialVersionUID = 399581521957873727L;
 
-    private String logoutRequestParameter = LOGOUT_REQUEST_PARAMETER;
+    private final String logoutRequestParameter;
 
-    public LogoutHttpMessage(final URL url, final String message, final boolean asynchronous) {
+    public LogoutHttpMessage(final String logoutRequestParameter, final URL url, final String message, final boolean asynchronous) {
         super(url, message, asynchronous);
         setContentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        this.logoutRequestParameter = logoutRequestParameter;
     }
 
     @Override
