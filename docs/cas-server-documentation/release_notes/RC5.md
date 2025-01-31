@@ -82,6 +82,11 @@ mapping CAS attributes to the SCIM user schema.
 ### Token Authentication
 
 [JWT authentication](../authentication/JWT-Authentication.html) is now able to accept OpenID Connect access tokens as JWTs.
+  
+### Google Authenticator Device Registration
+    
+[Google authenticator device registration](../mfa/GoogleAuthenticator-Authentication.html) can be turned off and disabled 
+via CAS properties. Please note that the default behavior is kept as is, where device registration is enabled by default.
 
 ## Other Stuff
 
@@ -93,6 +98,7 @@ mapping CAS attributes to the SCIM user schema.
 - A [new actuator endpoint](../integration/Attribute-Resolution.html) allows one to fetch registered attribute repositories with CAS.
 - [X509 connector](../authentication/X509-Authentication-WebServer-Configuration.html) for Apache Tomcat configures the maximum form post and header sizes for the connector.
 - CAS `<input/>` HTML elements that generate buttons are now able to render HTML content for the button label.
+- Locating [SAML2 identity provider metadata](../installation/Configuring-SAML2-DynamicMetadata.html) and keys per application can now be derived from a directory location assigned to the SAML2 service definition.
 
 ## Library Upgrades
 

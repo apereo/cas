@@ -66,6 +66,12 @@ public class CoreGoogleAuthenticatorMultifactorProperties implements Serializabl
     private boolean multipleDeviceRegistrationEnabled;
 
     /**
+     * When enabled, allows the user/system to register accounts
+     * and devices.
+     */
+    private boolean deviceRegistrationEnabled = true;
+
+    /**
      * Indicates whether this provider should support trusted devices.
      */
     private boolean trustedDeviceEnabled;
