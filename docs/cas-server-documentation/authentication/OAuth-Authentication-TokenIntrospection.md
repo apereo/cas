@@ -42,9 +42,6 @@ requires stronger assurance that the CAS server issued the token introspection r
 access token, including cases where the CAS server assumes liability for the content of the token introspection response. In such use cases it 
 may be useful or even required to return a signed JWT as the introspection response. 
 
-[This specification](https://www.oauth.com/oauth2-servers/token-introspection-endpoint/) extends the token introspection 
-endpoint with the capability to return responses as JWTs.
-
 A token introspection request may ask for a JWT introspection response by sending an introspection request 
 with an `Accept` HTTP header field set to `application/token-introspection+jwt`. The introspection endpoint responds with a JWT, 
 setting the `Content-Type` HTTP header field to `application/token-introspection+jwt` and the JWT `typ` ("type") header 
