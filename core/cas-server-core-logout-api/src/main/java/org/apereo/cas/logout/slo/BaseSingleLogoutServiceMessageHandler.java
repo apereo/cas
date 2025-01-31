@@ -1,5 +1,6 @@
 package org.apereo.cas.logout.slo;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
@@ -205,6 +206,6 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
     
     @Override
     public HttpMessage prepareLogoutHttpMessageToSend(final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
-        return new LogoutHttpMessage(request.getLogoutUrl(), logoutMessage.getPayload(), this.asynchronous);
+        return new LogoutHttpMessage(CasProtocolConstants.PARAMETER_LOGOUT_REQUEST, request.getLogoutUrl(), logoutMessage.getPayload(), this.asynchronous);
     }
 }

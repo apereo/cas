@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.slo.BaseSingleLogoutServiceMessageHandler;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
@@ -158,5 +159,10 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
         }
         LOGGER.warn("No (successful) logout response received from the url [{}]", msg.getUrl().toExternalForm());
         return false;
+    }
+
+    @Override
+    public HttpMessage prepareLogoutHttpMessageToSend(final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
+        return new LogoutHttpMessage(SamlProtocolConstants.PARAMETER_SAML_REQUEST, request.getLogoutUrl(), logoutMessage.getPayload(), isAsynchronous());
     }
 }

@@ -1,9 +1,10 @@
 package org.apereo.cas.web.flow.actions.logout;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.ClientCredential;
-import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -91,6 +92,8 @@ public class DelegatedSaml2ClientLogoutAction extends BaseCasWebflowAction {
     }
 
     protected boolean isDirectLogoutRequest(final HttpServletRequest request) {
-        return HttpMethod.POST.matches(request.getMethod()) || request.getParameter(LogoutHttpMessage.LOGOUT_REQUEST_PARAMETER) != null;
+        return HttpMethod.POST.matches(request.getMethod())
+            || request.getParameter(CasProtocolConstants.PARAMETER_LOGOUT_REQUEST) != null
+            || request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST) != null;
     }
 }
