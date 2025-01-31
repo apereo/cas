@@ -1,8 +1,8 @@
 package org.apereo.cas.web.saml2;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ClientCredential;
-import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketFactory;
@@ -116,7 +116,7 @@ class DelegatedSaml2ClientLogoutActionTests {
 
         val context = MockRequestContext.create(applicationContext);
         context.setMethod(HttpMethod.GET);
-        context.setParameter(LogoutHttpMessage.LOGOUT_REQUEST_PARAMETER, "adirectlogoutrequesttotreat");
+        context.setParameter(CasProtocolConstants.PARAMETER_LOGOUT_REQUEST, "adirectlogoutrequesttotreat");
         val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
         val manager = new ProfileManager(webContext, delegatedClientDistributedSessionStore);
         val profile = new CommonProfile();
