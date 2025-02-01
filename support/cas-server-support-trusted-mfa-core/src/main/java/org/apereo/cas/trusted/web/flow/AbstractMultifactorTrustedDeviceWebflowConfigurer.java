@@ -145,4 +145,10 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
             }
         });
     }
+
+    @Override
+    protected void doInitialize() {
+        super.doInitialize();
+        registerMultifactorTrustedAuthentication();
+    }
 }

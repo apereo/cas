@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.trusted.web.flow.BasicMultifactorTrustedWebflowConfigurer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -24,7 +25,6 @@ import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountCheckRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountSaveRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowAction;
-import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorWebflowConfigurer;
 import org.apereo.cas.webauthn.web.flow.WebAuthnPopulateCsrfTokenAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartAuthenticationAction;
@@ -186,7 +186,7 @@ class WebAuthnWebflowConfiguration {
                 .when(WebAuthnWebflowConfiguration.CONDITION.given(applicationContext.getEnvironment()))
                 .and(WebAuthnMultifactorTrustConfiguration.CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val cfg = new WebAuthnMultifactorTrustWebflowConfigurer(
+                    val cfg = new BasicMultifactorTrustedWebflowConfigurer(
                         flowBuilderServices,
                         flowDefinitionRegistry,
                         webAuthnFlowRegistry,

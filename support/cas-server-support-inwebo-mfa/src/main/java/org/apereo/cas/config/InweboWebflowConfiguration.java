@@ -3,12 +3,12 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.support.inwebo.service.InweboService;
-import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.support.inwebo.web.flow.InweboMultifactorWebflowConfigurer;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckAuthenticationAction;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboCheckUserAction;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboMustEnrollAction;
 import org.apereo.cas.support.inwebo.web.flow.actions.InweboPushAuthenticateAction;
+import org.apereo.cas.trusted.web.flow.BasicMultifactorTrustedWebflowConfigurer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -189,7 +189,7 @@ class InweboWebflowConfiguration {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val cfg = new InweboMultifactorTrustWebflowConfigurer(flowBuilderServices,
+                    val cfg = new BasicMultifactorTrustedWebflowConfigurer(flowBuilderServices,
                         flowDefinitionRegistry,
                         inweboFlowRegistry,
                         applicationContext,

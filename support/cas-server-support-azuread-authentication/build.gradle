@@ -14,8 +14,7 @@ dependencies {
     implementation libraries.jose4j
     implementation libraries.azuread
     implementation libraries.squareup
-
-
+    
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-web-api")

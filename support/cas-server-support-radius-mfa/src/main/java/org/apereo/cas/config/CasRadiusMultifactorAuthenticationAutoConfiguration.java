@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.adaptors.radius.web.flow.RadiusMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.trusted.web.flow.BasicMultifactorTrustedWebflowConfigurer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -68,7 +68,7 @@ public class CasRadiusMultifactorAuthenticationAutoConfiguration {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val cfg = new RadiusMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
+                    val cfg = new BasicMultifactorTrustedWebflowConfigurer(flowBuilderServices,
                         flowDefinitionRegistry, radiusFlowRegistry,
                         applicationContext, casProperties,
                         MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
