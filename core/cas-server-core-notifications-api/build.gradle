@@ -10,8 +10,10 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     
     implementation libraries.mail
+    compileOnly libraries.azuread
 
-
+    testImplementation libraries.azuread
+    
     testImplementation project(":core:cas-server-core-scripting")
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
