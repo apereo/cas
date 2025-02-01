@@ -51,7 +51,7 @@ public class CasGoogleAuthenticatorAutoConfiguration {
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices, module = "gauth")
     public static class GoogleAuthenticatorMultifactorTrustConfiguration {
         private static final int WEBFLOW_CONFIGURER_ORDER = 100;
-        
+
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.gauth.trusted-device-enabled")
             .isTrue().evenIfMissing();
 
@@ -63,15 +63,15 @@ public class CasGoogleAuthenticatorAutoConfiguration {
             final FlowDefinitionRegistry googleAuthenticatorFlowRegistry,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val cfg = new GoogleAuthenticatorMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
-                        loginFlowDefinitionRegistry, googleAuthenticatorFlowRegistry, applicationContext, casProperties,
+                        flowDefinitionRegistry, googleAuthenticatorFlowRegistry, applicationContext, casProperties,
                         MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
                     cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
                     return cfg;

@@ -35,7 +35,7 @@ class GroovyScriptWebflowActionTests {
 
     @Test
     void verifyShellScript() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
         val script = scriptFactory.fromScript("return new org.springframework.webflow.execution.Event(this, 'result')");
         val results = new GroovyScriptWebflowAction(script, applicationContext, casProperties);

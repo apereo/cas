@@ -17,7 +17,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.execution.Action;
-import static org.apereo.cas.web.flow.CasWebflowConstants.*;
+import static org.apereo.cas.web.flow.CasWebflowConstants.ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA;
+import static org.apereo.cas.web.flow.CasWebflowConstants.STATE_ID_FORGOT_USERNAME_ACCT_INFO;
+import static org.apereo.cas.web.flow.CasWebflowConstants.STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS;
+import static org.apereo.cas.web.flow.CasWebflowConstants.TRANSITION_ID_CAPTCHA_ERROR;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -42,7 +45,7 @@ class ForgotUsernameCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerT
     @Autowired
     @Qualifier(ACTION_ID_FORGOT_USERNAME_INIT_CAPTCHA)
     private Action initCaptchaAction;
-    
+
     @Test
     void verifyCaptcha() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
@@ -52,7 +55,7 @@ class ForgotUsernameCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerT
 
     @Test
     void verifyOperation() {
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         val state = (TransitionableState) flow.getState(STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS);
         assertEquals(STATE_ID_FORGOT_USERNAME_ACCT_INFO,

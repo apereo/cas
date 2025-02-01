@@ -44,11 +44,11 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
     private static final String VIEW_ID_REDIRECT_TO_DUO_REGISTRATION = "redirectToDuoRegistration";
 
     public DuoSecurityMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                   final FlowDefinitionRegistry flowDefinitionRegistry,
                                                    final ConfigurableApplicationContext applicationContext,
                                                    final CasConfigurationProperties casProperties,
                                                    final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry,
+        super(flowBuilderServices, flowDefinitionRegistry,
             applicationContext, casProperties, Optional.empty(), mfaFlowCustomizers);
     }
 
@@ -117,7 +117,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SKIP, getStartState(flow).getId());
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_RESTORE, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
-        
+
         val viewState = getState(flow, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ, ViewState.class);
         insertTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SWITCH, CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
 

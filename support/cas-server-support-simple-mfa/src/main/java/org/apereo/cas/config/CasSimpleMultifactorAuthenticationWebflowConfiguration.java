@@ -48,13 +48,16 @@ class CasSimpleMultifactorAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer mfaSimpleMultifactorWebflowConfigurer(
-            @Qualifier("mfaSimpleAuthenticatorFlowRegistry") final FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices,
+            @Qualifier("mfaSimpleAuthenticatorFlowRegistry")
+            final FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             val cfg = new CasSimpleMultifactorWebflowConfigurer(flowBuilderServices,
-                loginFlowRegistry, mfaSimpleAuthenticatorFlowRegistry, applicationContext, casProperties,
+                flowDefinitionRegistry, mfaSimpleAuthenticatorFlowRegistry, applicationContext, casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
             cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
             return cfg;
@@ -65,8 +68,10 @@ class CasSimpleMultifactorAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = "mfaSimpleAuthenticatorFlowRegistry")
         public FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry(
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER) final FlowBuilder flowBuilder,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
+            final FlowBuilder flowBuilder,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
             final ConfigurableApplicationContext applicationContext) {
             val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
             builder.addFlowBuilder(flowBuilder, casProperties.getAuthn().getMfa().getSimple().getId());
@@ -90,19 +95,22 @@ class CasSimpleMultifactorAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "surrogateCasSimpleMultifactorAuthenticationWebflowConfigurer")
         public CasWebflowConfigurer surrogateCasSimpleMultifactorAuthenticationWebflowConfigurer(
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return new SurrogateWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry, applicationContext, casProperties);
+                flowDefinitionRegistry, applicationContext, casProperties);
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "surrogateCasSimpleMultifactorAuthenticationWebflowExecutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer surrogateCasSimpleMultifactorAuthenticationWebflowExecutionPlanConfigurer(
-            @Qualifier("surrogateCasSimpleMultifactorAuthenticationWebflowConfigurer") final CasWebflowConfigurer surrogateWebflowConfigurer) {
+            @Qualifier("surrogateCasSimpleMultifactorAuthenticationWebflowConfigurer")
+            final CasWebflowConfigurer surrogateWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(surrogateWebflowConfigurer);
         }
 

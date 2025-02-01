@@ -6,7 +6,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -26,10 +25,10 @@ public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfig
     public static final String FLOW_ID_ACCOUNT_REGISTRATION = "acctreg";
 
     public AccountManagementWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                              final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                              final FlowDefinitionRegistry flowDefinitionRegistry,
                                               final ConfigurableApplicationContext applicationContext,
                                               final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Override
@@ -77,7 +76,7 @@ public class AccountManagementWebflowConfigurer extends AbstractCasWebflowConfig
         createStateDefaultTransition(completedView, "accountRegistrationCompleted");
 
         acctRegFlow.setStartState(completeView);
-        mainFlowDefinitionRegistry.registerFlowDefinition(acctRegFlow);
+        flowDefinitionRegistry.registerFlowDefinition(acctRegFlow);
 
         val flow = getLoginFlow();
         createSubflowState(flow, CasWebflowConstants.STATE_ID_ACCOUNT_REGISTRATION_SUBFLOW, FLOW_ID_ACCOUNT_REGISTRATION);

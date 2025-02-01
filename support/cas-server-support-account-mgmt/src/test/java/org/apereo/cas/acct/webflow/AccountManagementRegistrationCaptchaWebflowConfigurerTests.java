@@ -15,7 +15,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.execution.Action;
-import static org.apereo.cas.web.flow.CasWebflowConstants.*;
+import static org.apereo.cas.web.flow.CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_INIT_CAPTCHA;
+import static org.apereo.cas.web.flow.CasWebflowConstants.STATE_ID_SUBMIT_ACCOUNT_REGISTRATION;
+import static org.apereo.cas.web.flow.CasWebflowConstants.STATE_ID_VIEW_ACCOUNT_SIGNUP;
+import static org.apereo.cas.web.flow.CasWebflowConstants.TRANSITION_ID_CAPTCHA_ERROR;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -44,7 +47,7 @@ class AccountManagementRegistrationCaptchaWebflowConfigurerTests extends BaseWeb
 
     @Test
     void verifyOperation() {
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         val state = (TransitionableState) flow.getState(STATE_ID_SUBMIT_ACCOUNT_REGISTRATION);
         assertEquals(STATE_ID_VIEW_ACCOUNT_SIGNUP,
             state.getTransition(TRANSITION_ID_CAPTCHA_ERROR).getTargetStateId());

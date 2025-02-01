@@ -19,12 +19,10 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 public class DelegatedAuthenticationOidcWebflowConfigurer extends AbstractCasWebflowConfigurer {
     public DelegatedAuthenticationOidcWebflowConfigurer(
         final FlowBuilderServices flowBuilderServices,
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         setOrder(casProperties.getAuthn().getPac4j().getWebflow().getOrder() + 10);
     }
 

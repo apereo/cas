@@ -59,7 +59,7 @@ class PasswordManagementWebflowConfigurerTests {
         @Test
         void verifyOperation() throws Throwable {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-            val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
             var state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_AUTHENTICATION_BLOCKED);
             assertNotNull(state);
@@ -115,7 +115,7 @@ class PasswordManagementWebflowConfigurerTests {
         @Test
         void verifyOperation() throws Throwable {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-            val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
             var state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_AUTHENTICATION_BLOCKED);
             assertNotNull(state);
@@ -164,7 +164,7 @@ class PasswordManagementWebflowConfigurerTests {
             assertTrue(WebUtils.isPasswordManagementEnabled(context));
             assertTrue(WebUtils.isForgotUsernameEnabled(context));
 
-            val passwordResetFlow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
+            val passwordResetFlow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
             val sendAcct = (TransitionableState) passwordResetFlow.getState(CasWebflowConstants.STATE_ID_INIT_PASSWORD_RESET);
             assertEquals(sendAcct.getTransition(casSimpleMultifactorAuthenticationProvider.getId()).getTargetStateId(),
                 casSimpleMultifactorAuthenticationProvider.getId());

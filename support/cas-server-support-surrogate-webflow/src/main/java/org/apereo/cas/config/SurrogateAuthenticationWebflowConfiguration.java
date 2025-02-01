@@ -19,7 +19,6 @@ import org.apereo.cas.web.flow.action.SurrogateInitialAuthenticationAction;
 import org.apereo.cas.web.flow.action.SurrogateSelectionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionCatalog;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -56,11 +55,11 @@ class SurrogateAuthenticationWebflowConfiguration {
         public CasWebflowConfigurer surrogateWebflowConfigurer(
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
-            return new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+            return new SurrogateWebflowConfigurer(flowBuilderServices, flowDefinitionRegistry,
                 applicationContext, casProperties);
         }
     }
@@ -97,7 +96,8 @@ class SurrogateAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SURROGATE_INITIAL_AUTHENTICATION)
         public Action surrogateInitialAuthenticationAction(
-            @Qualifier(SurrogateCredentialParser.BEAN_NAME) final SurrogateCredentialParser surrogateCredentialParser) {
+            @Qualifier(SurrogateCredentialParser.BEAN_NAME)
+            final SurrogateCredentialParser surrogateCredentialParser) {
             return new SurrogateInitialAuthenticationAction(surrogateCredentialParser);
         }
 

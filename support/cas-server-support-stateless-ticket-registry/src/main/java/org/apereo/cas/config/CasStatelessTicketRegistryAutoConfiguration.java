@@ -59,7 +59,7 @@ public class CasStatelessTicketRegistryAutoConfiguration {
     public TicketRegistryCleaner ticketRegistryCleaner() {
         return NoOpTicketRegistryCleaner.getInstance();
     }
-    
+
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "statelessTicketRegistryCipherExecutor")
@@ -99,12 +99,12 @@ public class CasStatelessTicketRegistryAutoConfiguration {
     public CasWebflowConfigurer statelessTicketRegistryWebflowConfigurer(
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {
         return new StatelessTicketRegistryWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
+            flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "ticketGrantingTicketCompactor")
@@ -169,7 +169,8 @@ public class CasStatelessTicketRegistryAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ServiceMatchingStrategy serviceMatchingStrategy(
-        @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         return new ShortenedServiceMatchingStrategy(servicesManager);
     }
 }

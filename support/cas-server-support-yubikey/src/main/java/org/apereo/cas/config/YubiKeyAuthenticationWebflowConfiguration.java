@@ -100,12 +100,12 @@ class YubiKeyAuthenticationWebflowConfiguration {
             final FlowDefinitionRegistry yubikeyFlowRegistry,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             val cfg = new YubiKeyMultifactorWebflowConfigurer(flowBuilderServices,
-                loginFlowRegistry, yubikeyFlowRegistry,
+                flowDefinitionRegistry, yubikeyFlowRegistry,
                 applicationContext, casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
             cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
@@ -178,8 +178,8 @@ class YubiKeyAuthenticationWebflowConfiguration {
             final FlowDefinitionRegistry yubikeyFlowRegistry,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
@@ -187,7 +187,7 @@ class YubiKeyAuthenticationWebflowConfiguration {
                 .supply(() -> {
                     val cfg = new YubiKeyMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
                         yubikeyFlowRegistry,
-                        loginFlowDefinitionRegistry,
+                        flowDefinitionRegistry,
                         applicationContext,
                         casProperties,
                         MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));

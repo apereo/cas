@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
-
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -20,10 +19,10 @@ public class TrustedAuthenticationWebflowConfigurer extends AbstractCasWebflowCo
     private static final String ACTION_ID_REMOTE_USER_AUTHENTICATION_ACTION = "remoteUserAuthenticationAction";
 
     public TrustedAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                  final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                  final FlowDefinitionRegistry flowDefinitionRegistry,
                                                   final ConfigurableApplicationContext applicationContext,
                                                   final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Override

@@ -6,12 +6,10 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasMultifactorWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
-
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,13 +28,13 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
     public static final String MFA_YUBIKEY_EVENT_ID = "mfa-yubikey";
 
     public YubiKeyMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                               final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                final FlowDefinitionRegistry flowDefinitionRegistry,
+                                               final FlowDefinitionRegistry mfaFlowDefinitionRegistry,
                                                final ConfigurableApplicationContext applicationContext,
                                                final CasConfigurationProperties casProperties,
                                                final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext,
-            casProperties, Optional.of(flowDefinitionRegistry), mfaFlowCustomizers);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext,
+            casProperties, Optional.of(mfaFlowDefinitionRegistry), mfaFlowCustomizers);
     }
 
     @Override

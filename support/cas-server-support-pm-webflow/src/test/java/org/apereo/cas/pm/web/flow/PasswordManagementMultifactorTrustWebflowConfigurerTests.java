@@ -35,7 +35,7 @@ class PasswordManagementMultifactorTrustWebflowConfigurerTests extends BaseWebfl
     @Test
     void verifyOperation() throws Exception {
         val requestContext = MockRequestContext.create(applicationContext);
-        val flow = loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
+        val flow = flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
         val state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_INIT_PASSWORD_RESET);
         for (val action : state.getExitActionList()) {
             action.execute(requestContext);

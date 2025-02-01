@@ -57,7 +57,8 @@ class MultifactorAuthnTrustWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator(
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return new DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator(registeredServiceAccessStrategyEnforcer);
         }
 
@@ -67,10 +68,14 @@ class MultifactorAuthnTrustWebflowConfiguration {
         public Action mfaSetTrustAction(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("mfaTrustedDeviceBypassEvaluator") final MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator,
-            @Qualifier("deviceFingerprintStrategy") final DeviceFingerprintStrategy deviceFingerprintStrategy,
-            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME) final MultifactorAuthenticationTrustStorage mfaTrustEngine,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+            @Qualifier("mfaTrustedDeviceBypassEvaluator")
+            final MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator,
+            @Qualifier("deviceFingerprintStrategy")
+            final DeviceFingerprintStrategy deviceFingerprintStrategy,
+            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
+            final MultifactorAuthenticationTrustStorage mfaTrustEngine,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -88,10 +93,14 @@ class MultifactorAuthnTrustWebflowConfiguration {
         public Action mfaVerifyTrustAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("mfaTrustedDeviceBypassEvaluator") final MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator,
-            @Qualifier("deviceFingerprintStrategy") final DeviceFingerprintStrategy deviceFingerprintStrategy,
-            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME) final MultifactorAuthenticationTrustStorage mfaTrustEngine,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+            @Qualifier("mfaTrustedDeviceBypassEvaluator")
+            final MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator,
+            @Qualifier("deviceFingerprintStrategy")
+            final DeviceFingerprintStrategy deviceFingerprintStrategy,
+            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
+            final MultifactorAuthenticationTrustStorage mfaTrustEngine,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -109,12 +118,18 @@ class MultifactorAuthnTrustWebflowConfiguration {
         public Action mfaPrepareTrustDeviceViewAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("mfaTrustedDeviceBypassEvaluator") final MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator,
-            @Qualifier("deviceFingerprintStrategy") final DeviceFingerprintStrategy deviceFingerprintStrategy,
-            @Qualifier("mfaTrustDeviceNamingStrategy") final MultifactorAuthenticationTrustedDeviceNamingStrategy mfaTrustDeviceNamingStrategy,
-            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME) final MultifactorAuthenticationTrustStorage mfaTrustEngine,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+            @Qualifier("mfaTrustedDeviceBypassEvaluator")
+            final MultifactorAuthenticationTrustedDeviceBypassEvaluator mfaTrustedDeviceBypassEvaluator,
+            @Qualifier("deviceFingerprintStrategy")
+            final DeviceFingerprintStrategy deviceFingerprintStrategy,
+            @Qualifier("mfaTrustDeviceNamingStrategy")
+            final MultifactorAuthenticationTrustedDeviceNamingStrategy mfaTrustDeviceNamingStrategy,
+            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
+            final MultifactorAuthenticationTrustStorage mfaTrustEngine,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -132,11 +147,16 @@ class MultifactorAuthnTrustWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorProviderSelectionCriteria mfaTrustProviderSelectionCriteria(
             final CasConfigurationProperties casProperties,
-            @Qualifier("deviceFingerprintCookieGenerator") final CasCookieBuilder deviceFingerprintCookieGenerator,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME) final MultifactorAuthenticationTrustStorage mfaTrustEngine,
-            @Qualifier("mfaTrustDeviceNamingStrategy") final MultifactorAuthenticationTrustedDeviceNamingStrategy mfaTrustDeviceNamingStrategy,
-            @Qualifier("deviceFingerprintStrategy") final DeviceFingerprintStrategy deviceFingerprintStrategy) {
+            @Qualifier("deviceFingerprintCookieGenerator")
+            final CasCookieBuilder deviceFingerprintCookieGenerator,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
+            final MultifactorAuthenticationTrustStorage mfaTrustEngine,
+            @Qualifier("mfaTrustDeviceNamingStrategy")
+            final MultifactorAuthenticationTrustedDeviceNamingStrategy mfaTrustDeviceNamingStrategy,
+            @Qualifier("deviceFingerprintStrategy")
+            final DeviceFingerprintStrategy deviceFingerprintStrategy) {
             return new MultifactorAuthenticationTrustProviderSelectionCriteria(servicesManager,
                 mfaTrustEngine, mfaTrustDeviceNamingStrategy, deviceFingerprintStrategy, deviceFingerprintCookieGenerator, casProperties);
         }
@@ -155,14 +175,14 @@ class MultifactorAuthnTrustWebflowConfiguration {
             final CasWebflowConfigurer accountProfileMultifactorTrustedDeviceWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(accountProfileMultifactorTrustedDeviceWebflowConfigurer);
         }
-        
+
         @ConditionalOnMissingBean(name = "accountProfileMultifactorTrustedDeviceWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer accountProfileMultifactorTrustedDeviceWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {

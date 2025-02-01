@@ -20,7 +20,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
-import static org.apereo.cas.web.flow.CasWebflowConstants.*;
+import static org.apereo.cas.web.flow.CasWebflowConstants.STATE_ID_LOAD_SURROGATES_ACTION;
+import static org.apereo.cas.web.flow.CasWebflowConstants.TRANSITION_ID_SUCCESS;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -73,7 +74,7 @@ class CasSimpleMultifactorWebflowConfigurerTests {
 
         @Test
         void verifySurrogateOperation() {
-            val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             var state = (TransitionableState) flow.getState(getMultifactorEventId());
             assertEquals(STATE_ID_LOAD_SURROGATES_ACTION, state.getTransition(TRANSITION_ID_SUCCESS).getTargetStateId());
         }
