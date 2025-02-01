@@ -398,8 +398,10 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
-    public SubflowState createSubflowState(final Flow flow, final String stateId,
-                                           final String subflow, final FlowDefinitionRegistry registry,
+    public SubflowState createSubflowState(final Flow flow,
+                                           final String stateId,
+                                           final String subflow,
+                                           final FlowDefinitionRegistry registry,
                                            final Action entryAction) {
         if (containsFlowState(flow, stateId)) {
             LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), stateId);

@@ -24,7 +24,6 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ViewFactory;
-
 import java.util.List;
 import java.util.Map;
 
@@ -81,7 +80,8 @@ public interface CasWebflowConfigurer extends Ordered, NamedObject {
      *
      * @param applicationContext the application context
      */
-    default void postInitialization(final ConfigurableApplicationContext applicationContext) {}
+    default void postInitialization(final ConfigurableApplicationContext applicationContext) {
+    }
 
     /**
      * Gets login flow.
@@ -385,6 +385,22 @@ public interface CasWebflowConfigurer extends Ordered, NamedObject {
     /**
      * Create subflow state.
      *
+     * @param flow     the flow
+     * @param stateId  the state id
+     * @param subflow  the subflow
+     * @param registry the registry
+     * @return the subflow state
+     */
+    default SubflowState createSubflowState(final Flow flow,
+                                            final String stateId,
+                                            final String subflow,
+                                            final FlowDefinitionRegistry registry) {
+        return createSubflowState(flow, stateId, subflow, registry, null);
+    }
+
+    /**
+     * Create subflow state.
+     *
      * @param flow        the flow
      * @param id          the id
      * @param subflow     the subflow
@@ -404,7 +420,7 @@ public interface CasWebflowConfigurer extends Ordered, NamedObject {
      * @return the subflow state
      */
     default SubflowState createSubflowState(final Flow flow, final String stateId, final String subflow) {
-        return createSubflowState(flow, stateId, subflow, null);
+        return createSubflowState(flow, stateId, subflow, (Action) null);
     }
 
     /**
