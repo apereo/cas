@@ -51,21 +51,21 @@ public class CasSimpleMultifactorAuthenticationAutoConfiguration {
     @DependsOn("casSimpleMultifactorAuthenticationTicketFactoryConfigurer")
     public static class CasSimpleMultifactorTrustConfiguration {
         private static final int WEBFLOW_CONFIGURER_ORDER = 100;
-        
+
         @ConditionalOnMissingBean(name = "mfaSimpleMultifactorTrustWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer mfaSimpleMultifactorTrustWebflowConfigurer(
             @Qualifier("mfaSimpleAuthenticatorFlowRegistry")
             final FlowDefinitionRegistry mfaSimpleAuthenticatorFlowRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             val cfg = new CasSimpleMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry,
+                flowDefinitionRegistry,
                 mfaSimpleAuthenticatorFlowRegistry,
                 applicationContext, casProperties,
                 MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));

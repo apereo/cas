@@ -226,7 +226,7 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
                 .build()
                 .get();
         }
-        
+
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DISPLAY_BEFORE_PASSWORDLESS_AUTHN)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -310,12 +310,12 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
         public CasWebflowConfigurer passwordlessAuthenticationWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return new PasswordlessAuthenticationWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry, applicationContext, casProperties);
+                flowDefinitionRegistry, applicationContext, casProperties);
         }
 
         @ConditionalOnMissingBean(name = "passwordlessCasWebflowExecutionPlanConfigurer")
@@ -418,7 +418,7 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
             };
         }
     }
-    
+
     @Configuration(value = "PasswordlessCaptchaConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PasswordlessAuthn, module = "captcha")
@@ -429,8 +429,8 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public CasWebflowConfigurer passwordlessCaptchaWebflowConfigurer(
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             final CasConfigurationProperties casProperties,
@@ -439,7 +439,7 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val configurer = new PasswordlessAuthenticationCaptchaWebflowConfigurer(flowBuilderServices,
-                        loginFlowDefinitionRegistry, applicationContext, casProperties);
+                        flowDefinitionRegistry, applicationContext, casProperties);
                     configurer.setOrder(casProperties.getAuthn().getPasswordless().getWebflow().getOrder() + 2);
                     return configurer;
                 })
@@ -460,7 +460,7 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
                 .otherwiseProxy()
                 .get();
         }
-        
+
         @Bean
         @ConditionalOnMissingBean(name = "passwordlessCaptchaActivationStrategy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -507,7 +507,7 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
                 .otherwiseProxy()
                 .get();
         }
-        
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORDLESS_VALIDATE_CAPTCHA)

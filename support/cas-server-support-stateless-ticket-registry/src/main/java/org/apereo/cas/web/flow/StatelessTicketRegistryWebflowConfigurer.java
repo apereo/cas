@@ -22,10 +22,10 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 public class StatelessTicketRegistryWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     public StatelessTicketRegistryWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                    final FlowDefinitionRegistry flowDefinitionRegistry,
                                                     final ConfigurableApplicationContext applicationContext,
                                                     final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         setOrder(Ordered.LOWEST_PRECEDENCE);
     }
 

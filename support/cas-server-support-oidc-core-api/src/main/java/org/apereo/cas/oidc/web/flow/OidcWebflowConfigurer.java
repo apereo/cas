@@ -18,10 +18,10 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class OidcWebflowConfigurer extends AbstractCasWebflowConfigurer {
     public OidcWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                 final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                 final FlowDefinitionRegistry flowDefinitionRegistry,
                                  final ConfigurableApplicationContext applicationContext,
                                  final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Override

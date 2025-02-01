@@ -12,16 +12,11 @@ public interface CasWebflowConstants {
      * Bean Names.
      ****************************************
      */
-    
-    /**
-     * Bean name for login flow registry.
-     */
-    String BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY = "loginFlowRegistry";
 
     /**
-     * Bean name for logout flow registry.
+     * Bean name for flow registry.
      */
-    String BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY = "logoutFlowRegistry";
+    String BEAN_NAME_FLOW_DEFINITION_REGISTRY = "flowDefinitionRegistry";
 
     /**
      * Bean name for flow builder services.
@@ -53,7 +48,7 @@ public interface CasWebflowConstants {
      * Flow attribute or request parameter indicating warning before redirecting.
      */
     String ATTRIBUTE_WARN_ON_REDIRECT = "warn";
-    
+
     /**
      * Attribute to track registered service in the flow.
      */
@@ -478,7 +473,7 @@ public interface CasWebflowConstants {
      * Event id to signal security questions are disabled.
      */
     String TRANSITION_ID_SECURITY_QUESTIONS_DISABLED = "questionsDisabled";
-    
+
     /*
      ****************************************
      * States.
@@ -1267,7 +1262,7 @@ public interface CasWebflowConstants {
      * State id 'riskVerificationConfirmationView'.
      */
     String STATE_ID_RISK_VERIFICATION_CONFIRMATION = "riskVerificationConfirmationView";
-    
+
     /*
      ****************************************
      * Views.
@@ -1319,7 +1314,7 @@ public interface CasWebflowConstants {
     String VIEW_ID_BROWSER_STORAGE_WRITE = "storage/casBrowserStorageWriteView";
 
     /**
-     *The view state for browser storage reads..
+     * The view state for browser storage reads..
      */
     String VIEW_ID_BROWSER_STORAGE_READ = "storage/casBrowserStorageReadView";
 
@@ -1467,7 +1462,7 @@ public interface CasWebflowConstants {
      * Action id 'passwordlessValidateCaptchaAction'.
      */
     String ACTION_ID_PASSWORDLESS_VALIDATE_CAPTCHA = "passwordlessValidateCaptchaAction";
-    
+
     /**
      * Action id 'validateCaptchaAction'.
      */
@@ -1596,7 +1591,7 @@ public interface CasWebflowConstants {
      * Action id 'accountProfileActivateMfaAction'.
      */
     String ACTION_ID_ACCOUNT_PROFILE_ACTIVATE_MFA = "accountProfileActivateMfaAction";
-    
+
     /**
      * Action id 'prepareAccountProfilePasswordMgmtAction'.
      */

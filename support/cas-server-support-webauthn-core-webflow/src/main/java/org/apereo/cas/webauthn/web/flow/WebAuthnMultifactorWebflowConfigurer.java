@@ -29,19 +29,17 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
 
     public WebAuthnMultifactorWebflowConfigurer(
         final FlowBuilderServices flowBuilderServices,
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
         final FlowDefinitionRegistry flowDefinitionRegistry,
+        final FlowDefinitionRegistry mfaFlowDefinitionRegistry,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext,
-            casProperties, Optional.of(flowDefinitionRegistry), mfaFlowCustomizers);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext,
+            casProperties, Optional.of(mfaFlowDefinitionRegistry), mfaFlowCustomizers);
     }
 
     @Override
     protected void doInitialize() {
-
-
         multifactorAuthenticationFlowDefinitionRegistries.forEach(registry -> {
             val flow = getFlow(registry, FLOW_ID_MFA_WEBAUTHN);
             createFlowVariable(flow, CasWebflowConstants.VAR_ID_CREDENTIAL, WebAuthnCredential.class);

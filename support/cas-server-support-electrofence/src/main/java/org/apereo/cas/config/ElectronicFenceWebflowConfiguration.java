@@ -104,12 +104,12 @@ class ElectronicFenceWebflowConfiguration {
         public CasWebflowConfigurer riskAwareAuthenticationWebflowConfigurer(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return new RiskAwareAuthenticationWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry, applicationContext, casProperties);
+                flowDefinitionRegistry, applicationContext, casProperties);
         }
 
         @Bean

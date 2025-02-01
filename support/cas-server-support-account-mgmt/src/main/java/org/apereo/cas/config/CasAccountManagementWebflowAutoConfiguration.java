@@ -222,11 +222,11 @@ public class CasAccountManagementWebflowAutoConfiguration {
         public CasWebflowConfigurer accountMgmtWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
-            return new AccountManagementWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+            return new AccountManagementWebflowConfigurer(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         }
 
     }
@@ -369,8 +369,8 @@ public class CasAccountManagementWebflowAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public CasWebflowConfigurer accountMgmtRegistrationCaptchaWebflowConfigurer(
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             final CasConfigurationProperties casProperties,
@@ -379,7 +379,7 @@ public class CasAccountManagementWebflowAutoConfiguration {
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val configurer = new AccountManagementRegistrationCaptchaWebflowConfigurer(flowBuilderServices,
-                        loginFlowDefinitionRegistry, applicationContext, casProperties);
+                        flowDefinitionRegistry, applicationContext, casProperties);
                     configurer.setOrder(casProperties.getAccountRegistration().getWebflow().getOrder() + 2);
                     return configurer;
                 })

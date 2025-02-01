@@ -61,14 +61,14 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer(
             final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
                 .supply(() -> new AcceptableUsagePolicyWebflowConfigurer(flowBuilderServices,
-                    loginFlowDefinitionRegistry, applicationContext, casProperties))
+                    flowDefinitionRegistry, applicationContext, casProperties))
                 .otherwiseProxy()
                 .get();
         }

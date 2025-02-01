@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PasswordManagementAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     void verifyOperation() {
-        val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
+        val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         assertNotNull(flow);
         assertTrue(Arrays.stream(flow.getStartActionList().toArray())
             .anyMatch(ac -> ac.toString().contains(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PASSWORD_MANAGEMENT)));

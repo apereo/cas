@@ -21,7 +21,6 @@ import org.apereo.cas.web.flow.ConsentAccountProfileWebflowConfigurer;
 import org.apereo.cas.web.flow.ConsentWebflowConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -49,6 +48,7 @@ import org.springframework.webflow.execution.Action;
 @AutoConfiguration
 public class CasConsentWebflowAutoConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.consent.core.enabled").isTrue().evenIfMissing();
+
     @Configuration(value = "CasConsentWebflowActionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasConsentWebflowActionConfiguration {
@@ -124,13 +124,13 @@ public class CasConsentWebflowAutoConfiguration {
         public CasWebflowConfigurer consentWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+                .supply(() -> new ConsentWebflowConfigurer(flowBuilderServices, flowDefinitionRegistry,
                     applicationContext, casProperties))
                 .otherwiseProxy()
                 .get();
@@ -150,6 +150,7 @@ public class CasConsentWebflowAutoConfiguration {
                 .get();
         }
     }
+
     @Configuration(value = "CasConsentAccountProfileConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
@@ -179,7 +180,7 @@ public class CasConsentWebflowAutoConfiguration {
         public CasWebflowConfigurer casConsentAccountProfileWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {

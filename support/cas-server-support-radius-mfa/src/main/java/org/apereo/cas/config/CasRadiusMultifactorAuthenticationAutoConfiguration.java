@@ -61,15 +61,15 @@ public class CasRadiusMultifactorAuthenticationAutoConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("radiusFlowRegistry")
             final FlowDefinitionRegistry radiusFlowRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val cfg = new RadiusMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
-                        loginFlowDefinitionRegistry, radiusFlowRegistry,
+                        flowDefinitionRegistry, radiusFlowRegistry,
                         applicationContext, casProperties,
                         MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
                     cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);

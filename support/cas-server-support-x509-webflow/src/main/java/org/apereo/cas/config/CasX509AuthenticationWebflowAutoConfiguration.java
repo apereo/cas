@@ -53,14 +53,14 @@ public class CasX509AuthenticationWebflowAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer x509WebflowConfigurer(
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices,
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {
         return new X509WebflowConfigurer(flowBuilderServices,
-            loginFlowRegistry, applicationContext, casProperties);
+            flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
@@ -141,14 +141,14 @@ public class CasX509AuthenticationWebflowAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer x509TomcatServletWebServiceFactoryWebflowConfigurer(
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return new X509TomcatServletWebServiceFactoryWebflowConfigurer(
-                flowBuilderServices, loginFlowRegistry, applicationContext, casProperties);
+                flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         }
     }
 }

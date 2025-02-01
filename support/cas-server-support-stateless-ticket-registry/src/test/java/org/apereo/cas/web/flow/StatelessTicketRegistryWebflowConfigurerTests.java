@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class StatelessTicketRegistryWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     void verifyOperation() {
-        val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         val state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
         assertNotNull(state);
@@ -36,7 +36,7 @@ class StatelessTicketRegistryWebflowConfigurerTests extends BaseWebflowConfigure
         var fieldValue = ((Expression) ReflectionUtils.getField(Objects.requireNonNull(field), action)).getExpressionString();
         assertEquals(CasWebflowConstants.ACTION_ID_READ_BROWSER_STORAGE, fieldValue);
 
-        val accountFlow = loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
+        val accountFlow = flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         assertNotNull(flow);
         val tgtCheck = (ActionState) accountFlow.getState(CasWebflowConstants.STATE_ID_TICKET_GRANTING_TICKET_CHECK);
         assertNotNull(tgtCheck);

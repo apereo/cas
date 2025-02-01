@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
  */
 public class MultifactorAuthenticationAccountProfileWebflowConfigurer extends AbstractCasWebflowConfigurer {
     public MultifactorAuthenticationAccountProfileWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                                    final FlowDefinitionRegistry flowDefinitionRegistry,
                                                                     final ConfigurableApplicationContext applicationContext,
                                                                     final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         setOrder(Ordered.LOWEST_PRECEDENCE);
     }
 
@@ -50,13 +50,13 @@ public class MultifactorAuthenticationAccountProfileWebflowConfigurer extends Ab
                 .collect(Collectors.toList());
             AnnotationAwareOrderComparator.sort(providerActions);
             accountView.getRenderActionList().addAll(providerActions.toArray(CasWebflowConfigurer.EMPTY_ACTIONS_ARRAY));
-            
+
             val currentTrustActions = Arrays.stream(accountView.getRenderActionList().toArray())
                 .filter(MultifactorAuthenticationTrustedDeviceProviderAction.class::isInstance)
                 .map(MultifactorAuthenticationTrustedDeviceProviderAction.class::cast)
                 .map(MultifactorAuthenticationTrustedDeviceProviderAction::getName)
                 .collect(Collectors.toSet());
-            
+
             val trustedActions = applicationContext.getBeansOfType(MultifactorAuthenticationTrustedDeviceProviderAction.class)
                 .values()
                 .stream()

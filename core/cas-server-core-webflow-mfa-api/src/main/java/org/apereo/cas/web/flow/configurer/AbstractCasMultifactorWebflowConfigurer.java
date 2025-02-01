@@ -54,13 +54,13 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
     protected AbstractCasMultifactorWebflowConfigurer(
         final FlowBuilderServices flowBuilderServices,
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         final Optional<FlowDefinitionRegistry> mfaFlowDefinitionRegistry,
         final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         this(flowBuilderServices,
-            loginFlowDefinitionRegistry,
+            flowDefinitionRegistry,
             applicationContext,
             casProperties,
             mfaFlowDefinitionRegistry.map(List::of).orElseGet(List::of),
@@ -69,12 +69,12 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
     private AbstractCasMultifactorWebflowConfigurer(
         final FlowBuilderServices flowBuilderServices,
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         final List<FlowDefinitionRegistry> mfaFlowDefinitionRegistry,
         final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         setOrder(Ordered.LOWEST_PRECEDENCE);
         multifactorAuthenticationFlowDefinitionRegistries.addAll(mfaFlowDefinitionRegistry);
         multifactorAuthenticationFlowCustomizers.addAll(mfaFlowCustomizers);
@@ -179,7 +179,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
     }
 
     /**
-     * Register flow definition into login flow registry.
+     * Register flow definition into flow registry.
      */
     private void registerMultifactorFlowDefinitionIntoLoginFlowRegistry() {
         multifactorAuthenticationFlowDefinitionRegistries.forEach(registry -> {
@@ -188,7 +188,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                 val definition = registry.getFlowDefinition(flowId);
                 if (definition != null) {
                     LOGGER.trace("Registering flow definition [{}]", flowId);
-                    mainFlowDefinitionRegistry.registerFlowDefinition(definition);
+                    flowDefinitionRegistry.registerFlowDefinition(definition);
                 }
             }
         });

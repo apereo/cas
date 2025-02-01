@@ -30,14 +30,12 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
 
     public DelegatedAuthenticationWebflowConfigurer(
         final FlowBuilderServices flowBuilderServices,
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         final FlowDefinitionRegistry delegationRedirectFlowRegistry,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         this.delegatedClientRedirectFlowRegistry = delegationRedirectFlowRegistry;
-        setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
         setOrder(casProperties.getAuthn().getPac4j().getWebflow().getOrder());
     }
 
@@ -179,7 +177,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
 
         redirectFlow.setStartState(storeWebflowAction);
         delegatedClientRedirectFlowRegistry.registerFlowDefinition(redirectFlow);
-        mainFlowDefinitionRegistry.registerFlowDefinition(redirectFlow);
+        flowDefinitionRegistry.registerFlowDefinition(redirectFlow);
 
         val casLoginViewState = getState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
         createTransitionForState(casLoginViewState, CasWebflowConstants.TRANSITION_ID_DELEGATED_AUTHENTICATION_REDIRECT,

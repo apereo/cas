@@ -57,14 +57,14 @@ class InweboWebflowConfiguration {
     public CasWebflowConfigurer inweboMultifactorWebflowConfigurer(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         @Qualifier("inweboFlowRegistry")
         final FlowDefinitionRegistry inweboFlowRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
         val cfg = new InweboMultifactorWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry,
+            flowDefinitionRegistry,
             inweboFlowRegistry,
             applicationContext,
             casProperties,
@@ -182,15 +182,15 @@ class InweboWebflowConfiguration {
             final FlowDefinitionRegistry inweboFlowRegistry,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val cfg = new InweboMultifactorTrustWebflowConfigurer(flowBuilderServices,
-                        loginFlowDefinitionRegistry,
+                        flowDefinitionRegistry,
                         inweboFlowRegistry,
                         applicationContext,
                         casProperties,

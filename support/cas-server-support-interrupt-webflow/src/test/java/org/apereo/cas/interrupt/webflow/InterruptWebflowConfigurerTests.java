@@ -44,7 +44,7 @@ class InterruptWebflowConfigurerTests {
         @Test
         void verifyOperation() {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-            val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
             assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINALIZE_INTERRUPT));
             assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINISHED_INTERRUPT));
@@ -64,7 +64,7 @@ class InterruptWebflowConfigurerTests {
         @Test
         void verifyOperation() {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-            val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
             assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINALIZE_INTERRUPT));
             assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINISHED_INTERRUPT));

@@ -68,12 +68,8 @@ public abstract class BaseWebflowConfigurerTests {
     protected CasWebflowExecutionPlan casWebflowExecutionPlan;
 
     @Autowired
-    @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-    protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
-
-    @Autowired
-    @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
-    protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
+    @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+    protected FlowDefinitionRegistry flowDefinitionRegistry;
 
     @BeforeEach
     void setup() {

@@ -57,16 +57,12 @@ public class CasGoogleAnalyticsAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer casGoogleAnalyticsWebflowConfigurer(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
-        val cfg = new CasGoogleAnalyticsWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
-        cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
-        return cfg;
+        return new CasGoogleAnalyticsWebflowConfigurer(flowBuilderServices,
+            flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_ANALYTICS_CREATE_COOKIE)

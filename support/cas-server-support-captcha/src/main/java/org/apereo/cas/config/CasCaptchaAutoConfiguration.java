@@ -46,14 +46,14 @@ public class CasCaptchaAutoConfiguration {
     public CasWebflowConfigurer captchaWebflowConfigurer(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
         return BeanSupplier.of(CasWebflowConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> new CasCaptchaWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry, applicationContext, casProperties))
+                flowDefinitionRegistry, applicationContext, casProperties))
             .otherwiseProxy()
             .get();
     }

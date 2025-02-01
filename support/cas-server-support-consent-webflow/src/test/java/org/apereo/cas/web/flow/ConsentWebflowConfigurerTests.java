@@ -24,7 +24,7 @@ class ConsentWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         assertTrue(flow.containsState(ConsentWebflowConfigurer.STATE_ID_CONSENT_CONFIRM));
         assertTrue(flow.containsState(ConsentWebflowConfigurer.VIEW_ID_CONSENT_VIEW));

@@ -53,10 +53,12 @@ public class CasWsFederationAuthenticationWebflowAutoConfiguration {
     public CasWebflowConfigurer wsFederationWebflowConfigurer(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices) {
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+        final FlowBuilderServices flowBuilderServices) {
         return new WsFederationWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
+            flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
@@ -81,8 +83,10 @@ public class CasWsFederationAuthenticationWebflowAutoConfiguration {
     public Action wsFederationAction(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
-        @Qualifier("wsFederationRequestBuilder") final WsFederationRequestBuilder wsFederationRequestBuilder,
-        @Qualifier("wsFederationResponseValidator") final WsFederationResponseValidator wsFederationResponseValidator,
+        @Qualifier("wsFederationRequestBuilder")
+        final WsFederationRequestBuilder wsFederationRequestBuilder,
+        @Qualifier("wsFederationResponseValidator")
+        final WsFederationResponseValidator wsFederationResponseValidator,
         @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
         @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
@@ -104,8 +108,10 @@ public class CasWsFederationAuthenticationWebflowAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "wsFederationRequestBuilder")
     public WsFederationRequestBuilder wsFederationRequestBuilder(
-        @Qualifier("wsFederationConfigurations") final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
-        @Qualifier("wsFederationHelper") final WsFederationHelper wsFederationHelper) {
+        @Qualifier("wsFederationConfigurations")
+        final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
+        @Qualifier("wsFederationHelper")
+        final WsFederationHelper wsFederationHelper) {
         return new WsFederationRequestBuilder(wsFederationConfigurations.toList(), wsFederationHelper);
     }
 
@@ -113,10 +119,14 @@ public class CasWsFederationAuthenticationWebflowAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "wsFederationResponseValidator")
     public WsFederationResponseValidator wsFederationResponseValidator(
-        @Qualifier("wsFederationConfigurations") final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
-        @Qualifier("wsFederationCookieManager") final WsFederationCookieManager wsFederationCookieManager,
-        @Qualifier(AuthenticationSystemSupport.BEAN_NAME) final AuthenticationSystemSupport authenticationSystemSupport,
-        @Qualifier("wsFederationHelper") final WsFederationHelper wsFederationHelper) {
+        @Qualifier("wsFederationConfigurations")
+        final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
+        @Qualifier("wsFederationCookieManager")
+        final WsFederationCookieManager wsFederationCookieManager,
+        @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+        final AuthenticationSystemSupport authenticationSystemSupport,
+        @Qualifier("wsFederationHelper")
+        final WsFederationHelper wsFederationHelper) {
         return new WsFederationResponseValidator(wsFederationHelper,
             wsFederationConfigurations.toList(), authenticationSystemSupport, wsFederationCookieManager);
     }
@@ -125,7 +135,8 @@ public class CasWsFederationAuthenticationWebflowAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "wsFederationCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer wsFederationCasWebflowExecutionPlanConfigurer(
-        @Qualifier("wsFederationWebflowConfigurer") final CasWebflowConfigurer wsFederationWebflowConfigurer) {
+        @Qualifier("wsFederationWebflowConfigurer")
+        final CasWebflowConfigurer wsFederationWebflowConfigurer) {
         return plan -> plan.registerWebflowConfigurer(wsFederationWebflowConfigurer);
     }
 

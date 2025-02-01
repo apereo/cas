@@ -62,7 +62,8 @@ class OktaProvisioningConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public PrincipalProvisioner principalProvisioner(
-        @Qualifier("oktaProvisioningClient") final Client oktaProvisioningClient,
+        @Qualifier("oktaProvisioningClient")
+        final Client oktaProvisioningClient,
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {
         return BeanSupplier.of(PrincipalProvisioner.class)
@@ -78,7 +79,8 @@ class OktaProvisioningConfiguration {
     public Action oktaPrincipalProvisionerAction(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier(PrincipalProvisioner.BEAN_NAME) final PrincipalProvisioner principalProvisioner) {
+        @Qualifier(PrincipalProvisioner.BEAN_NAME)
+        final PrincipalProvisioner principalProvisioner) {
         return BeanSupplier.of(Action.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> new PrincipalProvisionerAction(principalProvisioner, casProperties.getScim()))
@@ -91,7 +93,8 @@ class OktaProvisioningConfiguration {
     @ConditionalOnMissingBean(name = "oktaCasWebflowExecutionPlanConfigurer")
     public CasWebflowExecutionPlanConfigurer oktaCasWebflowExecutionPlanConfigurer(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("oktaWebflowConfigurer") final CasWebflowConfigurer oktaWebflowConfigurer) {
+        @Qualifier("oktaWebflowConfigurer")
+        final CasWebflowConfigurer oktaWebflowConfigurer) {
         return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> plan -> plan.registerWebflowConfigurer(oktaWebflowConfigurer))
@@ -105,12 +108,14 @@ class OktaProvisioningConfiguration {
     public CasWebflowConfigurer oktaWebflowConfigurer(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices) {
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+        final FlowBuilderServices flowBuilderServices) {
         return BeanSupplier.of(CasWebflowConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> new OktaWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry, applicationContext, casProperties))
+                flowDefinitionRegistry, applicationContext, casProperties))
             .otherwiseProxy()
             .get();
     }

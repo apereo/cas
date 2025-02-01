@@ -41,10 +41,10 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     public static final String FLOW_VAR_ID_PASSWORD = "password";
 
     public PasswordManagementWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                               final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                               final FlowDefinitionRegistry flowDefinitionRegistry,
                                                final ConfigurableApplicationContext applicationContext,
                                                final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         setOrder(casProperties.getAuthn().getPm().getWebflow().getOrder());
     }
 
@@ -277,7 +277,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
 
         initReset.getExitActionList().add(new ConsumerExecutionAction(
             requestContext -> MultifactorAuthenticationWebflowUtils.putMultifactorDeviceRegistrationEnabled(requestContext, false)));
-        
+
         createTransitionForState(initReset, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD);
         createTransitionForState(initReset, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_PASSWORD_RESET_ERROR_VIEW);
 
@@ -307,7 +307,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         configurePasswordResetFlow(pswdFlow, CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD,
             "login-error/casMustChangePassView");
         pswdFlow.setStartState(verifyRequest);
-        mainFlowDefinitionRegistry.registerFlowDefinition(pswdFlow);
+        flowDefinitionRegistry.registerFlowDefinition(pswdFlow);
 
         createEndState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_RESET_FLOW_COMPLETE);
         createTransitionForState(
@@ -332,7 +332,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
 
     private void enablePasswordManagementForFlow(final Flow flow) {
         val action = new ConsumerExecutionAction(context -> {
-            WebUtils.putAccountProfileManagementEnabled(context, mainFlowDefinitionRegistry.containsFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT));
+            WebUtils.putAccountProfileManagementEnabled(context, flowDefinitionRegistry.containsFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT));
             WebUtils.putPasswordManagementEnabled(context, casProperties.getAuthn().getPm().getCore().isEnabled());
             WebUtils.putForgotUsernameEnabled(context, casProperties.getAuthn().getPm().getForgotUsername().isEnabled());
         });

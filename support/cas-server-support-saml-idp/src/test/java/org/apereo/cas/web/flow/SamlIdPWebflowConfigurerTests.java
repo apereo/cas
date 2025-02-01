@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.web.CasWebSecurityConfigurer;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,11 +27,11 @@ class SamlIdPWebflowConfigurerTests extends BaseSamlIdPWebflowTests {
     void verifyEndpoints() {
         assertFalse(samlIdPProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
-    
+
     @Test
     void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
     }
 }

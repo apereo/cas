@@ -25,13 +25,13 @@ import java.util.Optional;
 public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifactorWebflowConfigurer {
 
     public CasSimpleMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                 final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                  final FlowDefinitionRegistry flowDefinitionRegistry,
+                                                 final FlowDefinitionRegistry mfaFlowDefinitionRegistry,
                                                  final ConfigurableApplicationContext applicationContext,
                                                  final CasConfigurationProperties casProperties,
                                                  final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext,
-            casProperties, Optional.of(flowDefinitionRegistry), mfaFlowCustomizers);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext,
+            casProperties, Optional.of(mfaFlowDefinitionRegistry), mfaFlowCustomizers);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
             if (registrationEnabled) {
                 createTransitionForState(sendSimpleToken, CasWebflowConstants.TRANSITION_ID_REGISTER, "recipientsRegistrationView");
             }
-            
+
             val selectRecipientsView = createViewState(flow, "selectRecipientsView", "simple-mfa/casSimpleMfaSelectRecipientsView");
             createTransitionForState(selectRecipientsView, CasWebflowConstants.TRANSITION_ID_SELECT, CasWebflowConstants.STATE_ID_SIMPLE_MFA_SEND_TOKEN);
 

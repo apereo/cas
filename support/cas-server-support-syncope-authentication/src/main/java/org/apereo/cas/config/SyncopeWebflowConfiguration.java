@@ -13,7 +13,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.PrincipalProvisionerAction;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -89,13 +88,13 @@ class SyncopeWebflowConfiguration {
         public CasWebflowConfigurer syncopeWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new SyncopeWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties))
+                .supply(() -> new SyncopeWebflowConfigurer(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties))
                 .otherwiseProxy()
                 .get();
         }

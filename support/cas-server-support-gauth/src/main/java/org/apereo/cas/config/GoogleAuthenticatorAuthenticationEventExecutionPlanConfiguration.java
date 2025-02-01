@@ -147,7 +147,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 return CipherExecutorUtils.newStringCipherExecutor(crypto, OneTimeTokenAccountCipherExecutor.class);
             }
             LOGGER.warn("Google Authenticator one-time token account encryption/signing is turned off. "
-                        + "Consider turning on encryption, signing to securely and safely store one-time token accounts.");
+                + "Consider turning on encryption, signing to securely and safely store one-time token accounts.");
             return CipherExecutor.noOp();
         }
 
@@ -164,7 +164,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 })
                 .otherwise(() -> {
                     LOGGER.warn("Google Authenticator scratch codes encryption key is not defined. "
-                                + "Consider defining the encryption key to securely and safely store scratch codes.");
+                        + "Consider defining the encryption key to securely and safely store scratch codes.");
                     return CipherExecutor.noOp();
                 })
                 .get();
@@ -295,7 +295,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             return new OneTimeTokenCredentialDeviceManager(googleAuthenticatorAccountRegistry,
                 googleAuthenticatorMultifactorAuthenticationProvider);
         }
-        
+
         @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -495,6 +495,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             return provider;
         }
     }
+
     @Configuration(value = "GoogleAuthenticatorAccountProfileWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
@@ -507,7 +508,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         public CasWebflowConfigurer googleAccountProfileWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
@@ -549,10 +550,11 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_REGISTRATION)
-        public Action googleAccountProfileRegistrationAction(@Qualifier("googleAuthenticatorMultifactorAuthenticationProvider")
-                                                             final MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider) {
+        public Action googleAccountProfileRegistrationAction(
+            @Qualifier("googleAuthenticatorMultifactorAuthenticationProvider")
+            final MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider) {
             return new GoogleMultifactorAuthenticationAccountProfileRegistrationAction(googleAuthenticatorMultifactorAuthenticationProvider);
         }
-        
+
     }
 }

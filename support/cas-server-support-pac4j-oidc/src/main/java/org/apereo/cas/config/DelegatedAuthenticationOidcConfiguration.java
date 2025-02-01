@@ -55,7 +55,8 @@ class DelegatedAuthenticationOidcConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "delegatedOidcClientBuilder")
     public ConfigurableDelegatedClientBuilder delegatedOidcClientBuilder(
-        @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext) {
+        @Qualifier(CasSSLContext.BEAN_NAME)
+        final CasSSLContext casSslContext) {
         return new DelegatedClientOidcBuilder(casSslContext);
     }
 
@@ -93,14 +94,12 @@ class DelegatedAuthenticationOidcConfiguration {
     public CasWebflowConfigurer delegatedAuthenticationOidcWebflowConfigurer(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-        final FlowBuilderServices flowBuilderServices,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry logoutFlowDefinitionRegistry) {
-        return new DelegatedAuthenticationOidcWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-            logoutFlowDefinitionRegistry, applicationContext, casProperties);
+        final FlowBuilderServices flowBuilderServices) {
+        return new DelegatedAuthenticationOidcWebflowConfigurer(flowBuilderServices, flowDefinitionRegistry,
+            applicationContext, casProperties);
     }
 
     @Bean

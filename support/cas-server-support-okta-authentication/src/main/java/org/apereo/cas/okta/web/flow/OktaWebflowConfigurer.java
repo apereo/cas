@@ -17,10 +17,10 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class OktaWebflowConfigurer extends AbstractCasWebflowConfigurer {
     public OktaWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                    final ConfigurableApplicationContext applicationContext,
-                                    final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+                                 final FlowDefinitionRegistry flowDefinitionRegistry,
+                                 final ConfigurableApplicationContext applicationContext,
+                                 final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Override
