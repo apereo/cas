@@ -186,8 +186,8 @@ class YubiKeyAuthenticationWebflowConfiguration {
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val cfg = new YubiKeyMultifactorTrustedDeviceWebflowConfigurer(flowBuilderServices,
-                        yubikeyFlowRegistry,
                         flowDefinitionRegistry,
+                        yubikeyFlowRegistry,
                         applicationContext,
                         casProperties,
                         MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));

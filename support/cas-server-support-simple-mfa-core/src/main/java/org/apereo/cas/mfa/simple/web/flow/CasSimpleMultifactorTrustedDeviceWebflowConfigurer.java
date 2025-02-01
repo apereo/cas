@@ -24,7 +24,8 @@ public class CasSimpleMultifactorTrustedDeviceWebflowConfigurer extends Abstract
                                                               final CasConfigurationProperties casProperties,
                                                               final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
         super(flowBuilderServices, flowDefinitionRegistry,
-            applicationContext, casProperties, Optional.of(flowDefinitionRegistry), mfaFlowCustomizers);
+            applicationContext, casProperties,
+            Optional.of(mfaFlowDefinitionRegistry), mfaFlowCustomizers);
     }
 
     @Override
