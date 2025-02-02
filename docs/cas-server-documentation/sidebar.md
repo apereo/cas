@@ -823,6 +823,7 @@ layout: null
         *   [Email Strategies](#sendingemailstrategies)
             *   [Default](/cas/{{ version }}/notifications/Sending-Email-Configuration-Default.html)
             *   [SendGrid](/cas/{{ version }}/notifications/Sending-Email-Configuration-SendGrid.html)
+            *   [Microsoft Entra](/cas/{{ version }}/notifications/Sending-Email-Configuration-Azure-AD.html)
             *   [Amazon SES](/cas/{{ version }}/notifications/Sending-Email-Configuration-AmazonSES.html)
             *   [Mailjet](/cas/{{ version }}/notifications/Sending-Email-Configuration-Mailjet.html)
             *   [Mailgun](/cas/{{ version }}/notifications/Sending-Email-Configuration-Mailgun.html)
