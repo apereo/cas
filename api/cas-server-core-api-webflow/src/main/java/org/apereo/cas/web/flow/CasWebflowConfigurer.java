@@ -371,6 +371,26 @@ public interface CasWebflowConfigurer extends Ordered, NamedObject {
     ViewState createViewState(Flow flow, String id, String viewId, BinderConfiguration binder);
 
     /**
+     * Create end view state.
+     *
+     * @param flow        the flow
+     * @param id          the id
+     * @param viewFactory the view factory
+     * @return the view state
+     */
+    ViewState createEndViewState(Flow flow, String id, ViewFactory viewFactory);
+
+    /**
+     * Create end view state.
+     *
+     * @param flow   the flow
+     * @param id     the id
+     * @param viewId the view id
+     * @return the view state
+     */
+    ViewState createEndViewState(Flow flow, String id, String viewId);
+
+    /**
      * Create subflow state subflow state.
      *
      * @param flow        the flow
@@ -381,22 +401,6 @@ public interface CasWebflowConfigurer extends Ordered, NamedObject {
      */
     SubflowState createSubflowState(Flow flow, String id, String subflow,
                                     Action entryAction);
-
-    /**
-     * Create subflow state.
-     *
-     * @param flow     the flow
-     * @param stateId  the state id
-     * @param subflow  the subflow
-     * @param registry the registry
-     * @return the subflow state
-     */
-    default SubflowState createSubflowState(final Flow flow,
-                                            final String stateId,
-                                            final String subflow,
-                                            final FlowDefinitionRegistry registry) {
-        return createSubflowState(flow, stateId, subflow, registry, null);
-    }
 
     /**
      * Create subflow state.
@@ -420,7 +424,7 @@ public interface CasWebflowConfigurer extends Ordered, NamedObject {
      * @return the subflow state
      */
     default SubflowState createSubflowState(final Flow flow, final String stateId, final String subflow) {
-        return createSubflowState(flow, stateId, subflow, (Action) null);
+        return createSubflowState(flow, stateId, subflow, null);
     }
 
     /**

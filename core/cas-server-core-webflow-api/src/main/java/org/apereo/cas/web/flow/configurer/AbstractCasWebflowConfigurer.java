@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.states.EndViewState;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -381,6 +382,24 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public ViewState createViewState(final Flow flow, final String id, final String viewId, final BinderConfiguration binder) {
         return createViewState(flow, id, new LiteralExpression(viewId), binder);
+    }
+
+    @Override
+    public ViewState createEndViewState(final Flow flow, final String id, final ViewFactory viewFactory) {
+        if (containsFlowState(flow, id)) {
+            LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
+            return getTransitionableState(flow, id, EndViewState.class);
+        }
+        return new EndViewState(flow, id, viewFactory);
+    }
+
+    @Override
+    public ViewState createEndViewState(final Flow flow, final String id, final String viewId) {
+        val viewFactory = flowBuilderServices.getViewFactoryCreator()
+            .createViewFactory(new LiteralExpression(viewId), flowBuilderServices.getExpressionParser(),
+                flowBuilderServices.getConversionService(), null, this.flowBuilderServices.getValidator(),
+                flowBuilderServices.getValidationHintResolver());
+        return createEndViewState(flow, id, viewFactory);
     }
 
     @Override
