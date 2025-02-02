@@ -43,7 +43,7 @@ import static org.mockito.Mockito.*;
 @Getter
 class OneTimeTokenAccountSaveRegistrationActionTests extends BaseOneTimeTokenRepositoryTests {
     @Autowired
-    @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
+    @Qualifier(OneTimeTokenRepository.BEAN_NAME)
     private OneTimeTokenRepository repository;
 
     @Autowired

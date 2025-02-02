@@ -54,7 +54,7 @@ class GoogleAuthenticatorSaveRegistrationActionTests {
     private Action googleSaveAccountRegistrationAction;
 
     @Autowired
-    @Qualifier("googleAuthenticatorAccountRegistry")
+    @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
 
     @Nested

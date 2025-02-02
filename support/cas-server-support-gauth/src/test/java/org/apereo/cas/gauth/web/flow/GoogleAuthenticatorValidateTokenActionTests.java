@@ -46,7 +46,7 @@ class GoogleAuthenticatorValidateTokenActionTests {
     private Action action;
 
     @Autowired
-    @Qualifier("googleAuthenticatorAccountRegistry")
+    @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
 
     @Autowired
