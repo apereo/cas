@@ -41,7 +41,7 @@ class GoogleAuthenticatorAuthenticationDeviceProviderActionTests {
     private MultifactorAuthenticationDeviceProviderAction googleAccountDeviceProviderAction;
 
     @Autowired
-    @Qualifier("googleAuthenticatorAccountRegistry")
+    @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
 
     @Test

@@ -35,7 +35,7 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
     private GoogleAuthenticatorTokenCredentialRepositoryEndpoint endpoint;
 
     @Autowired
-    @Qualifier("googleAuthenticatorAccountRegistry")
+    @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository registry;
 
     @Autowired

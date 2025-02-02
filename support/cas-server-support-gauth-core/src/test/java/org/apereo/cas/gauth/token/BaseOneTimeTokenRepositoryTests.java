@@ -27,7 +27,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     protected String userId;
 
     @Autowired
-    @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
+    @Qualifier(OneTimeTokenRepository.BEAN_NAME)
     protected OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository;
 
     @Autowired

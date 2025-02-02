@@ -71,9 +71,9 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
     }
 
     protected void createLogoutViewState(final Flow flow) {
-        createEndState(flow, CasWebflowConstants.STATE_ID_REDIRECT_VIEW,
-            createExternalRedirectViewFactory("flowScope.logoutRedirectUrl"));
-        createEndState(flow, CasWebflowConstants.STATE_ID_POST_VIEW, CasWebflowConstants.VIEW_ID_POST_RESPONSE);
+        createViewState(flow, CasWebflowConstants.STATE_ID_REDIRECT_VIEW, createExternalRedirectViewFactory("flowScope.logoutRedirectUrl"));
+        createViewState(flow, CasWebflowConstants.STATE_ID_POST_VIEW, CasWebflowConstants.VIEW_ID_POST_RESPONSE);
+
         val logoutView = createViewState(flow, CasWebflowConstants.STATE_ID_LOGOUT_VIEW, "logout/casLogoutView");
         logoutView.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_LOGOUT_VIEW_SETUP));
         createTransitionForState(logoutView, CasWebflowConstants.TRANSITION_ID_PROCEED, "proceedFromLogout");

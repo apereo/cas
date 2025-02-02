@@ -33,7 +33,7 @@
     "--cas.logout.follow-service-redirects=true",
 
     "--logging.level.PROTOCOL_MESSAGE=debug",
-    "--logging.level.org.springframework.webflow=debug"
+    "--logging.level.org.springframework.webflow=info"
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/keycloak/run-keycloak-server.sh"
 }
