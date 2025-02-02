@@ -17,6 +17,8 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,6 +45,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.inwebo.service-id=7046"
     })
 @ExtendWith(CasTestExtension.class)
+@Execution(ExecutionMode.SAME_THREAD)
 public abstract class BaseInweboActionTests {
 
     protected static final String LOGIN = "jerome@casinthecloud.com";
