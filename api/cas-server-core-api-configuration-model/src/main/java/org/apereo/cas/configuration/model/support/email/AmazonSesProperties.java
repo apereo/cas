@@ -15,7 +15,7 @@ import java.io.Serial;
  */
 @Getter
 @Setter
-@RequiresModule(name = "cas-server-support-aws-ses", automated = true)
+@RequiresModule(name = "cas-server-support-aws-ses", automated = false)
 @Accessors(chain = true)
 
 public class AmazonSesProperties extends BaseAmazonWebServicesProperties {

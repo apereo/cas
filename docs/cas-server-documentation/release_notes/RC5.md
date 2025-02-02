@@ -87,6 +87,11 @@ mapping CAS attributes to the SCIM user schema.
     
 [Google authenticator device registration](../mfa/GoogleAuthenticator-Authentication.html) can be turned off and disabled 
 via CAS properties. Please note that the default behavior is kept as is, where device registration is enabled by default.
+      
+### Microsoft Entra ID Email Integration
+
+CAS is now able to [send emails](../notifications/Sending-Email-Configuration-Azure-AD.html) using Microsoft Entra ID 
+and its XOAUTH2 authentication mechanism.
 
 ## Other Stuff
 
