@@ -38,4 +38,17 @@ class LogoutViewSetupActionTests extends AbstractWebflowActionsTests {
         assertTrue(context.getFlowScope().contains(DynamicHtmlView.class.getName()));
         assertTrue(context.getFlowScope().contains(LogoutViewSetupAction.FLOW_SCOPE_ATTRIBUTE_PROCEED));
     }
+
+    @Test
+    void verifyOperationWithSloContinuationInScope() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        context.getConversationScope().put(SingleLogoutContinuation.class.getName(),
+            SingleLogoutContinuation.builder().content("Testing").build());
+        val results = logoutViewSetupAction.execute(context);
+        assertNull(results);
+        assertFalse(WebUtils.isGeoLocationTrackingIntoFlowScope(context));
+        assertEquals(HttpStatus.OK.value(), context.getHttpServletResponse().getStatus());
+        assertTrue(context.getFlowScope().contains(DynamicHtmlView.class.getName()));
+        assertTrue(context.getFlowScope().contains(LogoutViewSetupAction.FLOW_SCOPE_ATTRIBUTE_PROCEED));
+    }
 }

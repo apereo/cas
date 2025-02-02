@@ -49,13 +49,9 @@ const assert = require("assert");
     await cas.logPage(page);
     await cas.screenshot(page);
     url = await page.url();
-    assert(url.startsWith("https://localhost:8443/cas/logout"));
-
-    await cas.sleep(2000);
-    await cas.goto(page, "http://localhost:9443/simplesaml/saml2/idp/SingleLogoutService.php?ReturnTo=https://apereo.github.io");
-    url = await page.url();
     assert(url.startsWith("https://apereo.github.io"));
 
+    await cas.sleep(1000);
     await cas.gotoLogin(page);
     await cas.assertCookie(page, false);
 
