@@ -12,8 +12,6 @@
 <body>
 <main class="container mt-3 mb-3">
     <div layout:fragment="content">
-
-
         <div class="w-100 m-auto mdc-card card p-4">
             <div id="logoutBody" class="card-body">
                 <h2 class="banner-heading">
@@ -32,7 +30,7 @@
                         <input type="hidden" name="_eventId" value="proceed"/>
                     </form>
                     <script type="text/javascript">
-                        setTimeout((() => $("#logoutform").submit()), 2000);
+                        setTimeout((() => $("#logoutform").submit()), 1000);
                     </script>
                 </div>
                 <div th:remove="tag" th:unless="${enableProceed}">

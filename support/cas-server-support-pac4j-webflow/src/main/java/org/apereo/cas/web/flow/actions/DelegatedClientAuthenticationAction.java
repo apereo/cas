@@ -141,7 +141,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             FunctionUtils.doIf(LOGGER.isDebugEnabled(),
                 o -> LOGGER.debug(e.getMessage(), e), o -> LOGGER.info(e.getMessage())).accept(e);
             val continuation = SingleLogoutContinuation.builder();
-            clientCredential.ifPresent(cc -> continuation.context(CollectionUtils.wrap(ClientCredential.class.getName(), cc)));
+            clientCredential.ifPresent(cc -> continuation.context(CollectionUtils.wrap(ClientCredential.class.getName(), cc.getClientName())));
             if (e instanceof final AutomaticFormPostAction formPostAction) {
                 continuation.method(HttpMethod.POST).url(formPostAction.getUrl()).data(formPostAction.getData());
             }
