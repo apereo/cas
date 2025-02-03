@@ -361,8 +361,16 @@ class PasswordManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_EXPIRATION_HANDLE_WARNINGS)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Action handlePasswordExpirationWarningMessagesAction() {
-            return new HandlePasswordExpirationWarningMessagesAction();
+        public Action handlePasswordExpirationWarningMessagesAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(HandlePasswordExpirationWarningMessagesAction::new)
+                .withId(CasWebflowConstants.ACTION_ID_PASSWORD_EXPIRATION_HANDLE_WARNINGS)
+                .build()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORD_RESET_VERIFY_SECURITY_QUESTIONS)
@@ -559,31 +567,53 @@ class PasswordManagementWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_UPDATE_SECURITY_QUESTIONS)
         public Action accountProfileUpdateSecurityQuestionsAction(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
             final PasswordManagementService passwordManagementService) {
-            return new AccountProfileUpdateSecurityQuestionsAction(passwordManagementService, casProperties);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new AccountProfileUpdateSecurityQuestionsAction(passwordManagementService, casProperties))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_UPDATE_SECURITY_QUESTIONS)
+                .build()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_PASSWORD_CHANGE_REQUEST)
         public Action accountProfilePasswordChangeRequestAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier(PasswordResetUrlBuilder.BEAN_NAME)
             final PasswordResetUrlBuilder passwordResetUrlBuilder) {
-            return new AccountProfilePasswordChangeRequestAction(ticketRegistry, passwordResetUrlBuilder);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new AccountProfilePasswordChangeRequestAction(ticketRegistry, passwordResetUrlBuilder))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_PASSWORD_CHANGE_REQUEST)
+                .build()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PASSWORD_MANAGEMENT)
         public Action prepareAccountProfilePasswordMgmtAction(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
             final PasswordManagementService passwordManagementService) {
-            return new AccountProfilePreparePasswordManagementAction(passwordManagementService, casProperties);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new AccountProfilePreparePasswordManagementAction(passwordManagementService, casProperties))
+                .withId(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PASSWORD_MANAGEMENT)
+                .build()
+                .get();
         }
 
         @Bean

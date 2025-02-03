@@ -17,6 +17,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.DefaultMultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.authentication.FinalMultifactorAuthenticationTransactionWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -380,22 +381,37 @@ class WebAuthnWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_MFA_PREPARE)
         public Action webAuthnAccountProfilePrepareAction(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("webAuthnMultifactorAuthenticationProvider")
             final MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider,
             final CasConfigurationProperties casProperties,
             @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
             final RegistrationStorage webAuthnCredentialRepository) {
-            return new WebAuthnMultifactorAccountProfilePrepareAction(webAuthnCredentialRepository,
-                webAuthnMultifactorAuthenticationProvider, casProperties);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new WebAuthnMultifactorAccountProfilePrepareAction(webAuthnCredentialRepository,
+                            webAuthnMultifactorAuthenticationProvider, casProperties))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_MFA_PREPARE)
+                .build()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_REGISTRATION)
         public Action webAuthnAccountProfileRegistrationAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
             @Qualifier("webAuthnMultifactorAuthenticationProvider")
             final MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider) {
-            return new WebAuthnMultifactorAccountProfileRegistrationAction(webAuthnMultifactorAuthenticationProvider);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new WebAuthnMultifactorAccountProfileRegistrationAction(webAuthnMultifactorAuthenticationProvider))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_REGISTRATION)
+                .build()
+                .get();
         }
 
     }

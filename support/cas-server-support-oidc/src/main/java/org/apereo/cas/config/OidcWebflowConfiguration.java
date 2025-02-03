@@ -18,6 +18,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -118,11 +119,19 @@ class OidcWebflowConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action oidcRegisteredServiceUIAction(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
         @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
         final AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
-        return new OidcRegisteredServiceUIAction(servicesManager, oauth20AuthenticationServiceSelectionStrategy);
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> new OidcRegisteredServiceUIAction(servicesManager, oauth20AuthenticationServiceSelectionStrategy))
+            .withId(CasWebflowConstants.ACTION_ID_OIDC_REGISTERED_SERVICE_UI)
+            .build()
+            .get();
     }
 
 
@@ -130,17 +139,33 @@ class OidcWebflowConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_ACCESS_TOKENS)
     public Action oidcAccountProfileAccessTokensAction(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {
-        return new OidcAccountProfileAccessTokenAction(ticketRegistry);
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> new OidcAccountProfileAccessTokenAction(ticketRegistry))
+            .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_ACCESS_TOKENS)
+            .build()
+            .get();
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_OIDC_ACCESS_TOKEN)
     public Action accountProfileOidcRemoveAccessTokenAction(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {
-        return new OidcAccountProfileRemoveAccessTokenAction(ticketRegistry);
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> new OidcAccountProfileRemoveAccessTokenAction(ticketRegistry))
+            .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_OIDC_ACCESS_TOKEN)
+            .build()
+            .get();
     }
 }
