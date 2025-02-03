@@ -98,7 +98,7 @@
                     <span id="device-name"></span>
                 </div>
             </div>
-            <div class="d-flex justify-content-center flex-column align-items-center">
+            <div id="loginPanel" class="d-flex justify-content-center flex-column align-items-center">
                 <button class="mdc-button mdc-button--raised btn btn-primary me-2"
                         name="authnButton" id="authnButton" accesskey="a" type="button">
                     <i class="mdi mdi-fingerprint fas fa-fingerprint" aria-hidden="true"></i>
@@ -185,6 +185,17 @@
                         });
                         return true;
                     });
+                    
+                    if (!isBrowserSupported()) {
+                        setStatus(authFailTitle);
+                        addMessage('Web Authentication (WebAuthn) is not supported by this browser.');
+                        $("#messages").addClass("banner banner-danger alert alert-danger");
+                        hideDeviceInfo();
+                        $("#description").empty();
+                        $('#webauthnLoginForm').empty();
+                        $('#QRCodeSection').empty();
+                        $('#loginPanel').empty();
+                    }
                 </script>
         </div>
         <div>
