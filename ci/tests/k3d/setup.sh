@@ -99,7 +99,7 @@ fi
 ping ${PING_ARGS} host.k3d.internal > /dev/null 2>&1
 
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo add bitnami https://repo.broadcom.com/bitnami-files/index.yaml
+helm repo add bitnami https://charts.bitnami.com/bitnami
 
 kubectl create namespace ingress-nginx || true
 set +e
