@@ -184,6 +184,7 @@ const contextPath = pathSegments[1] ? `/${pathSegments[1]}` : '';
         }
     }
 
+    
     return {
         decodePublicKeyCredentialCreationOptions,
         decodePublicKeyCredentialRequestOptions,
@@ -211,6 +212,26 @@ function rejectIfNotSuccess(response) {
         return response;
     }
     return new Promise((resolve, reject) => reject(response));
+}
+
+/**
+ * Checks if the browser supports WebAuthn.
+ */
+async function isBrowserSupported(requirePlatformAuthenticator = true) {
+    if (!window.PublicKeyCredential) {
+        console.error("WebAuthn is not supported in this browser.");
+        return false;
+    }
+
+    if (requirePlatformAuthenticator) {
+        try {
+            return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+        } catch (error) {
+            console.error("Error checking for platform authenticator:", error);
+            return false;
+        }
+    }
+    return true;
 }
 
 function updateSession(response) {
@@ -445,6 +466,12 @@ function finishCeremony(response) {
 function register(username, displayName, credentialNickname, csrfToken,
                   requireResidentKey = false,
                   getRequest = getRegisterRequest) {
+
+    if (!isBrowserSupported()) {
+        addMessage('Web Authentication (WebAuthn) is not supported by this browser.');
+        return rejected('Unsupported browser');
+    }
+
     let request;
     return performCeremony({
         getWebAuthnUrls,
@@ -534,7 +561,13 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
     $('#divDeviceInfo').hide();
     hideDeviceInfo();
     clearMessages();
-    
+
+    if (!isBrowserSupported()) {
+        setStatus(authFailTitle);
+        addMessage('Web Authentication (WebAuthn) is not supported by this browser.');
+        return rejected('Unsupported browser');
+    }
+
     console.log(`Starting authentication for username ${username}`);
     return performCeremony({
         getWebAuthnUrls,
