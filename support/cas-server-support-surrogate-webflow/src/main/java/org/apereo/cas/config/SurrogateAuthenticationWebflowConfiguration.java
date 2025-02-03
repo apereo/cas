@@ -96,9 +96,17 @@ class SurrogateAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SURROGATE_INITIAL_AUTHENTICATION)
         public Action surrogateInitialAuthenticationAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
             @Qualifier(SurrogateCredentialParser.BEAN_NAME)
             final SurrogateCredentialParser surrogateCredentialParser) {
-            return new SurrogateInitialAuthenticationAction(surrogateCredentialParser);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new SurrogateInitialAuthenticationAction(surrogateCredentialParser))
+                .withId(CasWebflowConstants.ACTION_ID_SURROGATE_INITIAL_AUTHENTICATION)
+                .build()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SURROGATE_AUTHORIZATION_CHECK)

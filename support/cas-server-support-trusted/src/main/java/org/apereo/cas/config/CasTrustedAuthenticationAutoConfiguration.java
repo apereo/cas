@@ -201,6 +201,7 @@ public class CasTrustedAuthenticationAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "principalFromRemoteHeaderPrincipalAction")
         public PrincipalFromRequestExtractorAction principalFromRemoteHeaderPrincipalAction(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("trustedPrincipalFactory")
             final PrincipalFactory trustedPrincipalFactory,
