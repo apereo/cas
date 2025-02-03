@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "spring.mail.port=25000",
     "cas.email-provider.microsoft.client-id=d430f66f-bc3b-4e2d-a9bf-bf6c7ded8b7e",
     "cas.email-provider.microsoft.client-secret=${#environmentVariables['AZURE_AD_CLIENT_SECRET_MAIL']}",
-    "cas.email-provider.microsoft.tenant-id=2bbf190a-1ee3-487d-b39f-4d5038acf9ad",
+    "cas.email-provider.microsoft.tenant-id=2bbf190a-1ee3-487d-b39f-4d5038acf9ad"
 })
 @Tag("Mail")
 @ExtendWith(CasTestExtension.class)
