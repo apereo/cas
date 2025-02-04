@@ -31,14 +31,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.authn.adaptive.risk.ip.enabled=true")
 @Tag("WebflowConfig")
 class RiskAuthenticationVerificationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
-    @Autowired
-    @Qualifier("riskVerificationFlowRegistry")
-    private FlowDefinitionRegistry riskVerificationFlowRegistry;
 
     @Test
     void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-        val flow = (Flow) riskVerificationFlowRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_RISK_VERIFICATION);
+        val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_RISK_VERIFICATION);
         assertNotNull(flow);
         val state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_RISK_AUTHENTICATION_TOKEN_CHECK);
         assertNotNull(state);
