@@ -527,7 +527,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.apache.commons:commons-lang3:$commonsLangVersion") {
                 },
-                dependencies.create("commons-lang:commons-lang:2.6") {
+                dependencies.create("commons-lang:commons-lang:$commonsLang2Version") {
                 },
                 dependencies.create("org.jooq:jool:$joolVersion") {
                 },
@@ -973,13 +973,13 @@ ext.libraries = [
                 }
         ],
         graalvmsdk                 : [
-                dependencies.create("org.graalvm.sdk:graal-sdk:${graalVmVersion}") {
+                dependencies.create("org.graalvm.sdk:graal-sdk:$graalVmVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                 }
         ],
         graalvmpolyglot                 : [
-                dependencies.create("org.graalvm.polyglot:polyglot:${graalVmVersion}") {
+                dependencies.create("org.graalvm.polyglot:polyglot:$graalVmVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                 }
@@ -1054,7 +1054,7 @@ ext.libraries = [
                 dependencies.create("jakarta.xml.ws:jakarta.xml.ws-api:$wsApiVersion") {
                     transitive = false
                 },
-                dependencies.create("com.sun.xml.stream.buffer:streambuffer:2.1.0") {
+                dependencies.create("com.sun.xml.stream.buffer:streambuffer:$streamBufferVersion") {
                     transitive = false
                 },
                 dependencies.create("com.sun.xml.ws:jaxws-rt:$jaxbRuntimeVersion") {
@@ -1144,11 +1144,11 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                 },
-                dependencies.create("com.samskivert:jmustache:${mustacheVersion}") {
+                dependencies.create("com.samskivert:jmustache:$mustacheVersion") {
                 }
         ],
         scimsdk                    : [
-                dependencies.create("de.captaingoldfish:scim-sdk-client:${scimSdkClientVersion}") {
+                dependencies.create("de.captaingoldfish:scim-sdk-client:$scimSdkClientVersion") {
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1526,7 +1526,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.junit.platform:junit-platform-runner:$junitPlatformVersion") {
                 },
-                dependencies.create("org.awaitility:awaitility:${awaitilityVersion}") {
+                dependencies.create("org.awaitility:awaitility:$awaitilityVersion") {
                     exclude(group: "org.hamcrest", module: "hamcrest")
                     exclude(group: "junit", module: "junit")
                 },
@@ -2285,7 +2285,7 @@ ext.libraries = [
                 dependencies.create("net.minidev:json-smart:$jsonSmartVersion") {
                     exclude(group: "org.ow2.asm", module: "asm")
                 },
-                dependencies.create("com.github.stephenc.jcip:jcip-annotations:1.0-1") {
+                dependencies.create("com.github.stephenc.jcip:jcip-annotations:$jcpiAnnotationsVersion") {
                 }
         ],
         quartz                     : dependencies.create("org.quartz-scheduler:quartz:$quartzVersion") {
@@ -2322,10 +2322,10 @@ ext.libraries = [
                     exclude(group: "org.codehaus.jackson", module: "jackson-mapper-asl")
                     exclude(group: "commons-lang", module: "commons-lang")
                 },
-                dependencies.create("org.codehaus.jackson:jackson-mapper-asl:${jacksonAslVersion}") {
+                dependencies.create("org.codehaus.jackson:jackson-mapper-asl:$jacksonAslVersion") {
                     transitive = false
                 },
-                dependencies.create("org.codehaus.jackson:jackson-core-asl:${jacksonAslVersion}") {
+                dependencies.create("org.codehaus.jackson:jackson-core-asl:$jacksonAslVersion") {
                     transitive = false
                 }
         ],
@@ -2993,7 +2993,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
                 },
-                dependencies.create("com.netflix.netflix-commons:netflix-eventbus:0.3.0") {
+                dependencies.create("com.netflix.netflix-commons:netflix-eventbus:$netflixEventBusVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
@@ -3687,7 +3687,7 @@ ext.libraries = [
                 dependencies.create("org.webjars.npm:base64-js:$base64JsVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
-                dependencies.create("org.webjars.npm:clientjs:${clientJsVersion}") {
+                dependencies.create("org.webjars.npm:clientjs:$clientJsVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ]
