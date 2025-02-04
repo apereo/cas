@@ -38,6 +38,7 @@ class DefaultTenantExtractorTests {
         requestContext.setContextPath("/cas/tenants/b9584c42/login");
         val definition = tenantExtractor.extract(requestContext);
         assertTrue(definition.isPresent());
+        assertFalse(definition.get().getAuthenticationPolicy().getAuthenticationHandlers().isEmpty());
     }
 
     @Test

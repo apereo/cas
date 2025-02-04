@@ -30,4 +30,6 @@ public class TenantDefinition implements Serializable {
     private String id;
 
     private String description;
+
+    private TenantAuthenticationPolicy authenticationPolicy = new DefaultTenantAuthenticationPolicy();
 }
