@@ -59,8 +59,14 @@ public class DefaultSingleSignOnBuildingStrategy implements SingleSignOnBuilding
     }
 
     protected void removeTicketGrantingTicket(final String ticketGrantingTicketId) throws Throwable {
-        LOGGER.trace("Removing existing ticket-granting ticket [{}]", ticketGrantingTicketId);
         val ticket = (TicketGrantingTicket) ticketRegistrySupport.getTicket(ticketGrantingTicketId);
+
+        if (ticket == null) {
+            LOGGER.trace("Existing ticket-granting ticket [{}] not found or expired", ticketGrantingTicketId);
+            return;
+        }
+
+        LOGGER.trace("Removing existing ticket-granting ticket [{}]", ticketGrantingTicketId);
         val clientInfo = ClientInfoHolder.getClientInfo();
         applicationContext.publishEvent(new CasRequestSingleLogoutEvent(this, ticket, clientInfo));
 
