@@ -1,5 +1,5 @@
 {
-  "dependencies": "reports,multitenancy",
+  "dependencies": "generic,reports,multitenancy",
   "conditions": {
     "docker": "true"
   },
@@ -7,6 +7,11 @@
     "urls": ["https://localhost:8443/cas/actuator/health"]
   },
   "properties": [
+    "--cas.authn.accept.name=STATIC",
+
+    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.json.name=JSON",
+    
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.access.default=UNRESTRICTED",

@@ -17,6 +17,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -129,11 +130,13 @@ class DefaultAuthenticationManagerTests {
     }
 
     @BeforeEach
-    void setup() {
+    void setup() throws Throwable {
         applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             CoreAuthenticationTestUtils.getAuthenticationSystemSupport(), AuthenticationSystemSupport.BEAN_NAME);
+        val context = MockRequestContext.create(applicationContext);
+        context.setRemoteAddr("185.86.151.11").setLocalAddr("185.86.151.11").setClientInfo();
     }
 
     @Test

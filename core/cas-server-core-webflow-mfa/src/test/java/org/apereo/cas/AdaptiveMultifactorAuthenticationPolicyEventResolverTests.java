@@ -48,9 +48,8 @@ class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends BaseCasW
     void initialize() throws Exception {
         this.context = MockRequestContext.create(applicationContext);
 
-        request = this.context.getHttpServletRequest();
-        request.setRemoteAddr("185.86.151.11");
-        request.setLocalAddr("195.88.151.11");
+        request = context.getHttpServletRequest();
+        context.setRemoteAddr("185.86.151.11").setLocalAddr("195.88.151.11");
         
         val targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
         val transition = new Transition(new DefaultTransitionCriteria(

@@ -4,12 +4,30 @@
     {
       "@class": "org.apereo.cas.multitenancy.TenantDefinition",
       "id": "shire",
-      "description": "This is the Shire tenant definition"
+      "description": "This is the Shire tenant definition",
+      "authenticationPolicy": {
+        "@class": "org.apereo.cas.multitenancy.DefaultTenantAuthenticationPolicy",
+        "authenticationHandlers": [
+          "java.util.ArrayList",
+          [
+            "STATIC"
+          ]
+        ]
+      }
     },
     {
       "@class": "org.apereo.cas.multitenancy.TenantDefinition",
       "id": "moria",
-      "description": "This is the Moria tenant definition"
+      "description": "This is the Moria tenant definition",
+      "authenticationPolicy": {
+        "@class": "org.apereo.cas.multitenancy.DefaultTenantAuthenticationPolicy",
+        "authenticationHandlers": [
+          "java.util.ArrayList",
+          [
+            "JSON"
+          ]
+        ]
+      }
     }
   ]
 ]

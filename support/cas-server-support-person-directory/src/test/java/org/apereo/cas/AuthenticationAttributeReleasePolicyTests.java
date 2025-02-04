@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
@@ -31,6 +32,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
@@ -86,13 +88,19 @@ class AuthenticationAttributeReleasePolicyTests {
     @Qualifier("groovyAuthenticationProcessorExecutionPlanConfigurer")
     private AuthenticationEventExecutionPlanConfigurer groovyAuthenticationProcessorExecutionPlanConfigurer;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable{
+        val context = MockRequestContext.create(applicationContext);
+        context.setRemoteAddr("185.86.151.11").setLocalAddr("185.86.151.11").setClientInfo();
+        
         assertNotNull(groovyAuthenticationHandlerResolver);
         assertNotNull(globalPrincipalAttributeRepository);
         assertNotNull(authenticationManager);
         assertNotNull(groovyAuthenticationProcessorExecutionPlanConfigurer);
-
+        
         val attributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
             CoreAuthenticationTestUtils.getAuthentication(), mock(Assertion.class),
             Map.of(), CoreAuthenticationTestUtils.getRegisteredService());
