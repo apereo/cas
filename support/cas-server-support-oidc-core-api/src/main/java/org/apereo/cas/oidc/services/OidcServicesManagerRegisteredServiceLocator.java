@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.Ordered;
 
 /**
@@ -35,8 +36,8 @@ public class OidcServicesManagerRegisteredServiceLocator extends OAuth20Services
     }
 
     @Override
-    protected Class<? extends RegisteredService> getRegisteredServiceIndexedType() {
-        return OidcRegisteredService.class;
+    protected Pair<String, Class<? extends RegisteredService>> getRegisteredServiceIndexedType() {
+        return Pair.of(OidcRegisteredService.OIDC_REGISTERED_SERVICE_FRIENDLY_NAME, OidcRegisteredService.class);
     }
 }
 

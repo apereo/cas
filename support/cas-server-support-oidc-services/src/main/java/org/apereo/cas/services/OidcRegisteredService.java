@@ -30,10 +30,14 @@ import java.time.ZoneOffset;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class OidcRegisteredService extends OAuthRegisteredService {
+    /**
+     * Friendly name for this OAuth service.
+     */
+    public static final String OIDC_REGISTERED_SERVICE_FRIENDLY_NAME = "OpenID Connect Relying Party";
 
     @Serial
     private static final long serialVersionUID = 1310899699465091444L;
-
+    
     @ExpressionLanguageCapable
     private String jwks;
 
@@ -110,7 +114,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @JsonIgnore
     @Override
     public String getFriendlyName() {
-        return "OpenID Connect Relying Party";
+        return OIDC_REGISTERED_SERVICE_FRIENDLY_NAME;
     }
 
     /**
