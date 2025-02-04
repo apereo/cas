@@ -138,7 +138,7 @@ public interface AuthenticationEventExecutionPlan {
      * @return the authentication handlers for transaction
      * @throws Throwable the throwable
      */
-    Set<AuthenticationHandler> getAuthenticationHandlers(AuthenticationTransaction transaction) throws Throwable;
+    Set<AuthenticationHandler> resolveAuthenticationHandlers(AuthenticationTransaction transaction) throws Throwable;
 
     /**
      * Gets authentication handlers.

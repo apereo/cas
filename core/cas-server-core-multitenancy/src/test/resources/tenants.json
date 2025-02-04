@@ -10,8 +10,8 @@
         "authenticationHandlers": [
           "java.util.ArrayList",
           [
-            "handler1",
-            "handler2"
+            "SimpleTestUsernamePasswordAuthenticationHandler",
+            "UnknownHandler"
           ]
         ]
       }

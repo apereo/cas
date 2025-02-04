@@ -7,8 +7,6 @@ import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,7 +16,6 @@ import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
@@ -44,12 +41,7 @@ class GroovyScriptMultifactorAuthenticationPolicyEventResolverTests extends Base
     @BeforeEach
     void initialize() throws Exception {
         this.context = MockRequestContext.create(applicationContext);
-
-        val request = context.getHttpServletRequest();
-        request.setRemoteAddr("185.86.151.11");
-        request.setLocalAddr("195.88.151.11");
-        request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+        context.setRemoteAddr("185.86.151.11").setLocalAddr("195.88.151.11").withUserAgent().setClientInfo();
 
         val targetResolver = new DefaultTargetStateResolver(TestMultifactorAuthenticationProvider.ID);
         val transition = new Transition(new DefaultTransitionCriteria(

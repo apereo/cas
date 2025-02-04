@@ -1,13 +1,11 @@
 package org.apereo.cas.multitenancy;
 
-import org.apereo.cas.util.RegexUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link DefaultTenantExtractor}.
@@ -19,21 +17,12 @@ import java.util.regex.Pattern;
 @Slf4j
 @Getter
 public class DefaultTenantExtractor implements TenantExtractor {
-    private static final Pattern PATTERN_TENANTS = RegexUtils.createPattern("tenants/(.+)/(.+)");
+
     private final TenantsManager tenantsManager;
 
     @Override
     public Optional<TenantDefinition> extract(final String requestPath) {
-        if (StringUtils.isBlank(requestPath)) {
-            return Optional.empty();
-        }
-        val matcher = PATTERN_TENANTS.matcher(requestPath);
-        if (matcher.find()) {
-            val tenantId = matcher.group(1).trim();
-            if (StringUtils.isNotBlank(tenantId)) {
-                return tenantsManager.findTenant(tenantId);
-            }
-        }
-        return Optional.empty();
+        val tenantId = TenantExtractor.tenantIdFromPath(requestPath);
+        return StringUtils.isNotBlank(tenantId) ? tenantsManager.findTenant(tenantId) : Optional.empty();
     }
 }

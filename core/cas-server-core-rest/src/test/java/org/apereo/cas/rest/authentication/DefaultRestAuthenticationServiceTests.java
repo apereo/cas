@@ -25,6 +25,8 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,7 +78,10 @@ class DefaultRestAuthenticationServiceTests {
     void verifyAuthentication() throws Throwable {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
-
+        request.setRemoteAddr("185.86.151.11");
+        request.setLocalAddr("195.88.151.11");
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+        
         val body = new LinkedMultiValueMap<String, String>();
         body.add(RestHttpRequestCredentialFactory.PARAMETER_USERNAME, "casuser");
         body.add(RestHttpRequestCredentialFactory.PARAMETER_PASSWORD, "Mellon");
