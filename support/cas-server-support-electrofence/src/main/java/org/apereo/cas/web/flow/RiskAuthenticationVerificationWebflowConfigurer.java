@@ -25,7 +25,8 @@ public class RiskAuthenticationVerificationWebflowConfigurer extends AbstractCas
     @Override
     protected void doInitialize() {
         val riskVerificationFlow = buildFlow(CasWebflowConfigurer.FLOW_ID_RISK_VERIFICATION);
-        val checkRiskTokenState = createActionState(riskVerificationFlow, CasWebflowConstants.STATE_ID_RISK_AUTHENTICATION_TOKEN_CHECK,
+        val checkRiskTokenState = createActionState(riskVerificationFlow,
+            CasWebflowConstants.STATE_ID_RISK_AUTHENTICATION_TOKEN_CHECK,
             CasWebflowConstants.ACTION_ID_RISK_AUTHENTICATION_TOKEN_CHECK);
         val confirmationView = createEndState(riskVerificationFlow, "riskVerificationConfirmationView", "adaptive-authn/casRiskAuthenticationVerifiedView");
         createStateDefaultTransition(checkRiskTokenState, confirmationView.getId());
