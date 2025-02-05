@@ -122,3 +122,9 @@ and its XOAUTH2 authentication mechanism.
 - Lettuce
 - LettuceMod
 - Groovy
+- Pac4j
+- Google Cloud
+- SQL Server JDBC Driver
+- Oracle JDBC Driver
+- Guava
+- Azure Maps
