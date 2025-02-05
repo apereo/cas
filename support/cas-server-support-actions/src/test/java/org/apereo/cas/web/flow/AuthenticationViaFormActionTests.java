@@ -4,12 +4,15 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.BindException;
@@ -22,13 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("WebflowAuthenticationActions")
+@ExtendWith(CasTestExtension.class)
 class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
 
     private static final String TEST = "test";
-
-    private static final String USERNAME_PARAM = "username";
-
-    private static final String PASSWORD_PARAM = "password";
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_AUTHENTICATION_VIA_FORM_ACTION)
@@ -38,11 +38,21 @@ class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
     @Qualifier(CasCookieBuilder.BEAN_NAME_WARN_COOKIE_BUILDER)
     private CasCookieBuilder warnCookieGenerator;
 
+    @BeforeEach
+    void beforeEach() throws Exception {
+        val requestContext = MockRequestContext.create(applicationContext);
+        requestContext
+            .setRemoteAddr("127.26.152.11")
+            .setLocalAddr("109.98.51.12")
+            .withUserAgent()
+            .setClientInfo();
+    }
+
     @Test
     void verifySuccessfulAuthenticationWithNoService() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.setParameter(USERNAME_PARAM, TEST);
-        context.setParameter(PASSWORD_PARAM, TEST);
+        context.setParameter(CasProtocolConstants.PARAMETER_USERNAME, TEST);
+        context.setParameter(CasProtocolConstants.PARAMETER_PASSWORD, TEST);
         val credentials = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         putCredentialInRequestScope(context, credentials);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
@@ -52,8 +62,8 @@ class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
     void verifySuccessfulAuthenticationWithNoServiceAndWarn() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
 
-        context.setParameter(USERNAME_PARAM, TEST);
-        context.setParameter(PASSWORD_PARAM, TEST);
+        context.setParameter(CasProtocolConstants.PARAMETER_USERNAME, TEST);
+        context.setParameter(CasProtocolConstants.PARAMETER_PASSWORD, TEST);
         context.setParameter(CasWebflowConstants.ATTRIBUTE_WARN_ON_REDIRECT, "true");
 
         val credentials = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
@@ -66,8 +76,8 @@ class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
     void verifySuccessfulAuthenticationWithServiceAndWarn() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
 
-        context.setParameter(USERNAME_PARAM, TEST);
-        context.setParameter(PASSWORD_PARAM, TEST);
+        context.setParameter(CasProtocolConstants.PARAMETER_USERNAME, TEST);
+        context.setParameter(CasProtocolConstants.PARAMETER_PASSWORD, TEST);
         context.setParameter(CasWebflowConstants.ATTRIBUTE_WARN_ON_REDIRECT, "true");
         context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, TEST);
 
@@ -82,8 +92,8 @@ class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
     void verifyFailedAuthenticationWithNoService() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
 
-        context.setParameter(USERNAME_PARAM, TEST);
-        context.setParameter(PASSWORD_PARAM, "test2");
+        context.setParameter(CasProtocolConstants.PARAMETER_USERNAME, TEST);
+        context.setParameter(CasProtocolConstants.PARAMETER_PASSWORD, "test2");
 
         val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword();
         putCredentialInRequestScope(context, credential);
@@ -172,6 +182,6 @@ class AuthenticationViaFormActionTests extends AbstractWebflowActionsTests {
 
     private static void putCredentialInRequestScope(final RequestContext context,
                                                     final Credential credential) {
-        context.getRequestScope().put("credential", credential);
+        WebUtils.putCredential(context, credential);
     }
 }
