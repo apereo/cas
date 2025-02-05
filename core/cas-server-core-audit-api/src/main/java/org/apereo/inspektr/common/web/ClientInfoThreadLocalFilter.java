@@ -1,9 +1,9 @@
 package org.apereo.inspektr.common.web;
 
-import org.apereo.cas.multitenancy.TenantDefinition;
-import org.apereo.cas.multitenancy.TenantExtractor;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

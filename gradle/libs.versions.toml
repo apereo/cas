@@ -1,0 +1,735 @@
+[versions]
+aceEditor = "1.37.1"
+acmeClient = "3.5.0"
+amazonDax = "2.0.5"
+amazonSdk = "2.30.10"
+animateCss = "4.1.1"
+apacheCassandra = "4.18.1"
+apacheCxf = "4.1.0"
+apacheFediz = "1.7.0"
+apacheIgnite = "2.16.0"
+apacheVelocityEngine = "2.4.1"
+apiGuardian = "1.1.2"
+aspectj = "1.9.22.1"
+awaitility = "4.2.2"
+awsmemcached = "1.2.2"
+azureIdentity = "1.15.0"
+azureMapsGeoLocation = "1.0.0-beta.1"
+azuread = "1.18.0"
+base64Js = "1.5.1"
+bootstrap = "5.3.3"
+bootstrapSelect = "1.13.18"
+bouncyCastle = "1.80"
+bucket4j = "8.10.1"
+caffeine = "3.2.0"
+casClient = "4.0.4"
+cbor = "4.5.6"
+chartJs = "4.4.7"
+checkstyle="10.21.2"
+classgraph = "4.8.179"
+clientJs = "0.2.1"
+commonsBeans = "1.10.0"
+commonsCli = "1.9.0"
+commonsCodec = "1.18.0"
+commonsCollections = "4.4"
+commonsCollections3 = "3.2.2"
+commonsCompress = "1.27.1"
+commonsIo = "2.18.0"
+commonsJexl = "3.4.0"
+commonsLang = "3.17.0"
+commonsLang2 = "2.6"
+commonsPool = "2.12.1"
+commonsText = "1.13.0"
+commonsValidator = "1.9.0"
+cosmosdb = "4.66.0"
+cqEngine = "3.6.0"
+cryptacular = "1.2.7"
+cssVarsPonyfill = "2.4.9"
+curator = "5.7.1"
+datatables = "2.1.8"
+disruptor = "4.0.0"
+dom4j = "2.1.4"
+dropwizard = "4.2.30"
+duoClient = "0.6.3"
+duoUniversalSdk = "1.2.0"
+eclipseAngusMail = "2.0.3"
+eclipseLink = "4.0.5"
+elasticApm = "1.52.1"
+errorprone="2.36.0"
+es5Shim = "4.5.9"
+eurekaClient = "2.0.4"
+firebaseAdmin = "9.4.3"
+fluentd = "0.3.4"
+fluentdLog4j = "1.0.0"
+fontAwesome = "6.7.2"
+googleApiClient = "2.7.2"
+googleAuth = "1.5.0"
+googleCloudLogging = "3.21.2"
+googleCloudMonitor = "3.58.0"
+googleCloudSdk = "5.10.0"
+googleMapsGeoCoding = "2.2.0"
+googleZxing = "3.5.3"
+graalVm = "24.1.2"
+graalVmMetadataRepository="0.3.16"
+groovy = "4.0.25"
+grouper = "5.16.0"
+gson = "2.12.1"
+guava = "33.2.1-jre"
+h2 = "1.4.197"
+hazelcast = "5.5.0"
+hazelcastJClouds = "3.7.2"
+hazelcastZooKeeper = "4.0.2"
+hibernate = "6.6.6.Final"
+hibernateValidator = "8.0.2.Final"
+highlightJs = "11.10.0"
+hikari = "6.2.1"
+hjson = "3.1.0"
+hsql = "2.7.4"
+httpCore = "5.3.3"
+httpCore4 = "4.4.16"
+httpclient = "5.4.2"
+httpclient4 = "4.5.14"
+hypersistence = "3.9.1"
+influxDb = "7.2.0"
+ipGeoLocation = "1.0.16"
+jackson = "2.18.2"
+jacksonAsl = "1.9.13"
+jacksonDataBind = "2.18.2"
+jacoco="0.8.12"
+jakartaActivation = "2.1.3"
+jakartaAnnotationApi = "3.0.0"
+jakartaEl = "6.0.1"
+jakartaElImpl = "5.0.0"
+jakartaJms = "3.1.0"
+jakartaJstl = "3.0.2"
+jakartaServlet = "6.1.0"
+jakartaSoapApi = "3.0.2"
+jakartaValidation = "3.1.1"
+jasypt = "1.9.3"
+javaMelody = "2.5.0"
+javaParser = "3.26.3"
+javers = "7.7.0"
+jaxbApi = "4.0.2"
+jaxbImpl = "4.0.5"
+jaxbRuntime = "4.0.3"
+jcifs = "1.3.17"
+jclouds = "2.7.0"
+jcloudsGoogleEngine = "1.9.3"
+jcpiAnnotations = "1.0-1"
+jdom = "2.0.6.1"
+jetty = "12.0.16"
+jib = "3.4.4"
+jgit = "7.1.0.202411261347-r"
+jodaTime = "2.13.1"
+jool = "0.9.15"
+jose4j = "0.9.6"
+jpaPersistenceApi = "3.1.0"
+jquery = "3.7.1"
+jqueryUi = "1.14.1"
+jradius = "1.1.5"
+json = "20250107"
+jsonSmart = "2.5.1"
+jsonassert = "1.5.3"
+jsoup = "1.18.3"
+jta = "2.0.1"
+jtds = "1.3.1"
+junit = "5.11.4"
+junitPioneer = "2.3.0"
+junitPlatform = "1.11.4"
+kafka = "3.9.0"
+kryo = "5.6.2"
+kryoSerializers = "0.45"
+ldaptive = "2.4.0"
+lettuceMod = "4.2.0"
+log4j = "2.24.3"
+logback = "1.5.16"
+logbackAccess = "1.5.16"
+lombok="1.18.36"
+mailgun = "1.1.3"
+mailjet = "5.2.5"
+mariaDb = "3.5.1"
+material = "14.0.0"
+maxmind = "4.2.1"
+mdiFont = "7.4.47"
+micrometer = "1.14.3"
+micrometerOtel = "1.4.2"
+mockito = "5.15.2"
+mockitoInline = "5.2.0"
+mongoDriver = "5.3.1"
+mssqlServer = "12.6.1.jre11"
+mustache = "1.16"
+mysql = "9.2.0"
+netflixEventBus = "0.3.0"
+netty = "4.1.117.Final"
+nexmo = "5.6.0"
+nimbusJose = "10.0.1"
+nimbusOidc = "11.21.3"
+normalize = "8.0.1"
+notyf = "3.10.0"
+okhttp3 = "4.12.0"
+okio = "3.10.2"
+okioHttp = "2.7.5"
+oktaHttpClient = "8.2.5"
+oktaSdk = "3.0.0"
+opensaml = "5.1.3"
+oracleJdbc = "23.6.0.24.10"
+oshi = "6.6.6"
+otel = "1.46.0"
+pac4j = "6.1.0"
+permitio = "2.1.2"
+postgresql = "42.7.5"
+quartz = "2.5.0"
+redisLettuce = "6.5.3.RELEASE"
+retrofit = "2.11.0"
+saajImpl = "3.0.4"
+scimSdkClient = "1.27.1"
+semver = "3.1.0"
+sendGrid = "4.10.3"
+sentry = "8.1.0"
+shibbolethUtilJavaSupport = "9.1.3"
+slackClient = "1.45.2"
+slf4j = "2.0.16"
+snakeYaml = "2.3"
+socketJsClient = "1.5.1"
+splunkLogging = "1.11.8"
+spring = "6.2.2"
+springBoot = "3.4.2"
+springBootAdmin = "3.4.1"
+springCloudAzure = "5.19.0"
+springCloudBus = "4.2.0"
+springCloudCommons = "4.2.0"
+springCloudConfig = "4.2.0"
+springCloudConsul = "4.2.0"
+springCloudEureka = "4.2.0"
+springCloudKubernetesConfig = "3.2.0"
+springCloudVault = "4.2.0"
+springCloudZookeeper = "4.2.0"
+springDataCassandra = "4.4.2"
+springDataCommons = "3.4.2"
+springDataCosmosDb = "5.19.0"
+springDataMongoDb = "4.4.2"
+springDataRedis = "3.4.2"
+springDoc = "2.8.4"
+springIntegration = "6.4.1"
+springKafka = "3.3.2"
+springRabbit = "3.2.2"
+springRetry = "2.0.11"
+springSecurity = "6.4.2"
+springSecurityRsa = "1.1.5"
+springSession = "3.4.1"
+springSessionMongo = "3.4.1"
+springShell = "3.4.0"
+springWebflow = "3.0.1"
+springWs = "4.0.11"
+spymemcached = "2.12.3"
+stompWebSocket = "2.3.4"
+streamBuffer = "2.1.0"
+swagger = "2.2.28"
+sweetAlert = "11.15.10"
+textEncoding = "0.7.0"
+textMagic = "2.0.2456"
+thymeleaf = "3.1.3.RELEASE"
+thymeleafDialect = "3.2.0"
+tomcat = "10.1.34"
+twilio = "10.6.8"
+unboundid = "7.0.2"
+undertow = "2.3.18.Final"
+whatWgFetch = "3.6.20"
+wsApi = "4.0.2"
+wsdl4j = "1.6.3"
+wss4j = "4.0.0-SNAPSHOT"
+xerces = "2.12.2"
+xmlSec = "4.0.3"
+yubico = "3.1.0"
+yubicoWebauthn = "2.6.0"
+yugabytedb = "42.7.3-yb-2"
+zipkinBrave = "3.4.3"
+zookeeper = "3.9.3"
+zxcvbn = "4.4.2"
+
+#################################################################
+# This section handles Gradle build classpath dependency versions
+#################################################################
+gradleGit="2.4.2"
+gradleLombok="8.12.1"
+gradleDependencyVersions="0.52.0"
+gradleErrorProne="4.1.0"
+gradleGraalVmNative="0.10.4"
+gradleSonarqube="6.0.1.5171"
+gradleNexusPublishing="2.0.0"
+
+[libraries]
+ace-builds = { module = "org.webjars.npm:ace-builds", version.ref = "aceEditor" }
+acme4j-client = { module = "org.shredzone.acme4j:acme4j-client", version.ref = "acmeClient" }
+amazon-dax-client = { module = "software.amazon.dax:amazon-dax-client", version.ref = "amazonDax" }
+angus-mail = { module = "org.eclipse.angus:angus-mail", version.ref = "eclipseAngusMail" }
+animate-css = { module = "org.webjars.npm:animate.css", version.ref = "animateCss" }
+apache-client = { module = "software.amazon.awssdk:apache-client", version.ref = "amazonSdk" }
+apiguardian-api = { module = "org.apiguardian:apiguardian-api", version.ref = "apiGuardian" }
+apm-agent-api = { module = "co.elastic.apm:apm-agent-api", version.ref = "elasticApm" }
+apm-agent-attach = { module = "co.elastic.apm:apm-agent-attach", version.ref = "elasticApm" }
+aspectjrt = { module = "org.aspectj:aspectjrt", version.ref = "aspectj" }
+aspectjweaver = { module = "org.aspectj:aspectjweaver", version.ref = "aspectj" }
+awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
+aws-core = { module = "software.amazon.awssdk:aws-core", version.ref = "amazonSdk" }
+azure-cosmos = { module = "com.azure:azure-cosmos", version.ref = "cosmosdb" }
+azure-identity = { module = "com.azure:azure-identity", version.ref = "azureIdentity" }
+azure-maps-geolocation = { module = "com.azure:azure-maps-geolocation", version.ref = "azureMapsGeoLocation" }
+azure-maps-search = { module = "com.azure:azure-maps-search", version.ref = "azureMapsGeoLocation" }
+azure-spring-data-cosmos = { module = "com.azure:azure-spring-data-cosmos", version.ref = "springDataCosmosDb" }
+base64-js = { module = "org.webjars.npm:base64-js", version.ref = "base64Js" }
+bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncyCastle" }
+bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncyCastle" }
+bootstrap-core = { module = "org.webjars:bootstrap", version.ref = "bootstrap" }
+bootstrap-select = { module = "org.webjars:bootstrap-select", version.ref = "bootstrapSelect" }
+bson = { module = "org.mongodb:bson", version.ref = "mongoDriver" }
+bucket4j-core = { module = "com.bucket4j:bucket4j-core", version.ref = "bucket4j" }
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+cas-client-core = { module = "org.apereo.cas.client:cas-client-core", version.ref = "casClient" }
+cbor = { module = "com.upokecenter:cbor", version.ref = "cbor" }
+chart-js = { module = "org.webjars.npm:chart.js", version.ref = "chartJs" }
+classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph" }
+client = { module = "com.nexmo:client", version.ref = "nexmo" }
+clientjs = { module = "org.webjars.npm:clientjs", version.ref = "clientJs" }
+clouddirectory = { module = "software.amazon.awssdk:clouddirectory", version.ref = "amazonSdk" }
+cloudwatch = { module = "software.amazon.awssdk:cloudwatch", version.ref = "amazonSdk" }
+cloudwatchlogs = { module = "software.amazon.awssdk:cloudwatchlogs", version.ref = "amazonSdk" }
+cognitoidentity = { module = "software.amazon.awssdk:cognitoidentity", version.ref = "amazonSdk" }
+cognitoidentityprovider = { module = "software.amazon.awssdk:cognitoidentityprovider", version.ref = "amazonSdk" }
+commons-beanutils = { module = "commons-beanutils:commons-beanutils", version.ref = "commonsBeans" }
+commons-cli = { module = "commons-cli:commons-cli", version.ref = "commonsCli" }
+commons-codec = { module = "commons-codec:commons-codec", version.ref = "commonsCodec" }
+commons-collections = { module = "commons-collections:commons-collections", version.ref = "commonsCollections3" }
+commons-collections4 = { module = "org.apache.commons:commons-collections4", version.ref = "commonsCollections" }
+commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commonsCompress" }
+commons-io = { module = "commons-io:commons-io", version.ref = "commonsIo" }
+commons-jexl3 = { module = "org.apache.commons:commons-jexl3", version.ref = "commonsJexl" }
+commons-lang = { module = "commons-lang:commons-lang", version.ref = "commonsLang2" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commonsLang" }
+commons-pool2 = { module = "org.apache.commons:commons-pool2", version.ref = "commonsPool" }
+commons-text = { module = "org.apache.commons:commons-text", version.ref = "commonsText" }
+commons-validator = { module = "commons-validator:commons-validator", version.ref = "commonsValidator" }
+converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
+core = { module = "com.google.zxing:core", version.ref = "googleZxing" }
+cqengine = { module = "com.googlecode.cqengine:cqengine", version.ref = "cqEngine" }
+cryptacular = { module = "org.cryptacular:cryptacular", version.ref = "cryptacular" }
+css-vars-ponyfill = { module = "org.webjars.npm:css-vars-ponyfill", version.ref = "cssVarsPonyfill" }
+curator-client = { module = "org.apache.curator:curator-client", version.ref = "curator" }
+curator-framework = { module = "org.apache.curator:curator-framework", version.ref = "curator" }
+curator-recipes = { module = "org.apache.curator:curator-recipes", version.ref = "curator" }
+cxf-rt-frontend-jaxrs = { module = "org.apache.cxf:cxf-rt-frontend-jaxrs", version.ref = "apacheCxf" }
+cxf-rt-frontend-jaxws = { module = "org.apache.cxf:cxf-rt-frontend-jaxws", version.ref = "apacheCxf" }
+cxf-rt-rs-client = { module = "org.apache.cxf:cxf-rt-rs-client", version.ref = "apacheCxf" }
+cxf-rt-rs-extension-providers = { module = "org.apache.cxf:cxf-rt-rs-extension-providers", version.ref = "apacheCxf" }
+cxf-rt-rs-extension-search = { module = "org.apache.cxf:cxf-rt-rs-extension-search", version.ref = "apacheCxf" }
+cxf-rt-rs-security-sso-saml = { module = "org.apache.cxf:cxf-rt-rs-security-sso-saml", version.ref = "apacheCxf" }
+cxf-rt-rs-service-description = { module = "org.apache.cxf:cxf-rt-rs-service-description", version.ref = "apacheCxf" }
+cxf-rt-transports-http = { module = "org.apache.cxf:cxf-rt-transports-http", version.ref = "apacheCxf" }
+cxf-rt-ws-addr = { module = "org.apache.cxf:cxf-rt-ws-addr", version.ref = "apacheCxf" }
+cxf-rt-ws-policy = { module = "org.apache.cxf:cxf-rt-ws-policy", version.ref = "apacheCxf" }
+cxf-rt-ws-security = { module = "org.apache.cxf:cxf-rt-ws-security", version.ref = "apacheCxf" }
+cxf-services-sts-core = { module = "org.apache.cxf.services.sts:cxf-services-sts-core", version.ref = "apacheCxf" }
+datatables = { module = "org.webjars:datatables", version.ref = "datatables" }
+disruptor = { module = "com.lmax:disruptor", version.ref = "disruptor" }
+dom4j = { module = "org.dom4j:dom4j", version.ref = "dom4j" }
+duo-client = { module = "com.duosecurity:duo-client", version.ref = "duoClient" }
+duo-universal-sdk = { module = "com.duosecurity:duo-universal-sdk", version.ref = "duoUniversalSdk" }
+dynamodb = { module = "software.amazon.awssdk:dynamodb", version.ref = "amazonSdk" }
+elasticache-java-cluster-client = { module = "com.amazonaws:elasticache-java-cluster-client", version.ref = "awsmemcached" }
+es5-shim = { module = "org.webjars:es5-shim", version.ref = "es5Shim" }
+eureka-client = { module = "com.netflix.eureka:eureka-client", version.ref = "eurekaClient" }
+expressly = { module = "org.glassfish.expressly:expressly", version.ref = "jakartaElImpl" }
+fediz-core = { module = "org.apache.cxf.fediz:fediz-core", version.ref = "apacheFediz" }
+firebase-admin = { module = "com.google.firebase:firebase-admin", version.ref = "firebaseAdmin" }
+fluent-logger = { module = "org.fluentd:fluent-logger", version.ref = "fluentd" }
+fluentd-log4j-appender = { module = "io.github.technologize:fluentd-log4j-appender", version.ref = "fluentdLog4j" }
+font-awesome = { module = "org.webjars:font-awesome", version.ref = "fontAwesome" }
+geoip2 = { module = "com.maxmind.geoip2:geoip2", version.ref = "maxmind" }
+google-api-client = { module = "com.google.api-client:google-api-client", version.ref = "googleApiClient" }
+google-cloud-logging = { module = "com.google.cloud:google-cloud-logging", version.ref = "googleCloudLogging" }
+google-cloud-monitoring = { module = "com.google.cloud:google-cloud-monitoring", version.ref = "googleCloudMonitor" }
+google-compute-engine = { module = "org.apache.jclouds.labs:google-compute-engine", version.ref = "jcloudsGoogleEngine" }
+google-maps-services = { module = "com.google.maps:google-maps-services", version.ref = "googleMapsGeoCoding" }
+googleauth = { module = "com.warrenstrange:googleauth", version.ref = "googleAuth" }
+graal-sdk = { module = "org.graalvm.sdk:graal-sdk", version.ref = "graalVm" }
+apachegroovy-core = { module = "org.apache.groovy:groovy", version.ref = "groovy" }
+apachegroovy-datetime = { module = "org.apache.groovy:groovy-datetime", version.ref = "groovy" }
+apachegroovy-groovysh = { module = "org.apache.groovy:groovy-groovysh", version.ref = "groovy" }
+apachegroovy-json = { module = "org.apache.groovy:groovy-json", version.ref = "groovy" }
+apachegroovy-jsr223 = { module = "org.apache.groovy:groovy-jsr223", version.ref = "groovy" }
+apachegroovy-sql = { module = "org.apache.groovy:groovy-sql", version.ref = "groovy" }
+apachegroovy-templates = { module = "org.apache.groovy:groovy-templates", version.ref = "groovy" }
+apachegroovy-xml = { module = "org.apache.groovy:groovy-xml", version.ref = "groovy" }
+apachegroovy-yaml = { module = "org.apache.groovy:groovy-yaml", version.ref = "groovy" }
+grouperclient = { module = "edu.internet2.middleware.grouper:grouperClient", version.ref = "grouper" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
+hazelcast-sdk = { module = "com.hazelcast:hazelcast", version.ref = "hazelcast" }
+hazelcast-jclouds = { module = "com.hazelcast:hazelcast-jclouds", version.ref = "hazelcastJClouds" }
+hazelcast-sql = { module = "com.hazelcast:hazelcast-sql", version.ref = "hazelcast" }
+hazelcast-zookeeper = { module = "com.hazelcast:hazelcast-zookeeper", version.ref = "hazelcastZooKeeper" }
+hibernate-ant = { module = "org.hibernate.orm:hibernate-ant", version.ref = "hibernate" }
+hibernate-community-dialects = { module = "org.hibernate.orm:hibernate-community-dialects", version.ref = "hibernate" }
+hibernate-core = { module = "org.hibernate.orm:hibernate-core", version.ref = "hibernate" }
+hibernate-graalvm = { module = "org.hibernate.orm:hibernate-graalvm", version.ref = "hibernate" }
+hibernate-hikaricp = { module = "org.hibernate.orm:hibernate-hikaricp", version.ref = "hibernate" }
+hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "hibernateValidator" }
+highlightjs = { module = "org.webjars:highlightjs", version.ref = "highlightJs" }
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
+hjson = { module = "org.hjson:hjson", version.ref = "hjson" }
+hsqldb = { module = "org.hsqldb:hsqldb", version.ref = "hsql" }
+httpclient = { module = "org.apache.httpcomponents:httpclient", version.ref = "httpclient4" }
+httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5", version.ref = "httpclient" }
+httpcore = { module = "org.apache.httpcomponents:httpcore", version.ref = "httpCore4" }
+httpcore5 = { module = "org.apache.httpcomponents.core5:httpcore5", version.ref = "httpCore" }
+hypersistence-utils-hibernate = { module = "io.hypersistence:hypersistence-utils-hibernate-63", version.ref = "hypersistence" }
+ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "apacheIgnite" }
+ignite-indexing = { module = "org.apache.ignite:ignite-indexing", version.ref = "apacheIgnite" }
+ignite-log4j2 = { module = "org.apache.ignite:ignite-log4j2", version.ref = "apacheIgnite" }
+ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "apacheIgnite" }
+influxdb-client-java = { module = "com.influxdb:influxdb-client-java", version.ref = "influxDb" }
+ipgeolocation = { module = "io.ipgeolocation:ipgeolocation", version.ref = "ipGeoLocation" }
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
+jacksoncore = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-core-asl = { module = "org.codehaus.jackson:jackson-core-asl", version.ref = "jacksonAsl" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jacksonDataBind" }
+jackson-dataformat-cbor = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor", version.ref = "jackson" }
+jackson-dataformat-properties = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-properties", version.ref = "jackson" }
+jackson-dataformat-smile = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-smile", version.ref = "jackson" }
+jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
+jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
+jackson-datatype-guava = { module = "com.fasterxml.jackson.datatype:jackson-datatype-guava", version.ref = "jackson" }
+jackson-datatype-jdk8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "jackson" }
+jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+jackson-mapper-asl = { module = "org.codehaus.jackson:jackson-mapper-asl", version.ref = "jacksonAsl" }
+jackson-module-blackbird = { module = "com.fasterxml.jackson.module:jackson-module-blackbird", version.ref = "jackson" }
+jackson-module-jakarta-xmlbind-annotations = { module = "com.fasterxml.jackson.module:jackson-module-jakarta-xmlbind-annotations", version.ref = "jackson" }
+jackson-module-parameter-names = { module = "com.fasterxml.jackson.module:jackson-module-parameter-names", version.ref = "jackson" }
+jakarta-activation-api = { module = "jakarta.activation:jakarta.activation-api", version.ref = "jakartaActivation" }
+jakarta-annotation-api = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakartaAnnotationApi" }
+jakarta-el-api = { module = "jakarta.el:jakarta.el-api", version.ref = "jakartaEl" }
+jakarta-jms-api = { module = "jakarta.jms:jakarta.jms-api", version.ref = "jakartaJms" }
+jakarta-mail = { module = "org.eclipse.angus:jakarta.mail", version.ref = "eclipseAngusMail" }
+jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jpaPersistenceApi" }
+jakarta-servlet-api = { module = "jakarta.servlet:jakarta.servlet-api", version.ref = "jakartaServlet" }
+jakarta-servlet-jsp-jstl-api = { module = "jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api", version.ref = "jakartaJstl" }
+jakarta-transaction-api = { module = "jakarta.transaction:jakarta.transaction-api", version.ref = "jta" }
+jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakartaValidation" }
+jakarta-xml-bind-api = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version.ref = "jaxbApi" }
+jakarta-xml-soap-api = { module = "jakarta.xml.soap:jakarta.xml.soap-api", version.ref = "jakartaSoapApi" }
+jakarta-xml-ws-api = { module = "jakarta.xml.ws:jakarta.xml.ws-api", version.ref = "wsApi" }
+jasypt = { module = "org.jasypt:jasypt", version.ref = "jasypt" }
+java-driver-core = { module = "org.apache.cassandra:java-driver-core", version.ref = "apacheCassandra" }
+java-driver-mapper-runtime = { module = "org.apache.cassandra:java-driver-mapper-runtime", version.ref = "apacheCassandra" }
+javamelody-spring-boot-starter = { module = "net.bull.javamelody:javamelody-spring-boot-starter", version.ref = "javaMelody" }
+javaparser-core = { module = "com.github.javaparser:javaparser-core", version.ref = "javaParser" }
+javers-spring-boot-starter-mongo = { module = "org.javers:javers-spring-boot-starter-mongo", version.ref = "javers" }
+jaxb-impl = { module = "com.sun.xml.bind:jaxb-impl", version.ref = "jaxbImpl" }
+jaxws-rt = { module = "com.sun.xml.ws:jaxws-rt", version.ref = "jaxbRuntime" }
+jcifs = { module = "jcifs:jcifs", version.ref = "jcifs" }
+jcip-annotations = { module = "com.github.stephenc.jcip:jcip-annotations", version.ref = "jcpiAnnotations" }
+jclouds-allcompute = { module = "org.apache.jclouds:jclouds-allcompute", version.ref = "jclouds" }
+jclouds-compute = { module = "org.apache.jclouds:jclouds-compute", version.ref = "jclouds" }
+jdbc-yugabytedb = { module = "com.yugabyte:jdbc-yugabytedb", version.ref = "yugabytedb" }
+jdom2 = { module = "org.jdom:jdom2", version.ref = "jdom" }
+jetty-alpn-java-server = { module = "org.eclipse.jetty:jetty-alpn-java-server", version.ref = "jetty" }
+jetty-http2-server = { module = "org.eclipse.jetty.http2:jetty-http2-server", version.ref = "jetty" }
+jmustache = { module = "com.samskivert:jmustache", version.ref = "mustache" }
+joda-time = { module = "joda-time:joda-time", version.ref = "jodaTime" }
+jool = { module = "org.jooq:jool", version.ref = "jool" }
+jose4j = { module = "org.bitbucket.b_c:jose4j", version.ref = "jose4j" }
+jquery-core = { module = "org.webjars:jquery", version.ref = "jquery" }
+jquery-ui = { module = "org.webjars.npm:jquery-ui", version.ref = "jqueryUi" }
+jradius-apps = { module = "net.jradius:jradius-apps", version.ref = "jradius" }
+jradius-client = { module = "net.jradius:jradius-client", version.ref = "jradius" }
+jradius-core = { module = "net.jradius:jradius-core", version.ref = "jradius" }
+jradius-dictionary = { module = "net.jradius:jradius-dictionary", version.ref = "jradius" }
+jradius-extended = { module = "net.jradius:jradius-extended", version.ref = "jradius" }
+jradius-extras = { module = "net.jradius:jradius-extras", version.ref = "jradius" }
+jradius-server = { module = "net.jradius:jradius-server", version.ref = "jradius" }
+orgjson = { module = "org.json:json", version.ref = "json" }
+json-smart = { module = "net.minidev:json-smart", version.ref = "jsonSmart" }
+jsonassert = { module = "org.skyscreamer:jsonassert", version.ref = "jsonassert" }
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+jtds = { module = "net.sourceforge.jtds:jtds", version.ref = "jtds" }
+jul-to-slf4j = { module = "org.slf4j:jul-to-slf4j", version.ref = "slf4j" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
+junit-pioneer = { module = "org.junit-pioneer:junit-pioneer", version.ref = "junitPioneer" }
+junit-platform-engine = { module = "org.junit.platform:junit-platform-engine", version.ref = "junitPlatform" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junitPlatform" }
+junit-platform-runner = { module = "org.junit.platform:junit-platform-runner", version.ref = "junitPlatform" }
+junit-platform-suite-api = { module = "org.junit.platform:junit-platform-suite-api", version.ref = "junitPlatform" }
+kafka-clients = { module = "org.apache.kafka:kafka-clients", version.ref = "kafka" }
+kafka-streams = { module = "org.apache.kafka:kafka-streams", version.ref = "kafka" }
+kryo-sdk = { module = "com.esotericsoftware:kryo", version.ref = "kryo" }
+kryo-serializers = { module = "de.javakaffee:kryo-serializers", version.ref = "kryoSerializers" }
+ldaptive = { module = "org.ldaptive:ldaptive", version.ref = "ldaptive" }
+lettuce-core = { module = "io.lettuce:lettuce-core", version.ref = "redisLettuce" }
+lettucemod = { module = "com.redis:lettucemod", version.ref = "lettuceMod" }
+log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
+log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
+log4j-jakarta-web = { module = "org.apache.logging.log4j:log4j-jakarta-web", version.ref = "log4j" }
+log4j-jcl = { module = "org.apache.logging.log4j:log4j-jcl", version.ref = "log4j" }
+log4j-layout-template-json = { module = "org.apache.logging.log4j:log4j-layout-template-json", version.ref = "log4j" }
+log4j-slf4j2-impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
+log4j-spring-cloud-config-client = { module = "org.apache.logging.log4j:log4j-spring-cloud-config-client", version.ref = "log4j" }
+logback-access = { module = "ch.qos.logback:logback-access", version.ref = "logbackAccess" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+logback-core = { module = "ch.qos.logback:logback-core", version.ref = "logback" }
+logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp3" }
+mailgun-java = { module = "com.mailgun:mailgun-java", version.ref = "mailgun" }
+mailjet-client = { module = "com.mailjet:mailjet-client", version.ref = "mailjet" }
+mariadb-java-client = { module = "org.mariadb.jdbc:mariadb-java-client", version.ref = "mariaDb" }
+material-components-web = { module = "org.webjars.npm:material-components-web", version.ref = "material" }
+mdi-font = { module = "org.webjars.npm:mdi__font", version.ref = "mdiFont" }
+metrics-core = { module = "io.dropwizard.metrics:metrics-core", version.ref = "dropwizard" }
+micrometer-commons = { module = "io.micrometer:micrometer-commons", version.ref = "micrometer" }
+micrometer-core = { module = "io.micrometer:micrometer-core", version.ref = "micrometer" }
+micrometer-jakarta9 = { module = "io.micrometer:micrometer-jakarta9", version.ref = "micrometer" }
+micrometer-observation = { module = "io.micrometer:micrometer-observation", version.ref = "micrometer" }
+micrometer-registry-atlas = { module = "io.micrometer:micrometer-registry-atlas", version.ref = "micrometer" }
+micrometer-registry-cloudwatch2 = { module = "io.micrometer:micrometer-registry-cloudwatch2", version.ref = "micrometer" }
+micrometer-registry-datadog = { module = "io.micrometer:micrometer-registry-datadog", version.ref = "micrometer" }
+micrometer-registry-elastic = { module = "io.micrometer:micrometer-registry-elastic", version.ref = "micrometer" }
+micrometer-registry-ganglia = { module = "io.micrometer:micrometer-registry-ganglia", version.ref = "micrometer" }
+micrometer-registry-graphite = { module = "io.micrometer:micrometer-registry-graphite", version.ref = "micrometer" }
+micrometer-registry-influx = { module = "io.micrometer:micrometer-registry-influx", version.ref = "micrometer" }
+micrometer-registry-jmx = { module = "io.micrometer:micrometer-registry-jmx", version.ref = "micrometer" }
+micrometer-registry-new-relic = { module = "io.micrometer:micrometer-registry-new-relic", version.ref = "micrometer" }
+micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
+micrometer-registry-signalfx = { module = "io.micrometer:micrometer-registry-signalfx", version.ref = "micrometer" }
+micrometer-registry-statsd = { module = "io.micrometer:micrometer-registry-statsd", version.ref = "micrometer" }
+micrometer-registry-wavefront = { module = "io.micrometer:micrometer-registry-wavefront", version.ref = "micrometer" }
+micrometer-tracing-bridge-brave = { module = "io.micrometer:micrometer-tracing-bridge-brave", version.ref = "micrometerOtel" }
+micrometer-tracing-bridge-otel = { module = "io.micrometer:micrometer-tracing-bridge-otel", version.ref = "micrometerOtel" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
+mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "okhttp3" }
+mongodb-driver-core = { module = "org.mongodb:mongodb-driver-core", version.ref = "mongoDriver" }
+mongodb-driver-sync = { module = "org.mongodb:mongodb-driver-sync", version.ref = "mongoDriver" }
+msal4j = { module = "com.microsoft.azure:msal4j", version.ref = "azuread" }
+mssql-jdbc = { module = "com.microsoft.sqlserver:mssql-jdbc", version.ref = "mssqlServer" }
+mysql-connectorj = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
+netflix-eventbus = { module = "com.netflix.netflix-commons:netflix-eventbus", version.ref = "netflixEventBus" }
+netty-buffer = { module = "io.netty:netty-buffer", version.ref = "netty" }
+netty-codec = { module = "io.netty:netty-codec", version.ref = "netty" }
+netty-common = { module = "io.netty:netty-common", version.ref = "netty" }
+netty-handler = { module = "io.netty:netty-handler", version.ref = "netty" }
+netty-resolver = { module = "io.netty:netty-resolver", version.ref = "netty" }
+netty-transport = { module = "io.netty:netty-transport", version.ref = "netty" }
+nimbus-jose-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbusJose" }
+normalize-css = { module = "org.webjars.npm:normalize.css", version.ref = "normalize" }
+notyf = { module = "org.webjars.npm:notyf", version.ref = "notyf" }
+oauth2-oidc-sdk = { module = "com.nimbusds:oauth2-oidc-sdk", version.ref = "nimbusOidc" }
+ojdbc11 = { module = "com.oracle.database.jdbc:ojdbc11", version.ref = "oracleJdbc" }
+okhttp3 = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp3" }
+okhttp-urlconnection = { module = "com.squareup.okhttp:okhttp-urlconnection", version.ref = "okioHttp" }
+okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+okta-authn-sdk-api = { module = "com.okta.authn.sdk:okta-authn-sdk-api", version.ref = "oktaSdk" }
+okta-authn-sdk-impl = { module = "com.okta.authn.sdk:okta-authn-sdk-impl", version.ref = "oktaSdk" }
+okta-sdk-httpclient = { module = "com.okta.sdk:okta-sdk-httpclient", version.ref = "oktaHttpClient" }
+opensaml-core-api = { module = "org.opensaml:opensaml-core-api", version.ref = "opensaml" }
+opensaml-messaging-impl = { module = "org.opensaml:opensaml-messaging-impl", version.ref = "opensaml" }
+opensaml-profile-api = { module = "org.opensaml:opensaml-profile-api", version.ref = "opensaml" }
+opensaml-profile-impl = { module = "org.opensaml:opensaml-profile-impl", version.ref = "opensaml" }
+opensaml-saml-api = { module = "org.opensaml:opensaml-saml-api", version.ref = "opensaml" }
+opensaml-saml-impl = { module = "org.opensaml:opensaml-saml-impl", version.ref = "opensaml" }
+opensaml-security-api = { module = "org.opensaml:opensaml-security-api", version.ref = "opensaml" }
+opensaml-security-impl = { module = "org.opensaml:opensaml-security-impl", version.ref = "opensaml" }
+opensaml-soap-api = { module = "org.opensaml:opensaml-soap-api", version.ref = "opensaml" }
+opensaml-storage-impl = { module = "org.opensaml:opensaml-storage-impl", version.ref = "opensaml" }
+opensaml-xacml-saml-api = { module = "org.opensaml:opensaml-xacml-saml-api", version.ref = "opensaml" }
+opensaml-xacml-saml-impl = { module = "org.opensaml:opensaml-xacml-saml-impl", version.ref = "opensaml" }
+opensaml-xmlsec-impl = { module = "org.opensaml:opensaml-xmlsec-impl", version.ref = "opensaml" }
+opentelemetry-exporter-otlp = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "otel" }
+eclipse-jgit-sdk = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
+eclipse-jgit-http-apache = { module = "org.eclipse.jgit:org.eclipse.jgit.http.apache", version.ref = "jgit" }
+eclipse-jgit-ssh-jsch = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.jsch", version.ref = "jgit" }
+eclipse-persistence-jpa = { module = "org.eclipse.persistence:org.eclipse.persistence.jpa", version.ref = "eclipseLink" }
+oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshi" }
+pac4j-cas = { module = "org.pac4j:pac4j-cas", version.ref = "pac4j" }
+pac4j-config = { module = "org.pac4j:pac4j-config", version.ref = "pac4j" }
+pac4j-core = { module = "org.pac4j:pac4j-core", version.ref = "pac4j" }
+pac4j-http = { module = "org.pac4j:pac4j-http", version.ref = "pac4j" }
+pac4j-jakartaee = { module = "org.pac4j:pac4j-jakartaee", version.ref = "pac4j" }
+pac4j-jwt = { module = "org.pac4j:pac4j-jwt", version.ref = "pac4j" }
+pac4j-oauth = { module = "org.pac4j:pac4j-oauth", version.ref = "pac4j" }
+pac4j-oidc = { module = "org.pac4j:pac4j-oidc", version.ref = "pac4j" }
+pac4j-saml = { module = "org.pac4j:pac4j-saml", version.ref = "pac4j" }
+permit-sdk-java = { module = "io.permit:permit-sdk-java", version.ref = "permitio" }
+polyglot = { module = "org.graalvm.polyglot:polyglot", version.ref = "graalVm" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+quartz = { module = "org.quartz-scheduler:quartz", version.ref = "quartz" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+s3 = { module = "software.amazon.awssdk:s3", version.ref = "amazonSdk" }
+saaj-impl = { module = "com.sun.xml.messaging.saaj:saaj-impl", version.ref = "saajImpl" }
+scim-sdk-client = { module = "de.captaingoldfish:scim-sdk-client", version.ref = "scimSdkClient" }
+secretsmanager = { module = "software.amazon.awssdk:secretsmanager", version.ref = "amazonSdk" }
+semver4j = { module = "com.vdurmont:semver4j", version.ref = "semver" }
+sendgrid-java = { module = "com.sendgrid:sendgrid-java", version.ref = "sendGrid" }
+sentry-log4j2 = { module = "io.sentry:sentry-log4j2", version.ref = "sentry" }
+sentry-spring-boot-starter-jakarta = { module = "io.sentry:sentry-spring-boot-starter-jakarta", version.ref = "sentry" }
+ses = { module = "software.amazon.awssdk:ses", version.ref = "amazonSdk" }
+shib-support = { module = "net.shibboleth:shib-support", version.ref = "shibbolethUtilJavaSupport" }
+slack-api-client = { module = "com.slack.api:slack-api-client", version.ref = "slackClient" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeYaml" }
+sns = { module = "software.amazon.awssdk:sns", version.ref = "amazonSdk" }
+sockjs-client = { module = "org.webjars:sockjs-client", version.ref = "socketJsClient" }
+splunk-library-javalogging = { module = "com.splunk.logging:splunk-library-javalogging", version.ref = "splunkLogging" }
+spring-aop = { module = "org.springframework:spring-aop", version.ref = "spring" }
+spring-beans = { module = "org.springframework:spring-beans", version.ref = "spring" }
+spring-binding = { module = "org.springframework.webflow:spring-binding", version.ref = "springWebflow" }
+spring-boot-core = { module = "org.springframework.boot:spring-boot", version.ref = "springBoot" }
+spring-boot-actuator = { module = "org.springframework.boot:spring-boot-actuator", version.ref = "springBoot" }
+spring-boot-admin-starter-client = { module = "de.codecentric:spring-boot-admin-starter-client", version.ref = "springBootAdmin" }
+spring-boot-admin-starter-server = { module = "de.codecentric:spring-boot-admin-starter-server", version.ref = "springBootAdmin" }
+spring-boot-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure", version.ref = "springBoot" }
+spring-boot-configuration-metadata = { module = "org.springframework.boot:spring-boot-configuration-metadata", version.ref = "springBoot" }
+spring-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor", version.ref = "springBoot" }
+spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "springBoot" }
+spring-boot-properties-migrator = { module = "org.springframework.boot:spring-boot-properties-migrator", version.ref = "springBoot" }
+spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "springBoot" }
+spring-boot-starter-amqp = { module = "org.springframework.boot:spring-boot-starter-amqp", version.ref = "springBoot" }
+spring-boot-starter-aop = { module = "org.springframework.boot:spring-boot-starter-aop", version.ref = "springBoot" }
+spring-boot-starter-jetty = { module = "org.springframework.boot:spring-boot-starter-jetty", version.ref = "springBoot" }
+spring-boot-starter-log4j2 = { module = "org.springframework.boot:spring-boot-starter-log4j2", version.ref = "springBoot" }
+spring-boot-starter-logging = { module = "org.springframework.boot:spring-boot-starter-logging", version.ref = "springBoot" }
+spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref = "springBoot" }
+spring-boot-starter-mustache = { module = "org.springframework.boot:spring-boot-starter-mustache", version.ref = "springBoot" }
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
+spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf", version.ref = "springBoot" }
+spring-boot-starter-tomcat = { module = "org.springframework.boot:spring-boot-starter-tomcat", version.ref = "springBoot" }
+spring-boot-starter-undertow = { module = "org.springframework.boot:spring-boot-starter-undertow", version.ref = "springBoot" }
+spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "springBoot" }
+spring-boot-starter-web-sdk = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
+spring-boot-starter-web-services = { module = "org.springframework.boot:spring-boot-starter-web-services", version.ref = "springBoot" }
+spring-boot-starter-websocket = { module = "org.springframework.boot:spring-boot-starter-websocket", version.ref = "springBoot" }
+spring-cloud-azure-starter-actuator = { module = "com.azure.spring:spring-cloud-azure-starter-actuator", version.ref = "springCloudAzure" }
+spring-cloud-azure-starter-keyvault-sdk = { module = "com.azure.spring:spring-cloud-azure-starter-keyvault", version.ref = "springCloudAzure" }
+spring-cloud-azure-starter-keyvault-secrets = { module = "com.azure.spring:spring-cloud-azure-starter-keyvault-secrets", version.ref = "springCloudAzure" }
+spring-cloud-bus = { module = "org.springframework.cloud:spring-cloud-bus", version.ref = "springCloudBus" }
+spring-cloud-commons = { module = "org.springframework.cloud:spring-cloud-commons", version.ref = "springCloudCommons" }
+spring-cloud-config-client = { module = "org.springframework.cloud:spring-cloud-config-client", version.ref = "springCloudConfig" }
+spring-cloud-config-monitor = { module = "org.springframework.cloud:spring-cloud-config-monitor", version.ref = "springCloudConfig" }
+spring-cloud-config-server = { module = "org.springframework.cloud:spring-cloud-config-server", version.ref = "springCloudConfig" }
+spring-cloud-context = { module = "org.springframework.cloud:spring-cloud-context", version.ref = "springCloudCommons" }
+spring-cloud-gcp-data-firestore = { module = "com.google.cloud:spring-cloud-gcp-data-firestore", version.ref = "googleCloudSdk" }
+spring-cloud-gcp-secretmanager = { module = "com.google.cloud:spring-cloud-gcp-secretmanager", version.ref = "googleCloudSdk" }
+spring-cloud-gcp-starter-data-firestore = { module = "com.google.cloud:spring-cloud-gcp-starter-data-firestore", version.ref = "googleCloudSdk" }
+spring-cloud-gcp-starter-logging = { module = "com.google.cloud:spring-cloud-gcp-starter-logging", version.ref = "googleCloudSdk" }
+spring-cloud-gcp-starter-pubsub = { module = "com.google.cloud:spring-cloud-gcp-starter-pubsub", version.ref = "googleCloudSdk" }
+spring-cloud-gcp-starter-secretmanager = { module = "com.google.cloud:spring-cloud-gcp-starter-secretmanager", version.ref = "googleCloudSdk" }
+spring-cloud-gcp-starter-storage = { module = "com.google.cloud:spring-cloud-gcp-starter-storage", version.ref = "googleCloudSdk" }
+spring-cloud-gcp-starter-trace = { module = "com.google.cloud:spring-cloud-gcp-starter-trace", version.ref = "googleCloudSdk" }
+spring-cloud-starter-bootstrap = { module = "org.springframework.cloud:spring-cloud-starter-bootstrap", version.ref = "springCloudCommons" }
+spring-cloud-starter-bus-amqp = { module = "org.springframework.cloud:spring-cloud-starter-bus-amqp", version.ref = "springCloudBus" }
+spring-cloud-starter-bus-kafka = { module = "org.springframework.cloud:spring-cloud-starter-bus-kafka", version.ref = "springCloudBus" }
+spring-cloud-starter-consul-config = { module = "org.springframework.cloud:spring-cloud-starter-consul-config", version.ref = "springCloudConsul" }
+spring-cloud-starter-consul-discovery = { module = "org.springframework.cloud:spring-cloud-starter-consul-discovery", version.ref = "springCloudConsul" }
+spring-cloud-starter-kubernetes-fabric8-config = { module = "org.springframework.cloud:spring-cloud-starter-kubernetes-fabric8-config", version.ref = "springCloudKubernetesConfig" }
+spring-cloud-starter-netflix-eureka-client = { module = "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client", version.ref = "springCloudEureka" }
+spring-cloud-starter-vault-config = { module = "org.springframework.cloud:spring-cloud-starter-vault-config", version.ref = "springCloudVault" }
+spring-cloud-starter-zookeeper-core = { module = "org.springframework.cloud:spring-cloud-starter-zookeeper", version.ref = "springCloudZookeeper" }
+spring-cloud-starter-zookeeper-config = { module = "org.springframework.cloud:spring-cloud-starter-zookeeper-config", version.ref = "springCloudZookeeper" }
+spring-cloud-starter-zookeeper-discovery = { module = "org.springframework.cloud:spring-cloud-starter-zookeeper-discovery", version.ref = "springCloudZookeeper" }
+spring-context-core = { module = "org.springframework:spring-context", version.ref = "spring" }
+spring-context-indexer = { module = "org.springframework:spring-context-indexer", version.ref = "spring" }
+spring-context-support = { module = "org.springframework:spring-context-support", version.ref = "spring" }
+spring-core = { module = "org.springframework:spring-core", version.ref = "spring" }
+spring-data-cassandra = { module = "org.springframework.data:spring-data-cassandra", version.ref = "springDataCassandra" }
+spring-data-commons = { module = "org.springframework.data:spring-data-commons", version.ref = "springDataCommons" }
+spring-data-mongodb = { module = "org.springframework.data:spring-data-mongodb", version.ref = "springDataMongoDb" }
+spring-data-redis = { module = "org.springframework.data:spring-data-redis", version.ref = "springDataRedis" }
+spring-expression = { module = "org.springframework:spring-expression", version.ref = "spring" }
+spring-integration-amqp = { module = "org.springframework.integration:spring-integration-amqp", version.ref = "springIntegration" }
+spring-integration-core = { module = "org.springframework.integration:spring-integration-core", version.ref = "springIntegration" }
+spring-integration-jdbc = { module = "org.springframework.integration:spring-integration-jdbc", version.ref = "springIntegration" }
+spring-integration-jmx = { module = "org.springframework.integration:spring-integration-jmx", version.ref = "springIntegration" }
+spring-integration-redis = { module = "org.springframework.integration:spring-integration-redis", version.ref = "springIntegration" }
+spring-integration-zookeeper = { module = "org.springframework.integration:spring-integration-zookeeper", version.ref = "springIntegration" }
+spring-jcl = { module = "org.springframework:spring-jcl", version.ref = "spring" }
+spring-jdbc = { module = "org.springframework:spring-jdbc", version.ref = "spring" }
+spring-jms = { module = "org.springframework:spring-jms", version.ref = "spring" }
+spring-kafka = { module = "org.springframework.kafka:spring-kafka", version.ref = "springKafka" }
+spring-messaging = { module = "org.springframework:spring-messaging", version.ref = "spring" }
+spring-orm = { module = "org.springframework:spring-orm", version.ref = "spring" }
+spring-rabbit = { module = "org.springframework.amqp:spring-rabbit", version.ref = "springRabbit" }
+spring-retry = { module = "org.springframework.retry:spring-retry", version.ref = "springRetry" }
+spring-security-config = { module = "org.springframework.security:spring-security-config", version.ref = "springSecurity" }
+spring-security-core = { module = "org.springframework.security:spring-security-core", version.ref = "springSecurity" }
+spring-security-crypto = { module = "org.springframework.security:spring-security-crypto", version.ref = "springSecurity" }
+spring-security-rsa = { module = "org.springframework.security:spring-security-rsa", version.ref = "springSecurityRsa" }
+spring-security-test = { module = "org.springframework.security:spring-security-test", version.ref = "springSecurity" }
+spring-security-web = { module = "org.springframework.security:spring-security-web", version.ref = "springSecurity" }
+spring-session-core = { module = "org.springframework.session:spring-session-core", version.ref = "springSession" }
+spring-session-data-mongodb = { module = "org.springframework.session:spring-session-data-mongodb", version.ref = "springSessionMongo" }
+spring-session-data-redis = { module = "org.springframework.session:spring-session-data-redis", version.ref = "springSession" }
+spring-session-hazelcast = { module = "org.springframework.session:spring-session-hazelcast", version.ref = "springSession" }
+spring-session-jdbc = { module = "org.springframework.session:spring-session-jdbc", version.ref = "springSession" }
+spring-shell-starter = { module = "org.springframework.shell:spring-shell-starter", version.ref = "springShell" }
+spring-test = { module = "org.springframework:spring-test", version.ref = "spring" }
+spring-tx = { module = "org.springframework:spring-tx", version.ref = "spring" }
+spring-web = { module = "org.springframework:spring-web", version.ref = "spring" }
+spring-webflow = { module = "org.springframework.webflow:spring-webflow", version.ref = "springWebflow" }
+spring-webmvc = { module = "org.springframework:spring-webmvc", version.ref = "spring" }
+spring-ws-security = { module = "org.springframework.ws:spring-ws-security", version.ref = "springWs" }
+spring-ws-support = { module = "org.springframework.ws:spring-ws-support", version.ref = "springWs" }
+springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springDoc" }
+spymemcached = { module = "net.spy:spymemcached", version.ref = "spymemcached" }
+sqs = { module = "software.amazon.awssdk:sqs", version.ref = "amazonSdk" }
+ssm = { module = "software.amazon.awssdk:ssm", version.ref = "amazonSdk" }
+stomp-websocket = { module = "org.webjars:stomp-websocket", version.ref = "stompWebSocket" }
+streambuffer = { module = "com.sun.xml.stream.buffer:streambuffer", version.ref = "streamBuffer" }
+sts = { module = "software.amazon.awssdk:sts", version.ref = "amazonSdk" }
+swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", version.ref = "swagger" }
+swagger-core-jakarta = { module = "io.swagger.core.v3:swagger-core-jakarta", version.ref = "swagger" }
+swagger-jaxrs2-jakarta = { module = "io.swagger.core.v3:swagger-jaxrs2-jakarta", version.ref = "swagger" }
+swagger-models = { module = "io.swagger.core.v3:swagger-models", version.ref = "swagger" }
+sweetalert2 = { module = "org.webjars.npm:sweetalert2", version.ref = "sweetAlert" }
+text-encoding = { module = "org.webjars.npm:text-encoding", version.ref = "textEncoding" }
+textmagic-java-sdk = { module = "com.textmagic.sdk:textmagic-java-sdk", version.ref = "textMagic" }
+thymeleafsdk = { module = "org.thymeleaf:thymeleaf", version.ref = "thymeleaf" }
+thymeleaf-layout-dialect = { module = "com.github.zhanhb:thymeleaf-layout-dialect", version.ref = "thymeleafDialect" }
+thymeleaf-spring6 = { module = "org.thymeleaf:thymeleaf-spring6", version.ref = "thymeleaf" }
+tomcat-catalina-ha = { module = "org.apache.tomcat:tomcat-catalina-ha", version.ref = "tomcat" }
+tomcat-embed-core = { module = "org.apache.tomcat.embed:tomcat-embed-core", version.ref = "tomcat" }
+tomcat-embed-el = { module = "org.apache.tomcat.embed:tomcat-embed-el", version.ref = "tomcat" }
+tomcat-embed-websocket = { module = "org.apache.tomcat.embed:tomcat-embed-websocket", version.ref = "tomcat" }
+twilio = { module = "com.twilio.sdk:twilio", version.ref = "twilio" }
+unboundid-ldapsdk = { module = "com.unboundid:unboundid-ldapsdk", version.ref = "unboundid" }
+velocity-engine-core = { module = "org.apache.velocity:velocity-engine-core", version.ref = "apacheVelocityEngine" }
+verifiedpermissions = { module = "software.amazon.awssdk:verifiedpermissions", version.ref = "amazonSdk" }
+webauthn-server-attestation = { module = "com.yubico:webauthn-server-attestation", version.ref = "yubicoWebauthn" }
+webauthn-server-core = { module = "com.yubico:webauthn-server-core", version.ref = "yubicoWebauthn" }
+whatwg-fetch = { module = "org.webjars.npm:whatwg-fetch", version.ref = "whatWgFetch" }
+wsdl4j = { module = "wsdl4j:wsdl4j", version.ref = "wsdl4j" }
+wss4j-bindings = { module = "org.apache.wss4j:wss4j-bindings", version.ref = "wss4j" }
+wss4j-policy = { module = "org.apache.wss4j:wss4j-policy", version.ref = "wss4j" }
+wss4j-ws-security-common = { module = "org.apache.wss4j:wss4j-ws-security-common", version.ref = "wss4j" }
+wss4j-ws-security-dom = { module = "org.apache.wss4j:wss4j-ws-security-dom", version.ref = "wss4j" }
+wss4j-ws-security-policy-stax = { module = "org.apache.wss4j:wss4j-ws-security-policy-stax", version.ref = "wss4j" }
+wss4j-ws-security-stax = { module = "org.apache.wss4j:wss4j-ws-security-stax", version.ref = "wss4j" }
+xercesimpl = { module = "xerces:xercesImpl", version.ref = "xerces" }
+xmlsec = { module = "org.apache.santuario:xmlsec", version.ref = "xmlSec" }
+yubico-util = { module = "com.yubico:yubico-util", version.ref = "yubicoWebauthn" }
+yubico-validation-client2 = { module = "com.yubico:yubico-validation-client2", version.ref = "yubico" }
+zipkin-reporter-brave = { module = "io.zipkin.reporter2:zipkin-reporter-brave", version.ref = "zipkinBrave" }
+zookeeper = { module = "org.apache.zookeeper:zookeeper", version.ref = "zookeeper" }
+zxcvbn = { module = "org.webjars:zxcvbn", version.ref = "zxcvbn" }
+
+###########################################################
+# This section handles Gradle build classpath dependencies
+###########################################################
+
+gradle-plugin-spring-boot = { module = "org.springframework.boot:spring-boot-gradle-plugin", version.ref = "springBoot" }
+gradle-plugin-git-properties = { module = "com.gorylenko.gradle-git-properties:gradle-git-properties", version.ref = "gradleGit" }
+gradle-plugin-lombok = { module = "io.freefair.gradle:lombok-plugin", version.ref = "gradleLombok" }
+gradle-plugin-versions = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "gradleDependencyVersions" }
+gradle-plugin-native = { module = "org.graalvm.buildtools:native-gradle-plugin", version.ref = "gradleGraalVmNative" }
+gradle-plugin-errorprone = { module = "net.ltgt.gradle:gradle-errorprone-plugin", version.ref = "gradleErrorProne" }
+gradle-plugin-sonarqube = { module = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin", version.ref = "gradleSonarqube" }
+gradle-plugin-nexus = { module = "io.github.gradle-nexus:publish-plugin", version.ref = "gradleNexusPublishing" }
