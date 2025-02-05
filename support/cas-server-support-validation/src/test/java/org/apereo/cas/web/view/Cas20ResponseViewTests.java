@@ -13,6 +13,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
@@ -27,6 +28,7 @@ import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -62,6 +64,7 @@ import static org.mockito.Mockito.*;
     CasValidationAutoConfiguration.class
 })
 @Tag("CAS")
+@ExtendWith(CasTestExtension.class)
 class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
     @Autowired
     @Qualifier("serviceValidationViewFactory")

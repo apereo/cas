@@ -5,7 +5,7 @@ tasks.register("createOpenRewriteRecipe") {
     def tomcatVersion = libs.versions.tomcat.get()
     def sourceCompatibility = project.sourceCompatibility
     def springBootVersion = libs.versions.springBoot.get()
-    def jibVersion = libs.versions.jib.get()
+    def jibVersion = libs.versions.gradleJib.get()
     def gradleVersion = gradle.gradleVersion
     def recipeName = "cas${casVersion.replaceAll(/\.|-SNAPSHOT/, '')}"
 

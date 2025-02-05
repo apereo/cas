@@ -119,7 +119,6 @@ jcloudsGoogleEngine = "1.9.3"
 jcpiAnnotations = "1.0-1"
 jdom = "2.0.6.1"
 jetty = "12.0.16"
-jib = "3.4.4"
 jgit = "7.1.0.202411261347-r"
 jodaTime = "2.13.1"
 jool = "0.9.15"
@@ -258,6 +257,7 @@ gradleErrorProne = "4.1.0"
 gradleGraalVmNative = "0.10.5"
 gradleSonarqube = "6.0.1.5171"
 gradleNexusPublishing = "2.0.0"
+gradleJib = "3.4.4"
 
 [libraries]
 ace-builds = { module = "org.webjars.npm:ace-builds", version.ref = "aceEditor" }
@@ -735,3 +735,4 @@ gradle-plugin-native = { module = "org.graalvm.buildtools:native-gradle-plugin",
 gradle-plugin-errorprone = { module = "net.ltgt.gradle:gradle-errorprone-plugin", version.ref = "gradleErrorProne" }
 gradle-plugin-sonarqube = { module = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin", version.ref = "gradleSonarqube" }
 gradle-plugin-nexus = { module = "io.github.gradle-nexus:publish-plugin", version.ref = "gradleNexusPublishing" }
+gradle-plugin-jib = { module = "com.google.cloud.tools.jib:com.google.cloud.tools.jib.gradle.plugin", version.ref = "gradleJib" }

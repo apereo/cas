@@ -27,7 +27,7 @@ esac
 echo -e "Validating web application project: ${project}"
 
 echo -e "Checking for Apache Tomcat version..."
-tomcatVersion=$(cat gradle.properties | grep tomcatVersion | awk -F"=" '{printf $2}')
+tomcatVersion=$(cat gradle/libs.versions.toml | grep "^tomcat = " | awk -F"=" '{printf $2}' | tr -d ' "')
 echo "Apache Tomcat version: ${tomcatVersion}"
 
 tomcatVersionTag="v${tomcatVersion}"

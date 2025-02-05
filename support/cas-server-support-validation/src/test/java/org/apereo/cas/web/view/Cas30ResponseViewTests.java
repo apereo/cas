@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -28,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -64,6 +66,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasValidationAutoConfiguration.class
 })
 @Tag("CAS")
+@ExtendWith(CasTestExtension.class)
 class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
