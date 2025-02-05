@@ -217,6 +217,7 @@ subprojects {
     configurations {
         tests
         provided
+        jvmAgents
     }
 
     apply from: rootProject.file("gradle/overrides.gradle")
@@ -442,6 +443,10 @@ subprojects {
         testImplementation libraries.hibernatevalidator
 
         runtimeOnly libraries.httpclient4
+
+        jvmAgents(libs.mockito.core) {
+            transitive = false
+        }
     }
 }
 

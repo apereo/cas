@@ -224,6 +224,7 @@ TestCategories.values().each({ testCategory ->
                     }
                 }
 
+                jvmArgs += "-javaagent:${configurations.jvmAgents.asPath}"
             }
         }
     }
