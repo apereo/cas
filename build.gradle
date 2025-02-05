@@ -447,6 +447,9 @@ subprojects {
         jvmAgents(libs.mockito.core) {
             transitive = false
         }
+        jvmAgents(libs.mockito.inline) {
+            transitive = false
+        }
     }
 }
 
