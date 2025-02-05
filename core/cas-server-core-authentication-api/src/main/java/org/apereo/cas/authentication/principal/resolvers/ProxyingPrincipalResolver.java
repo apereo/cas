@@ -25,8 +25,7 @@ public class ProxyingPrincipalResolver implements PrincipalResolver {
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal,
                              final Optional<AuthenticationHandler> handler, final Optional<Service> service) throws Throwable {
-        val id = currentPrincipal.map(Principal::getId).orElseGet(credential::getId);
-        return principalFactory.createPrincipal(id);
+        return this.principalFactory.createPrincipal(credential.getId());
     }
 
     @Override

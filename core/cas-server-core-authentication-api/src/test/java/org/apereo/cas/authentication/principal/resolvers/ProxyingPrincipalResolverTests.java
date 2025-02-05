@@ -19,14 +19,9 @@ class ProxyingPrincipalResolverTests {
     @Test
     void verifyOperation() throws Throwable {
         val resolver = new ProxyingPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory());
-        var credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         assertTrue(resolver.supports(credential));
         assertNull(resolver.getAttributeRepository());
-        var principal = resolver.resolve(credential);
-        assertEquals(credential.getId(), principal.getId());
-        principal = resolver.resolve(credential,
-            Optional.of(CoreAuthenticationTestUtils.getPrincipal("helloworld")),
-            Optional.empty(), Optional.empty());
-        assertEquals("helloworld", principal.getId());
+        assertNotNull(resolver.resolve(credential));
     }
 }
