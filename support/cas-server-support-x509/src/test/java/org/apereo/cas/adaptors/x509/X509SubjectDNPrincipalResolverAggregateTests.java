@@ -4,10 +4,12 @@ import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.core.merger=MULTIVALUED"
     })
 @Tag("X509")
+@ExtendWith(CasTestExtension.class)
 class X509SubjectDNPrincipalResolverAggregateTests {
     private static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
