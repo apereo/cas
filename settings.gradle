@@ -2,8 +2,8 @@
     The Develocity gradle plugin MUST be applied here.
  */
 plugins {
-    id "com.gradle.develocity" version "${gradleDevelocityPluginVersion}"
-    id "com.gradle.common-custom-user-data-gradle-plugin" version "${gradleCommonUserDataPluginVersion}"
+    id "com.gradle.develocity" version "3.19.1"
+    id "com.gradle.common-custom-user-data-gradle-plugin" version "2.1"
 }
 
 ext.isCiServer = System.getenv().containsKey("CI")
