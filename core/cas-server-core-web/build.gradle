@@ -35,33 +35,34 @@ dependencies {
     implementation libraries.snakeyaml
 }
 
-// Filter properties from gradle.properties into this sub-project's property file resources  
-def gradleProps = new Properties()
-def gradlePropFile = file("../../gradle.properties")
-gradlePropFile.withInputStream { gradleProps.load(it) }
-
+def versionDefinitions  = libs.versions.metaClass.properties.findAll { it.type == Provider }
+def dependencyVersions = versionDefinitions.collectEntries { field ->
+    [field.name, field.getProperty(libs.versions).getOrNull()]
+}
 processResources {
-    inputs.properties(gradleProps)
+    inputs.properties(dependencyVersions)
     filesMatching("**/*.properties") {
-        expand(gradleProps)
+        expand(dependencyVersions)
     }
 }
 
 /* 
-Manually deleting jar if we gradle.properties newer than jar
-Probably a better way, but watch out for "tasks.jar.onlyIf" elsewhere in build scripts
+    Manually deleting jar if we have a newer than jar
+    Probably a better way, but watch out for "tasks.jar.onlyIf" elsewhere in build scripts
  */
 jar.dependsOn 'deleteJar'
 
 tasks.register('deleteJar', Delete) {
     def jarFile = file("build/libs/${project.name}-${project.version}.jar")
+    def gradlePropFile = rootProject.file("gradle/libs.versions.toml")
+
     def propModified = gradlePropFile.lastModified()
     def jarModified = jarFile.lastModified()
     if (propModified > jarModified) {
         doLast {
             logger.info("""
-Deleting JAR files [$jarFile] due to [gradle.properties] update because it was updated last at [$propModified]
-which is the greater than the last time the JAR files were updates at [$jarModified].
+Deleting JAR files [$jarFile] due to dependency version change. Last update was at [$propModified]
+which is the greater than the last time the JAR files were updated at [$jarModified].
 """)
         }
         delete jarFile

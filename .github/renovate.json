@@ -72,26 +72,5 @@
   },
   "docker-compose": {
     "enabled": true
-  },
-  "packageRules": [
-    {
-      "matchManagers": ["gradle", "maven"],
-      "enabled": false
-    },
-    {
-      "matchManagers": ["github-actions"],
-      "enabled": true
-    },
-    {
-      "managers": ["dockerfile"]
-    },
-    {
-      "matchDatasources": ["docker"],
-      "versioning": "docker"
-    },
-    {
-      "matchFileNames": ["**/package.json"],
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"]
-    }
-  ]
+  }
 }

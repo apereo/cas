@@ -18,14 +18,14 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
-        classpath "io.freefair.gradle:lombok-plugin:$gradleLombokVersion"
-        classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
-        classpath "org.graalvm.buildtools:native-gradle-plugin:${gradleGraalVmNativePluginVersion}"
-        classpath "net.ltgt.gradle:gradle-errorprone-plugin:$gradleErrorProneVersion"
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
-        classpath "io.github.gradle-nexus:publish-plugin:$gradleNexusPublishingVersion"
+        classpath libs.gradle.plugin.spring.boot
+        classpath libs.gradle.plugin.git.properties
+        classpath libs.gradle.plugin.lombok
+        classpath libs.gradle.plugin.versions
+        classpath libs.gradle.plugin.native
+        classpath libs.gradle.plugin.errorprone
+        classpath libs.gradle.plugin.sonarqube
+        classpath libs.gradle.plugin.nexus
     }
 }
 
@@ -135,7 +135,7 @@ allprojects {
     apply plugin: "jacoco"
 
     jacoco {
-        toolVersion = "$gradleJacocoVersion"
+        toolVersion = "${libs.versions.jacoco.get()}"
     }
 
     if (gradle.startParameter.taskNames.any { task -> task.contains("publishToMavenLocal") }) {
@@ -374,7 +374,7 @@ subprojects {
     if (projectRequiresLombok(project)) {
         apply plugin: "io.freefair.lombok"
         lombok {
-            version = "$lombokVersion"
+            version = "${libs.versions.lombok.get()}"
         }
     }
 
@@ -408,7 +408,7 @@ subprojects {
             configFile = new File(rootDir, "style/checkstyle-rules.xml")
             ignoreFailures = false
             showViolations = true
-            toolVersion = "${checkstyleVersion}"
+            toolVersion = "${libs.versions.checkstyle.get()}"
         }
     }
 
@@ -434,7 +434,7 @@ subprojects {
         annotationProcessor libraries.springindexer
 
         if (!providers.systemProperty("skipErrorProneCompiler").present) {
-            errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
+            errorprone "com.google.errorprone:error_prone_core:${libs.versions.errorprone.get()}"
         }
 
         testImplementation libraries.tests
