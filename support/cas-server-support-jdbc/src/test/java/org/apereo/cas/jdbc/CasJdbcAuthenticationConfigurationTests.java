@@ -17,12 +17,14 @@ import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -65,6 +67,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.jdbc.bind[0].dialect=org.hibernate.dialect.HSQLDialect"
     })
 @Tag("JDBCAuthentication")
+@ExtendWith(CasTestExtension.class)
 class CasJdbcAuthenticationConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;

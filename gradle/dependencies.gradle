@@ -2676,7 +2676,8 @@ ext.libraries = [
         ],
         springbootundertow         : [
                 dependencies.create(libs.spring.boot.starter.undertow.get()),
-                dependencies.create(libs.jakarta.annotation.api.get())
+                dependencies.create(libs.jakarta.annotation.api.get()),
+                dependencies.create(libs.undertow.servlet.get()),
         ],
         redis                      : [
                 dependencies.create(libs.spring.data.redis.get()) {
