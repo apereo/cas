@@ -28,10 +28,10 @@ import static org.junit.jupiter.api.Assertions.*;
     },
     properties = {
         "cas.geo-location.azure.client-id=${#environmentVars['AZURE_MAPS_CLIENT_ID']}",
-        "cas.geo-location.azure.subscription-id=${#environmentVars['AZURE_MAPS_SUBSCRIPTION_ID']}"
+        "cas.geo-location.azure.api-key=${#environmentVars['AZURE_MAPS_API_KEY']}"
     })
 @Tag("GeoLocation")
-@EnabledIfEnvironmentVariable(named = "AZURE_MAPS_SUBSCRIPTION_ID", matches = ".+")
+@EnabledIfEnvironmentVariable(named = "AZURE_MAPS_API_KEY", matches = ".+")
 @EnabledIfEnvironmentVariable(named = "AZURE_MAPS_CLIENT_ID", matches = ".+")
 class AzureMapsGeoLocationServiceTests {
     @Autowired
