@@ -72,5 +72,18 @@
   },
   "docker-compose": {
     "enabled": true
-  }
+  },
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["^software\\.amazon\\.awssdk$"],
+      "matchManagers": ["maven"],
+      "matchUpdateTypes": ["major", "minor"]
+    },
+    {
+      "matchManagers": ["dockerfile"],
+      "matchPaths": [".*oidc-login-strapi.*"],
+      "matchPackagePatterns": ["^node$"],
+      "enabled": false
+    }
+  ]
 }
