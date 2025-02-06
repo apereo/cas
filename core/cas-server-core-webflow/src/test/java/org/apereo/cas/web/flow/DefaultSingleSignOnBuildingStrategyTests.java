@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @ImportAutoConfiguration(CasCoreEventsAutoConfiguration.class)
 @ExtendWith(CasTestExtension.class)
 @Tag("Authentication")
-public class DefaultSingleSignOnBuildingStrategyTests {
+class DefaultSingleSignOnBuildingStrategyTests {
 
     @Autowired
     @Qualifier(SingleSignOnBuildingStrategy.BEAN_NAME)
