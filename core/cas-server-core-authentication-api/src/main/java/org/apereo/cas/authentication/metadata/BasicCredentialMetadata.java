@@ -74,6 +74,11 @@ public class BasicCredentialMetadata implements CredentialMetadata {
     }
 
     @Override
+    public <T extends Serializable> T getProperty(final String key, final Class<T> clazz) {
+        return Optional.ofNullable(properties.get(key)).map(clazz::cast).orElse(null);
+    }
+
+    @Override
     @CanIgnoreReturnValue
     public CredentialMetadata addTrait(final CredentialTrait credentialTrait) {
         traits.add(credentialTrait);

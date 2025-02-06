@@ -1,12 +1,8 @@
 {
   "@class" : "org.apereo.cas.services.CasRegisteredService",
-  "serviceId" : "^https://localhost:9859/anything/cas.*",
+  "serviceId" : "^http://localhost:56789/cas.*",
   "name" : "Sample",
-  "id" : 1,
-  "proxyPolicy" : {
-    "@class" : "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
-    "pattern" : "^http://localhost:56789/cas.*"
-  },
+  "id" : 2,
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "authorizedToReleaseProxyGrantingTicket" : false
