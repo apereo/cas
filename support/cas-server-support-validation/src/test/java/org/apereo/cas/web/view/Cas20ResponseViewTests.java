@@ -67,7 +67,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(CasTestExtension.class)
 class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
     @Autowired
-    @Qualifier("serviceValidationViewFactory")
+    @Qualifier(ServiceValidationViewFactory.BEAN_NAME)
     private ServiceValidationViewFactory serviceValidationViewFactory;
 
     @Override
@@ -102,7 +102,7 @@ class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, SERVICE.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, UUID.randomUUID().toString());
-        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        val modelAndView = serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertNotNull(modelAndView);
         assertNotNull(modelAndView.getView());
         assertTrue(modelAndView.getView().toString().contains("Failure"));
@@ -167,7 +167,7 @@ class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
-        val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        val modelAndView = serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertNotNull(modelAndView);
         assertNotNull(modelAndView.getView());
         assertTrue(modelAndView.getView().toString().contains("Failure"));
@@ -187,7 +187,6 @@ class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
             public String getContentType() {
                 return MediaType.TEXT_HTML_VALUE;
             }
-            
             @Override
             public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) {
                 Objects.requireNonNull(map).forEach(request::setAttribute);
@@ -198,7 +197,7 @@ class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
             new DefaultAuthenticationServiceSelectionPlan(), NoOpProtocolAttributesRenderer.INSTANCE, getAttributeDefinitionStore());
         view.render(modelAndView.getModel(), req, resp);
 
-        assertNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS));
+        assertNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXIES));
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION));
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL));
         assertNotNull(req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_PROXY_GRANTING_TICKET_IOU));

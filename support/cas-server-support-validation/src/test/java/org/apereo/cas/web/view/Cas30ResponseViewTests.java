@@ -42,6 +42,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContext;
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import javax.crypto.Cipher;
@@ -70,7 +71,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
-    @Qualifier("serviceValidationViewFactory")
+    @Qualifier(ServiceValidationViewFactory.BEAN_NAME)
     protected ServiceValidationViewFactory serviceValidationViewFactory;
 
     @Autowired
@@ -105,7 +106,11 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
             }
 
             @Override
-            public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) {
+            public void render(final Map<String, ?> map,
+                               @Nonnull
+                               final HttpServletRequest request,
+                               @Nonnull
+                               final HttpServletResponse response) {
                 LOGGER.warn("Setting attribute [{}]", map.keySet());
                 map.forEach(request::setAttribute);
             }

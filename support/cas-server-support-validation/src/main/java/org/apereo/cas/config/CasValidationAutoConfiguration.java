@@ -103,7 +103,7 @@ public class CasValidationAutoConfiguration {
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier("requestedContextValidator")
             final RequestedAuthenticationContextValidator requestedContextValidator,
-            @Qualifier("serviceValidationViewFactory")
+            @Qualifier(ServiceValidationViewFactory.BEAN_NAME)
             final ServiceValidationViewFactory serviceValidationViewFactory,
             @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory,
             final ConfigurableApplicationContext applicationContext,
@@ -200,7 +200,7 @@ public class CasValidationAutoConfiguration {
     static class CasValidationViewFactoryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @ConditionalOnMissingBean(name = "serviceValidationViewFactory")
+        @ConditionalOnMissingBean(name = ServiceValidationViewFactory.BEAN_NAME)
         public ServiceValidationViewFactory serviceValidationViewFactory(
             final List<ServiceValidationViewFactoryConfigurer> configurers) {
             val viewFactory = new ServiceValidationViewFactory();

@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Import;
 @ExtendWith(CasTestExtension.class)
 class LegacyValidateControllerTests extends AbstractServiceValidateControllerTests {
     @Autowired
-    @Qualifier("serviceValidationViewFactory")
+    @Qualifier(ServiceValidationViewFactory.BEAN_NAME)
     private ServiceValidationViewFactory serviceValidationViewFactory;
 
     @Override
