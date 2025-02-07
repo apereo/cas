@@ -25,6 +25,8 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -38,6 +40,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
+import org.springframework.mock.web.MockHttpServletRequest;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -79,6 +83,11 @@ class DefaultAuthenticationEventExecutionPlanTests {
         void before() {
             this.attributeRepositoryResolver = mock(AttributeRepositoryResolver.class);
             this.attributeDefinitionStore = mock(AttributeDefinitionStore.class);
+            val request = new MockHttpServletRequest();
+            request.setRemoteAddr("223.456.789.000");
+            request.setLocalAddr("223.456.789.100");
+            request.addHeader(HttpHeaders.USER_AGENT, "Firefox");
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         }
     }
 
@@ -178,10 +187,9 @@ class DefaultAuthenticationEventExecutionPlanTests {
         void verifyNoHandlerResolves() {
             val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
                 .newTransaction(CoreAuthenticationTestUtils.getWebApplicationService(), mock(Credential.class));
-            assertThrows(AuthenticationException.class, () -> authenticationEventExecutionPlan.getAuthenticationHandlers(transaction));
+            assertThrows(AuthenticationException.class, () -> authenticationEventExecutionPlan.resolveAuthenticationHandlers(transaction));
         }
     }
-
 
     @Nested
     @Import(CredentialTypes.AuthenticationTestConfiguration.class)
@@ -207,7 +215,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
             val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
                 .newTransaction(CoreAuthenticationTestUtils.getWebApplicationService(), credential);
 
-            val handlers = authenticationEventExecutionPlan.getAuthenticationHandlers(transaction);
+            val handlers = authenticationEventExecutionPlan.resolveAuthenticationHandlers(transaction);
             assertEquals(1, handlers.size());
             assertEquals("Handler1", handlers.iterator().next().getName());
         }
@@ -253,7 +261,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
             val service = CoreAuthenticationTestUtils.getWebApplicationService();
             val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(service, credential);
             when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
-            val handlers = authenticationEventExecutionPlan.getAuthenticationHandlers(transaction);
+            val handlers = authenticationEventExecutionPlan.resolveAuthenticationHandlers(transaction);
             assertEquals(2, handlers.size());
             assertTrue(handlers.stream().anyMatch(h -> "Handler1".equalsIgnoreCase(h.getName())));
             assertTrue(handlers.stream().anyMatch(h -> "Handler3".equalsIgnoreCase(h.getName())));

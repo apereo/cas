@@ -1,9 +1,9 @@
 {
   "@class":"org.apereo.cas.services.CasRegisteredService",
-  "id":605,
-  "serviceId":"https://apereo.github.io",
+  "id": 1,
+  "serviceId":"^https://localhost:9859/anything/cas",
   "name":"Sample",
-  "evaluationOrder":605,
+  "evaluationOrder": 1,
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "authorizedToReleaseAuthenticationAttributes": false,

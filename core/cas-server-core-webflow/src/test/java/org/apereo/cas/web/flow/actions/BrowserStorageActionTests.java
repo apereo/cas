@@ -67,8 +67,7 @@ class BrowserStorageActionTests extends BaseWebflowConfigurerTests {
     void verifyPutStorage() throws Exception {
         val context = MockRequestContext.create(applicationContext).withUserAgent("Firefox");
         val request = context.getHttpServletRequest();
-        request.setRemoteAddr("185.86.151.11");
-        request.setLocalAddr("185.88.151.11");
+        context.setRemoteAddr("185.86.151.11").setLocalAddr("185.88.151.11").setClientInfo();
         val result = putSessionStorageAction.execute(context);
         assertNull(result);
         assertNotNull(WebUtils.getBrowserStoragePayload(request));
@@ -81,8 +80,7 @@ class BrowserStorageActionTests extends BaseWebflowConfigurerTests {
         
         val context = MockRequestContext.create(applicationContext).withUserAgent("Firefox");
         val request = context.getHttpServletRequest();
-        request.setRemoteAddr("185.86.151.11");
-        request.setLocalAddr("185.88.151.11");
+        context.setRemoteAddr("185.86.151.11").setLocalAddr("185.88.151.11").setClientInfo();
 
         var storage = DefaultBrowserStorage.builder()
             .build()
@@ -108,10 +106,7 @@ class BrowserStorageActionTests extends BaseWebflowConfigurerTests {
     @Test
     void verifyOperation() throws Exception {
         val context = MockRequestContext.create(applicationContext).withUserAgent("Firefox");
-        val request = context.getHttpServletRequest();
-        request.setRemoteAddr("185.86.151.11");
-        request.setLocalAddr("185.88.151.11");
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+        context.setRemoteAddr("185.86.151.11").setLocalAddr("185.88.151.11").setClientInfo();
 
         val ticketGrantingTicket = new MockTicketGrantingTicket("casuser");
         context.setCurrentEvent(new Event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS,

@@ -36,8 +36,9 @@ public class AzureMapsProperties extends BaseGeoLocationProperties {
     private String clientId;
 
     /**
-     * Azure maps subscription id.
+     * API key used for shared key authentication - This is
+     * a simple and secure way for authenticating to the Azure Maps services.
      */
     @ExpressionLanguageCapable
-    private String subscriptionId;
+    private String apiKey;
 }

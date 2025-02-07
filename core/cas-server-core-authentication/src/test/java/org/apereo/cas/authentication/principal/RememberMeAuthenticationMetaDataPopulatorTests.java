@@ -58,9 +58,9 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
         request.setLocalAddr("185.88.151.11");
         request.addHeader(HttpHeaders.USER_AGENT, "Chrome");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-        val c = new RememberMeUsernamePasswordCredential();
-        c.setRememberMe(true);
-        val builder = newBuilder(c, new RememberMeAuthenticationProperties()
+        val credential = new RememberMeUsernamePasswordCredential();
+        credential.setRememberMe(true);
+        val builder = newBuilder(credential, new RememberMeAuthenticationProperties()
             .setSupportedUserAgents("Chrome")
             .setSupportedIpAddresses("123.+"));
         val auth = builder.build();

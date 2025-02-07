@@ -223,7 +223,7 @@ TestCategories.values().each({ testCategory ->
                         classDumpDir = layout.buildDirectory.dir('jacoco/classpathdumps').get().asFile
                     }
                 }
-
+                jvmArgs += "-javaagent:${configurations.jvmAgents.asPath}"
             }
         }
     }

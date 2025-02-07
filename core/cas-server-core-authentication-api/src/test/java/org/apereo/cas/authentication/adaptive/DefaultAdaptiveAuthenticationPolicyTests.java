@@ -8,11 +8,8 @@ import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,11 +26,7 @@ class DefaultAdaptiveAuthenticationPolicyTests {
     @Test
     void verifyActionClientIpRejected() throws Throwable {
         val context = MockRequestContext.create();
-        val request = context.getHttpServletRequest();
-        request.setRemoteAddr("185.86.151.11");
-        request.setLocalAddr("185.88.151.11");
-        request.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+        context.setRemoteAddr("185.86.151.11").setLocalAddr("185.88.151.11").withUserAgent(USER_AGENT).setClientInfo();
 
         val props = new AdaptiveAuthenticationProperties();
         props.getPolicy().setRejectIpAddresses("185\\.86.+");
@@ -52,11 +45,7 @@ class DefaultAdaptiveAuthenticationPolicyTests {
     @Test
     void verifyActionUserAgentRejected() throws Throwable {
         val context = MockRequestContext.create();
-        val request = context.getHttpServletRequest();
-        request.setRemoteAddr("185.86.151.11");
-        request.setLocalAddr("185.88.151.11");
-        request.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+        context.setRemoteAddr("185.86.151.11").setLocalAddr("185.88.151.11").withUserAgent(USER_AGENT).setClientInfo();
 
         val props = new AdaptiveAuthenticationProperties();
         props.getPolicy().setRejectBrowsers("Mozilla/5.0.+");
@@ -68,11 +57,7 @@ class DefaultAdaptiveAuthenticationPolicyTests {
     @Test
     void verifyActionGeoLocationRejected() throws Throwable {
         val context = MockRequestContext.create();
-        val request = context.getHttpServletRequest();
-        request.setRemoteAddr("185.86.151.11");
-        request.setLocalAddr("185.88.151.11");
-        request.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+        context.setRemoteAddr("185.86.151.11").setLocalAddr("185.88.151.11").withUserAgent(USER_AGENT).setClientInfo();
 
         val geoRequest = new GeoLocationRequest(51.5, -0.118);
         val props = new AdaptiveAuthenticationProperties();
@@ -90,8 +75,7 @@ class DefaultAdaptiveAuthenticationPolicyTests {
     @Test
     void verifyActionGeoLocationPass() throws Throwable {
         val context = MockRequestContext.create();
-        val request = context.getHttpServletRequest();
-        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+        context.setClientInfo();
 
         val geoRequest = new GeoLocationRequest(51.5, -0.118);
         val props = new AdaptiveAuthenticationProperties();

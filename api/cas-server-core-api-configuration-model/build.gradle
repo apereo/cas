@@ -23,9 +23,11 @@ dependencies {
     
     testImplementation libraries.springbootconfigmetadata
 
+    testImplementation project(":api:cas-server-core-api-audit")
+
     compileOnly libraries.javaparser
     compileOnly libraries.log4j
-    
+
     if (!skipConfigurationMetadata) {
         annotationProcessor libraries.springbootconfigmetadata
     }

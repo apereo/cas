@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,4 +50,7 @@ public class ServicesManagerConfigurationContext {
 
     @Nonnull
     private final CasConfigurationProperties casProperties;
+
+    @Nonnull
+    private final TenantExtractor tenantExtractor;
 }
