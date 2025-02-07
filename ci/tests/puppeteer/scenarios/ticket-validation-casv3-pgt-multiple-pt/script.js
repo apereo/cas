@@ -59,7 +59,6 @@ const createProxyTicket = async (proxyGrantingTicket) => {
         Buffer.from(pgt, "base64")
     ).toString("utf8");
 
-    // I don't understand why I get binary data before the PGT in the decrypted data
     const proxyGrantingTicket = decrypted.substring(decrypted.indexOf("PGT-"));
     await cas.logg(proxyGrantingTicket);
 

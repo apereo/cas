@@ -87,6 +87,16 @@ public interface CredentialMetadata extends Serializable {
     CredentialMetadata putProperty(String key, Serializable value);
 
     /**
+     * Gets property.
+     *
+     * @param <T>   the type parameter
+     * @param key   the key
+     * @param clazz the clazz
+     * @return the property
+     */
+    <T extends Serializable> T getProperty(String key, Class<T> clazz);
+
+    /**
      * Contains property?.
      *
      * @param key the key

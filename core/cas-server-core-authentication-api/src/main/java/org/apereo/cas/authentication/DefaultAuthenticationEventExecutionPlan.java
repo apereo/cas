@@ -13,6 +13,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,7 +51,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     private final List<AuthenticationPolicyResolver> authenticationPolicyResolvers = new ArrayList<>();
 
     private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
-    
+
     private final AuthenticationHandlerResolver defaultAuthenticationHandlerResolver;
 
     @Getter
@@ -158,7 +160,8 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
-    public @NonNull Set<AuthenticationHandler> getAuthenticationHandlers(final AuthenticationTransaction transaction) throws Throwable {
+    @NonNull
+    public Set<AuthenticationHandler> resolveAuthenticationHandlers(final AuthenticationTransaction transaction) throws Throwable {
         val handlers = getAuthenticationHandlers();
         LOGGER.debug("Candidate/Registered authentication handlers for this transaction [{}] are [{}]", transaction, handlers);
         val handlerResolvers = getAuthenticationHandlerResolvers(transaction);
@@ -177,7 +180,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
                 resolvedHandlers.addAll(defaultAuthenticationHandlerResolver.resolve(handlers, transaction));
             }
         }
-        
+
         val byCredential = new ByCredentialSourceAuthenticationHandlerResolver();
         if (byCredential.supports(resolvedHandlers, transaction)) {
             val credentialHandlers = byCredential.resolve(resolvedHandlers, transaction);
@@ -187,7 +190,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
                     && credentialHandlers.stream().noneMatch(credHandler -> StringUtils.equalsIgnoreCase(credHandler.getName(), handler.getName())));
             }
         }
-        
+
         if (resolvedHandlers.isEmpty()) {
             throw new AuthenticationException("No authentication handlers could be resolved to support the authentication transaction");
         }
@@ -197,7 +200,19 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public Set<AuthenticationHandler> getAuthenticationHandlers() {
-        val handlers = authenticationHandlerPrincipalResolverMap.keySet().toArray(AuthenticationHandler[]::new);
+        val clientInfo = Objects.requireNonNull(ClientInfoHolder.getClientInfo(), "Client info cannot be null");
+        val handlers = authenticationHandlerPrincipalResolverMap
+            .keySet()
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .filter(handler -> {
+                if (StringUtils.isNotBlank(clientInfo.getTenant())) {
+                    val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(clientInfo.getTenant()).orElseThrow();
+                    return tenantDefinition.getAuthenticationPolicy().getAuthenticationHandlers().contains(handler.getName());
+                }
+                return true;
+            })
+            .toArray(AuthenticationHandler[]::new);
         AnnotationAwareOrderComparator.sortIfNecessary(handlers);
         return new LinkedHashSet<>(CollectionUtils.wrapList(handlers));
     }

@@ -2,6 +2,8 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.config.CasSupportActionsAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 
 /**
@@ -11,5 +13,6 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
  * @since 6.0.0
  */
 @ImportAutoConfiguration(CasSupportActionsAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class AbstractWebflowActionsTests extends AbstractCentralAuthenticationServiceTests {
 }

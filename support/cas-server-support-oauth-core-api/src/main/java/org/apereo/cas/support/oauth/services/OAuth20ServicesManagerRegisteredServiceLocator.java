@@ -3,7 +3,7 @@ package org.apereo.cas.support.oauth.services;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.services.BaseServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.query.BasicRegisteredServiceQueryIndex;
 import org.apereo.cas.services.query.RegisteredServiceQueryAttribute;
@@ -14,6 +14,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.Ordered;
 import java.util.List;
 
@@ -24,7 +25,7 @@ import java.util.List;
  * @since 6.3.0
  */
 @Slf4j
-public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServicesManagerRegisteredServiceLocator {
+public class OAuth20ServicesManagerRegisteredServiceLocator extends BaseServicesManagerRegisteredServiceLocator {
     protected final CasConfigurationProperties casProperties;
 
     public OAuth20ServicesManagerRegisteredServiceLocator(final CasConfigurationProperties casProperties) {
@@ -51,13 +52,13 @@ public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServi
         val indexes = super.getRegisteredServiceIndexes();
         val registeredServiceIndexedType = getRegisteredServiceIndexedType();
         indexes.add(BasicRegisteredServiceQueryIndex.hashIndex(
-            new RegisteredServiceQueryAttribute(registeredServiceIndexedType, String.class, "clientId")));
+            new RegisteredServiceQueryAttribute(registeredServiceIndexedType.getValue(), String.class, "clientId")));
         return indexes;
     }
 
     @Override
-    protected Class<? extends RegisteredService> getRegisteredServiceIndexedType() {
-        return OAuthRegisteredService.class;
+    protected Pair<String, Class<? extends RegisteredService>> getRegisteredServiceIndexedType() {
+        return Pair.of(OAuthRegisteredService.OAUTH_REGISTERED_SERVICE_FRIENDLY_NAME, OAuthRegisteredService.class);
     }
 
     protected boolean supportsInternal(final RegisteredService registeredService, final Service givenService) {

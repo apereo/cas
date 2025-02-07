@@ -13,7 +13,6 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
         await cas.click(page, "#allow");
         await cas.waitForNavigation(page);
     }
-    // await cas.screenshot(page);
     await cas.sleep(1000);
     await cas.logPage(page);
     const code = await cas.assertParameter(page, "code");

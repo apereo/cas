@@ -1,11 +1,15 @@
 <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
     <cas:authenticationSuccess>
-        <cas:user>{{principal.id}}</cas:user>
-        {{#pgtIou}}<cas:proxyGrantingTicket>{{pgtIou}}</cas:proxyGrantingTicket>{{/pgtIou}}
-        {{#chainedAuthentications.length}}
+        <cas:user>{{principal.id}}</cas:user>{{#pgtIou}}
+        <cas:proxyGrantingTicket>{{pgtIou}}</cas:proxyGrantingTicket>{{/pgtIou}}
+        {{#proxies.0}}
         <cas:proxies>
-            {{#chainedAuthentications}}<cas:proxy>{{principal.id}}</cas:proxy>{{/chainedAuthentications}}
+        {{#proxies}}
+            {{#proxies}}
+            <cas:proxy>{{{.}}}</cas:proxy>
+            {{/proxies}}
+        {{/proxies}}
         </cas:proxies>
-        {{/chainedAuthentications.length}}
+        {{/proxies.0}}
     </cas:authenticationSuccess>
 </cas:serviceResponse>

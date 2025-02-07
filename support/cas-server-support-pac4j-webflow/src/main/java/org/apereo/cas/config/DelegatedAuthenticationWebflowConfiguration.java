@@ -13,6 +13,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.multitenancy.UnknownTenantException;
 import org.apereo.cas.pac4j.client.ChainingDelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.pac4j.client.DefaultDelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationFailureEvaluator;
@@ -86,6 +87,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 import lombok.val;
@@ -105,7 +107,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -147,10 +148,12 @@ class DelegatedAuthenticationWebflowConfiguration {
             final DelegatedClientAuthenticationFailureEvaluator delegatedClientAuthenticationFailureEvaluator,
             final WebProperties webProperties,
             final ConfigurableApplicationContext applicationContext) {
-            val mv = new ModelAndView();
-            mv.setStatus(HttpStatusCode.valueOf(HttpStatus.FORBIDDEN.value()));
-            mv.setViewName(CasWebflowConstants.VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW);
-            val mappings = Map.<Class<? extends Throwable>, ModelAndView>of(UnauthorizedServiceException.class, mv);
+
+            val mappings = Map.<Class<? extends Throwable>, ModelAndView>of(
+                UnauthorizedServiceException.class, WebUtils.toModelAndView(HttpStatus.FORBIDDEN, CasWebflowConstants.VIEW_ID_DELEGATED_AUTHN_ERROR_VIEW),
+                UnknownTenantException.class, WebUtils.toModelAndView(HttpStatus.NOT_FOUND, CasWebflowConstants.VIEW_ID_UNKNOWN_TENANT)
+            );
+
             val resolver = new MappedExceptionErrorViewResolver(applicationContext,
                 webProperties.getResources(), mappings,
                 errorContext -> delegatedClientAuthenticationFailureEvaluator.evaluate(errorContext.request(), errorContext.status().value()));
@@ -269,14 +272,16 @@ class DelegatedAuthenticationWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "delegatedClientIdentityProviderAuthorizer")
+        @ConditionalOnMissingBean(name = DelegatedClientIdentityProviderAuthorizer.BEAN_NAME)
         public DelegatedClientIdentityProviderAuthorizer delegatedClientIdentityProviderAuthorizer(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS)
             final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer) {
             return new DefaultDelegatedClientIdentityProviderAuthorizer(servicesManager,
-                registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
+                registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer, tenantExtractor);
         }
 
         @Bean
@@ -361,8 +366,10 @@ class DelegatedAuthenticationWebflowConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(DelegatedClientAuthenticationRequestCustomizer.class)
-                .when(BeanCondition.on("cas.authn.pac4j.core.groovy-authentication-request-customizer.location").exists()
+                .when(BeanCondition.on("cas.authn.pac4j.core.groovy-authentication-request-customizer.location")
+                    .exists()
                     .given(applicationContext.getEnvironment()))
+                .when(ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory().isPresent())
                 .supply(() -> {
                     val groovy = casProperties.getAuthn().getPac4j().getCore().getGroovyAuthenticationRequestCustomizer();
                     val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();

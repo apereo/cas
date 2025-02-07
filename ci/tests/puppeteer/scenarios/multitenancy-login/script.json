@@ -1,5 +1,5 @@
 {
-  "dependencies": "reports,multitenancy",
+  "dependencies": "generic,reports,multitenancy,pac4j-cas,pac4j-webflow",
   "conditions": {
     "docker": "true"
   },
@@ -7,6 +7,11 @@
     "urls": ["https://localhost:8443/cas/actuator/health"]
   },
   "properties": [
+    "--cas.authn.accept.name=STATIC",
+
+    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.json.name=JSON",
+    
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.access.default=UNRESTRICTED",
@@ -25,7 +30,15 @@
     "--cas.authn.attribute-repository.stub.attributes.gender=female",
     "--cas.authn.attribute-repository.stub.attributes.preferred_username=casuser",
 
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[0].protocol=CAS30",
+    "--cas.authn.pac4j.cas[0].client-name=CasClient1",
+
+    "--cas.authn.pac4j.cas[1].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[1].protocol=CAS20",
+    "--cas.authn.pac4j.cas[1].client-name=CasClient2",
+
     "--cas.http-client.host-name-verifier=none"
   ],
-  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/cas/run-cas-server.sh"
 }

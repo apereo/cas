@@ -1,10 +1,12 @@
 package org.apereo.cas.multitenancy;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link TenantExtractor}.
@@ -13,6 +15,11 @@ import java.util.Optional;
  * @since 7.2.0
  */
 public interface TenantExtractor {
+    /**
+     * Tenant pattern definition.
+     */
+    Pattern PATTERN_TENANTS = Pattern.compile("tenants/(.+)/(.+)", Pattern.CASE_INSENSITIVE);
+
     /**
      * Tenant extractor bean name.
      */
@@ -54,4 +61,21 @@ public interface TenantExtractor {
      * @return the optional
      */
     Optional<TenantDefinition> extract(String requestPath);
+
+    /**
+     * Tenant id from path.
+     *
+     * @param requestPath the request path
+     * @return the string
+     */
+    static String tenantIdFromPath(final String requestPath) {
+        if (StringUtils.isBlank(requestPath)) {
+            return null;
+        }
+        val matcher = PATTERN_TENANTS.matcher(requestPath);
+        if (matcher.find()) {
+            return matcher.group(1).trim();
+        }
+        return null;
+    }
 }

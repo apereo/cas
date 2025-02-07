@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuil
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.ChainingServicesManager;
@@ -289,6 +290,8 @@ class CasCoreServicesConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServicesManagerConfigurationContext servicesManagerConfigurationContext(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
             @Qualifier(RegisteredServicesTemplatesManager.BEAN_NAME)
             final RegisteredServicesTemplatesManager registeredServicesTemplatesManager,
@@ -311,6 +314,7 @@ class CasCoreServicesConfiguration {
                 .registeredServicesTemplatesManager(registeredServicesTemplatesManager)
                 .registeredServiceLocators(servicesManagerRegisteredServiceLocators)
                 .casProperties(casProperties)
+                .tenantExtractor(tenantExtractor)
                 .build();
         }
 
