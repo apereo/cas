@@ -2,12 +2,14 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
+import org.springframework.context.ApplicationContext;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -38,4 +40,7 @@ public class RegisteredServiceAccessStrategyRequest implements Serializable {
 
     @Builder.Default
     private final Map<String, List<Object>> attributes = new HashMap<>();
+
+    @JsonIgnore
+    private final ApplicationContext applicationContext;
 }

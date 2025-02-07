@@ -51,6 +51,15 @@ public class ConsumerExecutionAction extends BaseCasWebflowAction {
         ctx.getExternalContext().recordResponseComplete();
     });
 
+    /**
+     * Consumer action that populates the flow scope with the current event attributes.
+     */
+    public static final Action EVENT_ATTRIBUTES_TO_FLOW_SCOPE = new ConsumerExecutionAction(ctx -> {
+        if (ctx.getCurrentEvent() != null) {
+            ctx.getFlowScope().putAll(ctx.getCurrentEvent().getAttributes());
+        }
+    });
+
     private final Consumer<RequestContext> task;
 
     @Setter

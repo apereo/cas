@@ -4,6 +4,8 @@ import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.impl.plans.RiskyAuthenticationException;
@@ -102,17 +104,20 @@ class ElectronicFenceWebflowConfiguration {
         public CasWebflowConfigurer riskAwareAuthenticationWebflowConfigurer(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices) {
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
             return new RiskAwareAuthenticationWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry, applicationContext, casProperties);
+                flowDefinitionRegistry, applicationContext, casProperties);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "riskAwareCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer riskAwareCasWebflowExecutionPlanConfigurer(
-            @Qualifier("riskAwareAuthenticationWebflowConfigurer") final CasWebflowConfigurer riskAwareAuthenticationWebflowConfigurer) {
+            @Qualifier("riskAwareAuthenticationWebflowConfigurer")
+            final CasWebflowConfigurer riskAwareAuthenticationWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(riskAwareAuthenticationWebflowConfigurer);
         }
     }
@@ -125,19 +130,27 @@ class ElectronicFenceWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_RISK_AUTHENTICATION_TOKEN_CHECK)
         public Action riskAuthenticationCheckTokenAction(
-            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver principalResolver,
-            @Qualifier(GeoLocationService.BEAN_NAME) final ObjectProvider<GeoLocationService> geoLocationService,
-            @Qualifier(CasEventRepository.BEAN_NAME) final CasEventRepository casEventRepository,
-            @Qualifier("cookieCipherExecutor") final CipherExecutor cookieCipherExecutor,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier(CommunicationsManager.BEAN_NAME) final CommunicationsManager communicationsManager,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver principalResolver,
+            @Qualifier(GeoLocationService.BEAN_NAME)
+            final ObjectProvider<GeoLocationService> geoLocationService,
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository casEventRepository,
+            @Qualifier("cookieCipherExecutor")
+            final CipherExecutor cookieCipherExecutor,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final CommunicationsManager communicationsManager,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new RiskAuthenticationCheckTokenAction(casEventRepository, communicationsManager, servicesManager,
-                    principalResolver, cookieCipherExecutor, geoLocationService, casProperties))
+                    principalResolver, cookieCipherExecutor, geoLocationService, casProperties, webApplicationServiceFactory))
                 .withId(CasWebflowConstants.ACTION_ID_RISK_AUTHENTICATION_TOKEN_CHECK)
                 .build()
                 .get();
@@ -148,10 +161,13 @@ class ElectronicFenceWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "riskVerificationFlowExecutor")
         public FlowExecutor riskVerificationFlowExecutor(
-            @Qualifier("riskVerificationWebflowUrlHandler") final FlowUrlHandler riskVerificationWebflowUrlHandler,
+            @Qualifier("riskVerificationWebflowUrlHandler")
+            final FlowUrlHandler riskVerificationWebflowUrlHandler,
             final CasConfigurationProperties casProperties,
-            @Qualifier("riskVerificationFlowRegistry") final FlowDefinitionRegistry riskVerificationFlowRegistry,
-            @Qualifier("webflowCipherExecutor") final CipherExecutor webflowCipherExecutor) {
+            @Qualifier("riskVerificationFlowRegistry")
+            final FlowDefinitionRegistry riskVerificationFlowRegistry,
+            @Qualifier("webflowCipherExecutor")
+            final CipherExecutor webflowCipherExecutor) {
             val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
                 riskVerificationFlowRegistry, webflowCipherExecutor, FLOW_EXECUTION_LISTENERS,
                 riskVerificationWebflowUrlHandler);
@@ -163,8 +179,10 @@ class ElectronicFenceWebflowConfiguration {
         @ConditionalOnMissingBean(name = "riskVerificationFlowRegistry")
         public FlowDefinitionRegistry riskVerificationFlowRegistry(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER) final FlowBuilder flowBuilder) {
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
+            final FlowBuilder flowBuilder) {
             val builder = new FlowDefinitionRegistryBuilder(applicationContext, flowBuilderServices);
             builder.addFlowBuilder(flowBuilder, CasWebflowConfigurer.FLOW_ID_RISK_VERIFICATION);
             return builder.build();
@@ -176,15 +194,18 @@ class ElectronicFenceWebflowConfiguration {
         public FlowUrlHandler riskVerificationWebflowUrlHandler(final List<CasWebflowIdExtractor> flowIdExtractors) {
             return new CasDefaultFlowUrlHandler(flowIdExtractors);
         }
-        
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "riskVerificationWebflowHandlerAdapter")
         public HandlerAdapter riskVerificationWebflowHandlerAdapter(
-            @Qualifier(CasWebflowExecutionPlan.BEAN_NAME) final CasWebflowExecutionPlan webflowExecutionPlan,
-            @Qualifier("riskVerificationWebflowUrlHandler") final FlowUrlHandler riskVerificationWebflowUrlHandler,
+            @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
+            final CasWebflowExecutionPlan webflowExecutionPlan,
+            @Qualifier("riskVerificationWebflowUrlHandler")
+            final FlowUrlHandler riskVerificationWebflowUrlHandler,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("riskVerificationFlowExecutor") final FlowExecutor riskVerificationFlowExecutor) {
+            @Qualifier("riskVerificationFlowExecutor")
+            final FlowExecutor riskVerificationFlowExecutor) {
             val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_RISK_VERIFICATION, webflowExecutionPlan);
             handler.setFlowExecutor(riskVerificationFlowExecutor);
             handler.setFlowUrlHandler(riskVerificationWebflowUrlHandler);
@@ -195,8 +216,10 @@ class ElectronicFenceWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "riskVerificationFlowHandlerMapping")
         public HandlerMapping riskVerificationFlowHandlerMapping(
-            @Qualifier(CasWebflowExecutionPlan.BEAN_NAME) final CasWebflowExecutionPlan webflowExecutionPlan,
-            @Qualifier("riskVerificationFlowRegistry") final FlowDefinitionRegistry riskVerificationFlowRegistry) {
+            @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
+            final CasWebflowExecutionPlan webflowExecutionPlan,
+            @Qualifier("riskVerificationFlowRegistry")
+            final FlowDefinitionRegistry riskVerificationFlowRegistry) {
             val handler = new CasFlowHandlerMapping();
             handler.setOrder(0);
             handler.setFlowRegistry(riskVerificationFlowRegistry);
@@ -222,8 +245,10 @@ class ElectronicFenceWebflowConfiguration {
         public CasWebflowConfigurer riskVerificationWebflowConfigurer(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("riskVerificationFlowRegistry") final FlowDefinitionRegistry riskVerificationFlowRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices) {
+            @Qualifier("riskVerificationFlowRegistry")
+            final FlowDefinitionRegistry riskVerificationFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
             return new RiskAuthenticationVerificationWebflowConfigurer(flowBuilderServices,
                 riskVerificationFlowRegistry, applicationContext, casProperties);
         }
@@ -232,7 +257,8 @@ class ElectronicFenceWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "riskVerificationWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer riskVerificationWebflowExecutionPlanConfigurer(
-            @Qualifier("riskVerificationWebflowConfigurer") final CasWebflowConfigurer riskVerificationWebflowConfigurer) {
+            @Qualifier("riskVerificationWebflowConfigurer")
+            final CasWebflowConfigurer riskVerificationWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(riskVerificationWebflowConfigurer);
         }
     }

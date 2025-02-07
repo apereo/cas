@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -9,6 +10,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.net.URI;
 import java.nio.file.Files;
@@ -24,10 +30,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("RegisteredService")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 class ChainingRegisteredServiceAccessStrategyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyDelegatedAccessAnd() {
         val chain = new ChainingRegisteredServiceAccessStrategy();
@@ -109,10 +120,13 @@ class ChainingRegisteredServiceAccessStrategyTests {
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key2", Set.of("value2"))));
 
         assertFalse(chain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .applicationContext(applicationContext)
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build()));
         assertFalse(chain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .applicationContext(applicationContext)
             .attributes(CollectionUtils.wrap("key2", Set.of("value2"))).build()));
         assertTrue(chain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .applicationContext(applicationContext)
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"), "key2", Set.of("value2"))).build()));
     }
 
@@ -124,8 +138,10 @@ class ChainingRegisteredServiceAccessStrategyTests {
         chain.addStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("key2", Set.of("value2"))));
 
         assertTrue(chain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .applicationContext(applicationContext)
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build()));
         assertTrue(chain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .applicationContext(applicationContext)
             .attributes(CollectionUtils.wrap("key2", Set.of("value2"))).build()));
     }
 
@@ -170,13 +186,17 @@ class ChainingRegisteredServiceAccessStrategyTests {
         parentChain.addStrategies(chain1, chain2);
 
         assertFalse(parentChain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .applicationContext(applicationContext)
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"))).build()));
         assertFalse(parentChain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .applicationContext(applicationContext)
             .attributes(CollectionUtils.wrap("key2", Set.of("value2"))).build()));
 
         assertTrue(parentChain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .applicationContext(applicationContext)
             .attributes(CollectionUtils.wrap("key1", Set.of("value1"), "key2", Set.of("value2"))).build()));
         assertTrue(parentChain.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("casuser")
+            .applicationContext(applicationContext)
             .attributes(CollectionUtils.wrap("key3", Set.of("value3"))).build()));
     }
 }

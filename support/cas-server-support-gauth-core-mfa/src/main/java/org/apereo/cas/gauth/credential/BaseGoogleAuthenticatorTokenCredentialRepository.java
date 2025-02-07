@@ -19,6 +19,10 @@ import java.util.UUID;
  */
 @Getter
 public abstract class BaseGoogleAuthenticatorTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
+    /**
+     * Default bean name.
+     */
+    public static final String BEAN_NAME = "googleAuthenticatorAccountRegistry";
 
     /**
      * Google authenticator token creator.

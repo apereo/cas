@@ -3,7 +3,6 @@ package org.apereo.cas.web;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
@@ -15,6 +14,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -23,7 +23,7 @@ import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnfor
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
-import org.apereo.cas.web.support.DefaultArgumentExtractor;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
@@ -72,10 +72,18 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     protected ServicesManager servicesManager;
 
     @Autowired
+    @Qualifier(ArgumentExtractor.BEAN_NAME)
+    private ArgumentExtractor argumentExtractor;
+
+    @Autowired
     private WebEndpointProperties webEndpointProperties;
     
     @Autowired
     private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+    private RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
 
     private RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final String serviceId,
                                                                                    final RegisteredServiceProperties property) {
@@ -85,7 +93,6 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     private RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(
         final String serviceId,
         final Pair<RegisteredServiceProperties, String>... properties) {
-        val argumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
 
         val service = RegisteredServiceTestUtils.getRegisteredService(serviceId, Map.of());
         val props1 = new LinkedHashMap<String, RegisteredServiceProperty>();
@@ -101,7 +108,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
             new DirectObjectProvider<>(servicesManager),
             new DirectObjectProvider<>(argumentExtractor),
             new DirectObjectProvider<>(new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())),
-            new DirectObjectProvider<>(new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext)),
+            new DirectObjectProvider<>(new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext, principalAccessStrategyEnforcer)),
             webEndpointProperties);
     }
 

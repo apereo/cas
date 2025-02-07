@@ -257,30 +257,31 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                             <div class='tab-content'>
                                 <div class="tab-pane fade active show" id="endpointintro{{key}}">
                                     <br />
-                                    {%- assign allParams="" -%}
+                                    {%- assign allQueryParams="" -%}
                                     {%- if cfg.parameters.size > 0 -%}
                                     <h5>Endpoint Parameters</h5>
                                     <ul>
                                         {% for param in cfg.parameters -%}
-                                        <li>
-                                            {%- if param.required == true -%}
-                                            {%- assign paramTitle = "Parameter is required." -%}
-                                            {%- else -%}
-                                            {%- assign paramTitle = "Parameter is optional." -%}
-                                            {%- endif -%}
+                                            {%- assign paramName = param.name | replace: "()", "" -%}
+                                            <li>
+                                                {%- if param.required == true -%}
+                                                {%- assign paramTitle = "Parameter is required." -%}
+                                                {%- else -%}
+                                                {%- assign paramTitle = "Parameter is optional." -%}
+                                                {%- endif -%}
 
-                                            {%- if param.selector == true -%}
-                                            {%- assign paramTitle = paramTitle | append: " This parameter can be specified as a path variable." -%}
-                                            {%- else -%}
-                                            {%- assign paramTitle = paramTitle | append: " This parameter can be specified as a query parameter." -%}
-                                            {%- endif -%}
-                                            <i class="fas fa-info-circle" data-bs-toggle="tooltip"
-                                               data-bs-placment="top" data-bs-html="true"
-                                               title="{{ paramTitle }}"></i>
-                                            <code>{{ param.name }} ({{ param.type }})</code>
-                                            {%- if param.description.size > 0 -%}: <span>{{ param.description }}</span>{%- endif -%}
-                                            {%- assign allParams = allParams | append: param.name | append: "=...&" -%}
-                                        </li>
+                                                {%- if param.selector == true -%}
+                                                    {%- assign paramTitle = paramTitle | append: " This parameter can be specified as a path variable." -%}
+                                                {%- else -%}
+                                                    {%- assign paramTitle = paramTitle | append: " This parameter can be specified as a query parameter." -%}
+                                                    {%- assign allQueryParams = allQueryParams | append: paramName | append: "=...&" -%}
+                                                {%- endif -%}
+                                                <i class="fas fa-info-circle" data-bs-toggle="tooltip"
+                                                   data-bs-placment="top" data-bs-html="true"
+                                                   title="{{ paramTitle }}"></i>
+                                                <code>{{ paramName }} ({{ param.type }})</code>
+                                                {%- if param.description.size > 0 -%}: <span>{{ param.description }}</span>{%- endif -%}
+                                            </li>
                                         {%- endfor -%}
                                     </ul>
                                     {%- endif -%}
@@ -294,7 +295,7 @@ curl -k -u "username:password" \
 -X {{ cfg.method }} \
 -X "Content-Type: {{ cfg.consumes[0] | default: 'application/json' }}" \
 -X "Accept: {{ cfg.produces[0] | default: 'application/json' }}" \
-"https://sso.example.org/cas/actuator/{{ cfg.path }}?{{ allParams }}"
+"https://sso.example.org/cas/actuator/{{ cfg.path }}?{{ allQueryParams }}"
 ```{% endcapture %}
 {{ curlrequest | markdownify }}
                                     </div>
@@ -489,18 +490,17 @@ management.endpoints.web.path-mapping.health=healthcheck
                                                 This option allows you to define a static list of users, passwords along with their role in a JSON file.
                                                 The JSON file should be formatted as follows:
 
-                                                {%- capture jsonauthfile -%}
-                                                ```json
-                                                [
-                                                {
-                                                "username": "casuser",
-                                                "password": "{sha512}<hashed-password>",
-                                                "authorities": [ "ROLE_ADMIN" ]
-                                                }
-                                                ]
-                                                ```
-                                                {%- endcapture -%}
-                                                <span>{{ jsonauthfile | markdownify }}</span>
+{% capture jsonauthfile %}
+```json
+[
+    {
+        "username": "casuser",
+        "password": "{sha512}<hashed-password>",
+        "authorities": [ "ROLE_ADMIN" ]
+    }
+]
+```{% endcapture %}
+<span>{{ jsonauthfile | markdownify }}</span>
 
                                                 <p>Supported password encoding schemes are:
                                                     <code>{sha512}</code>, <code>{sha256}</code>, <code>{bcrypt}</code>,

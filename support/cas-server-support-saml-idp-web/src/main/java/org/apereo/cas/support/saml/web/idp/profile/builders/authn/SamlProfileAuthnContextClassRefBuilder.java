@@ -63,12 +63,12 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
     public AuthnContext build(final SamlProfileBuilderContext context) throws Exception {
         val classRefValue = buildAuthnContextClassRefValue(context);
         val authnContext = newSamlObject(AuthnContext.class);
-        val classRef = newSamlObject(AuthnContextClassRef.class);
-        classRef.setURI(classRefValue);
-        authnContext.setAuthnContextClassRef(classRef);
-
+        if (StringUtils.isNotBlank(classRefValue)) {
+            val classRef = newSamlObject(AuthnContextClassRef.class);
+            classRef.setURI(classRefValue);
+            authnContext.setAuthnContextClassRef(classRef);
+        }
         buildDefaultAuthenticatingAuthority(context, authnContext);
-
         return authnContext;
     }
 

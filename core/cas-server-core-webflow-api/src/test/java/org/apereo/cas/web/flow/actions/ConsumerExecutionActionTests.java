@@ -1,12 +1,16 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.webflow.action.EventFactorySupport;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
+import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,5 +36,15 @@ class ConsumerExecutionActionTests {
         assertNull(result);
         assertEquals(HttpStatus.NO_CONTENT.value(), context.getHttpServletResponse().getStatus());
         assertNotNull(WebUtils.getActiveFlow(context));
+    }
+
+    @Test
+    void verifyEventAttributesOperation() throws Throwable {
+        val context = MockRequestContext.create();
+        context.setCurrentEvent(new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+            new LocalAttributeMap<>(Map.of("key", "value"))));
+        val result = ConsumerExecutionAction.EVENT_ATTRIBUTES_TO_FLOW_SCOPE.execute(context);
+        assertNull(result);
+        assertEquals("value", context.getFlowScope().get("key"));
     }
 }

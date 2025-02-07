@@ -57,10 +57,10 @@ import java.util.List;
 @Configuration(value = "DelegatedAuthenticationSaml2Configuration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class DelegatedAuthenticationSaml2Configuration {
-    
+
     @Configuration(value = "DelegatedAuthenticationSAMLWebConfiguration", proxyBeanMethods = false)
     static class DelegatedAuthenticationSAMLWebConfiguration {
-        
+
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_TERMINATE_SESSION)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -139,11 +139,12 @@ class DelegatedAuthenticationSaml2Configuration {
         public CasWebflowConfigurer delegatedAuthenticationSaml2WebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry logoutFlowDefinitionRegistry) {
-            return new DelegatedAuthenticationSaml2WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                logoutFlowDefinitionRegistry, applicationContext, casProperties);
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return new DelegatedAuthenticationSaml2WebflowConfigurer(flowBuilderServices, flowDefinitionRegistry,
+                applicationContext, casProperties);
         }
 
         @Bean
@@ -176,8 +177,10 @@ class DelegatedAuthenticationSaml2Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "delegatedSaml2ClientMetadataController")
         public DelegatedSaml2ClientMetadataController delegatedSaml2ClientMetadataController(
-            @Qualifier(DelegatedIdentityProviders.BEAN_NAME) final DelegatedIdentityProviders identityProviders,
-            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME) final OpenSamlConfigBean configBean) {
+            @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
+            final DelegatedIdentityProviders identityProviders,
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean configBean) {
             return new DelegatedSaml2ClientMetadataController(identityProviders, configBean);
         }
 
@@ -194,7 +197,8 @@ class DelegatedAuthenticationSaml2Configuration {
         public ConfigurableDelegatedClientBuilder delegatedSaml2ClientBuilder(
             @Qualifier(DelegatedIdentityProviderFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
             final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory,
-            @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext) {
+            @Qualifier(CasSSLContext.BEAN_NAME)
+            final CasSSLContext casSslContext) {
             return new DelegatedClientSaml2Builder(casSslContext, samlMessageStoreFactory);
         }
 

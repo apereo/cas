@@ -72,7 +72,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             }
             val principal = principalFactory.createPrincipal(user.get("username").asText(),
                 SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
-            return createHandlerResult(credential, principal, new ArrayList<>(0));
+            return createHandlerResult(credential, principal, new ArrayList<>());
         }
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
     }

@@ -94,6 +94,8 @@ class TokenCoreConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME)
         public JwtBuilder tokenTicketJwtBuilder(
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
@@ -101,7 +103,7 @@ class TokenCoreConfiguration {
             @Qualifier("tokenCipherExecutor") final CipherExecutor tokenCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
             return new JwtBuilder(tokenCipherExecutor, applicationContext, servicesManager, defaultPrincipalResolver,
-                new RegisteredServiceJwtTicketCipherExecutor(), casProperties);
+                new RegisteredServiceJwtTicketCipherExecutor(), webApplicationServiceFactory, casProperties);
         }
     }
 

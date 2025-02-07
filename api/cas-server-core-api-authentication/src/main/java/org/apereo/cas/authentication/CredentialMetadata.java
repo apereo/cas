@@ -93,4 +93,18 @@ public interface CredentialMetadata extends Serializable {
      * @return true or false
      */
     boolean containsProperty(String key);
+
+    /**
+     * Gets tenant.
+     *
+     * @return the tenant
+     */
+    String getTenant();
+
+    /**
+     * Sets tenant.
+     *
+     * @param tenant the tenant
+     */
+    void setTenant(String tenant);
 }

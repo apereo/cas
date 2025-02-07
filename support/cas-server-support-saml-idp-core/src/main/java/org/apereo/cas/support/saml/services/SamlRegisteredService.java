@@ -45,6 +45,9 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     @ExpressionLanguageCapable
     private String metadataLocation;
 
+    @ExpressionLanguageCapable
+    private String idpMetadataLocation;
+
     private String metadataProxyLocation;
 
     /**
@@ -181,23 +184,23 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
 
     private Set<String> encryptableAttributes = new HashSet<>(0);
 
-    private List<String> signingSignatureReferenceDigestMethods = new ArrayList<>(0);
+    private List<String> signingSignatureReferenceDigestMethods = new ArrayList<>();
 
-    private List<String> signingSignatureAlgorithms = new ArrayList<>(0);
+    private List<String> signingSignatureAlgorithms = new ArrayList<>();
 
-    private List<String> signingSignatureBlackListedAlgorithms = new ArrayList<>(0);
+    private List<String> signingSignatureBlackListedAlgorithms = new ArrayList<>();
 
-    private List<String> signingSignatureWhiteListedAlgorithms = new ArrayList<>(0);
+    private List<String> signingSignatureWhiteListedAlgorithms = new ArrayList<>();
 
     private String signingSignatureCanonicalizationAlgorithm;
 
-    private List<String> encryptionDataAlgorithms = new ArrayList<>(0);
+    private List<String> encryptionDataAlgorithms = new ArrayList<>();
 
-    private List<String> encryptionKeyAlgorithms = new ArrayList<>(0);
+    private List<String> encryptionKeyAlgorithms = new ArrayList<>();
 
-    private List<String> encryptionBlackListedAlgorithms = new ArrayList<>(0);
+    private List<String> encryptionBlackListedAlgorithms = new ArrayList<>();
 
-    private List<String> encryptionWhiteListedAlgorithms = new ArrayList<>(0);
+    private List<String> encryptionWhiteListedAlgorithms = new ArrayList<>();
 
     @JsonIgnore
     @Override

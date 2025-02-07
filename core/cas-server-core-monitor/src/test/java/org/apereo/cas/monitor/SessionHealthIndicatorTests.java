@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -73,7 +74,7 @@ class SessionHealthIndicatorTests {
     public static AbstractWebApplicationService getService(final String name) {
         val request = new MockHttpServletRequest();
         request.addParameter("service", name);
-        return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
+        return (AbstractWebApplicationService) new WebApplicationServiceFactory(mock(TenantExtractor.class)).createService(request);
     }
 
     @BeforeEach

@@ -23,7 +23,7 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor
 public class DefaultPersonDirectoryAttributeRepositoryPlan implements PersonDirectoryAttributeRepositoryPlan, DisposableBean {
-    private final List<PersonAttributeDao> attributeRepositories = new ArrayList<>(0);
+    private final List<PersonAttributeDao> attributeRepositories = new ArrayList<>();
 
     private final List<PersonDirectoryAttributeRepositoryCustomizer> attributeRepositoryCustomizers;
 

@@ -1,6 +1,8 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
@@ -93,6 +95,10 @@ public abstract class AbstractOpenSamlTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+    protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+    
     @Test
     void autowireApplicationContext() {
         assertNotNull(this.applicationContext);

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "CasFeatureModule.DelegatedAuthentication.jdbc.enabled=true"
     })
 @ExtendWith(CasTestExtension.class)
-public class JdbcDelegatedIdentityProviderFactoryTests {
+class JdbcDelegatedIdentityProviderFactoryTests {
     @Autowired
     @Qualifier("pac4jDelegatedClientFactory")
     private DelegatedIdentityProviderFactory pac4jDelegatedClientFactory;

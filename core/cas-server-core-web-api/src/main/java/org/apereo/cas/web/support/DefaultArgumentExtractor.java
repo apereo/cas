@@ -2,7 +2,6 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +23,6 @@ import java.util.Objects;
 @Slf4j
 @Getter
 public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
-
-    public DefaultArgumentExtractor(final ServiceFactory<? extends WebApplicationService> serviceFactory) {
-        super(CollectionUtils.wrapList(serviceFactory));
-    }
 
     public DefaultArgumentExtractor(final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList) {
         super(serviceFactoryList);

@@ -46,7 +46,7 @@ public class OktaAuthenticationStateHandlerAdapter extends AuthenticationStateHa
 
     private Exception failureException;
 
-    private List<MessageDescriptor> warnings = new ArrayList<>(0);
+    private List<MessageDescriptor> warnings = new ArrayList<>();
 
     @Override
     public void handleUnknown(final AuthenticationResponse authenticationResponse) {

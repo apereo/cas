@@ -109,7 +109,8 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     void verifyAccessTokenCanBeAdded() throws Throwable {
         val code = createOAuthCode();
         val jwtBuilder = new JwtBuilder(CipherExecutor.noOpOfSerializableToString(),
-            applicationContext, servicesManager, principalResolver, RegisteredServiceCipherExecutor.noOp(), casProperties);
+            applicationContext, servicesManager, principalResolver,
+            RegisteredServiceCipherExecutor.noOp(), webApplicationServiceFactory, casProperties);
         val token = new OAuth20DefaultAccessTokenFactory(
             newTicketRegistry, neverExpiresExpirationPolicyBuilder(), jwtBuilder,
             servicesManager, TicketTrackingPolicy.noOp())

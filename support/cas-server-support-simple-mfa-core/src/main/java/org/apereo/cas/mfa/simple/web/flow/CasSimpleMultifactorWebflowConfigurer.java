@@ -4,14 +4,14 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasMultifactorWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
-
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,13 +25,13 @@ import java.util.Optional;
 public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifactorWebflowConfigurer {
 
     public CasSimpleMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                 final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                  final FlowDefinitionRegistry flowDefinitionRegistry,
+                                                 final FlowDefinitionRegistry mfaFlowDefinitionRegistry,
                                                  final ConfigurableApplicationContext applicationContext,
                                                  final CasConfigurationProperties casProperties,
                                                  final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext,
-            casProperties, Optional.of(flowDefinitionRegistry), mfaFlowCustomizers);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext,
+            casProperties, Optional.of(mfaFlowDefinitionRegistry), mfaFlowCustomizers);
     }
 
     @Override
@@ -54,13 +54,18 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
             createTransitionForState(sendSimpleToken, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_UNAVAILABLE);
             createTransitionForState(sendSimpleToken, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
             createTransitionForState(sendSimpleToken, CasWebflowConstants.TRANSITION_ID_SELECT, "selectRecipientsView");
-            createTransitionForState(sendSimpleToken, CasWebflowConstants.TRANSITION_ID_REGISTER, "recipientsRegistrationView");
+
+            val registrationEnabled = casProperties.getAuthn().getMfa().getSimple().getMail().isRegistrationEnabled();
+            if (registrationEnabled) {
+                createTransitionForState(sendSimpleToken, CasWebflowConstants.TRANSITION_ID_REGISTER, "recipientsRegistrationView");
+            }
 
             val selectRecipientsView = createViewState(flow, "selectRecipientsView", "simple-mfa/casSimpleMfaSelectRecipientsView");
             createTransitionForState(selectRecipientsView, CasWebflowConstants.TRANSITION_ID_SELECT, CasWebflowConstants.STATE_ID_SIMPLE_MFA_SEND_TOKEN);
 
-            createViewState(flow, "recipientsRegistrationView", "simple-mfa/casSimpleMfaRegisterRecipientsView");
-            
+            if (registrationEnabled) {
+                createEmailRegistrationStates(flow);
+            }
             val setPrincipalAction = createSetAction("viewScope.principal", "conversationScope.authentication.principal");
             val propertiesToBind = CollectionUtils.wrapList("token");
             val binder = createStateBinderConfiguration(propertiesToBind);
@@ -82,5 +87,23 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
         });
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), providerId);
+    }
+
+    private void createEmailRegistrationStates(final Flow flow) {
+        val registrationView = createViewState(flow, "recipientsRegistrationView", "simple-mfa/casSimpleMfaRegisterRecipientsView");
+        registrationView.getEntryActionList().add(ConsumerExecutionAction.EVENT_ATTRIBUTES_TO_FLOW_SCOPE);
+        createTransitionForState(registrationView, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_SIMPLE_MFA_VERIFY_EMAIL);
+        val verifyEmailState = createActionState(flow, CasWebflowConstants.STATE_ID_SIMPLE_MFA_VERIFY_EMAIL, CasWebflowConstants.ACTION_ID_MFA_SIMPLE_VERIFY_EMAIL);
+        verifyEmailState.getEntryActionList().add(ConsumerExecutionAction.EVENT_ATTRIBUTES_TO_FLOW_SCOPE);
+        createTransitionForState(verifyEmailState, CasWebflowConstants.TRANSITION_ID_ERROR, registrationView.getId());
+        createTransitionForState(verifyEmailState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "updateEmailRegistrationView");
+
+        val updateEmailViewState = createViewState(flow, "updateEmailRegistrationView", "simple-mfa/casSimpleMfaUpdateEmailRegistrationView");
+        createTransitionForState(updateEmailViewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "updateEmailRegistration");
+        createTransitionForState(updateEmailViewState, CasWebflowConstants.TRANSITION_ID_ERROR, updateEmailViewState.getId());
+
+        val updateEmailRegistrationState = createActionState(flow, "updateEmailRegistration", CasWebflowConstants.ACTION_ID_MFA_SIMPLE_UPDATE_EMAIL);
+        createTransitionForState(updateEmailRegistrationState, CasWebflowConstants.TRANSITION_ID_RESUME, CasWebflowConstants.STATE_ID_SIMPLE_MFA_SEND_TOKEN);
+        createTransitionForState(updateEmailRegistrationState, CasWebflowConstants.TRANSITION_ID_ERROR, updateEmailViewState.getId());
     }
 }

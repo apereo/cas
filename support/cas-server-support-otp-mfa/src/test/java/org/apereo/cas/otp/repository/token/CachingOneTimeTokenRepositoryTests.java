@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
 
     @Autowired
-    @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
+    @Qualifier(OneTimeTokenRepository.BEAN_NAME)
     private OneTimeTokenRepository repository;
 
     @Test

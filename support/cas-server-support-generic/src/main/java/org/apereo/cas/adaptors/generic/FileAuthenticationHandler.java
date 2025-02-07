@@ -70,7 +70,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             }
             if (matches(originalPassword, passwordOnRecord)) {
                 val principal = this.principalFactory.createPrincipal(username);
-                return createHandlerResult(transformedCredential, principal, new ArrayList<>(0));
+                return createHandlerResult(transformedCredential, principal, new ArrayList<>());
             }
         } catch (final IOException e) {
             throw new PreventedException(e);

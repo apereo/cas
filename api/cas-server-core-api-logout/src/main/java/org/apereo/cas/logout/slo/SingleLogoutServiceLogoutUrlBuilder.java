@@ -45,7 +45,7 @@ public interface SingleLogoutServiceLogoutUrlBuilder extends Ordered, NamedObjec
     default Collection<SingleLogoutUrl> determineLogoutUrl(final RegisteredService registeredService,
                                                            final WebApplicationService singleLogoutService,
                                                            final Optional<HttpServletRequest> httpRequest) {
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     /**

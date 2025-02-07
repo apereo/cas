@@ -7,16 +7,13 @@ import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import javax.security.auth.login.FailedLoginException;
+import org.springframework.beans.factory.ObjectProvider;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -25,13 +22,18 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@RequiredArgsConstructor
 @Slf4j
-public class DefaultCasSimpleMultifactorAuthenticationService implements CasSimpleMultifactorAuthenticationService {
-
-    protected final TicketRegistry ticketRegistry;
-
+public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSimpleMultifactorAuthenticationService {
     protected final TicketFactory ticketFactory;
+    protected final ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider;
+
+    public DefaultCasSimpleMultifactorAuthenticationService(final TicketRegistry ticketRegistry,
+                                                            final TicketFactory ticketFactory,
+                                                            final ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider) {
+        super(ticketRegistry);
+        this.ticketFactory = ticketFactory;
+        this.accountServiceProvider = accountServiceProvider;
+    }
 
     @Override
     public CasSimpleMultifactorAuthenticationTicket generate(final Principal principal, final Service service) throws Throwable {
@@ -58,52 +60,24 @@ public class DefaultCasSimpleMultifactorAuthenticationService implements CasSimp
 
     @Override
     public Principal fetch(final CasSimpleMultifactorTokenCredential tokenCredential) {
-        return Optional.ofNullable(getMultifactorAuthenticationTicketFor(tokenCredential))
-            .map(acct -> acct.getProperties().get(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL))
-            .map(Principal.class::cast)
+        return Optional.ofNullable(getMultifactorAuthenticationTicket(tokenCredential))
+            .map(this::getPrincipalFromTicket)
             .orElse(null);
+    }
+
+    @Override
+    public void update(final Principal principal, final Map<String, Object> attributes) {
+        accountServiceProvider.ifAvailable(service -> service.update(principal, attributes));
     }
 
     @Override
     public Principal validate(final Principal resolvedPrincipal,
                               final CasSimpleMultifactorTokenCredential credential) throws Exception {
-        val acct = getMultifactorAuthenticationTicketFor(credential);
+        val acct = getMultifactorAuthenticationTicket(credential);
         LOGGER.debug("Received token [{}] and principal id [{}]", acct, resolvedPrincipal.getId());
         val principal = validateTokenForPrincipal(resolvedPrincipal, acct);
         deleteToken(acct);
         LOGGER.debug("Validated token [{}] successfully for [{}].", credential.getId(), resolvedPrincipal.getId());
         return principal;
-    }
-
-    protected CasSimpleMultifactorAuthenticationTicket getMultifactorAuthenticationTicketFor(final CasSimpleMultifactorTokenCredential credential) {
-        val tokenId = normalize(credential.getId());
-        return ticketRegistry.getTicket(tokenId, CasSimpleMultifactorAuthenticationTicket.class);
-    }
-
-    protected Principal validateTokenForPrincipal(final Principal resolvedPrincipal, final CasSimpleMultifactorAuthenticationTicket acct)
-        throws FailedLoginException {
-        if (!acct.getProperties().containsKey(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL)) {
-            LOGGER.warn("Unable to locate principal for token [{}]", acct.getId());
-            deleteToken(acct);
-            throw new FailedLoginException("Failed to authenticate code " + acct.getId());
-        }
-        val principal = (Principal) acct.getProperties().get(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL);
-        if (!principal.equals(resolvedPrincipal)) {
-            LOGGER.warn("Principal assigned to token [{}] is unauthorized for token [{}]", principal.getId(), acct.getId());
-            deleteToken(acct);
-            throw new FailedLoginException("Failed to authenticate code " + acct.getId());
-        }
-        return principal;
-    }
-
-    protected static String normalize(final String tokenId) {
-        if (!tokenId.startsWith(CasSimpleMultifactorAuthenticationTicket.PREFIX)) {
-            return CasSimpleMultifactorAuthenticationTicket.PREFIX + UniqueTicketIdGenerator.SEPARATOR + tokenId;
-        }
-        return tokenId;
-    }
-
-    protected void deleteToken(final CasSimpleMultifactorAuthenticationTicket acct) {
-        FunctionUtils.doUnchecked(__ -> ticketRegistry.deleteTicket(acct.getId()));
     }
 }

@@ -31,7 +31,7 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
     /**
      * The factory responsible for creating service objects based on the arguments extracted.
      */
-    protected List<ServiceFactory<? extends WebApplicationService>> serviceFactories = new ArrayList<>(0);
+    protected List<ServiceFactory<? extends WebApplicationService>> serviceFactories = new ArrayList<>();
 
     @Override
     public WebApplicationService extractService(final HttpServletRequest request) {

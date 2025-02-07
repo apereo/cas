@@ -4,7 +4,7 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -50,6 +50,8 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
 
     private final GeoLocationService geoLocationService;
 
+    private final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
+
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(requestContext);
@@ -90,8 +92,14 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
         val authorizedServices = servicesManager.getAllServices()
             .stream()
             .filter(registeredService -> FunctionUtils.doAndHandle(
-                () -> RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                    registeredService, ticket.getAuthentication().getPrincipal().getId(), authzAttributes),
+                () -> principalAccessStrategyEnforcer.authorize(
+                    RegisteredServicePrincipalAccessStrategyEnforcer.PrincipalAccessStrategyContext.builder()
+                        .registeredService(registeredService)
+                        .principalId(ticket.getAuthentication().getPrincipal().getId())
+                        .principalAttributes(authzAttributes)
+                        .service(service)
+                        .applicationContext(requestContext.getActiveFlow().getApplicationContext())
+                        .build()),
                 throwable -> false).get())
             .sorted()
             .collect(Collectors.toList());

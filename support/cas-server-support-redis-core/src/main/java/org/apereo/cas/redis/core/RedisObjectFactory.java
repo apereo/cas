@@ -320,6 +320,6 @@ public class RedisObjectFactory {
                 .map(args -> new RedisNode(args[0], Integer.parseInt(args[1])))
                 .collect(Collectors.toList());
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

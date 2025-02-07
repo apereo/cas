@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.rest.authentication.DefaultRestAuthenticationService;
 import org.apereo.cas.rest.factory.DefaultUserAuthenticationResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
@@ -61,6 +62,9 @@ class UserAuthenticationResourceTests {
     private ServicesManager servicesManager;
 
     @Mock
+    private TenantExtractor tenantExtractor;
+    
+    @Mock
     private MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
 
     @Mock
@@ -88,7 +92,8 @@ class UserAuthenticationResourceTests {
 
         val applicationContext = new GenericApplicationContext();
         val api = new DefaultRestAuthenticationService(authenticationSupport, httpRequestCredentialFactory,
-            new WebApplicationServiceFactory(), multifactorTriggerSelectionStrategy, servicesManager, requestedContextValidator,
+            new WebApplicationServiceFactory(tenantExtractor), multifactorTriggerSelectionStrategy,
+            servicesManager, requestedContextValidator,
             AuthenticationPolicy.alwaysSatisfied(), applicationContext);
         userAuthenticationResource = new UserAuthenticationResource(api,
             new DefaultUserAuthenticationResourceEntityResponseFactory(),

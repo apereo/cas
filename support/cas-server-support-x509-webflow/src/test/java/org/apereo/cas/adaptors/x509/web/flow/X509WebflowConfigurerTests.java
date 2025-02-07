@@ -42,7 +42,7 @@ class X509WebflowConfigurerTests extends BaseWebflowConfigurerTests {
     void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
 
-        val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
 
         val state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_X509_START);

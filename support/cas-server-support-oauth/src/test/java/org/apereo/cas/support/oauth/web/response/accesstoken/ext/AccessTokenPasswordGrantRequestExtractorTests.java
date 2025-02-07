@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OAuth")
 class AccessTokenPasswordGrantRequestExtractorTests extends AbstractOAuth20Tests {
     @Autowired
-    @Qualifier("oauth20ConfigurationContext")
+    @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
     private OAuth20ConfigurationContext oauth20ConfigurationContext;
 
     @Test

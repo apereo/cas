@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
@@ -37,8 +38,10 @@ class CasWebApplicationServiceFactoryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = WebApplicationService.BEAN_NAME_FACTORY)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ServiceFactory<WebApplicationService> webApplicationServiceFactory() {
-            return new WebApplicationServiceFactory();
+        public ServiceFactory<WebApplicationService> webApplicationServiceFactory(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor) {
+            return new WebApplicationServiceFactory(tenantExtractor);
         }
     }
 

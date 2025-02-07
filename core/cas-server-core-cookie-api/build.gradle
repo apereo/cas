@@ -1,6 +1,7 @@
 description = "Apereo CAS Cookie Management Core"
 dependencies {
     api project(":api:cas-server-core-api-cookie")
+    api project(":api:cas-server-core-api-multitenancy")
     
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")

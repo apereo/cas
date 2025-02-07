@@ -72,6 +72,6 @@ public class CasConfigurationMetadataServerEndpoint extends BaseCasActuatorEndpo
                 .sorted()
                 .collect(Collectors.toList());
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

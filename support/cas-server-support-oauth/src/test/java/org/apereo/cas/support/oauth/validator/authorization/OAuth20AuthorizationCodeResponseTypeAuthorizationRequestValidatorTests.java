@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
 import org.apereo.cas.AbstractOAuth20Tests;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.ServicesManager;
@@ -32,8 +31,8 @@ class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests ext
     private OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator getValidator(
         final ServicesManager serviceManager) {
         return new OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator(serviceManager,
-            new WebApplicationServiceFactory(),
-            new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext),
+            serviceFactory,
+            new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext, principalAccessStrategyEnforcer),
             oauthRequestParameterResolver);
     }
 

@@ -15,7 +15,7 @@ const cas = require("../../cas.js");
     const imgs = await page.$$eval("#cas-logo", (imgs) => imgs.map((img) => img.getAttribute("src")));
     const logo = imgs.pop();
     await cas.log(logo);
-    assert(logo === "/cas/themes/example/images/logo.png");
+    await cas.assertTextMatches(logo, /\/cas\/themes\/example\/images\/logo-.*.png/);
 
     await cas.log("Logging out...");
     await cas.goto(page, `https://localhost:8443/cas/logout?service=${service}`);

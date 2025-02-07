@@ -1,6 +1,7 @@
 package org.apereo.cas.util.http;
 
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.HttpMessage;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;

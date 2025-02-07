@@ -48,7 +48,7 @@ class WebAuthnMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowCo
     @Autowired
     @Qualifier("webAuthnMultifactorAuthenticationProvider")
     private MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider;
-    
+
     @Override
     protected String getMultifactorEventId() {
         return WebAuthnMultifactorWebflowConfigurer.FLOW_ID_MFA_WEBAUTHN;
@@ -56,13 +56,13 @@ class WebAuthnMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowCo
 
     @Test
     void verifyCsrfOperation() throws Throwable {
-        val webAuthnFlow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(WebAuthnMultifactorWebflowConfigurer.FLOW_ID_MFA_WEBAUTHN);
+        val webAuthnFlow = (Flow) flowDefinitionRegistry.getFlowDefinition(WebAuthnMultifactorWebflowConfigurer.FLOW_ID_MFA_WEBAUTHN);
         webAuthnFlow.setApplicationContext(applicationContext);
         val context = MockRequestContext.create(applicationContext);
         context.setActiveFlow(webAuthnFlow);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, webAuthnMultifactorAuthenticationProvider);
-        
+
         val registration = (ViewState) webAuthnFlow.getState(CasWebflowConstants.STATE_ID_WEBAUTHN_VIEW_REGISTRATION);
         registration.enter(context);
         assertNotNull(context.getFlowScope().get("_csrf"));

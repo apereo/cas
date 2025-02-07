@@ -103,7 +103,7 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
                 return entities;
             }
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     private String getMetadataCacheKey(final Optional<SamlRegisteredService> serviceResult,

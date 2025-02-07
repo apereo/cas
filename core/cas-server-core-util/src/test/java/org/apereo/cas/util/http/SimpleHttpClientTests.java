@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import org.apereo.cas.web.HttpMessage;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;

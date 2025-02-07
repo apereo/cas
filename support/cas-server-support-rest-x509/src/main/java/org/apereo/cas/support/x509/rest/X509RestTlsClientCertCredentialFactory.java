@@ -37,6 +37,6 @@ public class X509RestTlsClientCertCredentialFactory implements RestHttpRequestCr
             credentials.add(prepareCredential(request, new X509CertificateCredential(certificates)));
             return credentials;
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

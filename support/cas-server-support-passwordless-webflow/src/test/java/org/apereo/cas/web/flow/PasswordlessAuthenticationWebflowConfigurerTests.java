@@ -54,11 +54,11 @@ class PasswordlessAuthenticationWebflowConfigurerTests extends BaseWebflowConfig
     @Autowired
     @Qualifier("passwordlessInitializeCaptchaAction")
     private Action passwordlessInitializeCaptchaAction;
-    
+
     @Test
     void verifyOperation() throws Throwable {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
 
         var state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION);
@@ -71,7 +71,7 @@ class PasswordlessAuthenticationWebflowConfigurerTests extends BaseWebflowConfig
         assertNotNull(state);
         state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_MFA);
         assertNotNull(state);
-        
+
         val requestContext = MockRequestContext.create(applicationContext);
         val event = passwordlessInitializeCaptchaAction.execute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());

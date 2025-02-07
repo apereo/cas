@@ -24,6 +24,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreValidationAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -31,6 +32,7 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import lombok.val;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +74,7 @@ import static org.mockito.Mockito.*;
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreWebflowAutoConfiguration.class,
     CasCoreValidationAutoConfiguration.class,
+    CasMultitenancyAutoConfiguration.class,
     BaseCasWebflowMultifactorAuthenticationTests.GeoLocationServiceTestConfiguration.class
 })
 @EnableAspectJAutoProxy(proxyTargetClass = false)
@@ -92,6 +95,10 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
 
+    @Autowired
+    @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
+    protected CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    
     @TestConfiguration(value = "AuthenticationTestConfiguration", proxyBeanMethods = false)
     static class AuthenticationTestConfiguration {
         @Bean

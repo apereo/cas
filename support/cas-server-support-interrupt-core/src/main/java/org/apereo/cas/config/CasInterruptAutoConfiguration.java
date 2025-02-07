@@ -14,9 +14,9 @@ import org.apereo.cas.interrupt.JsonResourceInterruptInquirer;
 import org.apereo.cas.interrupt.RegexAttributeInterruptInquirer;
 import org.apereo.cas.interrupt.RestEndpointInterruptInquirer;
 import org.apereo.cas.interrupt.SimpleInterruptTrackingEngine;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -27,6 +27,7 @@ import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
+import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -85,16 +86,19 @@ public class CasInterruptAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CookieValueManager interruptCookieValueManager(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(GeoLocationService.BEAN_NAME)
             final ObjectProvider<GeoLocationService> geoLocationService,
             final CasConfigurationProperties casProperties,
-            @Qualifier("interruptCookieCipherExecutor") final CipherExecutor cookieCipherExecutor) {
-
+            @Qualifier("interruptCookieCipherExecutor")
+            final CipherExecutor cookieCipherExecutor) {
             val props = casProperties.getInterrupt().getCookie();
-            return FunctionUtils.doIf(props.getCrypto().isEnabled(),
-                () -> new DefaultCasCookieValueManager(cookieCipherExecutor, geoLocationService,
-                    DefaultCookieSameSitePolicy.INSTANCE, props),
-                CookieValueManager::noOp).get();
+            if (props.getCrypto().isEnabled()) {
+                return new DefaultCasCookieValueManager(cookieCipherExecutor, tenantExtractor,
+                    geoLocationService, DefaultCookieSameSitePolicy.INSTANCE, props);
+            }
+            return new NoOpCookieValueManager(tenantExtractor);
         }
 
         @Bean

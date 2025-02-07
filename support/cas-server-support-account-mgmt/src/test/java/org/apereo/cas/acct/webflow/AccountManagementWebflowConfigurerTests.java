@@ -32,7 +32,7 @@ class AccountManagementWebflowConfigurerTests extends BaseWebflowConfigurerTests
     @Test
     void verifyOperation() throws Throwable {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_VIEW_ACCOUNT_SIGNUP));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_SUBMIT_ACCOUNT_REGISTRATION));
@@ -42,10 +42,10 @@ class AccountManagementWebflowConfigurerTests extends BaseWebflowConfigurerTests
         val subflow = (SubflowState) flow.getState(CasWebflowConstants.STATE_ID_ACCOUNT_REGISTRATION_SUBFLOW);
         assertNotNull(subflow);
 
-        val regFlow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(AccountManagementWebflowConfigurer.FLOW_ID_ACCOUNT_REGISTRATION);
+        val regFlow = (Flow) flowDefinitionRegistry.getFlowDefinition(AccountManagementWebflowConfigurer.FLOW_ID_ACCOUNT_REGISTRATION);
         val context = MockRequestContext.create(applicationContext);
         context.setActiveFlow(regFlow);
-        
+
         val completeState = (ViewState) regFlow.getState(CasWebflowConstants.STATE_ID_COMPLETE_ACCOUNT_REGISTRATION);
         completeState.enter(context);
 

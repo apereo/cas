@@ -47,6 +47,21 @@ if global metadata artifacts are managed on disk at `/etc/cas/config/saml/metada
 whose name is configured as `SampleService` with an id of `1000` are 
 expected to be found at `/etc/cas/config/saml/metadata/SampleService-1000`.
 
+Alternatively, a SAML2 service provider can be directly instructed to locate identity provider metadata from a designated location on disk.
+This can be useful in scenarios where you want to rotate your signing and encryption keys of your SAML2 identity provider metadata
+and wish to gradually allow service providers to pick up the new metadata:
+
+```json
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "the-entity-id-of-the-sp",
+  "name" : "SAMLService",
+  "id" : 1,
+  "metadataLocation" : "https://url/to/metadata.xml",
+  "idpMetadataLocation" : "file:/path/to/idp/metadata/directory"
+}
+```
+
 ### Advanced
             
 Service provider or identity provider metadata can also be managed using any one of the following strategies. 

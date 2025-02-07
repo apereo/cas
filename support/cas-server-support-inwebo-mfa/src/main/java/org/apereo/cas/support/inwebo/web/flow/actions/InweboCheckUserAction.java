@@ -16,7 +16,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import static org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.M_ACCESS_WEB;
 import static org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.VIRTUAL_AUTHENTICATOR;
-import static org.apereo.cas.support.inwebo.web.flow.actions.WebflowConstants.*;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.*;
 
 /**
  * A web action to check the user (status).

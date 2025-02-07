@@ -66,7 +66,11 @@ public interface AuditTrailManager extends Cleanable {
         /**
          * Headers attached to the request.
          */
-        HEADERS
+        HEADERS,
+        /**
+         * Tenant information/id.
+         */
+        TENANT
     }
 
     /**

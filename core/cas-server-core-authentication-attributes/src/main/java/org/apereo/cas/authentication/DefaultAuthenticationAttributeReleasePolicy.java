@@ -38,7 +38,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
     private final String authenticationContextAttribute;
 
     public DefaultAuthenticationAttributeReleasePolicy(final String authenticationContextAttribute) {
-        this(new ArrayList<>(0), new ArrayList<>(0), authenticationContextAttribute);
+        this(new ArrayList<>(), new ArrayList<>(), authenticationContextAttribute);
     }
 
     @Override

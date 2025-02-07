@@ -93,7 +93,8 @@ class CasConfigurationJasyptCipherExecutorTests {
         jasyptTest.setProviderName("BC");
         jasyptTest.setAlgorithm("PBEWITHSHAAND256BITAES-CBC-BC");
         jasyptTest.setIvGenerator(new RandomIvGenerator());
-        assertEquals("testing", jasyptTest.decode("{cas-cipher}88HKpXCD888/ZP7hMAg7VdxljZD3fho5r5V7c15kPXovYCk4cBdpcxfd5vgcxTit"));
+        jasyptTest.setPassword("P@$$w0rd");
+        assertEquals("testing", jasyptTest.decode("{cas-cipher}BvHnbgPin/9TaT4fgctwmtrZzwdRQWGUolr3dS1peGETCWFJOVYgu/Fkg+lxm6QX"));
     }
 
     @Test

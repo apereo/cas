@@ -2,6 +2,7 @@ package org.apereo.cas.gauth.web.flow;
 
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
+import org.apereo.cas.gauth.credential.BaseGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -41,7 +42,7 @@ class GoogleAuthenticatorAuthenticationDeviceProviderActionTests {
     private MultifactorAuthenticationDeviceProviderAction googleAccountDeviceProviderAction;
 
     @Autowired
-    @Qualifier("googleAuthenticatorAccountRegistry")
+    @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
 
     @Test

@@ -38,12 +38,12 @@
                     <div class="mdc-switch__focus-ring"></div>
                 </span>
             </button>
-            <label class="form-check-label" th:id="${id + 'ButtonLabel'}" th:text="#{${label}}">Switch Me</label>
+            <label class="form-check-label" th:id="${id + 'ButtonLabel'}" th:utext="#{${label}}">Switch Me</label>
             <input type="hidden" th:name="${id}" th:id="${id}" value="false" th:data-switch-btn="${id + 'Button'}"/>
         </div>
         <div th:id="${id + 'checkBoxPanel'}" class="form-check form-switch" style="display: none">
             <input type="checkbox" class="form-check-input" th:id="${id}" th:name="${id}" />
-            <label class="form-check-label" th:for="${id}" th:id="${id + 'ButtonLabel'}" th:text="#{${label}}">Switch Me</label>
+            <label class="form-check-label" th:for="${id}" th:id="${id + 'ButtonLabel'}" th:utext="#{${label}}">Switch Me</label>
         </div>
 
         <script th:inline="javascript">

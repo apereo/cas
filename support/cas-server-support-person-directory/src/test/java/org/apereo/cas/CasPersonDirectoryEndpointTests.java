@@ -1,28 +1,26 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
-import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
-import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
-import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
+import org.apereo.cas.persondir.MockPersonAttributeDao;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
+import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
-import org.apereo.cas.web.report.CasPersonDirectoryEndpoint;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link CasPersonDirectoryEndpointTests}.
@@ -33,21 +31,50 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "management.endpoint.personDirectory.access=UNRESTRICTED")
 @Import(CasPersonDirectoryEndpointTests.CasPersonDirectoryTestConfiguration.class)
 @Tag("ActuatorEndpoint")
+@ExtendWith(CasTestExtension.class)
+@AutoConfigureMockMvc
 class CasPersonDirectoryEndpointTests extends AbstractCasEndpointTests {
-    private static PersonAttributes PERSON = new SimplePersonAttributes("casuser", Map.of("phone", List.of("123456789")));
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
-    @Autowired
-    @Qualifier("casPersonDirectoryEndpoint")
-    private CasPersonDirectoryEndpoint personDirectoryEndpoint;
+    private static final MockPersonAttributeDao ATTRIBUTE_DAO = new MockPersonAttributeDao(
+        new SimplePersonAttributes("casuser", Map.of("phone", List.of("123456789"))));
 
     @Test
-    void verifyOperation() {
-        var person = personDirectoryEndpoint.showCachedAttributesFor("casuser");
+    void verifyRepositories() throws Throwable {
+        mockMvc.perform(get("/actuator/personDirectory/repositories")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void verifyGetUser() throws Throwable {
+        var person = MAPPER.readValue(mockMvc.perform(get("/actuator/personDirectory/cache/casuser")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString(), SimplePersonAttributes.class);
         assertNotNull(person);
         assertEquals("123456789", person.getAttributeValue("phone"));
-        PERSON = new SimplePersonAttributes("casuser", Map.of("phone", List.of("99887766")));
-        personDirectoryEndpoint.removeCachedAttributesFor("casuser");
-        person = personDirectoryEndpoint.showCachedAttributesFor("casuser");
+
+        mockMvc.perform(delete("/actuator/personDirectory/cache/casuser")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        ATTRIBUTE_DAO.setPerson(new SimplePersonAttributes("casuser", Map.of("phone", List.of("99887766"))));
+        
+        person = MAPPER.readValue(mockMvc.perform(get("/actuator/personDirectory/cache/casuser")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString(), SimplePersonAttributes.class);
+        assertNotNull(person);
         assertEquals("99887766", person.getAttributeValue("phone"));
     }
 
@@ -55,55 +82,8 @@ class CasPersonDirectoryEndpointTests extends AbstractCasEndpointTests {
     static class CasPersonDirectoryTestConfiguration {
         @Bean
         public PersonDirectoryAttributeRepositoryPlanConfigurer testAttributeRepositoryPlanConfigurer() {
-            return plan -> plan.registerAttributeRepositories(new MockPersonAttributeDao());
+            return plan -> plan.registerAttributeRepositories(ATTRIBUTE_DAO);
         }
     }
 
-    @RequiredArgsConstructor
-    @EqualsAndHashCode
-    @ToString
-    private static final class MockPersonAttributeDao implements PersonAttributeDao {
-        @Override
-        public PersonAttributes getPerson(final String s, final Set<PersonAttributes> set,
-                                          final PersonAttributeDaoFilter filter) {
-            return PERSON;
-        }
-
-        @Override
-        public Set<PersonAttributes> getPeople(final Map<String, Object> map, final PersonAttributeDaoFilter filter,
-                                               final Set<PersonAttributes> set) {
-            return Set.of(PERSON);
-        }
-
-        @Override
-        public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query, final PersonAttributeDaoFilter filter,
-                                                                         final Set<PersonAttributes> resultPeople) {
-            return Set.of(PERSON);
-        }
-
-        @Override
-        public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query, final PersonAttributeDaoFilter filter) {
-            return Set.of(PERSON);
-        }
-
-        @Override
-        public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query) {
-            return Set.of(PERSON);
-        }
-
-        @Override
-        public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query, final Set<PersonAttributes> resultPeople) {
-            return Set.of(PERSON);
-        }
-
-        @Override
-        public Map<String, Object> getTags() {
-            return Map.of();
-        }
-        
-        @Override
-        public int compareTo(@Nonnull final PersonAttributeDao o) {
-            return 0;
-        }
-    }
 }

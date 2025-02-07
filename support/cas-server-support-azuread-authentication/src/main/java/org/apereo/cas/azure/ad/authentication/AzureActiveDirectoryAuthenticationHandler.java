@@ -123,7 +123,7 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
             });
             val principal = principalFactory.createPrincipal(username, attributeMap);
             LOGGER.debug("Created principal for id [{}] and [{}] attributes", username, attributeMap);
-            return createHandlerResult(credential, principal, new ArrayList<>(0));
+            return createHandlerResult(credential, principal, new ArrayList<>());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             throw new FailedLoginException("Invalid credentials: " + e.getMessage());

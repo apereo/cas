@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Getter
 @Slf4j
 public class DefaultServiceRegistryExecutionPlan implements ServiceRegistryExecutionPlan {
-    private final Collection<ServiceRegistry> serviceRegistries = new ArrayList<>(0);
+    private final Collection<ServiceRegistry> serviceRegistries = new ArrayList<>();
 
     @Override
     @CanIgnoreReturnValue

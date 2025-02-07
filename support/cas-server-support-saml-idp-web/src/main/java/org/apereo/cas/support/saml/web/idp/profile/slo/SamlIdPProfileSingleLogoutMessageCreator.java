@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
+import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -87,7 +88,7 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
     }
 
     @Override
-    public SingleLogoutMessage create(final SingleLogoutRequestContext request) {
+    public SingleLogoutMessage create(final SingleLogoutRequestContext request) throws Throwable {
         val id = '_' + String.valueOf(RandomUtils.nextLong());
 
         val samlService = (SamlRegisteredService) request.getRegisteredService();
@@ -96,17 +97,13 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
             : Beans.newDuration(samlIdPProperties.getResponse().getSkewAllowance()).toSeconds();
 
         val issueInstant = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(skewAllowance);
-
-        val principalName = request.getExecutionRequest().getTicketGrantingTicket()
-            .getAuthentication().getPrincipal().getId();
-        LOGGER.trace("Preparing NameID attribute for principal [{}]", principalName);
-
+        val nameIdValue = buildLogoutRequestNameId(request);
         val nameFormat = StringUtils.defaultIfBlank(samlService.getRequiredNameIdFormat(), NameIDType.UNSPECIFIED);
-        val encoder = SamlAttributeBasedNameIdGenerator.get(Optional.empty(), nameFormat, samlService, principalName);
+        val encoder = SamlAttributeBasedNameIdGenerator.get(Optional.empty(), nameFormat, samlService, nameIdValue);
         LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
         val nameId = FunctionUtils.doUnchecked(() -> encoder.generate(new ProfileRequestContext(), nameFormat));
 
-        var samlLogoutRequest = newLogoutRequest(id, issueInstant,
+        val samlLogoutRequest = newLogoutRequest(id, issueInstant,
             request.getLogoutUrl().toExternalForm(),
             newIssuer(samlIdPProperties.getCore().getEntityId()),
             request.getTicketId(),
@@ -132,6 +129,21 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
         }
 
         return buildSingleLogoutMessage(samlLogoutRequest, samlLogoutRequest);
+    }
+
+    protected String buildLogoutRequestNameId(final SingleLogoutRequestContext request) throws Throwable {
+        val samlService = (SamlRegisteredService) request.getRegisteredService();
+        val principal = request.getExecutionRequest().getTicketGrantingTicket()
+            .getAuthentication().getPrincipal();
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(samlService)
+            .service(request.getService())
+            .principal(principal)
+            .applicationContext(samlRegisteredServiceCachingMetadataResolver.getOpenSamlConfigBean().getApplicationContext())
+            .build();
+        val principalName = samlService.getUsernameAttributeProvider().resolveUsername(usernameContext);
+        LOGGER.trace("Preparing NameID attribute for principal [{}]", principalName);
+        return principalName;
     }
 
     private SingleLogoutMessage buildSingleLogoutMessage(final LogoutRequest logoutRequest, final XMLObject message) {

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,11 +30,14 @@ class X509TomcatServletFactoryInitialActionTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyOperation() throws Throwable {
         val action = new X509TomcatServletFactoryInitialAction(casProperties);
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val result = action.execute(context);
         assertNull(result);

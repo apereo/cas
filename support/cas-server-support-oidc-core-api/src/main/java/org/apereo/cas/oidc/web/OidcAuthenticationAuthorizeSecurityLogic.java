@@ -48,7 +48,7 @@ public class OidcAuthenticationAuthorizeSecurityLogic extends OAuth20TicketGrant
             .orElse(Boolean.FALSE);
 
         return tooOld || prompts.contains(OidcConstants.PROMPT_LOGIN)
-            ? new ArrayList<>(0)
+            ? new ArrayList<>()
             : super.loadProfiles(callContext, manager, clients);
     }
 }

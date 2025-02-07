@@ -68,5 +68,5 @@ public class AdaptiveAuthenticationPolicyProperties implements Serializable {
      * based on that provider based on properties of date/time. One may want to force mfa during weekends,
      * after hours, etc and the ruleset provides a modest configuration set where time can also be treated as trigger.
      */
-    private List<TimeBasedAuthenticationProperties> requireTimedMultifactor = new ArrayList<>(0);
+    private List<TimeBasedAuthenticationProperties> requireTimedMultifactor = new ArrayList<>();
 }

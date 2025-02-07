@@ -50,14 +50,14 @@ public class CasTokenAuthenticationWebflowAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer tokenWebflowConfigurer(
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices,
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {
         return new TokenWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
+            flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
@@ -75,9 +75,9 @@ public class CasTokenAuthenticationWebflowAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("tokenRequestExtractor")
         final TokenRequestExtractor tokenRequestExtractor,
-        @Qualifier("adaptiveAuthenticationPolicy")
+        @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-        @Qualifier("serviceTicketRequestWebflowEventResolver")
+        @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,

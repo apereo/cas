@@ -17,7 +17,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-@RequiresModule(name = "cas-server-support-mailjet", automated = true)
+@RequiresModule(name = "cas-server-support-mailjet", automated = false)
 @Accessors(chain = true)
 
 public class MailjetProperties implements Serializable {

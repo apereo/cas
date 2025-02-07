@@ -53,7 +53,7 @@ public class HttpCorsRequestProperties implements Serializable {
      * When credentials are allowed, '*' cannot be used and origin patterns should be configured instead.
      * It does not include any path information, but only the server name.
      */
-    private List<String> allowOrigins = new ArrayList<>(0);
+    private List<String> allowOrigins = new ArrayList<>();
 
     /**
      * Comma-separated list of origin patterns to allow. Unlike allowed origins which only
@@ -61,7 +61,7 @@ public class HttpCorsRequestProperties implements Serializable {
      * {@code https://*.example.com}) and can be used when credentials are allowed. When no
      * allowed origin patterns or allowed origins are set, CORS support is disabled.
      */
-    private List<String> allowOriginPatterns = new ArrayList<>(0);
+    private List<String> allowOriginPatterns = new ArrayList<>();
 
     /**
      * The Access-Control-Allow-Methods header specifies the method or methods allowed when accessing the resource.
@@ -69,14 +69,14 @@ public class HttpCorsRequestProperties implements Serializable {
      * The conditions under which a request is pre-flighted are discussed above.
      * Default is everything.
      */
-    private List<String> allowMethods = new ArrayList<>(0);
+    private List<String> allowMethods = new ArrayList<>();
 
     /**
      * The Access-Control-Allow-Headers header is used in response to a preflight
      * request to indicate which HTTP headers can be used when making the actual request.
      * Default is everything.
      */
-    private List<String> allowHeaders = new ArrayList<>(0);
+    private List<String> allowHeaders = new ArrayList<>();
 
     /**
      * The Access-Control-Max-Age header indicates how long the results of a preflight request can be cached.
@@ -86,7 +86,7 @@ public class HttpCorsRequestProperties implements Serializable {
     /**
      * The Access-Control-Expose-Headers header lets a server accept headers that browsers are allowed to access.
      */
-    private List<String> exposedHeaders = new ArrayList<>(0);
+    private List<String> exposedHeaders = new ArrayList<>();
 
     public HttpCorsRequestProperties() {
         this.allowMethods.add("*");

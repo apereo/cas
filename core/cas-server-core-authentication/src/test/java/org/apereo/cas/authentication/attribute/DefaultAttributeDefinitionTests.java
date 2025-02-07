@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.ResourceAccessMode;
 import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
@@ -135,5 +137,17 @@ class DefaultAttributeDefinitionTests {
         val context = getAttributeDefinitionResolutionContext();
         val values = defn.resolveAttributeValues(context);
         assertTrue(values.isEmpty());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"MD5", "SHA1", "SHA256", "SHA512", "BASE64", "UNKNOWN"})
+    void verifyHashingFunction(final String hashingStrategy) throws Throwable {
+        val defn = DefaultAttributeDefinition.builder()
+            .key("givenName")
+            .hashingStrategy(hashingStrategy)
+            .build();
+        val context = getAttributeDefinitionResolutionContext();
+        val values = defn.resolveAttributeValues(context);
+        assertFalse(values.isEmpty());
     }
 }

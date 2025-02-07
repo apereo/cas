@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Getter
 public class DefaultPrincipalResolutionExecutionPlan implements PrincipalResolutionExecutionPlan {
-    private final List<PrincipalResolver> registeredPrincipalResolvers = new ArrayList<>(0);
+    private final List<PrincipalResolver> registeredPrincipalResolvers = new ArrayList<>();
 
     @Override
     public void registerPrincipalResolver(final PrincipalResolver principalResolver) {

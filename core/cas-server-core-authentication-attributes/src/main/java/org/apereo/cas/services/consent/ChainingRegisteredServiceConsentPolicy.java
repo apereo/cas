@@ -36,7 +36,7 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
     @Serial
     private static final long serialVersionUID = -2949244688986345692L;
 
-    private final List<RegisteredServiceConsentPolicy> policies = new ArrayList<>(0);
+    private final List<RegisteredServiceConsentPolicy> policies = new ArrayList<>();
 
     /**
      * Add policies.

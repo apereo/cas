@@ -23,13 +23,9 @@ Support is enabled by including the following module in the overlay:
 
 {% include_cached casproperties.html properties="cas.authn.mfa.simple" includes=".bypass" %}
 
-
 ## Registration
 
-Registration is expected to have occurred as an out-of-band process. Ultimately,
-CAS expects to fetch the necessary attributes from configured attribute sources to determine communications channels for
-email and/or sms. The adopter is expected to have populated user records with enough information to indicate a phone number and/or email
-address where CAS could then be configured to fetch and examine those attributes to share generated tokens.
+Please see [this guide](Simple-Multifactor-Authentication-Registration.html).
 
 ## Communication Strategy
 

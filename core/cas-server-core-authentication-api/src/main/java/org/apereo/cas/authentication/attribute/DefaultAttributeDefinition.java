@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.attribute;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -83,6 +84,8 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
 
     private boolean singleValue;
 
+    private String hashingStrategy;
+
     private static List<Object> formatValuesWithScope(final String scope, final List<Object> currentValues) {
         return currentValues
             .stream()
@@ -94,12 +97,12 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         val publicKey = registeredService.getPublicKey();
         if (publicKey == null) {
             LOGGER.error("No public key is defined for service [{}]. No attributes will be released", registeredService);
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         val cipher = publicKey.toCipher();
         if (cipher == null) {
             LOGGER.error("Unable to initialize cipher given the public key algorithm [{}]", publicKey.getAlgorithm());
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
 
         return currentValues
@@ -126,7 +129,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             }
         }
         LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     private static List<Object> fetchAttributeValueAsInlineGroovyScript(final String attributeName,
@@ -139,7 +142,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                 return fetchAttributeValueFromScript(script, attributeName, currentValues, context);
             })).orElseGet(() -> {
                 LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
-                return new ArrayList<>(0);
+                return new ArrayList<>();
             });
     }
 
@@ -176,6 +179,10 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         if (StringUtils.isNotBlank(getPatternFormat())) {
             currentValues = formatValuesWithPattern(currentValues);
         }
+        if (StringUtils.isNotBlank(getHashingStrategy())) {
+            currentValues = hashValues(currentValues);
+        }
+        
         if (isEncrypted()) {
             currentValues = encryptValues(currentValues, context.getRegisteredService());
         }
@@ -193,6 +200,20 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         }
         LOGGER.trace("Resolved values [{}] for attribute definition [{}]", currentValues, this);
         return currentValues;
+    }
+
+    private List<Object> hashValues(final List<Object> currentValues) {
+        return currentValues
+            .stream()
+            .map(value -> switch (getHashingStrategy().toLowerCase(Locale.ENGLISH)) {
+                case "hex" -> EncodingUtils.hexEncode(value.toString());
+                case "base64" -> EncodingUtils.encodeBase64(value.toString());
+                case "sha", "sha1" -> DigestUtils.sha(value.toString());
+                case "sha256" -> DigestUtils.sha256(value.toString());
+                case "sha512" -> DigestUtils.sha512(value.toString());
+                default -> value;
+            })
+            .collect(Collectors.toList());
     }
 
     private List<Object> getPatternValuesFor(final List<Object> currentValues,
@@ -237,7 +258,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             return fetchAttributeValueFromExternalGroovyScript(attributeKey, currentValues, input, context);
         }
 
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     private static String getScriptedPatternedValue(final Object currentValue,

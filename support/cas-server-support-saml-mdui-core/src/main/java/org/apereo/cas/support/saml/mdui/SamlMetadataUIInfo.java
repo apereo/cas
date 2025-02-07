@@ -234,7 +234,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
             return this.uiInfo.getLogos().stream()
                 .map(l -> new Logo(l.getURI(), l.getHeight(), l.getWidth())).collect(Collectors.toList());
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
 

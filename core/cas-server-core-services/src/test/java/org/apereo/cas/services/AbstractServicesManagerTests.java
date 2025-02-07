@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,11 @@ public abstract class AbstractServicesManagerTests{
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
-    
+
+    @Autowired
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+    protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
     @BeforeEach
     void initialize() {
         val registeredService = new CasRegisteredService();
@@ -89,7 +94,7 @@ public abstract class AbstractServicesManagerTests{
         assertFalse(isServiceInCache(registeredService.getName(), 0));
         serviceRegistry.save(registeredService);
         assertNotNull(serviceRegistry.findServiceByExactServiceId(registeredService.getName()));
-        val svc = new WebApplicationServiceFactory().createService(registeredService.getName());
+        val svc = webApplicationServiceFactory.createService(registeredService.getName());
         assertNotNull(servicesManager.findServiceBy(svc, CasRegisteredService.class));
         assertTrue(isServiceInCache(registeredService.getName(), 0));
     }

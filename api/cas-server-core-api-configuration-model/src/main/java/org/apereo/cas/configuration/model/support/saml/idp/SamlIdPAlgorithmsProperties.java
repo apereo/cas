@@ -30,42 +30,42 @@ public class SamlIdPAlgorithmsProperties implements Serializable {
     /**
      * The Override data encryption algorithms.
      */
-    private List<String> overrideDataEncryptionAlgorithms = new ArrayList<>(0);
+    private List<String> overrideDataEncryptionAlgorithms = new ArrayList<>();
 
     /**
      * The Override key encryption algorithms.
      */
-    private List<String> overrideKeyEncryptionAlgorithms = new ArrayList<>(0);
+    private List<String> overrideKeyEncryptionAlgorithms = new ArrayList<>();
 
     /**
      * The Override black listed encryption algorithms.
      */
-    private List<String> overrideBlockedEncryptionAlgorithms = new ArrayList<>(0);
+    private List<String> overrideBlockedEncryptionAlgorithms = new ArrayList<>();
 
     /**
      * The Override white listed algorithms.
      */
-    private List<String> overrideAllowedAlgorithms = new ArrayList<>(0);
+    private List<String> overrideAllowedAlgorithms = new ArrayList<>();
 
     /**
      * The Override signature reference digest methods.
      */
-    private List<String> overrideSignatureReferenceDigestMethods = new ArrayList<>(0);
+    private List<String> overrideSignatureReferenceDigestMethods = new ArrayList<>();
 
     /**
      * The Override signature algorithms.
      */
-    private List<String> overrideSignatureAlgorithms = new ArrayList<>(0);
+    private List<String> overrideSignatureAlgorithms = new ArrayList<>();
 
     /**
      * The Override blocked signature signing algorithms.
      */
-    private List<String> overrideBlockedSignatureSigningAlgorithms = new ArrayList<>(0);
+    private List<String> overrideBlockedSignatureSigningAlgorithms = new ArrayList<>();
 
     /**
      * The Override allowed signature signing algorithms.
      */
-    private List<String> overrideAllowedSignatureSigningAlgorithms = new ArrayList<>(0);
+    private List<String> overrideAllowedSignatureSigningAlgorithms = new ArrayList<>();
 
     /**
      * The Override signature canonicalization algorithm.

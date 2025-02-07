@@ -59,6 +59,8 @@ public class DynamoDbAuditTrailManagerFacilitator {
         values.put(ColumnNames.ACTION_PERFORMED.getColumnName(), AttributeValue.builder().s(record.getActionPerformed()).build());
         values.put(ColumnNames.USER_AGENT.getColumnName(), AttributeValue.builder().s(StringUtils.defaultIfBlank(record.getClientInfo().getUserAgent(), "N/A")).build());
         values.put(ColumnNames.GEO_LOCATION.getColumnName(), AttributeValue.builder().s(StringUtils.defaultIfBlank(record.getClientInfo().getGeoLocation(), "N/A")).build());
+        values.put(ColumnNames.TENANT.getColumnName(), AttributeValue.builder().s(StringUtils.defaultIfBlank(record.getClientInfo().getTenant(), "N/A")).build());
+
         val time = record.getWhenActionWasPerformed().toEpochSecond(ZoneOffset.UTC);
         values.put(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName(), AttributeValue.builder().s(String.valueOf(time)).build());
         LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
@@ -143,8 +145,9 @@ public class DynamoDbAuditTrailManagerFacilitator {
                     val resource = item.get(ColumnNames.RESOURCE_OPERATED_UPON.getColumnName()).s();
                     val userAgent = item.get(ColumnNames.USER_AGENT.getColumnName()).s();
                     val geoLocation = item.get(ColumnNames.GEO_LOCATION.getColumnName()).s();
+                    val tenant = item.get(ColumnNames.TENANT.getColumnName()).s();
                     val auditTime = Long.parseLong(item.get(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName()).s());
-                    val clientInfo = new ClientInfo(clientIp, serverIp, userAgent, geoLocation);
+                    val clientInfo = new ClientInfo(clientIp, serverIp, userAgent, geoLocation).setTenant(tenant);
                     return new AuditActionContext(principal, resource, actionPerformed, appCode,
                         DateTimeUtils.localDateTimeOf(auditTime), clientInfo);
                 })
@@ -190,6 +193,10 @@ public class DynamoDbAuditTrailManagerFacilitator {
          * Geolocation column.
          */
         GEO_LOCATION("geoLocation"),
+        /**
+         * Tenant column.
+         */
+        TENANT("tenant"),
         /**
          * applicationCode column.
          */

@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -22,10 +21,10 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     public SurrogateWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                      final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                      final FlowDefinitionRegistry flowDefinitionRegistry,
                                       final ConfigurableApplicationContext applicationContext,
                                       final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         setOrder(Ordered.LOWEST_PRECEDENCE);
     }
 
@@ -58,7 +57,7 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
         createEndState(flow, CasWebflowConstants.STATE_ID_SURROGATE_WILDCARD_VIEW, "surrogate/casSurrogateAuthnWildcardView");
     }
-    
+
     private void createSurrogateAuthorizationActionState(final Flow flow) {
         val actionState = getState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ActionState.class);
         actionState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SURROGATE_AUTHORIZATION_CHECK));

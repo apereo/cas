@@ -34,7 +34,7 @@ public class DefaultChainingMultifactorAuthenticationProvider implements Chainin
 
     private final ConfigurableApplicationContext applicationContext;
 
-    private final List<MultifactorAuthenticationProvider> multifactorAuthenticationProviders = new ArrayList<>(0);
+    private final List<MultifactorAuthenticationProvider> multifactorAuthenticationProviders = new ArrayList<>();
 
     private final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator;
 

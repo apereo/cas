@@ -253,6 +253,9 @@ A basic modest outline of the test configuration may be:
   "properties": [
     "--cas.server.something=something"
   ],
+  "healthcheck": {
+    "urls": ["https://localhost:8443/cas/actuator/health"]
+  },
   "jvmArgs": "...",
   "server": "tomcat|jetty|undertow|...",
   "SPRING_APPLICATION_JSON": {},

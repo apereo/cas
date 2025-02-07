@@ -26,10 +26,10 @@
     "pino-pretty": "13.0.0",
     "properties-reader": "2.3.0",
     "ps-node": "0.1.6",
-    "puppeteer": "23.11.1",
+    "puppeteer": "24.2.0",
     "puppeteer-loadtest": "2.2.1",
     "request": "2.88.2",
-    "@napi-rs/canvas": "0.1.65",
+    "@napi-rs/canvas": "0.1.66",
     "sockjs-client": "1.6.1",
     "speakeasy": "2.0.0",
     "unzipper": "0.12.3",
@@ -38,8 +38,8 @@
     "yaml": "2.7.0"
   },
   "devDependencies": {
-    "@eslint/js": "9.17.0",
-    "eslint": "9.17.0",
+    "@eslint/js": "9.19.0",
+    "eslint": "9.19.0",
     "globals": "15.14.0"
   }
 }

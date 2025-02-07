@@ -17,7 +17,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-@RequiresModule(name = "cas-server-support-mailgun", automated = true)
+@RequiresModule(name = "cas-server-support-mailgun", automated = false)
 @Accessors(chain = true)
 public class MailgunProperties implements Serializable {
     @Serial

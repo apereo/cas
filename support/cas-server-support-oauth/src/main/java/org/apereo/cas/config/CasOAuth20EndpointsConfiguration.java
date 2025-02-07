@@ -49,7 +49,7 @@ class CasOAuth20EndpointsConfiguration {
         @ConditionalOnMissingBean(name = "callbackAuthorizeController")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20CallbackAuthorizeEndpointController callbackAuthorizeController(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             return new OAuth20CallbackAuthorizeEndpointController(context);
         }
@@ -58,7 +58,7 @@ class CasOAuth20EndpointsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20IntrospectionEndpointController<OAuth20ConfigurationContext> introspectionEndpointController(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             return new OAuth20IntrospectionEndpointController<>(context);
         }
@@ -69,7 +69,7 @@ class CasOAuth20EndpointsConfiguration {
         public OAuth20AccessTokenEndpointController<OAuth20ConfigurationContext> accessTokenController(
             @Qualifier("accessTokenGrantAuditableRequestExtractor")
             final AuditableExecution accessTokenGrantAuditableRequestExtractor,
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             return new OAuth20AccessTokenEndpointController(context, accessTokenGrantAuditableRequestExtractor);
         }
@@ -78,7 +78,7 @@ class CasOAuth20EndpointsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20DeviceUserCodeApprovalEndpointController deviceUserCodeApprovalEndpointController(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             return new OAuth20DeviceUserCodeApprovalEndpointController(context);
         }
@@ -87,7 +87,7 @@ class CasOAuth20EndpointsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20UserProfileEndpointController<OAuth20ConfigurationContext> oauthProfileController(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             return new OAuth20UserProfileEndpointController(context);
         }
@@ -96,7 +96,7 @@ class CasOAuth20EndpointsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20RevocationEndpointController<OAuth20ConfigurationContext> oauthRevocationController(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             return new OAuth20RevocationEndpointController(context);
         }
@@ -105,7 +105,7 @@ class CasOAuth20EndpointsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthorizeEndpointController<OAuth20ConfigurationContext> authorizeController(
-            @Qualifier("oauth20ConfigurationContext")
+            @Qualifier(OAuth20ConfigurationContext.BEAN_NAME)
             final OAuth20ConfigurationContext context) {
             return new OAuth20AuthorizeEndpointController(context);
         }

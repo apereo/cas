@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.surrogate.SurrogateJdbcAuthenticationServic
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -16,6 +17,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -36,6 +38,9 @@ public class CasSurrogateJdbcAuthenticationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "jdbcSurrogateAuthenticationService")
     public BeanSupplier<SurrogateAuthenticationService> jdbcSurrogateAuthenticationService(
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+        final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
         final CasConfigurationProperties casProperties,
         @Qualifier("surrogateAuthenticationJdbcDataSource")
         final DataSource surrogateAuthenticationJdbcDataSource,
@@ -46,7 +51,7 @@ public class CasSurrogateJdbcAuthenticationAutoConfiguration {
             .when(() -> StringUtils.isNotBlank(su.getJdbc().getSurrogateSearchQuery()))
             .supply(Unchecked.supplier(() -> new SurrogateJdbcAuthenticationService(
                 new JdbcTemplate(surrogateAuthenticationJdbcDataSource),
-                servicesManager, casProperties)))
+                servicesManager, casProperties, principalAccessStrategyEnforcer, applicationContext)))
             .otherwiseNull();
     }
 

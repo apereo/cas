@@ -71,11 +71,10 @@ class InweboServiceTests {
 
         val sslContext = SSLUtils.buildSSLContext(clientCertificate);
         service = new InweboService(casProperties, mock(InweboConsoleAdmin.class), sslContext);
-        assertNotNull(service.casProperties());
-        assertNotNull(service.consoleAdmin());
-        assertNotNull(service.context());
-
-        when(service.consoleAdmin().loginQuery(anyLong())).thenReturn(new LoginQueryResult());
+        assertNotNull(service.getCasProperties());
+        assertNotNull(service.getConsoleAdmin());
+        assertNotNull(service.getContext());
+        when(service.getConsoleAdmin().loginQuery(anyLong())).thenReturn(new LoginQueryResult());
     }
 
     @Test
@@ -91,7 +90,7 @@ class InweboServiceTests {
         result.getId().add(USER_ID);
         result.getActivationStatus().add(ACTIVATION_STATUS);
         result.getStatus().add(USER_STATUS);
-        when(service.consoleAdmin().loginSearch(anyString())).thenReturn(result);
+        when(service.getConsoleAdmin().loginSearch(anyString())).thenReturn(result);
 
         val output = service.loginSearchQuery("login");
         assertNotNull(output);
@@ -109,11 +108,11 @@ class InweboServiceTests {
         loginSearchResult.getId().add(USER_ID);
         loginSearchResult.getActivationStatus().add(ACTIVATION_STATUS);
         loginSearchResult.getStatus().add(USER_STATUS);
-        when(service.consoleAdmin().loginSearch(anyString())).thenReturn(loginSearchResult);
+        when(service.getConsoleAdmin().loginSearch(anyString())).thenReturn(loginSearchResult);
 
         val loginQueryResult = new LoginQueryResult();
         loginQueryResult.setErr("OK");
-        when(service.consoleAdmin().loginQuery(anyLong())).thenReturn(loginQueryResult);
+        when(service.getConsoleAdmin().loginQuery(anyLong())).thenReturn(loginQueryResult);
 
         val output = service.loginSearchQuery("login");
         assertNotNull(output);
@@ -131,13 +130,13 @@ class InweboServiceTests {
         loginSearchResult.getId().add(USER_ID);
         loginSearchResult.getActivationStatus().add(ACTIVATION_STATUS);
         loginSearchResult.getStatus().add(USER_STATUS);
-        when(service.consoleAdmin().loginSearch(anyString())).thenReturn(loginSearchResult);
+        when(service.getConsoleAdmin().loginSearch(anyString())).thenReturn(loginSearchResult);
 
         val loginQueryResult = new LoginQueryResult();
         loginQueryResult.setErr("OK");
         loginQueryResult.getManame().add("Authenticator");
         loginQueryResult.getManame().add(StringUtils.EMPTY);
-        when(service.consoleAdmin().loginQuery(anyLong())).thenReturn(loginQueryResult);
+        when(service.getConsoleAdmin().loginQuery(anyLong())).thenReturn(loginQueryResult);
 
         val output = service.loginSearchQuery("login");
         assertNotNull(output);
@@ -155,14 +154,14 @@ class InweboServiceTests {
         loginSearchResult.getId().add(USER_ID);
         loginSearchResult.getActivationStatus().add(ACTIVATION_STATUS);
         loginSearchResult.getStatus().add(USER_STATUS);
-        when(service.consoleAdmin().loginSearch(anyString())).thenReturn(loginSearchResult);
+        when(service.getConsoleAdmin().loginSearch(anyString())).thenReturn(loginSearchResult);
 
         val loginQueryResult = new LoginQueryResult();
         loginQueryResult.setErr("OK");
         loginQueryResult.getManame().add("Authenticator");
         loginQueryResult.getManame().add("SomethingElse");
         loginQueryResult.getManame().add(StringUtils.EMPTY);
-        when(service.consoleAdmin().loginQuery(anyLong())).thenReturn(loginQueryResult);
+        when(service.getConsoleAdmin().loginQuery(anyLong())).thenReturn(loginQueryResult);
 
         val output = service.loginSearchQuery("login");
         assertNotNull(output);

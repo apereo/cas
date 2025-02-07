@@ -72,7 +72,7 @@ public interface DelegatedClientIdentityProviderAuthorizer {
      */
     default String getClientNameFromAuthentication(final Authentication authentication) {
         val clientNames = authentication.getAttributes().getOrDefault(
-            ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, new ArrayList<>(0));
+            ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, new ArrayList<>());
         return CollectionUtils.firstElement(clientNames).map(Object::toString).orElse(StringUtils.EMPTY);
     }
 

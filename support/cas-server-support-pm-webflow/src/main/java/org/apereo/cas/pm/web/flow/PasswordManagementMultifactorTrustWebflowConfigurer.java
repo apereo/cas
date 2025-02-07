@@ -19,10 +19,10 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class PasswordManagementMultifactorTrustWebflowConfigurer extends AbstractCasWebflowConfigurer {
     public PasswordManagementMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                               final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                               final FlowDefinitionRegistry flowDefinitionRegistry,
                                                                final ConfigurableApplicationContext applicationContext,
                                                                final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         setOrder(casProperties.getAuthn().getPm().getWebflow().getOrder() + 1);
     }
 

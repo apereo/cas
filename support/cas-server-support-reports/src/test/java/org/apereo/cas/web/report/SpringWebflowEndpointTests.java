@@ -69,8 +69,8 @@ class SpringWebflowEndpointTests extends AbstractCasEndpointTests {
         private CasConfigurationProperties casProperties;
 
         @Autowired
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        private FlowDefinitionRegistry flowDefinitionRegistry;
 
         @Autowired
         private FlowBuilderServices flowBuilderServices;
@@ -80,13 +80,14 @@ class SpringWebflowEndpointTests extends AbstractCasEndpointTests {
 
         @Bean
         public CasWebflowExecutionPlanConfigurer testWebflowExecutionPlanConfigurer(
-            @Qualifier("testCasWebflowConfigurer") final CasWebflowConfigurer testCasWebflowConfigurer) {
+            @Qualifier("testCasWebflowConfigurer")
+            final CasWebflowConfigurer testCasWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(testCasWebflowConfigurer);
         }
 
         @Bean
         public CasWebflowConfigurer testCasWebflowConfigurer() {
-            return new AbstractCasWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+            return new AbstractCasWebflowConfigurer(flowBuilderServices, flowDefinitionRegistry,
                 applicationContext, casProperties) {
                 @Override
                 protected void doInitialize() {

@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.states.EndViewState;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -102,9 +103,9 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     protected final FlowBuilderServices flowBuilderServices;
 
     /**
-     * The Login flow definition registry.
+     * The main CAS flow definition registry.
      */
-    protected final FlowDefinitionRegistry mainFlowDefinitionRegistry;
+    protected final FlowDefinitionRegistry flowDefinitionRegistry;
 
     /**
      * Application context.
@@ -115,11 +116,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * CAS Properties.
      */
     protected final CasConfigurationProperties casProperties;
-
-    /**
-     * The logout flow definition registry.
-     */
-    protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
 
     private int order;
 
@@ -151,11 +147,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public Flow getLogoutFlow() {
-        if (this.logoutFlowDefinitionRegistry == null) {
-            LOGGER.warn("Logout flow registry is not configured correctly.");
-            return null;
-        }
-        return (Flow) this.logoutFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGOUT);
+        return getFlow(FLOW_ID_LOGOUT);
     }
 
     @Override
@@ -393,13 +385,33 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
-    public SubflowState createSubflowState(final Flow flow, final String stateId, final String subflow, final Action entryAction) {
-        return createSubflowState(flow, stateId, subflow, this.mainFlowDefinitionRegistry, entryAction);
+    public ViewState createEndViewState(final Flow flow, final String id, final ViewFactory viewFactory) {
+        if (containsFlowState(flow, id)) {
+            LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), id);
+            return getTransitionableState(flow, id, EndViewState.class);
+        }
+        return new EndViewState(flow, id, viewFactory);
     }
 
     @Override
-    public SubflowState createSubflowState(final Flow flow, final String stateId,
-                                           final String subflow, final FlowDefinitionRegistry registry,
+    public ViewState createEndViewState(final Flow flow, final String id, final String viewId) {
+        val viewFactory = flowBuilderServices.getViewFactoryCreator()
+            .createViewFactory(new LiteralExpression(viewId), flowBuilderServices.getExpressionParser(),
+                flowBuilderServices.getConversionService(), null, this.flowBuilderServices.getValidator(),
+                flowBuilderServices.getValidationHintResolver());
+        return createEndViewState(flow, id, viewFactory);
+    }
+
+    @Override
+    public SubflowState createSubflowState(final Flow flow, final String stateId, final String subflow, final Action entryAction) {
+        return createSubflowState(flow, stateId, subflow, this.flowDefinitionRegistry, entryAction);
+    }
+
+    @Override
+    public SubflowState createSubflowState(final Flow flow,
+                                           final String stateId,
+                                           final String subflow,
+                                           final FlowDefinitionRegistry registry,
                                            final Action entryAction) {
         if (containsFlowState(flow, stateId)) {
             LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), stateId);
@@ -415,7 +427,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public Flow buildFlow(final String id) {
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
-        builder.setParent(this.mainFlowDefinitionRegistry);
+        builder.setParent(this.flowDefinitionRegistry);
         builder.addFlowBuilder(new FlowModelFlowBuilder(new DefaultFlowModelHolder(new DynamicFlowModelBuilder())), id);
         val registry = builder.build();
         return (Flow) registry.getFlowDefinition(id);
@@ -634,7 +646,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         if (def.getExecutionCriteria() != null) {
             return CollectionUtils.wrapList(def.getExecutionCriteria());
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override
@@ -653,7 +665,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public Flow getFlow(final String id) {
-        return getFlow(this.mainFlowDefinitionRegistry, id);
+        return getFlow(this.flowDefinitionRegistry, id);
     }
 
     @Override

@@ -10,7 +10,6 @@ import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
@@ -42,10 +41,6 @@ import static org.mockito.Mockito.*;
 @Import(DefaultMultifactorAuthenticationProviderWebflowEventResolverTests.MultifactorAuthenticationTestConfiguration.class)
 @TestPropertySource(properties = "cas.authn.mfa.triggers.global.global-provider-id=mfa-dummy")
 class DefaultMultifactorAuthenticationProviderWebflowEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
-    @Autowired
-    @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-
     @Autowired
     @Qualifier("globalAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver globalAuthenticationPolicyWebflowEventResolver;

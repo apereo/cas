@@ -162,7 +162,7 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
     /**
      * Default headers to be sent.
      **/
-    private Collection<? extends Header> defaultHeaders = new ArrayList<>(0);
+    private Collection<? extends Header> defaultHeaders = new ArrayList<>();
 
     /**
      * Default strategy implementation for proxy host authentication.

@@ -1,5 +1,7 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.CasProtocolConstants;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class LogoutHttpMessageTests {
     @Test
     void verifyOperation() throws Throwable {
-        val message = new LogoutHttpMessage(new URI("https://github.com").toURL(), "LogoutMessage", false);
-        assertTrue(message.getMessage().startsWith(LogoutHttpMessage.LOGOUT_REQUEST_PARAMETER));
+        val message = new LogoutHttpMessage(CasProtocolConstants.PARAMETER_LOGOUT_REQUEST, new URI("https://github.com").toURL(), "LogoutMessage", false);
+        assertTrue(message.getMessage().startsWith(CasProtocolConstants.PARAMETER_LOGOUT_REQUEST));
     }
 }

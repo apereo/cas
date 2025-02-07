@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -135,6 +136,8 @@ class CasWebSecurityConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casClientInfoLoggingFilter")
         public FilterRegistrationBean<ClientInfoThreadLocalFilter> casClientInfoLoggingFilter(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties) {
             val bean = new FilterRegistrationBean<ClientInfoThreadLocalFilter>();
             val audit = casProperties.getAudit().getEngine();
@@ -144,7 +147,7 @@ class CasWebSecurityConfiguration {
                 .useServerHostAddress(audit.isUseServerHostAddress())
                 .httpRequestHeaders(audit.getHttpRequestHeaders())
                 .build();
-            bean.setFilter(new ClientInfoThreadLocalFilter(options));
+            bean.setFilter(new ClientInfoThreadLocalFilter(options, tenantExtractor));
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
             bean.setName("CAS Client Info Logging Filter");
             bean.setAsyncSupported(true);

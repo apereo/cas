@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.ThemeResolver;
@@ -43,6 +44,9 @@ class ServiceThemeResolverTests {
     @Qualifier("themeResolver")
     private ThemeResolver themeResolver;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyGetServiceThemeDoesNotExist() throws Throwable {
         val registeredService = new CasRegisteredService();
@@ -53,7 +57,7 @@ class ServiceThemeResolverTests {
 
         servicesManager.save(registeredService);
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(registeredService.getServiceId()));
         context.withUserAgent();
         assertEquals(DEFAULT_THEME_NAME, themeResolver.resolveThemeName(context.getHttpServletRequest()));

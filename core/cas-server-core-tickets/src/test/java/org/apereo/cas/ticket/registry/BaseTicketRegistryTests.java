@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
@@ -118,6 +120,10 @@ public abstract class BaseTicketRegistryTests {
     @Qualifier(TicketSerializationManager.BEAN_NAME)
     protected TicketSerializationManager ticketSerializationManager;
 
+    @Autowired
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+    protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+    
     protected boolean useEncryption;
     
     private TicketRegistry ticketRegistry;

@@ -30,7 +30,9 @@ public interface CasBanner extends Banner {
     default void injectEnvironmentInfo(final Formatter formatter,
                                        final Environment environment,
                                        final Class<?> sourceClass) {
-        formatter.format("Active Profiles: %s%n", String.join(",", environment.getActiveProfiles()));
+        if (environment.getActiveProfiles().length > 0) {
+            formatter.format("Active Profiles: %s%n", String.join(",", environment.getActiveProfiles()));
+        }
     }
 
     /**

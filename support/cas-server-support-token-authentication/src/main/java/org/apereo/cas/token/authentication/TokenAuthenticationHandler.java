@@ -46,7 +46,7 @@ public class TokenAuthenticationHandler extends AbstractPreAndPostProcessingAuth
             val attributes = CollectionUtils.toMultiValuedMap(profile.getAttributes());
             val principal = principalFactory.createPrincipal(profile.getId(), attributes);
             tokenCredential.setId(principal.getId());
-            return createHandlerResult(tokenCredential, principal, new ArrayList<>(0));
+            return createHandlerResult(tokenCredential, principal, new ArrayList<>());
         } catch (final Throwable e) {
             throw new AuthenticationException(e);
         }

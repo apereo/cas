@@ -26,6 +26,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -65,9 +66,10 @@ public class CasCoreNotificationsAutoConfiguration {
     @ConditionalOnMissingBean(name = EmailSender.BEAN_NAME)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public EmailSender emailSender(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("messageSource") final MessageSource messageSource,
         @Qualifier("mailSender") final ObjectProvider<JavaMailSender> mailSender) {
-        return new DefaultEmailSender(mailSender.getIfAvailable(), messageSource);
+        return new DefaultEmailSender(mailSender.getIfAvailable(), messageSource, applicationContext);
     }
 
     @Bean

@@ -80,7 +80,7 @@ want a CAS-authenticated application to be able to use anchors/fragments when bo
 is configured by default to preserve anchor fragments where and when specified. There is 
 nothing further for you to do.
 
-### WebJARs for Javascript/CSS Libraries
+## WebJARs for Javascript/CSS Libraries
 
 The CAS application packages third party static resources inside the CAS webapp rather 
 than referencing CDN links so that CAS may be deployed on 
@@ -89,13 +89,12 @@ networks with limited internet access.
 The Third party static resources are packaged in "WebJAR" jar files and served up via the servlet `3.0` feature 
 that merges any folders under `META-INF/resources` in web application jars with the application's web root.
 
-#### Building WebJARs
+### Building WebJARs
 
-You can search for webjars at http://webjars.org. There are three flavors of WebJARs that you 
+You can search for webjars at https://webjars.org. There are three flavors of WebJARs that you 
 can read about but the NPM and Bower types can be created automatically for any version 
 (if they don't already exist) as long as there exists an NPM or Bower package for the 
 web resources you want to use. Click the "Add a webjar" button and follow 
 the instructions. If customizing the UI in an overlay, the deployer can add webjars as 
-dependencies to their overlay project and reference the URLs of the resource either directly 
-in an html file or via adding an entry to a `common_messages.properties` file 
-in the overlay project's `src\main\resources` folder.
+dependencies to their overlay project and reference the URLs of the resource directly 
+in an html file.

@@ -8,9 +8,9 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.ws.idp.web.flow.WSFederationIdentityProviderWebflowConfigurer;
 import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIAction;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,11 +38,19 @@ class CoreWsSecurityIdentityProviderWebflowConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_WSFEDERATION_METADATA_UI)
     public Action wsFederationMetadataUIAction(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
         final AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy) {
-        return new WSFederationMetadataUIAction(servicesManager, wsFederationAuthenticationServiceSelectionStrategy);
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> new WSFederationMetadataUIAction(servicesManager, wsFederationAuthenticationServiceSelectionStrategy))
+            .withId(CasWebflowConstants.ACTION_ID_WSFEDERATION_METADATA_UI)
+            .build()
+            .get();
     }
 
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
@@ -51,12 +59,12 @@ class CoreWsSecurityIdentityProviderWebflowConfiguration {
     public CasWebflowConfigurer wsFederationWebflowConfigurer(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
         return new WSFederationIdentityProviderWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
+            flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean

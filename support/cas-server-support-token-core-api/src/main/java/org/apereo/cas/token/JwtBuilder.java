@@ -3,7 +3,7 @@ package org.apereo.cas.token;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
@@ -72,13 +72,18 @@ public class JwtBuilder {
 
     private final RegisteredServiceCipherExecutor registeredServiceCipherExecutor;
 
+    private final ServiceFactory webApplicationServiceFactory;
+
     private final CasConfigurationProperties casProperties;
 
     public JwtBuilder(final CipherExecutor<Serializable, String> cipherExecutor,
-                      final ApplicationContext applicationContext, final ServicesManager servicesManager,
-                      final PrincipalResolver principalResolver, final CasConfigurationProperties properties) {
+                      final ApplicationContext applicationContext,
+                      final ServicesManager servicesManager,
+                      final PrincipalResolver principalResolver,
+                      final CasConfigurationProperties properties,
+                      final ServiceFactory webApplicationServiceFactory) {
         this(cipherExecutor, applicationContext, servicesManager, principalResolver,
-            RegisteredServiceCipherExecutor.noOp(), properties);
+            RegisteredServiceCipherExecutor.noOp(), webApplicationServiceFactory, properties);
     }
 
     /**
@@ -257,7 +262,7 @@ public class JwtBuilder {
     }
 
     protected RegisteredService locateRegisteredService(final String serviceAudience) {
-        val service = new WebApplicationServiceFactory().createService(serviceAudience);
+        val service = webApplicationServiceFactory.createService(serviceAudience);
         return servicesManager.findServiceBy(service);
     }
 

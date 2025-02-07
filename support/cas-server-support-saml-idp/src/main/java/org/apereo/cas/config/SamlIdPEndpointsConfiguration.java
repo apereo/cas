@@ -18,6 +18,7 @@ import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.pac4j.TicketRegistrySessionStore;
 import org.apereo.cas.services.CasRegisteredService;
@@ -503,6 +504,8 @@ class SamlIdPEndpointsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder samlIdPDistributedSessionCookieGenerator(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(GeoLocationService.BEAN_NAME)
             final ObjectProvider<GeoLocationService> geoLocationService,
             @Qualifier("samlIdPDistributedSessionCookieCipherExecutor")
@@ -513,8 +516,8 @@ class SamlIdPEndpointsConfiguration {
                 cookie.setName("%s%s".formatted(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME, SAML_SERVER_SUPPORT_PREFIX));
             }
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
-                new DefaultCasCookieValueManager(samlIdPDistributedSessionCookieCipherExecutor, geoLocationService,
-                    DefaultCookieSameSitePolicy.INSTANCE, cookie));
+                new DefaultCasCookieValueManager(samlIdPDistributedSessionCookieCipherExecutor, tenantExtractor,
+                    geoLocationService, DefaultCookieSameSitePolicy.INSTANCE, cookie));
         }
 
         @ConditionalOnMissingBean(name = "samlIdPDistributedSessionStore")

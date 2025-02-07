@@ -31,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -72,12 +71,14 @@ class CasPersonDirectoryConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasPersonDirectoryEndpoint casPersonDirectoryEndpoint(
-            @Autowired
             @Qualifier("cachingAttributeRepository")
             final ObjectProvider<PersonAttributeDao> cachingAttributeRepository,
+            @Qualifier(PersonDirectoryAttributeRepositoryPlan.BEAN_NAME)
+            final ObjectProvider<PersonDirectoryAttributeRepositoryPlan> attributeRepositoryPlan,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
-            return new CasPersonDirectoryEndpoint(casProperties, applicationContext, cachingAttributeRepository);
+            return new CasPersonDirectoryEndpoint(casProperties, applicationContext,
+                cachingAttributeRepository, attributeRepositoryPlan);
         }
 
 
@@ -111,7 +112,7 @@ class CasPersonDirectoryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalResolutionExecutionPlanConfigurer principalResolutionExecutionPlanConfigurer(
-            @Qualifier("personDirectoryAttributeRepositoryPlan") final PersonDirectoryAttributeRepositoryPlan personDirectoryAttributeRepositoryPlan,
+            @Qualifier(PersonDirectoryAttributeRepositoryPlan.BEAN_NAME) final PersonDirectoryAttributeRepositoryPlan personDirectoryAttributeRepositoryPlan,
             @Qualifier("personDirectoryAttributeRepositoryPrincipalResolver") final PrincipalResolver personDirectoryAttributeRepositoryPrincipalResolver) {
             return plan -> {
                 if (personDirectoryAttributeRepositoryPlan.isEmpty()) {
@@ -127,7 +128,7 @@ class CasPersonDirectoryConfiguration {
     @Configuration(value = "CasPersonDirectoryAttributeRepositoryPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasPersonDirectoryAttributeRepositoryPlanConfiguration {
-        @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPlan")
+        @ConditionalOnMissingBean(name = PersonDirectoryAttributeRepositoryPlan.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PersonDirectoryAttributeRepositoryPlan personDirectoryAttributeRepositoryPlan(
@@ -204,7 +205,7 @@ class CasPersonDirectoryConfiguration {
             @Qualifier("attributeRepositoryAttributeMerger")
             final AttributeMerger attributeRepositoryAttributeMerger,
             final CasConfigurationProperties casProperties,
-            @Qualifier("personDirectoryAttributeRepositoryPlan")
+            @Qualifier(PersonDirectoryAttributeRepositoryPlan.BEAN_NAME)
             final PersonDirectoryAttributeRepositoryPlan personDirectoryAttributeRepositoryPlan) {
             val aggregate = getAggregateAttributeRepository(casProperties);
             aggregate.setAttributeMerger(attributeRepositoryAttributeMerger);

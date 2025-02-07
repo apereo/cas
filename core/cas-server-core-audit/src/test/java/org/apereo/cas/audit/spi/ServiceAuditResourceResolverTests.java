@@ -34,7 +34,8 @@ class ServiceAuditResourceResolverTests {
         @Test
         void verifyOperation() {
             val jp = mock(JoinPoint.class);
-            when(jp.getArgs()).thenReturn(new Object[]{"something", RegisteredServiceTestUtils.getService()});
+            val args = new Object[]{"something", RegisteredServiceTestUtils.getService()};
+            when(jp.getArgs()).thenReturn(args);
             var input = serviceAuditResourceResolver.resolveFrom(jp, new Object());
             assertTrue(input.length > 0);
             input = serviceAuditResourceResolver.resolveFrom(jp, new RuntimeException());
@@ -54,7 +55,8 @@ class ServiceAuditResourceResolverTests {
         @Test
         void verifyJsonOperation() {
             val jp = mock(JoinPoint.class);
-            when(jp.getArgs()).thenReturn(new Object[]{"something", RegisteredServiceTestUtils.getService()});
+            val args = new Object[]{"something", RegisteredServiceTestUtils.getService()};
+            when(jp.getArgs()).thenReturn(args);
             var input = serviceAuditResourceResolver.resolveFrom(jp, new Object());
             assertTrue(input.length > 0);
 

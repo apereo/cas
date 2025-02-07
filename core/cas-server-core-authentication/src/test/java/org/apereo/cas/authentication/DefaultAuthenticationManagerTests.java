@@ -10,15 +10,29 @@ import org.apereo.cas.authentication.policy.RequiredAuthenticationHandlerAuthent
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasMultitenancyAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.DirectObjectProvider;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.StaticApplicationContext;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -40,6 +54,14 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Authentication")
 @Slf4j
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = {
+    DefaultAuthenticationManagerTests.AuthenticationPlanTestConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasMultitenancyAutoConfiguration.class
+})
+@ExtendWith(CasTestExtension.class)
 class DefaultAuthenticationManagerTests {
     private static final String HANDLER_A = "HandlerA";
 
@@ -50,6 +72,10 @@ class DefaultAuthenticationManagerTests {
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser1"),
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser2"));
 
+    @Autowired
+    @Qualifier(TenantExtractor.BEAN_NAME)
+    private TenantExtractor tenantExtractor;
+    
     private ConfigurableApplicationContext applicationContext;
 
     protected static ServicesManager mockServicesManager() {
@@ -91,8 +117,9 @@ class DefaultAuthenticationManagerTests {
         return mock;
     }
 
-    private static AuthenticationEventExecutionPlan getAuthenticationExecutionPlan(final Map<AuthenticationHandler, PrincipalResolver> map) {
-        val plan = new DefaultAuthenticationEventExecutionPlan();
+    private AuthenticationEventExecutionPlan getAuthenticationExecutionPlan(
+        final Map<AuthenticationHandler, PrincipalResolver> map) {
+        val plan = new DefaultAuthenticationEventExecutionPlan(new DefaultAuthenticationHandlerResolver(), tenantExtractor);
         plan.registerAuthenticationHandlerWithPrincipalResolver(map);
         plan.registerAuthenticationHandlerResolver(new RegisteredServiceAuthenticationHandlerResolver(mockServicesManager(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())));
@@ -379,4 +406,13 @@ class DefaultAuthenticationManagerTests {
             false, applicationContext);
     }
 
+    @TestConfiguration(value = "AuthenticationPlanTestConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class AuthenticationPlanTestConfiguration {
+        @Bean
+        public ServicesManager servicesManager() {
+            return mockServicesManager();
+        }
+    }
+    
 }

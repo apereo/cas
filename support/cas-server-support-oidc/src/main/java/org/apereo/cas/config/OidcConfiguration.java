@@ -696,6 +696,8 @@ class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcAccessTokenJwtBuilder")
         public JwtBuilder accessTokenJwtBuilder(
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("oidcAccessTokenJwtCipherExecutor")
@@ -707,7 +709,7 @@ class OidcConfiguration {
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver principalResolver) {
             return new OAuth20JwtBuilder(oidcAccessTokenJwtCipherExecutor, applicationContext, servicesManager,
-                oidcRegisteredServiceJwtAccessTokenCipherExecutor, casProperties, principalResolver);
+                oidcRegisteredServiceJwtAccessTokenCipherExecutor, casProperties, principalResolver, webApplicationServiceFactory);
         }
     }
 
@@ -1203,6 +1205,8 @@ class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcResponseModeJwtBuilder")
         public JwtBuilder oidcResponseModeJwtBuilder(
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("oidcRegisteredServiceResponseModeJwtCipherExecutor")
             final RegisteredServiceCipherExecutor oidcRegisteredServiceResponseModeJwtCipherExecutor,
@@ -1214,7 +1218,7 @@ class OidcConfiguration {
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver principalResolver) {
             return new OAuth20JwtBuilder(oidcResponseModeJwtCipherExecutor, applicationContext, servicesManager,
-                oidcRegisteredServiceResponseModeJwtCipherExecutor, casProperties, principalResolver);
+                oidcRegisteredServiceResponseModeJwtCipherExecutor, casProperties, principalResolver, webApplicationServiceFactory);
         }
 
     }

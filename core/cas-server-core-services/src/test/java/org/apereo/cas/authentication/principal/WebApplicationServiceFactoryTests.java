@@ -1,15 +1,19 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.CasProtocolConstants;
-
+import org.apereo.cas.config.BaseAutoConfigurationTests;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +26,13 @@ import static org.mockito.Mockito.*;
  * @since 4.2
  */
 @Tag("Authentication")
+@ExtendWith(CasTestExtension.class)
+@SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
 class WebApplicationServiceFactoryTests {
+
+    @Autowired
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+    protected ServiceFactory<WebApplicationService> serviceFactory;
 
     @Test
     void verifyServiceAttributes() {
@@ -32,8 +42,7 @@ class WebApplicationServiceFactoryTests {
         request.addParameter(CasProtocolConstants.PARAMETER_PASSWORD, "m$hf74621");
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "https://example.org?p3=v3&p4=v4");
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService(request);
+        val service = serviceFactory.createService(request);
         assertNotNull(service);
         assertEquals(6, service.getAttributes().size());
 
@@ -53,8 +62,7 @@ class WebApplicationServiceFactoryTests {
     void verifyServiceCreationSuccessfullyById() {
         val request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService("testservice");
+        val service = serviceFactory.createService("testservice");
         assertNotNull(service);
     }
 
@@ -62,8 +70,7 @@ class WebApplicationServiceFactoryTests {
     void verifyServiceCreationSuccessfullyByService() {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService(request);
+        val service = serviceFactory.createService(request);
         assertNotNull(service);
         assertEquals(CasProtocolConstants.PARAMETER_SERVICE, service.getSource());
     }
@@ -72,8 +79,7 @@ class WebApplicationServiceFactoryTests {
     void verifyServiceCreationSuccessfullyByTargetService() {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "test");
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService(request);
+        val service = serviceFactory.createService(request);
         assertNotNull(service);
         assertEquals(CasProtocolConstants.PARAMETER_TARGET_SERVICE, service.getSource());
     }
@@ -84,8 +90,7 @@ class WebApplicationServiceFactoryTests {
         request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "test");
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ticket");
         request.addParameter(CasProtocolConstants.PARAMETER_METHOD, "post");
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService(request);
+        val service = serviceFactory.createService(request);
         assertNotNull(service);
         assertEquals("ticket", service.getArtifactId());
     }
@@ -94,32 +99,27 @@ class WebApplicationServiceFactoryTests {
     void verifyServiceCreationNoService() {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ticket");
-        val factory = new WebApplicationServiceFactory();
-
-        val service = factory.createService(request);
+        val service = serviceFactory.createService(request);
         assertNull(service);
     }
 
     @Test
     void verifyServiceCreationNoRequest() {
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService("testservice");
+        val service = serviceFactory.createService("testservice");
         assertNotNull(service);
     }
 
     @Test
     void verifyServiceByClass() {
-        val factory = new WebApplicationServiceFactory();
-        assertThrows(ClassCastException.class, () -> factory.createService("testservice", mock(Service.class).getClass()));
-        assertNotNull(factory.createService("testservice", WebApplicationService.class));
+        assertThrows(ClassCastException.class, () -> serviceFactory.createService("testservice", mock(Service.class).getClass()));
+        assertNotNull(serviceFactory.createService("testservice", WebApplicationService.class));
     }
 
     @Test
     void verifyServiceByClassReq() {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "test");
-        val factory = new WebApplicationServiceFactory();
-        assertThrows(ClassCastException.class, () -> factory.createService(request, mock(Service.class).getClass()));
-        assertNotNull(factory.createService(request, WebApplicationService.class));
+        assertThrows(ClassCastException.class, () -> serviceFactory.createService(request, mock(Service.class).getClass()));
+        assertNotNull(serviceFactory.createService(request, WebApplicationService.class));
     }
 }

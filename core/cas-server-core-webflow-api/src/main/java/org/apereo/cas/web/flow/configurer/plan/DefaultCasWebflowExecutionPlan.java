@@ -26,11 +26,11 @@ import java.util.List;
 public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
     private final CasReentrantLock lock = new CasReentrantLock();
 
-    private final List<CasWebflowConfigurer> webflowConfigurers = new ArrayList<>(0);
+    private final List<CasWebflowConfigurer> webflowConfigurers = new ArrayList<>();
 
-    private final List<HandlerInterceptor> webflowInterceptors = new ArrayList<>(0);
+    private final List<HandlerInterceptor> webflowInterceptors = new ArrayList<>();
 
-    private final List<CasWebflowLoginContextProvider> webflowLoginContextProviders = new ArrayList<>(0);
+    private final List<CasWebflowLoginContextProvider> webflowLoginContextProviders = new ArrayList<>();
 
     private final ConfigurableApplicationContext applicationContext;
 

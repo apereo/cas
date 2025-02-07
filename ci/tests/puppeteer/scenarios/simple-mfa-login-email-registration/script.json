@@ -1,0 +1,27 @@
+{
+  "dependencies": "simple-mfa,reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.http-client.host-name-verifier=none",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.authn.mfa.simple.mail.html=false",
+    "--cas.authn.mfa.simple.mail.from=cas@example.com",
+    "--cas.authn.mfa.simple.mail.subject=Token",
+    "--cas.authn.mfa.simple.mail.text=${token}",
+    "--cas.authn.mfa.simple.mail.accepted-email-pattern=.+@example.org"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
+

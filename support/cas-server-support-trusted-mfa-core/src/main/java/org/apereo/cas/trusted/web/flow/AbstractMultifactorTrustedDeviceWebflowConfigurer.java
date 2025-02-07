@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasMultifactorWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -15,7 +14,6 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
-
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
@@ -37,12 +35,12 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
     public static final String MFA_TRUSTED_AUTHN_SCOPE_ATTR = "mfaTrustedAuthentication";
 
     protected AbstractMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                                final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                                final FlowDefinitionRegistry flowDefinitionRegistry,
                                                                 final ConfigurableApplicationContext applicationContext,
                                                                 final CasConfigurationProperties casProperties,
                                                                 final Optional<FlowDefinitionRegistry> mfaFlowDefinitionRegistry,
                                                                 final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties, mfaFlowDefinitionRegistry, mfaFlowCustomizers);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties, mfaFlowDefinitionRegistry, mfaFlowCustomizers);
     }
 
     /**
@@ -146,5 +144,11 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
                     CasWebflowConstants.ACTION_ID_MFA_VERIFY_TRUST_ACTION));
             }
         });
+    }
+
+    @Override
+    protected void doInitialize() {
+        super.doInitialize();
+        registerMultifactorTrustedAuthentication();
     }
 }
