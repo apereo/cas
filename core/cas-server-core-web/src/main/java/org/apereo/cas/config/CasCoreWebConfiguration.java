@@ -19,6 +19,7 @@ import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
+import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.view.CasReloadableMessageBundle;
 import org.apereo.cas.web.view.DynamicHtmlView;
 import lombok.val;
@@ -55,7 +56,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -171,19 +171,12 @@ class CasCoreWebConfiguration {
             final WebProperties webProperties,
             final ConfigurableApplicationContext applicationContext) {
             val mappings = Map.<Class<? extends Throwable>, ModelAndView>of(
-                UnknownTenantException.class, getModelAndView(HttpStatus.NOT_FOUND, CasWebflowConstants.VIEW_ID_UNKNOWN_TENANT),
-                UnauthorizedServiceException.class, getModelAndView(HttpStatus.FORBIDDEN, CasWebflowConstants.VIEW_ID_SERVICE_ERROR),
-                NoSuchConversationException.class, getModelAndView(HttpStatus.UNPROCESSABLE_ENTITY, "error/%s".formatted(HttpStatus.UNPROCESSABLE_ENTITY.value()))
+                UnknownTenantException.class, WebUtils.toModelAndView(HttpStatus.NOT_FOUND, CasWebflowConstants.VIEW_ID_UNKNOWN_TENANT),
+                UnauthorizedServiceException.class, WebUtils.toModelAndView(HttpStatus.FORBIDDEN, CasWebflowConstants.VIEW_ID_SERVICE_ERROR),
+                NoSuchConversationException.class, WebUtils.toModelAndView(HttpStatus.UNPROCESSABLE_ENTITY, "error/%s".formatted(HttpStatus.UNPROCESSABLE_ENTITY.value()))
             );
             return new MappedExceptionErrorViewResolver(applicationContext,
                 webProperties.getResources(), mappings, errorContext -> Optional.empty());
-        }
-
-        private static ModelAndView getModelAndView(final HttpStatus status, final String viewName) {
-            val mv = new ModelAndView();
-            mv.setStatus(HttpStatusCode.valueOf(status.value()));
-            mv.setViewName(viewName);
-            return mv;
         }
     }
 

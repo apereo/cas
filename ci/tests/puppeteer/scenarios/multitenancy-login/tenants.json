@@ -12,6 +12,12 @@
           [
             "STATIC"
           ]
+        ],
+        "allowedProviders": [
+          "java.util.ArrayList",
+          [
+            "CasClient1"
+          ]
         ]
       }
     },
@@ -25,6 +31,12 @@
           "java.util.ArrayList",
           [
             "JSON"
+          ]
+        ],
+        "allowedProviders": [
+          "java.util.ArrayList",
+          [
+            "CasClient2"
           ]
         ]
       }
