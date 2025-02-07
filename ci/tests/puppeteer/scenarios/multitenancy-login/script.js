@@ -14,11 +14,15 @@ async function verifyTenant(browser, tenantId) {
 
     switch (tenantId) {
     case "shire":
+        await cas.assertVisibility(page, "li #CasClient1");
+        await cas.assertInvisibility(page, "li #CasClient2");
         response = await cas.loginWith(page, "casweb", "p@ssw0rd");
         assert(response.status() === 401);
         await cas.loginWith(page, "casuser", "Mellon");
         break;
     case "moria":
+        await cas.assertVisibility(page, "li #CasClient2");
+        await cas.assertInvisibility(page, "li #CasClient1");
         response = await cas.loginWith(page, "casuser", "Mellon");
         assert(response.status() === 401);
         await cas.loginWith(page, "casweb", "p@ssw0rd");

@@ -42,6 +42,7 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.context.ExternalContextHolder;
@@ -1918,5 +1919,19 @@ public class WebUtils {
      */
     public static Integer countFailedAuthenticationAttempts(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("authenticationFailureCount", Integer.class);
+    }
+
+    /**
+     * To model and view.
+     *
+     * @param status   the status
+     * @param viewName the view name
+     * @return the model and view
+     */
+    public static ModelAndView toModelAndView(final HttpStatus status, final String viewName) {
+        val mv = new ModelAndView();
+        mv.setStatus(HttpStatusCode.valueOf(status.value()));
+        mv.setViewName(viewName);
+        return mv;
     }
 }
