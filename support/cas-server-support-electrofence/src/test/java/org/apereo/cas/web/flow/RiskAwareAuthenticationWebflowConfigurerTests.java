@@ -31,7 +31,7 @@ class RiskAwareAuthenticationWebflowConfigurerTests extends BaseWebflowConfigure
     @Test
     void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
 
         var state = (TransitionableState) flow.getState(RiskAwareAuthenticationWebflowConfigurer.STATE_ID_BLOCKED_AUTHN);

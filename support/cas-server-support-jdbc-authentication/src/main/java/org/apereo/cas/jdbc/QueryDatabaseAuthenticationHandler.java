@@ -99,7 +99,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
 
             val attributes = collectPrincipalAttributes(dbFields);
             val principal = this.principalFactory.createPrincipal(username, attributes);
-            return createHandlerResult(credential, principal, new ArrayList<>(0));
+            return createHandlerResult(credential, principal, new ArrayList<>());
 
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {

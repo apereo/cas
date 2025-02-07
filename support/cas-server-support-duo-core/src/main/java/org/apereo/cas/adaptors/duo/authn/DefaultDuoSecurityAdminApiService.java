@@ -105,7 +105,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
                 .map(Long::valueOf)
                 .collect(Collectors.toList());
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override

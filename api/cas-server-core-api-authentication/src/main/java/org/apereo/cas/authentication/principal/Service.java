@@ -71,6 +71,20 @@ public interface Service extends Serializable {
     String getId();
 
     /**
+     * Gets tenant.
+     *
+     * @return the tenant
+     */
+    String getTenant();
+
+    /**
+     * Sets tenant.
+     *
+     * @param tenant the tenant
+     */
+    void setTenant(String tenant);
+
+    /**
      * Principal attributes.
      *
      * @return the map of configured attributes for this principal

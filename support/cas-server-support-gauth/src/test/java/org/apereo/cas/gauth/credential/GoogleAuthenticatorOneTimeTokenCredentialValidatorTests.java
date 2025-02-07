@@ -50,11 +50,11 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     private OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator;
 
     @Autowired
-    @Qualifier("googleAuthenticatorAccountRegistry")
+    @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
 
     @Autowired
-    @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
+    @Qualifier(OneTimeTokenRepository.BEAN_NAME)
     private OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository;
 
     @Test

@@ -21,6 +21,7 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.merger.MultivaluedAttributeMerger;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
@@ -95,7 +96,7 @@ public class RegisteredServiceTestUtils {
     public static AbstractWebApplicationService getService(final String name) {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
-        return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
+        return (AbstractWebApplicationService) new WebApplicationServiceFactory(mock(TenantExtractor.class)).createService(request);
     }
 
     public static Service getService2() {

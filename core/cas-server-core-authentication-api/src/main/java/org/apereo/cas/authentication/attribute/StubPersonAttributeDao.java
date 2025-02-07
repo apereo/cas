@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.attribute;
 
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import lombok.AllArgsConstructor;
@@ -63,7 +64,7 @@ public class StubPersonAttributeDao extends BasePersonAttributeDao {
     public Set<PersonAttributes> getPeople(final Map<String, Object> query,
                                            final PersonAttributeDaoFilter filter,
                                            final Set<PersonAttributes> resolvedPeople) {
-        return getPeopleWithMultivaluedAttributes(stuffAttributesIntoList(query, filter), filter, resolvedPeople);
+        return getPeopleWithMultivaluedAttributes(PersonAttributeDao.stuffAttributesIntoList(query), filter, resolvedPeople);
     }
 
     public void setBackingMap(final Map<String, List<Object>> backingMap) {

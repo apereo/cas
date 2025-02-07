@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.multitenancy.UnknownTenantException;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.web.support.MappedExceptionErrorViewResolver;
 import org.apereo.cas.util.spring.RestActuatorControllerEndpoint;
@@ -170,6 +171,7 @@ class CasCoreWebConfiguration {
             final WebProperties webProperties,
             final ConfigurableApplicationContext applicationContext) {
             val mappings = Map.<Class<? extends Throwable>, ModelAndView>of(
+                UnknownTenantException.class, getModelAndView(HttpStatus.NOT_FOUND, CasWebflowConstants.VIEW_ID_UNKNOWN_TENANT),
                 UnauthorizedServiceException.class, getModelAndView(HttpStatus.FORBIDDEN, CasWebflowConstants.VIEW_ID_SERVICE_ERROR),
                 NoSuchConversationException.class, getModelAndView(HttpStatus.UNPROCESSABLE_ENTITY, "error/%s".formatted(HttpStatus.UNPROCESSABLE_ENTITY.value()))
             );

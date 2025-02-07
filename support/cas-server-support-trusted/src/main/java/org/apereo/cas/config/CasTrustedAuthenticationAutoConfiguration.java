@@ -163,9 +163,9 @@ public class CasTrustedAuthenticationAutoConfiguration {
             final PrincipalFactory trustedPrincipalFactory,
             @Qualifier("remoteRequestPrincipalAttributesExtractor")
             final RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor,
-            @Qualifier("adaptiveAuthenticationPolicy")
+            @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
             @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
@@ -184,9 +184,9 @@ public class CasTrustedAuthenticationAutoConfiguration {
             final PrincipalFactory trustedPrincipalFactory,
             @Qualifier("remoteRequestPrincipalAttributesExtractor")
             final RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor,
-            @Qualifier("adaptiveAuthenticationPolicy")
+            @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
             @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
@@ -201,14 +201,15 @@ public class CasTrustedAuthenticationAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "principalFromRemoteHeaderPrincipalAction")
         public PrincipalFromRequestExtractorAction principalFromRemoteHeaderPrincipalAction(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("trustedPrincipalFactory")
             final PrincipalFactory trustedPrincipalFactory,
             @Qualifier("remoteRequestPrincipalAttributesExtractor")
             final RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor,
-            @Qualifier("adaptiveAuthenticationPolicy")
+            @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
             @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
@@ -235,9 +236,9 @@ public class CasTrustedAuthenticationAutoConfiguration {
             final PrincipalFromRequestExtractorAction principalFromRemoteUserPrincipalAction,
             @Qualifier("principalFromRemoteHeaderPrincipalAction")
             final PrincipalFromRequestExtractorAction principalFromRemoteHeaderPrincipalAction,
-            @Qualifier("adaptiveAuthenticationPolicy")
+            @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
             @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {

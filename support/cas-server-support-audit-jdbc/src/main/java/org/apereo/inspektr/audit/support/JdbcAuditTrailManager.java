@@ -19,6 +19,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionOperations;
+import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.sql.ResultSet;
@@ -104,6 +105,10 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
          */
         GEOLOCATION("AUD_GEOLOCATION"),
         /**
+         * Geolocation column.
+         */
+        TENANT("AUD_TENANT"),
+        /**
          * UserAgent column.
          */
         USERAGENT("AUD_USERAGENT"),
@@ -162,7 +167,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
     protected void saveAuditRecord(final AuditActionContext auditActionContext) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
-            protected void doInTransactionWithoutResult(final TransactionStatus __) {
+            protected void doInTransactionWithoutResult(@Nonnull final TransactionStatus __) {
                 val principal = auditActionContext.getPrincipal();
                 val userId = columnLength <= 0 || principal.length() <= columnLength
                     ? principal
@@ -190,6 +195,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
                 parameterMap.put(AuditTableColumns.APPLIC_CD.getColumnName(), auditActionContext.getApplicationCode());
                 parameterMap.put(AuditTableColumns.DATE.getColumnName(), auditActionContext.getWhenActionWasPerformed());
                 parameterMap.put(AuditTableColumns.GEOLOCATION.getColumnName(), clientInfo.getGeoLocation());
+                parameterMap.put(AuditTableColumns.TENANT.getColumnName(), clientInfo.getTenant());
                 parameterMap.put(AuditTableColumns.USERAGENT.getColumnName(), clientInfo.getUserAgent());
                 parameterMap.put(AuditTableColumns.LOCALE.getColumnName(), locale);
                 parameterMap.put(AuditTableColumns.ACTION.getColumnName(), action);
@@ -291,6 +297,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
         val appCode = resultSet.getString(AuditTableColumns.APPLIC_CD.getColumnName());
         val action = resultSet.getString(AuditTableColumns.ACTION.getColumnName());
         val userAgent = resultSet.getString(AuditTableColumns.USERAGENT.getColumnName());
+        val tenant = resultSet.getString(AuditTableColumns.TENANT.getColumnName());
         val geoLocation = resultSet.getString(AuditTableColumns.GEOLOCATION.getColumnName());
         val locale = StringUtils.defaultIfBlank(resultSet.getString(AuditTableColumns.LOCALE.getColumnName()), Locale.US.toLanguageTag());
 
@@ -303,6 +310,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
         }
         val clientInfo = new ClientInfo(clientIp, serverIp, userAgent, geoLocation)
             .setLocale(Locale.forLanguageTag(locale))
+            .setTenant(tenant)
             .setHeaders(headers);
         val auditDate = audDate.toLocalDateTime();
         return new AuditActionContext(principal, resource, action, appCode, auditDate, clientInfo);

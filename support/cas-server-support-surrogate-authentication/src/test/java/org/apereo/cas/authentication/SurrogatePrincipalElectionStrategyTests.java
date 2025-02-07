@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationServiceTests;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,11 +43,17 @@ class SurrogatePrincipalElectionStrategyTests {
     @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
     private AttributeRepositoryResolver attributeRepositoryResolver;
 
-
+    @Autowired
+    @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+    private RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
+    
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyNominate() throws Throwable {
         val surrogate = buildSurrogatePrincipal("cas-surrogate",
@@ -145,7 +153,8 @@ class SurrogatePrincipalElectionStrategyTests {
 
     private SurrogateAuthenticationPrincipalBuilder getBuilder() {
         val surrogateAuthenticationService = new SimpleSurrogateAuthenticationService(
-            Map.of("test", List.of("surrogate")), servicesManager, casProperties);
+            Map.of("test", List.of("surrogate")), servicesManager, casProperties,
+            principalAccessStrategyEnforcer, applicationContext);
         return new DefaultSurrogateAuthenticationPrincipalBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),

@@ -2,7 +2,7 @@
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await cas.newBrowser(cas.browserOptions());
+    const browser = await cas.newBrowser(cas.browserOptions({ args: [ "--accept-lang=de", "--lang=de"] }));
     const page = await cas.newPage(browser);
 
     const stepUpUrl = "https://localhost:8443/cas/login?service=https://localhost:9859/anything/1&authn_method=mfa-duo";

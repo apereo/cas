@@ -64,5 +64,5 @@ public abstract class AbstractLdapSearchProperties extends AbstractLdapPropertie
     /**
      * Search handlers.
      */
-    private List<LdapSearchEntryHandlersProperties> searchEntryHandlers = new ArrayList<>(0);
+    private List<LdapSearchEntryHandlersProperties> searchEntryHandlers = new ArrayList<>();
 }

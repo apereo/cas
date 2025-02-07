@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.jdbc.authn;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,5 +24,6 @@ public class ProcedureJdbcAuthenticationProperties extends BaseJdbcAuthenticatio
     /**
      * The procedure name to execute.
      */
+    @RequiredProperty
     private String procedureName;
 }

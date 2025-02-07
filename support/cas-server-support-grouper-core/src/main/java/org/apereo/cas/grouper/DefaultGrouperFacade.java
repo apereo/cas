@@ -29,7 +29,7 @@ public class DefaultGrouperFacade implements GrouperFacade {
             val results = fetchGroupsFor(subjectId);
             if (results == null || results.length == 0) {
                 LOGGER.warn("Subject id [{}] could not be located.", subjectId);
-                return new ArrayList<>(0);
+                return new ArrayList<>();
             }
             LOGGER.debug("Found [{}] groups for [{}]", results.length, subjectId);
             return CollectionUtils.wrapList(results);

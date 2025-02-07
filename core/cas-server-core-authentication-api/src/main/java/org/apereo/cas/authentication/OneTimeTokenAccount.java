@@ -80,7 +80,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @CollectionTable(name = TABLE_NAME_SCRATCH_CODES, joinColumns = @JoinColumn(name = "id"))
     @Column(nullable = false, columnDefinition = "numeric", precision = 255, scale = 0)
     @Builder.Default
-    private List<Number> scratchCodes = new ArrayList<>(0);
+    private List<Number> scratchCodes = new ArrayList<>();
 
     @Column(nullable = false)
     @JsonProperty("username")

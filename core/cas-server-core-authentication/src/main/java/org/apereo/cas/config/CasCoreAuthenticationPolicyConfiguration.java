@@ -59,7 +59,7 @@ class CasCoreAuthenticationPolicyConfiguration {
             };
         }
 
-        @ConditionalOnMissingBean(name = "adaptiveAuthenticationPolicy")
+        @ConditionalOnMissingBean(name = AdaptiveAuthenticationPolicy.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy(

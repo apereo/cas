@@ -93,7 +93,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
     /**
      * Activate and configure a multifactor authentication provider via Duo Security.
      */
-    private List<DuoSecurityMultifactorAuthenticationProperties> duo = new ArrayList<>(0);
+    private List<DuoSecurityMultifactorAuthenticationProperties> duo = new ArrayList<>();
 
     /**
      * Activate and configure a multifactor authentication provider via Inwebo.

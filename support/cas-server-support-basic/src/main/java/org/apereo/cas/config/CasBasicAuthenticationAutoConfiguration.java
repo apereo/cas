@@ -12,6 +12,7 @@ import org.apereo.cas.web.flow.BasicAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -42,14 +43,22 @@ public class CasBasicAuthenticationAutoConfiguration {
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_BASIC_AUTHENTICATION)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action basicAuthenticationAction(
-        @Qualifier("adaptiveAuthenticationPolicy")
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties,
+        @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-        @Qualifier("serviceTicketRequestWebflowEventResolver")
+        @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
         @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
-        return new BasicAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
-            serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> new BasicAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
+                    serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy))
+            .withId(CasWebflowConstants.ACTION_ID_BASIC_AUTHENTICATION)
+            .build()
+            .get();
     }
 
     @ConditionalOnMissingBean(name = "basicAuthenticationWebflowConfigurer")
@@ -57,11 +66,11 @@ public class CasBasicAuthenticationAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer basicAuthenticationWebflowConfigurer(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
-        return new BasicAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        return new BasicAuthenticationWebflowConfigurer(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "basicPrincipalFactory")

@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.slo;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.slo.BaseSingleLogoutServiceMessageHandler;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
@@ -21,6 +20,7 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
+import org.apereo.cas.web.HttpMessage;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.http.HttpResponse;
@@ -94,7 +94,7 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
     }
 
     @Override
-    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
+    protected boolean sendMessageToEndpoint(final HttpMessage msg, final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
 
         val payload = logoutMessage.getPayload();
         HttpResponse response = null;

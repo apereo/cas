@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -66,7 +65,7 @@ public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigure
         createEndState(accountFlow, CasWebflowConstants.STATE_ID_REDIRECT_TO_LOGIN, view);
 
         accountFlow.setStartState(validate);
-        mainFlowDefinitionRegistry.registerFlowDefinition(accountFlow);
+        flowDefinitionRegistry.registerFlowDefinition(accountFlow);
 
         val removeSession = createActionState(accountFlow, CasWebflowConstants.STATE_ID_REMOVE_SINGLE_SIGNON_SESSION,
             CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_SINGLE_SIGNON_SESSION);

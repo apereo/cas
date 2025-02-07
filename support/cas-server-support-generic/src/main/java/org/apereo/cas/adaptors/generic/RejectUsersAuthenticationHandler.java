@@ -47,6 +47,6 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
             throw new FailedLoginException();
         }
         val principal = principalFactory.createPrincipal(username);
-        return createHandlerResult(credential, principal, new ArrayList<>(0));
+        return createHandlerResult(credential, principal, new ArrayList<>());
     }
 }

@@ -126,7 +126,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, "Could not retrieve input stream from resource. Moving on...", e);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     /**

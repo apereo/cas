@@ -274,7 +274,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         if (attributes.containsKey(attributeKey)) {
             return attributes.get(attributeKey);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     /**

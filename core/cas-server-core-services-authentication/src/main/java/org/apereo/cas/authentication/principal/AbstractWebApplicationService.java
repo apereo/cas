@@ -66,6 +66,10 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     @Column
     private String source;
 
+    @JsonProperty
+    @Column
+    private String tenant;
+
     @Column
     private boolean loggedOutAlready;
 

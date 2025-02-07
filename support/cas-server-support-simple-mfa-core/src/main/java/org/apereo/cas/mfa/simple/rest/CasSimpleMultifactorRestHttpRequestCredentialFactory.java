@@ -34,11 +34,11 @@ public class CasSimpleMultifactorRestHttpRequestCredentialFactory implements Res
     public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
         if (requestBody == null || requestBody.isEmpty()) {
             LOGGER.debug("Skipping [{}] because the requestBody is null or empty", getClass().getSimpleName());
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         val token = requestBody.getFirst(PARAMETER_NAME_CAS_SIMPLE_OTP);
         if (StringUtils.isBlank(token)) {
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         val creds = new CasSimpleMultifactorTokenCredential(token);
         return CollectionUtils.wrap(prepareCredential(request, creds));

@@ -2,6 +2,8 @@ package org.apereo.inspektr.common.web;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,13 +22,15 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class ClientInfoThreadLocalFilter implements Filter {
     private final ClientInfoExtractionOptions options;
-
+    private final TenantExtractor tenantExtractor;
+    
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response,
                          final FilterChain filterChain) throws IOException, ServletException {
         try {
             if (request instanceof final HttpServletRequest httpServletRequest) {
-                val clientInfo = ClientInfo.from(httpServletRequest, options);
+                val tenantId = tenantExtractor.extract(httpServletRequest).map(TenantDefinition::getId).orElse(null);
+                val clientInfo = ClientInfo.from(httpServletRequest, options).setTenant(tenantId);
                 ClientInfoHolder.setClientInfo(clientInfo);
             }
             filterChain.doFilter(request, response);

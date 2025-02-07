@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
@@ -25,7 +26,9 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.test.CasTestExtension;
@@ -64,6 +67,7 @@ import static org.mockito.Mockito.*;
     CasCoreTicketsAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
+    CasMultitenancyAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class
 })
 @Tag("AuthenticationPolicy")
@@ -76,6 +80,10 @@ class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier(TenantExtractor.BEAN_NAME)
+    private TenantExtractor tenantExtractor;
+    
     private static Assertion getAssertion(final Map<Credential, ? extends AuthenticationHandler> handlers) {
         val assertion = mock(Assertion.class);
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
@@ -192,7 +200,7 @@ class AuthenticationPolicyAwareServiceTicketValidationAuthorizerTests {
 
     private ServiceTicketValidationAuthorizer getAuthorizer(final AuthenticationPolicy policy,
                                                             final List<? extends AuthenticationHandler> authenticationHandlers) {
-        val plan = new DefaultAuthenticationEventExecutionPlan();
+        val plan = new DefaultAuthenticationEventExecutionPlan(new DefaultAuthenticationHandlerResolver(), tenantExtractor);
         plan.registerAuthenticationHandlers(authenticationHandlers);
         plan.registerAuthenticationPolicy(policy);
         return new AuthenticationPolicyAwareServiceTicketValidationAuthorizer(servicesManager, plan, applicationContext);

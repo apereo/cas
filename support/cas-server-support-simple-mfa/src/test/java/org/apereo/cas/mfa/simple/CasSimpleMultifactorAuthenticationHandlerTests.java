@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
+import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationAccountService;
 import org.apereo.cas.mfa.simple.validation.DefaultCasSimpleMultifactorAuthenticationService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -20,6 +21,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -63,6 +65,10 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier(CasSimpleMultifactorAuthenticationAccountService.BEAN_NAME)
+    private ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountService;
+
     @Test
     void verifyFailsToFindToken() {
         val id = UUID.randomUUID().toString();
@@ -93,7 +99,7 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
         val credential = new CasSimpleMultifactorTokenCredential(ticket.getId());
         ticket.markTicketExpired();
 
-        val mfaService = new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry, defaultTicketFactory);
+        val mfaService = new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry, defaultTicketFactory, accountService);
         val handler = new CasSimpleMultifactorAuthenticationHandler(casProperties.getAuthn().getMfa().getSimple(),
             applicationContext, servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), mfaService,
             new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));

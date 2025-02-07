@@ -1,7 +1,8 @@
 package org.apereo.cas.web.flow.actions.logout;
 
-import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.logout.slo.SingleLogoutContinuation;
 import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -12,6 +13,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
@@ -52,20 +54,14 @@ public class DelegatedAuthenticationIdentityProviderFinalizeLogoutAction extends
             val logoutRequest = DelegationWebflowUtils.getDelegatedAuthenticationLogoutRequest(requestContext,
                 DelegatedAuthenticationClientLogoutRequest.class);
             if (logoutRequest != null && StringUtils.isNotBlank(logoutRequest.getTarget())) {
-                redirectUrl = logoutRequest.getTarget();
                 WebUtils.putLogoutRedirectUrl(request, logoutRequest.getTarget());
             }
         }
-
-        val logoutEndpoint = logoutRedirectUrl(redirectUrl);
-        LOGGER.debug("Redirecting to [{}]", logoutEndpoint);
-        response.sendRedirect(logoutEndpoint);
-        requestContext.getExternalContext().recordResponseComplete();
-        return null;
+        webContext.getRequestAttribute(SingleLogoutContinuation.class.getName(), SingleLogoutContinuation.class)
+            .ifPresent(continuation ->
+                requestContext.getConversationScope().put(SingleLogoutContinuation.class.getName(), continuation));
+        WebUtils.removeCredential(requestContext);
+        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_LOGOUT);
     }
 
-    private static String logoutRedirectUrl(final String logoutUrl) {
-        var logoutEndpoint = StringUtils.removeStart(CasProtocolConstants.ENDPOINT_LOGOUT, "/");
-        return logoutEndpoint.concat("?".concat(CasProtocolConstants.PARAMETER_SERVICE).concat("=").concat(logoutUrl));
-    }
 }

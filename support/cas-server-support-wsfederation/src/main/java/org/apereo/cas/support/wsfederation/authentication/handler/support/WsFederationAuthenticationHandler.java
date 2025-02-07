@@ -43,7 +43,7 @@ public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcess
         if (wsFederationCredentials != null) {
             val attributes = wsFederationCredentials.getAttributes();
             val principal = principalFactory.createPrincipal(wsFederationCredentials.getId(), attributes);
-            return this.createHandlerResult(wsFederationCredentials, principal, new ArrayList<>(0));
+            return this.createHandlerResult(wsFederationCredentials, principal, new ArrayList<>());
         }
         throw new FailedLoginException();
     }

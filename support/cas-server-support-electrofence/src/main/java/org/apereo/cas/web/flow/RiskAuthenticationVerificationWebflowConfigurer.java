@@ -30,6 +30,6 @@ public class RiskAuthenticationVerificationWebflowConfigurer extends AbstractCas
         val confirmationView = createEndState(riskVerificationFlow, "riskVerificationConfirmationView", "adaptive-authn/casRiskAuthenticationVerifiedView");
         createStateDefaultTransition(checkRiskTokenState, confirmationView.getId());
         riskVerificationFlow.setStartState(checkRiskTokenState);
-        mainFlowDefinitionRegistry.registerFlowDefinition(riskVerificationFlow);
+        flowDefinitionRegistry.registerFlowDefinition(riskVerificationFlow);
     }
 }

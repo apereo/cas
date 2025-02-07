@@ -79,7 +79,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      * To fetch and resolve attributes that carry tags/options,
      * consider tagging the mapped attribute as such: {@code homePostalAddress:homePostalAddress;}.
      */
-    private List<String> principalAttributeList = new ArrayList<>(0);
+    private List<String> principalAttributeList = new ArrayList<>();
 
     /**
      * Sets a flag that determines whether multiple values are allowed for the {@link #principalAttributeId}.
@@ -92,7 +92,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
     /**
      * List of additional attributes to retrieve, if any.
      */
-    private List<String> additionalAttributes = new ArrayList<>(0);
+    private List<String> additionalAttributes = new ArrayList<>();
 
     /**
      * Flag to indicate whether CAS should block authentication

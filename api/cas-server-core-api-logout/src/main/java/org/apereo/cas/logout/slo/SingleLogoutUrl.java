@@ -57,6 +57,6 @@ public class SingleLogoutUrl implements Serializable {
                 .map(url -> new SingleLogoutUrl(url, registeredService.getLogoutType()))
                 .collect(Collectors.toList());
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

@@ -8,9 +8,12 @@ category: Webflow Management
 
 # Extending CAS Webflow
 
-The objective of this guide is to better describe how CAS utilizes Spring Webflow to accommodate various authentication flows. Please
-remember that this is **NOT** to teach one how Spring Webflow itself works internally. If you want to learn more about Spring Webflow and
-understand the internals of actions, states, decisions and scopes please [see this guide](https://github.com/apereo/spring-webflow/).
+The objective of this guide is to better describe how CAS utilizes Spring Webflow to accommodate various authentication
+flows. Please
+remember that this is **NOT** to teach one how Spring Webflow itself works internally. If you want to learn more about
+Spring Webflow and
+understand the internals of actions, states, decisions and scopes
+please [see this guide](https://github.com/apereo/spring-webflow/).
 
 CAS by default operates on the following core webflow configuration files:
 
@@ -21,38 +24,50 @@ CAS by default operates on the following core webflow configuration files:
 | `pswdreset` | [Password management](../password_management/Password-Management.html) and password reset flow. |
 | `account`   | [Account management](../registration/Account-Management-Overview.html) and profile flow..       |
 
-The above flows present a minimal structure for what CAS needs at its core to handle login and logout flows. It is important to note that at
-runtime many other actions and states are injected into either of these flows dynamically depending on the CAS configuration and presence of
-feature modules. Also note that each feature module itself may dynamically present other opinionated subflow configuration files that are
+The above flows present a minimal structure for what CAS needs at its core to handle login and logout flows. It is
+important to note that at
+runtime many other actions and states are injected into either of these flows dynamically depending on the CAS
+configuration and presence of
+feature modules. Also note that each feature module itself may dynamically present other opinionated subflow
+configuration files that are
 automagically picked up at runtime.
 
 ## Modifying Webflow
 
-In modest trivial cases, you may be able to [overlay and modify](../installation/WAR-Overlay-Installation.html) the core flow configuration
-files to add or override the desired behavior. Again, think very carefully before introducing those changes into your deployment
-environment. Avoid making ad-hoc changes to the webflow as much as possible and consider how the change you have in mind might be more
-suitable as a direct contribution to the CAS project itself so you can just take advantage of its configuration and *NOT* its maintenance.
+In modest trivial cases, you may be able to [overlay and modify](../installation/WAR-Overlay-Installation.html) the core
+flow configuration
+files to add or override the desired behavior. Again, think very carefully before introducing those changes into your
+deployment
+environment. Avoid making ad-hoc changes to the webflow as much as possible and consider how the change you have in mind
+might be more
+suitable as a direct contribution to the CAS project itself so you can just take advantage of its configuration and
+*NOT* its maintenance.
 
-To learn how to introduce new actions and state into a Spring Webflow, please [see this guide](https://github.com/apereo/spring-webflow/).
+To learn how to introduce new actions and state into a Spring Webflow,
+please [see this guide](https://github.com/apereo/spring-webflow/).
 
 <div class="alert alert-info">:information_source: <strong>Speak Up</strong><p>If you find something that is broken where the 
 webflow auto-configuration strategy fails to deliver as advertised, discuss that with the project community 
 and submit a patch that corrects the bug or adds the desired behavior as a modest enhancement. 
 Avoid one-off changes and make the change where the change belongs.</p></div>
 
-In more advanced cases where you may need to take a deep dive and alter core CAS behavior conditionally, you would need to take advantage of
+In more advanced cases where you may need to take a deep dive and alter core CAS behavior conditionally, you would need
+to take advantage of
 the CAS APIs to deliver changes. Using the CAS APIs directly does present the following advantages at some cost:
 
 - Changes are all scoped to Java (Groovy, Kotlin, Clojure, etc).
 - You have the full power of Java to dynamically and conditionally augment the Spring Webflow.
 - Your changes are all self-contained.
-- Changes are now part of the CAS APIs and they will be compiled. Breaking changes on upgrades, if any, should be noticed immediately at
+- Changes are now part of the CAS APIs and they will be compiled. Breaking changes on upgrades, if any, should be
+  noticed immediately at
   build time.
 
 ### Java
 
-This is the most traditional yet most powerful method of dynamically altering the webflow internals. You will be asked to write components
-that auto-configure the webflow and inject themselves into the running CAS application context only to be executed at runtime.
+This is the most traditional yet most powerful method of dynamically altering the webflow internals. You will be asked
+to write components
+that auto-configure the webflow and inject themselves into the running CAS application context only to be executed at
+runtime.
 
 At a minimum, your overlay will need to include the following modules:
 
@@ -80,7 +95,8 @@ public class SomethingWebflowConfigurer extends AbstractCasWebflowConfigurer {
 }
 ```
 
-The parent class, `AbstractCasWebflowConfigurer`, providers a lot of helper methods and utilities in a *DSL-like* fashion to hide the
+The parent class, `AbstractCasWebflowConfigurer`, providers a lot of helper methods and utilities in a *DSL-like*
+fashion to hide the
 complexity of Spring Webflow APIs to make customization easier.
 
 #### Register
@@ -99,7 +115,7 @@ public class SomethingConfiguration implements CasWebflowExecutionPlanConfigurer
 
     @Autowired
     @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private FlowDefinitionRegistry flowDefinitionRegistry;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -111,7 +127,7 @@ public class SomethingConfiguration implements CasWebflowExecutionPlanConfigurer
     @Bean
     public CasWebflowConfigurer somethingWebflowConfigurer() {
         return new SomethingWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
+            flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Override
@@ -121,7 +137,8 @@ public class SomethingConfiguration implements CasWebflowExecutionPlanConfigurer
 }
 ```
 
-Configuration classes need to be registered with CAS via the strategy [outlined here](../configuration/Configuration-Management-Extensions.html).
+Configuration classes need to be registered with CAS via the
+strategy [outlined here](../configuration/Configuration-Management-Extensions.html).
 
 <div class="alert alert-info">:information_source: <strong>To Build & Beyond</strong><p>Note that compiling configuration classes and any other
 piece of Java code that is put into the CAS Overlay may require additional CAS modules and dependencies on the classpath. You will need
@@ -132,8 +149,10 @@ See [this guide](ttps://docs.spring.io/spring-boot/docs/current/reference/html/)
 
 ### Groovy
 
-You may configure CAS to alter and auto-configure the webflow via a Groovy script. This is the less elaborate option where you have modest
-access to CAS APIs that allow you alter the webflow. However, configuration and scaffolding of the overlay and required dependencies is
+You may configure CAS to alter and auto-configure the webflow via a Groovy script. This is the less elaborate option
+where you have modest
+access to CAS APIs that allow you alter the webflow. However, configuration and scaffolding of the overlay and required
+dependencies is
 easier as all is provided by CAS at runtime.
 
 <div class="alert alert-warning">:warning: <strong>Stop Coding</strong><p>Remember that APIs provided 
@@ -146,14 +165,17 @@ with good reason and make sure you have thought changes through before stepping 
 
 #### Configuration
 
-To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+To prepare CAS to support and integrate with Apache Groovy,
+please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% include_cached casproperties.html properties="cas.webflow" includes=".autoconfigure,.groovy" %}
 
 #### Webflow Auto Configuration
 
-A sample Groovy script follows that aims to locate the CAS login flow and a particular state pre-defined in the flow. If found, a custom
-action is inserted into the state to execute as soon as CAS enters that state in the flow. While this is a rather modest example, note that
+A sample Groovy script follows that aims to locate the CAS login flow and a particular state pre-defined in the flow. If
+found, a custom
+action is inserted into the state to execute as soon as CAS enters that state in the flow. While this is a rather modest
+example, note that
 the script has the ability to add/remove actions, states, transitions, add/remove subflows, etc.
 
 ```groovy
@@ -205,9 +227,12 @@ The parameters passed are as follows:
 
 #### Webflow Actions
 
-Webflow operations are typically handled via `Action` components that are implemented and registered with the CAS runtime as `Bean` definitions. While these 
-definitions could be conditionally substituted with an alternative implementation, you also have the option to carry out the action operation via Groovy 
-scripts. In this scenario, you take over the responsibility of action implementation yourself, relieving CAS from providing you with an implementation.
+Webflow operations are typically handled via `Action` components that are implemented and registered with the CAS
+runtime as `Bean` definitions. While these
+definitions could be conditionally substituted with an alternative implementation, you also have the option to carry out
+the action operation via Groovy
+scripts. In this scenario, you take over the responsibility of action implementation yourself, relieving CAS from
+providing you with an implementation.
 
 {% include_cached casproperties.html properties="cas.webflow.groovy.actions" %}
 

@@ -40,8 +40,7 @@ an example response to an introspection request for a token:
 The introspection response is a plain JSON object. However, there are use cases where the resource server 
 requires stronger assurance that the CAS server issued the token introspection response for an 
 access token, including cases where the CAS server assumes liability for the content of the token introspection response. In such use cases it 
-may be useful or even required to return a signed JWT as the introspection response. [This specification](https://www.ietf.org/id/draft-ietf-oauth-jwt-introspection-response-12.html) 
-extends the token introspection endpoint with the capability to return responses as JWTs.
+may be useful or even required to return a signed JWT as the introspection response. 
 
 A token introspection request may ask for a JWT introspection response by sending an introspection request 
 with an `Accept` HTTP header field set to `application/token-introspection+jwt`. The introspection endpoint responds with a JWT, 

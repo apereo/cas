@@ -36,7 +36,7 @@ class RedirectToServiceActionTests extends BaseWebflowConfigurerTests {
 
     @Test
     void verifyAction() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());

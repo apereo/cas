@@ -3,10 +3,10 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieValueManager;
@@ -14,6 +14,7 @@ import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
+import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -48,12 +49,16 @@ public class CasCoreCookieAutoConfiguration {
         public CookieValueManager cookieValueManager(
             @Qualifier(GeoLocationService.BEAN_NAME)
             final ObjectProvider<GeoLocationService> geoLocationService,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
             @Qualifier("cookieCipherExecutor") final CipherExecutor cookieCipherExecutor) {
-            return FunctionUtils.doIf(casProperties.getTgc().getCrypto().isEnabled(),
-                () -> new DefaultCasCookieValueManager(cookieCipherExecutor, geoLocationService,
-                    DefaultCookieSameSitePolicy.INSTANCE, casProperties.getTgc()),
-                CookieValueManager::noOp).get();
+            if (casProperties.getTgc().getCrypto().isEnabled()) {
+                return new DefaultCasCookieValueManager(cookieCipherExecutor,
+                    tenantExtractor, geoLocationService,
+                    DefaultCookieSameSitePolicy.INSTANCE, casProperties.getTgc());
+            }
+            return new NoOpCookieValueManager(tenantExtractor);
         }
 
         @ConditionalOnMissingBean(name = "cookieCipherExecutor")
@@ -86,9 +91,14 @@ public class CasCoreCookieAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasCookieBuilder.BEAN_NAME_WARN_COOKIE_BUILDER)
-        public CasCookieBuilder warnCookieGenerator(final CasConfigurationProperties casProperties) {
+        public CasCookieBuilder warnCookieGenerator(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
+            final CasConfigurationProperties casProperties) {
             val props = casProperties.getWarningCookie();
-            return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
+            return new CookieRetrievingCookieGenerator(
+                CookieUtils.buildCookieGenerationContext(props),
+                new NoOpCookieValueManager(tenantExtractor));
         }
 
         @ConditionalOnMissingBean(name = CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)

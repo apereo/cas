@@ -28,6 +28,8 @@ import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderM
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -95,14 +97,14 @@ import java.util.stream.Collectors;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication,
-                             module = "duo")
+    module = "duo")
 @Configuration(value = "DuoSecurityAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
     private static final int WEBFLOW_CONFIGURER_ORDER = 0;
 
     @Configuration(value = "DuoSecurityAuthenticationEventExecutionConfiguration",
-                   proxyBeanMethods = false)
+        proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class DuoSecurityAuthenticationEventExecutionConfiguration {
         private static BeanContainer<AuthenticationMetaDataPopulator> duoAuthenticationMetaDataPopulator(
@@ -133,8 +135,10 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final List<MultifactorAuthenticationPrincipalResolver> resolvers,
             final CasConfigurationProperties casProperties,
-            @Qualifier("duoPrincipalFactory") final PrincipalFactory duoPrincipalFactory,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+            @Qualifier("duoPrincipalFactory")
+            final PrincipalFactory duoPrincipalFactory,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
 
             return BeanSupplier.of(BeanContainer.class)
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
@@ -165,7 +169,8 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         public AuthenticationEventExecutionPlanConfigurer duoSecurityAuthenticationEventExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("duoAuthenticationHandlers") final BeanContainer<MultifactorAuthenticationHandler> duoAuthenticationHandlers) {
+            @Qualifier("duoAuthenticationHandlers")
+            final BeanContainer<MultifactorAuthenticationHandler> duoAuthenticationHandlers) {
             return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> {
@@ -183,7 +188,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Configuration(value = "DuoSecurityAuthenticationMonitorConfiguration",
-                   proxyBeanMethods = false)
+        proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class DuoSecurityAuthenticationMonitorConfiguration {
         @Bean
@@ -199,7 +204,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Configuration(value = "DuoSecurityAuthenticationEventExecutionPlanCoreConfiguration",
-                   proxyBeanMethods = false)
+        proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Slf4j
     static class DuoSecurityAuthenticationEventExecutionPlanCoreConfiguration {
@@ -227,9 +232,12 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolvers,
-            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT) final HttpClient httpClient,
-            @Qualifier("duoSecurityBypassEvaluator") final ChainingMultifactorAuthenticationProviderBypassEvaluator duoSecurityBypassEvaluator,
-            @Qualifier("failureModeEvaluator") final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
+            final HttpClient httpClient,
+            @Qualifier("duoSecurityBypassEvaluator")
+            final ChainingMultifactorAuthenticationProviderBypassEvaluator duoSecurityBypassEvaluator,
+            @Qualifier("failureModeEvaluator")
+            final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
 
             return BeanSupplier.of(BeanContainer.class)
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
@@ -298,7 +306,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Configuration(value = "DuoSecurityAuthenticationWebflowActionsConfiguration",
-                   proxyBeanMethods = false)
+        proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class DuoSecurityAuthenticationWebflowActionsConfiguration {
         @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")
@@ -307,15 +315,15 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         public CasWebflowConfigurer duoMultifactorWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val cfg = new DuoSecurityMultifactorWebflowConfigurer(flowBuilderServices,
-                        loginFlowDefinitionRegistry, applicationContext, casProperties,
+                        flowDefinitionRegistry, applicationContext, casProperties,
                         MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
                     cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
                     return cfg;
@@ -329,7 +337,8 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "duoSecurityCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer duoSecurityCasWebflowExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("duoMultifactorWebflowConfigurer") final CasWebflowConfigurer duoMultifactorWebflowConfigurer) {
+            @Qualifier("duoMultifactorWebflowConfigurer")
+            final CasWebflowConfigurer duoMultifactorWebflowConfigurer) {
             return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerWebflowConfigurer(duoMultifactorWebflowConfigurer))
@@ -341,9 +350,12 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action determineDuoUserAccountAction(
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return WebflowActionBeanSupplier.builder()
@@ -351,7 +363,8 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                    .supply(() -> new DuoSecurityDetermineUserAccountAction(casProperties, servicesManager, defaultPrincipalResolver))
+                    .supply(() -> new DuoSecurityDetermineUserAccountAction(casProperties,
+                        servicesManager, defaultPrincipalResolver, webApplicationServiceFactory))
                     .otherwise(() -> ConsumerExecutionAction.NONE)
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_DETERMINE_DUO_USER_ACCOUNT)
@@ -383,7 +396,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Configuration(value = "DuoSecurityAuthenticationEventExecutionPlanWebConfiguration",
-                   proxyBeanMethods = false)
+        proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class DuoSecurityAuthenticationEventExecutionPlanWebConfiguration {
         @Bean
@@ -415,7 +428,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     }
 
     @Configuration(value = "SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration",
-                   proxyBeanMethods = false)
+        proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnClass(SurrogateAuthenticationService.class)
     static class SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration {
@@ -423,7 +436,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @ConditionalOnClass(DuoSecurityAuthenticationService.class)
         @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthentication,
-                                     module = "duo")
+            module = "duo")
         public CasMultifactorWebflowCustomizer surrogateDuoSecurityMultifactorWebflowCustomizer(
             final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(CasMultifactorWebflowCustomizer.class)
@@ -443,14 +456,16 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
         public CasWebflowConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer(
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new SurrogateWebflowConfigurer(
-                    flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties))
+                    flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties))
                 .otherwiseProxy()
                 .get();
         }
@@ -460,7 +475,8 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer surrogateDuoSecurityMultifactorAuthenticationWebflowExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer") final CasWebflowConfigurer surrogateWebflowConfigurer) {
+            @Qualifier("surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer")
+            final CasWebflowConfigurer surrogateWebflowConfigurer) {
             return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerWebflowConfigurer(surrogateWebflowConfigurer))

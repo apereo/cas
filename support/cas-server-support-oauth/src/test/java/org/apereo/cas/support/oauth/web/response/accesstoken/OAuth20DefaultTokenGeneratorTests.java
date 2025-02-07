@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
 import org.apereo.cas.AbstractOAuth20Tests;
+import org.apereo.cas.OAuth20TestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -14,6 +15,7 @@ import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceT
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
+import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
@@ -326,7 +328,7 @@ class OAuth20DefaultTokenGeneratorTests {
             val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
 
             val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
-            val refreshToken = getRefreshToken(registeredService.getServiceId(), registeredService.getClientId());
+            val refreshToken = OAuth20TestUtils.getRefreshToken(registeredService.getServiceId(), registeredService.getClientId());
             when(refreshToken.getScopes()).thenReturn(Set.of("email", "openid"));
             ticketRegistry.addTicket(refreshToken);
 
@@ -344,11 +346,11 @@ class OAuth20DefaultTokenGeneratorTests {
             assertTrue(response.getRefreshToken().isPresent());
             val ticket = response.getRefreshToken().get();
             assertInstanceOf(OAuth20RefreshToken.class, ticket);
-            assertEquals(Set.of("openid", "email"), ((OAuth20RefreshToken) ticket).getScopes());
+            assertEquals(Set.of("openid", "email"), ((OAuth20Token) ticket).getScopes());
             assertTrue(response.getAccessToken().isPresent());
             val ticket2 = response.getAccessToken().get();
             assertInstanceOf(OAuth20AccessToken.class, ticket2);
-            assertEquals(Set.of("email"), ((OAuth20AccessToken) ticket2).getScopes());
+            assertEquals(Set.of("email"), ((OAuth20Token) ticket2).getScopes());
         }
 
         @Test

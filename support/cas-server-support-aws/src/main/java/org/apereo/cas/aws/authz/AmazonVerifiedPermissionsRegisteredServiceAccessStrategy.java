@@ -134,7 +134,7 @@ public class AmazonVerifiedPermissionsRegisteredServiceAccessStrategy extends Ba
         val clientConfig = ClientOverrideConfiguration.builder()
             .apiCallTimeout(Duration.ofSeconds(5))
             .apiCallAttemptTimeout(Duration.ofSeconds(5))
-            .retryPolicy(RetryMode.STANDARD)
+            .retryStrategy(RetryMode.STANDARD)
             .build();
         return VerifiedPermissionsClient.builder()
             .defaultsMode(DefaultsMode.STANDARD)

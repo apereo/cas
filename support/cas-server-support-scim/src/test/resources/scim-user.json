@@ -1,0 +1,112 @@
+{
+  "startIndex": 0,
+  "totalResults": 1,
+  "itemsPerPage": 10,
+  "schemas": [
+    "urn:ietf:params:scim:api:messages:2.0:ListResponse"
+  ],
+  "Resources": [
+    {
+      "schemas": [
+        "urn:ietf:params:scim:schemas:core:2.0:User",
+        "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"
+      ],
+      "id": "2819c223-7f76-453a-919d-413861904646",
+      "externalId": "701984",
+      "userName": "casuser@example.com",
+      "name": {
+        "formatted": "Ms. Barbara J Jensen III",
+        "familyName": "Jensen",
+        "givenName": "Barbara",
+        "middleName": "Jane",
+        "honorificPrefix": "Ms.",
+        "honorificSuffix": "III"
+      },
+      "displayName": "Babs Jensen",
+      "nickName": "Babs",
+      "profileUrl": "https://login.example.com/bjensen",
+      "emails": [
+        {
+          "value": "bjensen@example.com",
+          "type": "work",
+          "primary": true
+        },
+        {
+          "value": "babs@myemail.com",
+          "type": "other"
+        }
+      ],
+      "addresses": [
+        {
+          "type": "work",
+          "streetAddress": "2100 Main Street",
+          "locality": "Mountain View",
+          "region": "CA",
+          "postalCode": "94043",
+          "country": "USA",
+          "formatted": "2100 Main Street Mountain View, CA 94043 USA"
+        }
+      ],
+      "phoneNumbers": [
+        {
+          "value": "+1 555 555 5555",
+          "type": "work"
+        }
+      ],
+      "ims": [
+        {
+          "value": "someIMHandle",
+          "type": "aim"
+        }
+      ],
+      "photos": [
+        {
+          "value": "https://photos.example.com/profilephoto/bjensen",
+          "type": "photo"
+        },
+        {
+          "value": "https://photos.example.com/profilephoto/bjensenthumbnail",
+          "type": "thumbnail"
+        }
+      ],
+      "userType": "Employee",
+      "title": "Tour Guide",
+      "preferredLanguage": "en-US",
+      "locale": "en-US",
+      "timezone": "America/Los_Angeles",
+      "active": true,
+      "password": "supersecret",
+      "groups": [
+        {
+          "value": "e9e30dba-f08f-4109-8486-d5c6a331660a",
+          "$ref": "https://example.com/Groups/e9e30dba-f08f-4109-8486-d5c6a331660a",
+          "display": "Tour Guides"
+        },
+        {
+          "value": "fc348aa8-3835-43f3-9d3c-00f95b1d8b93",
+          "$ref": "https://example.com/Groups/fc348aa8-3835-43f3-9d3c-00f95b1d8b93",
+          "display": "Employees"
+        }
+      ],
+      "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User": {
+        "employeeNumber": "701984",
+        "costCenter": "4130",
+        "organization": "Example.com",
+        "division": "Tour Operations",
+        "department": "Guide Services",
+        "manager": {
+          "value": "carlos123",
+          "$ref": "https://example.com/Users/carlos123",
+          "displayName": "Carlos Rossi"
+        }
+      },
+      "meta": {
+        "resourceType": "User",
+        "created": "2010-01-23T04:56:22Z",
+        "lastModified": "2011-05-13T04:42:34Z",
+        "location": "https://example.com/v2/Users/2819c223-7f76-453a-919d-413861904646",
+        "version": "W/\"3694e05e9dff590\""
+      }
+    }
+  ]
+}

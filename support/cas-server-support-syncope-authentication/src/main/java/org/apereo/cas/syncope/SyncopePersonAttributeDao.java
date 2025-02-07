@@ -2,6 +2,7 @@ package org.apereo.cas.syncope;
 
 import org.apereo.cas.authentication.attribute.BasePersonAttributeDao;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalAttributesProperties;
@@ -36,7 +37,7 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
     @Override
     public Set<PersonAttributes> getPeople(final Map<String, Object> map, final PersonAttributeDaoFilter filter,
                                            final Set<PersonAttributes> resolvedPeople) {
-        return getPeopleWithMultivaluedAttributes(stuffAttributesIntoList(map, filter), filter);
+        return getPeopleWithMultivaluedAttributes(PersonAttributeDao.stuffAttributesIntoList(map), filter);
     }
 
     @Override

@@ -774,17 +774,26 @@ function buildAndRun() {
         printcyan "Waiting for CAS instance #${c} under process id ${pid}"
         casLogin="https://localhost:${serverPort}/cas/login"
 
-        until curl -I -k --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
-          echo -n '.'
-          sleep 2
-        done
-        RC=0
-
-        if [[ $RC -ne 0 ]]; then
-          printred "Unable to launch CAS instance #${c} under process id ${pid}."
-          printred "Killing process id $pid and exiting"
-          kill -9 "$pid"
-          exit 3
+        healthCheckUrls=$(jq -r '.healthcheck?.urls[]?' "${config}" 2>/dev/null)
+        if [[ -n "$healthCheckUrls" ]]; then
+          url_array=()
+          while IFS= read -r url; do
+            url_array+=("$url")
+          done <<< "$healthCheckUrls"
+          
+          for url in "${url_array[@]}"; do
+            printcyan "Checking healthcheck url: $url"
+            until curl -I -k --connect-timeout 10 --output /dev/null --silent --fail "$url"; do
+              echo -n '.'
+              sleep 2
+            done
+          done
+        else
+          printcyan "No healthcheck urls found"
+          until curl -I -k --connect-timeout 10 --output /dev/null --silent --fail $casLogin; do
+            echo -n '.'
+            sleep 2
+          done
         fi
         printcyan "CAS server ${casLogin} is up and running under process id ${pid}"
 

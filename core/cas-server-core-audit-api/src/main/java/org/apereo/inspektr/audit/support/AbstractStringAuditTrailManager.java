@@ -89,6 +89,7 @@ public abstract class AbstractStringAuditTrailManager implements AuditTrailManag
         buildSingleAuditLineForField(AuditableFields.SERVER_IP, clientInfo.getServerIpAddress(), builder);
         buildSingleAuditLineForField(AuditableFields.DEVICE_FINGERPRINT, clientInfo.getDeviceFingerprint(), builder);
         buildSingleAuditLineForField(AuditableFields.HEADERS, clientInfo.getHeaders(), builder);
+        buildSingleAuditLineForField(AuditableFields.TENANT, clientInfo.getTenant(), builder);
 
         if (!useSingleLine) {
             builder.append("=============================================================");
@@ -123,23 +124,28 @@ public abstract class AbstractStringAuditTrailManager implements AuditTrailManag
         if (isFieldAuditable(AuditableFields.WHEN)) {
             map.put("when", readFieldValue(auditActionContext.getWhenActionWasPerformed().toString()));
         }
+        
+        val clientInfo = auditActionContext.getClientInfo();
         if (isFieldAuditable(AuditableFields.CLIENT_IP)) {
-            map.put("clientIpAddress", readFieldValue(auditActionContext.getClientInfo().getClientIpAddress()));
+            map.put("clientIpAddress", readFieldValue(clientInfo.getClientIpAddress()));
         }
         if (isFieldAuditable(AuditableFields.SERVER_IP)) {
-            map.put("serverIpAddress", readFieldValue(auditActionContext.getClientInfo().getServerIpAddress()));
+            map.put("serverIpAddress", readFieldValue(clientInfo.getServerIpAddress()));
         }
         if (isFieldAuditable(AuditableFields.USER_AGENT)) {
-            map.put("userAgent", readFieldValue(auditActionContext.getClientInfo().getUserAgent()));
+            map.put("userAgent", readFieldValue(clientInfo.getUserAgent()));
         }
         if (isFieldAuditable(AuditableFields.HEADERS)) {
-            map.put("headers", auditActionContext.getClientInfo().getHeaders());
+            map.put("headers", clientInfo.getHeaders());
         }
         if (isFieldAuditable(AuditableFields.GEO_LOCATION)) {
-            map.put("geoLocation", readFieldValue(auditActionContext.getClientInfo().getGeoLocation()));
+            map.put("geoLocation", readFieldValue(clientInfo.getGeoLocation()));
         }
         if (isFieldAuditable(AuditableFields.DEVICE_FINGERPRINT)) {
-            map.put("deviceFingerprint", readFieldValue(auditActionContext.getClientInfo().getDeviceFingerprint()));
+            map.put("deviceFingerprint", readFieldValue(clientInfo.getDeviceFingerprint()));
+        }
+        if (isFieldAuditable(AuditableFields.TENANT)) {
+            map.put("tenant", readFieldValue(clientInfo.getTenant()));
         }
         return map;
     }

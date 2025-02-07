@@ -40,7 +40,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>(0));
 
-    private final List<Credential> providedCredentials = new ArrayList<>(0);
+    private final List<Credential> providedCredentials = new ArrayList<>();
 
     private final PrincipalElectionStrategy principalElectionStrategy;
 

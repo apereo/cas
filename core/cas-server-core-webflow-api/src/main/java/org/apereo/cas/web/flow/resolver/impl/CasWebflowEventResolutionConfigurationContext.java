@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -82,4 +83,6 @@ public class CasWebflowEventResolutionConfigurationContext {
     private final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
     private final CasWebflowExceptionCatalog casWebflowExceptionCatalog;
+
+    private final TenantExtractor tenantExtractor;
 }

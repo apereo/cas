@@ -179,7 +179,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
             return CollectionUtils.wrap(this.crlIssuerMap.get(principal));
         }
         LOGGER.warn("Could not locate CRL for issuer principal [{}]", principal);
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     private boolean validateConfiguration() {

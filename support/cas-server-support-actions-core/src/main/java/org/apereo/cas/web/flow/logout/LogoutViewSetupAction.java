@@ -13,6 +13,7 @@ import org.apereo.cas.web.view.DynamicHtmlView;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import java.util.Optional;
 
 /**
  * This is {@link LogoutViewSetupAction}.
@@ -45,11 +46,12 @@ public class LogoutViewSetupAction extends AbstractLogoutAction {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         WebUtils.putGeoLocationTrackingIntoFlowScope(context,
             casProperties.getEvents().getCore().isTrackGeolocation());
-        val continuation = (SingleLogoutContinuation) request.getAttribute(SingleLogoutContinuation.class.getName());
-        FunctionUtils.doIfNotNull(continuation, __ -> {
-            context.getFlowScope().put(FLOW_SCOPE_ATTRIBUTE_PROCEED, Boolean.TRUE);
-            FunctionUtils.doIfNotBlank(continuation.getContent(), cnt -> context.getFlowScope().put(DynamicHtmlView.class.getName(), cnt));
-        });
+        Optional.ofNullable((SingleLogoutContinuation) request.getAttribute(SingleLogoutContinuation.class.getName()))
+            .or(() -> Optional.ofNullable(context.getConversationScope().get(SingleLogoutContinuation.class.getName(), SingleLogoutContinuation.class)))
+            .ifPresent(continuation -> {
+                context.getFlowScope().put(FLOW_SCOPE_ATTRIBUTE_PROCEED, Boolean.TRUE);
+                FunctionUtils.doIfNotBlank(continuation.getContent(), cnt -> context.getFlowScope().put(DynamicHtmlView.class.getName(), cnt));
+            });
         return null;
     }
 }

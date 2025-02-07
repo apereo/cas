@@ -17,7 +17,7 @@ public class CasKryoPool extends Pool<CloseableKryo> implements KryoPool<Closeab
     private final CloseableKryoFactory factory;
 
     public CasKryoPool() {
-        this(new ArrayList<>(0), true, true, false, false);
+        this(new ArrayList<>(), true, true, false, false);
     }
 
     public CasKryoPool(final Collection<Class> classesToRegister, final boolean warnUnregisteredClasses,

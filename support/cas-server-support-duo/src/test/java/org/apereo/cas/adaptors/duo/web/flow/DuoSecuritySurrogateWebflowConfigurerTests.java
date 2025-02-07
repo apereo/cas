@@ -19,7 +19,11 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
-import static org.apereo.cas.web.flow.CasWebflowConstants.*;
+import static org.apereo.cas.web.flow.CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN;
+import static org.apereo.cas.web.flow.CasWebflowConstants.STATE_ID_LOAD_SURROGATES_ACTION;
+import static org.apereo.cas.web.flow.CasWebflowConstants.STATE_ID_SELECT_SURROGATE;
+import static org.apereo.cas.web.flow.CasWebflowConstants.STATE_ID_SURROGATE_VIEW;
+import static org.apereo.cas.web.flow.CasWebflowConstants.TRANSITION_ID_SUCCESS;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -47,7 +51,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
         @Test
         void verifyOperation() {
             assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-            val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
             var state = (TransitionableState) flow.getState(STATE_ID_LOAD_SURROGATES_ACTION);
             assertNotNull(state);
@@ -81,7 +85,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
         void verifyOperation() {
             assertNotNull(surrogateDuoSecurityMultifactorAuthenticationWebflowConfigurer);
             assertNotNull(surrogateDuoSecurityMultifactorWebflowCustomizer);
-            val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
             assertNotNull(flow);
             var state = (TransitionableState) flow.getState(STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
             assertEquals(STATE_ID_LOAD_SURROGATES_ACTION, state.getTransition(TRANSITION_ID_SUCCESS).getTargetStateId());

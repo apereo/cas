@@ -100,5 +100,5 @@ public class OidcCoreProperties implements Serializable {
      * the multifactor authentication features of CAS.
      * Once successful, {@code acr} and {@code amr} values are passed back to the relying party as part of the id token.
      */
-    private List<String> authenticationContextReferenceMappings = new ArrayList<>(0);
+    private List<String> authenticationContextReferenceMappings = new ArrayList<>();
 }

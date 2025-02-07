@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateLdapAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -35,13 +36,16 @@ public class CasSurrogateLdapAuthenticationAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "ldapSurrogateAuthenticationService")
     public BeanSupplier<SurrogateAuthenticationService> ldapSurrogateAuthenticationService(
+        @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+        final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(SurrogateAuthenticationService.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> new SurrogateLdapAuthenticationService(casProperties, servicesManager))
+            .supply(() -> new SurrogateLdapAuthenticationService(casProperties,
+                servicesManager, principalAccessStrategyEnforcer, applicationContext))
             .otherwiseNull();
     }
 }

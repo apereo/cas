@@ -23,10 +23,10 @@ import java.util.Arrays;
  */
 public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
     public PasswordlessAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                       final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                       final FlowDefinitionRegistry flowDefinitionRegistry,
                                                        final ConfigurableApplicationContext applicationContext,
                                                        final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         setOrder(casProperties.getAuthn().getPasswordless().getWebflow().getOrder());
     }
 
@@ -50,7 +50,7 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
         viewState.getRenderActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_SELECTION_MENU));
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID);
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_PASSWORDLESS_ACCEPT_SELECTION_MENU);
-        
+
         val acceptState = createActionState(flow, CasWebflowConstants.STATE_ID_PASSWORDLESS_ACCEPT_SELECTION_MENU,
             CasWebflowConstants.ACTION_ID_PASSWORDLESS_ACCEPT_SELECTION_MENU);
         createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_PROMPT, getPromptTargetStateId(flow));
@@ -95,7 +95,7 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
 
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SELECT,
             CasWebflowConstants.STATE_ID_PASSWORDLESS_DISPLAY_SELECTION_MENU);
-        
+
         if (applicationContext.containsBean(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)) {
             createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN);

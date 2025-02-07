@@ -23,6 +23,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
+import org.apereo.cas.web.HttpMessage;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -94,7 +95,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
     }
 
     @Override
-    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg,
+    protected boolean sendMessageToEndpoint(final HttpMessage msg,
                                             final SingleLogoutRequestContext request,
                                             final SingleLogoutMessage logoutMessage) {
         if (request.getExecutionRequest().getHttpServletRequest().isPresent()) {
@@ -158,5 +159,10 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
         }
         LOGGER.warn("No (successful) logout response received from the url [{}]", msg.getUrl().toExternalForm());
         return false;
+    }
+
+    @Override
+    public HttpMessage prepareLogoutHttpMessageToSend(final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
+        return new LogoutHttpMessage(SamlProtocolConstants.PARAMETER_SAML_REQUEST, request.getLogoutUrl(), logoutMessage.getPayload(), isAsynchronous());
     }
 }

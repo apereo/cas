@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedProxyingException;
@@ -39,13 +38,13 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = "cas.ticket.crypto.enabled=true")
 class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthenticationServiceTests {
 
-    private static Service getService(final String name) {
+    private Service getService(final String name) {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
-        return new WebApplicationServiceFactory().createService(request);
+        return getWebApplicationServiceFactory().createService(request);
     }
 
-    private static Service getService() {
+    private Service getService() {
         return getService(CoreAuthenticationTestUtils.CONST_TEST_URL);
     }
 

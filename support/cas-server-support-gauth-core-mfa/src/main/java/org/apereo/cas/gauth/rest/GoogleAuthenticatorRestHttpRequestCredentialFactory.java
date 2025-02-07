@@ -38,13 +38,13 @@ public class GoogleAuthenticatorRestHttpRequestCredentialFactory implements Rest
     public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
         if (requestBody == null || requestBody.isEmpty()) {
             LOGGER.debug("Skipping [{}] because the requestBody is null or empty", getClass().getSimpleName());
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         val token = requestBody.getFirst(PARAMETER_NAME_GAUTH_OTP);
         val id = requestBody.getFirst(PARAMETER_NAME_GAUTH_ACCT);
         LOGGER.debug("Google authenticator token [{}] in the request body via account [{}]", token, id);
         if (StringUtils.isBlank(token)) {
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         val creds = new GoogleAuthenticatorTokenCredential(token,
             StringUtils.isNotBlank(id) ? Long.valueOf(id) : null);

@@ -36,26 +36,26 @@ public class RedirectUnauthorizedServiceUrlAction extends BaseCasWebflowAction {
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         var redirectUrl = determineUnauthorizedServiceRedirectUrl(requestContext);
-        val url = redirectUrl.toString();
-
-        val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
-        if (scriptFactory.isPresent() && scriptFactory.get().isScript(url)) {
-            redirectUrl = FunctionUtils.doUnchecked(() -> {
-                val registeredService = WebUtils.getRegisteredService(requestContext);
-                val authentication = WebUtils.getAuthentication(requestContext);
-                val args = CollectionUtils.<String, Object>wrap("registeredService", registeredService,
-                    "authentication", authentication,
-                    "requestContext", requestContext,
-                    "applicationContext", applicationContext,
-                    "logger", LOGGER);
-                val scriptToExec = scriptResourceCacheManager.getObject().resolveScriptableResource(url);
-                scriptToExec.setBinding(args);
-                return scriptToExec.execute(args.values().toArray(), URI.class);
-            });
+        if (redirectUrl != null) {
+            val url = redirectUrl.toString();
+            val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+            if (scriptFactory.isPresent() && scriptFactory.get().isScript(url)) {
+                redirectUrl = FunctionUtils.doUnchecked(() -> {
+                    val registeredService = WebUtils.getRegisteredService(requestContext);
+                    val authentication = WebUtils.getAuthentication(requestContext);
+                    val args = CollectionUtils.<String, Object>wrap("registeredService", registeredService,
+                        "authentication", authentication,
+                        "requestContext", requestContext,
+                        "applicationContext", applicationContext,
+                        "logger", LOGGER);
+                    val scriptToExec = scriptResourceCacheManager.getObject().resolveScriptableResource(url);
+                    scriptToExec.setBinding(args);
+                    return scriptToExec.execute(args.values().toArray(), URI.class);
+                });
+            }
+            LOGGER.debug("Redirecting to unauthorized redirect URL [{}]", redirectUrl);
+            WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(requestContext, redirectUrl);
         }
-
-        LOGGER.debug("Redirecting to unauthorized redirect URL [{}]", redirectUrl);
-        WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(requestContext, redirectUrl);
         return null;
     }
 

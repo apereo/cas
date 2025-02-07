@@ -96,7 +96,7 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
         if (result.getKey()) {
             val radiusAttributes = CollectionUtils.toMultiValuedMap(result.getValue().orElseThrow());
             val finalPrincipal = principalFactory.createPrincipal(username, radiusAttributes);
-            return createHandlerResult(credential, finalPrincipal, new ArrayList<>(0));
+            return createHandlerResult(credential, finalPrincipal, new ArrayList<>());
         }
         throw new FailedLoginException("Radius authentication failed for user " + username);
     }

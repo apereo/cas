@@ -12,8 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.jee.context.JEEContext;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.Map;
 import java.util.UUID;
@@ -33,9 +31,8 @@ class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
     @Test
     void verifyOperation() throws Throwable {
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(new MockHttpServletRequest(), response);
         val accessToken = getAccessToken();
-        val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+        val data = oidcUserProfileDataCreator.createFrom(accessToken);
         val entity = oidcUserProfileViewRenderer.render(data, accessToken, response);
         assertNotNull(entity);
         assertNotNull(entity.getBody());
@@ -55,13 +52,12 @@ class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
     void verifyOperationOAuth() throws Throwable {
         val clientId = UUID.randomUUID().toString();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(new MockHttpServletRequest(), response);
         val accessToken = getAccessToken(clientId);
         val service = getOAuthRegisteredService(clientId, "https://somthing.com");
 
         servicesManager.save(service);
 
-        val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+        val data = oidcUserProfileDataCreator.createFrom(accessToken);
         val entity = oidcUserProfileViewRenderer.render(data, accessToken, response);
         assertNotNull(entity);
         assertNotNull(entity.getBody());
@@ -71,7 +67,6 @@ class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
     void verifyOperationEncryptedAndSigned() throws Throwable {
         val clientId = UUID.randomUUID().toString();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(new MockHttpServletRequest(), response);
         val accessToken = getAccessToken(clientId);
         val service = getOidcRegisteredService(clientId);
         service.setUserInfoEncryptedResponseEncoding(OidcUserProfileSigningAndEncryptionService.USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT);
@@ -81,7 +76,7 @@ class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
         service.setEncryptIdToken(true);
         servicesManager.save(service);
 
-        val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+        val data = oidcUserProfileDataCreator.createFrom(accessToken);
         val entity = oidcUserProfileViewRenderer.render(data, accessToken, response);
         assertNotNull(entity);
         assertNotNull(entity.getBody());
@@ -91,7 +86,6 @@ class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
     void verifyOperationSigned() throws Throwable {
         val clientId = UUID.randomUUID().toString();
         val response = new MockHttpServletResponse();
-        val context = new JEEContext(new MockHttpServletRequest(), response);
         val accessToken = getAccessToken(clientId);
         val service = getOidcRegisteredService(clientId);
         service.setUserInfoSigningAlg("RS256");
@@ -99,7 +93,7 @@ class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
         service.setEncryptIdToken(false);
         servicesManager.save(service);
 
-        val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+        val data = oidcUserProfileDataCreator.createFrom(accessToken);
         val entity = oidcUserProfileViewRenderer.render(data, accessToken, response);
         assertNotNull(entity);
         val body = (String) entity.getBody();

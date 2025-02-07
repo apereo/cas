@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
@@ -389,7 +388,8 @@ public abstract class AbstractOidcTests {
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("email", List.of("casuser@example.org")));
         val token = mock(OAuth20RefreshToken.class);
         when(token.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
-        when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService("https://oauth.example.org"));
+        val service = RegisteredServiceTestUtils.getService("https://oauth.example.org");
+        when(token.getService()).thenReturn(service);
         when(token.getId()).thenReturn("RT-123456");
         when(token.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(token.getScopes()).thenReturn(Set.of(OidcConstants.StandardScopes.EMAIL.getScope(),
@@ -473,7 +473,8 @@ public abstract class AbstractOidcTests {
         val code = addCode(principal, getOidcRegisteredService(clientId));
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
-        when(accessToken.getService()).thenReturn(RegisteredServiceTestUtils.getService("https://oauth.example.org"));
+        val service = RegisteredServiceTestUtils.getService("https://oauth.example.org");
+        when(accessToken.getService()).thenReturn(service);
         when(accessToken.getId()).thenReturn("AT-" + UUID.randomUUID());
         when(accessToken.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
@@ -498,8 +499,7 @@ public abstract class AbstractOidcTests {
                                   final OAuthRegisteredService registeredService) throws Throwable {
         val ticketGrantingTicket = new MockTicketGrantingTicket("casuser");
         val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService(registeredService.getClientId());
+        val service = webApplicationServiceFactory.createService(registeredService.getClientId());
         val scopes = List.of(OidcConstants.StandardScopes.OPENID.getScope());
         val code = defaultOAuthCodeFactory.create(service, authentication,
             ticketGrantingTicket, scopes, registeredService.getClientId(),
@@ -511,8 +511,7 @@ public abstract class AbstractOidcTests {
     protected OAuth20Code addCode(final TicketGrantingTicket ticketGrantingTicket,
                                   final OAuthRegisteredService registeredService) throws Throwable {
         val authentication = ticketGrantingTicket.getAuthentication();
-        val factory = new WebApplicationServiceFactory();
-        val service = factory.createService(registeredService.getClientId());
+        val service = webApplicationServiceFactory.createService(registeredService.getClientId());
         val scopes = List.of(OidcConstants.StandardScopes.OPENID.getScope());
         val code = defaultOAuthCodeFactory.create(service, authentication,
             ticketGrantingTicket, scopes, registeredService.getClientId(),

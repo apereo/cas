@@ -12,16 +12,11 @@ public interface CasWebflowConstants {
      * Bean Names.
      ****************************************
      */
-    
-    /**
-     * Bean name for login flow registry.
-     */
-    String BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY = "loginFlowRegistry";
 
     /**
-     * Bean name for logout flow registry.
+     * Bean name for flow registry.
      */
-    String BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY = "logoutFlowRegistry";
+    String BEAN_NAME_FLOW_DEFINITION_REGISTRY = "flowDefinitionRegistry";
 
     /**
      * Bean name for flow builder services.
@@ -53,7 +48,7 @@ public interface CasWebflowConstants {
      * Flow attribute or request parameter indicating warning before redirecting.
      */
     String ATTRIBUTE_WARN_ON_REDIRECT = "warn";
-    
+
     /**
      * Attribute to track registered service in the flow.
      */
@@ -478,7 +473,7 @@ public interface CasWebflowConstants {
      * Event id to signal security questions are disabled.
      */
     String TRANSITION_ID_SECURITY_QUESTIONS_DISABLED = "questionsDisabled";
-    
+
     /*
      ****************************************
      * States.
@@ -1136,6 +1131,10 @@ public interface CasWebflowConstants {
      * State id 'viewRegistration'.
      */
     String STATE_ID_VIEW_REGISTRATION = "viewRegistration";
+    /**
+     * State id 'viewRegistrationRequired'.
+     */
+    String STATE_ID_REGISTRATION_REQUIRED = "viewRegistrationRequired";
 
     /**
      * State id 'viewRegistrationWebAuthn'.
@@ -1250,12 +1249,20 @@ public interface CasWebflowConstants {
      * State id 'sendSimpleToken'.
      */
     String STATE_ID_SIMPLE_MFA_SEND_TOKEN = "sendSimpleToken";
+    /**
+     * State id 'verifyEmail'.
+     */
+    String STATE_ID_SIMPLE_MFA_VERIFY_EMAIL = "verifyEmail";
+    /**
+     * State id 'updateEmail'.
+     */
+    String STATE_ID_SIMPLE_MFA_UPDATE_EMAIL = "updateEmail";
 
     /**
      * State id 'riskVerificationConfirmationView'.
      */
     String STATE_ID_RISK_VERIFICATION_CONFIRMATION = "riskVerificationConfirmationView";
-    
+
     /*
      ****************************************
      * Views.
@@ -1276,6 +1283,10 @@ public interface CasWebflowConstants {
      * The view id 'casServiceErrorView'.
      */
     String VIEW_ID_SERVICE_ERROR = "error/casServiceErrorView";
+    /**
+     * The view id 'casUnknownTenantView'.
+     */
+    String VIEW_ID_UNKNOWN_TENANT = "error/casUnknownTenantView";
 
     /**
      * The view id 'casWebflowConfigErrorView'.
@@ -1303,7 +1314,7 @@ public interface CasWebflowConstants {
     String VIEW_ID_BROWSER_STORAGE_WRITE = "storage/casBrowserStorageWriteView";
 
     /**
-     *The view state for browser storage reads..
+     * The view state for browser storage reads..
      */
     String VIEW_ID_BROWSER_STORAGE_READ = "storage/casBrowserStorageReadView";
 
@@ -1451,7 +1462,7 @@ public interface CasWebflowConstants {
      * Action id 'passwordlessValidateCaptchaAction'.
      */
     String ACTION_ID_PASSWORDLESS_VALIDATE_CAPTCHA = "passwordlessValidateCaptchaAction";
-    
+
     /**
      * Action id 'validateCaptchaAction'.
      */
@@ -1580,7 +1591,7 @@ public interface CasWebflowConstants {
      * Action id 'accountProfileActivateMfaAction'.
      */
     String ACTION_ID_ACCOUNT_PROFILE_ACTIVATE_MFA = "accountProfileActivateMfaAction";
-    
+
     /**
      * Action id 'prepareAccountProfilePasswordMgmtAction'.
      */
@@ -2018,6 +2029,15 @@ public interface CasWebflowConstants {
      * Action id 'mfaSimpleMultifactorSendTokenAction'.
      */
     String ACTION_ID_MFA_SIMPLE_SEND_TOKEN = "mfaSimpleMultifactorSendTokenAction";
+    /**
+     * Action id 'mfaSimpleMultifactorVerifyEmailAction'.
+     */
+    String ACTION_ID_MFA_SIMPLE_VERIFY_EMAIL = "mfaSimpleMultifactorVerifyEmailAction";
+
+    /**
+     * Action id 'mfaSimpleMultifactorUpdateEmailAction'.
+     */
+    String ACTION_ID_MFA_SIMPLE_UPDATE_EMAIL = "mfaSimpleMultifactorUpdateEmailAction";
     /**
      * Action id 'loadAccountRegistrationPropertiesAction'.
      */

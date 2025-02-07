@@ -75,7 +75,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             }
             val attributes = collectPrincipalAttributes(sqlQueryResults);
             val principal = principalFactory.createPrincipal(username, attributes);
-            return createHandlerResult(transformedCredential, principal, new ArrayList<>(0));
+            return createHandlerResult(transformedCredential, principal, new ArrayList<>());
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {
                 throw new AccountNotFoundException(username + " not found with SQL query");

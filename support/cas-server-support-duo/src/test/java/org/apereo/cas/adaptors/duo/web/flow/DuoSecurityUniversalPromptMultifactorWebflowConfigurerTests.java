@@ -38,7 +38,7 @@ class DuoSecurityUniversalPromptMultifactorWebflowConfigurerTests extends BaseMu
 
     @Test
     void verifyUniversalPromptFlow() {
-        val loginFlow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val loginFlow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(loginFlow.getState(CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN));
         assertEquals(CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN, loginFlow.getStartState().getId());
 

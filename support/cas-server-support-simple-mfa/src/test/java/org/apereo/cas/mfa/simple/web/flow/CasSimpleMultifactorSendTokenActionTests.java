@@ -17,6 +17,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.webflow.action.EventFactorySupport;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
@@ -149,6 +151,42 @@ class CasSimpleMultifactorSendTokenActionTests {
             val token = new CasSimpleMultifactorTokenCredential(theToken1.getKey());
             ticketRegistry.deleteTicket(theToken1.getKey());
             assertThrows(MultifactorAuthenticationFailedException.class, () -> authenticationHandler.authenticate(token, mock(Service.class)));
+        }
+    }
+
+    @Nested
+    @TestPropertySource(properties = {
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
+
+        "cas.authn.mfa.simple.mail.from=admin@example.org",
+        "cas.authn.mfa.simple.mail.subject=CAS Token",
+        "cas.authn.mfa.simple.mail.text=CAS Token is ${token}",
+        "cas.authn.mfa.simple.mail.accepted-email-pattern=.+@example.org"
+    })
+    class EmailRegistrationTests extends BaseCasSimpleMultifactorSendTokenActionTests {
+        
+        @Test
+        void verifyEmailRegistration() throws Throwable {
+            val requestContext = buildRequestContextFor("casuser", null);
+            val event = mfaSimpleMultifactorSendTokenAction.execute(requestContext);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, event.getId());
+            val attributes = event.getAttributes();
+            assertTrue(attributes.contains("principal"));
+            assertTrue(attributes.contains("authentication"));
+            assertTrue(attributes.contains(CasSimpleMultifactorSendTokenAction.EVENT_ATTR_ALLOW_REGISTER_EMAIL));
+        }
+
+        @Test
+        void verifyResumeEmailRegistration() throws Throwable {
+            val requestContext = buildRequestContextFor("casuser", null);
+            requestContext.setCurrentEvent(new EventFactorySupport().event(this,
+                CasWebflowConstants.TRANSITION_ID_RESUME, new LocalAttributeMap<>(
+                    Map.of(CasSimpleMultifactorVerifyEmailAction.TOKEN_PROPERTY_EMAIL_TO_REGISTER, "casuser@example.org"))));
+            val event = mfaSimpleMultifactorSendTokenAction.execute(requestContext);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+            val attributes = event.getAttributes();
+            assertTrue(attributes.contains("token"));
         }
     }
 

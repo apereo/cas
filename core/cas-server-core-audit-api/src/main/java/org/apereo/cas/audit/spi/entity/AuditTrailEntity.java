@@ -50,6 +50,9 @@ public class AuditTrailEntity {
     @Column(name = "AUD_ACTION")
     private String action;
 
+    @Column(name = "AUD_TENANT")
+    private String tenant;
+
     @Column(name = "APPLIC_CD")
     private String applicationCode;
 

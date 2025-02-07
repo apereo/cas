@@ -35,5 +35,5 @@ public class RecursiveSearchEntryHandlersProperties implements Serializable {
     /**
      * The Merge attributes.
      */
-    private List<String> mergeAttributes = new ArrayList<>(0);
+    private List<String> mergeAttributes = new ArrayList<>();
 }

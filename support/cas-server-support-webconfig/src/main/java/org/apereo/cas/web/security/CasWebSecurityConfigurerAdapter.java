@@ -213,6 +213,7 @@ public class CasWebSecurityConfigurerAdapter {
             customizer.requestMatchers(new AntPathRequestMatcher("/resources/**")).permitAll();
             customizer.requestMatchers(new AntPathRequestMatcher("/static/**")).permitAll();
             customizer.requestMatchers(new AntPathRequestMatcher("/public/**")).permitAll();
+            customizer.requestMatchers(new AntPathRequestMatcher("/favicon**")).permitAll();
             Arrays.stream(webProperties.getResources().getStaticLocations())
                 .forEach(location -> {
                     if (location.startsWith(ResourceUtils.FILE_URL_PREFIX)) {

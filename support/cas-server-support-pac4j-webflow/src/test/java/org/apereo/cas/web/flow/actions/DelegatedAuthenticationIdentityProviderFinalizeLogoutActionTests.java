@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.slo.SingleLogoutContinuation;
 import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
@@ -46,21 +47,26 @@ class DelegatedAuthenticationIdentityProviderFinalizeLogoutActionTests {
         context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "CasClient");
         context.setParameter(casProperties.getLogout().getRedirectParameter().getFirst(), "https://github.com");
         context.withUserAgent();
-        assertNull(action.execute(context));
+        context.setRequestAttribute(SingleLogoutContinuation.class.getName(), SingleLogoutContinuation.builder().content("content").build());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_LOGOUT, action.execute(context).getId());
         assertNotNull(WebUtils.getLogoutRedirectUrl(context.getHttpServletRequest(), String.class));
+        assertNull(WebUtils.getCredential(context));
+        assertNotNull(context.getConversationScope().get(SingleLogoutContinuation.class.getName()));
     }
 
     @Test
     void verifyDelegatedLogoutRequestRedirect() throws Throwable {
         val context = MockRequestContext.create(applicationContext).withUserAgent();
         context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "CasClient");
-
+        context.setRequestAttribute(SingleLogoutContinuation.class.getName(), SingleLogoutContinuation.builder().content("content").build());
         val logoutRequest = DelegatedAuthenticationClientLogoutRequest.builder()
             .target("https://google.com")
             .status(200)
             .build();
         DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequest(context, logoutRequest);
-        assertNull(action.execute(context));
+        assertEquals(CasWebflowConstants.TRANSITION_ID_LOGOUT, action.execute(context).getId());
         assertNotNull(WebUtils.getLogoutRedirectUrl(context.getHttpServletRequest(), String.class));
+        assertNull(WebUtils.getCredential(context));
+        assertNotNull(context.getConversationScope().get(SingleLogoutContinuation.class.getName()));
     }
 }

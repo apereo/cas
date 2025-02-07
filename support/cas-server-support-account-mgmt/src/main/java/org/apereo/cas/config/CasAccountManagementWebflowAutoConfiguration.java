@@ -31,7 +31,7 @@ import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
-import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
+import org.apereo.cas.scim.v2.provisioning.ScimPrincipalAttributeMapper;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -191,7 +191,7 @@ public class CasAccountManagementWebflowAutoConfiguration {
         }
     }
 
-    @ConditionalOnClass(ScimV2PrincipalAttributeMapper.class)
+    @ConditionalOnClass(ScimPrincipalAttributeMapper.class)
     @Configuration(value = "CasAccountManagementScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountRegistration, module = "scim")
@@ -222,11 +222,11 @@ public class CasAccountManagementWebflowAutoConfiguration {
         public CasWebflowConfigurer accountMgmtWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
-            return new AccountManagementWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+            return new AccountManagementWebflowConfigurer(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         }
 
     }
@@ -369,8 +369,8 @@ public class CasAccountManagementWebflowAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public CasWebflowConfigurer accountMgmtRegistrationCaptchaWebflowConfigurer(
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             final CasConfigurationProperties casProperties,
@@ -379,7 +379,7 @@ public class CasAccountManagementWebflowAutoConfiguration {
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val configurer = new AccountManagementRegistrationCaptchaWebflowConfigurer(flowBuilderServices,
-                        loginFlowDefinitionRegistry, applicationContext, casProperties);
+                        flowDefinitionRegistry, applicationContext, casProperties);
                     configurer.setOrder(casProperties.getAccountRegistration().getWebflow().getOrder() + 2);
                     return configurer;
                 })

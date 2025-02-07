@@ -249,11 +249,9 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
      * Stuff attributes into list.
      *
      * @param personAttributesMap the person attributes map
-     * @param filter              the filter
      * @return the map
      */
-    default Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> personAttributesMap,
-                                                              final PersonAttributeDaoFilter filter) {
+    static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> personAttributesMap) {
         val personAttributes = new HashMap<String, List<Object>>();
         for (val stringObjectEntry : personAttributesMap.entrySet()) {
             val value = stringObjectEntry.getValue();

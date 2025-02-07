@@ -56,7 +56,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
                 val account = accounts.get(userName.toLowerCase(Locale.ENGLISH).trim());
                 return decode(account);
             }
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         });
     }
 

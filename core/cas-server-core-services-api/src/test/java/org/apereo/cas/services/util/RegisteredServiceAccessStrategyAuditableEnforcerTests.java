@@ -8,20 +8,23 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.StaticApplicationContext;
-
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,12 +35,16 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("RegisteredService")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 class RegisteredServiceAccessStrategyAuditableEnforcerTests {
 
-    private static AuditableExecutionResult executeAccessStrategy(final AuditableContext context) {
-        val appCtx = new StaticApplicationContext();
-        appCtx.refresh();
-        return new RegisteredServiceAccessStrategyAuditableEnforcer(appCtx).execute(context);
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
+    private AuditableExecutionResult executeAccessStrategy(final AuditableContext context) {
+        return new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext,
+            new DefaultRegisteredServicePrincipalAccessStrategyEnforcer(applicationContext)).execute(context);
     }
 
     private static RegisteredService createRegisteredService(final boolean enabled) {

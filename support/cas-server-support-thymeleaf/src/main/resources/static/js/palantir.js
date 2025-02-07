@@ -119,7 +119,7 @@ function fetchServices(callback) {
                     5: `${service.id}`
                 });
 
-
+                let metadataSourcesCount = 0;
                 if (serviceClass.includes("SamlRegisteredService")) {
                     const metadataLocation = service.metadataLocation;
                     saml2MetadataProvidersTable.row.add({
@@ -127,7 +127,9 @@ function fetchServices(callback) {
                         1: `<span serviceId='${service.id}' class="text-wrap">${service.name ?? ""}</span>`,
                         2: metadataLocation
                     });
+                    metadataSourcesCount++;
                 }
+                $("#saml2metadataproviders").toggle(metadataSourcesCount > 0);
             }
 
             applicationsTable.search("").draw();
@@ -2140,6 +2142,22 @@ async function initializePersonDirectoryOperations() {
         }
     });
 
+    const attributeDefinitionsTable = $("#attributeDefinitionsTable").DataTable({
+        pageLength: 10,
+        drawCallback: settings => {
+            $("#attributeDefinitionsTable tr").addClass("mdc-data-table__row");
+            $("#attributeDefinitionsTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    const attributeRepositoriesTable = $("#attributeRepositoriesTable").DataTable({
+        pageLength: 10,
+        drawCallback: settings => {
+            $("#attributeRepositoriesTable tr").addClass("mdc-data-table__row");
+            $("#attributeRepositoriesTable td").addClass("mdc-data-table__cell");
+        }
+    });
+    
     $("button[name=personDirectoryClearButton]").off().on("click", () => {
         if (actuatorEndpoints.persondirectory) {
             const form = document.getElementById("fmPersonDirectory");
@@ -2174,7 +2192,6 @@ async function initializePersonDirectoryOperations() {
         }
     });
 
-
     $("button[name=personDirectoryButton]").off().on("click", () => {
         if (actuatorEndpoints.persondirectory) {
             const form = document.getElementById("fmPersonDirectory");
@@ -2205,7 +2222,54 @@ async function initializePersonDirectoryOperations() {
             });
         }
     });
+    
+    attributeDefinitionsTable.clear();
+    let attributeDefinitions = 0;
+    if (actuatorEndpoints.attributeDefinitions) {
+        $.get(actuatorEndpoints.attributeDefinitions, response => {
+            for (const definition of response) {
+                attributeDefinitionsTable.row.add({
+                    0: `<code>${definition.key ?? "N/A"}</code>`,
+                    1: `<code>${definition.name ?? "N/A"}</code>`,
+                    2: `<code>${definition.scoped ?? "false"}</code>`,
+                    3: `<code>${definition.encrypted ?? "false"}</code>`,
+                    4: `<code>${definition.singleValue ?? "false"}</code>`,
+                    5: `<code>${definition.attribute ?? "N/A"}</code>`,
+                    6: `<code>${definition.patternFormat ?? "N/A"}</code>`,
+                    7: `<code>${definition.canonicalizationMode ?? "N/A"}</code>`,
+                    8: `<code>${definition.flattened ?? "false"}</code>`,
+                    9: `<code>${definition?.friendlyName ?? "N/A"}</code>`,
+                    10: `<code>${definition?.urn ?? "N/A"}</code>`
+                });
+                attributeDefinitions++;
+            }
+            attributeDefinitionsTable.draw();
+            $("#attributeDefinitionsTab").toggle(attributeDefinitions > 0);
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayBanner(xhr);
+        });
+    }
 
+    attributeRepositoriesTable.clear();
+    let attributeRepositories = 0;
+    if (actuatorEndpoints.persondirectory) {
+        $.get(`${actuatorEndpoints.persondirectory}/repositories`, response => {
+            for (const definition of response) {
+                attributeRepositoriesTable.row.add({
+                    0: `<code>${definition.id ?? "N/A"}</code>`,
+                    1: `<code>${definition.order ?? "0"}</code>`,
+                    2: `<code>${JSON.stringify(definition.tags)}</code>`
+                });
+                attributeRepositories++;
+            }
+            attributeRepositoriesTable.draw();
+            $("#attributeRepositoriesTab").toggle(attributeRepositories > 0);
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayBanner(xhr);
+        });
+    }
 }
 
 async function initializeAuthenticationOperations() {

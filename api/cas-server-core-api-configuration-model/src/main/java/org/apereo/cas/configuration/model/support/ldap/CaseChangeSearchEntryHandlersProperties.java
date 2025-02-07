@@ -45,5 +45,5 @@ public class CaseChangeSearchEntryHandlersProperties implements Serializable {
     /**
      * The Attribute names.
      */
-    private List<String> attributeNames = new ArrayList<>(0);
+    private List<String> attributeNames = new ArrayList<>();
 }

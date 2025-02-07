@@ -85,5 +85,20 @@ class FileSystemSamlIdPMetadataLocatorTests {
             assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(registeredService));
             assertNotNull(samlIdPMetadataLocator.resolveSigningKey(registeredService));
         }
+
+        @Test
+        void verifyMetadataPerService() throws Throwable {
+            val service = new SamlRegisteredService();
+            service.setName("TestShib");
+            service.setId(2000);
+            service.setIdpMetadataLocation("file:src/test/resources/metadata/ObjectSignerTest-1000");
+            val registeredService = Optional.of(service);
+
+            assertNotNull(samlIdPMetadataLocator.resolveMetadata(registeredService));
+            assertNotNull(samlIdPMetadataLocator.resolveEncryptionCertificate(registeredService));
+            assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(registeredService));
+            assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(registeredService));
+            assertNotNull(samlIdPMetadataLocator.resolveSigningKey(registeredService));
+        }
     }
 }

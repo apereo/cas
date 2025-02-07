@@ -42,5 +42,5 @@ public class RedisSentinelProperties implements CasFeatureModule, Serializable {
     /**
      * list of host:port pairs.
      */
-    private List<String> node = new ArrayList<>(0);
+    private List<String> node = new ArrayList<>();
 }

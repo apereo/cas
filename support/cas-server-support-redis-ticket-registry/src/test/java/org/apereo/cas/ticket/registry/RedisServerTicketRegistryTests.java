@@ -4,7 +4,8 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasRedisCoreAutoConfiguration;
 import org.apereo.cas.config.CasRedisTicketRegistryAutoConfiguration;
 import org.apereo.cas.redis.core.CasRedisTemplate;
@@ -492,6 +493,11 @@ class RedisServerTicketRegistryTests {
         @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
         private TicketTrackingPolicy serviceTicketSessionTrackingPolicy;
 
+        @Autowired
+        @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+        private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+        
         @Test
         void verifyConcurrentAddTicket() throws Throwable {
             val principalId = UUID.randomUUID().toString();
@@ -503,7 +509,7 @@ class RedisServerTicketRegistryTests {
 
             val request = new MockHttpServletRequest();
             request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://foo.com");
-            val service = new WebApplicationServiceFactory().createService(request);
+            val service = webApplicationServiceFactory.createService(request);
 
             val testHasFailed = new AtomicBoolean();
             val threads = new ArrayList<Thread>();

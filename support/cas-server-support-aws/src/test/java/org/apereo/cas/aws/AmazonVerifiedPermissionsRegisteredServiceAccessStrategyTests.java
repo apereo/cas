@@ -3,6 +3,7 @@ package org.apereo.cas.aws;
 import org.apereo.cas.aws.authz.AmazonVerifiedPermissionsRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +11,11 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import software.amazon.awssdk.core.SdkSystemSetting;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("AmazonWebServices")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 class AmazonVerifiedPermissionsRegisteredServiceAccessStrategyTests {
 
     static {
@@ -36,6 +44,9 @@ class AmazonVerifiedPermissionsRegisteredServiceAccessStrategyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifySerializeToJson() throws IOException {
         val strategy = new AmazonVerifiedPermissionsRegisteredServiceAccessStrategy();
@@ -57,6 +68,7 @@ class AmazonVerifiedPermissionsRegisteredServiceAccessStrategyTests {
 
         val accessRequest = RegisteredServiceAccessStrategyRequest.builder()
             .principalId("casuser")
+            .applicationContext(applicationContext)
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .service(RegisteredServiceTestUtils.getService())
             .attributes(CollectionUtils.wrap("key1", Set.of("value1")))

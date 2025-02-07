@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
-
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -18,10 +17,10 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 public class RemoteAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     public RemoteAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                 final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                 final FlowDefinitionRegistry flowDefinitionRegistry,
                                                  final ConfigurableApplicationContext applicationContext,
                                                  final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Override
@@ -36,9 +35,9 @@ public class RemoteAuthenticationWebflowConfigurer extends AbstractCasWebflowCon
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, CasWebflowConstants.STATE_ID_SHOW_AUTHN_WARNING_MSGS);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_ERROR, targetState);
-            
+
             actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
-            
+
             setStartState(flow, actionState);
 
         }

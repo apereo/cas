@@ -107,14 +107,14 @@ class PasswordManagementForgotUsernameConfiguration {
         public CasWebflowConfigurer forgotUsernameWebflowConfigurer(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new ForgotUsernameWebflowConfigurer(flowBuilderServices,
-                    loginFlowDefinitionRegistry, applicationContext, casProperties))
+                    flowDefinitionRegistry, applicationContext, casProperties))
                 .otherwiseProxy()
                 .get();
         }
@@ -147,14 +147,14 @@ class PasswordManagementForgotUsernameConfiguration {
         public CasWebflowConfigurer forgotUsernameCaptchaWebflowConfigurer(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val configurer = new ForgotUsernameCaptchaWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+                    val configurer = new ForgotUsernameCaptchaWebflowConfigurer(flowBuilderServices, flowDefinitionRegistry,
                         applicationContext, casProperties);
                     configurer.setOrder(casProperties.getAuthn().getPm().getWebflow().getOrder() + 2);
                     return configurer;

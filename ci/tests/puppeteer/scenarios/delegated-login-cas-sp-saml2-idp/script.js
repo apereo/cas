@@ -30,16 +30,17 @@ const cas = require("../../cas.js");
     assert(authenticationSuccess.attributes.name[0] === "CAS");
     assert(authenticationSuccess.attributes.department[0] === "SSO");
 
+    await cas.sleep(2000);
     await cas.gotoLogin(page);
     await cas.assertCookie(page);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, caskeycloak@example.org, have successfully logged in");
 
+    await cas.logb("Logging out...");
     await cas.gotoLogout(page, service);
     await cas.sleep(6000);
     await cas.logPage(page);
     const url = await page.url();
     await cas.sleep(3000);
-    
     assert(url.startsWith(service));
     await cas.gotoLogin(page, service);
     await cas.click(page, "li #keycloak");

@@ -22,7 +22,6 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
-import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -52,17 +51,13 @@ public class CasInterruptWebflowAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer interruptWebflowConfigurer(
         final CasConfigurationProperties casProperties,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry logoutFlowRegistry,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
-        val cfg = new InterruptWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+        return new InterruptWebflowConfigurer(flowBuilderServices, flowDefinitionRegistry,
             applicationContext, casProperties);
-        cfg.setLogoutFlowDefinitionRegistry(logoutFlowRegistry);
-        return cfg;
     }
 
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INQUIRE_INTERRUPT)
@@ -117,7 +112,7 @@ public class CasInterruptWebflowAutoConfiguration {
             .build()
             .get();
     }
-    
+
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_FINALIZE_INTERRUPT)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -134,6 +129,7 @@ public class CasInterruptWebflowAutoConfiguration {
             .build()
             .get();
     }
+
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategy")
@@ -147,7 +143,7 @@ public class CasInterruptWebflowAutoConfiguration {
         return new InterruptSingleSignOnParticipationStrategy(servicesManager,
             ticketRegistrySupport, authenticationServiceSelectionPlan);
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategyConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

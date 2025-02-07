@@ -61,6 +61,9 @@
   "schedule": [
     "after 10pm and before 6am every weekday"
   ],
+  "gradle": {
+    "enabled": true
+  },
   "docker": {
     "enabled": true
   },
@@ -80,8 +83,7 @@
       "enabled": true
     },
     {
-      "managers": ["dockerfile"],
-      "groupName": "all-docker-updates"
+      "managers": ["dockerfile"]
     },
     {
       "matchDatasources": ["docker"],

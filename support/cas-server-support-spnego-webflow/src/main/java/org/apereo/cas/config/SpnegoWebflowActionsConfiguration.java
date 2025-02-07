@@ -12,12 +12,12 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SpnegoCredentialsAction;
 import org.apereo.cas.web.flow.SpnegoNegotiateCredentialsAction;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.client.BaseSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.flow.client.HostNameSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-
 import lombok.val;
 import org.ldaptive.SearchOperation;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,7 +29,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.execution.Action;
-
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,47 +48,86 @@ class SpnegoWebflowActionsConfiguration {
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SPNEGO)
     public Action spnego(
         final CasConfigurationProperties casProperties,
-        @Qualifier("adaptiveAuthenticationPolicy")
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-        @Qualifier("serviceTicketRequestWebflowEventResolver")
+        @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
         @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
-        val spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
-            serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
-            spnegoProperties.isSend401OnAuthenticationFailure());
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> {
+                val spnegoProperties = casProperties.getAuthn().getSpnego();
+                return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
+                    serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
+                    spnegoProperties.isSend401OnAuthenticationFailure());
+            })
+            .withId(CasWebflowConstants.ACTION_ID_SPNEGO)
+            .build()
+            .get();
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SPNEGO_NEGOTIATE)
-    public Action negociateSpnego(final CasConfigurationProperties casProperties) {
-        val spnegoProperties = casProperties.getAuthn().getSpnego();
-        val supportedBrowsers = Stream.of(spnegoProperties.getSupportedBrowsers().split(",")).collect(Collectors.toList());
-        return new SpnegoNegotiateCredentialsAction(supportedBrowsers,
-            spnegoProperties.isMixedModeAuthentication());
+    public Action negociateSpnego(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> {
+                val spnegoProperties = casProperties.getAuthn().getSpnego();
+                val supportedBrowsers = Stream.of(spnegoProperties.getSupportedBrowsers().split(",")).collect(Collectors.toList());
+                return new SpnegoNegotiateCredentialsAction(supportedBrowsers,
+                    spnegoProperties.isMixedModeAuthentication());
+            })
+            .withId(CasWebflowConstants.ACTION_ID_SPNEGO_NEGOTIATE)
+            .build()
+            .get();
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SPNEGO_CLIENT_BASE)
-    public Action baseSpnegoClientAction(final CasConfigurationProperties casProperties) {
-        val spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new BaseSpnegoKnownClientSystemsFilterAction(
-            RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),
-            spnegoProperties.getAlternativeRemoteHostAttribute(),
-            Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis());
+    public Action baseSpnegoClientAction(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> {
+                val spnegoProperties = casProperties.getAuthn().getSpnego();
+                return new BaseSpnegoKnownClientSystemsFilterAction(
+                    RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),
+                    spnegoProperties.getAlternativeRemoteHostAttribute(),
+                    Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis());
+            })
+            .withId(CasWebflowConstants.ACTION_ID_SPNEGO_CLIENT_BASE)
+            .build()
+            .get();
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SPNEGO_CLIENT_HOSTNAME)
-    public Action hostnameSpnegoClientAction(final CasConfigurationProperties casProperties) {
-        val spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(
-            spnegoProperties.getIpsToCheckPattern()), spnegoProperties.getAlternativeRemoteHostAttribute(),
-            Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(), spnegoProperties.getHostNamePatternString());
+    public Action hostnameSpnegoClientAction(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> {
+                val spnegoProperties = casProperties.getAuthn().getSpnego();
+                return new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(
+                    spnegoProperties.getIpsToCheckPattern()), spnegoProperties.getAlternativeRemoteHostAttribute(),
+                    Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(), spnegoProperties.getHostNamePatternString());
+            })
+            .withId(CasWebflowConstants.ACTION_ID_SPNEGO_CLIENT_HOSTNAME)
+            .build()
+            .get();
     }
 
     @Configuration(value = "SpnegoLdapWebflowActionsConfiguration", proxyBeanMethods = false)

@@ -48,7 +48,9 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
         val payload = CollectionUtils.wrap("credential", transaction.getCredentials());
         if (transaction instanceof final RegisteredServiceAwareAuthenticationTransaction rsat) {
             FunctionUtils.doIfNotNull(rsat.getRegisteredService(), registeredService -> {
-                payload.put("registeredServiceId", registeredService.getServiceId());
+                payload.put("registeredServiceUrl", registeredService.getServiceId());
+                payload.put("registeredServiceId", registeredService.getId());
+                payload.put("registeredServiceFriendlyName", registeredService.getFriendlyName());
                 payload.put("registeredServiceName", registeredService.getName());
                 payload.put("service", getServiceId(transaction.getService()));
             });

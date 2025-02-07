@@ -25,6 +25,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -110,8 +111,8 @@ class SamlServiceTests extends AbstractOpenSamlTests {
         val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "https://some.service.edu/path/to/app");
 
-        val service = new DefaultArgumentExtractor(samlServiceFactory).extractService(request);
-        val impl = new DefaultArgumentExtractor(samlServiceFactory).extractService(request);
+        val service = new DefaultArgumentExtractor(List.of(samlServiceFactory)).extractService(request);
+        val impl = new DefaultArgumentExtractor(List.of(samlServiceFactory)).extractService(request);
         val manager = mock(ServicesManager.class);
         assertTrue(new DefaultServiceMatchingStrategy(manager).matches(impl, service));
     }
@@ -120,11 +121,11 @@ class SamlServiceTests extends AbstractOpenSamlTests {
     void verifyTargetMatchesNoSamlService() {
         val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "https://some.service.edu/path/to/app");
-        val impl = new DefaultArgumentExtractor(samlServiceFactory).extractService(request);
+        val impl = new DefaultArgumentExtractor(List.of(samlServiceFactory)).extractService(request);
 
         val request2 = new MockHttpServletRequest();
         request2.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "https://some.SERVICE.edu");
-        val service = new DefaultArgumentExtractor(samlServiceFactory).extractService(request2);
+        val service = new DefaultArgumentExtractor(List.of(samlServiceFactory)).extractService(request2);
         val manager = mock(ServicesManager.class);
         assertFalse(new DefaultServiceMatchingStrategy(manager).matches(impl, service));
     }

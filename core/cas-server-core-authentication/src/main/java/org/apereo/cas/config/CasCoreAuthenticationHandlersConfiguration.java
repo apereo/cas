@@ -167,7 +167,7 @@ class CasCoreAuthenticationHandlersConfiguration {
             if (passwordPolicy.isEnabled()) {
                 val cfg = new PasswordPolicyContext(passwordPolicy);
                 if (passwordPolicy.isAccountStateHandlingEnabled()) {
-                    cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
+                    cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>());
                 } else {
                     LOGGER.debug("Handling account states is disabled via CAS configuration");
                 }
@@ -264,7 +264,7 @@ class CasCoreAuthenticationHandlersConfiguration {
                         LOGGER.debug("Password policy is enabled for JAAS. Constructing password policy configuration for [{}]", jaas.getRealm());
                         val cfg = new PasswordPolicyContext(passwordPolicy);
                         if (passwordPolicy.isAccountStateHandlingEnabled()) {
-                            cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
+                            cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>());
                         } else {
                             LOGGER.debug("Handling account states is disabled via CAS configuration");
                         }

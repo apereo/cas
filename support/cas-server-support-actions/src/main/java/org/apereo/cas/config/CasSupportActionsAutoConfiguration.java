@@ -14,6 +14,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -124,11 +125,11 @@ public class CasSupportActionsAutoConfiguration {
         public Action authenticationViaFormAction(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
             @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
-            @Qualifier("adaptiveAuthenticationPolicy")
+            @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
 
             return WebflowActionBeanSupplier.builder()
@@ -384,6 +385,8 @@ public class CasSupportActionsAutoConfiguration {
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties,
+            @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+            final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
@@ -392,7 +395,7 @@ public class CasSupportActionsAutoConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new GenericSuccessViewAction(ticketRegistry, servicesManager,
-                    webApplicationServiceFactory, casProperties))
+                    webApplicationServiceFactory, casProperties, principalAccessStrategyEnforcer))
                 .withId(CasWebflowConstants.ACTION_ID_GENERIC_SUCCESS_VIEW)
                 .build()
                 .get();
@@ -670,6 +673,8 @@ public class CasSupportActionsAutoConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
             final AuditTrailExecutionPlan auditTrailExecutionPlan,
+            @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+            final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -680,7 +685,8 @@ public class CasSupportActionsAutoConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new PrepareAccountProfileViewAction(ticketRegistry,
-                    servicesManager, casProperties, auditTrailExecutionPlan, geoLocationService.getIfAvailable()))
+                    servicesManager, casProperties, auditTrailExecutionPlan,
+                    geoLocationService.getIfAvailable(), principalAccessStrategyEnforcer))
                 .withId(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE)
                 .build()
                 .get();

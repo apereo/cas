@@ -15,6 +15,11 @@ import java.util.stream.Stream;
 public interface PersonDirectoryAttributeRepositoryPlan {
 
     /**
+     * The bean name.
+     */
+    String BEAN_NAME = "personDirectoryAttributeRepositoryPlan";
+
+    /**
      * Register attribute repository.
      *
      * @param repository the repository

@@ -1,32 +1,30 @@
 package org.apereo.cas.support.inwebo.web.flow.actions;
 
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
-import org.apereo.cas.authentication.DefaultAuthenticationManager;
 import org.apereo.cas.authentication.DefaultAuthenticationResult;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
-import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
-import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
-import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.inwebo.authentication.InweboAuthenticationDeviceMetadataPopulator;
-import org.apereo.cas.support.inwebo.authentication.InweboAuthenticationHandler;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.support.inwebo.config.BaseInweboConfiguration;
 import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.support.inwebo.service.response.InweboDeviceNameResponse;
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.apereo.cas.util.spring.DirectObjectProvider;
-import org.apereo.cas.web.flow.authentication.DefaultCasWebflowExceptionCatalog;
-import org.apereo.cas.web.flow.authentication.FinalMultifactorAuthenticationTransactionWebflowEventResolver;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.context.support.StaticApplicationContext;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -36,6 +34,18 @@ import static org.mockito.Mockito.*;
  * @author Jerome LELEU
  * @since 6.4.0
  */
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = {
+    BaseInweboActionTests.InweboActionTestConfiguration.class,
+    BaseInweboConfiguration.SharedTestConfiguration.class
+},
+    properties = {
+        "cas.authn.mfa.inwebo.client-certificate.certificate.location=classpath:clientcert.p12",
+        "cas.authn.mfa.inwebo.client-certificate.passphrase=password",
+        "cas.authn.mfa.inwebo.service-id=7046"
+    })
+@ExtendWith(CasTestExtension.class)
+@Execution(ExecutionMode.SAME_THREAD)
 public abstract class BaseInweboActionTests {
 
     protected static final String LOGIN = "jerome@casinthecloud.com";
@@ -46,10 +56,19 @@ public abstract class BaseInweboActionTests {
 
     protected MockRequestContext requestContext;
 
+    @Autowired
+    @Qualifier("inweboService")
     protected InweboService service;
 
     protected CasWebflowEventResolver resolver;
 
+    @Autowired
+    @Qualifier(TenantExtractor.BEAN_NAME)
+    protected TenantExtractor tenantExtractor;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     protected static InweboDeviceNameResponse deviceResponse(final InweboResult result) {
         val response = new InweboDeviceNameResponse();
         response.setResult(result);
@@ -61,29 +80,8 @@ public abstract class BaseInweboActionTests {
 
     @BeforeEach
     void setUp() throws Exception {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-        var authenticationSystemSupport = ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
-            CoreAuthenticationTestUtils.getAuthenticationSystemSupport(), AuthenticationSystemSupport.BEAN_NAME);
-
         this.requestContext = MockRequestContext.create(applicationContext);
-        service = mock(InweboService.class);
-
-        val authenticationEventExecutionPlan = new DefaultAuthenticationEventExecutionPlan();
-        authenticationEventExecutionPlan.registerAuthenticationHandler(new InweboAuthenticationHandler(mock(ServicesManager.class),
-            PrincipalFactoryUtils.newPrincipalFactory(), new InweboMultifactorAuthenticationProperties(), service,
-            new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class))));
-        authenticationEventExecutionPlan.registerAuthenticationMetadataPopulator(new InweboAuthenticationDeviceMetadataPopulator());
-
-        val authenticationManager = new DefaultAuthenticationManager(authenticationEventExecutionPlan,
-            new DirectObjectProvider<>(authenticationSystemSupport), true, applicationContext);
-        authenticationSystemSupport = CoreAuthenticationTestUtils.getAuthenticationSystemSupport(authenticationManager, mock(ServicesManager.class));
-        val configurationContext = CasWebflowEventResolutionConfigurationContext
-            .builder()
-            .authenticationSystemSupport(authenticationSystemSupport)
-            .casWebflowExceptionCatalog(new DefaultCasWebflowExceptionCatalog())
-            .build();
-        resolver = new FinalMultifactorAuthenticationTransactionWebflowEventResolver(configurationContext);
+        reset(this.service);
         setAuthenticationInContext(LOGIN);
     }
 
@@ -106,5 +104,13 @@ public abstract class BaseInweboActionTests {
         val builder = WebUtils.getAuthenticationResultBuilder(requestContext);
         val attributes = builder.build().getAuthentication().getAttributes();
         assertNull(attributes.get("inweboAuthenticationDevice"));
+    }
+
+    @TestConfiguration(value = "InweboActionTestConfiguration", proxyBeanMethods = false)
+    public static class InweboActionTestConfiguration {
+        @Bean
+        public InweboService inweboService() {
+            return mock(InweboService.class);
+        }
     }
 }

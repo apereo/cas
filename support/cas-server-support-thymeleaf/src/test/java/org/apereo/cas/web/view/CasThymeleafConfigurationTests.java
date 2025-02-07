@@ -22,6 +22,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = BaseThymeleafTests.SharedTestConfiguration.class,
     properties = {
+        "spring.web.resources.chain.strategy.content.enabled=true",
         "cas.view.rest.url=http://localhost:8182",
         "cas.view.template-prefixes=classpath:templates,file:/templates"
     })

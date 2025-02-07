@@ -4,7 +4,8 @@ import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.BaseAbstractMultifactorAuthenticationProviderTests;
 import org.apereo.cas.authentication.mfa.MultifactorAuthenticationTestUtils;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.http.HttpMessage;
+import org.apereo.cas.web.HttpMessage;
+
 
 import com.yubico.client.v2.YubicoClient;
 import lombok.val;

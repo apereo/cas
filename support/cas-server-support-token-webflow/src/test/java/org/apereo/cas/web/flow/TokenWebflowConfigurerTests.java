@@ -29,7 +29,7 @@ class TokenWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         val state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_TOKEN_AUTHENTICATION_CHECK);
         assertNotNull(state);

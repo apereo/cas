@@ -10,7 +10,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.pac4j.core.context.HttpConstants;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -93,8 +92,7 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
         try {
             validateAccessToken(accessTokenResult.getKey(), accessTokenTicket, request, response);
             updateAccessTokenUsage(accessTokenTicket);
-            val context = new JEEContext(request, response);
-            val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);
+            val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket);
             return getConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);

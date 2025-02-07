@@ -41,6 +41,7 @@ public class WebflowActionBeanSupplier implements Supplier<Action> {
         return BeanSupplier.of(Action.class)
             .ifExists(properties.getWebflow().getGroovy().getActions().get(id))
             .when(CasRuntimeHintsRegistrar.notInNativeImage())
+            .when(ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory().isPresent())
             .and(condition.given(applicationContext.getEnvironment()))
             .supply(Unchecked.supplier(() -> {
                 val script = properties.getWebflow().getGroovy().getActions().get(id);

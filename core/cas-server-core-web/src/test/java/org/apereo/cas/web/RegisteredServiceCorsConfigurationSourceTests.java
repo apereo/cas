@@ -96,7 +96,8 @@ class RegisteredServiceCorsConfigurationSourceTests {
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
 
         val argumentExtractor = mock(ArgumentExtractor.class);
-        when(argumentExtractor.extractService(any())).thenReturn(RegisteredServiceTestUtils.getService());
+        val service = RegisteredServiceTestUtils.getService();
+        when(argumentExtractor.extractService(any())).thenReturn(service);
 
         val source = new RegisteredServiceCorsConfigurationSource(casProperties,
             servicesManager, argumentExtractor);

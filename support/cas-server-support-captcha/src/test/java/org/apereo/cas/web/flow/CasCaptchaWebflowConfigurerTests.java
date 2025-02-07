@@ -23,7 +23,7 @@ class CasCaptchaWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         val state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         assertTrue(Arrays.stream(state.getActionList().toArray())

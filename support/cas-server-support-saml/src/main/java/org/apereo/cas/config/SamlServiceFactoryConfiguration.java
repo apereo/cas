@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.util.CollectionUtils;
@@ -37,7 +38,8 @@ class SamlServiceFactoryConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public ServiceFactory<SamlService> samlServiceFactory() {
-        return new SamlServiceFactory();
+    public ServiceFactory<SamlService> samlServiceFactory(@Qualifier(TenantExtractor.BEAN_NAME)
+                                                          final TenantExtractor tenantExtractor) {
+        return new SamlServiceFactory(tenantExtractor);
     }
 }

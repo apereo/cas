@@ -22,12 +22,12 @@ public class DefaultPasswordPolicyHandlingStrategy<AuthnResponse> implements Aut
     public List<MessageDescriptor> handle(final AuthnResponse response, final PasswordPolicyContext configuration) throws Throwable {
         if (configuration == null) {
             LOGGER.debug("No password policy configuration is defined");
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         val accountStateHandler = configuration.getAccountStateHandler();
         if (accountStateHandler == null) {
             LOGGER.debug("No password policy account state handler is defined");
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
 
         LOGGER.debug("Applying password policy [{}] to [{}]", response, accountStateHandler);

@@ -112,7 +112,7 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
 
         if (state == null) {
             LOGGER.debug("Account state not defined. Returning empty list of messages.");
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         val messages = new ArrayList<MessageDescriptor>();
         handleError(state.getError(), response, configuration, messages);

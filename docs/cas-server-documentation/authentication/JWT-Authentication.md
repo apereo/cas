@@ -5,10 +5,9 @@ category: Authentication
 ---
 {% include variables.html %}
 
-
 # JWT Authentication
 
-[JSON Web Tokens](http://jwt.io/) are an open, industry standard RFC 7519 method for representing claims securely between two parties.
+JSON Web Tokens are an open, industry standard RFC 7519 method for representing claims securely between two parties.
 CAS provides support for token-based authentication on top of JWT, where an authentication request can be granted an SSO session based
 on a form of credentials that are JWTs.
 
@@ -112,3 +111,11 @@ Signing and encryption keys may also be defined on a per-service basis, or globa
 The following endpoints are provided by CAS:
 
 {% include_cached actuators.html endpoints="tokenAuth" %}
+
+## OpenID Connect JWT Access Tokens
+
+CAS also allows OpenID Connect access tokens to be passed as the `token` parameter, when the access token
+is encoded as a JWT. The token is decoded and then fetched as a valid access token from the ticket registry,
+allowing CAS establish an authenticated session and subsequently create a single sign-on session.
+
+To learn more about OpenID Connect, [please review this guide](../authentication/OIDC-Authentication.html).

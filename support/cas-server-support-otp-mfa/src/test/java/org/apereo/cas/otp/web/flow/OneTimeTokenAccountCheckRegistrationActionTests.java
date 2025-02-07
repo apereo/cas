@@ -3,8 +3,10 @@ package org.apereo.cas.otp.web.flow;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -14,6 +16,12 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Collection;
 import java.util.List;
@@ -29,7 +37,16 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
+@ExtendWith(CasTestExtension.class)
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 class OneTimeTokenAccountCheckRegistrationActionTests {
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyExistingAccount() throws Throwable {
         val account = OneTimeTokenAccount.builder()
@@ -41,9 +58,9 @@ class OneTimeTokenAccountCheckRegistrationActionTests {
             .build();
         val repository = mock(OneTimeTokenCredentialRepository.class);
         when(repository.get(anyString())).thenReturn((Collection) List.of(account));
-        val action = new OneTimeTokenAccountCheckRegistrationAction(repository);
+        val action = new OneTimeTokenAccountCheckRegistrationAction(repository, casProperties);
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(context.getApplicationContext(),
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(context.getApplicationContext());
@@ -63,9 +80,9 @@ class OneTimeTokenAccountCheckRegistrationActionTests {
             .build();
         val repository = mock(OneTimeTokenCredentialRepository.class);
         when(repository.create(anyString())).thenReturn(account);
-        val action = new OneTimeTokenAccountCheckRegistrationAction(repository);
+        val action = new OneTimeTokenAccountCheckRegistrationAction(repository, casProperties);
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(context.getApplicationContext(),
             MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
 

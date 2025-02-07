@@ -55,7 +55,7 @@ public class DefaultLogoutManager implements LogoutManager {
         LOGGER.info("Performing logout operations for [{}]", ticket.getId());
         if (this.singleLogoutCallbacksDisabled) {
             LOGGER.info("Single logout callbacks are disabled");
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         val logoutRequests = performLogoutForTicket(context);
         logoutExecutionPlan.getLogoutPostProcessors().forEach(postProcessor -> {

@@ -34,7 +34,7 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
         assertEquals(2, interceptors.size());
         assertTrue(interceptors.stream().anyMatch(CasLocaleChangeInterceptor.class::isInstance));
         assertTrue(interceptors.stream().anyMatch(ResourceUrlProviderExposingInterceptor.class::isInstance));
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM));
@@ -58,7 +58,7 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
         val cfg = casWebflowExecutionPlan.getWebflowConfigurers().iterator().next();
         assertNotNull(cfg.createRenderAction("ExampleRenderAction"));
 
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
 
         assertNull(cfg.getState(flow, "InvalidStateId", ViewState.class));
@@ -74,7 +74,7 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
     void verifyWebflowConfigError() throws Throwable {
-        val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         val stopState = (EndState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_WEBFLOW_CONFIG_ERROR);
         val context = MockRequestContext.create(applicationContext);
         context.setActiveFlow(flow);
@@ -84,7 +84,7 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
     void verifyStorageStates() {
-        val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         val writeState = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
         assertNotNull(writeState);
         assertEquals(1, writeState.getEntryActionList().size());

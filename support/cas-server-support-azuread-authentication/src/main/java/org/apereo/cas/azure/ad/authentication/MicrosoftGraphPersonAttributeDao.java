@@ -3,6 +3,7 @@ package org.apereo.cas.azure.ad.authentication;
 import org.apereo.cas.authentication.attribute.BasePersonAttributeDao;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
 import org.apereo.cas.authentication.attribute.SimpleUsernameAttributeProvider;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.UsernameAttributeProvider;
@@ -104,7 +105,7 @@ public class MicrosoftGraphPersonAttributeDao extends BasePersonAttributeDao {
             if (userCallResult.isSuccessful()) {
                 val response = userCallResult.body();
                 val attributes = response.buildAttributes();
-                return new SimplePersonAttributes(uid, stuffAttributesIntoList(attributes, filter));
+                return new SimplePersonAttributes(uid, PersonAttributeDao.stuffAttributesIntoList(attributes));
             }
             try (val errorBody = userCallResult.errorBody()) {
                 throw new RuntimeException("error requesting token (" + userCallResult.code() + "): " + errorBody);
@@ -116,7 +117,7 @@ public class MicrosoftGraphPersonAttributeDao extends BasePersonAttributeDao {
     public Set<PersonAttributes> getPeople(final Map<String, Object> query,
                                             final PersonAttributeDaoFilter filter,
                                             final Set<PersonAttributes> resultPeople) {
-        return getPeopleWithMultivaluedAttributes(stuffAttributesIntoList(query, filter), filter, resultPeople);
+        return getPeopleWithMultivaluedAttributes(PersonAttributeDao.stuffAttributesIntoList(query), filter, resultPeople);
     }
 
     @Override
@@ -214,11 +215,11 @@ public class MicrosoftGraphPersonAttributeDao extends BasePersonAttributeDao {
 
         private String preferredName;
 
-        private List<String> businessPhones = new ArrayList<>(0);
+        private List<String> businessPhones = new ArrayList<>();
 
-        private List<String> schools = new ArrayList<>(0);
+        private List<String> schools = new ArrayList<>();
 
-        private List<String> skills = new ArrayList<>(0);
+        private List<String> skills = new ArrayList<>();
 
         private String postalCode;
 

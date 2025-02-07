@@ -222,7 +222,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.getDescendantTickets().add(id);
         ticketRegistry.addTicket(tgt);
-        ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
+        ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(response.getCookies());
 
         assertDoesNotThrow(() -> federationValidateRequestController.handleFederationRequest(response, request));

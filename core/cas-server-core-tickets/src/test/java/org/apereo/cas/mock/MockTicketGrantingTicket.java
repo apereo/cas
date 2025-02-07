@@ -155,7 +155,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     @Override
     public List<Authentication> getChainedAuthentications() {
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override

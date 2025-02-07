@@ -53,14 +53,14 @@ public class CasX509AuthenticationWebflowAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer x509WebflowConfigurer(
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices,
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {
         return new X509WebflowConfigurer(flowBuilderServices,
-            loginFlowRegistry, applicationContext, casProperties);
+            flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
@@ -79,9 +79,9 @@ public class CasX509AuthenticationWebflowAutoConfiguration {
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
         @Qualifier("x509CertificateExtractor")
         final X509CertificateExtractor x509CertificateExtractor,
-        @Qualifier("serviceTicketRequestWebflowEventResolver")
+        @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-        @Qualifier("adaptiveAuthenticationPolicy")
+        @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
         final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
         final CasConfigurationProperties casProperties) {
         return WebflowActionBeanSupplier.builder()
@@ -141,14 +141,14 @@ public class CasX509AuthenticationWebflowAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer x509TomcatServletWebServiceFactoryWebflowConfigurer(
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return new X509TomcatServletWebServiceFactoryWebflowConfigurer(
-                flowBuilderServices, loginFlowRegistry, applicationContext, casProperties);
+                flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         }
     }
 }

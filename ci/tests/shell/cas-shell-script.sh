@@ -1,9 +1,9 @@
 help
-encrypt-value --value SOMEVALUE --password JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC
-encrypt-value --value SOMEVALUE --password JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC
-encrypt-value --value SOMEVALUE --password JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC --initvector
-decrypt-value --value {cas-cipher}iARpnWTURDdiAhWdcHXxqJpncj4iRo3w9i2UT33stcs= --password JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC
-decrypt-value --value {cas-cipher}Snynjp9UvY1VohHy+L5ig9ydKUw/E3yaEsWsxmS1eiQwxwJMPtjpuCNPaBOyPhQs --password JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC --initvector
+encrypt-value --value SOMEVALUE --password P@$$w0rd --alg PBEWITHSHAAND40BITRC4 --provider BC
+encrypt-value --value SOMEVALUE --password P@$$w0rd --alg PBEWITHSHAAND40BITRC4 --provider BC
+encrypt-value --value SOMEVALUE --password P@$$w0rd --alg PBEWITHSHAAND40BITRC4 --provider BC --initvector
+decrypt-value --value {cas-cipher}iARpnWTURDdiAhWdcHXxqJpncj4iRo3w9i2UT33stcs= --password JASTYPTPW --alg PBEWITHSHAAND40BITRC4 --provider BC
+decrypt-value --value {cas-cipher}BvHnbgPin/9TaT4fgctwmtrZzwdRQWGUolr3dS1peGETCWFJOVYgu/Fkg+lxm6QX --password P@$$w0rd --alg PBEWITHSHAAND40BITRC4 --provider BC --initvector
 jasypt-test-algorithms
 generate-idp-metadata --metadataLocation "./" --subjectAltNames "cas.example.com,cas.example.io,cas.example.net" --force
 generate-key --key-size 256

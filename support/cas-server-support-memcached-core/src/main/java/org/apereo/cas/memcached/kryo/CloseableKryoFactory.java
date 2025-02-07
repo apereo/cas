@@ -89,7 +89,7 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
 
     private final CasKryoPool kryoPool;
 
-    private Collection<Class> classesToRegister = new ArrayList<>(0);
+    private Collection<Class> classesToRegister = new ArrayList<>();
 
     private boolean warnUnregisteredClasses = true;
 
