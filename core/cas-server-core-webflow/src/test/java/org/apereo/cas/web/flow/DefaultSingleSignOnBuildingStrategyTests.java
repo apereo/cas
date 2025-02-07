@@ -1,16 +1,13 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CasCoreEventsAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link DefaultSingleSignOnBuildingStrategyTests}.
@@ -19,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
  * @since 7.2.0
  */
 @SpringBootTest(classes = BaseWebflowConfigurerTests.SharedTestConfiguration.class)
-@ImportAutoConfiguration(CasCoreEventsAutoConfiguration.class)
 @ExtendWith(CasTestExtension.class)
 @Tag("Authentication")
 class DefaultSingleSignOnBuildingStrategyTests {

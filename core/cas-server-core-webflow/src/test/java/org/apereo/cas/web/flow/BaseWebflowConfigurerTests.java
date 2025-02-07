@@ -91,6 +91,7 @@ public abstract class BaseWebflowConfigurerTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreEventsAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class,
         CasMultitenancyAutoConfiguration.class
     })
