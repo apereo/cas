@@ -913,7 +913,7 @@ exports.extractFromEmail = async (browser) => {
     return text;
 };
 
-exports.waitForNavigation = async (page, timeout = 10000) => page.waitForNavigation({timeout: timeout});
+exports.waitForNavigation = async (page) => page.waitForNavigation();
 
 exports.goto = async (page, url, retryCount = 5) => {
     let response = null;
