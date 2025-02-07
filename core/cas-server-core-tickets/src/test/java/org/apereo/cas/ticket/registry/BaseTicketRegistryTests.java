@@ -279,7 +279,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    @Transactional
+    @Transactional(transactionManager = "ticketTransactionManager", readOnly = true)
     void verifyGetSsoSessionsPerUser() throws Throwable {
         assumeTrue(canTicketRegistryIterate());
         val id = UUID.randomUUID().toString();
