@@ -9,7 +9,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 7.2.0
  */
-@FunctionalInterface
 public interface TenantAuthenticationPolicy extends Serializable {
     /**
      * Gets authentication handlers.
@@ -17,4 +16,12 @@ public interface TenantAuthenticationPolicy extends Serializable {
      * @return the authentication handlers
      */
     List<String> getAuthenticationHandlers();
+
+
+    /**
+     * Gets allowed external identity providers for delegation.
+     *
+     * @return the allowed providers
+     */
+    List<String> getAllowedProviders();
 }

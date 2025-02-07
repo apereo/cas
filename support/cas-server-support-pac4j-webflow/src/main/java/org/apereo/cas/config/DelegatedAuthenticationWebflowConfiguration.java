@@ -269,14 +269,16 @@ class DelegatedAuthenticationWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "delegatedClientIdentityProviderAuthorizer")
+        @ConditionalOnMissingBean(name = DelegatedClientIdentityProviderAuthorizer.BEAN_NAME)
         public DelegatedClientIdentityProviderAuthorizer delegatedClientIdentityProviderAuthorizer(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS)
             final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer) {
             return new DefaultDelegatedClientIdentityProviderAuthorizer(servicesManager,
-                registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
+                registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer, tenantExtractor);
         }
 
         @Bean
@@ -361,8 +363,10 @@ class DelegatedAuthenticationWebflowConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(DelegatedClientAuthenticationRequestCustomizer.class)
-                .when(BeanCondition.on("cas.authn.pac4j.core.groovy-authentication-request-customizer.location").exists()
+                .when(BeanCondition.on("cas.authn.pac4j.core.groovy-authentication-request-customizer.location")
+                    .exists()
                     .given(applicationContext.getEnvironment()))
+                .when(ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory().isPresent())
                 .supply(() -> {
                     val groovy = casProperties.getAuthn().getPac4j().getCore().getGroovyAuthenticationRequestCustomizer();
                     val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();

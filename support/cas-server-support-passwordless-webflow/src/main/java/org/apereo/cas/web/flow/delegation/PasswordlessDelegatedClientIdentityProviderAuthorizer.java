@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.delegation;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.client.authz.BaseDelegatedClientIdentityProviderAuthorizer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
@@ -20,8 +21,9 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 public class PasswordlessDelegatedClientIdentityProviderAuthorizer extends BaseDelegatedClientIdentityProviderAuthorizer {
     public PasswordlessDelegatedClientIdentityProviderAuthorizer(final ServicesManager servicesManager,
-                                                                 final AuditableExecution delegatedAuthenticationPolicyEnforcer) {
-        super(servicesManager, delegatedAuthenticationPolicyEnforcer);
+                                                                 final AuditableExecution delegatedAuthenticationPolicyEnforcer,
+                                                                 final TenantExtractor tenantExtractor) {
+        super(servicesManager, delegatedAuthenticationPolicyEnforcer, tenantExtractor);
     }
 
     @Override

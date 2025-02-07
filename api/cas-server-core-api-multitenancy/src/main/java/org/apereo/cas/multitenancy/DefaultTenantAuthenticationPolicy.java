@@ -22,4 +22,6 @@ public class DefaultTenantAuthenticationPolicy implements TenantAuthenticationPo
     private static final long serialVersionUID = -9012299259747093234L;
 
     private List<String> authenticationHandlers;
+
+    private List<String> allowedProviders;
 }

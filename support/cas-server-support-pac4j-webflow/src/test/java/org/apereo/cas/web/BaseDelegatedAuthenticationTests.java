@@ -16,6 +16,7 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasDelegatedAuthenticationCasAutoConfiguration;
 import org.apereo.cas.config.CasDelegatedAuthenticationOidcAutoConfiguration;
+import org.apereo.cas.config.CasMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
@@ -55,7 +56,8 @@ public abstract class BaseDelegatedAuthenticationTests {
         CasCoreCookieAutoConfiguration.class,
         CasThymeleafAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasCoreAuditAutoConfiguration.class
+        CasCoreAuditAutoConfiguration.class,
+        CasMultitenancyAutoConfiguration.class
     })
     @SpringBootTestAutoConfigurations
     @SpringBootConfiguration(proxyBeanMethods = false)
