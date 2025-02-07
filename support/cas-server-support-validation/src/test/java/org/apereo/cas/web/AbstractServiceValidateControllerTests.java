@@ -7,10 +7,12 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockValidationSpecification;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.DefaultCasProtocolValidationSpecification;
@@ -19,6 +21,7 @@ import org.apereo.cas.validation.ValidationResponseType;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -35,6 +38,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@ExtendWith(CasTestExtension.class)
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
     protected static final String SUCCESS = "Success";
 
@@ -56,11 +60,18 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @BeforeEach
-    void onSetUp() {
+    void onSetUp() throws Exception {
         val context = new StaticApplicationContext();
         context.refresh();
         this.serviceValidateController = getServiceValidateControllerInstance();
         this.serviceValidateController.setApplicationContext(context);
+
+        val requestContext = MockRequestContext.create(context);
+        requestContext
+            .setRemoteAddr("127.26.152.11")
+            .setLocalAddr("109.98.51.12")
+            .withUserAgent()
+            .setClientInfo();
     }
 
     protected HttpServletRequest getHttpServletRequest() throws Throwable {

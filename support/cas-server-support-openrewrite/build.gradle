@@ -2,10 +2,10 @@ description = "Apereo CAS Open Rewrite Support"
 
 tasks.register("createOpenRewriteRecipe") {
     def casVersion = rootProject.version.replaceAll(/-SNAPSHOT/, '')
-    def tomcatVersion = project.tomcatVersion
+    def tomcatVersion = libs.versions.tomcat.get()
     def sourceCompatibility = project.sourceCompatibility
-    def springBootVersion = project.springBootVersion
-    def jibVersion = project.jibVersion
+    def springBootVersion = libs.versions.springBoot.get()
+    def jibVersion = libs.versions.gradleJib.get()
     def gradleVersion = gradle.gradleVersion
     def recipeName = "cas${casVersion.replaceAll(/\.|-SNAPSHOT/, '')}"
 

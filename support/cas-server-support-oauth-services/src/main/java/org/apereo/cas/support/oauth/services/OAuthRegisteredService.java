@@ -27,6 +27,10 @@ import java.util.Set;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
+    /**
+     * Friendly name for this OAuth service.
+     */
+    public static final String OAUTH_REGISTERED_SERVICE_FRIENDLY_NAME = "OAuth2 Client";
 
     @Serial
     private static final long serialVersionUID = 5318897374067731021L;
@@ -90,7 +94,7 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
     @JsonIgnore
     @Override
     public String getFriendlyName() {
-        return "OAuth2 Client";
+        return OAUTH_REGISTERED_SERVICE_FRIENDLY_NAME;
     }
 
     @JsonIgnore

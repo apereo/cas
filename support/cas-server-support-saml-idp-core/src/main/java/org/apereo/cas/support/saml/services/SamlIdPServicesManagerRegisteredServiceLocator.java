@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.services.BaseServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -30,7 +30,7 @@ import java.util.Optional;
  * @since 6.3.0
  */
 @Slf4j
-public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServicesManagerRegisteredServiceLocator {
+public class SamlIdPServicesManagerRegisteredServiceLocator extends BaseServicesManagerRegisteredServiceLocator {
 
     public SamlIdPServicesManagerRegisteredServiceLocator(
         final SamlRegisteredServiceCachingMetadataResolver resolver) {
@@ -92,8 +92,8 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends DefaultServi
     }
 
     @Override
-    protected Class<? extends RegisteredService> getRegisteredServiceIndexedType() {
-        return SamlRegisteredService.class;
+    protected Pair<String, Class<? extends RegisteredService>> getRegisteredServiceIndexedType() {
+        return Pair.of(SamlRegisteredService.FRIENDLY_NAME, SamlRegisteredService.class);
     }
 
     @RequiredArgsConstructor

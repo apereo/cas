@@ -219,6 +219,7 @@ public class MockRequestContext extends MockRequestControlContext {
         return this;
     }
 
+
     public MockRequestContext setMessageContext(final MessageContext messageContext) throws Exception {
         val field = ReflectionUtils.findField(getClass(), "messageContext");
         Objects.requireNonNull(field).trySetAccessible();

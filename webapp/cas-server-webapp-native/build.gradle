@@ -109,7 +109,7 @@ dependencies {
 graalvmNative {
     metadataRepository {
         enabled = true
-        version = "${graalVmMetadataRepositoryVersion}"
+        version = "${libs.versions.graalVmMetadataRepository.get()}"
     }
 
     /*

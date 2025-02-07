@@ -20,6 +20,12 @@ import java.util.ArrayList;
  * @since 6.6.0
  */
 public interface DelegatedClientIdentityProviderAuthorizer {
+
+    /**
+     * The bean name.
+     */
+    String BEAN_NAME = "delegatedClientIdentityProviderAuthorizer";
+
     /**
      * Is delegated client authorized for service?
      *

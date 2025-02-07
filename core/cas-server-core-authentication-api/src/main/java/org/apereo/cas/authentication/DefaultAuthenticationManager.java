@@ -216,7 +216,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         val builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         credentials.forEach(builder::addCredential);
 
-        val handlerSet = authenticationEventExecutionPlan.getAuthenticationHandlers(transaction);
+        val handlerSet = authenticationEventExecutionPlan.resolveAuthenticationHandlers(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);
 
         for (val credential : credentials) {

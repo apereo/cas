@@ -26,7 +26,7 @@ async function startFlow(context, clientName) {
     assert(subjectConfirmation["saml2:SubjectConfirmationData"][0]["$"]["InResponseTo"] === undefined);
     assert(subjectConfirmation["saml2:SubjectConfirmationData"][0]["$"]["Address"] === "127.0.0.1");
 
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.sleep(6000);
     await cas.logPage(page);
     await cas.assertTicketParameter(page);
