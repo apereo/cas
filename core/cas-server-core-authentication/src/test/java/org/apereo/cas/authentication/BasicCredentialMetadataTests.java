@@ -32,6 +32,7 @@ class BasicCredentialMetadataTests {
         val cmd = new BasicCredentialMetadata(new UsernamePasswordCredential());
         cmd.putProperty("key", "value").putProperties(Map.of("one", "two"));
         assertTrue(cmd.containsProperty("one"));
+        assertNotNull(cmd.getProperty("key", String.class));
         MAPPER.writeValue(JSON_FILE, cmd);
         val credentialMetaDataRead = MAPPER.readValue(JSON_FILE, BasicCredentialMetadata.class);
         assertEquals(cmd, credentialMetaDataRead);

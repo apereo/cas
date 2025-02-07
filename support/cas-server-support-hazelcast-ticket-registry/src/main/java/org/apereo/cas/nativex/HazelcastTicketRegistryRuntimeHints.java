@@ -3,7 +3,10 @@ package org.apereo.cas.nativex;
 import org.apereo.cas.ticket.registry.HazelcastTicketDocument;
 import org.apereo.cas.ticket.registry.MapAttributeValueExtractor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import com.hazelcast.instance.GeneratedBuildProperties;
+import com.hazelcast.internal.cluster.Versions;
 import com.hazelcast.internal.dynamicconfig.DynamicConfigurationAwareConfig;
+import com.hazelcast.internal.partition.impl.MigrationStats;
 import com.hazelcast.internal.serialization.DataSerializerHook;
 import com.hazelcast.jet.sql.impl.connector.SqlConnector;
 import com.hazelcast.jet.sql.impl.connector.SqlConnectorCache;
@@ -70,6 +73,7 @@ import com.hazelcast.shaded.org.apache.calcite.schema.Schemas;
 import com.hazelcast.shaded.org.apache.calcite.schema.Statistic;
 import com.hazelcast.shaded.org.apache.calcite.schema.Table;
 import com.hazelcast.spi.properties.ClusterProperty;
+import com.hazelcast.spi.properties.HazelcastProperty;
 import com.hazelcast.sql.SqlService;
 import com.hazelcast.sql.impl.type.converter.Converter;
 import lombok.val;
@@ -88,6 +92,7 @@ public class HazelcastTicketRegistryRuntimeHints implements CasRuntimeHintsRegis
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         registerReflectionHints(hints,
             List.of(
+                HazelcastProperty.class,
                 ClusterProperty.class,
                 Schemas.class,
                 SchemaPlus.class,
@@ -144,7 +149,11 @@ public class HazelcastTicketRegistryRuntimeHints implements CasRuntimeHintsRegis
                 HazelcastRelMdWatermarkedFields.class,
                 RelMdRowCount.class,
 
-                MapAttributeValueExtractor.class
+                MapAttributeValueExtractor.class,
+
+                Versions.class,
+                MigrationStats.class,
+                GeneratedBuildProperties.class
             )
         );
         val classes = findSubclassesInPackage(Converter.class, "com.hazelcast.sql");

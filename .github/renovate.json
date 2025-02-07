@@ -75,23 +75,27 @@
   },
   "packageRules": [
     {
-      "matchManagers": ["gradle", "maven"],
+      "matchPackagePatterns": ["^software\\.amazon\\.awssdk$"],
+      "matchManagers": ["maven"],
+      "matchUpdateTypes": ["major", "minor"]
+    },
+    {
+      "matchPackagePatterns": ["^com\\.h2database$"],
+      "matchManagers": ["maven"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
       "enabled": false
     },
     {
-      "matchManagers": ["github-actions"],
-      "enabled": true
+      "matchManagers": ["dockerfile"],
+      "matchPaths": [".*oidc-login-strapi.*"],
+      "matchPackagePatterns": ["^node$"],
+      "enabled": false
     },
     {
-      "managers": ["dockerfile"]
-    },
-    {
-      "matchDatasources": ["docker"],
-      "versioning": "docker"
-    },
-    {
-      "matchFileNames": ["**/package.json"],
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"]
+      "matchManagers": ["gradle"],
+      "matchPaths": [".*radius.*/build.gradle"],
+      "matchPackageNames": ["org.bouncycastle:bcprov-jdk15on"],
+      "enabled": false
     }
   ]
 }

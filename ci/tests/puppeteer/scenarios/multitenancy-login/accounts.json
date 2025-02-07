@@ -1,0 +1,12 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "casweb" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "p@ssw0rd",
+    "attributes" : {
+      "@class" : "java.util.LinkedHashMap",
+      "name" : [ "java.util.List", ["ApereoCAS"] ],
+      "color" : [ "java.util.List", ["blue"] ]
+    }
+  }
+}

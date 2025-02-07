@@ -10,17 +10,19 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderAuthorizer;
+import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.RequestContext;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -32,77 +34,107 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Delegation")
 class DefaultDelegatedClientIdentityProviderAuthorizerTests {
-    @Autowired
-    @Qualifier("delegatedClientIdentityProviderAuthorizer")
-    private DelegatedClientIdentityProviderAuthorizer delegatedClientIdentityProviderAuthorizer;
+    @ExtendWith(CasTestExtension.class)
+    @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
+    abstract static class BaseTests {
+        @Autowired
+        @Qualifier(DelegatedClientIdentityProviderAuthorizer.BEAN_NAME)
+        protected DelegatedClientIdentityProviderAuthorizer delegatedClientIdentityProviderAuthorizer;
 
-    @Autowired
-    @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
-    private DelegatedIdentityProviders identityProviders;
+        @Autowired
+        @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
+        protected DelegatedIdentityProviders identityProviders;
 
-    @Autowired
-    @Qualifier(ServicesManager.BEAN_NAME)
-    private ServicesManager servicesManager;
-    
-    @BeforeEach
-    void setup() {
-        servicesManager.deleteAll();
+        @Autowired
+        @Qualifier(ServicesManager.BEAN_NAME)
+        protected ServicesManager servicesManager;
+
+        @Autowired
+        protected ConfigurableApplicationContext applicationContext;
+
+        @BeforeEach
+        void setup() {
+            servicesManager.deleteAll();
+        }
+
+        protected void verifyAuthorizationForService(final RequestContext requestContext) throws Throwable {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val client = identityProviders.findClient("CasClient").orElseThrow();
+            val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+            assertTrue(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, null, request));
+            assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));
+            assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, requestContext));
+
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
+            registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setEnabled(false));
+            servicesManager.save(registeredService);
+            assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));
+            assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, requestContext));
+
+            val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+            registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setEnabled(true));
+            val delegationStrategy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy()
+                .setAllowedProviders(List.of("AnotherClient"));
+            accessStrategy.setDelegatedAuthenticationPolicy(delegationStrategy);
+            registeredService.setAccessStrategy(accessStrategy);
+            servicesManager.save(registeredService);
+            assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));
+            assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, requestContext));
+
+            delegationStrategy.setAllowedProviders(List.of(client.getName()));
+            servicesManager.save(registeredService);
+            assertTrue(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));
+            assertTrue(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, requestContext));
+        }
     }
 
-    @Test
-    void verifyClientNameFromAuth() throws Throwable {
-        val client = identityProviders.findClient("CasClient").get();
-        val authn = RegisteredServiceTestUtils.getAuthentication("casuser",
-            Map.of(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, List.of(client.getName())));
+    @Nested
+    class DefaultTests extends BaseTests {
+        @Test
+        void verifyClientNameFromAuth() throws Throwable {
+            val client = identityProviders.findClient("CasClient").orElseThrow();
+            val authn = RegisteredServiceTestUtils.getAuthentication("casuser",
+                Map.of(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, List.of(client.getName())));
 
-        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
-        val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-        val delegationStrategy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy()
-            .setAllowedProviders(List.of(client.getName()));
-        accessStrategy.setDelegatedAuthenticationPolicy(delegationStrategy);
-        val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
-        registeredService.setAccessStrategy(accessStrategy);
-        servicesManager.save(registeredService);
-        assertTrue(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForAuthentication(authn, service, new MockRequestContext()));
+            val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+            val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+            val delegationStrategy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy()
+                .setAllowedProviders(List.of(client.getName()));
+            accessStrategy.setDelegatedAuthenticationPolicy(delegationStrategy);
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
+            registeredService.setAccessStrategy(accessStrategy);
+            servicesManager.save(registeredService);
+            val requestContext = MockRequestContext.create(applicationContext);
+            assertTrue(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForAuthentication(authn, service, requestContext));
+        }
+
+        @Test
+        void verifyAuthorizationByService() throws Throwable {
+            val requestContext = MockRequestContext.create(applicationContext);
+            verifyAuthorizationForService(requestContext);
+        }
     }
 
-    @Test
-    void verifyAuthzByService() throws Throwable {
-        verifyAuthzForService(new MockHttpServletRequest(), new MockRequestContext());
-    }
+    @Nested
+    @TestPropertySource(properties = "cas.multitenancy.json.location=classpath:/tenants.json")
+    class MultitenancyTests extends BaseTests {
+        @Test
+        void verifyAuthorizationByTenant() throws Throwable {
+            val requestContext = MockRequestContext.create(applicationContext);
+            requestContext.setContextPath("/tenants/shire/login");
 
-    private void verifyAuthzForService(final HttpServletRequest request,
-                                       final RequestContext requestContext) throws Throwable {
-        val client = identityProviders.findClient("CasClient").get();
-        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
-        assertTrue(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, null, request));
-        assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));
-        assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, requestContext));
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            var client = identityProviders.findClient("CasClient").orElseThrow();
+            val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
+            servicesManager.save(registeredService);
+            assertTrue(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));
 
-        val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
-        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setEnabled(false));
-        servicesManager.save(registeredService);
-        assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));
-        assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, requestContext));
-
-        val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setEnabled(true));
-        val delegationStrategy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy()
-            .setAllowedProviders(List.of("AnotherClient"));
-        accessStrategy.setDelegatedAuthenticationPolicy(delegationStrategy);
-        registeredService.setAccessStrategy(accessStrategy);
-        servicesManager.save(registeredService);
-        assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));
-        assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, requestContext));
-
-        delegationStrategy.setAllowedProviders(List.of(client.getName()));
-        servicesManager.save(registeredService);
-        assertTrue(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));
-        assertTrue(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, requestContext));
+            client = identityProviders.findClient("LogoutClient").orElseThrow();
+            assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));
+        }
     }
 
 }

@@ -18,5 +18,4 @@ Support is enabled by including the following module:
 
 {% include_cached casproperties.html
     properties="cas.email-provider.microsoft"
-    thirdPartyStartsWith="spring.sendgrid" 
-    displayEmailServers="false" %}
+    displayEmailServers="true" %}

@@ -162,6 +162,7 @@ exports.click = async (page, button) =>
 exports.asciiart = async (text) => {
     const art = figlet.textSync(text);
     console.log(colors.blue(art));
+    console.log(`🔷 Puppeteer: ${colors.blue(require("puppeteer/package.json").version)}`);
 };
 
 exports.assertTextMatches = async(text, regExp) =>
@@ -557,7 +558,8 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
         .catch((error) => failureHandler(error));
 };
 
-exports.doDelete = async (url, statusCode = 0, successHandler = undefined, failureHandler = undefined, headers = {}) => {
+exports.doDelete = async (url, statusCode = 0, successHandler = undefined,
+    failureHandler = undefined, headers = {}) => {
     const instance = axios.create({
         timeout: 5000,
         httpsAgent: new https.Agent({
@@ -911,7 +913,7 @@ exports.extractFromEmail = async (browser) => {
     return text;
 };
 
-exports.waitForNavigation = async (page, timeout = 10000) => page.waitForNavigation({timeout: timeout});
+exports.waitForNavigation = async (page) => page.waitForNavigation();
 
 exports.goto = async (page, url, retryCount = 5) => {
     let response = null;

@@ -26,6 +26,11 @@ import java.util.function.Function;
 public class ServiceValidationViewFactory {
 
     /**
+     * Default bean name.
+     */
+    public static final String BEAN_NAME = "serviceValidationViewFactory";
+    
+    /**
      * The Registered views.
      */
     private final Map<String, Pair<View, View>> registeredViews = new HashMap<>(0);

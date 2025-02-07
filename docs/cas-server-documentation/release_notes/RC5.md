@@ -104,6 +104,7 @@ and its XOAUTH2 authentication mechanism.
 - [X509 connector](../authentication/X509-Authentication-WebServer-Configuration.html) for Apache Tomcat configures the maximum form post and header sizes for the connector.
 - CAS `<input/>` HTML elements that generate buttons are now able to render HTML content for the button label.
 - Locating [SAML2 identity provider metadata](../installation/Configuring-SAML2-DynamicMetadata.html) and keys per application can now be derived from a directory location assigned to the SAML2 service definition.
+- Dependency management for the CAS codebase has switched over to using Gradle's [Version Catalog](https://docs.gradle.org/current/userguide/version_catalogs.html).
 
 ## Library Upgrades
 
@@ -121,3 +122,9 @@ and its XOAUTH2 authentication mechanism.
 - Lettuce
 - LettuceMod
 - Groovy
+- Pac4j
+- Google Cloud
+- SQL Server JDBC Driver
+- Oracle JDBC Driver
+- Guava
+- Azure Maps

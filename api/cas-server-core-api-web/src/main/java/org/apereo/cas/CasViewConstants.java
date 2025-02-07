@@ -28,7 +28,7 @@ public interface CasViewConstants {
      * Represents the chained authentication objects
      * in the view for proxying.
      */
-    String MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS = "chainedAuthentications";
+    String MODEL_ATTRIBUTE_NAME_PROXIES = "proxies";
 
     /**
      * Represents the

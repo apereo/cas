@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
@@ -14,15 +15,14 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.view.AbstractView;
-
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,7 +109,7 @@ public abstract class AbstractCasView extends AbstractView {
         return (WebApplicationService) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE);
     }
 
-    protected Collection<Authentication> getChainedAuthentications(final Map<String, Object> model) {
+    protected List<Authentication> getChainedAuthentications(final Map<String, Object> model) {
         val assertion = getAssertionFrom(model);
         val chainedAuthentications = assertion.getChainedAuthentications();
         return chainedAuthentications.stream().limit(chainedAuthentications.size() - 1).collect(Collectors.toList());
@@ -131,7 +131,19 @@ public abstract class AbstractCasView extends AbstractView {
         putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL, getPrincipal(model));
         val chain = getChainedAuthentications(model);
         if (!chain.isEmpty()) {
-            putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS, chain);
+            val listOfProxies = new ArrayList<String>();
+            chain.forEach(authentication ->
+                authentication.getCredentials()
+                    .stream()
+                    .filter(HttpBasedServiceCredential.class::isInstance)
+                    .map(HttpBasedServiceCredential.class::cast)
+                    .map(credential -> credential.getCredentialMetadata()
+                        .getProperty(HttpBasedServiceCredential.class.getName(), String.class))
+                    .filter(StringUtils::isNotBlank)
+                    .forEach(listOfProxies::add));
+            if (!listOfProxies.isEmpty()) {
+                putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXIES, listOfProxies);
+            }
         }
         putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION, getPrimaryAuthenticationFrom(model));
         LOGGER.trace("Prepared CAS response output model with attribute names [{}]", model.keySet());

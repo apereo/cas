@@ -14,3 +14,11 @@ services:
       - "httpbin-http"
     ports:
       - "9859:443"
+  request-baskets:
+    image: darklynx/request-baskets
+    ports:
+      - "56789:55555"
+    environment:
+      MODE: public
+      BASKET: cas
+      TOKEN: "SV00cPIKRdWjGkN1vkbEbPdhtvV5vIJ0ajygcdnZVBgl"
