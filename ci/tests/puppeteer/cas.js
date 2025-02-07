@@ -162,6 +162,7 @@ exports.click = async (page, button) =>
 exports.asciiart = async (text) => {
     const art = figlet.textSync(text);
     console.log(colors.blue(art));
+    console.log(`🔷 Puppeteer: ${colors.blue(require("puppeteer/package.json").version)}`);
 };
 
 exports.assertTextMatches = async(text, regExp) =>
