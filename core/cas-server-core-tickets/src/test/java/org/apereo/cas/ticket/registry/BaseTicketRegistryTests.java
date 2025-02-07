@@ -281,7 +281,9 @@ public abstract class BaseTicketRegistryTests {
     @RepeatedTest(2)
     @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
     void verifyGetSsoSessionsPerUser() throws Throwable {
-        assumeTrue(canTicketRegistryIterate());
+        val formatted = "Ticket registry %s does not support iteration".formatted(getClass().getName());
+        System.out.println(formatted);
+        assumeTrue(canTicketRegistryIterate(), formatted);
         val id = UUID.randomUUID().toString();
         for (var i = 0; i < 5; i++) {
             val tgtId = TICKET_GRANTING_TICKET_ID_GENERATOR
