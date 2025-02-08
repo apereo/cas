@@ -109,7 +109,7 @@ and its XOAUTH2 authentication mechanism.
 ## Library Upgrades
 
 - Spring Boot
-- Apache Tomcat
+- Apache Tomcat                                        
 - Spring
 - BouncyCastle
 - PostgreSQL
