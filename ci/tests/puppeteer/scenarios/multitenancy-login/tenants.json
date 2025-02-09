@@ -12,7 +12,10 @@
           [
             "STATIC"
           ]
-        ],
+        ]
+      },
+      "delegatedAuthenticationPolicy": {
+        "@class": "org.apereo.cas.multitenancy.DefaultTenantDelegatedAuthenticationPolicy",
         "allowedProviders": [
           "java.util.ArrayList",
           [
@@ -32,7 +35,10 @@
           [
             "JSON"
           ]
-        ],
+        ]
+      },
+      "delegatedAuthenticationPolicy": {
+        "@class": "org.apereo.cas.multitenancy.DefaultTenantDelegatedAuthenticationPolicy",
         "allowedProviders": [
           "java.util.ArrayList",
           [
