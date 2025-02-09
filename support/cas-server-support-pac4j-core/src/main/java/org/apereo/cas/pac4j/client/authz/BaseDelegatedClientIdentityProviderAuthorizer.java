@@ -79,7 +79,7 @@ public abstract class BaseDelegatedClientIdentityProviderAuthorizer implements D
     }
 
     protected boolean isDelegatedClientAuthorizedForTenant(final String clientName, final TenantDefinition tenantDefinition) {
-        val allowedProviders = tenantDefinition.getAuthenticationPolicy().getAllowedProviders();
+        val allowedProviders = tenantDefinition.getDelegatedAuthenticationPolicy().getAllowedProviders();
         val allowedByTenant = StringUtils.isBlank(clientName) || allowedProviders == null
             || allowedProviders.isEmpty() || allowedProviders.contains(clientName);
         LOGGER.debug("Tenant [{}] allows for delegated authentication with provider [{}]: [{}]", tenantDefinition.getId(), clientName,
