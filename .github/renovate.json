@@ -75,12 +75,12 @@
   },
   "packageRules": [
     {
-      "matchPackagePatterns": ["^software\\.amazon\\.awssdk$"],
+      "matchPackagePatterns": ["^software\\.amazon\\.awssdk(:.+)?$"],
       "matchManagers": ["maven"],
       "matchUpdateTypes": ["major", "minor"]
     },
     {
-      "matchPackagePatterns": ["^com\\.h2database$"],
+      "matchPackagePatterns": ["^com\\.h2database(:.+)?$"],
       "matchManagers": ["maven"],
       "matchUpdateTypes": ["major", "minor", "patch"],
       "enabled": false
