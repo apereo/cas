@@ -3,7 +3,7 @@ package org.apereo.cas.logging.web;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLoggingAutoConfiguration;
-import org.apereo.cas.config.CasMultitenancyAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(CasTestExtension.class)
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    CasMultitenancyAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class,
     CasCoreCookieAutoConfiguration.class,
     CasCoreLoggingAutoConfiguration.class
 })

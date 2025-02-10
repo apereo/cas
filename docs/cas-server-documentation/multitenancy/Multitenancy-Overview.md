@@ -60,6 +60,15 @@ The basic construct for a tenant definition should match the following:
             "..."
           ]
         ]
+      },
+      "multifactorAuthenticationPolicy": {
+        "@class": "org.apereo.cas.multitenancy.DefaultTenantMultifactorAuthenticationPolicy",
+        "globalProviderIds": [
+          "java.util.HashSet",
+          [
+            "mfa-duo"
+          ]
+        ]
       }
     }
   ]
@@ -68,12 +77,13 @@ The basic construct for a tenant definition should match the following:
 
 A registered tenant definition supports the following fields:
 
-| Field                           | Description                                                                                      |
-|---------------------------------|--------------------------------------------------------------------------------------------------|
-| `id`                            | Primary identifier for the tenant that forms the dedicated tenant URL.                           |
-| `description`                   | Description of what this tenant is about.                                                        |
-| `authenticationPolicy`          | Describes the criteria for primary authentication, list of allowed authentication handlers, etc. |
-| `delegatedAuthenticationPolicy` | Describes the criteria for external authentication, list of allowed identity providers, etc.     |
+| Field                             | Description                                                                                      |
+|-----------------------------------|--------------------------------------------------------------------------------------------------|
+| `id`                              | Primary identifier for the tenant that forms the dedicated tenant URL.                           |
+| `description`                     | Description of what this tenant is about.                                                        |
+| `authenticationPolicy`            | Describes the criteria for primary authentication, list of allowed authentication handlers, etc. |
+| `delegatedAuthenticationPolicy`   | Describes the criteria for external authentication, list of allowed identity providers, etc.     |
+| `multifactorAuthenticationPolicy` | Describes the criteria for multifactor authentication, list of multifactor providers, etc.       |
      
 
 ### Custom Tenant Registration
