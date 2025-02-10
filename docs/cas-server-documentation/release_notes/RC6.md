@@ -61,6 +61,9 @@ test coverage of the CAS codebase is approximately `94%`.
 
 ## Other Stuff
 
+- Storing [attribute consent decisions](../integration/Attribute-Release-Consent-Storage-REST.html) is now reworked to be more compatible with REST design principals. 
+
 ## Library Upgrades
 
 - Gradle
+- Nimbus
