@@ -18,8 +18,8 @@ public class InMemoryThrottledSubmissionCleaner implements Runnable {
 
     @Override
     @Scheduled(
-        cron = "${cas.authn.throttle.schedule.cleaner.cron-expression:}",
-        zone = "${cas.authn.throttle.schedule.cleaner.cron-time-zone:}",
+        cron = "${cas.authn.throttle.schedule.cron-expression:}",
+        zone = "${cas.authn.throttle.schedule.cron-time-zone:}",
         initialDelayString = "${cas.authn.throttle.schedule.start-delay:PT10S}",
         fixedDelayString = "${cas.authn.throttle.schedule.repeat-interval:PT15S}")
     public void run() {
