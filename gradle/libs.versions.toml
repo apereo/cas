@@ -2,7 +2,7 @@
 aceEditor = "1.37.1"
 acmeClient = "3.5.0"
 amazonDax = "2.0.5"
-amazonSdk = "2.30.14"
+amazonSdk = "2.30.16"
 animateCss = "4.1.1"
 apacheCassandra = "4.18.1"
 apacheCxf = "4.1.0"
