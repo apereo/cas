@@ -42,33 +42,18 @@ The basic construct for a tenant definition should match the following:
     {
       "@class": "org.apereo.cas.multitenancy.TenantDefinition",
       "id": "shire",
-      "description": "This is the tenant definition",
+      "description": "This is my tenant description",
       "authenticationPolicy": {
         "@class": "org.apereo.cas.multitenancy.DefaultTenantAuthenticationPolicy",
-        "authenticationHandlers": [
-          "java.util.ArrayList",
-          [
-            "..."
-          ]
-        ]
+        "authenticationHandlers": [ "java.util.ArrayList", [ "..." ] ]
       },
       "delegatedAuthenticationPolicy": {
         "@class": "org.apereo.cas.multitenancy.DefaultTenantDelegatedAuthenticationPolicy",
-        "allowedProviders": [
-          "java.util.ArrayList",
-          [
-            "..."
-          ]
-        ]
+        "allowedProviders": [ "java.util.ArrayList", [ "..." ] ]
       },
       "multifactorAuthenticationPolicy": {
         "@class": "org.apereo.cas.multitenancy.DefaultTenantMultifactorAuthenticationPolicy",
-        "globalProviderIds": [
-          "java.util.HashSet",
-          [
-            "mfa-duo"
-          ]
-        ]
+        "globalProviderIds": [ "java.util.ArrayList", [ "..." ] ]
       }
     }
   ]
