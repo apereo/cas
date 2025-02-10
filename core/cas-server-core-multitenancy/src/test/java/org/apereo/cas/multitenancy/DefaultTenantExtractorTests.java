@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.sso.proxy-authn-enabled=false",
+        "cas.multitenancy.core.enabled=true",
         "cas.multitenancy.json.location=classpath:/tenants.json"
     })
 @ExtendWith(CasTestExtension.class)

@@ -141,7 +141,10 @@ class DefaultCasDelegatingWebflowEventResolverTests {
     }
 
     @Nested
-    @TestPropertySource(properties = "cas.multitenancy.json.location=classpath:/tenants.json")
+    @TestPropertySource(properties = {
+        "cas.multitenancy.core.enabled=true",
+        "cas.multitenancy.json.location=classpath:/tenants.json"
+    })
     class TenantTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
         @Test

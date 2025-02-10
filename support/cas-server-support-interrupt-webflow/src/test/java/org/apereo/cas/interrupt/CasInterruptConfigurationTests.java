@@ -1,7 +1,7 @@
 package org.apereo.cas.interrupt;
 
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasInterruptAutoConfiguration;
-import org.apereo.cas.config.CasMultitenancyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    CasMultitenancyAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class,
     CasInterruptAutoConfiguration.class
 },
     properties = {

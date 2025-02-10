@@ -1,5 +1,6 @@
 package org.apereo.cas.multitenancy;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +21,13 @@ public class DefaultTenantExtractor implements TenantExtractor {
 
     private final TenantsManager tenantsManager;
 
+    private final CasConfigurationProperties casProperties;
+
     @Override
     public Optional<TenantDefinition> extract(final String requestPath) {
-        val tenantId = TenantExtractor.tenantIdFromPath(requestPath);
+        val tenantId = casProperties.getMultitenancy().getCore().isEnabled()
+            ? TenantExtractor.tenantIdFromPath(requestPath)
+            : StringUtils.EMPTY;
         return StringUtils.isNotBlank(tenantId) ? tenantsManager.findTenant(tenantId) : Optional.empty();
     }
 }

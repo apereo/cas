@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseMultitenancyTests.SharedTestConfiguration.class,
     properties = {
         "cas.tgc.path=/cas",
+        "cas.multitenancy.core.enabled=true",
         "cas.multitenancy.json.location=classpath:/tenants.json"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

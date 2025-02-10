@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
@@ -44,6 +45,8 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
 
     private final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
+    private final TenantExtractor tenantExtractor;
+    
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override

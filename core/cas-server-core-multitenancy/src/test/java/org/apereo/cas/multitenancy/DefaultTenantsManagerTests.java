@@ -19,7 +19,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Web")
 @SpringBootTest(classes = BaseMultitenancyTests.SharedTestConfiguration.class)
-@TestPropertySource(properties = "cas.multitenancy.json.location=classpath:/tenants.json")
+@TestPropertySource(properties = {
+    "cas.multitenancy.core.enabled=true",
+    "cas.multitenancy.json.location=classpath:/tenants.json"
+})
 @ExtendWith(CasTestExtension.class)
 class DefaultTenantsManagerTests {
 

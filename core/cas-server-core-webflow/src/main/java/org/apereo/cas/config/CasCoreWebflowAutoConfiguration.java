@@ -25,6 +25,6 @@ import org.springframework.context.annotation.Import;
     CasWebflowContextConfiguration.class,
     CasWebflowMonitoringConfiguration.class
 })
-@ImportAutoConfiguration(CasMultitenancyAutoConfiguration.class)
+@ImportAutoConfiguration(CasCoreMultitenancyAutoConfiguration.class)
 public class CasCoreWebflowAutoConfiguration {
 }

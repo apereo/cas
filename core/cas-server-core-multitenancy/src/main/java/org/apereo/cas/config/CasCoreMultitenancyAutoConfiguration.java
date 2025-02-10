@@ -21,7 +21,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
- * This is {@link CasMultitenancyAutoConfiguration}.
+ * This is {@link CasCoreMultitenancyAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 7.2.0
@@ -29,7 +29,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Multitenancy)
 @AutoConfiguration
-public class CasMultitenancyAutoConfiguration {
+public class CasCoreMultitenancyAutoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -43,9 +43,10 @@ public class CasMultitenancyAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = TenantExtractor.BEAN_NAME)
     public TenantExtractor tenantExtractor(
+        final CasConfigurationProperties casProperties,
         @Qualifier(TenantsManager.BEAN_NAME)
         final TenantsManager tenantsManager) {
-        return new DefaultTenantExtractor(tenantsManager);
+        return new DefaultTenantExtractor(tenantsManager, casProperties);
     }
     
     @Bean
