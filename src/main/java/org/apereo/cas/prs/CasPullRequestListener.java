@@ -43,92 +43,14 @@ public class CasPullRequestListener implements PullRequestListener {
         removeLabelWorkInProgress(pr);
         checkForPullRequestTestCases(pr);
         checkForPullRequestDescription(pr);
-        processAutomaticMergeByChangeset(pr);
-    }
-
-    private boolean canBotPullRequestBeMerged(final PullRequest pr) {
-        if (pr.isBot() && !pr.isDraft() && !pr.isWorkInProgress() && !pr.isLocked()) {
-            var files = repository.getPullRequestFiles(pr);
-            if (files.stream().allMatch(file -> file.getFilename().endsWith("locust/requirements.txt"))) {
-                log.info("Merging bot pull request for Locust {}", pr);
-                return repository.approveAndMergePullRequest(pr);
-            }
-            if (files.stream().allMatch(file -> file.getFilename().matches(".github/workflows/.+.yml"))) {
-                var rangeResult = extractBotDependencyRange(pr);
-                if (rangeResult.isPresent() && (rangeResult.get().isQualifiedForPatchUpgrade() || rangeResult.get().isQualifiedForMinorUpgrade())) {
-                    log.info("Merging bot pull request {} for GitHub Actions for dependency range {}", pr, rangeResult.get());
-                    return repository.approveAndMergePullRequest(pr);
-                }
-            }
-        }
-        return false;
-    }
-    
-    private boolean processAutomaticMergeByChangeset(final PullRequest pr) {
-        if (pr.isBot()) {
-            if (canBotPullRequestBeMerged(pr)) {
-                return true;
-            }
-            try {
-                var rangeResult = extractBotDependencyRange(pr);
-                if (rangeResult.isPresent()) {
-                    var startingVersion = rangeResult.get().startingVersion();
-                    var endingVersion = rangeResult.get().endingVersion();
-
-                    if (rangeResult.get().isQualifiedForPatchUpgrade()) {
-                        log.info("Merging patch dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
-                        repository.labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
-                        return repository.approveAndMergePullRequest(pr);
-                    }
-
-                    var files = repository.getPullRequestFiles(pr);
-                    var firstFile = files.getFirst().getFilename();
-                    if (firstFile.endsWith("package.json")) {
-                        if (rangeResult.get().isQualifiedForMinorUpgrade()) {
-                            log.info("Merging minor dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
-                            repository.labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
-                            return repository.approveAndMergePullRequest(pr);
-                        }
-                    }
-                }
-            } catch (final Exception e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-
-        if (pr.isLabeledAs(CasLabels.LABEL_AUTO_MERGE)) {
-            var timeline = repository.getPullRequestTimeline(pr);
-            var admins = repository.getGitHubProperties().getRepository().getAdmins();
-            var approvedByAdmin = timeline
-                .stream()
-                .anyMatch(r ->
-                    r.isLabeled()
-                        && r.getLabel().getName().equals(CasLabels.LABEL_AUTO_MERGE.getTitle())
-                        && r.getActor() != null
-                        && admins.contains(r.getActor().getLogin()));
-            if (approvedByAdmin) {
-                log.info("Merging admin-approved pull request {}", pr);
-                return repository.approveAndMergePullRequest(pr);
-            }
-        }
-        return false;
+        
+        repository.autoMergePullRequest(pr);
     }
 
     private boolean shouldDisregardPullRequest(final PullRequest pr) {
         return processDependencyUpgradesPullRequests(pr)
             || processLabelSeeMaintenancePolicy(pr)
             || processInvalidPullRequest(pr);
-    }
-
-    private static Optional<DependencyRange> extractBotDependencyRange(final PullRequest pr) {
-        var pattern = Pattern.compile("`(\\d+\\.\\d+\\.\\d+)` \\-\\> `(\\d+\\.\\d+\\.\\d+)`");
-        var matcher = pattern.matcher(pr.getBody());
-        if (matcher.find()) {
-            var startingVersion = new Semver(matcher.group(1));
-            var endingVersion = new Semver(matcher.group(2));
-            return Optional.of(new DependencyRange(startingVersion, endingVersion));
-        }
-        return Optional.empty();
     }
     
     @SneakyThrows

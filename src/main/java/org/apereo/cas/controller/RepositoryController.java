@@ -111,7 +111,7 @@ public class RepositoryController {
     @GetMapping(value = "/repo/pulls", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})
     public List listPulls() {
-        return repository.getPullRequests()
+        return repository.getOpenPullRequests()
             .stream()
             .map(pr -> {
                 val map = new LinkedHashMap<String, String>();

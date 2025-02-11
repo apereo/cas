@@ -14,10 +14,15 @@ public class StagingRepositoryJob {
 
     private final MonitoredRepository repository;
 
-    @Scheduled(fixedRate = ONE_MINUTE * 3)
+    @Scheduled(fixedRate = ONE_MINUTE * 5)
     void monitorWorkflowRuns() {
         log.info("Monitoring {}", this.repository.getFullName());
         try {
+            var pullRequests = this.repository.getOpenPullRequests();
+            pullRequests.forEach(pr -> {
+                log.info("Processing pull request {}", pr.getNumber());
+                repository.autoMergePullRequest(pr);
+            });
             log.info("Processing workflow runs for {}", this.repository.getFullName());
             repository.removeCancelledWorkflowRuns();
             repository.removeOldWorkflowRuns();

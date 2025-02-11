@@ -16,6 +16,7 @@ import org.apereo.cas.github.PullRequestReview;
 import org.apereo.cas.github.TimelineEntry;
 import org.apereo.cas.github.Workflows;
 import com.github.zafarkhaja.semver.Version;
+import com.vdurmont.semver4j.Semver;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -56,7 +58,7 @@ public class MonitoredRepository {
         return gitHub.approve(getOrganization(), getName(), pr, includeComment);
     }
 
-    public List<PullRequest> getPullRequests() {
+    public List<PullRequest> getOpenPullRequests() {
         final List<PullRequest> pullRequests = new ArrayList<>();
         try {
             var page = gitHub.getPullRequests(getOrganization(), getName());
@@ -122,6 +124,85 @@ public class MonitoredRepository {
             return true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    public static Optional<DependencyRange> extractBotDependencyRange(final PullRequest pr) {
+        var pattern = Pattern.compile("`(\\d+\\.\\d+\\.\\d+)` \\-\\> `(\\d+\\.\\d+\\.\\d+)`");
+        var matcher = pattern.matcher(pr.getBody());
+        if (matcher.find()) {
+            var startingVersion = new Semver(matcher.group(1));
+            var endingVersion = new Semver(matcher.group(2));
+            return Optional.of(new DependencyRange(startingVersion, endingVersion));
+        }
+        return Optional.empty();
+    }
+
+    private boolean canBotPullRequestBeMerged(final PullRequest pr) {
+        if (pr.isBot() && !pr.isDraft() && !pr.isWorkInProgress() && !pr.isLocked()) {
+            var files = getPullRequestFiles(pr);
+            if (files.stream().allMatch(file -> file.getFilename().endsWith("locust/requirements.txt"))) {
+                log.info("Merging bot pull request for Locust {}", pr);
+                return approveAndMergePullRequest(pr);
+            }
+            if (files.stream().allMatch(file -> file.getFilename().matches(".github/workflows/.+.yml"))) {
+                var rangeResult = extractBotDependencyRange(pr);
+                if (rangeResult.isPresent() && (rangeResult.get().isQualifiedForPatchUpgrade() || rangeResult.get().isQualifiedForMinorUpgrade())) {
+                    log.info("Merging bot pull request {} for GitHub Actions for dependency range {}", pr, rangeResult.get());
+                    return approveAndMergePullRequest(pr);
+                }
+            }
+        }
+        return false;
+    }
+    
+    public boolean autoMergePullRequest(final PullRequest pr) {
+        if (pr.isBot()) {
+            if (canBotPullRequestBeMerged(pr)) {
+                return true;
+            }
+            try {
+                var rangeResult = extractBotDependencyRange(pr);
+                if (rangeResult.isPresent()) {
+                    var startingVersion = rangeResult.get().startingVersion();
+                    var endingVersion = rangeResult.get().endingVersion();
+
+                    if (rangeResult.get().isQualifiedForPatchUpgrade()) {
+                        log.info("Merging patch dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                        labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
+                        return approveAndMergePullRequest(pr);
+                    }
+
+                    var files = getPullRequestFiles(pr);
+                    var firstFile = files.getFirst().getFilename();
+                    if (firstFile.endsWith("package.json")) {
+                        if (rangeResult.get().isQualifiedForMinorUpgrade()) {
+                            log.info("Merging minor dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                            labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
+                            return approveAndMergePullRequest(pr);
+                        }
+                    }
+                }
+            } catch (final Exception e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+
+        if (pr.isLabeledAs(CasLabels.LABEL_AUTO_MERGE)) {
+            var timeline = getPullRequestTimeline(pr);
+            var admins = getGitHubProperties().getRepository().getAdmins();
+            var approvedByAdmin = timeline
+                .stream()
+                .anyMatch(r ->
+                    r.isLabeled()
+                        && r.getLabel().getName().equals(CasLabels.LABEL_AUTO_MERGE.getTitle())
+                        && r.getActor() != null
+                        && admins.contains(r.getActor().getLogin()));
+            if (approvedByAdmin) {
+                log.info("Merging admin-approved pull request {}", pr);
+                return approveAndMergePullRequest(pr);
+            }
         }
         return false;
     }
@@ -536,7 +617,7 @@ public class MonitoredRepository {
             if (!workflowRun.getRuns().isEmpty()) {
                 log.debug("Found {} workflow runs for page {}", workflowRun.getRuns().size(), i);
             }
-            
+
             workflowRun.getRuns().forEach(run -> {
                 val staleExp = run.getUpdatedTime().plusDays(gitHubProperties.getStaleWorkflowRunInDays());
                 if (staleExp.isBefore(now)) {
