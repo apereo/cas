@@ -7,6 +7,7 @@ import org.apereo.cas.notifications.DefaultCommunicationsManager;
 import org.apereo.cas.notifications.call.PhoneCallOperator;
 import org.apereo.cas.notifications.mail.DefaultEmailSender;
 import org.apereo.cas.notifications.mail.EmailSender;
+import org.apereo.cas.notifications.mail.EmailSenderCustomizer;
 import org.apereo.cas.notifications.push.DefaultNotificationSender;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.push.NotificationSenderExecutionPlanConfigurer;
@@ -15,8 +16,8 @@ import org.apereo.cas.notifications.sms.RestfulSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -30,9 +31,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -55,10 +56,14 @@ public class CasCoreNotificationsAutoConfiguration {
     @ConditionalOnMissingBean(name = CommunicationsManager.BEAN_NAME)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CommunicationsManager communicationsManager(
-        @Qualifier(SmsSender.BEAN_NAME) final SmsSender smsSender,
-        @Qualifier(EmailSender.BEAN_NAME) final EmailSender emailSender,
-        @Qualifier(PhoneCallOperator.BEAN_NAME) final PhoneCallOperator phoneCallOperator,
-        @Qualifier("notificationSender") final NotificationSender notificationSender) {
+        @Qualifier(SmsSender.BEAN_NAME)
+        final SmsSender smsSender,
+        @Qualifier(EmailSender.BEAN_NAME)
+        final EmailSender emailSender,
+        @Qualifier(PhoneCallOperator.BEAN_NAME)
+        final PhoneCallOperator phoneCallOperator,
+        @Qualifier("notificationSender")
+        final NotificationSender notificationSender) {
         return new DefaultCommunicationsManager(smsSender, emailSender, notificationSender, phoneCallOperator);
     }
 
@@ -67,9 +72,18 @@ public class CasCoreNotificationsAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public EmailSender emailSender(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("messageSource") final MessageSource messageSource,
-        @Qualifier("mailSender") final ObjectProvider<JavaMailSender> mailSender) {
-        return new DefaultEmailSender(mailSender.getIfAvailable(), messageSource, applicationContext);
+        final ObjectProvider<List<EmailSenderCustomizer>> customizers,
+        @Qualifier("messageSource")
+        final MessageSource messageSource,
+        @Qualifier("mailSender")
+        final ObjectProvider<JavaMailSender> mailSender) {
+        val emailSenderCustomizers = Optional.ofNullable(customizers.getIfAvailable())
+            .orElseGet(ArrayList::new)
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .toList();
+        return new DefaultEmailSender(mailSender.getIfAvailable(), messageSource, applicationContext, emailSenderCustomizers);
     }
 
     @Bean
