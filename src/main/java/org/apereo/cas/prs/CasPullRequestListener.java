@@ -130,7 +130,7 @@ public class CasPullRequestListener implements PullRequestListener {
         }
 
         if (pr.isRenovateBot()) {
-            log.info("Pull request {} is produced by a bot and will be ignored", pr);
+            log.debug("Pull request {} is produced by a bot and will be ignored", pr);
             return;
         }
 

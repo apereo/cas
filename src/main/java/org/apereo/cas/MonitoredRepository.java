@@ -664,7 +664,7 @@ public class MonitoredRepository {
         runs.forEach(run -> {
             val found = pullRequests.stream().anyMatch(pr -> pr.getHead().getRef().equals(run.getHeadBranch()));
             if (!found) {
-                log.info("Cancelling workflow run {}. No open pull request found for branch {}", run, run.getHeadBranch());
+                log.debug("Cancelling workflow run {}. No open pull request found for branch {}", run, run.getHeadBranch());
                 cancelWorkflowRun(run);
             }
         });
