@@ -458,6 +458,15 @@ public class MonitoredRepository {
                 gitHub.removeWorkflowRun(getOrganization(), getName(), run);
             });
         }
+
+        workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(), Workflows.WorkflowRunStatus.SKIPPED);
+        if (!workflowRun.getRuns().isEmpty()) {
+            log.debug("Found {} cancelled workflow runs", workflowRun.getRuns().size());
+            workflowRun.getRuns().forEach(run -> {
+                log.debug("Removing workflow run {}", run);
+                gitHub.removeWorkflowRun(getOrganization(), getName(), run);
+            });
+        }
     }
 
     public boolean shouldResumeCiBuild(final PullRequest pr) {

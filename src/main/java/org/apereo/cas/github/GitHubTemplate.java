@@ -217,7 +217,7 @@ public class GitHubTemplate implements GitHubOperations {
             urlBuilder.addParameter("head_sha", commit.getSha());
         }
 
-        urlBuilder.addParameter("per_page", "25");
+        urlBuilder.addParameter("per_page", "50");
         urlBuilder.addParameter("page", String.valueOf(page));
 
         val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.v3+json")));

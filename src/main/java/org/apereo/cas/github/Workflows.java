@@ -25,6 +25,7 @@ public class Workflows {
         WAITING("waiting"),
         CANCELLED("cancelled"),
         IN_PROGRESS("in progress"),
+        SKIPPED("skipped"),
         SUCCESS("success"),
         FAILURE("failure"),
         STALE("stale"),
