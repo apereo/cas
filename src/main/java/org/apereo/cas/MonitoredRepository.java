@@ -705,7 +705,7 @@ public class MonitoredRepository {
 
     private void cancelWorkflowRun(final Workflows.WorkflowRun run) {
         try {
-            log.info("Cancelling workflow run {}", run);
+            log.debug("Cancelling workflow run {}", run);
             this.gitHub.cancelWorkflowRun(getOrganization(), getName(), run);
         } catch (final Exception e) {
             log.error(e.getMessage(), e);

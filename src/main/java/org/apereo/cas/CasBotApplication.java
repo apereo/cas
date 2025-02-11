@@ -103,7 +103,7 @@ public class CasBotApplication {
 
     @EventListener
     public void applicationReady(final ApplicationReadyEvent event) {
-        log.info("CAS GitHub bot is now ready");
+        log.info("Apereo CAS GitHub Bot is now ready");
 
         val repository = event.getApplicationContext().getBean("monitoredRepository", MonitoredRepository.class);
         log.info("Current version in master branch: {}", repository.getCurrentVersionInMaster());

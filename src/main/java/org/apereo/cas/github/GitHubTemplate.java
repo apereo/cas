@@ -482,7 +482,8 @@ public class GitHubTemplate implements GitHubOperations {
         try {
             var response = this.rest.exchange(new RequestEntity<Void>(HttpMethod.DELETE, URI.create(url)), Workflows.WorkflowRun.class);
             if (!response.getStatusCode().is2xxSuccessful()) {
-                log.warn("Failed to remove workflow run. Response status: {}", response.getStatusCode());
+                log.warn("Failed to remove workflow run {} from {}. Response status: {}",
+                    run.getId(), organization + '/' + name, response.getStatusCode());
             }
         } catch (final HttpClientErrorException.Forbidden e) {
             log.error("{}: Cannot delete workflow run using {}: {}", e.getStatusText(), url, e.getMessage());
