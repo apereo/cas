@@ -1,17 +1,18 @@
 package org.apereo.cas.notifications.mail;
 
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.beans.BeanSupplier;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import java.util.List;
 
 /**
  * This is {@link DefaultEmailSender}.
@@ -21,12 +22,17 @@ import org.springframework.mail.javamail.MimeMessageHelper;
  */
 @RequiredArgsConstructor
 @Slf4j
+@Getter
 public class DefaultEmailSender implements EmailSender {
     private final JavaMailSender mailSender;
 
     private final MessageSource messageSource;
 
     private final ApplicationContext applicationContext;
+
+    private final List<EmailSenderCustomizer> emailSenderCustomizers;
+
+    private final CasReentrantLock lock = new CasReentrantLock();
 
     @Override
     public boolean canSend() {
@@ -61,17 +67,13 @@ public class DefaultEmailSender implements EmailSender {
         messageHelper.setCc(emailProperties.getCc().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         messageHelper.setBcc(emailProperties.getBcc().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
 
-        applicationContext.getBeansOfType(EmailSenderCustomizer.class, false, false)
-            .values()
-            .stream()
-            .filter(BeanSupplier::isNotProxy)
-            .sorted(AnnotationAwareOrderComparator.INSTANCE)
-            .forEach(customizer -> customizer.customize(mailSender, emailRequest));
-
-        mailSender.send(message);
-
-        return EmailCommunicationResult.builder()
-            .success(true)
+        val builder = EmailCommunicationResult.builder().success(false);
+        if (lock.tryLock()) {
+            emailSenderCustomizers.forEach(customizer -> customizer.customize(mailSender, emailRequest));
+            mailSender.send(message);
+            builder.success(true);
+        }
+        return builder
             .to(recipients)
             .body(emailRequest.getBody())
             .build();
