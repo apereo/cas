@@ -128,12 +128,25 @@ public class MonitoredRepository {
         return false;
     }
 
-    public static Optional<DependencyRange> extractBotDependencyRange(final PullRequest pr) {
-        var pattern = Pattern.compile("`(\\d+\\.\\d+\\.\\d+)` \\-\\> `(\\d+\\.\\d+\\.\\d+)`");
+    public Optional<DependencyRange> extractBotDependencyRange(final PullRequest pr) {
+        if (pr.getTitle().startsWith("chore(deps): bump") && pr.getTitle().endsWith("-SNAPSHOT")) {
+            log.debug("Ignoring SNAPSHOT dependency upgrade {}", pr);
+            labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
+            close(pr);
+            return Optional.empty();
+        }
+        var pattern = Pattern.compile("`(\\d+\\.\\d+\\.\\d+).*` \\-\\> `(\\d+\\.\\d+\\.\\d+).*`");
         var matcher = pattern.matcher(pr.getBody());
         if (matcher.find()) {
             var startingVersion = new Semver(matcher.group(1));
             var endingVersion = new Semver(matcher.group(2));
+            return Optional.of(new DependencyRange(startingVersion, endingVersion));
+        }
+        pattern = Pattern.compile("chore\\(deps\\): bump (.+) from (\\d+\\.\\d+\\.\\d+).* to (\\d+\\.\\d+\\.\\d+).*");
+        matcher = pattern.matcher(pr.getTitle());
+        if (matcher.find()) {
+            var startingVersion = new Semver(matcher.group(2));
+            var endingVersion = new Semver(matcher.group(3));
             return Optional.of(new DependencyRange(startingVersion, endingVersion));
         }
         return Optional.empty();
