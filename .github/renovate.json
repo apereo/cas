@@ -75,7 +75,7 @@
   },
   "packageRules": [
     {
-      "matchPackagePatterns": ["^software\\.amazon\\.awssdk(:.+)?$"],
+      "matchPackagePatterns": ["^software\\.amazon\\.awssdk\\..+$"],
       "matchManagers": ["maven"],
       "matchUpdateTypes": ["major", "minor"]
     },
