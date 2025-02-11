@@ -49,8 +49,8 @@ class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpointTests {
         throttle.recordSubmissionFailure(request);
         val records = throttledSubmissionHandlerEndpoint.getRecords();
         assertFalse(records.isEmpty());
-        throttledSubmissionHandlerEndpoint.deleteByKey(records.getFirst().getKey());
-        assertDoesNotThrow(() -> throttledSubmissionHandlerEndpoint.release(false));
-        assertDoesNotThrow(() -> throttledSubmissionHandlerEndpoint.release(true));
+        throttledSubmissionHandlerEndpoint.deleteByKeyOrRelease(false, records.getFirst().getKey());
+        assertDoesNotThrow(() -> throttledSubmissionHandlerEndpoint.deleteByKeyOrRelease(false, null));
+        assertDoesNotThrow(() -> throttledSubmissionHandlerEndpoint.deleteByKeyOrRelease(true, null));
     }
 }
