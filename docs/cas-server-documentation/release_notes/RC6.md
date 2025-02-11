@@ -67,3 +67,12 @@ test coverage of the CAS codebase is approximately `94%`.
 
 - Gradle
 - Nimbus
+- Apache Tomcat
+- Hibernate
+- Micrometer
+- Spring Boot Admin
+- Azure Identity
+- Netty
+- Amazon SDK
+- Mailgun
+- Azure CosmosDb
