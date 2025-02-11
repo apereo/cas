@@ -10,10 +10,12 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasMultifactorAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -34,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Import(CasMultifactorAuthenticationEventExecutionPlanTestConfiguration.class)
 @Tag("MFA")
+@ExtendWith(CasTestExtension.class)
 class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     private static final Service NORMAL_SERVICE = newService("https://example.com/normal/");
@@ -54,10 +57,10 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
 
     private static UsernamePasswordCredential newUserPassCredentials(final String user,
                                                                      final String pass) {
-        val userpass = new UsernamePasswordCredential();
-        userpass.setUsername(user);
-        userpass.assignPassword(pass);
-        return userpass;
+        val credential = new UsernamePasswordCredential();
+        credential.setUsername(user);
+        credential.assignPassword(pass);
+        return credential;
     }
 
     private static Service newService(final String id) {
@@ -134,6 +137,6 @@ class MultifactorAuthenticationTests extends BaseCasWebflowMultifactorAuthentica
     }
 
     private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws Throwable {
-        return this.authenticationSystemSupport.finalizeAuthenticationTransaction(service, credential);
+        return authenticationSystemSupport.finalizeAuthenticationTransaction(service, credential);
     }
 }

@@ -19,12 +19,16 @@ import org.apereo.cas.web.v2.ProxyController;
 import org.apereo.cas.web.v2.ProxyValidateController;
 import lombok.Getter;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -72,7 +76,15 @@ class ProxyValidateControllerTests {
     @Qualifier("proxyController")
     private ProxyController proxyController;
 
-    
+    @BeforeEach
+    void before() {
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("223.456.789.000");
+        request.setLocalAddr("223.456.789.100");
+        request.addHeader(HttpHeaders.USER_AGENT, "Firefox");
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+    }
+
     @Test
     void verifyValidServiceTicket() throws Throwable {
         val service = RegisteredServiceTestUtils.getService("https://www.casinthecloud.com");
