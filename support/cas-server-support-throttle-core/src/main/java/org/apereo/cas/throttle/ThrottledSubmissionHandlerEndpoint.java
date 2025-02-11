@@ -8,6 +8,7 @@ import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -15,7 +16,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
@@ -47,33 +47,28 @@ public class ThrottledSubmissionHandlerEndpoint extends BaseCasRestActuatorEndpo
     }
 
     /**
-     * Delete by key.
-     *
-     * @param key the key
-     */
-    @DeleteMapping(path= "/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Removed selected key from the throttled authentication records")
-    public void deleteByKey(@PathVariable final String key) {
-        throttledSubmissionsStore.getObject().remove(key);
-    }
-
-    /**
-     * Release throttled interceptors as necessary.
+     * Delete by key or release throttled interceptors as necessary.
      */
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Clean and release throttled authentication records",
-        parameters = @Parameter(name = "clear", required = false, description = "Whether to clear/remove the records or simply release them"))
-    public void release(@RequestParam(value = "clear", required = false) final boolean clear) {
-        val interceptors = authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors();
-        interceptors
-            .stream()
-            .map(ThrottledSubmissionHandlerInterceptor.class::cast)
-            .forEach(interceptor -> {
-                if (clear) {
-                    interceptor.clear();
-                } else {
-                    interceptor.release();
-                }
-            });
+    @Operation(summary = "Clean or release all throttled interceptors or remove a throttled authentication record by key",
+            parameters = { @Parameter(name = "clear", required = false, description = "Whether to clear/remove the records or simply release them"),
+                           @Parameter(name = "key", required = false, description = "Selected key for removal")})
+    public void deleteByKeyOrRelease(@RequestParam(value = "clear", required = false) final boolean clear,
+                                     @RequestParam(value = "key", required = false) final String key) {
+        if (StringUtils.isNotBlank(key)) {
+            throttledSubmissionsStore.getObject().remove(key);
+        } else {
+            val interceptors = authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors();
+            interceptors
+                .stream()
+                .map(ThrottledSubmissionHandlerInterceptor.class::cast)
+                .forEach(interceptor -> {
+                    if (clear) {
+                        interceptor.clear();
+                    } else {
+                        interceptor.release();
+                    }
+                });
+        }
     }
 }

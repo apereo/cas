@@ -3074,7 +3074,7 @@ async function initializeThrottlesOperations() {
                     .then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
-                                url: `${actuatorEndpoints.throttles}/${key}`,
+                                url: `${actuatorEndpoints.throttles}?key=` + encodeURIComponent(key),
                                 type: "DELETE",
                                 contentType: "application/x-www-form-urlencoded",
                                 success: (response, status, xhr) => {
