@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -48,6 +49,8 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
 
     private final ApplicationContext applicationContext;
 
+    private final TenantExtractor tenantExtractor;
+    
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override

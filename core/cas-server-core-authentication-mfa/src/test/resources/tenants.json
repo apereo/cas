@@ -1,0 +1,19 @@
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "description": "Example tenant",
+      "multifactorAuthenticationPolicy": {
+        "@class": "org.apereo.cas.multitenancy.DefaultTenantMultifactorAuthenticationPolicy",
+        "globalProviderIds": [
+          "java.util.HashSet",
+          [
+            "mfa-dummy"
+          ]
+        ]
+      }
+    }
+  ]
+]

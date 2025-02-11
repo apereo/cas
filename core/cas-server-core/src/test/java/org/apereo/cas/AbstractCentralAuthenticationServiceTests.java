@@ -15,8 +15,14 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -81,4 +87,13 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     @Autowired
     @Qualifier(AttributeDefinitionStore.BEAN_NAME)
     private AttributeDefinitionStore attributeDefinitionStore;
+
+    @BeforeEach
+    void before() {
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("223.456.789.000");
+        request.setLocalAddr("223.456.789.100");
+        request.addHeader(HttpHeaders.USER_AGENT, "Firefox");
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+    }
 }

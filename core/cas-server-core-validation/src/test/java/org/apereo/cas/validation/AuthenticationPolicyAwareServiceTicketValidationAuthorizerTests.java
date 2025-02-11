@@ -20,13 +20,13 @@ import org.apereo.cas.authentication.policy.RequiredAuthenticationHandlerAuthent
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
@@ -67,7 +67,7 @@ import static org.mockito.Mockito.*;
     CasCoreTicketsAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
-    CasMultitenancyAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class
 })
 @Tag("AuthenticationPolicy")

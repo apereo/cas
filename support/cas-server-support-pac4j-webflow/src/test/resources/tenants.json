@@ -5,8 +5,8 @@
       "@class": "org.apereo.cas.multitenancy.TenantDefinition",
       "id": "shire",
       "description": "Example tenant",
-      "authenticationPolicy": {
-        "@class": "org.apereo.cas.multitenancy.DefaultTenantAuthenticationPolicy",
+      "delegatedAuthenticationPolicy": {
+        "@class": "org.apereo.cas.multitenancy.DefaultTenantDelegatedAuthenticationPolicy",
         "allowedProviders": [
           "java.util.ArrayList",
           [

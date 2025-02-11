@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.io.Serial;
-import java.util.List;
+import java.util.Set;
 
 /**
- * This is {@link DefaultTenantAuthenticationPolicy}.
+ * This is {@link DefaultTenantMultifactorAuthenticationPolicy}.
  *
  * @author Misagh Moayyed
  * @since 7.2.0
@@ -17,9 +17,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
-public class DefaultTenantAuthenticationPolicy implements TenantAuthenticationPolicy {
+public class DefaultTenantMultifactorAuthenticationPolicy implements TenantMultifactorAuthenticationPolicy {
     @Serial
     private static final long serialVersionUID = -9012299259747093234L;
 
-    private List<String> authenticationHandlers;
+    private Set<String> globalProviderIds;
 }

@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
-import org.apereo.cas.config.CasMultitenancyAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
 @Tag("Cookie")
 @SpringBootTest(classes = {
     CasCoreCookieAutoConfiguration.class,
-    CasMultitenancyAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class,
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
