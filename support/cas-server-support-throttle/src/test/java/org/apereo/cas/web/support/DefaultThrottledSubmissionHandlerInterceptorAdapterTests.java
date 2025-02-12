@@ -22,7 +22,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ExtendWith(CasTestExtension.class)
 class DefaultThrottledSubmissionHandlerInterceptorAdapterTests {
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @EnableScheduling
     @SpringBootTest(classes = BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class,
         properties = {

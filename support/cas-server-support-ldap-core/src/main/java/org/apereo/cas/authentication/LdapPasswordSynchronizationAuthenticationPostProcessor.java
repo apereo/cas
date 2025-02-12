@@ -6,6 +6,7 @@ import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.AttributeModification;
@@ -24,15 +25,11 @@ import java.util.Collections;
  * @since 6.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class LdapPasswordSynchronizationAuthenticationPostProcessor implements AuthenticationPostProcessor {
     private final LdapConnectionFactory searchFactory;
 
     private final LdapPasswordSynchronizationProperties ldapProperties;
-
-    public LdapPasswordSynchronizationAuthenticationPostProcessor(final LdapPasswordSynchronizationProperties properties) {
-        this.ldapProperties = properties;
-        this.searchFactory = new LdapConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(properties));
-    }
 
     @Override
     public void destroy() {

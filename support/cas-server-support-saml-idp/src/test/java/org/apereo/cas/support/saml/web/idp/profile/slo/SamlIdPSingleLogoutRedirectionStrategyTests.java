@@ -34,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class SamlIdPSingleLogoutRedirectionStrategyTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.logout.send-logout-response=true",
         "cas.authn.saml-idp.logout.sign-logout-response=true",
@@ -140,7 +139,6 @@ class SamlIdPSingleLogoutRedirectionStrategyTests {
     }
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata956",
         "cas.authn.saml-idp.logout.send-logout-response=true"

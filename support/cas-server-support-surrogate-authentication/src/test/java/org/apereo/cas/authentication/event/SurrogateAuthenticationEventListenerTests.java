@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication.event;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationServiceTests;
 import org.apereo.cas.notifications.sms.MockSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
@@ -35,9 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    SurrogateAuthenticationEventListenerTests.SurrogateAuthenticationEventListenerTestConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class
+    BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class,
+    SurrogateAuthenticationEventListenerTests.SurrogateAuthenticationEventListenerTestConfiguration.class
 },
     properties = {
         "spring.mail.host=localhost",

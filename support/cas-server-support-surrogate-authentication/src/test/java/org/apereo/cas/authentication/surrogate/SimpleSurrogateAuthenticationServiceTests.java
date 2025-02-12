@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class SimpleSurrogateAuthenticationServiceTests {
 
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @SpringBootTest(classes = BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     class DefaultTests extends BaseSurrogateAuthenticationServiceTests {
@@ -63,7 +62,6 @@ class SimpleSurrogateAuthenticationServiceTests {
     }
     
     @Nested
-    @SuppressWarnings("ClassCanBeStatic")
     @SpringBootTest(classes = BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class,
         properties = {
             "cas.authn.surrogate.core.principal-attribute-names=membership",

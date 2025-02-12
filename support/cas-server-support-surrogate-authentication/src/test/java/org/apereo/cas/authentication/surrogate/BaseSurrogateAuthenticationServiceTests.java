@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreRestAutoConfiguration;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
@@ -110,6 +111,7 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
         CasThemesAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
+        CasCoreMultitenancyAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
