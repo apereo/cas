@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
@@ -160,6 +161,8 @@ public class OAuth20ConfigurationContext {
     private final CipherExecutor<byte[], byte[]> webflowCipherExecutor;
 
     private final HttpClient httpClient;
+
+    private final TenantExtractor tenantExtractor;
 
     /**
      * Gets ticket granting ticket.

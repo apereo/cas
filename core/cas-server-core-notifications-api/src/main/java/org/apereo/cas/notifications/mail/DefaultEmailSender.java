@@ -1,18 +1,25 @@
 package org.apereo.cas.notifications.mail;
 
-import org.apereo.cas.util.concurrent.CasReentrantLock;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.mail.MailProperties;
+import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import jakarta.mail.internet.MimeMessage;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * This is {@link DefaultEmailSender}.
@@ -24,31 +31,42 @@ import java.util.List;
 @Slf4j
 @Getter
 public class DefaultEmailSender implements EmailSender {
-    private final JavaMailSender mailSender;
-
     private final MessageSource messageSource;
 
     private final ApplicationContext applicationContext;
 
     private final List<EmailSenderCustomizer> emailSenderCustomizers;
 
-    private final CasReentrantLock lock = new CasReentrantLock();
+    private final MailProperties mailProperties;
 
-    @Override
-    public boolean canSend() {
-        try {
-            if (mailSender != null && mailSender instanceof final JavaMailSenderImpl impl) {
-                impl.testConnection();
-                return true;
-            }
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return false;
-    }
+    private final ObjectProvider<SslBundles> sslBundles;
+
+    private final TenantExtractor tenantExtractor;
 
     @Override
     public EmailCommunicationResult send(final EmailMessageRequest emailRequest) throws Exception {
+        val mailSender = createMailSender(emailRequest);
+        val connectionAvailable = mailSender != null && FunctionUtils.doAndHandle(() -> {
+            mailSender.testConnection();
+            return true;
+        }, throwable -> false).get();
+
+        val recipients = emailRequest.getRecipients();
+        if (connectionAvailable) {
+            val message = createEmailMessage(emailRequest, mailSender);
+            emailSenderCustomizers.forEach(customizer -> customizer.customize(mailSender, emailRequest));
+            mailSender.send(message);
+        }
+
+        return EmailCommunicationResult.builder()
+            .success(connectionAvailable)
+            .to(recipients)
+            .body(emailRequest.getBody())
+            .build();
+    }
+
+    protected MimeMessage createEmailMessage(final EmailMessageRequest emailRequest,
+                                             final JavaMailSender mailSender) throws Exception {
         val recipients = emailRequest.getRecipients();
         val message = mailSender.createMimeMessage();
         val messageHelper = new MimeMessageHelper(message);
@@ -61,22 +79,58 @@ public class DefaultEmailSender implements EmailSender {
         messageHelper.setSubject(subject);
 
         messageHelper.setFrom(emailProperties.getFrom());
-        FunctionUtils.doIfNotBlank(emailProperties.getReplyTo(), __ -> messageHelper.setReplyTo(emailProperties.getReplyTo()));
+        FunctionUtils.doIfNotBlank(emailProperties.getReplyTo(), messageHelper::setReplyTo);
         messageHelper.setValidateAddresses(emailProperties.isValidateAddresses());
         messageHelper.setPriority(emailProperties.getPriority());
         messageHelper.setCc(emailProperties.getCc().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         messageHelper.setBcc(emailProperties.getBcc().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
 
-        val builder = EmailCommunicationResult.builder().success(false);
-        if (lock.tryLock()) {
-            emailSenderCustomizers.forEach(customizer -> customizer.customize(mailSender, emailRequest));
-            mailSender.send(message);
-            builder.success(true);
-        }
-        return builder
-            .to(recipients)
-            .body(emailRequest.getBody())
-            .build();
+        return message;
     }
 
+    protected JavaMailSenderImpl createMailSender(final EmailMessageRequest emailRequest) {
+        if (StringUtils.isNotBlank(mailProperties.getHost())) {
+            val sender = new JavaMailSenderImpl();
+            return applyProperties(sender);
+        }
+        return null;
+    }
+
+    protected JavaMailSenderImpl applyProperties(final JavaMailSenderImpl sender) {
+        applyEmailServerProperties(sender);
+
+        val javaMailProperties = asProperties(mailProperties.getProperties());
+        val protocol = StringUtils.defaultIfBlank(mailProperties.getProtocol(), "smtp");
+        
+        val ssl = mailProperties.getSsl();
+        if (ssl.isEnabled()) {
+            javaMailProperties.setProperty("mail." + protocol + ".ssl.enable", "true");
+        }
+        if (StringUtils.isNotBlank(ssl.getBundle())) {
+            val sslBundle = sslBundles.getObject().getBundle(ssl.getBundle());
+            val socketFactory = sslBundle.createSslContext().getSocketFactory();
+            javaMailProperties.put("mail." + protocol + ".ssl.socketFactory", socketFactory);
+        }
+        if (!javaMailProperties.isEmpty()) {
+            sender.setJavaMailProperties(javaMailProperties);
+        }
+        return sender;
+    }
+
+    protected void applyEmailServerProperties(final JavaMailSenderImpl sender) {
+        sender.setHost(mailProperties.getHost());
+        if (mailProperties.getPort() != null) {
+            sender.setPort(mailProperties.getPort());
+        }
+        sender.setUsername(mailProperties.getUsername());
+        sender.setPassword(mailProperties.getPassword());
+        sender.setProtocol(mailProperties.getProtocol());
+        sender.setDefaultEncoding(mailProperties.getDefaultEncoding().name());
+    }
+
+    private static Properties asProperties(final Map<String, String> source) {
+        val properties = new Properties();
+        properties.putAll(source);
+        return properties;
+    }
 }

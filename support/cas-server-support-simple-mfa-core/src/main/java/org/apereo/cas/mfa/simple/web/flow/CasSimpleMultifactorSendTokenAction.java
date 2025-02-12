@@ -9,6 +9,7 @@ import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy.TokenSharingStrategyOptions;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationService;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.CollectionUtils;
@@ -75,6 +76,8 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     protected final CasSimpleMultifactorTokenCommunicationStrategy tokenCommunicationStrategy;
 
     protected final BucketConsumer bucketConsumer;
+
+    protected final TenantExtractor tenantExtractor;
 
     protected boolean isNotificationSent(final Principal principal, final Ticket token) {
         return communicationsManager.isNotificationSenderDefined()
@@ -151,13 +154,14 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         return routeToErrorEvent();
     }
 
-    private boolean tryToSendEmail(final RequestContext requestContext, final EnumSet<TokenSharingStrategyOptions> communicationStrategy,
+    private boolean tryToSendEmail(final RequestContext requestContext,
+                                   final EnumSet<TokenSharingStrategyOptions> communicationStrategy,
                                    final Principal principal,
                                    final Map<TokenSharingStrategyOptions, List<String>> mapOfAllRecipients,
                                    final CasSimpleMultifactorAuthenticationTicket token) {
         if (communicationStrategy.contains(TokenSharingStrategyOptions.EMAIL) && communicationsManager.isMailSenderDefined()) {
-            val cmd = CasSimpleMultifactorSendEmail.of(communicationsManager, properties);
-            val recipients = cmd.getEmailMessageRecipients(principal);
+            val cmd = CasSimpleMultifactorSendEmail.of(communicationsManager, properties, tenantExtractor);
+            val recipients = cmd.getEmailMessageRecipients(principal, requestContext);
 
             val currentEvent = requestContext.getCurrentEvent();
             var registeredEmailAddress = StringUtils.EMPTY;

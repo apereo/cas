@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
@@ -817,7 +818,9 @@ class OidcConfiguration {
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationManager,
             @Qualifier("webflowCipherExecutor")
-            final CipherExecutor webflowCipherExecutor) {
+            final CipherExecutor webflowCipherExecutor,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor) {
 
             val sortedIdClaimCollectors = new ArrayList<>(oidcIdTokenClaimCollectors);
             AnnotationAwareOrderComparator.sortIfNecessary(sortedIdClaimCollectors);
@@ -878,6 +881,7 @@ class OidcConfiguration {
                 .taskScheduler(taskScheduler)
                 .communicationsManager(communicationManager)
                 .webflowCipherExecutor(webflowCipherExecutor)
+                .tenantExtractor(tenantExtractor)
                 .build();
         }
     }

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.notifications.BaseNotificationTests;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,23 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Mail")
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = BaseNotificationTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseNotificationTests.SharedTestConfiguration.class,
+    properties = {
+        "spring.ssl.bundle.jks.mail-bundle.key-store.location=classpath:keystore.p12",
+        "spring.ssl.bundle.jks.mail-bundle.key-store.password=changeit",
+        "spring.ssl.bundle.jks.mail-bundle.key-store.type=PKCS12",
+        "spring.ssl.bundle.jks.mail-bundle.trust-store.location=classpath:keystore.p12",
+        "spring.ssl.bundle.jks.mail-bundle.trust-store.password=changeit",
+        "spring.ssl.bundle.jks.mail-bundle.trust-store.type=PKCS12",
+
+        "spring.mail.host=localhost",
+        "spring.mail.port=25000",
+        "spring.mail.ssl.enabled=true",
+        "spring.mail.ssl.bundle=mail-bundle",
+        "spring.mail.properties.mail.smtp.connectiontimeout=5000",
+        "spring.mail.properties.mail.smtp.ssl.checkserveridentity=false"
+    })
+@EnabledIfListeningOnPort(port = 25000)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class DefaultEmailSenderTests {
     @Autowired
@@ -33,12 +50,14 @@ class DefaultEmailSenderTests {
     private EmailSender emailSender;
 
     @Test
-    void verifySubjectCanExpandWithVariables() {
-        val emailRequest = EmailMessageRequest.builder()
+    void verifySubjectCanExpandWithVariables() throws Throwable {
+        val emailRequest = EmailMessageRequest
+            .builder()
             .context(CollectionUtils.wrap("name", "casuser"))
             .emailProperties(new EmailProperties().setSubject("Hello ${name}"))
             .build();
         val subject = emailSender.determineEmailSubject(emailRequest, mock(HierarchicalMessageSource.class));
         assertEquals("Hello casuser", subject);
+        assertFalse(emailSender.send(emailRequest).isSuccess());
     }
 }

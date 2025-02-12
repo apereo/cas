@@ -8,6 +8,8 @@ import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionSt
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
@@ -38,15 +40,19 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
 
     private final CommunicationsManager communicationsManager;
 
+    private final TenantExtractor tenantExtractor;
+
     public CreatePasswordlessAuthenticationTokenAction(final CasConfigurationProperties casProperties,
                                                        final PasswordlessTokenRepository passwordlessTokenRepository,
                                                        final CommunicationsManager communicationsManager,
                                                        final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
                                                        final PrincipalFactory passwordlessPrincipalFactory,
-                                                       final AuthenticationSystemSupport authenticationSystemSupport) {
+                                                       final AuthenticationSystemSupport authenticationSystemSupport,
+                                                       final TenantExtractor tenantExtractor) {
         super(casProperties, multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory, authenticationSystemSupport);
         this.passwordlessTokenRepository = passwordlessTokenRepository;
         this.communicationsManager = communicationsManager;
+        this.tenantExtractor = tenantExtractor;
     }
 
     @Override
@@ -115,6 +121,7 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
                 .emailProperties(mail)
                 .locale(locale.orElseGet(Locale::getDefault))
                 .to(List.of(user.getEmail()))
+                .tenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
                 .body(body)
                 .build();
             return communicationsManager.email(emailRequest).isSuccess();

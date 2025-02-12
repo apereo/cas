@@ -26,7 +26,8 @@ public class CasRegisteredServiceExpiredEvent extends BaseCasRegisteredServiceEv
 
     private final boolean deleted;
 
-    public CasRegisteredServiceExpiredEvent(final Object source, final RegisteredService registeredService, final boolean deleted, final ClientInfo clientInfo) {
+    public CasRegisteredServiceExpiredEvent(final Object source, final RegisteredService registeredService,
+                                            final boolean deleted, final ClientInfo clientInfo) {
         super(source, clientInfo);
         this.registeredService = registeredService;
         this.deleted = deleted;

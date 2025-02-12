@@ -31,6 +31,7 @@ import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationServ
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
@@ -129,10 +130,12 @@ class SurrogateAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public SurrogateAuthenticationEventListener surrogateAuthenticationEventListener(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager,
             final CasConfigurationProperties casProperties) {
-            return new DefaultSurrogateAuthenticationEventListener(communicationsManager, casProperties);
+            return new DefaultSurrogateAuthenticationEventListener(communicationsManager, casProperties, tenantExtractor);
         }
 
     }

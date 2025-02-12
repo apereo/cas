@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
@@ -8,14 +9,13 @@ import org.apereo.cas.notifications.sms.SmsBodyBuilder;
 import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
-
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,12 +28,15 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Slf4j
+@Getter
 public class DefaultRegisteredServicesEventListener implements RegisteredServicesEventListener {
     private final ServicesManager servicesManager;
 
     private final CasConfigurationProperties casProperties;
 
     private final CommunicationsManager communicationsManager;
+
+    private final TenantExtractor tenantExtractor;
 
     @Override
     public void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
@@ -74,6 +77,7 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
                     val emailRequest = EmailMessageRequest.builder()
                         .emailProperties(mail)
                         .to(List.of(contact.getEmail()))
+                        .tenant(event.getClientInfo().getTenant())
                         .body(body).build();
                     communicationsManager.email(emailRequest);
                 });

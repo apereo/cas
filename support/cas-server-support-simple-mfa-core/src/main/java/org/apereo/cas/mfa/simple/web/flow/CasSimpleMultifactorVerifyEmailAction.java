@@ -8,6 +8,7 @@ import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProvider;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCommunicationStrategy;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationService;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -51,6 +52,8 @@ public class CasSimpleMultifactorVerifyEmailAction extends AbstractMultifactorAu
 
     protected final BucketConsumer bucketConsumer;
 
+    protected final TenantExtractor tenantExtractor;
+
     @Override
     protected Event doPreExecute(final RequestContext requestContext) throws Exception {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
@@ -70,7 +73,7 @@ public class CasSimpleMultifactorVerifyEmailAction extends AbstractMultifactorAu
                 LOGGER.debug("Received email address [{}] for [{}]", emailAddress, principal.getId());
                 val token = getOrCreateToken(requestContext, principal);
                 token.putProperty(TOKEN_PROPERTY_EMAIL_TO_REGISTER, emailAddress);
-                val cmd = CasSimpleMultifactorSendEmail.of(communicationsManager, properties);
+                val cmd = CasSimpleMultifactorSendEmail.of(communicationsManager, properties, tenantExtractor);
                 val emailSent = cmd.send(principal, token, List.of(emailAddress), requestContext).isAnyEmailSent();
                 if (emailSent) {
                     LOGGER.debug("Email [{}] is sent to [{}]", emailAddress, principal.getId());

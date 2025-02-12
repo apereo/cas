@@ -9,6 +9,8 @@ import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
@@ -51,26 +53,15 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
      */
     public static final String REQUEST_PARAMETER_EMAIL = "email";
 
-    /**
-     * The CAS configuration properties.
-     */
     protected final CasConfigurationProperties casProperties;
 
-    /**
-     * The communication manager for SMS/emails.
-     */
     protected final CommunicationsManager communicationsManager;
 
-    /**
-     * The password management service.
-     */
     protected final PasswordManagementService passwordManagementService;
 
-    /**
-     * The principal resolver to resolve the user
-     * and fetch attributes for follow-up ops, such as email message body building.
-     */
     protected final PrincipalResolver principalResolver;
+
+    protected final TenantExtractor tenantExtractor;
 
     @Audit(action = AuditableActions.REQUEST_FORGOT_USERNAME,
         principalResolverName = AuditPrincipalResolvers.REQUEST_FORGOT_USERNAME_PRINCIPAL_RESOLVER,
@@ -133,9 +124,13 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
             .parameters(parameters)
             .build()
             .get();
-        val emailRequest = EmailMessageRequest.builder().emailProperties(reset)
+        val emailRequest = EmailMessageRequest.builder()
+            .emailProperties(reset)
             .locale(locale.orElseGet(Locale::getDefault))
-            .to(List.of(query.getEmail())).body(body).build();
+            .to(List.of(query.getEmail()))
+            .tenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
+            .body(body)
+            .build();
         return communicationsManager.email(emailRequest);
     }
 

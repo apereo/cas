@@ -268,6 +268,8 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
             @Qualifier(PasswordlessRequestParser.BEAN_NAME)
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager,
             @Qualifier(PasswordlessTokenRepository.BEAN_NAME)
@@ -277,7 +279,8 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new CreatePasswordlessAuthenticationTokenAction(
                     casProperties, passwordlessTokenRepository, communicationsManager,
-                    multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory, authenticationSystemSupport))
+                    multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory,
+                    authenticationSystemSupport, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_CREATE_PASSWORDLESS_AUTHN_TOKEN)
                 .build()
                 .get();

@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.DefaultCommunicationsManager;
 import org.apereo.cas.notifications.call.PhoneCallOperator;
@@ -25,14 +26,15 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.ssl.SslBundles;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -48,7 +50,7 @@ import java.util.stream.Collectors;
  */
 @EnableScheduling
 @Slf4j
-@EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableConfigurationProperties({CasConfigurationProperties.class, MailProperties.class})
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Notifications)
 @AutoConfiguration
 public class CasCoreNotificationsAutoConfiguration {
@@ -73,17 +75,20 @@ public class CasCoreNotificationsAutoConfiguration {
     public EmailSender emailSender(
         final ConfigurableApplicationContext applicationContext,
         final ObjectProvider<List<EmailSenderCustomizer>> customizers,
+        final MailProperties mailProperties,
+        final ObjectProvider<SslBundles> sslBundles,
+        @Qualifier(TenantExtractor.BEAN_NAME)
+        final TenantExtractor tenantExtractor,
         @Qualifier("messageSource")
-        final MessageSource messageSource,
-        @Qualifier("mailSender")
-        final ObjectProvider<JavaMailSender> mailSender) {
+        final MessageSource messageSource) {
         val emailSenderCustomizers = Optional.ofNullable(customizers.getIfAvailable())
             .orElseGet(ArrayList::new)
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .toList();
-        return new DefaultEmailSender(mailSender.getIfAvailable(), messageSource, applicationContext, emailSenderCustomizers);
+        return new DefaultEmailSender(messageSource, applicationContext,
+            emailSenderCustomizers, mailProperties, sslBundles, tenantExtractor);
     }
 
     @Bean

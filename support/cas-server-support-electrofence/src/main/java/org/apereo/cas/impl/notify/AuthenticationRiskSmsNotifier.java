@@ -3,6 +3,7 @@ package org.apereo.cas.impl.notify;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.sms.SmsBodyBuilder;
 import org.apereo.cas.notifications.sms.SmsRequest;
@@ -30,9 +31,10 @@ public class AuthenticationRiskSmsNotifier extends BaseAuthenticationRiskNotifie
                                          final ServicesManager servicesManager,
                                          final PrincipalResolver principalResolver,
                                          final CipherExecutor riskVerificationCipherExecutor,
-                                         final ServiceFactory serviceFactory) {
+                                         final ServiceFactory serviceFactory,
+                                         final TenantExtractor tenantExtractor) {
         super(applicationContext, casProperties, communicationsManager, servicesManager,
-            principalResolver, riskVerificationCipherExecutor, serviceFactory);
+            principalResolver, riskVerificationCipherExecutor, serviceFactory, tenantExtractor);
     }
 
     @Override

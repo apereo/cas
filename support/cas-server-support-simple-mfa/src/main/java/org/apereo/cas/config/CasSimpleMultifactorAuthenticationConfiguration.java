@@ -18,6 +18,7 @@ import org.apereo.cas.mfa.simple.web.CasSimpleMultifactorAuthenticationEndpoint;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorSendTokenAction;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorUpdateEmailAction;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorVerifyEmailAction;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
@@ -74,10 +75,12 @@ class CasSimpleMultifactorAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action mfaSimpleMultifactorSendTokenAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasSimpleMultifactorAuthenticationService.BEAN_NAME)
             final CasSimpleMultifactorAuthenticationService casSimpleMultifactorAuthenticationService,
-            @Qualifier("mfaSimpleMultifactorTokenCommunicationStrategy")
+            @Qualifier(CasSimpleMultifactorTokenCommunicationStrategy.BEAN_NAME)
             final CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy,
             final CasConfigurationProperties casProperties,
             @Qualifier(CommunicationsManager.BEAN_NAME)
@@ -92,7 +95,7 @@ class CasSimpleMultifactorAuthenticationConfiguration {
                     return new CasSimpleMultifactorSendTokenAction(
                         communicationsManager, casSimpleMultifactorAuthenticationService, simple,
                         mfaSimpleMultifactorTokenCommunicationStrategy,
-                        mfaSimpleMultifactorBucketConsumer);
+                        mfaSimpleMultifactorBucketConsumer, tenantExtractor);
                 })
                 .withId(CasWebflowConstants.ACTION_ID_MFA_SIMPLE_SEND_TOKEN)
                 .build()
@@ -106,7 +109,7 @@ class CasSimpleMultifactorAuthenticationConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasSimpleMultifactorAuthenticationService.BEAN_NAME)
             final CasSimpleMultifactorAuthenticationService casSimpleMultifactorAuthenticationService,
-            @Qualifier("mfaSimpleMultifactorTokenCommunicationStrategy")
+            @Qualifier(CasSimpleMultifactorTokenCommunicationStrategy.BEAN_NAME)
             final CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy,
             final CasConfigurationProperties casProperties,
             @Qualifier(CommunicationsManager.BEAN_NAME)
@@ -133,10 +136,12 @@ class CasSimpleMultifactorAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action mfaSimpleMultifactorVerifyEmailAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasSimpleMultifactorAuthenticationService.BEAN_NAME)
             final CasSimpleMultifactorAuthenticationService casSimpleMultifactorAuthenticationService,
-            @Qualifier("mfaSimpleMultifactorTokenCommunicationStrategy")
+            @Qualifier(CasSimpleMultifactorTokenCommunicationStrategy.BEAN_NAME)
             final CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy,
             final CasConfigurationProperties casProperties,
             @Qualifier(CommunicationsManager.BEAN_NAME)
@@ -146,14 +151,11 @@ class CasSimpleMultifactorAuthenticationConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> {
-                    val simple = casProperties.getAuthn().getMfa().getSimple();
-                    return new CasSimpleMultifactorVerifyEmailAction(
-                        communicationsManager, casSimpleMultifactorAuthenticationService,
-                        simple,
-                        mfaSimpleMultifactorTokenCommunicationStrategy,
-                        mfaSimpleMultifactorBucketConsumer);
-                })
+                .withAction(() -> new CasSimpleMultifactorVerifyEmailAction(
+                    communicationsManager, casSimpleMultifactorAuthenticationService,
+                    casProperties.getAuthn().getMfa().getSimple(),
+                    mfaSimpleMultifactorTokenCommunicationStrategy,
+                    mfaSimpleMultifactorBucketConsumer, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_MFA_SIMPLE_VERIFY_EMAIL)
                 .build()
                 .get();
