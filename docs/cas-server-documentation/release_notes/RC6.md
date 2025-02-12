@@ -76,3 +76,6 @@ test coverage of the CAS codebase is approximately `94%`.
 - Amazon SDK
 - Mailgun
 - Azure CosmosDb
+- Apache Cassandra
+- MariaDb
+- Elastic APM

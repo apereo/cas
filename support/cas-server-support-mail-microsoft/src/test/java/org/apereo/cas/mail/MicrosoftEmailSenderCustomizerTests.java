@@ -1,5 +1,6 @@
 package org.apereo.cas.mail;
 
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMicrosoftEmailSenderAutoConfiguration;
