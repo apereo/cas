@@ -6,6 +6,8 @@ import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPo
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.passwordsync.LdapPasswordSynchronizationProperties;
+import org.apereo.cas.util.LdapConnectionFactory;
+import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -59,7 +61,10 @@ class LdapPasswordSynchronizationConfiguration {
                 val ldap = casProperties.getAuthn().getPasswordSync().getLdap();
                 val processors = ldap.stream()
                     .filter(LdapPasswordSynchronizationProperties::isEnabled)
-                    .map(LdapPasswordSynchronizationAuthenticationPostProcessor::new)
+                    .map(properties -> {
+                        val searchFactory = new LdapConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(properties));
+                        return new LdapPasswordSynchronizationAuthenticationPostProcessor(searchFactory, properties);
+                    })
                     .collect(Collectors.toList());
                 return BeanContainer.of(processors);
             })

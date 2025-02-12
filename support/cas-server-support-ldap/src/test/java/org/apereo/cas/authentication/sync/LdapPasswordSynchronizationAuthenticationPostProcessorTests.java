@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPostProcessor;
+import org.apereo.cas.util.LdapConnectionFactory;
+import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -40,7 +42,9 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
         @Test
         void verifyBadCredential() {
             assertThrows(AuthenticationException.class, () -> {
-                val sync = new LdapPasswordSynchronizationAuthenticationPostProcessor(casProperties.getAuthn().getPasswordSync().getLdap().getFirst());
+                val properties = casProperties.getAuthn().getPasswordSync().getLdap().getFirst();
+                val sync = new LdapPasswordSynchronizationAuthenticationPostProcessor(
+                    new LdapConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(properties)), properties);
                 val credentials = mock(Credential.class);
                 assertFalse(sync.supports(credentials));
                 sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(),
