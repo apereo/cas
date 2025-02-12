@@ -72,8 +72,26 @@ class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpointTests {
             .getContentAsString(), new TypeReference<List<ThrottledSubmission>>() {
         });
         assertFalse(records.isEmpty());
-        throttledSubmissionHandlerEndpoint.deleteByKeyOrRelease(false, records.getFirst().getKey());
-        assertDoesNotThrow(() -> throttledSubmissionHandlerEndpoint.deleteByKeyOrRelease(false, null));
-        assertDoesNotThrow(() -> throttledSubmissionHandlerEndpoint.deleteByKeyOrRelease(true, null));
+
+        mockMvc.perform(delete("/actuator/throttles")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .queryParam("key", records.getFirst().getKey())
+            )
+            .andExpect(status().isOk());
+
+        mockMvc.perform(delete("/actuator/throttles")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .queryParam("clear", "true")
+            )
+            .andExpect(status().isOk());
+
+        mockMvc.perform(delete("/actuator/throttles")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .queryParam("clear", "false")
+            )
+            .andExpect(status().isOk());
     }
 }
