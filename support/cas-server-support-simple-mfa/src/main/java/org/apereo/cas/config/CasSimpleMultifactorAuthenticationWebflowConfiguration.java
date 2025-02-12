@@ -78,7 +78,7 @@ class CasSimpleMultifactorAuthenticationWebflowConfiguration {
             return builder.build();
         }
 
-        @ConditionalOnMissingBean(name = "mfaSimpleMultifactorTokenCommunicationStrategy")
+        @ConditionalOnMissingBean(name = CasSimpleMultifactorTokenCommunicationStrategy.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy() {

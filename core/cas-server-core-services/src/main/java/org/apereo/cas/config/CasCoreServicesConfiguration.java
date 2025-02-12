@@ -119,11 +119,14 @@ class CasCoreServicesConfiguration {
         @Lazy(false)
         public RegisteredServicesEventListener registeredServicesEventListener(
             final CasConfigurationProperties casProperties,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
-            return new DefaultRegisteredServicesEventListener(servicesManager, casProperties, communicationsManager);
+            return new DefaultRegisteredServicesEventListener(servicesManager,
+                casProperties, communicationsManager, tenantExtractor);
         }
     }
 

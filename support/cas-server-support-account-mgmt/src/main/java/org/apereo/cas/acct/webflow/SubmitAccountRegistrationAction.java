@@ -5,6 +5,8 @@ import org.apereo.cas.acct.AccountRegistrationService;
 import org.apereo.cas.acct.AccountRegistrationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
@@ -51,6 +53,8 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
     private final TicketFactory ticketFactory;
 
     private final TicketRegistry ticketRegistry;
+
+    private final TenantExtractor tenantExtractor;
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
@@ -128,6 +132,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
                 .emailProperties(emailProps)
                 .locale(locale.orElseGet(Locale::getDefault))
                 .to(List.of(registrationRequest.getEmail()))
+                .tenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
                 .body(text).build();
             return communicationsManager.email(emailRequest);
         }

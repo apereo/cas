@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -56,6 +57,8 @@ public abstract class BaseAuthenticationRiskNotifier implements AuthenticationRi
     protected final CipherExecutor riskVerificationCipherExecutor;
 
     protected final ServiceFactory serviceFactory;
+
+    protected final TenantExtractor tenantExtractor;
 
     protected Authentication authentication;
 

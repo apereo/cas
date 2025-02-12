@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
@@ -200,24 +201,26 @@ public class OidcCibaController extends BaseOidcController {
         request.setAttribute(CibaRequestContext.class.getName(), cibaRequestContext);
         request.setAttribute(Principal.class.getName(), principal);
         val cibaResponse = buildCibaResponse(cibaRequest);
-        scheduleUserVerificationRequest(cibaRequest, cibaRequestContext, registeredService);
+        scheduleUserVerificationRequest(cibaRequest, cibaRequestContext, registeredService, request);
         return cibaResponse;
     }
 
     @SuppressWarnings("FutureReturnValueIgnored")
     protected void scheduleUserVerificationRequest(final OidcCibaRequest cibaRequestId,
                                                    final CibaRequestContext cibaRequest,
-                                                   final OidcRegisteredService registeredService) {
+                                                   final OidcRegisteredService registeredService,
+                                                   final HttpServletRequest httpServletRequest) {
         val verification = configurationContext.getCasProperties().getAuthn().getOidc().getCiba().getVerification();
         val delayInSeconds = Beans.newDuration(verification.getDelay()).toSeconds();
         configurationContext.getTaskScheduler().schedule(
-            () -> notifyUserForCibaRequestVerification(cibaRequestId, cibaRequest, registeredService),
+            () -> notifyUserForCibaRequestVerification(cibaRequestId, cibaRequest, registeredService, httpServletRequest),
             LocalDateTime.now(Clock.systemUTC()).plusSeconds(delayInSeconds).toInstant(ZoneOffset.UTC));
     }
 
     protected void notifyUserForCibaRequestVerification(final OidcCibaRequest cibaRequest,
                                                         final CibaRequestContext cibaRequestContext,
-                                                        final OidcRegisteredService registeredService) {
+                                                        final OidcRegisteredService registeredService,
+                                                        final HttpServletRequest httpServletRequest) {
         val mail = configurationContext.getCasProperties().getAuthn().getOidc().getCiba().getVerification().getMail();
         val principal = cibaRequest.getAuthentication().getPrincipal();
         val verificationUrl = buildCibaVerificationUrl(cibaRequest);
@@ -239,6 +242,8 @@ public class OidcCibaController extends BaseOidcController {
                     .body(body)
                     .principal(principal)
                     .attribute(resolvedAttribute)
+                    .tenant(getConfigurationContext().getTenantExtractor().extract(httpServletRequest)
+                        .map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
                     .build();
                 return configurationContext.getCommunicationsManager().email(emailRequest);
             })

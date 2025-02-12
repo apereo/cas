@@ -19,12 +19,12 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.boot.autoconfigure.mustache.MustacheAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
+import org.springframework.boot.autoconfigure.ssl.SslAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebProperties;
@@ -61,8 +61,6 @@ import java.lang.annotation.Target;
     DispatcherServletAutoConfiguration.class,
     IntegrationAutoConfiguration.class,
     JacksonAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    MailSenderValidatorAutoConfiguration.class,
     MetricsAutoConfiguration.class,
     MockMvcAutoConfiguration.class,
     MustacheAutoConfiguration.class,
@@ -86,7 +84,8 @@ import java.lang.annotation.Target;
     ConditionsReportEndpointAutoConfiguration.class,
     EnvironmentEndpointAutoConfiguration.class,
     HealthEndpointAutoConfiguration.class,
-    InfoEndpointAutoConfiguration.class
+    InfoEndpointAutoConfiguration.class,
+    SslAutoConfiguration.class
 })
 @Inherited
 @EnableScheduling
@@ -94,6 +93,7 @@ import java.lang.annotation.Target;
 @EnableRetry
 @EnableConfigurationProperties({
     WebProperties.class,
+    MailProperties.class,
     SecurityProperties.class,
     CasConfigurationProperties.class
 })

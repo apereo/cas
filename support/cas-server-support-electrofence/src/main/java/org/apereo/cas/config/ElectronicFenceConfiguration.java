@@ -26,6 +26,7 @@ import org.apereo.cas.impl.notify.AuthenticationRiskSmsNotifier;
 import org.apereo.cas.impl.plans.BaseAuthenticationRiskContingencyPlan;
 import org.apereo.cas.impl.plans.BlockAuthenticationContingencyPlan;
 import org.apereo.cas.impl.plans.MultifactorAuthenticationContingencyPlan;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -163,6 +164,8 @@ class ElectronicFenceConfiguration {
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver principalResolver,
             @Qualifier("cookieCipherExecutor")
@@ -173,7 +176,8 @@ class ElectronicFenceConfiguration {
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
             return new AuthenticationRiskEmailNotifier(casProperties, applicationContext, communicationsManager,
-                servicesManager, principalResolver, cookieCipherExecutor, webApplicationServiceFactory);
+                servicesManager, principalResolver, cookieCipherExecutor,
+                webApplicationServiceFactory, tenantExtractor);
         }
 
         @ConditionalOnMissingBean(name = "authenticationRiskSmsNotifier")
@@ -183,6 +187,8 @@ class ElectronicFenceConfiguration {
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver,
             @Qualifier("cookieCipherExecutor")
@@ -193,7 +199,8 @@ class ElectronicFenceConfiguration {
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
             return new AuthenticationRiskSmsNotifier(casProperties, applicationContext, communicationsManager,
-                servicesManager, defaultPrincipalResolver, cookieCipherExecutor, webApplicationServiceFactory);
+                servicesManager, defaultPrincipalResolver, cookieCipherExecutor,
+                webApplicationServiceFactory, tenantExtractor);
         }
     }
 

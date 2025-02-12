@@ -40,6 +40,8 @@ public class EmailMessageRequest {
 
     private final Locale locale;
 
+    private final String tenant;
+
     @Builder.Default
     private final Map<String, Object> context = new LinkedHashMap<>();
 

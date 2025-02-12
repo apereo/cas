@@ -352,7 +352,9 @@ class CasOAuth20Configuration {
             @Qualifier("webflowCipherExecutor")
             final CipherExecutor webflowCipherExecutor,
             @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
-            final HttpClient httpClient) {
+            final HttpClient httpClient,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor) {
             return OAuth20ConfigurationContext.builder()
                 .argumentExtractor(argumentExtractor)
                 .httpClient(httpClient)
@@ -393,6 +395,7 @@ class CasOAuth20Configuration {
                 .taskScheduler(taskScheduler)
                 .communicationsManager(communicationManager)
                 .webflowCipherExecutor(webflowCipherExecutor)
+                .tenantExtractor(tenantExtractor)
                 .build();
         }
     }

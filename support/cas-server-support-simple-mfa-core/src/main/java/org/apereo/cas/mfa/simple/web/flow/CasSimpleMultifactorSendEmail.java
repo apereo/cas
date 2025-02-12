@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 public class CasSimpleMultifactorSendEmail {
     private final CommunicationsManager communicationsManager;
     private final CasSimpleMultifactorAuthenticationProperties properties;
+    private final TenantExtractor tenantExtractor;
 
     protected EmailCommunicationResults send(final Principal principal, final Ticket tokenTicket,
                                              final List<String> recipients, final RequestContext requestContext) {
@@ -77,12 +80,13 @@ public class CasSimpleMultifactorSendEmail {
         return communicationsManager.email(emailRequest);
     }
 
-    protected List<String> getEmailMessageRecipients(final Principal principal) {
+    protected List<String> getEmailMessageRecipients(final Principal principal, final RequestContext requestContext) {
         return properties.getMail().getAttributeName()
             .stream()
             .map(attribute -> EmailMessageRequest.builder()
                 .emailProperties(properties.getMail())
                 .principal(principal)
+                .tenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
                 .attribute(SpringExpressionLanguageValueResolver.getInstance().resolve(attribute))
                 .build()
                 .getRecipients())
@@ -104,6 +108,7 @@ public class CasSimpleMultifactorSendEmail {
             .principal(principal)
             .attribute(SpringExpressionLanguageValueResolver.getInstance().resolve(attribute))
             .body(bodyBuilder.get())
+            .tenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
             .context(bodyBuilder.getParameters())
             .build();
     }
