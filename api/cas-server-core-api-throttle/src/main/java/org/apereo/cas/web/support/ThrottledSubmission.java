@@ -1,12 +1,15 @@
 package org.apereo.cas.web.support;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 import lombok.val;
 import java.io.Serial;
 import java.io.Serializable;
@@ -24,6 +27,9 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @With
 @Setter
+@Jacksonized
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@NoArgsConstructor(force = true)
 public class ThrottledSubmission implements Serializable {
     @Serial
     private static final long serialVersionUID = -853401483455717926L;

@@ -45,7 +45,7 @@ public class ThrottledSubmissionHandlerEndpoint extends BaseCasRestActuatorEndpo
     public List<ThrottledSubmission> getRecords() {
         return throttledSubmissionsStore.getObject().entries().toList();
     }
-
+    
     /**
      * Delete by key or release throttled interceptors as necessary.
      */
