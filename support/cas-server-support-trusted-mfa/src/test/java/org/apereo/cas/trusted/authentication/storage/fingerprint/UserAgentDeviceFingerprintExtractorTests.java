@@ -5,7 +5,6 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.trusted.web.flow.fingerprint.UserAgentDeviceFingerprintExtractor;
 import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +30,6 @@ class UserAgentDeviceFingerprintExtractorTests {
     @Test
     void verifyAgentFingerprintNotFound() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        ClientInfoHolder.setClientInfo(null);
         val ex = new UserAgentDeviceFingerprintExtractor();
         assertFalse(ex.extract(RegisteredServiceTestUtils.getAuthentication(),
             context.getHttpServletRequest(), context.getHttpServletResponse()).isPresent());

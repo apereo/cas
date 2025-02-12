@@ -28,7 +28,6 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,11 +71,6 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         request.setRemoteAddr(IP_ADDRESS);
         request.setLocalAddr(IP_ADDRESS);
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-    }
-
-    @AfterEach
-    public void afterEachTest() {
-        ClientInfoHolder.setClientInfo(null);
     }
 
     @Test

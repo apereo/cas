@@ -90,7 +90,6 @@ class CasAuthenticationEventListenerTests {
     @Test
     void verifyCasAuthenticationWithNoClientInfo() {
         assertRepositoryIsEmpty();
-        ClientInfoHolder.setClientInfo(null);
         val event = new CasAuthenticationTransactionFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
