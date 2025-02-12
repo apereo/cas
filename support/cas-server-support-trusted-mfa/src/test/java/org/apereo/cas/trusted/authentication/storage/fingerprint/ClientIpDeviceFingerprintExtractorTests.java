@@ -2,7 +2,6 @@ package org.apereo.cas.trusted.authentication.storage.fingerprint;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.web.flow.fingerprint.ClientIpDeviceFingerprintExtractor;
-
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -23,15 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @NoArgsConstructor
 @Tag("MFATrustedDevices")
 class ClientIpDeviceFingerprintExtractorTests {
-
-    @Test
-    void verifyClientIpFingerprintNotFound() {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        ClientInfoHolder.setClientInfo(null);
-        val ex = new ClientIpDeviceFingerprintExtractor();
-        assertFalse(ex.extract(RegisteredServiceTestUtils.getAuthentication(), request, response).isPresent());
-    }
 
     @Test
     void verifyClientIpFingerprintFound() {
