@@ -9,9 +9,6 @@ import org.apereo.cas.web.CasWebSecurityConfigurer;
 import de.codecentric.boot.admin.client.config.SpringBootAdminClientAutoConfiguration;
 import de.codecentric.boot.admin.client.registration.RegistrationClient;
 import de.codecentric.boot.admin.server.config.AdminServerAutoConfiguration;
-import de.codecentric.boot.admin.server.config.AdminServerInstanceWebClientConfiguration;
-import de.codecentric.boot.admin.server.config.AdminServerMarkerConfiguration;
-import de.codecentric.boot.admin.server.config.AdminServerWebConfiguration;
 import de.codecentric.boot.admin.server.domain.values.Registration;
 import de.codecentric.boot.admin.server.services.InstanceIdGenerator;
 import de.codecentric.boot.admin.server.web.client.InstanceWebClientCustomizer;
@@ -21,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.reactive.function.client.ClientHttpConnectorAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,10 +34,8 @@ import static org.mockito.Mockito.*;
 @Tag("WebApp")
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    AdminServerMarkerConfiguration.class,
+    ClientHttpConnectorAutoConfiguration.class,
     AdminServerAutoConfiguration.class,
-    AdminServerWebConfiguration.class,
-    AdminServerInstanceWebClientConfiguration.class,
 
     SpringBootAdminClientAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,

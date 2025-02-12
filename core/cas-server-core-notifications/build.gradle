@@ -8,14 +8,14 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-notifications-api")
+    implementation project(":core:cas-server-core-web")
 
     implementation libraries.mail
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-scripting")
+    testImplementation project(":core:cas-server-core-multitenancy")
 
-    implementation project(":core:cas-server-core-web")
-    
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
 }

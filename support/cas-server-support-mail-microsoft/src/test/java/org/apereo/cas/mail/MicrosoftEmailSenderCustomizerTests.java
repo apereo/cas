@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasCoreWebAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasMicrosoftEmailSenderAutoConfiguration.class
 }, properties = {
