@@ -34,4 +34,5 @@ public class CibaRequestContext implements Serializable {
     private final long requestedExpiry;
     private final String clientId;
     private final Principal principal;
+    private final String tenant;
 }

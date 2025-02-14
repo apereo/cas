@@ -201,26 +201,24 @@ public class OidcCibaController extends BaseOidcController {
         request.setAttribute(CibaRequestContext.class.getName(), cibaRequestContext);
         request.setAttribute(Principal.class.getName(), principal);
         val cibaResponse = buildCibaResponse(cibaRequest);
-        scheduleUserVerificationRequest(cibaRequest, cibaRequestContext, registeredService, request);
+        scheduleUserVerificationRequest(cibaRequest, cibaRequestContext, registeredService);
         return cibaResponse;
     }
 
     @SuppressWarnings("FutureReturnValueIgnored")
     protected void scheduleUserVerificationRequest(final OidcCibaRequest cibaRequestId,
                                                    final CibaRequestContext cibaRequest,
-                                                   final OidcRegisteredService registeredService,
-                                                   final HttpServletRequest httpServletRequest) {
+                                                   final OidcRegisteredService registeredService) {
         val verification = configurationContext.getCasProperties().getAuthn().getOidc().getCiba().getVerification();
         val delayInSeconds = Beans.newDuration(verification.getDelay()).toSeconds();
         configurationContext.getTaskScheduler().schedule(
-            () -> notifyUserForCibaRequestVerification(cibaRequestId, cibaRequest, registeredService, httpServletRequest),
+            () -> notifyUserForCibaRequestVerification(cibaRequestId, cibaRequest, registeredService),
             LocalDateTime.now(Clock.systemUTC()).plusSeconds(delayInSeconds).toInstant(ZoneOffset.UTC));
     }
 
     protected void notifyUserForCibaRequestVerification(final OidcCibaRequest cibaRequest,
                                                         final CibaRequestContext cibaRequestContext,
-                                                        final OidcRegisteredService registeredService,
-                                                        final HttpServletRequest httpServletRequest) {
+                                                        final OidcRegisteredService registeredService) {
         val mail = configurationContext.getCasProperties().getAuthn().getOidc().getCiba().getVerification().getMail();
         val principal = cibaRequest.getAuthentication().getPrincipal();
         val verificationUrl = buildCibaVerificationUrl(cibaRequest);
@@ -242,8 +240,7 @@ public class OidcCibaController extends BaseOidcController {
                     .body(body)
                     .principal(principal)
                     .attribute(resolvedAttribute)
-                    .tenant(getConfigurationContext().getTenantExtractor().extract(httpServletRequest)
-                        .map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
+                    .tenant(cibaRequestContext.getTenant())
                     .build();
                 return configurationContext.getCommunicationsManager().email(emailRequest);
             })
@@ -277,6 +274,9 @@ public class OidcCibaController extends BaseOidcController {
         val userProfile = manager.getProfile().orElseThrow();
         val clientId = userProfile.getAttribute(OAuth20Constants.CLIENT_ID).toString();
 
+        val tenant = getConfigurationContext().getTenantExtractor().extract(webContext.getRequestURL())
+            .map(TenantDefinition::getId).orElse(StringUtils.EMPTY);
+
         return CibaRequestContext.builder()
             .acrValues(requestParameterResolver.resolveRequestParameters(webContext, OidcConstants.ACR_VALUES))
             .bindingMessage(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.BINDING_MESSAGE).orElse(null))
@@ -288,6 +288,7 @@ public class OidcCibaController extends BaseOidcController {
             .scope(requestParameterResolver.resolveRequestScopes(webContext))
             .clientId(clientId)
             .userCode(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.USER_CODE).orElse(null))
+            .tenant(tenant)
             .build();
     }
 
