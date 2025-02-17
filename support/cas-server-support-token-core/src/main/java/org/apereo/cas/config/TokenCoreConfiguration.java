@@ -56,10 +56,14 @@ class TokenCoreConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "tokenTicketValidator")
         public TicketValidator tokenTicketValidator(
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME) final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME) final CentralAuthenticationService centralAuthenticationService) {
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService) {
             return new InternalTicketValidator(centralAuthenticationService,
                 webApplicationServiceFactory, authenticationAttributeReleasePolicy, servicesManager);
         }
@@ -100,8 +104,10 @@ class TokenCoreConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver,
-            @Qualifier("tokenCipherExecutor") final CipherExecutor tokenCipherExecutor,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+            @Qualifier("tokenCipherExecutor")
+            final CipherExecutor tokenCipherExecutor,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
             return new JwtBuilder(tokenCipherExecutor, applicationContext, servicesManager, defaultPrincipalResolver,
                 new RegisteredServiceJwtTicketCipherExecutor(), webApplicationServiceFactory, casProperties);
         }
@@ -116,9 +122,12 @@ class TokenCoreConfiguration {
         @ConditionalOnMissingBean(name = TokenTicketBuilder.BEAN_NAME)
         public TokenTicketBuilder tokenTicketBuilder(
             final CasConfigurationProperties casProperties,
-            @Qualifier("tokenTicketValidator") final TicketValidator tokenTicketValidator,
-            @Qualifier(JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME) final JwtBuilder tokenTicketJwtBuilder,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
+            @Qualifier("tokenTicketValidator")
+            final TicketValidator tokenTicketValidator,
+            @Qualifier(JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME)
+            final JwtBuilder tokenTicketJwtBuilder,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {
             return new JwtTicketBuilder(tokenTicketValidator, ticketFactory,
@@ -133,10 +142,13 @@ class TokenCoreConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public JwtTokenCipherSigningPublicKeyEndpoint jwtTokenCipherSigningPublicKeyEndpoint(
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final CasConfigurationProperties casProperties,
-            @Qualifier("tokenCipherExecutor") final CipherExecutor tokenCipherExecutor,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+            @Qualifier("tokenCipherExecutor")
+            final CipherExecutor tokenCipherExecutor,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
             return new JwtTokenCipherSigningPublicKeyEndpoint(casProperties,
                 tokenCipherExecutor, servicesManager, webApplicationServiceFactory);
         }

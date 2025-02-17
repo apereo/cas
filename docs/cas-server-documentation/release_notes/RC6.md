@@ -71,8 +71,15 @@ test coverage of the CAS codebase is approximately `94%`.
 - Hibernate
 - Micrometer
 - Spring Boot Admin
+- Spring
+- Spring Data Azure
+- Spring Cloud Azure
+- Google Cloud Monitoring
+- Google Cloud Logging
 - Azure Identity
 - Netty
+- Sentry
+- Node.js
 - Amazon SDK
 - Mailgun
 - Azure CosmosDb
