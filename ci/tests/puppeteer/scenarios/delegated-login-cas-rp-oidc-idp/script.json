@@ -27,7 +27,7 @@
     "--cas.authn.pac4j.oidc[0].generic.principal-id-attribute=email",
     "--cas.authn.pac4j.oidc[0].generic.id=kc_client",
     "--cas.authn.pac4j.oidc[0].generic.secret=Tz6b8e11IcUR4bFubPfjzfYmbouqk3rb",
-    "--cas.authn.pac4j.oidc[0].generic.discovery-uri=https://localhost:8989/realms/cas/.well-known/openid-configuration",
+    "--cas.authn.pac4j.oidc[0].generic.discovery-uri=http://localhost:8988/realms/cas/.well-known/openid-configuration",
     "--cas.authn.pac4j.oidc[0].generic.preferred-jws-algorithm=RS256",
     "--cas.authn.pac4j.oidc[0].generic.client-authentication-method=client_secret_basic",
     "--cas.authn.pac4j.oidc[0].generic.supported-client-authentication-methods=client_secret_basic,client_secret_post",
