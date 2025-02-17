@@ -14,6 +14,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.authentication.OAuth20AccessTokenAuthenticationHandler;
 import org.apereo.cas.token.authentication.TokenAuthenticationHandler;
 import org.apereo.cas.token.authentication.TokenAuthenticationPostProcessor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -53,6 +54,8 @@ public class CasTokenAuthenticationAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationHandler tokenAuthenticationHandler(
+            @Qualifier("tokenCipherExecutor")
+            final CipherExecutor tokenCipherExecutor,
             final CasConfigurationProperties casProperties,
             @Qualifier("tokenPrincipalFactory")
             final PrincipalFactory tokenPrincipalFactory,

@@ -41,7 +41,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     private static final List<String> PROFILE_PATTERNS = Arrays.asList("application-%s.%s", "%s.%s");
 
     private final CipherExecutor<String, String> casConfigurationCipherExecutor;
-    
+
     /**
      * Returns a property source composed of system properties and environment variables.
      * <p>
@@ -79,7 +79,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
             }
         } else {
             LOGGER.info("Configuration directory [{}] is not a directory or cannot be found at the specific path",
-                 FunctionUtils.doIfNotNull(config, () -> config, () -> "unspecified").get());
+                FunctionUtils.doIfNotNull(config, () -> config, () -> "unspecified").get());
         }
 
         val embeddedProperties = loadEmbeddedProperties(resourceLoader, environment);
@@ -181,19 +181,19 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
                 .stream()
                 .filter(loader -> loader.supports(resource))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("No configuration loader is found to support " + resource));
 
             val source = foundLoader.load(resource, environment,
                 "applicationProfilesProperties-" + resource.getFilename(), casConfigurationCipherExecutor);
             composite.addFirstPropertySource(source);
 
-            
+
         }));
         return composite;
     }
 
     protected PropertySource<?> loadEmbeddedProperties(final ResourceLoader resourceLoader,
-                                                     final Environment environment) {
+                                                       final Environment environment) {
         val profiles = Arrays.stream(environment.getActiveProfiles()).toList();
         val configFiles = profiles
             .stream()
@@ -212,19 +212,17 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
 
         val composite = new CompositePropertySource("embeddedCompositeProperties");
         val configurationLoaders = CasConfigurationPropertiesSourceLocator.getConfigurationPropertiesLoaders();
-        
+
         configFiles
             .stream()
             .filter(Resource::exists)
             .forEach(resource -> {
                 LOGGER.trace("Loading properties from [{}]", resource);
-
                 val foundLoader = configurationLoaders
                     .stream()
                     .filter(loader -> loader.supports(resource))
                     .findFirst()
-                    .orElseThrow();
-
+                    .orElseThrow(() -> new IllegalArgumentException("No configuration loader is found to support " + resource));
                 val sourceName = String.format("embeddedProperties-%s", resource.getFilename());
                 val source = foundLoader.load(resource, environment, sourceName, casConfigurationCipherExecutor);
                 composite.addPropertySource(source);
