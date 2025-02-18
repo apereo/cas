@@ -51,6 +51,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     CasCoreMultitenancyAutoConfiguration.class,
     CasThymeleafAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
+    CasTokenCoreAutoConfiguration.class,
     CasTokenAuthenticationAutoConfiguration.class
 })
 @Tag("AuthenticationHandler")
