@@ -18,6 +18,7 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasTokenAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
