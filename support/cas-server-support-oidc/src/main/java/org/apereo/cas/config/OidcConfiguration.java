@@ -925,8 +925,11 @@ class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = OidcIssuerService.BEAN_NAME)
-        public OidcIssuerService oidcIssuerService(final CasConfigurationProperties casProperties) {
-            return new OidcDefaultIssuerService(casProperties.getAuthn().getOidc());
+        public OidcIssuerService oidcIssuerService(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
+            final CasConfigurationProperties casProperties) {
+            return new OidcDefaultIssuerService(casProperties.getAuthn().getOidc(), tenantExtractor);
         }
 
         @ConditionalOnMissingBean(name = "oidcPrincipalFactory")

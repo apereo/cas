@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.issuer;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.RegexUtils;
@@ -23,10 +24,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class OidcDefaultIssuerService implements OidcIssuerService {
-    /**
-     * The OIDC configuration properties.
-     */
     protected final OidcProperties properties;
+    protected final TenantExtractor tenantExtractor;
 
     @Override
     public String determineIssuer(final Optional<OidcRegisteredService> registeredService) {

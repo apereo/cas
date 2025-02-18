@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasTokenAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ImportAutoConfiguration({
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+    CasTokenCoreAutoConfiguration.class,
     CasTokenAuthenticationAutoConfiguration.class,
     CasTokenAuthenticationWebflowAutoConfiguration.class
 })
