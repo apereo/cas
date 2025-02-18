@@ -35,7 +35,7 @@ public class AuditTrailEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "AUD_USER")
+    @Column(name = "AUD_USER", length = 512)
     private String user;
 
     @Column(name = "AUD_CLIENT_IP")
@@ -44,13 +44,13 @@ public class AuditTrailEntity {
     @Column(name = "AUD_SERVER_IP")
     private String serverIp;
 
-    @Column(name = "AUD_RESOURCE")
+    @Column(name = "AUD_RESOURCE", length = 512)
     private String resource;
 
     @Column(name = "AUD_ACTION")
     private String action;
 
-    @Column(name = "AUD_TENANT")
+    @Column(name = "AUD_TENANT", length = 512)
     private String tenant;
 
     @Column(name = "APPLIC_CD")
