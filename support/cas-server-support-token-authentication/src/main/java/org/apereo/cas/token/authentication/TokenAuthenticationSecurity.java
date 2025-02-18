@@ -78,13 +78,13 @@ public class TokenAuthenticationSecurity {
     /**
      * For registered service.
      *
-     * @param service the service
+     * @param registeredService the service
      * @return the token authentication security
      */
-    public static TokenAuthenticationSecurity forRegisteredService(final RegisteredService service) {
+    public static TokenAuthenticationSecurity forRegisteredService(final RegisteredService registeredService) {
         val securityConfiguration = new RegisteredServiceSecurityConfiguration();
-        val signingConfig = getSignatureConfiguration(service);
-        val encConfig = getEncryptionConfiguration(service);
+        val signingConfig = getSignatureConfiguration(registeredService);
+        val encConfig = getEncryptionConfiguration(registeredService);
         securityConfiguration.setEncryptionConfiguration(encConfig);
         securityConfiguration.setSignatureConfiguration(signingConfig);
         return new TokenAuthenticationSecurity(securityConfiguration);
@@ -114,32 +114,32 @@ public class TokenAuthenticationSecurity {
         return authn;
     }
 
-    private static String getRegisteredServiceJwtProperty(final RegisteredService service,
+    private static String getRegisteredServiceJwtProperty(final RegisteredService registeredService,
                                                           final RegisteredServiceProperties propName) {
-        if (service == null || !service.getAccessStrategy().isServiceAccessAllowed(service, null)) {
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed(registeredService, null)) {
             LOGGER.debug("Service is not defined/found or its access is disabled in the registry");
             throw UnauthorizedServiceException.denied("Denied");
         }
-        if (propName.isAssignedTo(service)) {
-            val propertyValue = propName.getPropertyValue(service).value();
+        if (propName.isAssignedTo(registeredService)) {
+            val propertyValue = propName.getPropertyValue(registeredService).value();
             return SpringExpressionLanguageValueResolver.getInstance().resolve(propertyValue);
         }
-        LOGGER.trace("Service [{}] does not define a property [{}] in the registry", service.getServiceId(), propName);
+        LOGGER.trace("Service [{}] does not define a property [{}] in the registry", registeredService.getServiceId(), propName);
         return null;
     }
 
-    private static SignatureConfiguration getSignatureConfiguration(final RegisteredService service) {
-        val signingSecret = getRegisteredServiceJwtSigningSecret(service);
+    private static SignatureConfiguration getSignatureConfiguration(final RegisteredService registeredService) {
+        val signingSecret = getRegisteredServiceJwtSigningSecret(registeredService);
         if (StringUtils.isNotBlank(signingSecret)) {
-            val signingAlg = determineSigningAlgorithm(service);
+            val signingAlg = determineSigningAlgorithm(registeredService);
             if (JWSAlgorithm.Family.HMAC_SHA.contains(signingAlg)) {
-                val secretBytes = getSecretBytes(signingSecret, areSecretsBase64Encoded(service));
+                val secretBytes = getSecretBytes(signingSecret, areSecretsBase64Encoded(registeredService));
                 return new SecretSignatureConfiguration(secretBytes, signingAlg);
             }
             if (JWSAlgorithm.Family.RSA.contains(signingAlg)) {
                 val privateKey = getRsaPrivateKey(signingSecret);
                 
-                val encryptionSecret = getRegisteredServiceJwtEncryptionSecret(service);
+                val encryptionSecret = getRegisteredServiceJwtEncryptionSecret(registeredService);
                 val publicKey = StringUtils.isNotBlank(encryptionSecret) ? getRsaPublicKey(encryptionSecret) : null;
                 
                 val config = new RSASignatureConfiguration();
@@ -152,15 +152,15 @@ public class TokenAuthenticationSecurity {
         return null;
     }
 
-    private static EncryptionConfiguration getEncryptionConfiguration(final RegisteredService service) {
-        val encryptionSecret = getRegisteredServiceJwtEncryptionSecret(service);
+    private static EncryptionConfiguration getEncryptionConfiguration(final RegisteredService registeredService) {
+        val encryptionSecret = getRegisteredServiceJwtEncryptionSecret(registeredService);
         if (StringUtils.isNotBlank(encryptionSecret)) {
-            val encryptionAlgorithm = determineEncryptionAlgorithm(service);
-            val encryptionMethod = determineEncryptionMethod(service);
+            val encryptionAlgorithm = determineEncryptionAlgorithm(registeredService);
+            val encryptionMethod = determineEncryptionMethod(registeredService);
             if (JWEAlgorithm.Family.RSA.contains(encryptionAlgorithm)) {
                 val publicKey = getRsaPublicKey(encryptionSecret);
 
-                val signingSecret = getRegisteredServiceJwtSigningSecret(service);
+                val signingSecret = getRegisteredServiceJwtSigningSecret(registeredService);
                 val privateKey = StringUtils.isNotBlank(signingSecret) ? getRsaPrivateKey(signingSecret) : null;
 
                 val config = new RSAEncryptionConfiguration();
@@ -170,7 +170,7 @@ public class TokenAuthenticationSecurity {
                 config.setPrivateKey(privateKey);
                 return config;
             }
-            val encSecretBytes = getSecretBytes(encryptionSecret, areSecretsBase64Encoded(service));
+            val encSecretBytes = getSecretBytes(encryptionSecret, areSecretsBase64Encoded(registeredService));
             return new SecretEncryptionConfiguration(encSecretBytes, encryptionAlgorithm, encryptionMethod);
         }
         return null;
@@ -196,8 +196,8 @@ public class TokenAuthenticationSecurity {
         });
     }
     
-    private static JWSAlgorithm determineSigningAlgorithm(final RegisteredService service) {
-        val serviceSigningAlg = getRegisteredServiceJwtProperty(service, RegisteredServiceProperties.TOKEN_SECRET_SIGNING_ALG);
+    private static JWSAlgorithm determineSigningAlgorithm(final RegisteredService registeredService) {
+        val serviceSigningAlg = getRegisteredServiceJwtProperty(registeredService, RegisteredServiceProperties.TOKEN_SECRET_SIGNING_ALG);
         val signingSecretAlg = StringUtils.defaultIfBlank(serviceSigningAlg, JWSAlgorithm.HS256.getName());
         val sets = new HashSet<Algorithm>(0);
         sets.addAll(JWSAlgorithm.Family.EC);
@@ -207,16 +207,16 @@ public class TokenAuthenticationSecurity {
         return findAlgorithmFamily(sets, signingSecretAlg, JWSAlgorithm.class);
     }
 
-    private static EncryptionMethod determineEncryptionMethod(final RegisteredService service) {
+    private static EncryptionMethod determineEncryptionMethod(final RegisteredService registeredService) {
         val encryptionMethods = new HashSet<Algorithm>(0);
         encryptionMethods.addAll(EncryptionMethod.Family.AES_CBC_HMAC_SHA);
         encryptionMethods.addAll(EncryptionMethod.Family.AES_GCM);
-        val encryptionMethod = getRegisteredServiceJwtProperty(service, RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_METHOD);
+        val encryptionMethod = getRegisteredServiceJwtProperty(registeredService, RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_METHOD);
         val encryptionSecretMethod = StringUtils.defaultIfBlank(encryptionMethod, EncryptionMethod.A192CBC_HS384.getName());
         return findAlgorithmFamily(encryptionMethods, encryptionSecretMethod, EncryptionMethod.class);
     }
 
-    private static JWEAlgorithm determineEncryptionAlgorithm(final RegisteredService service) {
+    private static JWEAlgorithm determineEncryptionAlgorithm(final RegisteredService registeredService) {
         val sets = new HashSet<Algorithm>(0);
         sets.addAll(JWEAlgorithm.Family.AES_GCM_KW);
         sets.addAll(JWEAlgorithm.Family.AES_KW);
@@ -225,26 +225,27 @@ public class TokenAuthenticationSecurity {
         sets.addAll(JWEAlgorithm.Family.PBES2);
         sets.addAll(JWEAlgorithm.Family.RSA);
         sets.addAll(JWEAlgorithm.Family.SYMMETRIC);
-        val encryptionAlg = getRegisteredServiceJwtProperty(service, RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_ALG);
+        val encryptionAlg = getRegisteredServiceJwtProperty(registeredService, RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_ALG);
         val encryptionSecretAlg = StringUtils.defaultIfBlank(encryptionAlg, JWEAlgorithm.DIR.getName());
         return findAlgorithmFamily(sets, encryptionSecretAlg, JWEAlgorithm.class);
     }
 
-    private static String getRegisteredServiceJwtEncryptionSecret(final RegisteredService service) {
-        return getRegisteredServiceJwtProperty(service, RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION);
+    private static String getRegisteredServiceJwtEncryptionSecret(final RegisteredService registeredService) {
+        return getRegisteredServiceJwtProperty(registeredService, RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION);
     }
 
-    private static String getRegisteredServiceJwtSigningSecret(final RegisteredService service) {
-        return getRegisteredServiceJwtProperty(service, RegisteredServiceProperties.TOKEN_SECRET_SIGNING);
+    private static String getRegisteredServiceJwtSigningSecret(final RegisteredService registeredService) {
+        return getRegisteredServiceJwtProperty(registeredService, RegisteredServiceProperties.TOKEN_SECRET_SIGNING);
     }
 
-    private static boolean areSecretsBase64Encoded(final RegisteredService service) {
-        val secretIsBase64 = getRegisteredServiceJwtProperty(service, RegisteredServiceProperties.TOKEN_SECRETS_ARE_BASE64_ENCODED);
+    private static boolean areSecretsBase64Encoded(final RegisteredService registeredService) {
+        val secretIsBase64 = getRegisteredServiceJwtProperty(registeredService, RegisteredServiceProperties.TOKEN_SECRETS_ARE_BASE64_ENCODED);
         return BooleanUtils.toBoolean(secretIsBase64);
     }
 
     private static <T extends Algorithm> T findAlgorithmFamily(final Set<Algorithm> family,
-                                                               final String alg, final Class<T> clazz) {
+                                                               final String alg,
+                                                               final Class<T> clazz) {
         val result = family
             .stream()
             .filter(algorithm -> algorithm.getName().equalsIgnoreCase(alg))
