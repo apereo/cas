@@ -423,7 +423,7 @@ public class MockWebServer implements Closeable {
         }
 
         private void writeResponse(final Socket socket) throws IOException {
-            if (resource == null) {
+            if (resource == null && resourceSupplier != null) {
                 this.resource = resourceSupplier.get();
             }
 

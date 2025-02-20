@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -34,4 +35,10 @@ public class PasswordSynchronizationProperties implements Serializable {
      * Options for password sync via LDAP.
      */
     private List<LdapPasswordSynchronizationProperties> ldap = new ArrayList<>();
+
+    /**
+     * Options for password sync via REST.
+     */
+    @NestedConfigurationProperty
+    private RestfulPasswordSynchronizationProperties rest = new RestfulPasswordSynchronizationProperties();
 }
