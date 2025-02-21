@@ -1,0 +1,19 @@
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "description": "This is the Shire tenant definition",
+      "authenticationPolicy": {
+        "@class": "org.apereo.cas.multitenancy.DefaultTenantAuthenticationPolicy",
+        "authenticationHandlers": [
+          "java.util.ArrayList",
+          [
+            "STATIC"
+          ]
+        ]
+      }
+    }
+  ]
+]
