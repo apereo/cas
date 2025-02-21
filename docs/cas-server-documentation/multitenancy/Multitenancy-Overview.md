@@ -45,7 +45,7 @@ The basic construct for a tenant definition should match the following:
       "description": "This is my tenant description",
       "authenticationPolicy": {
         "@class": "org.apereo.cas.multitenancy.DefaultTenantAuthenticationPolicy",
-        "authenticationHandlers": [ "java.util.ArrayList", [ "..." ] ],
+        "authenticationHandlers": [ "java.util.ArrayList", [ "LdapAuthHandler1" ] ],
         "authenticationProtocolPolicy": {
           "@class": "org.apereo.cas.multitenancy.TenantCasAuthenticationProtocolPolicy",
           "supportedProtocols": [ "java.util.HashSet", [ "SAML1", "CAS20", "CAS30" ] ]
@@ -58,6 +58,15 @@ The basic construct for a tenant definition should match the following:
       "multifactorAuthenticationPolicy": {
         "@class": "org.apereo.cas.multitenancy.DefaultTenantMultifactorAuthenticationPolicy",
         "globalProviderIds": [ "java.util.ArrayList", [ "..." ] ]
+      },
+      "communicationPolicy": {
+        "@class": "org.apereo.cas.multitenancy.DefaultTenantCommunicationPolicy",
+        "emailCommunicationPolicy": {
+          "@class": "org.apereo.cas.multitenancy.TenantEmailCommunicationPolicy",
+          "host": "...",
+          "port": 2500,
+          "from": "..."
+        }
       }
     }
   ]
@@ -89,6 +98,7 @@ A registered tenant definition supports the following fields and capabilities:
 | `authenticationPolicy`            | Describes the criteria for primary authentication, list of allowed authentication handlers, etc. |
 | `delegatedAuthenticationPolicy`   | Describes the criteria for external authentication, list of allowed identity providers, etc.     |
 | `multifactorAuthenticationPolicy` | Describes the criteria for multifactor authentication, list of multifactor providers, etc.       |
+| `communicationPolicy`             | Describes how the tenant should communicate with users to send out email messages, etc.          |
   
 ### Authentication Policy
       
@@ -126,3 +136,19 @@ The tenant multifactor authentication policy controls aspects of CAS that activa
 | Field               | Description                                                                |
 |---------------------|----------------------------------------------------------------------------|
 | `globalProviderIds` | List of multifactor provider IDs that should be activated for this tenant. |
+                  
+### Communication Policy
+
+The tenant communication policy controls per-tenant settings that describe email servers, SMS gateways, etc.
+This construct allows one to isolate communication strategies per tenant.
+
+- Email: `o.a.c.m.TenantEmailCommunicationPolicy`
+
+| Field      | Description                                             |
+|------------|---------------------------------------------------------|
+| `host`     | Email server host name, i.e. `localhost`.               |
+| `port`     | Email server port activated when set to non-zero value. |
+| `username` | Email server username to establish connections.         |
+| `password` | Email server password to establish connections.         |
+| `from`     | The `FROM` address assigned to the email message sent.  |
+  
