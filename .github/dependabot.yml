@@ -4,6 +4,9 @@ updates:
     directory: "/"
     schedule:
       interval: daily
+    labels:
+      - "Bot"
+      - "Dependabot"
     open-pull-requests-limit: 10
     ignore:
       - dependency-name: org.bouncycastle:bcprov-jdk15on

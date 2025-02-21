@@ -33,6 +33,8 @@ public class TenantDefinition implements Serializable {
 
     private TenantAuthenticationPolicy authenticationPolicy = new DefaultTenantAuthenticationPolicy();
     
+    private TenantCommunicationPolicy communicationPolicy = new DefaultTenantCommunicationPolicy();
+
     private TenantDelegatedAuthenticationPolicy delegatedAuthenticationPolicy = new DefaultTenantDelegatedAuthenticationPolicy();
     
     private TenantMultifactorAuthenticationPolicy multifactorAuthenticationPolicy = new DefaultTenantMultifactorAuthenticationPolicy();

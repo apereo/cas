@@ -1,5 +1,8 @@
 package org.apereo.cas.notifications.mail;
 
+import org.apereo.cas.multitenancy.TenantCommunicationPolicy;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantEmailCommunicationPolicy;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
@@ -8,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.boot.ssl.SslBundles;
@@ -19,6 +23,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import jakarta.mail.internet.MimeMessage;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -78,7 +84,13 @@ public class DefaultEmailSender implements EmailSender {
         val subject = determineEmailSubject(emailRequest, messageSource);
         messageHelper.setSubject(subject);
 
-        messageHelper.setFrom(emailProperties.getFrom());
+        findTenantEmailCommunicationPolicy(emailRequest)
+            .filter(policy -> StringUtils.isNotBlank(policy.getFrom()))
+            .ifPresentOrElse(
+                Unchecked.consumer(policy -> messageHelper.setFrom(policy.getFrom())),
+                Unchecked.runnable(() -> messageHelper.setFrom(emailProperties.getFrom()))
+            );
+
         FunctionUtils.doIfNotBlank(emailProperties.getReplyTo(), messageHelper::setReplyTo);
         messageHelper.setValidateAddresses(emailProperties.isValidateAddresses());
         messageHelper.setPriority(emailProperties.getPriority());
@@ -89,19 +101,17 @@ public class DefaultEmailSender implements EmailSender {
     }
 
     protected JavaMailSenderImpl createMailSender(final EmailMessageRequest emailRequest) {
-        if (StringUtils.isNotBlank(mailProperties.getHost())) {
-            val sender = new JavaMailSenderImpl();
-            return applyProperties(sender);
-        }
-        return null;
+        val sender = applyProperties(new JavaMailSenderImpl(), emailRequest);
+        return StringUtils.isNotBlank(sender.getHost()) ? sender : null;
     }
 
-    protected JavaMailSenderImpl applyProperties(final JavaMailSenderImpl sender) {
-        applyEmailServerProperties(sender);
+    protected JavaMailSenderImpl applyProperties(final JavaMailSenderImpl sender,
+                                                 final EmailMessageRequest emailRequest) {
+        applyEmailServerProperties(sender, emailRequest);
 
         val javaMailProperties = asProperties(mailProperties.getProperties());
         val protocol = StringUtils.defaultIfBlank(mailProperties.getProtocol(), "smtp");
-        
+
         val ssl = mailProperties.getSsl();
         if (ssl.isEnabled()) {
             javaMailProperties.setProperty("mail." + protocol + ".ssl.enable", "true");
@@ -117,15 +127,38 @@ public class DefaultEmailSender implements EmailSender {
         return sender;
     }
 
-    protected void applyEmailServerProperties(final JavaMailSenderImpl sender) {
-        sender.setHost(mailProperties.getHost());
-        if (mailProperties.getPort() != null) {
-            sender.setPort(mailProperties.getPort());
-        }
-        sender.setUsername(mailProperties.getUsername());
-        sender.setPassword(mailProperties.getPassword());
+    protected void applyEmailServerProperties(final JavaMailSenderImpl sender,
+                                              final EmailMessageRequest emailMessageRequest) {
+        val tenantEmailCommunicationPolicy = findTenantEmailCommunicationPolicy(emailMessageRequest);
+        tenantEmailCommunicationPolicy.ifPresentOrElse(policy -> {
+            sender.setHost(policy.getHost());
+            if (policy.getPort() > 0) {
+                sender.setPort(policy.getPort());
+            }
+            sender.setUsername(policy.getUsername());
+            sender.setPassword(policy.getPassword());
+        }, () -> {
+            sender.setHost(mailProperties.getHost());
+            if (mailProperties.getPort() != null) {
+                sender.setPort(mailProperties.getPort());
+            }
+            sender.setUsername(mailProperties.getUsername());
+            sender.setPassword(mailProperties.getPassword());
+        });
         sender.setProtocol(mailProperties.getProtocol());
         sender.setDefaultEncoding(mailProperties.getDefaultEncoding().name());
+    }
+
+    private Optional<TenantEmailCommunicationPolicy> findTenantEmailCommunicationPolicy(
+        final EmailMessageRequest emailMessageRequest) {
+        return tenantExtractor.getTenantsManager()
+            .findTenant(emailMessageRequest.getTenant())
+            .map(TenantDefinition::getCommunicationPolicy)
+            .filter(Objects::nonNull)
+            .map(TenantCommunicationPolicy::getEmailCommunicationPolicy)
+            .filter(Objects::nonNull)
+            .stream()
+            .findFirst();
     }
 
     private static Properties asProperties(final Map<String, String> source) {
