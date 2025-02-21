@@ -1,5 +1,6 @@
 package org.apereo.cas.multitenancy;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import java.util.Set;
  * @since 7.2.0
  */
 @FunctionalInterface
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface TenantMultifactorAuthenticationPolicy extends Serializable {
 
     /**

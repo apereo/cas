@@ -45,7 +45,11 @@ The basic construct for a tenant definition should match the following:
       "description": "This is my tenant description",
       "authenticationPolicy": {
         "@class": "org.apereo.cas.multitenancy.DefaultTenantAuthenticationPolicy",
-        "authenticationHandlers": [ "java.util.ArrayList", [ "..." ] ]
+        "authenticationHandlers": [ "java.util.ArrayList", [ "..." ] ],
+        "authenticationProtocolPolicy": {
+          "@class": "org.apereo.cas.multitenancy.TenantCasAuthenticationProtocolPolicy",
+          "supportedProtocols": [ "java.util.HashSet", [ "SAML1", "CAS20", "CAS30" ] ]
+        }
       },
       "delegatedAuthenticationPolicy": {
         "@class": "org.apereo.cas.multitenancy.DefaultTenantDelegatedAuthenticationPolicy",
@@ -60,17 +64,6 @@ The basic construct for a tenant definition should match the following:
 ]
 ```
 
-A registered tenant definition supports the following fields:
-
-| Field                             | Description                                                                                      |
-|-----------------------------------|--------------------------------------------------------------------------------------------------|
-| `id`                              | Primary identifier for the tenant that forms the dedicated tenant URL.                           |
-| `description`                     | Description of what this tenant is about.                                                        |
-| `authenticationPolicy`            | Describes the criteria for primary authentication, list of allowed authentication handlers, etc. |
-| `delegatedAuthenticationPolicy`   | Describes the criteria for external authentication, list of allowed identity providers, etc.     |
-| `multifactorAuthenticationPolicy` | Describes the criteria for multifactor authentication, list of multifactor providers, etc.       |
-     
-
 ### Custom Tenant Registration
 
 If you need to customize the tenant registration process, you may do so by providing a custom implementation
@@ -83,5 +76,53 @@ public TenantsManager tenantsManager() {
 }
 ```
 
-[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about
-how to register configurations into the CAS runtime.
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+
+## Tenant Capabilities
+
+A registered tenant definition supports the following fields and capabilities:
+
+| Field                             | Description                                                                                      |
+|-----------------------------------|--------------------------------------------------------------------------------------------------|
+| `id`                              | Primary identifier for the tenant that forms the dedicated tenant URL.                           |
+| `description`                     | Description of what this tenant is about.                                                        |
+| `authenticationPolicy`            | Describes the criteria for primary authentication, list of allowed authentication handlers, etc. |
+| `delegatedAuthenticationPolicy`   | Describes the criteria for external authentication, list of allowed identity providers, etc.     |
+| `multifactorAuthenticationPolicy` | Describes the criteria for multifactor authentication, list of multifactor providers, etc.       |
+  
+### Authentication Policy
+      
+The tenant authentication policy supports the following fields:
+
+| Field                    | Description                                                                                       |
+|--------------------------|---------------------------------------------------------------------------------------------------|
+| `authenticationHandlers` | List of authentication handlers available to this tenant, invoked during authentication attempts. |
+
+### Authentication Protocol Policy
+
+The tenant authentication protocol policy controls specific aspects of a CAS-supported authentication protocol. Each policy setting
+is captured inside a dedicated component that is responsible for managing the protocol settings and capabilities.
+  
+- CAS: `o.a.c.m.TenantCasAuthenticationProtocolPolicy`
+
+| Field                | Description                                                                                                                               |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `supportedProtocols` | Set of [supported authentication protocols](../services/Configuring-Service-Supported-Protocols.html) that are owned by the CAS protocol. |
+   
+### Delegated Authentication Policy
+
+The tenant delegated authentication policy controls aspects of CAS that support authentication 
+[via external identity providers](../integration/Delegate-Authentication.html).
+
+| Field              | Description                                                                 |
+|--------------------|-----------------------------------------------------------------------------|
+| `allowedProviders` | List of identity providers that are allowed and authorized for this tenant. |
+          
+### Multifactor Authentication Policy
+
+The tenant multifactor authentication policy controls aspects of CAS that activate and enforce 
+[multifactor authentication](../mfa/Configuring-Multifactor-Authentication.html).
+
+| Field               | Description                                                                |
+|---------------------|----------------------------------------------------------------------------|
+| `globalProviderIds` | List of multifactor provider IDs that should be activated for this tenant. |
