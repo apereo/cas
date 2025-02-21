@@ -61,7 +61,9 @@ test coverage of the CAS codebase is approximately `94%`.
 
 ## Other Stuff
 
-- Storing [attribute consent decisions](../integration/Attribute-Release-Consent-Storage-REST.html) is now reworked to be more compatible with REST design principals. 
+- Storing [attribute consent decisions](../integration/Attribute-Release-Consent-Storage-REST.html) is now reworked to be more compatible with REST design principals.
+- Synchronizing passwords can now be used using a [REST API](../password_management/Password-Synchronization.html).
+- Column sizes for [JDBC Audit](../audits/Audits-Database.html) records are slightly adjusted to better accommodate larger data.
 
 ## Library Upgrades
 
@@ -72,16 +74,22 @@ test coverage of the CAS codebase is approximately `94%`.
 - Micrometer
 - Spring Boot Admin
 - Spring
+- Lettuce
 - Spring Data Azure
 - Spring Cloud Azure
 - Google Cloud Monitoring
 - Google Cloud Logging
+- Spring Boot
+- Spring Integration
+- Spring Security
+- Spring Session
 - Azure Identity
 - Netty
 - Sentry
 - Node.js
 - Amazon SDK
 - Mailgun
+- Twilio
 - Azure CosmosDb
 - Apache Cassandra
 - MariaDb

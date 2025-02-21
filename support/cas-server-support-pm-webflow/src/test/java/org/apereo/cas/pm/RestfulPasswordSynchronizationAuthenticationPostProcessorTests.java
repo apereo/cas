@@ -35,7 +35,7 @@ class RestfulPasswordSynchronizationAuthenticationPostProcessorTests {
 
     @TestPropertySource(properties = {
         "cas.authn.password-sync.enabled=true",
-        "cas.authn.password-sync.rest.url=http://localhost:${random.int[3000,9999]}",
+        "cas.authn.password-sync.rest.url=http://localhost:${random.int[3000,9999]}"
     })
     @Import(RestfulPasswordSynchronizationAuthenticationPostProcessorTests.AuthenticationTestConfiguration.class)
     abstract static class BasePostProcessorTests extends BasePasswordManagementActionTests {
