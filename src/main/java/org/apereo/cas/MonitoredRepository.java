@@ -171,7 +171,7 @@ public class MonitoredRepository {
     }
     
     public boolean autoMergePullRequest(final PullRequest pr) {
-        if (pr.isBot()) {
+        if (pr.isMergeable() && pr.isBot()) {
             if (canBotPullRequestBeMerged(pr)) {
                 return true;
             }
@@ -202,7 +202,7 @@ public class MonitoredRepository {
             }
         }
 
-        if (pr.isLabeledAs(CasLabels.LABEL_AUTO_MERGE)) {
+        if (pr.isMergeable() && pr.isLabeledAs(CasLabels.LABEL_AUTO_MERGE)) {
             var timeline = getPullRequestTimeline(pr);
             var admins = getGitHubProperties().getRepository().getAdmins();
             var approvedByAdmin = timeline
