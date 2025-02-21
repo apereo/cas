@@ -73,6 +73,8 @@ import java.util.TimeZone;
 @Slf4j
 public class GitHubTemplate implements GitHubOperations {
 
+    private static final String API_GITHUB_REPOS = "https://api.github.com/repos/";
+
     private final RestOperations rest;
 
     private final LinkParser linkParser;
@@ -105,34 +107,34 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public Page<Issue> getIssues(final String organization, final String repository) {
-        val url = "https://api.github.com/repos/" + organization + '/' + repository
+        val url = API_GITHUB_REPOS + organization + '/' + repository
             + "/issues";
         return getPage(url, Issue[].class);
     }
 
     @Override
     public Page<PullRequest> getPullRequests(final String organization, final String repository) {
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls?state=open";
-        val headers = new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.shadow-cat-preview+json")));
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/pulls?state=open";
+        val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.shadow-cat-preview+json")));
         return getPage(url, PullRequest[].class, Map.of(), headers);
     }
 
     @Override
     public PullRequest getPullRequest(final String organization, final String repository, final String number) {
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number;
-        val headers = new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.shadow-cat-preview+json")));
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/pulls/" + number;
+        val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.shadow-cat-preview+json")));
         return getSinglePage(url, PullRequest.class, Map.of(), headers);
     }
 
     @Override
     public void closePullRequest(final String organization, final String repository, final String number) {
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number;
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/pulls/" + number;
         var uri = URI.create(url);
         log.info("Closing to pull request {}", uri);
 
         final Map<String, String> body = new HashMap<>();
         body.put("state", "closed");
-        var response = this.rest.exchange(new RequestEntity(body, HttpMethod.PATCH, uri), PullRequest.class);
+        var response = this.rest.exchange(new RequestEntity<>(body, HttpMethod.PATCH, uri), PullRequest.class);
         if (response.getStatusCode() != HttpStatus.OK) {
             log.warn("Failed to close to pull request. Response status: " + response.getStatusCode());
         }
@@ -140,11 +142,11 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public void openPullRequest(final String organization, final String repository, final String number) {
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number;
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/pulls/" + number;
         var uri = URI.create(url);
         final Map<String, String> body = new HashMap<>();
         body.put("state", "open");
-        var response = this.rest.exchange(new RequestEntity(body, HttpMethod.PATCH, uri), PullRequest.class);
+        var response = this.rest.exchange(new RequestEntity<>(body, HttpMethod.PATCH, uri), PullRequest.class);
         if (response.getStatusCode() != HttpStatus.OK) {
             log.warn("Failed to open to pull request. Response status: " + response.getStatusCode());
         }
@@ -167,7 +169,7 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public Page<PullRequestFile> getPullRequestFiles(final String organization, final String repository, final String number) {
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number + "/files";
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/pulls/" + number + "/files";
         return getPage(url, PullRequestFile[].class);
     }
 
@@ -175,7 +177,7 @@ public class GitHubTemplate implements GitHubOperations {
     @SneakyThrows
     public void updatePullRequest(final String organization, final String repository,
                                   final PullRequest pr, final Map<String, ? extends Serializable> payload) {
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber();
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/pulls/" + pr.getNumber();
         var uri = URI.create(url);
         log.info("Closing to pull request {}", uri);
         var response = this.rest.exchange(new RequestEntity(payload, HttpMethod.PATCH, uri), PullRequest.class);
@@ -186,13 +188,13 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public Page<PullRequestReview> getPullRequestReviews(final String organization, final String name, final PullRequest pr) {
-        val url = "https://api.github.com/repos/" + organization + '/' + name + "/pulls/" + pr.getNumber() + "/reviews";
+        val url = API_GITHUB_REPOS + organization + '/' + name + "/pulls/" + pr.getNumber() + "/reviews";
         return getPage(url, PullRequestReview[].class);
     }
 
     @Override
     public Page<TimelineEntry> getPullRequestTimeline(final String organization, final String name, final PullRequest pr) {
-        val url = "https://api.github.com/repos/" + organization + '/' + name + "/issues/" + pr.getNumber() + "/timeline";
+        val url = API_GITHUB_REPOS + organization + '/' + name + "/issues/" + pr.getNumber() + "/timeline";
         return getPage(url, TimelineEntry[].class);
     }
 
@@ -201,7 +203,7 @@ public class GitHubTemplate implements GitHubOperations {
     public Workflows getWorkflowRuns(final String organization, final String repository, final Branch branch,
                                      final Workflows.WorkflowRunEvent event, final Workflows.WorkflowRunStatus status,
                                      final Commit commit, final long page) {
-        var url = "https://api.github.com/repos/" + organization + '/' + repository + "/actions/runs";
+        var url = API_GITHUB_REPOS + organization + '/' + repository + "/actions/runs";
         var urlBuilder = new URIBuilder(url);
 
         if (branch != null) {
@@ -233,7 +235,7 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public void rerunFailedWorkflowJobs(final String organization, final String name, final Workflows.WorkflowRun run) {
-        val url = "https://api.github.com/repos/" + organization + '/' + name + "/actions/runs/" + run.getId() + "/rerun-failed-jobs";
+        val url = API_GITHUB_REPOS + organization + '/' + name + "/actions/runs/" + run.getId() + "/rerun-failed-jobs";
         val responseEntity = this.rest.exchange(url, HttpMethod.POST, HttpEntity.EMPTY, Map.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             log.info("Successfully rerun failed workflow run id {}", run);
@@ -255,19 +257,19 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public CombinedCommitStatus getCombinedPullRequestCommitStatus(final String organization, final String repository, String ref) {
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/commits/" + ref + "/status";
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/commits/" + ref + "/status";
         return getSinglePage(url, CombinedCommitStatus.class);
     }
 
     @Override
     public Page<Commit> getPullRequestCommits(final String organization, final String repository, final String number) {
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + number + "/commits";
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/pulls/" + number + "/commits";
         return getPage(url, Commit[].class);
     }
 
     @Override
     public Commit getCommit(final String organization, final String repository, final String branchOrSha) {
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/commits/" + branchOrSha;
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/commits/" + branchOrSha;
         return getSinglePage(url, Commit.class);
     }
 
@@ -275,7 +277,7 @@ public class GitHubTemplate implements GitHubOperations {
     public boolean mergeIntoBase(final String organization, final String repository, final PullRequest pr,
                                  final String commitTitle, final String commitMessage,
                                  final String shaToMatch, final String method) {
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/merge";
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/merge";
 
         val map = new LinkedHashMap<>();
         if (StringUtils.hasText(commitTitle)) {
@@ -299,7 +301,7 @@ public class GitHubTemplate implements GitHubOperations {
     @Override
     public boolean approve(final String organization, final String repository, final PullRequest pr, final boolean includeComment) {
         try {
-            val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/reviews";
+            val url = API_GITHUB_REPOS + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/reviews";
             val params = new HashMap<String, String>();
             params.put("commit_id", pr.getHead().getSha());
             if (includeComment) {
@@ -308,7 +310,7 @@ public class GitHubTemplate implements GitHubOperations {
                 params.put("body", template);
             }
             params.put("event", "APPROVE");
-            val responseEntity = rest.exchange(new RequestEntity(params, HttpMethod.POST, URI.create(url)), Map.class);
+            val responseEntity = rest.exchange(new RequestEntity<>(params, HttpMethod.POST, URI.create(url)), Map.class);
             return responseEntity.getStatusCode().is2xxSuccessful();
         } catch (Exception e) {
             log.error("Error approving PR", e);
@@ -319,11 +321,11 @@ public class GitHubTemplate implements GitHubOperations {
     @Override
     public PullRequest mergeWithBase(final String organization, final String repository, final PullRequest pr) {
         if (pr.getHead().getRepository().isFork()) {
-            val url = "https://api.github.com/repos/" + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/update-branch";
+            val url = API_GITHUB_REPOS + organization + '/' + repository + "/pulls/" + pr.getNumber() + "/update-branch";
 //            val params = new HashMap<String, String>();
 //            params.put("expected_head_sha", pr.getHead().getSha());
             val responseEntity = this.rest.exchange(url, HttpMethod.PUT,
-                new HttpEntity<>(new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.lydian-preview+json")))), Map.class);
+                new HttpEntity<>(new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.lydian-preview+json")))), Map.class);
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 log.info("Merged pull request {} with base", pr);
             } else {
@@ -332,7 +334,7 @@ public class GitHubTemplate implements GitHubOperations {
             return pr;
         }
 
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/merges";
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/merges";
         var uri = URI.create(url);
         var body = new HashMap<String, String>();
         val prBranch = pr.getHead().getRef();
@@ -343,7 +345,7 @@ public class GitHubTemplate implements GitHubOperations {
 
         body.put("commit_message", "Merged branch " + targetBranch + " into " + prBranch);
 
-        val response = this.rest.exchange(new RequestEntity(body, HttpMethod.POST, uri), Map.class);
+        val response = this.rest.exchange(new RequestEntity<>(body, HttpMethod.POST, uri), Map.class);
         if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
             log.debug("Pull request [{}] already contains the [{}]; nothing to merge", targetBranch, pr);
         } else if (response.getStatusCode() == HttpStatus.CONFLICT) {
@@ -359,13 +361,13 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public Page<Milestone> getMilestones(final String organization, final String name) {
-        val url = "https://api.github.com/repos/" + organization + '/' + name + "/milestones?state=open";
+        val url = API_GITHUB_REPOS + organization + '/' + name + "/milestones?state=open";
         return getPage(url, Milestone[].class);
     }
 
     @Override
     public Page<Label> getLabels(final String organization, final String name) {
-        val url = "https://api.github.com/repos/" + organization + '/' + name + "/labels";
+        val url = API_GITHUB_REPOS + organization + '/' + name + "/labels";
         return getPage(url, Label[].class);
     }
 
@@ -384,16 +386,21 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     @Override
-    public PullRequest addLabel(final PullRequest pr, final String label) {
+    public PullRequest addLabel(final PullRequest pr, final List<String> labels) {
         val uri = URI.create(pr.getLabelsUrl());
-        log.info("Adding label {} to pull request {}", label, pr);
+        log.info("Adding labels {} to pull request {}", labels, pr);
         var response = this.rest.exchange(
-            new RequestEntity<>(Arrays.asList(label), HttpMethod.POST, uri),
+            new RequestEntity<>(labels, HttpMethod.POST, uri),
             Label[].class);
         if (response.getStatusCode() != HttpStatus.OK) {
             log.warn("Failed to add label to pull request. Response status: " + response.getStatusCode());
         }
         return pr;
+    }
+
+    @Override
+    public PullRequest addLabel(final PullRequest pr, final String... label) {
+        return addLabel(pr, Arrays.asList(label));
     }
 
     @Override
@@ -463,13 +470,13 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public Page<Comment> getComments(final String organization, final String name, final String number) {
-        val url = "https://api.github.com/repos/" + organization + '/' + name + "/issues/" + number + "/comments";
+        val url = API_GITHUB_REPOS + organization + '/' + name + "/issues/" + number + "/comments";
         return getPage(url, Comment[].class);
     }
 
     @Override
     public void removeComment(final String organization, final String name, final String commentId) {
-        val url = "https://api.github.com/repos/" + organization + '/' + name + "/issues/comments/" + commentId;
+        val url = API_GITHUB_REPOS + organization + '/' + name + "/issues/comments/" + commentId;
         var response = this.rest.exchange(new RequestEntity<Void>(HttpMethod.DELETE, URI.create(url)), Comment.class);
         if (!response.getStatusCode().is2xxSuccessful()) {
             log.warn("Failed to remove comment. Response status: {}", response.getStatusCode());
@@ -478,7 +485,7 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public void removeWorkflowRun(final String organization, final String name, final Workflows.WorkflowRun run) {
-        val url = "https://api.github.com/repos/" + organization + '/' + name + "/actions/runs/" + run.getId();
+        val url = API_GITHUB_REPOS + organization + '/' + name + "/actions/runs/" + run.getId();
         try {
             var response = this.rest.exchange(new RequestEntity<Void>(HttpMethod.DELETE, URI.create(url)), Workflows.WorkflowRun.class);
             if (!response.getStatusCode().is2xxSuccessful()) {
@@ -521,10 +528,10 @@ public class GitHubTemplate implements GitHubOperations {
         body.put("conclusion", conclusion);
         body.put("completed_at", currentTime);
         body.put("output", output);
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/check-runs";
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/check-runs";
 
-        val headers = new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.antiope-preview+json")));
-        val response = this.rest.exchange(new RequestEntity(body, headers, HttpMethod.POST, new URI(url)), Map.class);
+        val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.antiope-preview+json")));
+        val response = this.rest.exchange(new RequestEntity<>(body, headers, HttpMethod.POST, new URI(url)), Map.class);
         return response.getStatusCode().is2xxSuccessful();
     }
 
@@ -541,9 +548,9 @@ public class GitHubTemplate implements GitHubOperations {
         if (StringUtils.hasText(filter)) {
             params.put("filter", filter);
         }
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/commits/" + ref + "/check-runs";
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/commits/" + ref + "/check-runs";
         return getSinglePage(url, CheckRun.class, params,
-            new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.antiope-preview+json"))));
+            new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.antiope-preview+json"))));
     }
 
     @Override
@@ -555,7 +562,7 @@ public class GitHubTemplate implements GitHubOperations {
         body.put("context", context);
         body.put("target_url", targetUrl);
         body.put("description", description);
-        val url = "https://api.github.com/repos/" + organization + '/' + repository + "/statuses/" + ref;
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/statuses/" + ref;
         val response = this.rest.exchange(new RequestEntity(body, HttpMethod.POST, new URI(url)), Map.class);
         return response.getStatusCode().is2xxSuccessful();
 
@@ -563,7 +570,7 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public Page<Branch> getBranches(final String organization, final String name) {
-        val url = "https://api.github.com/repos/" + organization + '/' + name + "/branches";
+        val url = API_GITHUB_REPOS + organization + '/' + name + "/branches";
         return getPage(url, Branch[].class);
     }
 
@@ -573,7 +580,7 @@ public class GitHubTemplate implements GitHubOperations {
                                      final Workflows.WorkflowRun run) throws Exception {
         val body = new HashMap<>();
         val url = run.getCancelUrl();
-        val response = this.rest.exchange(new RequestEntity(body, HttpMethod.POST, new URI(url)), Map.class);
+        val response = this.rest.exchange(new RequestEntity<>(body, HttpMethod.POST, new URI(url)), Map.class);
         return response.getStatusCode().is2xxSuccessful();
     }
 

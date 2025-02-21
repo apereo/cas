@@ -29,6 +29,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -184,7 +185,7 @@ public class MonitoredRepository {
                     if (rangeResult.get().isQualifiedForPatchUpgrade()) {
                         log.info("Merging patch dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                         labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
-                        return approveAndMergePullRequest(pr);
+                        return approveAndMergePullRequest(pr, false);
                     }
 
                     var files = getPullRequestFiles(pr);
@@ -193,7 +194,7 @@ public class MonitoredRepository {
                         if (rangeResult.get().isQualifiedForMinorUpgrade()) {
                             log.info("Merging minor dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                             labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
-                            return approveAndMergePullRequest(pr);
+                            return approveAndMergePullRequest(pr, false);
                         }
                     }
                 }
@@ -374,12 +375,9 @@ public class MonitoredRepository {
         return files;
     }
 
-    public PullRequest labelPullRequestAs(final PullRequest pr, final CasLabels labelName) {
-        if (!pr.isLabeledAs(labelName)) {
-            return gitHub.addLabel(pr, labelName.getTitle());
-        }
-        log.debug("Pull request {} is already assigned to label {}", pr.getNumber(), labelName);
-        return pr;
+    public PullRequest labelPullRequestAs(final PullRequest pr, final CasLabels... labelName) {
+        var labels = Arrays.stream(labelName).filter(label -> !pr.isLabeledAs(label)).map(CasLabels::getTitle).toList();
+        return gitHub.addLabel(pr, labels);
     }
 
     public void removeAllCommentsFrom(final PullRequest pr, final String login) {
@@ -425,7 +423,11 @@ public class MonitoredRepository {
     }
 
     public boolean approveAndMergePullRequest(final PullRequest pr) {
-        if (approvePullRequest(pr, true)) {
+        return approveAndMergePullRequest(pr, true);
+    }
+
+    public boolean approveAndMergePullRequest(final PullRequest pr, final boolean includeComment) {
+        if (approvePullRequest(pr, includeComment)) {
             return mergePullRequestIntoBase(pr);
         }
         return false;

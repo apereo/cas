@@ -17,6 +17,7 @@
 package org.apereo.cas.github;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 public interface GitHubOperations {
@@ -33,7 +34,9 @@ public interface GitHubOperations {
 
     Issue addLabel(Issue issue, String label);
 
-    PullRequest addLabel(PullRequest pr, String label);
+    PullRequest addLabel(PullRequest pr, String... label);
+    
+    PullRequest addLabel(PullRequest pr, List<String> labels);
 
     Issue removeLabel(Issue issue, String label);
 

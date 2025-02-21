@@ -384,6 +384,11 @@ public class CasPullRequestListener implements PullRequestListener {
 
     private void processLabelsByFeatures(final PullRequest givenPullRequest) {
         val pr = repository.getPullRequest(givenPullRequest.getNumber());
+        if (pr.isBot()) {
+            repository.labelPullRequestAs(pr, CasLabels.LABEL_BOT, CasLabels.LABEL_RENOVATE,
+                CasLabels.LABEL_GRADLE_BUILD_RELEASE);
+        }
+
         val title = pr.getTitle().toLowerCase();
         Arrays.stream(CasLabels.values()).forEach(l -> {
             if (!pr.isLabeledAs(l)) {
