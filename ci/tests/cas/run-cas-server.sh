@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export DOCKER_IMAGE="apereo/cas:7.1.4"
+export DOCKER_IMAGE="apereo/cas:7.1.5"
 
 if [[ -f "${CAS_KEYSTORE}" ]] ; then
   echo -e "Found existing CAS keystore at ${CAS_KEYSTORE}"
