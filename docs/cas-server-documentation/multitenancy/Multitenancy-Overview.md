@@ -26,6 +26,12 @@ When multitenancy is enabled, registered tenants will each receive their own ded
 /cas/tenants/{TENANT_ID}/...
 ```
 
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="multitenancy" %}
+
 ## Tenant Registration
                                                                       
 Tenants are registered with CAS via a JSON file by default that is expected to be available at a well-known location

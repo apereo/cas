@@ -1,5 +1,6 @@
 package org.apereo.cas.multitenancy;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -8,7 +9,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 7.2.0
  */
-@FunctionalInterface
 public interface TenantsManager {
     /**
      * Tenant manager bean name.
@@ -22,4 +22,11 @@ public interface TenantsManager {
      * @return the tenant definition
      */
     Optional<TenantDefinition> findTenant(String tenantId);
+
+    /**
+     * Find tenants list.
+     *
+     * @return the list
+     */
+    List<TenantDefinition> findTenants();
 }

@@ -73,6 +73,11 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean {
             .findFirst();
     }
 
+    @Override
+    public List<TenantDefinition> findTenants() {
+        return List.copyOf(tenantDefinitionList);
+    }
+
     private List<TenantDefinition> readFromJsonResource() {
         return FunctionUtils.doAndHandle((CheckedSupplier<List<TenantDefinition>>) () -> {
             if (ResourceUtils.doesResourceExist(jsonResource)) {
