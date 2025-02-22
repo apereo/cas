@@ -17,7 +17,8 @@ const Tabs = {
     CONSENT: 10,
     PROTOCOLS: 11,
     THROTTLES: 12,
-    MFA: 13
+    MFA: 13,
+    MULTITENANCY: 14
 };
 
 /**
@@ -48,7 +49,7 @@ function fetchServices(callback) {
 
             let saml2MetadataProvidersTable = $("#saml2MetadataProvidersTable").DataTable();
             saml2MetadataProvidersTable.clear();
-            
+
             for (const service of response[1]) {
                 let icon = "mdi-web-box";
                 const serviceClass = service["@class"];
@@ -134,7 +135,7 @@ function fetchServices(callback) {
 
             applicationsTable.search("").draw();
             saml2MetadataProvidersTable.search("").draw();
-            
+
             servicesChart.data.datasets[0].data = serviceCountByType;
             servicesChart.update();
 
@@ -271,12 +272,12 @@ function initializeFooterButtons() {
  */
 
 async function initializeHeimdallOperations() {
-    
+
     if (!CAS_FEATURES.includes("Authorization")) {
         $("#heimdall").addClass("d-none");
         return;
     }
-    
+
     const heimdallResourcesTable = $("#heimdallResourcesTable").DataTable({
         pageLength: 10,
         columnDefs: [
@@ -285,7 +286,7 @@ async function initializeHeimdallOperations() {
             {width: "50%", targets: 2},
             {width: "20%", targets: 3},
             {width: "9%", targets: 4},
-            {width: "10%", targets: 5},
+            {width: "10%", targets: 5}
         ],
         autoWidth: false,
         drawCallback: settings => {
@@ -308,7 +309,7 @@ async function initializeHeimdallOperations() {
                 });
         }
     });
-    
+
     if (actuatorEndpoints.heimdall) {
         const heimdallViewResourceEditor = initializeAceEditor("heimdallViewResourceEditor", "json");
         heimdallViewResourceEditor.setReadOnly(true);
@@ -360,16 +361,16 @@ async function initializeHeimdallOperations() {
                 displayBanner(xhr);
             });
         }
-        
+
         fetchHeimdallResources(heimdallViewResourceEditor);
-        
+
         setInterval(() => {
             if (currentActiveTab === Tabs.ACCESS_STRATEGY) {
                 fetchHeimdallResources();
             }
         }, DEFAULT_INTERVAL);
     }
-    
+
 }
 
 async function initializeAccessStrategyOperations() {
@@ -871,7 +872,7 @@ async function initializeSsoSessionOperations() {
                 icon: "warning",
                 showConfirmButton: true,
                 showDenyButton: true
-                
+
             })
                 .then((result) => {
                     if (result.isConfirmed) {
@@ -912,7 +913,7 @@ async function initializeSsoSessionOperations() {
                 }
             });
             ssoSessionsTable.clear();
-            
+
             $.ajax({
                 url: `${actuatorEndpoints.ssosessions}/users/${username}`,
                 type: "GET",
@@ -951,7 +952,7 @@ async function initializeSsoSessionOperations() {
                     }
                     ssoSessionsTable.draw();
                     Swal.close();
-                    
+
                     $("button[name=viewSsoSession]").off().on("click", function () {
                         const attributes = JSON.parse($(this).children("span").first().text());
                         for (const [key, value] of Object.entries(attributes.principal)) {
@@ -1083,7 +1084,7 @@ async function initializeLoggingOperations() {
             }
         });
     }
-    
+
     function fetchLoggerData(callback) {
         if (actuatorEndpoints.loggingconfig) {
             $.get(actuatorEndpoints.loggingconfig, response => callback(response)).fail((xhr, status, error) => {
@@ -1113,7 +1114,7 @@ async function initializeLoggingOperations() {
                     1: `${loggerLevel.trim()}`
                 });
             }
-            
+
             loggersTable.clear();
             for (const logger of response.loggers) {
                 addLoggerToTable(logger);
@@ -1219,7 +1220,7 @@ async function initializeLoggingOperations() {
                         }
                     });
                 }
-            }, $("#logRefreshFilter").val())
+            }, $("#logRefreshFilter").val());
         }
 
         function startStreamingLogData() {
@@ -1229,7 +1230,7 @@ async function initializeLoggingOperations() {
                     fetchLogsFrom(actuatorEndpoints.gcplogs);
                     fetchLogsFrom(actuatorEndpoints.loggingconfig);
                 }
-            }, $("#logRefreshFilter").val())
+            }, $("#logRefreshFilter").val());
         }
 
         let refreshStreamInterval = startStreamingLogData();
@@ -1243,18 +1244,18 @@ async function initializeLoggingOperations() {
             change: (event, data) => {
                 clearInterval(refreshStreamInterval);
                 refreshStreamInterval = startStreamingLogData();
-                
+
                 if (refreshLogFileInterval) {
                     clearInterval(refreshLogFileInterval);
-                    refreshLogFileInterval = startStreamingLogFile()
+                    refreshLogFileInterval = startStreamingLogFile();
                 }
             }
         });
-        
+
     } else {
         $("#loggingDataStreamOps").parent().addClass("d-none");
     }
-    
+
 }
 
 async function initializeAuditEventsOperations() {
@@ -1266,6 +1267,7 @@ async function initializeAuditEventsOperations() {
                 $("#auditEventsTable td").addClass("mdc-data-table__cell");
             }
         });
+
         function fetchAuditLog() {
             return setInterval(() => {
                 if (currentActiveTab === Tabs.LOGGING) {
@@ -1288,7 +1290,7 @@ async function initializeAuditEventsOperations() {
                                     2: `<code>${entry?.actionPerformed ?? "N/A"}</code>`,
                                     3: `<code>${entry?.whenActionWasPerformed ?? "N/A"}</code>`,
                                     4: `<code>${entry?.clientInfo?.clientIpAddress ?? "N/A"}</code>`,
-                                    5: `<span>${entry?.clientInfo?.userAgent ?? "N/A"}</span>`,
+                                    5: `<span>${entry?.clientInfo?.userAgent ?? "N/A"}</span>`
                                 });
                             }
                             auditEventsTable.draw();
@@ -1298,9 +1300,9 @@ async function initializeAuditEventsOperations() {
                         }
                     });
                 }
-            }, $("#auditEventsRefreshFilter").val())
+            }, $("#auditEventsRefreshFilter").val());
         }
-        
+
         let refreshInterval = undefined;
         if (actuatorEndpoints.auditlog) {
             refreshInterval = fetchAuditLog();
@@ -1309,7 +1311,7 @@ async function initializeAuditEventsOperations() {
             change: (event, data) => {
                 if (refreshInterval) {
                     clearInterval(refreshInterval);
-                    refreshInterval = fetchAuditLog()
+                    refreshInterval = fetchAuditLog();
                 }
             }
         });
@@ -1698,7 +1700,7 @@ function initializeServiceButtons() {
                             url: `${actuatorEndpoints.registeredservices}/${serviceId}`,
                             type: "DELETE",
                             success: response => {
-                                
+
                                 let nearestTr = $(this).closest("tr");
 
                                 let applicationsTable = $("#applicationsTable").DataTable();
@@ -1752,12 +1754,12 @@ function initializeServiceButtons() {
                             contentType: "application/json",
                             data: value,
                             success: response => {
-                                
+
                                 editServiceDialog["close"]();
                                 fetchServices(() => {
                                     let newServiceId = response.id;
                                     $("#applicationsTable tr").removeClass("selected");
-                                    
+
                                     $(`#applicationsTable tr td span[serviceId=${newServiceId}]`).each(function () {
                                         $(this).closest("tr").addClass("selected");
                                     });
@@ -1878,7 +1880,7 @@ async function initializeServicesOperations() {
     $("a[name=serviceDefinitionEntry]").off().on("click", function () {
         let type = $(this).data("type");
         let id = $(this).data("id");
-        
+
         const entries = serviceDefinitions[type];
         for (const entry of entries) {
             const definition = JSON.parse(entry);
@@ -2157,7 +2159,7 @@ async function initializePersonDirectoryOperations() {
             $("#attributeRepositoriesTable td").addClass("mdc-data-table__cell");
         }
     });
-    
+
     $("button[name=personDirectoryClearButton]").off().on("click", () => {
         if (actuatorEndpoints.persondirectory) {
             const form = document.getElementById("fmPersonDirectory");
@@ -2222,7 +2224,7 @@ async function initializePersonDirectoryOperations() {
             });
         }
     });
-    
+
     attributeDefinitionsTable.clear();
     let attributeDefinitions = 0;
     if (actuatorEndpoints.attributeDefinitions) {
@@ -2307,7 +2309,7 @@ async function initializeAuthenticationOperations() {
         function showSamlMetadata(payload) {
             const saml2Editor = initializeAceEditor("delegatedClientsSaml2Editor", "xml");
             saml2Editor.setReadOnly(true);
-            
+
             saml2Editor.setValue(new XMLSerializer().serializeToString(payload));
             saml2Editor.gotoLine(1);
 
@@ -2317,7 +2319,7 @@ async function initializeAuthenticationOperations() {
             const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("delegatedClientsSaml2Dialog"));
             dialog["open"]();
         }
-        
+
         $("button[name=saml2ClientSpMetadata]").off().on("click", function () {
             $(this).prop("disabled", true);
             const url = `${casServerPrefix}/sp/${$(this).attr("clientName")}/metadata`;
@@ -2800,7 +2802,7 @@ async function initializeCasProtocolOperations() {
             casProtocolServiceEditor.setReadOnly(true);
             casProtocolServiceEditor.setValue(JSON.stringify(data.registeredService, null, 2));
             casProtocolServiceEditor.gotoLine(1);
-            
+
             $("#casProtocolEditorContainer").removeClass("d-none");
             $("#casProtocolServiceEditorContainer").removeClass("d-none");
 
@@ -2848,7 +2850,7 @@ async function initializeTrustedMultifactorOperations() {
                     Swal.showLoading();
                 }
             });
-            
+
             $.get(`${actuatorEndpoints.multifactortrusteddevices}/${username}`, response => {
                 for (const device of Object.values(response)) {
                     let buttons = `
@@ -2867,7 +2869,7 @@ async function initializeTrustedMultifactorOperations() {
                         5: `<code>${device.expirationDate ?? "N/A"}</code>`,
                         6: `<code>${device.multifactorAuthenticationProvider ?? "N/A"}</code>`,
                         7: `<code>${device.recordKey ?? "N/A"}</code>`,
-                        8: `${buttons}`,
+                        8: `${buttons}`
                     });
                 }
                 mfaTrustedDevicesTable.draw();
@@ -2913,6 +2915,40 @@ async function initializeTrustedMultifactorOperations() {
 
 }
 
+async function initializeMultitenancyOperations() {
+    const tenantsTable = $("#tenantsTable").DataTable({
+        pageLength: 10,
+        autoWidth: true,
+        drawCallback: settings => {
+            $("#tenantsTable tr").addClass("mdc-data-table__row");
+            $("#tenantsTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    function fetchTenants() {
+        tenantsTable.clear();
+        $.get(`${actuatorEndpoints.multitenancy}/tenants`, response => {
+            for (const tenant of Object.values(response)) {
+                tenantsTable.row.add({
+                    0: `<code>${tenant.id}</code>`,
+                    1: `<code>${tenant.description ?? ""}</code>`
+                });
+            }
+            tenantsTable.draw();
+        })
+            .fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+            });
+    }
+
+    fetchTenants();
+    setInterval(() => {
+        if (currentActiveTab === Tabs.MULTITENANCY) {
+            fetchTenants();
+        }
+    }, DEFAULT_INTERVAL);
+}
 
 async function initializeMultifactorOperations() {
     const mfaDevicesTable = $("#mfaDevicesTable").DataTable({
@@ -2965,7 +3001,7 @@ async function initializeMultifactorOperations() {
                         6: `<code>${device.expirationDateTime ?? "N/A"}</code>`,
                         7: `<code>${device.source ?? "N/A"}</code>`,
                         8: `<span>${device.payload}</span>`,
-                        9: `${buttons}`,
+                        9: `${buttons}`
                     });
                 }
                 mfaDevicesTable.draw();
@@ -3014,7 +3050,7 @@ async function initializeMultifactorOperations() {
             fmMfaDevices.reportValidity();
             return false;
         }
-        
+
         fetchMfaDevices();
     });
 }
@@ -3074,7 +3110,7 @@ async function initializeThrottlesOperations() {
                     .then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
-                                url: `${actuatorEndpoints.throttles}?key=` + encodeURIComponent(key),
+                                url: `${actuatorEndpoints.throttles}?key=${encodeURIComponent(key)}`,
                                 type: "DELETE",
                                 contentType: "application/x-www-form-urlencoded",
                                 success: (response, status, xhr) => {
@@ -3618,7 +3654,10 @@ async function initializePalantir() {
             if (!actuatorEndpoints.multifactortrusteddevices) {
                 $("#trustedMfaDevicesTab").parent().addClass("d-none");
             }
-            
+            if (!actuatorEndpoints.multitenancy) {
+                $("#tenantsTabButton").addClass("d-none");
+            }
+
             let visibleCount = $("nav.sidebar-navigation ul li:visible").length;
 
 
@@ -3661,6 +3700,7 @@ async function initializePalantir() {
                         initializeOidcProtocolOperations(),
                         initializeThrottlesOperations(),
                         initializeMultifactorOperations(),
+                        initializeMultitenancyOperations(),
                         initializeTrustedMultifactorOperations(),
                         initializeAuditEventsOperations()
                     ]);
@@ -3723,7 +3763,7 @@ document.addEventListener("DOMContentLoaded", () => {
             y: "bottom"
         }
     });
-    
+
     initializePalantir().then(r => {
 
         Swal.fire({

@@ -1,5 +1,6 @@
 package org.apereo.cas.multitenancy;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ import java.io.Serial;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultTenantCommunicationPolicy implements TenantCommunicationPolicy {
     @Serial
     private static final long serialVersionUID = 1810371962642100469L;

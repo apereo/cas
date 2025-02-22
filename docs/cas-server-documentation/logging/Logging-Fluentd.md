@@ -18,7 +18,7 @@ CAS log data can be automatically routed to Fluentd. Support is enabled by inclu
 With the above module, you may then declare a specific appender to communicate with AWS CloudWatch:
 
 ```xml
-<Configuration packages="io.github.technologize">
+<Configuration>
     <Appenders>
         <Fluentd name="fluentd" tag="yourTag" >
         <!-- 
