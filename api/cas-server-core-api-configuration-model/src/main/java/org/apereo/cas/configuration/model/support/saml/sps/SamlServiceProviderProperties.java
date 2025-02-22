@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import java.io.Serial;
@@ -318,7 +317,6 @@ public class SamlServiceProviderProperties implements Serializable {
     private CaliforniaCommunityColleges cccco = new CaliforniaCommunityColleges();
 
     @Getter
-    @RequiredArgsConstructor
     private enum CommonAttributeNames {
         /**
          * Attribute name.
@@ -402,6 +400,10 @@ public class SamlServiceProviderProperties implements Serializable {
          * Attribute name.
          */
         private final String attributeName;
+
+        CommonAttributeNames(final String name) {
+            this.attributeName = name;
+        }
     }
 
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")

@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.validation.ValidationResponseType;
 import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -45,13 +46,14 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
 
     private static void sanitizeAndTransformAttributeNames(final Map<String, Object> attributes,
                                                            final Service webApplicationService) {
-        if (webApplicationService instanceof final WebApplicationService was && !was.getFormat().isEncodingNecessary()) {
+        if (webApplicationService instanceof final WebApplicationService was && was.getFormat() == ValidationResponseType.JSON) {
             LOGGER.trace("Skipping attribute name sanitization for [{}]", webApplicationService);
             return;
         }
 
         LOGGER.trace("Sanitizing attribute names in preparation of the final validation response");
-        val encodedAttributes = attributes.keySet().stream()
+        val encodedAttributes = attributes.keySet()
+            .stream()
             .filter(DefaultCasProtocolAttributeEncoder::getSanitizingAttributeNamePredicate)
             .map(attribute -> {
                 val values = attributes.get(attribute);
