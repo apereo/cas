@@ -5,14 +5,14 @@ Set -Dlog4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContext
 or override log42.component.properties to turn off async
 -->
 <!-- Specify the refresh internal in seconds. -->
-<Configuration monitorInterval="5" packages="org.apereo.cas.logging">
+<Configuration monitorInterval="5">
     <Properties>
         <Property name="baseDir">/tmp/logs</Property>
         
         <Property name="cas.log.level">${main:\--logging.level.org.apereo.cas:-info}</Property>
         <Property name="spring.webflow.log.level">${main:\--logging.level.org.springframework.webflow:-info}</Property>
         <Property name="spring.security.log.level">${main:\--logging.level.org.springframework.security:-warn}</Property>
-        <Property name="thymeleaf.log.level">${main:\--logging.level.org.thymeleaf-warn}</Property>
+        <Property name="thymeleaf.log.level">${main:\--logging.level.org.thymeleaf:-warn}</Property>
         <Property name="spring.cloud.log.level">${main:\--logging.level.org.springframework.cloud:-warn}</Property>
         <Property name="spring.web.log.level">${main:\--logging.level.org.springframework.web:-warn}</Property>
         <Property name="spring.boot.log.level">${main:\--logging.level.org.springframework.boot:-warn}</Property>

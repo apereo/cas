@@ -38,7 +38,7 @@ in the logging configuration.</p></div>
 This is an example of the logging configuration:
 
 ```xml
-<Configuration packages="org.apereo.cas.logging">
+<Configuration>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <JsonLayout locationInfo="false"

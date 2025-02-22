@@ -50,7 +50,7 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean {
                 watcherService = new FileWatcherService(jsonResource.getFile(),
                     file -> {
                         val resources = readFromJsonResource();
-                        if (resources.isEmpty()) {
+                        if (!resources.isEmpty()) {
                             tenantDefinitionList.clear();
                             tenantDefinitionList.addAll(resources);
                         }
