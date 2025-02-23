@@ -12,7 +12,7 @@
     "express": "4.21.2",
     "figlet": "1.8.0",
     "http-cas-client": "0.4.3",
-    "jose": "5.10.0",
+    "jose": "6.0.4",
     "jsonpath-plus": "10.3.0",
     "jsonwebtoken": "9.0.2",
     "jsqr": "1.4.0",
