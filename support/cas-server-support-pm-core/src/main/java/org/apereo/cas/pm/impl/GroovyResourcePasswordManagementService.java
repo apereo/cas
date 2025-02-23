@@ -1,7 +1,7 @@
 package org.apereo.cas.pm.impl;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementQuery;
@@ -29,11 +29,10 @@ public class GroovyResourcePasswordManagementService extends BasePasswordManagem
     private final ExecutableCompiledScript watchableScript;
 
     public GroovyResourcePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
-                                                   final String issuer,
-                                                   final PasswordManagementProperties passwordManagementProperties,
+                                                   final CasConfigurationProperties casProperties,
                                                    final Resource groovyResource,
                                                    final PasswordHistoryService passwordHistoryService) {
-        super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
+        super(casProperties, cipherExecutor, passwordHistoryService);
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
         this.watchableScript = scriptFactory.fromResource(groovyResource);
     }

@@ -1,7 +1,7 @@
 package org.apereo.cas.pm.rest;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementQuery;
@@ -33,17 +33,16 @@ public class RestPasswordManagementService extends BasePasswordManagementService
     private final RestTemplate restTemplate;
 
     public RestPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
-                                         final String issuer,
+                                         final CasConfigurationProperties casProperties,
                                          final RestTemplate restTemplate,
-                                         final PasswordManagementProperties passwordManagementProperties,
                                          final PasswordHistoryService passwordHistoryService) {
-        super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
+        super(casProperties, cipherExecutor, passwordHistoryService);
         this.restTemplate = restTemplate;
     }
 
     @Override
     public boolean changeInternal(final PasswordChangeRequest bean) {
-        val rest = properties.getRest();
+        val rest = casProperties.getAuthn().getPm().getRest();
 
         if (StringUtils.isBlank(rest.getEndpointUrlChange())) {
             return false;
@@ -65,7 +64,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findUsername(final PasswordManagementQuery query) {
-        val rest = properties.getRest();
+        val rest = casProperties.getAuthn().getPm().getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlUser())) {
             return null;
         }
@@ -84,7 +83,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findEmail(final PasswordManagementQuery query) {
-        val rest = properties.getRest();
+        val rest = casProperties.getAuthn().getPm().getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlEmail())) {
             return null;
         }
@@ -95,7 +94,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         val entity = new HttpEntity<>(headers);
         val result = restTemplate.exchange(rest.getEndpointUrlEmail(), HttpMethod.GET, entity, String.class);
 
-        if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {
+        if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();
         }
         return null;
@@ -103,7 +102,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findPhone(final PasswordManagementQuery query) {
-        val rest = properties.getRest();
+        val rest = casProperties.getAuthn().getPm().getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlPhone())) {
             return null;
         }
@@ -122,7 +121,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
-        val rest = properties.getRest();
+        val rest = casProperties.getAuthn().getPm().getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlSecurityQuestions())) {
             return null;
         }
@@ -141,7 +140,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public void updateSecurityQuestions(final PasswordManagementQuery query) {
-        val rest = properties.getRest();
+        val rest = casProperties.getAuthn().getPm().getRest();
         if (StringUtils.isNotBlank(rest.getEndpointUrlSecurityQuestions())) {
             val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
@@ -153,7 +152,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public boolean unlockAccount(final Credential credential) {
-        val rest = properties.getRest();
+        val rest = casProperties.getAuthn().getPm().getRest();
         var result = true;
         if (StringUtils.isNotBlank(rest.getEndpointUrlAccountUnlock())) {
             val headers = new HttpHeaders();

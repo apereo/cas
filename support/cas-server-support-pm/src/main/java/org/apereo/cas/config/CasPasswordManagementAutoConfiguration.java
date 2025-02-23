@@ -175,16 +175,13 @@ public class CasPasswordManagementAutoConfiguration {
                 if (location != null) {
                     LOGGER.debug("Configuring password management based on JSON resource [{}]", location);
                     return new JsonResourcePasswordManagementService(passwordManagementCipherExecutor,
-                        casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm(), location,
-                        passwordHistoryService);
+                        casProperties, location, passwordHistoryService);
                 }
                 val groovyScript = pm.getGroovy().getLocation();
                 if (groovyScript != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
                     LOGGER.debug("Configuring password management based on Groovy resource [{}]", groovyScript);
                     return new GroovyResourcePasswordManagementService(passwordManagementCipherExecutor,
-                        casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm(),
-                        groovyScript,
-                        passwordHistoryService);
+                        casProperties, groovyScript, passwordHistoryService);
                 }
                 LOGGER.warn("No storage service is configured to handle the account update and password service operations. "
                     + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
@@ -193,8 +190,7 @@ public class CasPasswordManagementAutoConfiguration {
                 LOGGER.debug("Password management is disabled. To enable the password management functionality, "
                     + "add 'cas.authn.pm.core.enabled=true' to the CAS configuration and then configure storage options for account updates");
             }
-            return new NoOpPasswordManagementService(passwordManagementCipherExecutor,
-                casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm());
+            return new NoOpPasswordManagementService(passwordManagementCipherExecutor, casProperties);
         }
 
         @Bean
