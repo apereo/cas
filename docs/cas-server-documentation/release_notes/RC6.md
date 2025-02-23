@@ -61,7 +61,8 @@ test coverage of the CAS codebase is approximately `94%`.
 
 ## Other Stuff
 
-- Storing [attribute consent decisions](../integration/Attribute-Release-Consent-Storage-REST.html) is now reworked to be more compatible with REST design principals.
+- Storing [attribute consent decisions](../integration/Attribute-Release-Consent-Storage-REST.html) is reworked to be more compatible with REST design principals.
+- [Rest password management](../password_management/Password-Management-REST.html) operations are reworked to be more compatible with REST design principals.
 - Synchronizing passwords can now be used using a [REST API](../password_management/Password-Synchronization.html).
 - Column sizes for [JDBC Audit](../audits/Audits-Database.html) records are slightly adjusted to better accommodate larger data.
 

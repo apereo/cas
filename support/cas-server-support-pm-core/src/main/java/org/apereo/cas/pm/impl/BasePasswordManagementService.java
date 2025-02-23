@@ -5,14 +5,12 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.pm.InvalidPasswordException;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +20,6 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -142,12 +139,5 @@ public abstract class BasePasswordManagementService implements PasswordManagemen
         return false;
     }
 
-    /**
-     * Change password internally, by the impl.
-     *
-     * @param bean the bean
-     * @return true/false
-     * @throws InvalidPasswordException if new password fails downstream validation
-     */
-    public abstract boolean changeInternal(PasswordChangeRequest bean) throws Throwable;
+    protected abstract boolean changeInternal(PasswordChangeRequest bean) throws Throwable;
 }

@@ -106,7 +106,8 @@ class RestPasswordManagementServiceTests {
             "cas.authn.pm.rest.endpoint-url-phone=http://localhost:9092",
             "cas.authn.pm.rest.endpoint-url-account-unlock=http://localhost:9092",
             "cas.authn.pm.rest.endpoint-username=username",
-            "cas.authn.pm.rest.endpoint-password=password"
+            "cas.authn.pm.rest.endpoint-password=password",
+            "cas.authn.pm.rest.headers.header1=value1"
         })
     public class BasicOperations {
         @Autowired
@@ -221,6 +222,7 @@ class RestPasswordManagementServiceTests {
                 rest.setEndpointUrlChange("http://localhost:9308");
                 rest.setEndpointUrlSecurityQuestions("http://localhost:9308");
                 rest.setEndpointUrlEmail("http://localhost:9308");
+                rest.getHeaders().put("header1", "value1");
                 val passwordService = getRestPasswordManagementService(props);
 
                 assertDoesNotThrow(() -> passwordService.updateSecurityQuestions(query));
