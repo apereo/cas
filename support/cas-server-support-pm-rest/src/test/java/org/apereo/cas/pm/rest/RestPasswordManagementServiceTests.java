@@ -230,9 +230,8 @@ class RestPasswordManagementServiceTests {
         private RestPasswordManagementService getRestPasswordManagementService(final CasConfigurationProperties props) {
             return new RestPasswordManagementService(
                 passwordManagementCipherExecutor,
-                props.getServer().getPrefix(),
+                props,
                 new RestTemplate(),
-                props.getAuthn().getPm(),
                 passwordHistoryService);
         }
 

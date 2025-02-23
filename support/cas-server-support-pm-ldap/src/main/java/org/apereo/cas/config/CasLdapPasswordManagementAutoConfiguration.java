@@ -15,6 +15,7 @@ import lombok.val;
 import org.ldaptive.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -36,6 +37,7 @@ public class CasLdapPasswordManagementAutoConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
+    @ConditionalOnMissingBean(name = "ldapPasswordChangeService")
     public PasswordManagementService passwordChangeService(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
@@ -51,11 +53,9 @@ public class CasLdapPasswordManagementAutoConfiguration {
                 passwordManagerProperties.getLdap().forEach(
                     ldap -> connectionFactoryMap.put(ldap.getLdapUrl(), LdapUtils.newLdaptiveConnectionFactory(ldap)));
                 return new LdapPasswordManagementService(passwordManagementCipherExecutor,
-                    casProperties.getServer().getPrefix(),
-                    passwordManagerProperties, passwordHistoryService, connectionFactoryMap);
+                    casProperties, passwordHistoryService, connectionFactoryMap);
             })
-            .otherwise(() -> new NoOpPasswordManagementService(passwordManagementCipherExecutor,
-                casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm()))
+            .otherwise(() -> new NoOpPasswordManagementService(passwordManagementCipherExecutor, casProperties))
             .get();
     }
 }

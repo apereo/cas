@@ -52,10 +52,9 @@ public class CasRestPasswordManagementAutoConfiguration {
                                                            final CipherExecutor passwordManagementCipherExecutor,
                                                            @Qualifier(PasswordHistoryService.BEAN_NAME)
                                                            final PasswordHistoryService passwordHistoryService) {
-        var pm = casProperties.getAuthn().getPm();
         return new RestPasswordManagementService(passwordManagementCipherExecutor,
-            casProperties.getServer().getPrefix(),
-            buildRestTemplateBuilder(restTemplateBuilder, casProperties), pm,
+            casProperties,
+            buildRestTemplateBuilder(restTemplateBuilder, casProperties),
             passwordHistoryService);
     }
 }
