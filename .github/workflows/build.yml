@@ -28,7 +28,7 @@ on:
 #  push:
 #    branches: [ master ]
   pull_request:
-    types: [ labeled ]
+    types: [ assigned ]
 #    branches: [ master ]
 
 ##########################################################################
@@ -55,6 +55,26 @@ jobs:
 
   ##########################################################################
 
+  build-pull-request:
+    if: ${{ (github.event_name == 'pull_request' && github.event.assignee.login == 'apereocas-bot' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Initialize
+        run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+      - name: Build with JDK ${{ env.JDK_CURRENT }}
+        run: ./gradlew build -PsourceCompatibility=${{ env.JDK_CURRENT }} -PtargetCompatibility=${{ env.JDK_CURRENT }} ${{ env.GRADLE_BUILD_OPTIONS }}
+
+  ##########################################################################
+        
   build:
     needs: [initialize]
     continue-on-error: false
