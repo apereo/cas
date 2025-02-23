@@ -55,10 +55,14 @@ public class PullRequest {
     private final long deletions;
     private final long additions;
     private final long commits;
+    private final long comments;
 
     private final String statusesUrl;
+    private final String mergeableState;
+    private final String mergeCommitSha;
 
     private final boolean mergeable;
+    private final boolean rebaseable;
     private final boolean locked;
     private final boolean draft;
 
@@ -77,9 +81,13 @@ public class PullRequest {
                        @JsonProperty("changed_files") final long changedFiles,
                        @JsonProperty("deletions") final long deletions,
                        @JsonProperty("additions") final long additions,
+                       @JsonProperty("comments") final long comments,
                        @JsonProperty("commits") final long commits,
                        @JsonProperty("statuses_url") final String statusesUrl,
                        @JsonProperty("mergeable") final String mergeable,
+                       @JsonProperty("merge_commit_sha") final String mergeCommitSha,
+                       @JsonProperty("mergeable_state") final String mergeableState,
+                       @JsonProperty("rebaseable") final String rebaseable,
                        @JsonProperty("locked") final Boolean locked,
                        @JsonProperty("draft") final Boolean draft) {
         this.url = url;
@@ -98,11 +106,15 @@ public class PullRequest {
         this.deletions = deletions;
         this.additions = additions;
         this.commits = commits;
+        this.comments = comments;
 
         this.statusesUrl = statusesUrl;
         this.draft = draft == null ? Boolean.FALSE : draft;
         this.mergeable = mergeable != null && Boolean.parseBoolean(mergeable);
-        this.locked = locked == null ? Boolean.FALSE : locked;;
+        this.rebaseable = rebaseable != null && Boolean.parseBoolean(rebaseable);
+        this.locked = locked == null ? Boolean.FALSE : locked;
+        this.mergeableState = mergeableState;
+        this.mergeCommitSha = mergeCommitSha;
     }
     
     public boolean isOpen() {

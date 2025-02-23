@@ -107,22 +107,21 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public Page<Issue> getIssues(final String organization, final String repository) {
-        val url = API_GITHUB_REPOS + organization + '/' + repository
-            + "/issues";
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/issues";
         return getPage(url, Issue[].class);
     }
 
     @Override
     public Page<PullRequest> getPullRequests(final String organization, final String repository) {
         val url = API_GITHUB_REPOS + organization + '/' + repository + "/pulls?state=open";
-        val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.shadow-cat-preview+json")));
+        val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github+json")));
         return getPage(url, PullRequest[].class, Map.of(), headers);
     }
 
     @Override
     public PullRequest getPullRequest(final String organization, final String repository, final String number) {
         val url = API_GITHUB_REPOS + organization + '/' + repository + "/pulls/" + number;
-        val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.shadow-cat-preview+json")));
+        val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github+json")));
         return getSinglePage(url, PullRequest.class, Map.of(), headers);
     }
 
@@ -379,7 +378,7 @@ public class GitHubTemplate implements GitHubOperations {
         final Map<String, String> body = new HashMap<>();
         body.put("milestone", milestone.getNumber());
 
-        var response = this.rest.exchange(new RequestEntity(body, HttpMethod.PATCH, uri), PullRequest.class);
+        var response = this.rest.exchange(new RequestEntity<>(body, HttpMethod.PATCH, uri), PullRequest.class);
         if (response.getStatusCode() != HttpStatus.OK) {
             log.warn("Failed to add milestone to pull request. Response status: {}", response.getStatusCode());
         }
@@ -387,13 +386,15 @@ public class GitHubTemplate implements GitHubOperations {
 
     @Override
     public PullRequest addLabel(final PullRequest pr, final List<String> labels) {
-        val uri = URI.create(pr.getLabelsUrl());
-        log.info("Adding labels {} to pull request {}", labels, pr);
-        var response = this.rest.exchange(
-            new RequestEntity<>(labels, HttpMethod.POST, uri),
-            Label[].class);
-        if (response.getStatusCode() != HttpStatus.OK) {
-            log.warn("Failed to add label to pull request. Response status: " + response.getStatusCode());
+        if (!labels.isEmpty()) {
+            val uri = URI.create(pr.getLabelsUrl());
+            log.info("Adding labels {} to pull request {}", labels, pr);
+            var response = this.rest.exchange(
+                new RequestEntity<>(labels, HttpMethod.POST, uri),
+                Label[].class);
+            if (response.getStatusCode() != HttpStatus.OK) {
+                log.warn("Failed to add label to pull request. Response status: " + response.getStatusCode());
+            }
         }
         return pr;
     }
@@ -634,7 +635,7 @@ public class GitHubTemplate implements GitHubOperations {
             return null;
         }
         var hd = new HttpHeaders(headers);
-        final ResponseEntity<T> contents = this.rest.exchange(url, HttpMethod.GET, new HttpEntity<>(hd), type, params);
+        var contents = this.rest.exchange(url, HttpMethod.GET, new HttpEntity<>(hd), type, params);
         var body = Arrays.asList(type.cast(contents.getBody()));
         return new StandardPage<T>(body, () -> getPage(getNextUrl(contents), type));
     }

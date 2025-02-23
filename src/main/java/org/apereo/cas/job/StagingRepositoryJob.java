@@ -4,6 +4,7 @@ package org.apereo.cas.job;
 import org.apereo.cas.MonitoredRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.scheduling.annotation.Scheduled;
 
 @Slf4j
@@ -16,10 +17,11 @@ public class StagingRepositoryJob {
 
     @Scheduled(fixedRate = ONE_MINUTE * 5)
     void monitorWorkflowRuns() {
-        log.info("Monitoring {}", this.repository.getFullName());
+        log.info("Monitoring {}", repository.getFullName());
         try {
-            var pullRequests = this.repository.getOpenPullRequests();
-            pullRequests.forEach(pr -> {
+            var pullRequests = repository.getOpenPullRequests();
+            pullRequests.forEach(givenPullRequest -> {
+                val pr = repository.getPullRequest(givenPullRequest.getNumber());
                 log.info("Processing pull request {}", pr.getNumber());
                 repository.autoMergePullRequest(pr);
             });

@@ -1,12 +1,10 @@
 package org.apereo.cas.prs;
 
 import org.apereo.cas.CasLabels;
-import org.apereo.cas.DependencyRange;
 import org.apereo.cas.Memes;
 import org.apereo.cas.MonitoredRepository;
 import org.apereo.cas.PullRequestListener;
 import org.apereo.cas.github.PullRequest;
-import com.vdurmont.semver4j.Semver;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +14,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StringUtils;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Slf4j
