@@ -6,19 +6,18 @@ import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.impl.BasePasswordManagementService;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
 import org.springframework.web.client.RestTemplate;
-
+import org.springframework.web.util.UriComponentsBuilder;
 import java.io.Serializable;
+import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -43,23 +42,20 @@ public class RestPasswordManagementService extends BasePasswordManagementService
     @Override
     public boolean changeInternal(final PasswordChangeRequest bean) {
         val rest = casProperties.getAuthn().getPm().getRest();
-
         if (StringUtils.isBlank(rest.getEndpointUrlChange())) {
             return false;
         }
 
-        val headers = new HttpHeaders();
-        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-        headers.put(rest.getFieldNameUser(), CollectionUtils.wrap(bean.getUsername()));
-        headers.put(rest.getFieldNamePassword(), CollectionUtils.wrap(bean.toPassword()));
+        val body = new HashMap<>();
+        body.put(rest.getFieldNameUser(), bean.getUsername());
+        body.put(rest.getFieldNamePassword(), bean.toPassword());
         if (bean.getCurrentPassword() != null) {
-            headers.put(rest.getFieldNamePasswordOld(), CollectionUtils.wrap(bean.toCurrentPassword()));
+            body.put(rest.getFieldNamePasswordOld(), bean.toCurrentPassword());
         }
-
-        val entity = new HttpEntity<>(headers);
+        val entity = new HttpEntity<>(body);
         val result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);
         return result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()
-               && Objects.requireNonNull(result.getBody());
+            && Objects.requireNonNull(result.getBody());
     }
 
     @Override
@@ -68,12 +64,10 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         if (StringUtils.isBlank(rest.getEndpointUrlUser())) {
             return null;
         }
-
-        val headers = new HttpHeaders();
-        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-        headers.put("email", CollectionUtils.wrap(query.getUsername()));
-        val entity = new HttpEntity<>(headers);
-        val result = restTemplate.exchange(rest.getEndpointUrlUser(), HttpMethod.GET, entity, String.class);
+        val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlUser())
+            .queryParam("email", query.getUsername()).build().toUriString();
+        val request = new RequestEntity<>(HttpMethod.GET, URI.create(url));
+        val result = restTemplate.exchange(request, String.class);
 
         if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();
@@ -88,11 +82,10 @@ public class RestPasswordManagementService extends BasePasswordManagementService
             return null;
         }
 
-        val headers = new HttpHeaders();
-        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-        headers.put("username", CollectionUtils.wrap(query.getUsername()));
-        val entity = new HttpEntity<>(headers);
-        val result = restTemplate.exchange(rest.getEndpointUrlEmail(), HttpMethod.GET, entity, String.class);
+        val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlEmail())
+            .queryParam("username", query.getUsername()).build().toUriString();
+        val request = new RequestEntity<>(HttpMethod.GET, URI.create(url));
+        val result = restTemplate.exchange(request, String.class);
 
         if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();
@@ -106,12 +99,10 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         if (StringUtils.isBlank(rest.getEndpointUrlPhone())) {
             return null;
         }
-
-        val headers = new HttpHeaders();
-        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-        headers.put("username", CollectionUtils.wrap(query.getUsername()));
-        val entity = new HttpEntity<>(headers);
-        val result = restTemplate.exchange(rest.getEndpointUrlPhone(), HttpMethod.GET, entity, String.class);
+        val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlPhone())
+            .queryParam("username", query.getUsername()).build().toUriString();
+        val request = new RequestEntity<>(HttpMethod.GET, URI.create(url));
+        val result = restTemplate.exchange(request, String.class);
 
         if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();
@@ -125,12 +116,11 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         if (StringUtils.isBlank(rest.getEndpointUrlSecurityQuestions())) {
             return null;
         }
-        val headers = new HttpHeaders();
-        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-        headers.put("username", CollectionUtils.wrap(query.getUsername()));
-        val entity = new HttpEntity<>(headers);
-        val result = restTemplate.exchange(rest.getEndpointUrlSecurityQuestions(),
-            HttpMethod.GET, entity, Map.class);
+
+        val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlSecurityQuestions())
+            .queryParam("username", query.getUsername()).build().toUriString();
+        val request = new RequestEntity<>(HttpMethod.GET, URI.create(url));
+        val result = restTemplate.exchange(request, Map.class);
 
         if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();
@@ -142,11 +132,10 @@ public class RestPasswordManagementService extends BasePasswordManagementService
     public void updateSecurityQuestions(final PasswordManagementQuery query) {
         val rest = casProperties.getAuthn().getPm().getRest();
         if (StringUtils.isNotBlank(rest.getEndpointUrlSecurityQuestions())) {
-            val headers = new HttpHeaders();
-            headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            headers.put("username", CollectionUtils.wrap(query.getUsername()));
-            val entity = new HttpEntity<>(query.getSecurityQuestions(), headers);
-            restTemplate.exchange(rest.getEndpointUrlSecurityQuestions(), HttpMethod.POST, entity, Integer.class);
+            val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlSecurityQuestions())
+                .queryParam("username", query.getUsername()).build().toUriString();
+            val entity = new HttpEntity<>(query.getSecurityQuestions());
+            restTemplate.exchange(url, HttpMethod.POST, entity, Boolean.class);
         }
     }
 
@@ -155,12 +144,10 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         val rest = casProperties.getAuthn().getPm().getRest();
         var result = true;
         if (StringUtils.isNotBlank(rest.getEndpointUrlAccountUnlock())) {
-            val headers = new HttpHeaders();
-            headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            headers.put("username", CollectionUtils.wrap(credential.getId()));
-            val url = StringUtils.appendIfMissing(rest.getEndpointUrlAccountUnlock(), "/").concat(credential.getId());
-            result = restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(headers), Boolean.class)
-                .getStatusCode().is2xxSuccessful();
+            val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlAccountUnlock())
+                .queryParam("username", credential.getId()).build().toUriString();
+            val request = new RequestEntity<>(HttpMethod.POST, URI.create(url));
+            result = restTemplate.exchange(request, Boolean.class).getStatusCode().is2xxSuccessful();
         }
         return result;
     }

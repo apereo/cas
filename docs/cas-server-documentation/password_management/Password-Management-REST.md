@@ -17,10 +17,14 @@ REST support is enabled by including the following dependencies in the WAR overl
 
 {% include_cached casproperties.html properties="cas.authn.pm.rest" %}
 
-| Endpoint               | Method | Headers                               | Expected Response                          |
-|------------------------|--------|---------------------------------------|--------------------------------------------|
-| Get Email Address      | `GET`  | `username`                            | `200`. Email address in the body.          |
-| Get Phone Number       | `GET`  | `username`                            | `200`. Phone number in the body.           |
-| Get Security Questions | `GET`  | `username`                            | `200`. Security questions map in the body. |
-| Update Password        | `POST` | `username`, `password`, `oldPassword` | `200`. `true/false` in the body.           |
-| Unlock Account         | `POST` | `username` in the path                | `200`. `true/false` in the body.           |
+| Endpoint                  | Method | Query Parameter(s) | Request Body                          | Expected Response                          |
+|---------------------------|--------|--------------------|---------------------------------------|--------------------------------------------|
+| Get Email Address         | `GET`  | `username`         | None                                  | `200`. Email address in the body.          |
+| Get Phone Number          | `GET`  | `username`         | None                                  | `200`. Phone number in the body.           |
+| Get Security Questions    | `GET`  | `username`         | None                                  | `200`. Security questions map in the body. |
+| Update Security Questions | `POST` | `username`         | Security questions map in the body.   | `200`. `true/false` in the body.           |
+| Update Password           | `POST` | None               | `username`, `password`, `oldPassword` | `200`. `true/false` in the body.           |
+| Unlock Account            | `POST` | `username`         | None                                  | `200`. `true/false` in the body.           |
+          
+By default, all requests are submitted using the `Accept` header `application/json`, `Content-Type` header set to `application/json`
+and `Accept-Charset` header set to `UTF-8`.

@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.mock.web.MockHttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,11 +54,13 @@ class SurrogateAuthenticationEventListenerTests {
     @Qualifier("surrogateAuthenticationEventListener")
     private SurrogateAuthenticationEventListener surrogateAuthenticationEventListener;
 
-    private ClientInfo clientInfo;
-
     @BeforeEach
     void setup() {
-        clientInfo = ClientInfoHolder.getClientInfo();
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("223.456.789.000");
+        request.setLocalAddr("23.456.789.100");
+        request.addHeader(HttpHeaders.USER_AGENT, "test");
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 
     @Test
@@ -66,6 +70,7 @@ class SurrogateAuthenticationEventListenerTests {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
+                val clientInfo = ClientInfoHolder.getClientInfo();
                 val failureEvent = new CasSurrogateAuthenticationFailureEvent(this,
                     principal, "surrogate", clientInfo);
                 surrogateAuthenticationEventListener.handleSurrogateAuthenticationFailureEvent(failureEvent);
@@ -82,6 +87,7 @@ class SurrogateAuthenticationEventListenerTests {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
+                val clientInfo = ClientInfoHolder.getClientInfo();
                 val failureEvent = new CasSurrogateAuthenticationFailureEvent(this,
                     principal, "surrogate", clientInfo);
                 surrogateAuthenticationEventListener.handleSurrogateAuthenticationFailureEvent(failureEvent);
