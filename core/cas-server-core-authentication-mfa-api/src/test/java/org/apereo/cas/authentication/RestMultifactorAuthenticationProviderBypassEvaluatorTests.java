@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -86,6 +88,32 @@ class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
             assertEquals("casuser", recordedRequestUrl.queryParameter("principal"));
             assertEquals(recordedRequestUrl.queryParameter("service"), registeredService.getServiceId());
             assertEquals(recordedRequestUrl.queryParameter("provider"), provider.getId());
+            assertTrue(res);
+        }
+    }
+
+    @Test
+    void verifyRestSendsHeaders() throws Throwable {
+        try (val webServer = new okhttp3.mockwebserver.MockWebServer()) {
+            val port = webServer.getPort();
+            val response = new MockResponse().setResponseCode(HttpStatus.ACCEPTED.value());
+            webServer.enqueue(response);
+
+            val props = new MultifactorAuthenticationProviderBypassProperties();
+            props.getRest().setUrl("http://localhost:" + port);
+            props.getRest().setHeaders(Map.of(
+                    "X-Custom-Header", "HeaderValue",
+                    "Authorization", "Bearer token"
+            ));
+            val provider = new TestMultifactorAuthenticationProvider();
+            val r = new RestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId(), applicationContext);
+            val request = new MockHttpServletRequest();
+            val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();
+            val res = r.shouldMultifactorAuthenticationProviderExecute(MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
+                    registeredService, provider, request, MultifactorAuthenticationTestUtils.getService("service"));
+            val recordedRequest = webServer.takeRequest();
+            assertEquals("HeaderValue", recordedRequest.getHeader("X-Custom-Header"));
+            assertEquals("Bearer token", recordedRequest.getHeader("Authorization"));
             assertTrue(res);
         }
     }
