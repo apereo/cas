@@ -56,7 +56,7 @@ jobs:
   ##########################################################################
 
   build-pull-request:
-    if: ${{ (github.event_name == 'pull_request' && github.event.assignee.login == 'apereocas-bot' }}
+    if: ${{ (github.event_name == 'pull_request' && github.event.assignee.login == 'apereocas-bot') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
