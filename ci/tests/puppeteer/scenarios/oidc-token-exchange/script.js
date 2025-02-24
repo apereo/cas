@@ -38,7 +38,7 @@ async function exchangeToken(token, fromType, toType) {
                     assert(keys.status === 200);
                     assert(keys.data.keys[0]["kid"] !== undefined);
                     cas.log(`Using key identifier ${keys.data.keys[0]["kid"]}`);
-                    cas.verifyJwtWithJwk(payload.data.id_token, keys.data.keys[0], "RS512").then((verified) => {
+                    cas.verifyJwtWithJwk(payload.data.id_token, keys.data.keys[0], "RS256").then((verified) => {
                         cas.log(verified);
                         assert(verified.payload.sub === "client");
                         assert(verified.payload.aud === "client");
