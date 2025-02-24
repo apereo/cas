@@ -2,6 +2,7 @@ package org.apereo.cas.pm.impl;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +12,7 @@ import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.server.prefix=${cas.server.name}/cas"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ExtendWith(CasTestExtension.class)
 class NoOpPasswordManagementServiceTests {
 
     @Autowired
