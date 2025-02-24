@@ -31,12 +31,15 @@ const jose = require("jose");
     await cas.log("DPoP proof payload is");
     await cas.log(payload);
 
-    const {publicKey, privateKey} = await jose.generateKeyPair("ES256");
+    const {publicKey, privateKey} = await jose.generateKeyPair("ES256", { extractable: true });
     const publicJwk = await jose.exportJWK(publicKey);
     await cas.log("DPoP public key is");
     await cas.log(publicJwk);
 
-    const dpopProof = await cas.createJwt(payload, privateKey, "ES256",
+    const privateKeyPem = await jose.exportPKCS8(privateKey);
+    await cas.log("DPoP private key is");
+    
+    const dpopProof = await cas.createJwt(payload, privateKeyPem, "ES256",
         {
             header: {
                 jwk: publicJwk,
@@ -84,7 +87,7 @@ const jose = require("jose");
     await cas.log("DPoP proof profile payload is");
     await cas.log(profilePayload);
 
-    const dpopProofProfile = await cas.createJwt(profilePayload, privateKey, "ES256",
+    const dpopProofProfile = await cas.createJwt(profilePayload, privateKeyPem, "ES256",
         {
             header: {
                 jwk: publicJwk,
