@@ -10,7 +10,9 @@ import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 /**
@@ -47,5 +49,26 @@ public class MultitenancyEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Report registered tenant definitions")
     public List<TenantDefinition> allTenantDefinitions() {
         return tenantExtractor.getObject().getTenantsManager().findTenants();
+    }
+
+    /**
+     * All tenant definitions.
+     *
+     * @return the list
+     */
+    @GetMapping(
+        path = "/tenants/{tenantId}",
+        produces = {
+            MediaType.APPLICATION_JSON_VALUE,
+            MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+            MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MEDIA_TYPE_CAS_YAML
+        })
+    @Operation(summary = "Report registered tenant definition by its id")
+    public ResponseEntity<TenantDefinition> tenantDefinition(
+        @PathVariable
+        final String tenantId) {
+        return ResponseEntity.of(tenantExtractor.getObject().getTenantsManager().findTenant(tenantId));
     }
 }

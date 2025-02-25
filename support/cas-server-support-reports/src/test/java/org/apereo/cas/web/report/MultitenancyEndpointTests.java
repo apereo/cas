@@ -28,4 +28,11 @@ class MultitenancyEndpointTests extends AbstractCasEndpointTests {
             .andExpect(status().isOk());
     }
 
+    @Test
+    void verifyOperationById() throws Throwable {
+        mockMvc.perform(get("/actuator/multitenancy/tenants/shire")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+    }
 }
