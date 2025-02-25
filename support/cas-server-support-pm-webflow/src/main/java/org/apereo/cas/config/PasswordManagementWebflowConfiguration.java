@@ -327,8 +327,7 @@ class PasswordManagementWebflowConfiguration {
                     .supply(() -> new SendPasswordResetInstructionsAction(casProperties, communicationsManager,
                         passwordManagementService, ticketRegistry, ticketFactory,
                         defaultPrincipalResolver, passwordResetUrlBuilder,
-                        multifactorAuthenticationProviderSelector, authenticationSystemSupport,
-                        applicationContext))
+                        multifactorAuthenticationProviderSelector, authenticationSystemSupport))
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_PASSWORD_RESET_SEND_INSTRUCTIONS)
                 .build()

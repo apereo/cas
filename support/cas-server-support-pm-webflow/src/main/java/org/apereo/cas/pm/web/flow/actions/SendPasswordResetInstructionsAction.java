@@ -37,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -103,8 +102,6 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
 
     protected final AuthenticationSystemSupport authenticationSystemSupport;
 
-    protected final ApplicationContext applicationContext;
-
     @Audit(action = AuditableActions.REQUEST_CHANGE_PASSWORD,
         principalResolverName = AuditPrincipalResolvers.REQUEST_CHANGE_PASSWORD_PRINCIPAL_RESOLVER,
         actionResolverName = AuditActionResolvers.REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER,
@@ -153,6 +150,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
     }
 
     protected boolean doesPasswordResetRequireMultifactorAuthentication(final RequestContext requestContext) {
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
         val providerId = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(requestContext);
         return casProperties.getAuthn().getPm().getReset().isMultifactorAuthenticationEnabled()
@@ -176,6 +174,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
 
     protected MultifactorAuthenticationProvider selectMultifactorAuthenticationProvider(final RequestContext requestContext,
                                                                                         final Principal principal) throws Throwable {
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
         val registeredService = WebUtils.getRegisteredService(requestContext);
         return multifactorAuthenticationProviderSelector.resolve(providers.values(), registeredService, principal);

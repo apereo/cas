@@ -5,23 +5,24 @@ import org.apereo.cas.pm.InvalidPasswordException;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
+import org.apereo.cas.pm.event.PasswordChangeFailureEvent;
+import org.apereo.cas.pm.event.PasswordChangeSuccessEvent;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Optional;
 
 /**
@@ -57,11 +58,15 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        
+        val bean = getPasswordChangeRequest(requestContext);
+        Optional.ofNullable(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class))
+                .ifPresent(credential -> bean.setCurrentPassword(credential.getPassword()));
+
         try {
-            val bean = getPasswordChangeRequest(requestContext);
-            Optional.ofNullable(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class))
-                    .ifPresent(credential -> bean.setCurrentPassword(credential.getPassword()));
-            
+
             LOGGER.debug("Attempting to validate the password change bean for username [{}]", bean.getUsername());
             if (StringUtils.isBlank(bean.getUsername()) || !passwordValidationService.isValid(bean)) {
                 LOGGER.error("Failed to validate the provided password");
@@ -71,26 +76,23 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
                 val credential = new UsernamePasswordCredential(bean.getUsername(), bean.toPassword());
                 WebUtils.putCredential(requestContext, credential);
                 LOGGER.info("Password successfully changed for [{}]", bean.getUsername());
+
+                applicationContext.publishEvent(new PasswordChangeSuccessEvent(this, clientInfo, bean));
                 return getSuccessEvent(requestContext, bean);
             }
         } catch (final InvalidPasswordException e) {
+            applicationContext.publishEvent(new PasswordChangeFailureEvent(this, clientInfo, bean, e));
             return getErrorEvent(requestContext,
                 PASSWORD_VALIDATION_FAILURE_CODE + StringUtils.defaultIfBlank(e.getCode(), StringUtils.EMPTY),
                 StringUtils.defaultIfBlank(e.getValidationMessage(), DEFAULT_MESSAGE),
                 e.getParams());
         } catch (final Throwable e) {
+            applicationContext.publishEvent(new PasswordChangeFailureEvent(this, clientInfo, bean, e));
             LoggingUtils.error(LOGGER, e);
         }
         return getErrorEvent(requestContext, "pm.updateFailure", DEFAULT_MESSAGE);
     }
 
-    /**
-     * Finalize password change success.
-     *
-     * @param requestContext the request context
-     * @param bean           the bean
-     * @return the event
-     */
     protected Event getSuccessEvent(final RequestContext requestContext,
                                     final PasswordChangeRequest bean) {
         return new EventFactorySupport()
@@ -98,7 +100,7 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
                 new LocalAttributeMap<>("passwordChangeRequest", bean));
     }
 
-    private Event getErrorEvent(final RequestContext ctx, final String code, final String message, final Object... params) {
+    protected Event getErrorEvent(final RequestContext ctx, final String code, final String message, final Object... params) {
         WebUtils.addErrorMessageToContext(ctx, code, message, params);
         return error();
     }
