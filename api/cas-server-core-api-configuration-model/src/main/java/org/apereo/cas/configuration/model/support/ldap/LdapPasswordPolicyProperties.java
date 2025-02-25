@@ -19,7 +19,6 @@ import java.io.Serial;
 @Setter
 @RequiresModule(name = "cas-server-support-ldap")
 @Accessors(chain = true)
-
 public class LdapPasswordPolicyProperties extends PasswordPolicyProperties {
     @Serial
     private static final long serialVersionUID = -1878237508646993100L;

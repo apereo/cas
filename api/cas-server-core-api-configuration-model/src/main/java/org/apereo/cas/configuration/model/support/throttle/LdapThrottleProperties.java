@@ -20,7 +20,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class LdapThrottleProperties extends AbstractLdapSearchProperties {
     @Serial
     private static final long serialVersionUID = 7519847618333749780L;

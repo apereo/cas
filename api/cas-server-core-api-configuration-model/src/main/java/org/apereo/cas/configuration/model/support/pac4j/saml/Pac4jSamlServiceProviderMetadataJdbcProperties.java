@@ -20,7 +20,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Pac4jSamlServiceProviderMetadataJdbcProperties extends AbstractJpaProperties {
     @Serial
     private static final long serialVersionUID = -5114734720383722585L;

@@ -28,7 +28,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Pac4jDelegatedAuthenticationProperties implements Serializable {
 
     @Serial

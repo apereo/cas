@@ -20,7 +20,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class LdapConsentProperties extends AbstractLdapSearchProperties {
 
     @Serial

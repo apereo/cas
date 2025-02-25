@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SurrogateRestfulAuthenticationProperties extends RestEndpointProperties {
     @Serial
     private static final long serialVersionUID = 8152273816132989085L;

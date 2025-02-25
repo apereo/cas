@@ -20,7 +20,6 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
 @Setter
 @Accessors(chain = true)
-
 public class TimeoutTicketExpirationPolicyProperties implements Serializable {
 
     @Serial

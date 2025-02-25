@@ -20,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class ScimAccountManagementRegistrationProvisioningProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 6833936824474022021L;

@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -42,44 +41,18 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
      */
     public static final String REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED = "LogoutRequestConfirmed";
 
-    /**
-     * The event factory.
-     */
     protected final EventFactorySupport eventFactorySupport = new EventFactorySupport();
 
-    /**
-     * The authentication service.
-     */
     protected final CentralAuthenticationService centralAuthenticationService;
 
-    /**
-     * The TGT cookie generator.
-     */
     protected final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
-    /**
-     * The warn cookie generator.
-     */
     protected final CasCookieBuilder warnCookieGenerator;
 
-    /**
-     * The logout properties.
-     */
     protected final LogoutProperties logoutProperties;
 
-    /**
-     * Logout manager.
-     */
     protected final LogoutManager logoutManager;
 
-    /**
-     * Application context.
-     */
-    protected final ConfigurableApplicationContext applicationContext;
-
-    /**
-     * Single logout executor.
-     */
     protected final SingleLogoutRequestExecutor singleLogoutRequestExecutor;
 
     protected static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
@@ -113,8 +86,8 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
-        val beanFactory = applicationContext.getBeanFactory();
-        val terminationHandlers = BeanFactoryUtils.beansOfTypeIncludingAncestors(beanFactory, SessionTerminationHandler.class)
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
+        val terminationHandlers = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, SessionTerminationHandler.class)
             .values()
             .stream()
             .filter(BeanSupplier::isNotProxy)

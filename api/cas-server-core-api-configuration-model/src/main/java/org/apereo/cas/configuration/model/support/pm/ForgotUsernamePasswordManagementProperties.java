@@ -23,7 +23,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class ForgotUsernamePasswordManagementProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 4850199066765183587L;

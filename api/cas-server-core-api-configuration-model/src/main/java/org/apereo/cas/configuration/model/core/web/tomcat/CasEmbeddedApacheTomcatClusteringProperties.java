@@ -20,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 620356002948464740L;

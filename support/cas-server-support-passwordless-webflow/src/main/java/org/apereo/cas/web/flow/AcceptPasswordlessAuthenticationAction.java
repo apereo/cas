@@ -18,7 +18,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -40,21 +39,17 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
-    private final ConfigurableApplicationContext applicationContext;
-
 
     public AcceptPasswordlessAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                   final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                                   final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
                                                   final PasswordlessTokenRepository passwordlessTokenRepository,
                                                   final AuthenticationSystemSupport authenticationSystemSupport,
-                                                  final PasswordlessUserAccountStore passwordlessUserAccountStore,
-                                                  final ConfigurableApplicationContext applicationContext) {
+                                                  final PasswordlessUserAccountStore passwordlessUserAccountStore) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.passwordlessTokenRepository = passwordlessTokenRepository;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.passwordlessUserAccountStore = passwordlessUserAccountStore;
-        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -90,6 +85,7 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
         val service = WebUtils.getService(requestContext);
         var authenticationResultBuilder = authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);
 
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val processors = applicationContext.getBeansOfType(PasswordlessAuthenticationPreProcessor.class).values()
             .stream()
             .filter(BeanSupplier::isNotProxy)

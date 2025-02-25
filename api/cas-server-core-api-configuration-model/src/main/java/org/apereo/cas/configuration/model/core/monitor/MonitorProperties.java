@@ -22,7 +22,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class MonitorProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -7047060071480971606L;

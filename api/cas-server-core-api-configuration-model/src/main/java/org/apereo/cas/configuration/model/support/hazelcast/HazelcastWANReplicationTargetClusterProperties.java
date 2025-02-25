@@ -21,7 +21,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class HazelcastWANReplicationTargetClusterProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 1635330607045885145L;

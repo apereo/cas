@@ -38,7 +38,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class ServiceRegistryProperties implements Serializable {
 
     @Serial

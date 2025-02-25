@@ -21,7 +21,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class GroovyWebflowProperties extends SpringResourceProperties {
 
     @Serial

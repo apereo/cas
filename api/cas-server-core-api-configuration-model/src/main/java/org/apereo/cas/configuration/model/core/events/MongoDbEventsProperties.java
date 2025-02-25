@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class MongoDbEventsProperties extends SingleCollectionMongoDbProperties {
 
     @Serial

@@ -22,7 +22,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class StubPrincipalAttributesProperties implements Serializable {
 
     @Serial

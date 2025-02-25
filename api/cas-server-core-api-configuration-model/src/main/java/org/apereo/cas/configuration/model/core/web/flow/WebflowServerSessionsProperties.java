@@ -22,7 +22,6 @@ import java.io.Serializable;
 @Setter
 @RequiresModule(name = "cas-server-core-webflow")
 @Accessors(chain = true)
-
 public class WebflowServerSessionsProperties implements Serializable {
 
     @Serial

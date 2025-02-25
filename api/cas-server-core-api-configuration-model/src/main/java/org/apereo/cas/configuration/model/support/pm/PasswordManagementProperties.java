@@ -27,7 +27,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
-
 public class PasswordManagementProperties implements CasFeatureModule, Serializable {
 
     @Serial

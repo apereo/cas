@@ -18,7 +18,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class AuditRedisProperties extends BaseRedisProperties {
     @Serial
     private static final long serialVersionUID = -8112996050439638782L;

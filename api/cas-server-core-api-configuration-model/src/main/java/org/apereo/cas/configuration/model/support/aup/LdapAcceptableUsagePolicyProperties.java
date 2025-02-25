@@ -20,7 +20,6 @@ import java.util.Locale;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class LdapAcceptableUsagePolicyProperties extends AbstractLdapSearchProperties {
     @Serial
     private static final long serialVersionUID = -7991011278378393382L;

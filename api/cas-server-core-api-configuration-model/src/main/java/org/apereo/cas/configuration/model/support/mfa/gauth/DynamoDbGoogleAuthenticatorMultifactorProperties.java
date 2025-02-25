@@ -19,7 +19,6 @@ import java.io.Serial;
 @Setter
 @RequiresModule(name = "cas-server-support-gauth-dynamodb")
 @Accessors(chain = true)
-
 public class DynamoDbGoogleAuthenticatorMultifactorProperties extends AbstractDynamoDbProperties {
     @Serial
     private static final long serialVersionUID = -1161683393319585262L;

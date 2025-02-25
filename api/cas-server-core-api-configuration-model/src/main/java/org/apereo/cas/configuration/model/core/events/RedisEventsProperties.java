@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class RedisEventsProperties extends BaseRedisProperties {
     @Serial
     private static final long serialVersionUID = 9027696961101634818L;

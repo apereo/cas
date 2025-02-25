@@ -28,7 +28,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class AccountManagementRegistrationCoreProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = -4679683905941523034L;

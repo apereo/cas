@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class RestfulSmsProperties extends RestEndpointProperties {
     @Serial
     private static final long serialVersionUID = -8102345678378393382L;

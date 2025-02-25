@@ -19,7 +19,6 @@ import java.io.Serializable;
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
-
 public class PhoneProperties implements CasFeatureModule, Serializable {
 
     @Serial

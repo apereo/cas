@@ -19,7 +19,6 @@ import java.io.Serializable;
 @Setter
 @RequiresModule(name = "cas-server-support-mailjet", automated = false)
 @Accessors(chain = true)
-
 public class MailjetProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -2504930082372661815L;

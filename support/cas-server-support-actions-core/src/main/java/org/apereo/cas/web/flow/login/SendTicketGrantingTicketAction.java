@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -40,8 +39,6 @@ public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
     private final CasCookieBuilder ticketGrantingCookieBuilder;
 
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
-
-    private final ApplicationContext applicationContext;
 
     @Override
     protected Event doExecuteInternal(final RequestContext context) throws Throwable {

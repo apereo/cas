@@ -102,7 +102,7 @@ class DuoSecurityConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                    .supply(() -> new DuoSecurityUniversalPromptPrepareLoginAction(applicationContext, duoUniversalPromptSessionStore))
+                    .supply(() -> new DuoSecurityUniversalPromptPrepareLoginAction(duoUniversalPromptSessionStore))
                     .otherwiseProxy()
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN)
@@ -128,8 +128,7 @@ class DuoSecurityConfiguration {
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                     .supply(() -> new DuoSecurityUniversalPromptValidateLoginAction(
-                        duoAuthenticationWebflowEventResolver, duoUniversalPromptSessionStore,
-                        applicationContext))
+                        duoAuthenticationWebflowEventResolver, duoUniversalPromptSessionStore))
                     .otherwiseProxy()
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN)
@@ -164,7 +163,7 @@ class DuoSecurityConfiguration {
             final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(MultifactorAuthenticationDeviceProviderAction.class)
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new DuoSecurityMultifactorAuthenticationDeviceProviderAction(applicationContext))
+                .supply(DuoSecurityMultifactorAuthenticationDeviceProviderAction::new)
                 .otherwiseProxy()
                 .get();
         }

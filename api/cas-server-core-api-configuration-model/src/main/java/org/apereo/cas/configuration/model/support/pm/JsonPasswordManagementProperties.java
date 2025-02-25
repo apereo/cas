@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class JsonPasswordManagementProperties extends SpringResourceProperties {
     @Serial
     private static final long serialVersionUID = 1129426669588789974L;

@@ -18,7 +18,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class WarningCookieProperties extends CookieProperties {
     @Serial
     private static final long serialVersionUID = -266090748600049578L;

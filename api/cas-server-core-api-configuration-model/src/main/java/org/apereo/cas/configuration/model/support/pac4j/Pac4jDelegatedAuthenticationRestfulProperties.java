@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Pac4jDelegatedAuthenticationRestfulProperties extends RestEndpointProperties {
     @Serial
     private static final long serialVersionUID = 3659099897056632608L;

@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class WebAuthnRestfulMultifactorProperties extends RestEndpointProperties {
     @Serial
     private static final long serialVersionUID = -77291036299848782L;

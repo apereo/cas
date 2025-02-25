@@ -22,7 +22,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class PasswordHistoryProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 2211199066765183587L;

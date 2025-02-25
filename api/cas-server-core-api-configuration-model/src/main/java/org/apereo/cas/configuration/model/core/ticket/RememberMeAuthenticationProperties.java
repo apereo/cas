@@ -21,7 +21,6 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
 @Setter
 @Accessors(chain = true)
-
 public class RememberMeAuthenticationProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 1899959269597512610L;

@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Bucket4jThrottleProperties extends BaseBucket4jProperties {
     @Serial
     private static final long serialVersionUID = 5813165633105563813L;

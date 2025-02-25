@@ -24,7 +24,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class PasswordPolicyProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -3878237508646993100L;

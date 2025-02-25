@@ -22,7 +22,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class HttpHeadersRequestProperties implements Serializable {
 
     @Serial

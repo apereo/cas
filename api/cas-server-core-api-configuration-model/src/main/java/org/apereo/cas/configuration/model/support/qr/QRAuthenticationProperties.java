@@ -22,7 +22,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class QRAuthenticationProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 8726382874579042117L;

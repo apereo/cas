@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class MongoDbMonitorProperties extends BaseMongoDbProperties {
     @Serial
     private static final long serialVersionUID = -1918436901491275547L;

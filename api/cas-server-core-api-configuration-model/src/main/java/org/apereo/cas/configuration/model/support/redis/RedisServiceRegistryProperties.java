@@ -18,7 +18,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class RedisServiceRegistryProperties extends BaseRedisProperties {
 
     @Serial

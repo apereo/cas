@@ -26,7 +26,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class AcmeProperties implements Serializable, CasFeatureModule {
     @Serial
     private static final long serialVersionUID = -561637865919944706L;

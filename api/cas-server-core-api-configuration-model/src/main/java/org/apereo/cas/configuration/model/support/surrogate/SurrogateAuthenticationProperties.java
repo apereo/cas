@@ -23,7 +23,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SurrogateAuthenticationProperties implements Serializable {
 
     @Serial

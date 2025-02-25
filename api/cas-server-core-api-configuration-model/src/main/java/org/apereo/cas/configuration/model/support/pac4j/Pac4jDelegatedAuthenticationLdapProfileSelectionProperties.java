@@ -22,7 +22,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Pac4jDelegatedAuthenticationLdapProfileSelectionProperties extends AbstractLdapSearchProperties {
     @Serial
     private static final long serialVersionUID = 3372867394066286022L;

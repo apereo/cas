@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class HazelcastNetworkClusterProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -8474968308106013185L;

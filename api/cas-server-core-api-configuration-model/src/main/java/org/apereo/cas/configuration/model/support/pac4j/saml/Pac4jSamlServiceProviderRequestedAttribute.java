@@ -19,7 +19,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Pac4jSamlServiceProviderRequestedAttribute implements Serializable {
     @Serial
     private static final long serialVersionUID = -862819796533384951L;

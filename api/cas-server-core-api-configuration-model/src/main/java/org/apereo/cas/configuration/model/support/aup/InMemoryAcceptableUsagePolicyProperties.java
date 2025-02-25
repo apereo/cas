@@ -20,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class InMemoryAcceptableUsagePolicyProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 8164227843747126083L;

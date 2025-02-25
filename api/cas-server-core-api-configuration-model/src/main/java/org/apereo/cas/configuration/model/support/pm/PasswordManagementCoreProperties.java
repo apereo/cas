@@ -24,7 +24,6 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
-
 public class PasswordManagementCoreProperties implements CasFeatureModule, Serializable {
 
     @Serial

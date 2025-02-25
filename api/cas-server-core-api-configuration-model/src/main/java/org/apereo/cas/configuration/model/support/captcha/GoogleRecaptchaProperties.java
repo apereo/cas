@@ -25,7 +25,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class GoogleRecaptchaProperties implements CasFeatureModule, Serializable {
 
     @Serial

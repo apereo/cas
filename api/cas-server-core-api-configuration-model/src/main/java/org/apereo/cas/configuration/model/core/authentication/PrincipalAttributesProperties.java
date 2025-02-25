@@ -42,7 +42,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class PrincipalAttributesProperties implements Serializable {
 
     @Serial

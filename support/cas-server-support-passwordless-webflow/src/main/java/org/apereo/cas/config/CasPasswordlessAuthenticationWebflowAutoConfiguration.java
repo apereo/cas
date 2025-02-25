@@ -165,8 +165,7 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new AcceptPasswordlessAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
                     serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
-                    passwordlessTokenRepository, authenticationSystemSupport, passwordlessUserAccountStore,
-                    applicationContext))
+                    passwordlessTokenRepository, authenticationSystemSupport, passwordlessUserAccountStore))
                 .withId(CasWebflowConstants.ACTION_ID_ACCEPT_PASSWORDLESS_AUTHN)
                 .build()
                 .get();
@@ -190,8 +189,8 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new AcceptPasswordlessSelectionMenuAction(casProperties,
-                    passwordlessUserAccountStore, applicationContext,
-                    multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory, authenticationSystemSupport))
+                    passwordlessUserAccountStore, multifactorTriggerSelectionStrategy,
+                    passwordlessPrincipalFactory, authenticationSystemSupport))
                 .withId(CasWebflowConstants.ACTION_ID_PASSWORDLESS_ACCEPT_SELECTION_MENU)
                 .build()
                 .get();
@@ -221,8 +220,7 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new PreparePasswordlessSelectionMenuAction(casProperties,
                     multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory, authenticationSystemSupport,
-                    passwordlessUserAccountStore, applicationContext,
-                    delegatedClientIdentityProviderConfigurationProducer, communicationsManager))
+                    passwordlessUserAccountStore, delegatedClientIdentityProviderConfigurationProducer, communicationsManager))
                 .withId(CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_SELECTION_MENU)
                 .build()
                 .get();

@@ -22,7 +22,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public abstract class BaseBucket4jProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 1813165633105563813L;

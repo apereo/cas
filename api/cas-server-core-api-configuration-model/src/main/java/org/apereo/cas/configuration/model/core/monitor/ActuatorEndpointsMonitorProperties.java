@@ -29,7 +29,6 @@ import java.util.stream.Stream;
 @Setter
 @ToString
 @Accessors(chain = true)
-
 public class ActuatorEndpointsMonitorProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -3375777593395683691L;

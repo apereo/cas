@@ -18,7 +18,6 @@ import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -46,15 +45,11 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
     private final BrowserWebStorageSessionStore sessionStore;
 
-    private final ConfigurableApplicationContext applicationContext;
-
     public DuoSecurityUniversalPromptValidateLoginAction(
         final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
-        final BrowserWebStorageSessionStore sessionStore,
-        final ConfigurableApplicationContext applicationContext) {
+        final BrowserWebStorageSessionStore sessionStore) {
         super(duoAuthenticationWebflowEventResolver);
         this.sessionStore = sessionStore;
-        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -145,6 +140,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         LOGGER.trace("Received Duo Security code [{}]", duoCode);
         val duoSecurityIdentifier = (String) sessionStorage.getSessionAttributes(webContext).get("duoProviderId");
         val credential = new DuoSecurityUniversalPromptCredential(duoCode, authentication);
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(duoSecurityIdentifier, applicationContext)
             .orElseThrow(() -> new IllegalArgumentException("Unable to locate multifactor authentication provider by id " + duoSecurityIdentifier));
         credential.setProviderId(provider.getId());

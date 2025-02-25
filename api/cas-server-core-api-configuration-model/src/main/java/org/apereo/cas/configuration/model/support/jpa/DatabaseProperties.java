@@ -21,7 +21,6 @@ import java.util.Map;
 @Setter
 @RequiresModule(name = "cas-server-support-jdbc-drivers")
 @Accessors(chain = true)
-
 public class DatabaseProperties implements Serializable {
 
     @Serial

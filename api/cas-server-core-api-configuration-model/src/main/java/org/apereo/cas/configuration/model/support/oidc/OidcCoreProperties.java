@@ -26,7 +26,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class OidcCoreProperties implements Serializable {
 
     @Serial

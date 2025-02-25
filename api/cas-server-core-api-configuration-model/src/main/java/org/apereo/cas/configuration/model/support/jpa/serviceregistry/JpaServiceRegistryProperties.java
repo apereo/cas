@@ -20,7 +20,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class JpaServiceRegistryProperties extends AbstractJpaProperties {
 
     @Serial

@@ -15,11 +15,10 @@ import java.io.Serial;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RequiresModule(name = "cas-server-support-audit-rest", automated = true)
+@RequiresModule(name = "cas-server-support-audit-rest")
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class AuditRestProperties extends RestEndpointProperties {
 
     @Serial

@@ -49,7 +49,7 @@ public class WebflowActionBeanSupplier implements Supplier<Action> {
                 val resource = ResourceUtils.getRawResourceFrom(script);
                 val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
                 val watchableResource = scriptFactory.fromResource(resource);
-                return new GroovyScriptWebflowAction(watchableResource, applicationContext, properties);
+                return new GroovyScriptWebflowAction(watchableResource, properties);
             }))
             .otherwise(action)
             .get();

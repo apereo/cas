@@ -20,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class HazelcastZooKeeperDiscoveryProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 235372431457637272L;

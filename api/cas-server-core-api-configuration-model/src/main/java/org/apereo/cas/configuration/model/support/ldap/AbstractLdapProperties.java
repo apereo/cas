@@ -26,7 +26,6 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public abstract class AbstractLdapProperties implements Serializable, CasFeatureModule {
 
     @Serial

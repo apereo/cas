@@ -2,11 +2,9 @@ package org.apereo.cas.configuration.model.support.cookie;
 
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
 import java.io.Serial;
 
 /**
@@ -21,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class PinnableCookieProperties extends CookieProperties {
 
     @Serial
@@ -31,6 +28,15 @@ public class PinnableCookieProperties extends CookieProperties {
      * When generating cookie values, determine whether the value
      * should be compounded and signed with the properties of
      * the current session, such as IP address, user-agent, etc.
+     * <p>
+     * Turning off session pinning is not exactly ideal. This is a barrier to prevent cookie
+     * replay attacks. A cookie that was created with an IP given a certain location cannot
+     * be replayed back in a different browser with a different IP from a different location.
+     * <p>
+     * There may however be legitimate reasons to turn it off and relax this after careful reviews,
+     * if you intend to support a type of user who intends to switch their IP quite frequently.
+     * A classic example is the type of user that is on VPN at the time of login,
+     * but decides to resume their work a few hours later off VPN or at a different location.
      */
     private boolean pinToSession = true;
 

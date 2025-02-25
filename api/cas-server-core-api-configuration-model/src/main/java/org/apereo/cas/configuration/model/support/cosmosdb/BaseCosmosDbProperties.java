@@ -24,7 +24,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public abstract class BaseCosmosDbProperties implements Serializable {
 
     @Serial

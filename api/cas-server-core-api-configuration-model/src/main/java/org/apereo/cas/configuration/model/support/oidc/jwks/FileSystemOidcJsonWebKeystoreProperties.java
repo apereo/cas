@@ -21,7 +21,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class FileSystemOidcJsonWebKeystoreProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 1659099897056632658L;

@@ -11,7 +11,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -32,9 +31,8 @@ public class ConfirmConsentAction extends AbstractConsentAction {
                                 final AuthenticationServiceSelectionPlan strategies,
                                 final ConsentEngine consentEngine,
                                 final CasConfigurationProperties casProperties,
-                                final AttributeDefinitionStore attributeDefinitionStore,
-                                final ConfigurableApplicationContext applicationContext) {
-        super(casProperties, servicesManager, strategies, consentEngine, attributeDefinitionStore, applicationContext);
+                                final AttributeDefinitionStore attributeDefinitionStore) {
+        super(casProperties, servicesManager, strategies, consentEngine, attributeDefinitionStore);
     }
 
     @Override

@@ -19,7 +19,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class CasEmbeddedApacheTomcatSocketProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 3280755966422957481L;

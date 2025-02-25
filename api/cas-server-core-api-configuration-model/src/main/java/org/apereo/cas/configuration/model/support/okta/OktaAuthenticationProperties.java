@@ -23,7 +23,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class OktaAuthenticationProperties extends BaseOktaProperties {
     @Serial
     private static final long serialVersionUID = -13245764438426360L;

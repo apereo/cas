@@ -27,7 +27,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SpnegoProperties implements Serializable {
 
     @Serial

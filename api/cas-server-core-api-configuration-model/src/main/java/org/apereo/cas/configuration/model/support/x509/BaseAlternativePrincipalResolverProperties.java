@@ -19,7 +19,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public abstract class BaseAlternativePrincipalResolverProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 4770829035414038072L;

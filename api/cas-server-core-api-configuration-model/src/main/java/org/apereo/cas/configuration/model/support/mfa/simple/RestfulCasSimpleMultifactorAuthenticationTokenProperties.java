@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class RestfulCasSimpleMultifactorAuthenticationTokenProperties extends RestEndpointProperties {
     @Serial
     private static final long serialVersionUID = -6333748853833491119L;

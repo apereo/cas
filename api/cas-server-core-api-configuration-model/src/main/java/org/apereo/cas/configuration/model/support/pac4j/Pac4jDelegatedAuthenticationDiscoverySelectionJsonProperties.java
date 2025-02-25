@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Pac4jDelegatedAuthenticationDiscoverySelectionJsonProperties extends SpringResourceProperties {
     @Serial
     private static final long serialVersionUID = -2261947621312270068L;

@@ -19,7 +19,6 @@ import java.io.Serial;
 @Setter
 @RequiresModule(name = "cas-server-support-aws")
 @Accessors(chain = true)
-
 public class AmazonSecurityTokenServiceProperties extends BaseAmazonWebServicesProperties {
     @Serial
     private static final long serialVersionUID = 5426637051495147084L;

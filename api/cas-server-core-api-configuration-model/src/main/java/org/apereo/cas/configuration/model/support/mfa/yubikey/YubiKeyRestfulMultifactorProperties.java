@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class YubiKeyRestfulMultifactorProperties extends RestEndpointProperties {
     @Serial
     private static final long serialVersionUID = -33291036299848782L;

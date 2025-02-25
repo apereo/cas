@@ -29,7 +29,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class MultifactorAuthenticationProperties implements Serializable {
 
     @Serial

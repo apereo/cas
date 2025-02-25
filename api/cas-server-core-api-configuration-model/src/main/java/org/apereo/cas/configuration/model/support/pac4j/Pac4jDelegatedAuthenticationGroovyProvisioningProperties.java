@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Pac4jDelegatedAuthenticationGroovyProvisioningProperties extends SpringResourceProperties {
     @Serial
     private static final long serialVersionUID = 7179027843747126083L;

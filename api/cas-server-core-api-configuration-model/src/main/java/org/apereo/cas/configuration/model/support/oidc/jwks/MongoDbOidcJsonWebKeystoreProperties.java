@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class MongoDbOidcJsonWebKeystoreProperties extends SingleCollectionMongoDbProperties {
     @Serial
     private static final long serialVersionUID = -8392367146283877576L;

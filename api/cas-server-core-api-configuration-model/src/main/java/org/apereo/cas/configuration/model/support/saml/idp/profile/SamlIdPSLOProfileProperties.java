@@ -18,7 +18,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SamlIdPSLOProfileProperties extends SamlIdPBaseProfileProperties {
     @Serial
     private static final long serialVersionUID = -8100516679034234656L;

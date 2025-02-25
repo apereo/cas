@@ -19,7 +19,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class HazelcastCoreProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 5935324429402972680L;

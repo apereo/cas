@@ -19,7 +19,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class MultifactorAuthenticationProviderSelectionProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 7426521468929733907L;

@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class JpaOidcJsonWebKeystoreProperties extends AbstractJpaProperties {
     @Serial
     private static final long serialVersionUID = 1633689616653363554L;

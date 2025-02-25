@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class LocaleCookieProperties extends CookieProperties {
     @Serial
     private static final long serialVersionUID = 158577966798914031L;

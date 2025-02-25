@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SurrogateGroovyAuthenticationProperties extends SpringResourceProperties {
     @Serial
     private static final long serialVersionUID = 1588367681439517829L;

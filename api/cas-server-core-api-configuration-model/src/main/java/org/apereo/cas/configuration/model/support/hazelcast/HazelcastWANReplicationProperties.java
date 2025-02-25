@@ -21,7 +21,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class HazelcastWANReplicationProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 1726420607045775145L;

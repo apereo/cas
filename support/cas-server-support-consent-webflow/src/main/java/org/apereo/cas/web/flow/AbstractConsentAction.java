@@ -20,7 +20,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -39,36 +38,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public abstract class AbstractConsentAction extends BaseCasWebflowAction {
-    /**
-     * CAS Settings.
-     */
     protected final CasConfigurationProperties casProperties;
 
-    /**
-     * The services manager.
-     */
     protected final ServicesManager servicesManager;
 
-    /**
-     * Service selection strategies.
-     */
     protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
-    /**
-     * The consent engine that handles calculations.
-     */
     protected final ConsentEngine consentEngine;
 
-    /**
-     * The attribute definition store
-     * that might contain metadata about consentable attributes.
-     */
     protected final AttributeDefinitionStore attributeDefinitionStore;
-
-    /**
-     * The application context.
-     */
-    protected final ConfigurableApplicationContext applicationContext;
 
     /**
      * Gets registered service for consent.
@@ -120,6 +98,7 @@ public abstract class AbstractConsentAction extends BaseCasWebflowAction {
      * @param context    the context
      */
     protected void prepareConsentableAttributes(final Map<String, List<Object>> attributes, final RequestContext context) {
+        val applicationContext = context.getActiveFlow().getApplicationContext();
         val builders = applicationContext.getBeansOfType(ConsentableAttributeBuilder.class).values()
             .stream()
             .filter(BeanSupplier::isNotProxy)

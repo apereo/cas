@@ -26,7 +26,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SamlIdPCoreProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -1848175783676789852L;

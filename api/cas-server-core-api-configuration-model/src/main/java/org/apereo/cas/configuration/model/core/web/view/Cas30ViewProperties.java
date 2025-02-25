@@ -19,7 +19,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Cas30ViewProperties implements Serializable {
 
     @Serial

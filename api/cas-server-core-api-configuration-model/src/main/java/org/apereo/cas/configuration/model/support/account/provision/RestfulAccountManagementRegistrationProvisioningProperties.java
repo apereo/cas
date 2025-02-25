@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class RestfulAccountManagementRegistrationProvisioningProperties extends BaseRestEndpointProperties {
     @Serial
     private static final long serialVersionUID = 6855936824474022021L;

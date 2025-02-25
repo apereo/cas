@@ -60,7 +60,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class AuthenticationProperties implements Serializable {
 
     @Serial

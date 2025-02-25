@@ -21,7 +21,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class GoogleAuthenticatorMultifactorScratchCodeProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 8740203143088539401L;

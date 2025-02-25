@@ -9,7 +9,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -24,17 +23,13 @@ import org.springframework.webflow.execution.RequestContext;
 public class AcceptPasswordlessSelectionMenuAction extends BasePasswordlessCasWebflowAction {
     protected final PasswordlessUserAccountStore passwordlessUserAccountStore;
 
-    protected final ConfigurableApplicationContext applicationContext;
-
     public AcceptPasswordlessSelectionMenuAction(final CasConfigurationProperties casProperties,
                                                  final PasswordlessUserAccountStore passwordlessUserAccountStore,
-                                                 final ConfigurableApplicationContext applicationContext,
                                                  final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
                                                  final PrincipalFactory passwordlessPrincipalFactory,
                                                  final AuthenticationSystemSupport authenticationSystemSupport) {
         super(casProperties, multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory, authenticationSystemSupport);
         this.passwordlessUserAccountStore = passwordlessUserAccountStore;
-        this.applicationContext = applicationContext;
     }
 
     @Override

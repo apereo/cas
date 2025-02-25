@@ -28,7 +28,6 @@ import java.util.Map;
 @Setter
 @RequiresModule(name = "cas-server-support-jdbc-drivers")
 @Accessors(chain = true)
-
 @SuppressWarnings("UnescapedEntity")
 public abstract class AbstractJpaProperties implements CasFeatureModule, Serializable {
 

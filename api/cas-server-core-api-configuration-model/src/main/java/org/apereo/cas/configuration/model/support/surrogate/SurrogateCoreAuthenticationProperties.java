@@ -21,7 +21,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SurrogateCoreAuthenticationProperties implements Serializable, CasFeatureModule {
     @Serial
     private static final long serialVersionUID = 16938920863432222L;

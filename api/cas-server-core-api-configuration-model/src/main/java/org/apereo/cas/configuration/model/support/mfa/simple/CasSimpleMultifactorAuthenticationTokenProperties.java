@@ -20,7 +20,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class CasSimpleMultifactorAuthenticationTokenProperties extends BaseMultifactorAuthenticationProviderProperties {
     @Serial
     private static final long serialVersionUID = -6333748853833491119L;

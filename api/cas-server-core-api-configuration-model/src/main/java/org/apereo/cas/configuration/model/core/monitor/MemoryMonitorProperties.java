@@ -19,7 +19,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class MemoryMonitorProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -7147060071480971606L;

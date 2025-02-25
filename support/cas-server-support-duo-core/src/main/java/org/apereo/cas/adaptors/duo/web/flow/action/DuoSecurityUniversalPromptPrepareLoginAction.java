@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.scope.ConversationScope;
@@ -40,13 +39,11 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultifactorAuthenticationAction<DuoSecurityMultifactorAuthenticationProvider> {
-    private final ConfigurableApplicationContext applicationContext;
-
     private final BrowserWebStorageSessionStore duoUniversalPromptSessionStore;
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
-
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val authentication = WebUtils.getAuthentication(requestContext);
         val duoSecurityIdentifier = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(requestContext);
 

@@ -21,7 +21,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class OidcJsonWebKeystoreProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -1696060572027445151L;
