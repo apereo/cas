@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SurrogateJsonAuthenticationProperties extends SpringResourceProperties {
     @Serial
     private static final long serialVersionUID = 3599367681439517829L;

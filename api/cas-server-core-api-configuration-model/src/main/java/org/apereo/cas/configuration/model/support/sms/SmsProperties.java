@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
-
 public class SmsProperties implements CasFeatureModule, Serializable {
 
     @Serial

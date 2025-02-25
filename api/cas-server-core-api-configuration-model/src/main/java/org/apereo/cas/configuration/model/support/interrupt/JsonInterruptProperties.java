@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class JsonInterruptProperties extends SpringResourceProperties {
     @Serial
     private static final long serialVersionUID = 1079027840047126083L;

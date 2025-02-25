@@ -19,7 +19,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class OidcServicesProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 1233477683583467669L;

@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class CasSimpleMultifactorAuthenticationBucket4jProperties extends BaseBucket4jProperties {
     @Serial
     private static final long serialVersionUID = -2432886337199727140L;

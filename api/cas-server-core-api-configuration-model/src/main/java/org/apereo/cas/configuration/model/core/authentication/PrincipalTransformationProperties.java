@@ -24,7 +24,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class PrincipalTransformationProperties implements Serializable {
 
     @Serial

@@ -26,7 +26,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableClientProperties {
 
     @Serial

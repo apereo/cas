@@ -23,7 +23,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 @RequiresModule(name = "cas-server-support-ws-sts")
 public class WsFederationSecurityTokenServiceProperties implements Serializable {
 

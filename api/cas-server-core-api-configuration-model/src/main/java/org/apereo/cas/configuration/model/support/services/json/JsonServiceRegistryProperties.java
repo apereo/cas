@@ -22,7 +22,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class JsonServiceRegistryProperties extends SpringResourceProperties {
     /**
      * Default location directory name where services may be found.

@@ -21,7 +21,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class CaseChangeSearchEntryHandlersProperties implements Serializable {
 
     @Serial

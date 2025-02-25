@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
-
 public class EmailProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 7367120636536230761L;

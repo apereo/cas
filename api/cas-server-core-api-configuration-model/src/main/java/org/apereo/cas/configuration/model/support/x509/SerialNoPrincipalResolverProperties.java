@@ -18,7 +18,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SerialNoPrincipalResolverProperties implements Serializable {
 
     @Serial

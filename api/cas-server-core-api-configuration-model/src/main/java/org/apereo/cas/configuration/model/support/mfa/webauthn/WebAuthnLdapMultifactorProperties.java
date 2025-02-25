@@ -20,7 +20,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class WebAuthnLdapMultifactorProperties extends AbstractLdapSearchProperties {
     @Serial
     private static final long serialVersionUID = -1161683393319585262L;

@@ -21,7 +21,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class RegexInterruptProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 2169027840047126083L;

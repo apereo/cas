@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class AttributeQueryTicketProperties implements Serializable {
 
     @Serial

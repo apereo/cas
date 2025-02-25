@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class InfluxDbEventsProperties extends InfluxDbProperties {
 
     @Serial

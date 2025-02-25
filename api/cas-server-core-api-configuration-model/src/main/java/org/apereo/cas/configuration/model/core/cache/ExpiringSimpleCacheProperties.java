@@ -17,7 +17,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class ExpiringSimpleCacheProperties extends SimpleCacheProperties {
     @Serial
     private static final long serialVersionUID = -268826011744304210L;

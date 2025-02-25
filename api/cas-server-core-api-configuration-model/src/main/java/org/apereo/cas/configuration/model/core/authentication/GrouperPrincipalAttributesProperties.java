@@ -21,7 +21,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class GrouperPrincipalAttributesProperties implements Serializable {
 
     @Serial

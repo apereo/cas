@@ -202,7 +202,7 @@ class MultifactorAuthnTrustWebflowConfiguration {
             @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
             final MultifactorAuthenticationTrustStorage mfaTrustEngine,
             final ConfigurableApplicationContext applicationContext) {
-            return new DefaultMultifactorAuthenticationTrustedDeviceProviderAction(applicationContext, mfaTrustEngine);
+            return new DefaultMultifactorAuthenticationTrustedDeviceProviderAction(mfaTrustEngine);
         }
 
         @Bean
@@ -216,7 +216,7 @@ class MultifactorAuthnTrustWebflowConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new MultifactorAuthenticationRemoveTrustedDeviceAction(applicationContext, mfaTrustEngine))
+                .withAction(() -> new MultifactorAuthenticationRemoveTrustedDeviceAction(mfaTrustEngine))
                 .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_MFA_TRUSTED_DEVICE)
                 .build()
                 .get();

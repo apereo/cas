@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.net.URI;
@@ -31,8 +30,6 @@ public class RedirectUnauthorizedServiceUrlAction extends BaseCasWebflowAction {
 
     private final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager;
     
-    private final ApplicationContext applicationContext;
-
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         var redirectUrl = determineUnauthorizedServiceRedirectUrl(requestContext);
@@ -42,6 +39,7 @@ public class RedirectUnauthorizedServiceUrlAction extends BaseCasWebflowAction {
             if (scriptFactory.isPresent() && scriptFactory.get().isScript(url)) {
                 redirectUrl = FunctionUtils.doUnchecked(() -> {
                     val registeredService = WebUtils.getRegisteredService(requestContext);
+                    val applicationContext = requestContext.getActiveFlow().getApplicationContext();
                     val authentication = WebUtils.getAuthentication(requestContext);
                     val args = CollectionUtils.<String, Object>wrap("registeredService", registeredService,
                         "authentication", authentication,

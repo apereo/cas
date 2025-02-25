@@ -21,7 +21,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class RedisAuthenticationProperties extends BaseRedisProperties {
 
     @Serial

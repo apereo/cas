@@ -22,7 +22,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Pac4jDelegatedAuthenticationDiscoverySelectionProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -2561947621312270068L;

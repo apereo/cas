@@ -21,7 +21,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class TextMagicProperties implements CasFeatureModule, Serializable {
 
     @Serial

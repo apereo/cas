@@ -23,7 +23,6 @@ import java.time.Duration;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class DeviceFingerprintProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 747021103142441353L;

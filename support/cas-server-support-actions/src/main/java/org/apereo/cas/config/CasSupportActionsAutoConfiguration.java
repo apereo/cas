@@ -194,7 +194,7 @@ public class CasSupportActionsAutoConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new SendTicketGrantingTicketAction(ticketRegistry, ticketGrantingTicketCookieGenerator,
-                    webflowSingleSignOnParticipationStrategy, applicationContext))
+                    webflowSingleSignOnParticipationStrategy))
                 .withId(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
                 .build()
                 .get();
@@ -414,7 +414,7 @@ public class CasSupportActionsAutoConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new RedirectUnauthorizedServiceUrlAction(servicesManager, scriptResourceCacheManager, applicationContext))
+                .withAction(() -> new RedirectUnauthorizedServiceUrlAction(servicesManager, scriptResourceCacheManager))
                 .withId(CasWebflowConstants.ACTION_ID_REDIRECT_UNAUTHORIZED_SERVICE_URL)
                 .build()
                 .get();
@@ -536,7 +536,7 @@ public class CasSupportActionsAutoConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
                     warnCookieGenerator, casProperties.getLogout(), logoutManager,
-                    applicationContext, defaultSingleLogoutRequestExecutor))
+                    defaultSingleLogoutRequestExecutor))
                 .withId(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
                 .build()
                 .get();

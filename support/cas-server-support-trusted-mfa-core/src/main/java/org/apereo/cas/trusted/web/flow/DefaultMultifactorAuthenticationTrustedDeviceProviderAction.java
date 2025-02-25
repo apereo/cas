@@ -12,7 +12,6 @@ import org.apereo.cas.web.flow.actions.MultifactorAuthenticationTrustedDevicePro
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,7 +23,6 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 public class DefaultMultifactorAuthenticationTrustedDeviceProviderAction extends BaseCasWebflowAction implements MultifactorAuthenticationTrustedDeviceProviderAction {
-    protected final ConfigurableApplicationContext applicationContext;
     protected final MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Override
@@ -33,14 +31,15 @@ public class DefaultMultifactorAuthenticationTrustedDeviceProviderAction extends
         val principal = authentication.getPrincipal();
         val devices = mfaTrustEngine.get(principal.getId())
             .stream()
-            .map(this::mapMultifactorAuthenticationTrustRecord)
+            .map(device -> mapMultifactorAuthenticationTrustRecord(requestContext, device))
             .toList();
         MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustedDevices(requestContext, devices);
         return null;
     }
 
     protected MultifactorAuthenticationRegisteredDevice mapMultifactorAuthenticationTrustRecord(
-        final MultifactorAuthenticationTrustRecord device) {
+        final RequestContext requestContext, final MultifactorAuthenticationTrustRecord device) {
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val source = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(device.getMultifactorAuthenticationProvider(), applicationContext)
             .map(MultifactorAuthenticationProvider::getFriendlyName)
             .orElse("Unknown");

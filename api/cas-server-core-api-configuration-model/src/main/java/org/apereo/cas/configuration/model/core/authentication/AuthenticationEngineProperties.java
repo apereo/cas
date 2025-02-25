@@ -20,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class AuthenticationEngineProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -2475347572099983874L;

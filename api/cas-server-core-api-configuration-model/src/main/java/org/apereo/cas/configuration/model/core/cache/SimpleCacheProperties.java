@@ -19,7 +19,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SimpleCacheProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -168826011744304210L;

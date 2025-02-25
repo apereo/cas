@@ -19,7 +19,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SamlIdPAuthenticationContextProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -2848175783676789852L;

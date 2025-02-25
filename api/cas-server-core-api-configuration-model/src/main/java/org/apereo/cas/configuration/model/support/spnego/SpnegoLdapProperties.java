@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SpnegoLdapProperties extends AbstractLdapSearchProperties {
     @Serial
     private static final long serialVersionUID = -8835216200501334936L;

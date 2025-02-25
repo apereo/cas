@@ -20,7 +20,6 @@ import java.io.Serializable;
 @Setter
 @RequiresModule(name = "cas-server-core-webflow", automated = true)
 @Accessors(chain = true)
-
 public class WebflowAutoConfigurationProperties implements CasFeatureModule, Serializable {
 
     @Serial

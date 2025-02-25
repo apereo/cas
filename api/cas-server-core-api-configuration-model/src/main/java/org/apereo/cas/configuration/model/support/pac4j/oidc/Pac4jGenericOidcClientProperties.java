@@ -18,7 +18,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Pac4jGenericOidcClientProperties extends BasePac4jOidcClientProperties {
     @Serial
     private static final long serialVersionUID = 3359382317533639638L;

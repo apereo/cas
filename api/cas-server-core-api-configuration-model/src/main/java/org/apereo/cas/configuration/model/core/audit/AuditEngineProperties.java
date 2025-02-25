@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class AuditEngineProperties implements Serializable {
 
     @Serial

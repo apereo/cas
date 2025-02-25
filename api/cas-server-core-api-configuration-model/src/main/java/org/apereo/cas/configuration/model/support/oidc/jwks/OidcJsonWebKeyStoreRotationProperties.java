@@ -21,7 +21,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class OidcJsonWebKeyStoreRotationProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 4988981831781991617L;

@@ -23,7 +23,6 @@ import java.io.Serializable;
 @Setter
 @RequiresModule(name = "cas-server-support-aws")
 @Accessors(chain = true)
-
 public abstract class BaseAmazonWebServicesProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 6426637051495147084L;

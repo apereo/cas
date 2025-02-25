@@ -23,7 +23,6 @@ import java.nio.file.Files;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class WebAuthnMultifactorAttestationTrustSourceFidoProperties implements Serializable {
     /**
      * Default legal text header.

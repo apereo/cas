@@ -22,7 +22,6 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class CasEmbeddedApacheTomcatBasicAuthenticationProperties implements Serializable {
 
     @Serial

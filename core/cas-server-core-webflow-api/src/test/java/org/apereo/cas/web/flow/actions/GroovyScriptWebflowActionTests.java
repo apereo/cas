@@ -38,7 +38,7 @@ class GroovyScriptWebflowActionTests {
         val context = MockRequestContext.create(applicationContext);
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
         val script = scriptFactory.fromScript("return new org.springframework.webflow.execution.Event(this, 'result')");
-        val results = new GroovyScriptWebflowAction(script, applicationContext, casProperties);
+        val results = new GroovyScriptWebflowAction(script, casProperties);
         val result = results.execute(context);
         assertNotNull(result);
         assertEquals("result", result.getId());
@@ -50,7 +50,7 @@ class GroovyScriptWebflowActionTests {
         val groovyResource = new ClassPathResource("GroovyWebflowAction.groovy");
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
         val watchableScript = scriptFactory.fromResource(groovyResource);
-        val results = new GroovyScriptWebflowAction(watchableScript, applicationContext, casProperties);
+        val results = new GroovyScriptWebflowAction(watchableScript, casProperties);
         val result = results.execute(context);
         assertNotNull(result);
         assertEquals("result", result.getId());

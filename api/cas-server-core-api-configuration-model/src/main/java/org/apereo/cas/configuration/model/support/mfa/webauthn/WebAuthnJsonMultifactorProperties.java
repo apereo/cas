@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class WebAuthnJsonMultifactorProperties extends SpringResourceProperties {
     @Serial
     private static final long serialVersionUID = -1283660787308509919L;

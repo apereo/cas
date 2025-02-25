@@ -23,7 +23,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Pac4jDelegatedAuthenticationProfileSelectionProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 1478567744591488495L;

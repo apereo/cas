@@ -25,7 +25,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class GitSamlMetadataProperties extends BaseGitProperties {
     @Serial
     private static final long serialVersionUID = 4194689836396653458L;

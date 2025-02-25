@@ -20,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class StandaloneConfigurationSecurityProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 8571848605614437022L;

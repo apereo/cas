@@ -18,7 +18,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class OktaPrincipalProvisioningProperties extends BaseOktaApiProperties {
 
     @Serial

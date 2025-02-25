@@ -20,7 +20,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class RestfulGoogleAuthenticatorMultifactorProperties extends BaseRestEndpointProperties {
     @Serial
     private static final long serialVersionUID = 4518622579150572559L;

@@ -22,7 +22,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class LdapMonitorProperties extends AbstractLdapProperties {
     @Serial
     private static final long serialVersionUID = 4722929378440179113L;

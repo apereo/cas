@@ -21,7 +21,6 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
-
 public class MonitorWarningProperties implements Serializable {
 
     @Serial

@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class JdbcThrottleProperties extends AbstractJpaProperties {
     /**
      * SQL throttling query for all failing records.

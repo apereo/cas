@@ -20,7 +20,6 @@ import java.io.Serial;
 @Setter
 @RequiresModule(name = "cas-server-support-gauth-ldap")
 @Accessors(chain = true)
-
 public class LdapGoogleAuthenticatorMultifactorProperties extends AbstractLdapSearchProperties {
     @Serial
     private static final long serialVersionUID = -100556119517414696L;

@@ -77,7 +77,7 @@ public class CasConsentWebflowAutoConfiguration {
                     .supply(() -> new CheckConsentRequiredAction(servicesManager,
                         authenticationRequestServiceSelectionStrategies,
                         consentEngine, casProperties, attributeDefinitionStore,
-                        applicationContext, consentActivationStrategy))
+                        consentActivationStrategy))
                     .otherwise(() -> ConsumerExecutionAction.NONE)
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_CHECK_CONSENT_REQUIRED)
@@ -105,7 +105,7 @@ public class CasConsentWebflowAutoConfiguration {
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(CONDITION.given(applicationContext.getEnvironment()))
                     .supply(() -> new ConfirmConsentAction(servicesManager, authenticationRequestServiceSelectionStrategies,
-                        consentEngine, casProperties, attributeDefinitionStore, applicationContext))
+                        consentEngine, casProperties, attributeDefinitionStore))
                     .otherwise(() -> ConsumerExecutionAction.NONE)
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_CONFIRM_CONSENT)

@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class PasswordlessAuthenticationMongoDbAccountsProperties extends SingleCollectionMongoDbProperties {
     @Serial
     private static final long serialVersionUID = -6304734732383722585L;

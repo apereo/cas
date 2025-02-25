@@ -20,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class UmaResourceSetProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 215435145313504895L;

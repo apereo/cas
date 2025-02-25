@@ -20,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Pac4jSamlServiceProviderMetadataFileSystemProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -992809796533384951L;

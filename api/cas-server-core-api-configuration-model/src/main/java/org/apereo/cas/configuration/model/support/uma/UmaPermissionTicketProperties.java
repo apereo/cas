@@ -20,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class UmaPermissionTicketProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 6624128522839644377L;

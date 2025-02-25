@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class PrincipalAttributesCoreProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -4525569588579072890L;

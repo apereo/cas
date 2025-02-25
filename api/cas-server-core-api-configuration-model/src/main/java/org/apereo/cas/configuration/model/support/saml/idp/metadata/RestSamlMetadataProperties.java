@@ -21,7 +21,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class RestSamlMetadataProperties extends RestEndpointProperties {
     @Serial
     private static final long serialVersionUID = -7734304585762871404L;

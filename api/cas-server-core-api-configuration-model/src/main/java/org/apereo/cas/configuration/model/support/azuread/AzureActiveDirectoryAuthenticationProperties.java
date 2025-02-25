@@ -26,7 +26,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class AzureActiveDirectoryAuthenticationProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -21355975558426360L;

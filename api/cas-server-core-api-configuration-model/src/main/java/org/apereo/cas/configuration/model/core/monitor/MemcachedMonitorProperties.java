@@ -20,7 +20,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 @Deprecated(since = "7.0.0")
 public class MemcachedMonitorProperties extends BaseMemcachedProperties {
     @Serial

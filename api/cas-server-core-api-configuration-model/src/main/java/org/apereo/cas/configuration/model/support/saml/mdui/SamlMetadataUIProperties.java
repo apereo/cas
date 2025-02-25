@@ -24,7 +24,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SamlMetadataUIProperties implements Serializable {
 
     @Serial

@@ -20,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class ThrottleFailureProperties implements Serializable {
     /**
      * Default authentication failed action used as the code.

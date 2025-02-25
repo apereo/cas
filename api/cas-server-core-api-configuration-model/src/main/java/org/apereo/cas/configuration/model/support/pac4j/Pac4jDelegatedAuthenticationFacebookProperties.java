@@ -18,7 +18,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Pac4jDelegatedAuthenticationFacebookProperties extends Pac4jIdentifiableClientProperties {
 
     @Serial

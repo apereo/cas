@@ -23,7 +23,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class UmaRequestingPartyTokenProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 3988708361481340920L;

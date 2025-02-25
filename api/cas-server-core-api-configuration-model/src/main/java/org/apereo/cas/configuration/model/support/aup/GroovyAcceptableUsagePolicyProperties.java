@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class GroovyAcceptableUsagePolicyProperties extends SpringResourceProperties {
     @Serial
     private static final long serialVersionUID = 9164227843747126083L;

@@ -21,7 +21,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SpnegoAuthenticationProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 4513529663377430783L;

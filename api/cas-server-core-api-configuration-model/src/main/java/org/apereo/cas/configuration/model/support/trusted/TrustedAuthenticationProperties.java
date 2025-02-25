@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class TrustedAuthenticationProperties implements Serializable {
 
     @Serial

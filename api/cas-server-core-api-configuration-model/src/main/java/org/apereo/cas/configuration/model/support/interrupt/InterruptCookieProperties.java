@@ -17,11 +17,10 @@ import java.io.Serial;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@RequiresModule(name = "cas-server-support-interrupt-webflow", automated = true)
+@RequiresModule(name = "cas-server-support-interrupt-webflow")
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class InterruptCookieProperties extends PinnableCookieProperties {
     @Serial
     private static final long serialVersionUID = -266090748600049578L;

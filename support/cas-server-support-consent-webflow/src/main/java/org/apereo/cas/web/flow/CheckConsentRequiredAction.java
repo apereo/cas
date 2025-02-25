@@ -13,7 +13,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -37,10 +36,9 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
                                       final ConsentEngine consentEngine,
                                       final CasConfigurationProperties casProperties,
                                       final AttributeDefinitionStore attributeDefinitionStore,
-                                      final ConfigurableApplicationContext applicationContext,
                                       final ConsentActivationStrategy consentActivationStrategy) {
         super(casProperties, servicesManager, strategies,
-            consentEngine, attributeDefinitionStore, applicationContext);
+            consentEngine, attributeDefinitionStore);
         this.consentActivationStrategy = consentActivationStrategy;
     }
 

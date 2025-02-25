@@ -22,7 +22,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class PasswordlessAuthenticationProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 8726382874579042117L;

@@ -22,7 +22,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class CasSimpleMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
     /**
      * Provider id by default.

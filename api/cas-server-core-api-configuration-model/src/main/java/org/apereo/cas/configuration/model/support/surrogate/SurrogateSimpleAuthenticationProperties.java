@@ -21,7 +21,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SurrogateSimpleAuthenticationProperties extends AbstractLdapSearchProperties {
     @Serial
     private static final long serialVersionUID = 16938920863432222L;

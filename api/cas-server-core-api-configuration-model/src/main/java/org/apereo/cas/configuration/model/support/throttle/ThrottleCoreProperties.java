@@ -19,7 +19,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class ThrottleCoreProperties implements Serializable {
     /**
      * Default app code for throttling and audits.

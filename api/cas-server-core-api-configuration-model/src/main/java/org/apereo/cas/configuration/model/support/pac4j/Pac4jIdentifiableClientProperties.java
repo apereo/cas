@@ -20,7 +20,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Pac4jIdentifiableClientProperties extends Pac4jBaseClientProperties {
 
     @Serial

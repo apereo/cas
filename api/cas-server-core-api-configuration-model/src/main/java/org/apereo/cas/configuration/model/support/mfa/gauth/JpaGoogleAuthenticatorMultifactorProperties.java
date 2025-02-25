@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class JpaGoogleAuthenticatorMultifactorProperties extends AbstractJpaProperties {
     @Serial
     private static final long serialVersionUID = -2689797889546802618L;

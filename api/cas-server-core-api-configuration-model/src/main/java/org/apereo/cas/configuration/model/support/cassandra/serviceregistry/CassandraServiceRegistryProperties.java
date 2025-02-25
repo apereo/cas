@@ -18,7 +18,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class CassandraServiceRegistryProperties extends BaseCassandraProperties {
     @Serial
     private static final long serialVersionUID = -1835394847251801709L;

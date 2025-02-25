@@ -22,7 +22,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class AmazonS3SamlMetadataProperties extends BaseAmazonWebServicesProperties {
     @Serial
     private static final long serialVersionUID = 352435146313504995L;

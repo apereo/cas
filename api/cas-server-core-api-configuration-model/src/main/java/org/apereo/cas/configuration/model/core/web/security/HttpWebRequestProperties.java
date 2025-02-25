@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class HttpWebRequestProperties implements Serializable {
 
     @Serial

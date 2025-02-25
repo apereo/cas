@@ -20,7 +20,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class GroovyAuthenticationEngineProcessorProperties extends SpringResourceProperties {
     @Serial
     private static final long serialVersionUID = 8079027843747126083L;

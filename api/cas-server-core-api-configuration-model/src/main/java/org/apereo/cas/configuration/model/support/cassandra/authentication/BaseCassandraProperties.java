@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 @Setter
 @RequiresModule(name = "cas-server-support-cassandra-core")
 @Accessors(chain = true)
-
 public abstract class BaseCassandraProperties implements Serializable {
 
     @Serial

@@ -13,7 +13,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
@@ -28,8 +27,6 @@ import java.util.Optional;
 public class PreparePasswordlessSelectionMenuAction extends BasePasswordlessCasWebflowAction {
     protected final PasswordlessUserAccountStore passwordlessUserAccountStore;
 
-    protected final ConfigurableApplicationContext applicationContext;
-
     private final ObjectProvider<DelegatedClientIdentityProviderConfigurationProducer> providerConfigurationProducer;
 
     private final CommunicationsManager communicationsManager;
@@ -40,12 +37,10 @@ public class PreparePasswordlessSelectionMenuAction extends BasePasswordlessCasW
         final PrincipalFactory passwordlessPrincipalFactory,
         final AuthenticationSystemSupport authenticationSystemSupport,
         final PasswordlessUserAccountStore passwordlessUserAccountStore,
-        final ConfigurableApplicationContext applicationContext,
         final ObjectProvider<DelegatedClientIdentityProviderConfigurationProducer> providerConfigurationProducer,
         final CommunicationsManager communicationsManager) {
         super(casProperties, multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory, authenticationSystemSupport);
         this.passwordlessUserAccountStore = passwordlessUserAccountStore;
-        this.applicationContext = applicationContext;
         this.providerConfigurationProducer = providerConfigurationProducer;
         this.communicationsManager = communicationsManager;
     }

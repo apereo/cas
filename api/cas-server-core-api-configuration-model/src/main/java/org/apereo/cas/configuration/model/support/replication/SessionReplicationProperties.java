@@ -20,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SessionReplicationProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -3839399712674610962L;

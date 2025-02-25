@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
 
     @Serial

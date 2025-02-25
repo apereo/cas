@@ -19,7 +19,6 @@ import java.io.Serializable;
 @Setter
 @RequiresModule(name = "cas-server-support-service-registry-stream")
 @Accessors(chain = true)
-
 public class BaseStreamServicesProperties implements Serializable {
 
     @Serial

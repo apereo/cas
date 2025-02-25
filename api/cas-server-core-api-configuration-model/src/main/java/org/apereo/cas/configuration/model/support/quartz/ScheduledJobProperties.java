@@ -23,7 +23,6 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
-
 public class ScheduledJobProperties implements CasFeatureModule, Serializable {
 
     @Serial

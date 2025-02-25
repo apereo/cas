@@ -20,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class InterruptProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -4945287309473842615L;

@@ -18,7 +18,6 @@ import java.io.Serial;
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
-
 public class RestEndpointProperties extends BaseRestEndpointProperties {
     @Serial
     private static final long serialVersionUID = 2687020856160473089L;

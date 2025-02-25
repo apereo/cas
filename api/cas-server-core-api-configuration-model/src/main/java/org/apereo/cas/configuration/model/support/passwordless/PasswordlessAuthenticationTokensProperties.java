@@ -27,7 +27,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class PasswordlessAuthenticationTokensProperties implements Serializable {
 
     @Serial

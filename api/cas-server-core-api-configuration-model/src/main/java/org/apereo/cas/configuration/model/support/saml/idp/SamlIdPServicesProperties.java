@@ -21,7 +21,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SamlIdPServicesProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 7211477683583467619L;

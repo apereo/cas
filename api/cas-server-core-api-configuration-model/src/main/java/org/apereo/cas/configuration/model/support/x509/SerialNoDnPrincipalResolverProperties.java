@@ -18,7 +18,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SerialNoDnPrincipalResolverProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 1259126639860604739L;

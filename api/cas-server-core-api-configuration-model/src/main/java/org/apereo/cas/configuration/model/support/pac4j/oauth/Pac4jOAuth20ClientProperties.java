@@ -22,7 +22,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientProperties {
 
     @Serial

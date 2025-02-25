@@ -23,7 +23,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class CasEmbeddedApacheTomcatAjpProperties implements Serializable {
 
     @Serial

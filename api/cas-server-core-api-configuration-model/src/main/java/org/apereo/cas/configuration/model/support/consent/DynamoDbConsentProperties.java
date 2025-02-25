@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class DynamoDbConsentProperties extends AbstractDynamoDbProperties {
     @Serial
     private static final long serialVersionUID = -9012260892496773705L;

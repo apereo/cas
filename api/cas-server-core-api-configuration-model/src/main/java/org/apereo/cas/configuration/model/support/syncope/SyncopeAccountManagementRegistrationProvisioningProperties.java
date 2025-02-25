@@ -21,7 +21,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SyncopeAccountManagementRegistrationProvisioningProperties extends BaseSyncopeProperties {
     @Serial
     private static final long serialVersionUID = 5555936823374022021L;

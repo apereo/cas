@@ -20,7 +20,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class UmaResourceSetJpaProperties extends AbstractJpaProperties {
     @Serial
     private static final long serialVersionUID = 210435146313504995L;

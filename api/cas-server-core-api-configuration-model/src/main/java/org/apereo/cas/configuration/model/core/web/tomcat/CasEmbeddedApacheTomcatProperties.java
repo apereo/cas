@@ -22,7 +22,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class CasEmbeddedApacheTomcatProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -99143821503580896L;

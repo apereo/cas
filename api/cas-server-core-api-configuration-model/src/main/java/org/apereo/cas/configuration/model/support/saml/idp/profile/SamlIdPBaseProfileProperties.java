@@ -19,7 +19,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class SamlIdPBaseProfileProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -8100516679034234656L;

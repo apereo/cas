@@ -20,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class MDQSamlMetadataProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -1311568960413770598L;

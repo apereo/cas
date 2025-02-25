@@ -20,7 +20,6 @@ import java.io.Serial;
 @Setter
 @RequiresModule(name = "cas-server-support-gauth-mongo")
 @Accessors(chain = true)
-
 public class MongoDbGoogleAuthenticatorMultifactorProperties extends SingleCollectionMongoDbProperties {
     @Serial
     private static final long serialVersionUID = -200556119517414696L;

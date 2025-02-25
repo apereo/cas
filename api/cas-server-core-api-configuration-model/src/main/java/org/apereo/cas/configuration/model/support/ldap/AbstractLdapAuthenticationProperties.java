@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapSearchProperties {
 
     @Serial

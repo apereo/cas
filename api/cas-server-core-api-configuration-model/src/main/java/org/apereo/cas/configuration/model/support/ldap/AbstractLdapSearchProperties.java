@@ -21,7 +21,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public abstract class AbstractLdapSearchProperties extends AbstractLdapProperties {
     @Serial
     private static final long serialVersionUID = 3009946735155362639L;

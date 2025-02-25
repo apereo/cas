@@ -22,7 +22,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class AuthenticationExceptionsProperties implements Serializable {
 
     @Serial

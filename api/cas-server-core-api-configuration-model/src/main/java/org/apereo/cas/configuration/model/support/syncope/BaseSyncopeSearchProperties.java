@@ -22,7 +22,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public abstract class BaseSyncopeSearchProperties extends BaseSyncopeProperties {
 
     @Serial

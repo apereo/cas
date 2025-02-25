@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class WebAuthnDynamoDbMultifactorProperties extends AbstractDynamoDbProperties {
     @Serial
     private static final long serialVersionUID = -2261683393319585262L;

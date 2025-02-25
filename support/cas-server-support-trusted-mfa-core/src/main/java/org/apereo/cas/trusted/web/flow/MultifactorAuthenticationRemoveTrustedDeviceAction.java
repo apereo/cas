@@ -4,7 +4,6 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -16,7 +15,6 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 public class MultifactorAuthenticationRemoveTrustedDeviceAction extends BaseCasWebflowAction {
-    protected final ConfigurableApplicationContext applicationContext;
     protected final MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Override

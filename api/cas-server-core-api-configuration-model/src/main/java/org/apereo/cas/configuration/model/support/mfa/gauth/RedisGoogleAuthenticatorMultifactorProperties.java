@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class RedisGoogleAuthenticatorMultifactorProperties extends BaseRedisProperties {
     @Serial
     private static final long serialVersionUID = -1260683393319585262L;

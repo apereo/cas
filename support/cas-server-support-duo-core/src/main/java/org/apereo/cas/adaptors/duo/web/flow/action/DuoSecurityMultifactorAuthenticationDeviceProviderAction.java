@@ -9,7 +9,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.List;
@@ -26,18 +25,16 @@ import java.util.stream.Collectors;
 public class DuoSecurityMultifactorAuthenticationDeviceProviderAction extends BaseCasWebflowAction
     implements MultifactorAuthenticationDeviceProviderAction {
 
-    private final ConfigurableApplicationContext applicationContext;
-
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
-        val providers = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext.getBeanFactory(), DuoSecurityMultifactorAuthenticationProvider.class).values();
+        val providers = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, DuoSecurityMultifactorAuthenticationProvider.class).values();
         val accounts = providers
             .stream()
             .filter(Objects::nonNull)
             .filter(BeanSupplier::isNotProxy)
-            .map(duoSecurityMultifactorAuthenticationProvider -> duoSecurityMultifactorAuthenticationProvider)
             .filter(provider -> Objects.nonNull(provider.getDeviceManager()))
             .map(provider -> provider.getDeviceManager().findRegisteredDevices(principal))
             .flatMap(List::stream)

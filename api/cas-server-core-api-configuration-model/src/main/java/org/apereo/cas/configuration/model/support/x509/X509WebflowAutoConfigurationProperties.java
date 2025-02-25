@@ -20,7 +20,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class X509WebflowAutoConfigurationProperties extends WebflowAutoConfigurationProperties {
     @Serial
     private static final long serialVersionUID = 2744305877450488111L;

@@ -20,7 +20,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class JpaEventsProperties extends AbstractJpaProperties {
     @Serial
     private static final long serialVersionUID = 7647381223153797806L;

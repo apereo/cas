@@ -19,7 +19,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class TicketGrantingTicketCoreProperties implements Serializable {
 
     @Serial

@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class ConsentCoreProperties implements Serializable {
 
     @Serial
