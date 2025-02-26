@@ -36,9 +36,6 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
 
     private static final String CACHE_KEY_METADATA = "CasSamlIdentityProviderMetadata";
 
-    /**
-     * Cipher executor to encrypt/sign metadata.
-     */
     protected final CipherExecutor<String, String> metadataCipherExecutor;
 
     private final Cache<String, SamlIdPMetadataDocument> metadataCache;
