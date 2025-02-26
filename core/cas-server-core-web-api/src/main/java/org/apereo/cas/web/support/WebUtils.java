@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHolder;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -1083,9 +1084,8 @@ public class WebUtils {
      */
     public static Authentication getInProgressAuthentication() {
         val context = RequestContextHolder.getRequestContext();
-        return Optional.ofNullable(context).map(WebUtils::getAuthentication).orElse(null);
+        return Optional.ofNullable(context).map(WebUtils::getAuthentication).orElse(AuthenticationHolder.getCurrentAuthentication());
     }
-
 
     /**
      * Put request surrogate authentication.

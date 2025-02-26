@@ -13,13 +13,12 @@ import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-
 import javax.security.auth.login.FailedLoginException;
+import java.util.Objects;
 
 /**
  * An authentication handler that uses the token provided
@@ -61,10 +60,9 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Throwable {
         val tokenCredential = (GoogleAuthenticatorTokenCredential) credential;
-        val authentication = WebUtils.getInProgressAuthentication();
-
+        val authentication = Objects.requireNonNull(WebUtils.getInProgressAuthentication());
+        Objects.requireNonNull(authentication, "No authentication is available to determine the principal");
         val validatedToken = validator.validate(authentication, tokenCredential);
-
         if (validatedToken != null) {
             val principal = authentication.getPrincipal().getId();
             LOGGER.debug("Validated OTP token [{}] successfully for [{}]", validatedToken, principal);
