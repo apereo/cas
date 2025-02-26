@@ -1,5 +1,8 @@
 {
-  "dependencies": "gauth,reports",
+  "dependencies": "gauth,reports,rest",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
@@ -7,5 +10,6 @@
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

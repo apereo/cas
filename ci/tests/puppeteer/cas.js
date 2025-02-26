@@ -28,6 +28,8 @@ const speakeasy = require("speakeasy");
 const {createCanvas, loadImage} = require("@napi-rs/canvas");
 const jsQR = require("jsqr");
 
+const USED_OTPS = [];
+
 const LOGGER = pino({
     level: "debug",
     options: {
@@ -65,6 +67,7 @@ const BROWSER_OPTIONS = {
         "--disable-setuid-sandbox",
         "--disable-web-security",
         "--start-maximized",
+        "--password-store=basic",
         "--window-size=1920,1080"
     ]
 };
@@ -99,6 +102,7 @@ exports.newBrowser = async (options) => {
             const browser = await puppeteer.launch(options);
             await this.sleep();
             await this.logg(`Browser ${await browser.version()} / ${await browser.userAgent()} is launched...`);
+            await this.logg("Chromium Executable Path:", puppeteer.executablePath());
             return browser;
         } catch (e) {
             retry++;
@@ -1037,12 +1041,24 @@ exports.parseOtpAuthenticationUrl = async (url) => {
     };
 };
 
-exports.generateOtp = async (otpConfig) =>
-    speakeasy.totp({
-        secret: otpConfig.secret,
-        encoding: "base32",
-        step: 30
-    });
+exports.generateOtp = async (otpConfig) => {
+    let otp = undefined;
+    while (otp === undefined || USED_OTPS.includes(otp)) {
+        otp = speakeasy.totp({
+            secret: otpConfig.secret,
+            encoding: "base32",
+            step: 30
+        });
+        if (USED_OTPS.includes(otp)) {
+            await this.logb(`Generated OTP matches the previous value: ${otp}. Trying again...`);
+            await this.sleep(3000);
+        } else {
+            await this.logb(`Generated OTP: ${otp}`);
+        }
+    }
+    USED_OTPS.push(otp);
+    return otp;
+};
 
 exports.dockerContainer = async (name) => {
     const containers = await docker.container.list();
