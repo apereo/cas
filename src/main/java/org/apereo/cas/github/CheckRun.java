@@ -38,6 +38,7 @@ public class CheckRun {
     public static class CheckRunDetails {
         private final String id;
         private final String status;
+        private final String conclusion;
         private final String name;
         private final String description;
         private final String url;
@@ -45,6 +46,7 @@ public class CheckRun {
 
         @JsonCreator
         public CheckRunDetails(@JsonProperty("status") final String status,
+                               @JsonProperty("conclusion") final String conclusion,
                                @JsonProperty("url") final String url,
                                @JsonProperty("id") final String id,
                                @JsonProperty("name") final String name,
@@ -56,6 +58,7 @@ public class CheckRun {
             this.description = description;
             this.name = name;
             this.pullRequests = pullRequests;
+            this.conclusion = conclusion;
         }
     }
 }

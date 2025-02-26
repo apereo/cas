@@ -66,6 +66,8 @@ public class PullRequest {
     private final boolean locked;
     private final boolean draft;
 
+    private final Assignee assignee;
+
     @JsonCreator
     public PullRequest(@JsonProperty("url") final String url,
                        @JsonProperty("comments_url") final String commentsUrl,
@@ -88,6 +90,7 @@ public class PullRequest {
                        @JsonProperty("merge_commit_sha") final String mergeCommitSha,
                        @JsonProperty("mergeable_state") final String mergeableState,
                        @JsonProperty("rebaseable") final String rebaseable,
+                       @JsonProperty("assignee") final Assignee assignee,
                        @JsonProperty("locked") final Boolean locked,
                        @JsonProperty("draft") final Boolean draft) {
         this.url = url;
@@ -115,6 +118,8 @@ public class PullRequest {
         this.locked = locked == null ? Boolean.FALSE : locked;
         this.mergeableState = mergeableState;
         this.mergeCommitSha = mergeCommitSha;
+
+        this.assignee = assignee;
     }
     
     public boolean isOpen() {
@@ -133,7 +138,7 @@ public class PullRequest {
         return this.base.getRef().equalsIgnoreCase("master");
     }
 
-    public boolean isTargetBranchOnHeroku() {
+    public boolean isTargetedAtHerokuBranch() {
         return this.base.getRef().toLowerCase().startsWith("heroku");
     }
 
@@ -167,5 +172,9 @@ public class PullRequest {
     
     public boolean isClosed() {
         return !isOpen();
+    }
+
+    public boolean isTargetedAtRepository(final String fullName) {
+        return getBase().getRepository().getFullName().equalsIgnoreCase(fullName);
     }
 }

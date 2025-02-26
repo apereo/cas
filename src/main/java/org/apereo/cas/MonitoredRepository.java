@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import java.io.StringReader;
 import java.net.URI;
@@ -143,11 +144,19 @@ public class MonitoredRepository {
             var endingVersion = new Semver(matcher.group(2));
             return Optional.of(new DependencyRange(startingVersion, endingVersion));
         }
-        pattern = Pattern.compile("chore\\(deps\\): bump (.+) from (\\d+\\.\\d+\\.\\d+).* to (\\d+\\.\\d+\\.\\d+).*");
+        pattern = Pattern.compile("chore\\(deps\\): bump (.+) from (\\d+\\.\\d+(\\.\\d+)*).* to (\\d+\\.\\d+(\\.\\d+)*).*");
         matcher = pattern.matcher(pr.getTitle());
         if (matcher.find()) {
-            var startingVersion = new Semver(matcher.group(2));
-            var endingVersion = new Semver(matcher.group(3));
+            var initialVersion = matcher.group(2);
+            var startingVersion = new Semver(initialVersion, Semver.SemverType.LOOSE);
+            if (startingVersion.getPatch() == null) {
+                startingVersion = new Semver(initialVersion + ".0", Semver.SemverType.LOOSE);
+            }
+            var targetVersion = matcher.group(3);
+            if (!StringUtils.hasText(targetVersion)) {
+                targetVersion = matcher.group(4);
+            }
+            var endingVersion = new Semver(targetVersion, Semver.SemverType.LOOSE);
             return Optional.of(new DependencyRange(startingVersion, endingVersion));
         }
         return Optional.empty();
@@ -195,6 +204,26 @@ public class MonitoredRepository {
                             log.info("Merging minor dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                             labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
                             return approveAndMergePullRequest(pr, false);
+                        }
+                    }
+
+                    if (firstFile.endsWith("libs.versions.toml")) {
+                        var stagingRepository = pr.isTargetedAtRepository(gitHubProperties.getStagingRepository().getFullName());
+                        if (stagingRepository && (rangeResult.get().isQualifiedForMinorUpgrade() || rangeResult.get().isQualifiedForMajorUpgrade())) {
+                            if (pr.getAssignee() == null) {
+                                gitHub.assignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
+                            } else if (pr.getAssignee().getLogin().equalsIgnoreCase("apereocas-bot")) {
+                                var checkrun = getLatestCompletedCheckRunsFor(pr, "build-pull-request");
+                                if (checkrun != null && checkrun.getCount() == 1) {
+                                    var run = checkrun.getRuns().getFirst();
+                                    if (run.getStatus().equalsIgnoreCase(Workflows.WorkflowRunStatus.COMPLETED.getName())
+                                        && run.getConclusion().equalsIgnoreCase("success")) {
+                                        log.info("Merging major dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                                        labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
+                                        return approveAndMergePullRequest(pr, false);
+                                    }
+                                }
+                            }
                         }
                     }
                 }

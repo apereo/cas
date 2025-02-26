@@ -13,4 +13,8 @@ public record DependencyRange(Semver startingVersion, Semver endingVersion) {
         return startingVersion.getMajor().equals(endingVersion.getMajor())
             && endingVersion.getMinor() > startingVersion.getMinor();
     }
+
+    public boolean isQualifiedForMajorUpgrade() {
+        return endingVersion.getMajor() > startingVersion.getMajor();
+    }
 }

@@ -116,7 +116,7 @@ public class CasPullRequestListener implements PullRequestListener {
 
     @SneakyThrows
     private void checkForPullRequestTestCases(final PullRequest pr) {
-        if (pr.isTargetBranchOnHeroku()) {
+        if (pr.isTargetedAtHerokuBranch()) {
             log.info("Pull request {} is targeted at a Heroku branch and will be ignored", pr);
             return;
         }
@@ -182,7 +182,7 @@ public class CasPullRequestListener implements PullRequestListener {
 
     @SneakyThrows
     private boolean processInvalidPullRequest(final PullRequest pr) {
-        if (pr.isTargetBranchOnHeroku()) {
+        if (pr.isTargetedAtHerokuBranch()) {
             log.info("Pull request {} is targeted at a Heroku branch", pr);
             return true;
         }
@@ -268,7 +268,7 @@ public class CasPullRequestListener implements PullRequestListener {
         var committer = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
         if (!committer
             && !pr.isLabeledAs(CasLabels.LABEL_SEE_SECURITY_POLICY)
-            && !pr.isTargetBranchOnHeroku()
+            && !pr.isTargetedAtHerokuBranch()
             && !pr.isWorkInProgress()
             && !pr.isDraft()
             && !pr.isRenovateBot()
@@ -301,7 +301,7 @@ public class CasPullRequestListener implements PullRequestListener {
     @SneakyThrows
     private boolean processLabelSeeMaintenancePolicy(final PullRequest pr) {
         if (!pr.isTargetedAtMasterBranch() && !pr.isLabeledAs(CasLabels.LABEL_SEE_MAINTENANCE_POLICY)
-            && !pr.isTargetBranchOnHeroku() && !pr.isWorkInProgress() && !pr.isUnderReview()) {
+            && !pr.isTargetedAtHerokuBranch() && !pr.isWorkInProgress() && !pr.isUnderReview()) {
             var milestones = repository.getActiveMilestones();
             val milestone = MonitoredRepository.getMilestoneForBranch(milestones, pr.getBase().getRef());
             if (milestone.isEmpty()) {
@@ -327,7 +327,7 @@ public class CasPullRequestListener implements PullRequestListener {
             return;
         }
 
-        if (!pr.isTargetBranchOnHeroku() && !pr.getBase().isRefMaster()) {
+        if (!pr.isTargetedAtHerokuBranch() && !pr.getBase().isRefMaster()) {
             log.info("{} is targeted at a branch {} and should be ported forward to the master branch", pr, pr.getBase());
             if (!pr.isLabeledAs(CasLabels.LABEL_PENDING_PORT_FORWARD)) {
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_PORT_FORWARD);
@@ -361,7 +361,7 @@ public class CasPullRequestListener implements PullRequestListener {
     }
 
     private void processMilestoneAssignment(final PullRequest pr) {
-        if (pr.getMilestone() == null && !pr.isTargetBranchOnHeroku()) {
+        if (pr.getMilestone() == null && !pr.isTargetedAtHerokuBranch()) {
             if (pr.isTargetedAtMasterBranch()) {
                 val milestoneForMaster = repository.getMilestoneForMaster();
                 milestoneForMaster.ifPresent(milestone -> {

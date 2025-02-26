@@ -47,6 +47,7 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -135,7 +136,7 @@ public class GitHubTemplate implements GitHubOperations {
         body.put("state", "closed");
         var response = this.rest.exchange(new RequestEntity<>(body, HttpMethod.PATCH, uri), PullRequest.class);
         if (response.getStatusCode() != HttpStatus.OK) {
-            log.warn("Failed to close to pull request. Response status: " + response.getStatusCode());
+            log.warn("Failed to close to pull request. Response status: {}", response.getStatusCode());
         }
     }
 
@@ -147,7 +148,7 @@ public class GitHubTemplate implements GitHubOperations {
         body.put("state", "open");
         var response = this.rest.exchange(new RequestEntity<>(body, HttpMethod.PATCH, uri), PullRequest.class);
         if (response.getStatusCode() != HttpStatus.OK) {
-            log.warn("Failed to open to pull request. Response status: " + response.getStatusCode());
+            log.warn("Failed to open to pull request. Response status: {}", response.getStatusCode());
         }
     }
 
@@ -181,7 +182,7 @@ public class GitHubTemplate implements GitHubOperations {
         log.info("Closing to pull request {}", uri);
         var response = this.rest.exchange(new RequestEntity(payload, HttpMethod.PATCH, uri), PullRequest.class);
         if (response.getStatusCode() != HttpStatus.OK) {
-            log.warn("Failed to update to pull request. Response status: " + response.getStatusCode());
+            log.warn("Failed to update to pull request. Response status: {}", response.getStatusCode());
         }
     }
 
@@ -393,7 +394,7 @@ public class GitHubTemplate implements GitHubOperations {
                 new RequestEntity<>(labels, HttpMethod.POST, uri),
                 Label[].class);
             if (response.getStatusCode() != HttpStatus.OK) {
-                log.warn("Failed to add label to pull request. Response status: " + response.getStatusCode());
+                log.warn("Failed to add label to pull request. Response status: {}", response.getStatusCode());
             }
         }
         return pr;
@@ -447,8 +448,7 @@ public class GitHubTemplate implements GitHubOperations {
                 issue.getLabelsUrl().replace("{/name}", '/' + encodedName))),
             Label[].class);
         if (response.getStatusCode() != HttpStatus.OK) {
-            log.warn("Failed to remove label from issue. Response status: "
-                + response.getStatusCode());
+            log.warn("Failed to remove label from issue. Response status: {}", response.getStatusCode());
         }
         return new Issue(issue.getUrl(), issue.getCommentsUrl(), issue.getEventsUrl(),
             issue.getLabelsUrl(), issue.getUser(), Arrays.asList(response.getBody()),
@@ -531,7 +531,7 @@ public class GitHubTemplate implements GitHubOperations {
         body.put("output", output);
         val url = API_GITHUB_REPOS + organization + '/' + repository + "/check-runs";
 
-        val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.antiope-preview+json")));
+        val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github+json")));
         val response = this.rest.exchange(new RequestEntity<>(body, headers, HttpMethod.POST, new URI(url)), Map.class);
         return response.getStatusCode().is2xxSuccessful();
     }
@@ -539,19 +539,20 @@ public class GitHubTemplate implements GitHubOperations {
     @Override
     public CheckRun getCheckRunsFor(final String organization, final String repository, final String ref,
                                     final String checkName, final String status, final String filter) {
-        var params = new HashMap<>();
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/commits/" + ref + "/check-runs";
+        var builder = UriComponentsBuilder.fromUriString(url);
+
         if (StringUtils.hasText(checkName)) {
-            params.put("check_name", checkName);
+            builder.queryParam("check_name", checkName);
         }
         if (StringUtils.hasText(status)) {
-            params.put("status", status);
+            builder.queryParam("status", status);
         }
         if (StringUtils.hasText(filter)) {
-            params.put("filter", filter);
+            builder.queryParam("filter", filter);
         }
-        val url = API_GITHUB_REPOS + organization + '/' + repository + "/commits/" + ref + "/check-runs";
-        return getSinglePage(url, CheckRun.class, params,
-            new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.antiope-preview+json"))));
+        return getSinglePage(builder.build().toUriString(), CheckRun.class, Map.of(),
+            new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github+json"))));
     }
 
     @Override
@@ -564,7 +565,7 @@ public class GitHubTemplate implements GitHubOperations {
         body.put("target_url", targetUrl);
         body.put("description", description);
         val url = API_GITHUB_REPOS + organization + '/' + repository + "/statuses/" + ref;
-        val response = this.rest.exchange(new RequestEntity(body, HttpMethod.POST, new URI(url)), Map.class);
+        val response = this.rest.exchange(new RequestEntity<>(body, HttpMethod.POST, new URI(url)), Map.class);
         return response.getStatusCode().is2xxSuccessful();
 
     }
@@ -583,6 +584,17 @@ public class GitHubTemplate implements GitHubOperations {
         val url = run.getCancelUrl();
         val response = this.rest.exchange(new RequestEntity<>(body, HttpMethod.POST, new URI(url)), Map.class);
         return response.getStatusCode().is2xxSuccessful();
+    }
+
+    @Override
+    public void assignPullRequest(final String organization, final String name, final PullRequest pr, final String... assignee) {
+        val url = API_GITHUB_REPOS + organization + '/' + name + "/issues/" + pr.getNumber() + "/assignees";
+        val body = new HashMap<String, Object>();
+        body.put("assignees", List.of(assignee));
+        var response = this.rest.exchange(new RequestEntity<>(body, HttpMethod.POST, URI.create(url)), Map.class);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            log.warn("Failed to assign pull request. Response status: {}", response.getStatusCode());
+        }
     }
 
     private static final class ErrorLoggingMappingJackson2HttpMessageConverter
