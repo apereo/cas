@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -62,10 +61,6 @@ class InitialFlowSetupActionTests {
         @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)
         private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
-        @Autowired
-        @Qualifier(TenantExtractor.BEAN_NAME)
-        private TenantExtractor tenantExtractor;
-        
         @Autowired
         @Qualifier(ArgumentExtractor.BEAN_NAME)
         private ArgumentExtractor argumentExtractor;

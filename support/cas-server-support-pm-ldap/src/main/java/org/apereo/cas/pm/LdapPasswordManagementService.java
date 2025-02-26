@@ -1,8 +1,8 @@
 package org.apereo.cas.pm;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pm.LdapPasswordManagementProperties;
-import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.impl.BasePasswordManagementService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapConnectionFactory;
@@ -39,18 +39,14 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class LdapPasswordManagementService extends BasePasswordManagementService implements DisposableBean {
-    private final List<LdapPasswordManagementProperties> ldapProperties;
-
     private final Map<String, ConnectionFactory> connectionFactoryMap;
 
     public LdapPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
-                                         final String issuer,
-                                         final PasswordManagementProperties passwordManagementProperties,
+                                         final CasConfigurationProperties casProperties,
                                          final PasswordHistoryService passwordHistoryService,
                                          final Map<String, ConnectionFactory> connectionFactoryMap) {
-        super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
-        this.ldapProperties = passwordManagementProperties.getLdap();
-        this.connectionFactoryMap = connectionFactoryMap;
+        super(casProperties, cipherExecutor, passwordHistoryService);
+        this.connectionFactoryMap = Map.copyOf(connectionFactoryMap);
     }
 
     @Override
@@ -61,7 +57,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findEmail(final PasswordManagementQuery query) {
-        val email = findAttribute(query, properties.getReset().getMail().getAttributeName(),
+        val email = findAttribute(query, casProperties.getAuthn().getPm().getReset().getMail().getAttributeName(),
             CollectionUtils.wrap(query.getUsername()));
         if (EmailValidator.getInstance().isValid(email)) {
             LOGGER.debug("Email address [{}] for [{}] appears valid", email, query.getUsername());
@@ -73,12 +69,12 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findPhone(final PasswordManagementQuery query) {
-        return findAttribute(query, properties.getReset().getSms().getAttributeName(), CollectionUtils.wrap(query.getUsername()));
+        return findAttribute(query, casProperties.getAuthn().getPm().getReset().getSms().getAttributeName(), CollectionUtils.wrap(query.getUsername()));
     }
 
     @Override
     public String findUsername(final PasswordManagementQuery query) {
-        return findAttribute(query, properties.getLdap().stream()
+        return findAttribute(query, casProperties.getAuthn().getPm().getLdap().stream()
             .map(LdapPasswordManagementProperties::getUsernameAttribute)
             .collect(Collectors.toList()), CollectionUtils.wrap(query.getEmail()));
     }
@@ -219,7 +215,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     private Map<LdapEntry, LdapPasswordManagementProperties> findEntries(final List<String> filterValues) {
         val results = new LinkedHashMap<LdapEntry, LdapPasswordManagementProperties>(0);
-        ldapProperties
+        casProperties.getAuthn().getPm().getLdap()
             .stream()
             .sorted(Comparator.comparing(LdapPasswordManagementProperties::getName))
             .forEach(Unchecked.consumer(ldap -> {

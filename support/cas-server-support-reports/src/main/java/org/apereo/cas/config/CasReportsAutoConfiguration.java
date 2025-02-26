@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
@@ -40,6 +41,7 @@ import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasRuntimeModulesEndpoint;
 import org.apereo.cas.web.report.MultifactorAuthenticationDevicesEndpoint;
+import org.apereo.cas.web.report.MultitenancyEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpoint;
 import org.apereo.cas.web.report.RegisteredServiceAccessEndpoint;
@@ -389,6 +391,21 @@ public class CasReportsAutoConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return new MultifactorAuthenticationDevicesEndpoint(casProperties, applicationContext);
+        }
+    }
+
+    @Configuration(value = "MultitenancyEndpointsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class MultitenancyEndpointsConfiguration {
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public MultitenancyEndpoint multitenancyEndpoint(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final ObjectProvider<TenantExtractor> tenantExtractor,
+            final CasConfigurationProperties casProperties) {
+            return new MultitenancyEndpoint(casProperties, applicationContext, tenantExtractor);
         }
     }
 }

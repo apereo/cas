@@ -11,10 +11,10 @@ find ./ci/tests -type f -name "*.sh" -exec chmod +x {} \;
 dockerPlatform="unknown"
 docker ps &> /dev/null
 if [[ $? -ne 0 ]] ; then
-  echo "Docker engine is not available."
+  printf "\n${RED}Docker engine is not available.${ENDCOLOR}"
 else
   dockerPlatform=$(docker version --format '{{json .Server.Os}}')
-  printf "Docker engine platform is ${GREEN}%s${ENDCOLOR}\n" "$dockerPlatform."
+  printf "\nDocker engine platform is ${GREEN}%s${ENDCOLOR}\n" "$dockerPlatform."
 fi
 
 function isDockerOnLinux() {

@@ -24,7 +24,7 @@ The [Logging](../logging/Logging.html) configuration file must be adjusted to ma
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" packages="org.apache.logging.log4j.core,io.sentry.log4j2">
+<Configuration status="warn">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>

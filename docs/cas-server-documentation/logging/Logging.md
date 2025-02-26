@@ -38,7 +38,7 @@ such as Ticket Granting Tickets or Proxy Granting Tickets. It may be used via th
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
-<Configuration monitorInterval="2" packages="org.apereo.cas.logging">
+<Configuration monitorInterval="2">
   <!-- Wrap the console appender inside -->
   <CasAppender name="casConsole" maxEntries="50">
       <AppenderRef ref="console" />

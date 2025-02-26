@@ -50,7 +50,7 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean {
                 watcherService = new FileWatcherService(jsonResource.getFile(),
                     file -> {
                         val resources = readFromJsonResource();
-                        if (resources.isEmpty()) {
+                        if (!resources.isEmpty()) {
                             tenantDefinitionList.clear();
                             tenantDefinitionList.addAll(resources);
                         }
@@ -71,6 +71,11 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean {
             .stream()
             .filter(t -> t.getId().equalsIgnoreCase(tenantId))
             .findFirst();
+    }
+
+    @Override
+    public List<TenantDefinition> findTenants() {
+        return List.copyOf(tenantDefinitionList);
     }
 
     private List<TenantDefinition> readFromJsonResource() {

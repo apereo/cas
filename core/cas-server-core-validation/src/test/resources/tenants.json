@@ -1,0 +1,17 @@
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "description": "Example tenant",
+      "authenticationPolicy": {
+        "@class": "org.apereo.cas.multitenancy.DefaultTenantAuthenticationPolicy",
+        "authenticationProtocolPolicy": {
+          "@class": "org.apereo.cas.multitenancy.TenantCasAuthenticationProtocolPolicy",
+          "supportedProtocols": [ "java.util.HashSet", [ "SAML1", "CAS20" ] ]
+        }
+      }
+    }
+  ]
+]

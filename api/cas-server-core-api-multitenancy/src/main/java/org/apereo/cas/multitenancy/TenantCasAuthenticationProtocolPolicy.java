@@ -9,7 +9,7 @@ import java.io.Serial;
 import java.util.Set;
 
 /**
- * This is {@link DefaultTenantMultifactorAuthenticationPolicy}.
+ * This is {@link TenantCasAuthenticationProtocolPolicy}.
  *
  * @author Misagh Moayyed
  * @since 7.2.0
@@ -19,9 +19,9 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class DefaultTenantMultifactorAuthenticationPolicy implements TenantMultifactorAuthenticationPolicy {
+public class TenantCasAuthenticationProtocolPolicy implements TenantAuthenticationProtocolPolicy {
     @Serial
     private static final long serialVersionUID = -9012299259747093234L;
 
-    private Set<String> globalProviderIds;
+    private Set<String> supportedProtocols;
 }
