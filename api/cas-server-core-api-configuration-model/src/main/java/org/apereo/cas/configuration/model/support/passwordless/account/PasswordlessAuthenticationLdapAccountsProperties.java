@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.passwordless.account;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,12 +27,14 @@ public class PasswordlessAuthenticationLdapAccountsProperties extends AbstractLd
      * Name of the LDAP attribute that
      * indicates the user's email address.
      */
+    @RequiredProperty
     private String emailAttribute = "mail";
 
     /**
      * Name of the LDAP attribute that
      * indicates the user's phone.
      */
+    @RequiredProperty
     private String phoneAttribute = "phoneNumber";
 
     /**
