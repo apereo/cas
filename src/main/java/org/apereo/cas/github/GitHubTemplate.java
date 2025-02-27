@@ -597,6 +597,17 @@ public class GitHubTemplate implements GitHubOperations {
         }
     }
 
+    @Override
+    public void unassignPullRequest(final String organization, final String name, final PullRequest pr, final String... assignee) {
+        val url = API_GITHUB_REPOS + organization + '/' + name + "/issues/" + pr.getNumber() + "/assignees";
+        val body = new HashMap<String, Object>();
+        body.put("assignees", List.of(assignee));
+        var response = this.rest.exchange(new RequestEntity<>(body, HttpMethod.DELETE, URI.create(url)), Map.class);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            log.warn("Failed to unassign pull request. Response status: {}", response.getStatusCode());
+        }
+    }
+
     private static final class ErrorLoggingMappingJackson2HttpMessageConverter
         extends MappingJackson2HttpMessageConverter {
 

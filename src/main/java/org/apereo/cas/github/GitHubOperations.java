@@ -158,5 +158,7 @@ public interface GitHubOperations {
     PullRequestSearchResults searchPullRequests(String organization, String name, String sha);
 
     void assignPullRequest(String organization, String name, PullRequest pr, String... assignee);
-    
+
+    void unassignPullRequest(String organization, String name, PullRequest pr, String... assignee);
+
 }

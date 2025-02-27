@@ -153,7 +153,7 @@ public class MonitoredRepository {
                 startingVersion = new Semver(initialVersion + ".0", Semver.SemverType.LOOSE);
             }
             var targetVersion = matcher.group(3);
-            if (!StringUtils.hasText(targetVersion)) {
+            if (!StringUtils.hasText(targetVersion) || targetVersion.startsWith(".")) {
                 targetVersion = matcher.group(4);
             }
             var endingVersion = new Semver(targetVersion, Semver.SemverType.LOOSE);
@@ -211,9 +211,15 @@ public class MonitoredRepository {
                         var stagingRepository = pr.isTargetedAtRepository(gitHubProperties.getStagingRepository().getFullName());
                         if (stagingRepository && (rangeResult.get().isQualifiedForMinorUpgrade() || rangeResult.get().isQualifiedForMajorUpgrade())) {
                             if (pr.getAssignee() == null) {
+                                log.info("Assigning major dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                                 gitHub.assignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
                             } else if (pr.getAssignee().getLogin().equalsIgnoreCase("apereocas-bot")) {
                                 var checkrun = getLatestCompletedCheckRunsFor(pr, "build-pull-request");
+                                if (checkrun == null || checkrun.getCount() == 0) {
+                                    log.info("Unassigning and re-assigning major dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                                    gitHub.unassignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
+                                    gitHub.assignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
+                                }
                                 if (checkrun != null && checkrun.getCount() == 1) {
                                     var run = checkrun.getRuns().getFirst();
                                     if (run.getStatus().equalsIgnoreCase(Workflows.WorkflowRunStatus.COMPLETED.getName())
