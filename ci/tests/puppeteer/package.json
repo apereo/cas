@@ -4,7 +4,7 @@
   "dependencies": {
     "@stomp/stompjs": "7.0.0",
     "archiver": "7.0.1",
-    "axios": "1.7.9",
+    "axios": "1.8.1",
     "basic-auth": "2.0.1",
     "colors": "1.4.0",
     "crypto-js": "4.2.0",
@@ -12,7 +12,7 @@
     "express": "4.21.2",
     "figlet": "1.8.0",
     "http-cas-client": "0.4.3",
-    "jose": "6.0.7",
+    "jose": "6.0.8",
     "jsonpath-plus": "10.3.0",
     "jsonwebtoken": "9.0.2",
     "jsqr": "1.4.0",
