@@ -32,6 +32,7 @@ import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -268,6 +269,10 @@ public class MockWebServer implements Closeable {
         this.worker.setResourceSupplier(sup);
     }
 
+    public void headersConsumer(final Consumer<Map<String, String>> consumer) {
+        this.worker.setHeadersConsumer(consumer);
+    }
+
     /**
      * Starts the Web server so it can accept requests on the listening port.
      */
@@ -337,6 +342,9 @@ public class MockWebServer implements Closeable {
         @Setter
         private Supplier<Resource> resourceSupplier;
 
+        @Setter
+        private Consumer<Map<String, String>> headersConsumer;
+
         private boolean running;
 
         Worker(final ServerSocket sock, final String contentType) {
@@ -397,7 +405,11 @@ public class MockWebServer implements Closeable {
                         }
                     }
                     LOGGER.debug("Headers are [{}]", givenHeaders);
-                    if (this.functionToExecute != null) {
+                    if (headersConsumer != null) {
+                        headersConsumer.accept(givenHeaders);
+                    }
+                    
+                    if (functionToExecute != null) {
                         LOGGER.trace("Executed function with result [{}]", functionToExecute.apply(socket));
                     } else {
                         writeResponse(socket);
