@@ -69,31 +69,7 @@ class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
     }
 
     @Test
-    void verifyRestSendsQueryParameters() throws Throwable {
-        try (val webServer = new okhttp3.mockwebserver.MockWebServer()) {
-            val port = webServer.getPort();
-            val response = new MockResponse().setResponseCode(HttpStatus.ACCEPTED.value());
-            webServer.enqueue(response);
-
-            val props = new MultifactorAuthenticationProviderBypassProperties();
-            props.getRest().setUrl("http://localhost:" + port);
-            val provider = new TestMultifactorAuthenticationProvider();
-            val r = new RestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId(), applicationContext);
-            val request = new MockHttpServletRequest();
-            val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();
-            val res = r.shouldMultifactorAuthenticationProviderExecute(MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
-                registeredService, provider, request, MultifactorAuthenticationTestUtils.getService("service"));
-
-            val recordedRequestUrl = webServer.takeRequest().getRequestUrl();
-            assertEquals("casuser", recordedRequestUrl.queryParameter("principal"));
-            assertEquals(recordedRequestUrl.queryParameter("service"), registeredService.getServiceId());
-            assertEquals(recordedRequestUrl.queryParameter("provider"), provider.getId());
-            assertTrue(res);
-        }
-    }
-
-    @Test
-    void verifyRestSendsHeaders() throws Throwable {
+    void verifyRestSendsQueryParametersAndHeaders() throws Throwable {
         try (val webServer = new okhttp3.mockwebserver.MockWebServer()) {
             val port = webServer.getPort();
             val response = new MockResponse().setResponseCode(HttpStatus.ACCEPTED.value());
@@ -111,7 +87,12 @@ class RestMultifactorAuthenticationProviderBypassEvaluatorTests {
             val registeredService = MultifactorAuthenticationTestUtils.getRegisteredService();
             val res = r.shouldMultifactorAuthenticationProviderExecute(MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
                     registeredService, provider, request, MultifactorAuthenticationTestUtils.getService("service"));
+
             val recordedRequest = webServer.takeRequest();
+            val recordedRequestUrl = recordedRequest.getRequestUrl();
+            assertEquals("casuser", recordedRequestUrl.queryParameter("principal"));
+            assertEquals(recordedRequestUrl.queryParameter("service"), registeredService.getServiceId());
+            assertEquals(recordedRequestUrl.queryParameter("provider"), provider.getId());
             assertEquals("HeaderValue", recordedRequest.getHeader("X-Custom-Header"));
             assertEquals("Bearer token", recordedRequest.getHeader("Authorization"));
             assertTrue(res);
