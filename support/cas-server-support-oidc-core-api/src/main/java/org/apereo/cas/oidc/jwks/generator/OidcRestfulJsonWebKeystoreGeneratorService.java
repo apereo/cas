@@ -47,6 +47,7 @@ public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKe
             .basicAuthPassword(rest.getBasicAuthPassword())
             .basicAuthUsername(rest.getBasicAuthUsername())
             .method(HttpMethod.GET)
+            .headers(rest.getHeaders())
             .url(rest.getUrl())
             .build();
         val response = HttpUtils.execute(exec);

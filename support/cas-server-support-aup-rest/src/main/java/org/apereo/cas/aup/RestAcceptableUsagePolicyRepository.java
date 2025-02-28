@@ -71,6 +71,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 .url(rest.getUrl())
                 .httpClient(this.httpClient)
                 .parameters(parameters)
+                .headers(rest.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = Optional.ofNullable(response).map(HttpResponse::getCode).orElseGet(HttpStatus.SERVICE_UNAVAILABLE::value);
@@ -95,6 +96,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.GET)
                 .url(url)
+                .headers(rest.getHeaders())
                 .httpClient(this.httpClient)
                 .parameters(CollectionUtils.wrap("username", principal.getId(),
                     "locale", request.getLocale().toString()))
@@ -141,6 +143,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                     .url(url)
                     .httpClient(this.httpClient)
                     .parameters(parameters)
+                    .headers(rest.getHeaders())
                     .build();
                 response = HttpUtils.execute(exec);
                 val statusCode = response.getCode();
