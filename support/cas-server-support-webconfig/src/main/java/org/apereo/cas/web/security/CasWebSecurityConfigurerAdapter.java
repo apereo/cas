@@ -122,7 +122,7 @@ public class CasWebSecurityConfigurerAdapter {
 
         val patterns = getAllowedPatternsToIgnore();
         LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from http security", patterns);
-        var requests = http.authorizeHttpRequests(customizer -> {
+        val requests = http.authorizeHttpRequests(customizer -> {
             val matchers = patterns.stream().map(AntPathRequestMatcher::new).toList().toArray(new RequestMatcher[0]);
             customizer.requestMatchers(matchers).permitAll();
         });
