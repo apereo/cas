@@ -71,6 +71,7 @@ test coverage of the CAS codebase is approximately `94%`.
 - Gradle
 - Nimbus
 - Apache Tomcat
+- Apache Groovy
 - Hibernate
 - Micrometer
 - Spring Boot Admin
@@ -94,4 +95,6 @@ test coverage of the CAS codebase is approximately `94%`.
 - Azure CosmosDb
 - Apache Cassandra
 - MariaDb
+- Jose
+- Permit.io
 - Elastic APM
