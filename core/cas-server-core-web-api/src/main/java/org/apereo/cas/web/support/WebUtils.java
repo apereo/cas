@@ -1084,7 +1084,7 @@ public class WebUtils {
      */
     public static Authentication getInProgressAuthentication() {
         val context = RequestContextHolder.getRequestContext();
-        return Optional.ofNullable(context).map(WebUtils::getAuthentication).orElse(AuthenticationHolder.getCurrentAuthentication());
+        return Optional.ofNullable(context).map(WebUtils::getAuthentication).orElseGet(AuthenticationHolder::getCurrentAuthentication);
     }
 
     /**
