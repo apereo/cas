@@ -14,10 +14,6 @@ const cas = require("../../cas.js");
     let url = await page.url();
     assert(url === casService);
 
-    let logoutUrl = "https://localhost:8443/cas/oidc/oidcLogout";
-    logoutUrl += `?post_logout_redirect_uri=${casService}`;
-    logoutUrl += "&state=1234567890";
-
     response = await cas.goto(page, url);
     await cas.sleep(1000);
     await cas.logPage(page);
@@ -41,6 +37,9 @@ const cas = require("../../cas.js");
         throw `Operation failed: ${error}`;
     });
 
+    let logoutUrl = "https://localhost:8443/cas/oidc/oidcLogout";
+    logoutUrl += `?post_logout_redirect_uri=${casService}`;
+    logoutUrl += "&state=1234567890";
     logoutUrl += `&id_token_hint=${idToken}`;
     response = await cas.goto(page, logoutUrl);
     await cas.sleep(1000);
