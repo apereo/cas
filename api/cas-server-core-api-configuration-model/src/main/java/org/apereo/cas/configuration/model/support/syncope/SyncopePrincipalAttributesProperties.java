@@ -40,4 +40,11 @@ public class SyncopePrincipalAttributesProperties extends BaseSyncopeSearchPrope
      * Whether attribute resolution based on this source is enabled.
      */
     private AttributeRepositoryStates state = AttributeRepositoryStates.ACTIVE;
+
+    /**
+     * Indicates whether user groups should be included in the attribute resolution.
+     * This results in a separate API call to Apache Syncope to fetch user groups
+     * after the user attributes have been resolved.
+     */
+    private boolean includeUserGroups;
 }

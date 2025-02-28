@@ -371,7 +371,6 @@ curl -X 'POST' \
   "connectorDisplayName": "CSV",
   "orgUnit": null,
   "propagationPriority": null,
-  "randomPwdIfNotProvided": false,
   "enforceMandatoryCondition": false,
   "createTraceLevel": "ALL",
   "updateTraceLevel": "ALL",

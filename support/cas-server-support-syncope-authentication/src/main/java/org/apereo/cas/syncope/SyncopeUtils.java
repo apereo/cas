@@ -10,7 +10,6 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
@@ -22,7 +21,6 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -129,15 +127,15 @@ public class SyncopeUtils {
 
         return attributes;
     }
-    
-    private List<Map<String, String>> mapSyncopeGroupMemberhips(final JsonNode user){
+
+    private List<Map<String, String>> mapSyncopeGroupMemberhips(final JsonNode user) {
         val memberships = new ArrayList<Map<String, String>>();
         user.get("memberships").forEach(member -> {
             val membershipInfo = new HashMap<String, String>();
             membershipInfo.put("groupName", member.get("groupName").asText());
-            if (member.has("plainAttrs")){
+            if (member.has("plainAttrs")) {
                 member.get("plainAttrs").forEach(attr ->
-                        membershipInfo.put(attr.get("schema").asText(), attr.get("values").toString())
+                    membershipInfo.put(attr.get("schema").asText(), attr.get("values").toString())
                 );
                 memberships.add(membershipInfo);
             }
@@ -219,6 +217,70 @@ public class SyncopeUtils {
         }
         return new ArrayList<>();
     }
+
+
+    /**
+     * Syncope user groups search.
+     *
+     * @param properties the properties
+     * @param user       the user
+     * @return the list
+     */
+    public static List<Map<String, List<Object>>> syncopeUserGroupsSearch(final BaseSyncopeSearchProperties properties,
+                                                                          final String user) {
+
+        HttpResponse response = null;
+        try {
+            val fiql = EncodingUtils.urlEncode("$member==%s".formatted(user));
+            val syncopeRestUrl = StringUtils.appendIfMissing(
+                SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/")
+                + "rest/groups/?page=1&size=50&details=true&fiql=" + fiql;
+            LOGGER.debug("Executing Syncope user group search via [{}]", syncopeRestUrl);
+            val requestHeaders = new LinkedHashMap<String, String>();
+            requestHeaders.put("X-Syncope-Domain", properties.getDomain());
+            requestHeaders.putAll(properties.getHeaders());
+            val exec = HttpExecutionRequest.builder()
+                .method(HttpMethod.GET)
+                .url(syncopeRestUrl)
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .headers(requestHeaders)
+                .build();
+
+            response = Objects.requireNonNull(HttpUtils.execute(exec));
+            if (Objects.requireNonNull(HttpStatus.resolve(response.getCode())).is2xxSuccessful()) {
+                val entity = ((HttpEntityContainer) response).getEntity();
+                return FunctionUtils.doUnchecked(() -> {
+                    val result = EntityUtils.toString(entity);
+                    val it = Optional.of(MAPPER.readTree(result))
+                        .filter(sr -> sr.has("result"))
+                        .map(sr -> sr.get("result"))
+                        .map(JsonNode::iterator)
+                        .orElse(Collections.emptyIterator());
+                    val groups = new ArrayList<>();
+                    StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
+                        .forEach(node -> convertFromGroupEntity(node, groups));
+                    val name = properties.getAttributeMappings().getOrDefault("groups", "syncopeUserGroups");
+                    val attributes = new HashMap<String, List<Object>>();
+                    attributes.put(name, groups);
+                    return List.of(attributes);
+                });
+            }
+        } finally {
+            HttpUtils.close(response);
+        }
+        return new ArrayList<>();
+
+    }
+
+    private static void convertFromGroupEntity(final JsonNode group,
+                                               final List<Object> attributes) {
+        val groupAttrs = new HashMap<String, String>();
+        groupAttrs.put("groupName", group.get("name").asText());
+        group.get("plainAttrs").forEach(attr -> groupAttrs.put(attr.get("schema").asText(), attr.get("values").toString()));
+        attributes.add(groupAttrs);
+    }
+
 
     /**
      * Convert to user create entity map.

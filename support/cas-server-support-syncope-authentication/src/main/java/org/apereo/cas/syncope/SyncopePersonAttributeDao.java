@@ -29,8 +29,12 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
     @Override
     public PersonAttributes getPerson(final String uid, final Set<PersonAttributes> resolvedPeople, final PersonAttributeDaoFilter filter) {
         val attributes = new HashMap<String, List<Object>>();
-        val results = syncopeSearch(uid);
+        val results = syncopeUserSearch(uid);
         results.forEach(attributes::putAll);
+        if (properties.isIncludeUserGroups()) {
+            val groups = syncopeUserGroupsSearch(uid);
+            groups.forEach(attributes::putAll);
+        }
         return new SimplePersonAttributes(uid, attributes);
     }
 
@@ -54,7 +58,13 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
             .orElseGet(() -> new LinkedHashSet<>(0));
     }
 
-    protected List<Map<String, List<Object>>> syncopeSearch(final String username) {
+    protected List<Map<String, List<Object>>> syncopeUserSearch(final String username) {
         return SyncopeUtils.syncopeUserSearch(properties, username);
     }
+
+    protected List<Map<String, List<Object>>> syncopeUserGroupsSearch(final String username) {
+        return SyncopeUtils.syncopeUserGroupsSearch(properties, username);
+    }
+
+    
 }
