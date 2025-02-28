@@ -43,6 +43,7 @@ public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligen
                 .method(HttpMethod.GET)
                 .url(rest.getUrl())
                 .parameters(parameters)
+                .headers(rest.getHeaders())
                 .build();
 
             response = HttpUtils.execute(exec);

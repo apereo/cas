@@ -96,6 +96,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
+                .headers(restProperties.getHeaders())
                 .url(url)
                 .build();
 
@@ -114,6 +115,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
+                .headers(restProperties.getHeaders())
                 .url(url)
                 .build();
             response = HttpUtils.execute(exec);
@@ -131,6 +133,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
                 .url(restProperties.getUrl())
+                .headers(restProperties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
         } finally {
@@ -148,6 +151,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.GET)
                 .url(url)
+                .headers(restProperties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null) {
@@ -176,6 +180,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.GET)
                 .url(restProperties.getUrl())
+                .headers(restProperties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null) {

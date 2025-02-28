@@ -51,6 +51,7 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
                 .method(HttpMethod.GET)
                 .url(restProperties.getUrl())
                 .parameters(parameters)
+                .headers(restProperties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
             if (Objects.requireNonNull(response).getCode() == HttpStatus.OK.value()) {
@@ -78,6 +79,7 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.GET)
                 .url(restProperties.getUrl())
+                .headers(restProperties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
             if (Objects.requireNonNull(response).getCode() == HttpStatus.OK.value()) {

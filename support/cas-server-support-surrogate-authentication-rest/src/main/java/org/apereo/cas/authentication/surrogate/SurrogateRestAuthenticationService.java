@@ -56,6 +56,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(properties.getUrl())
+                .headers(properties.getHeaders())
                 .parameters(CollectionUtils.wrap("surrogate", surrogate, "principal", principal.getId()))
                 .build();
             response = HttpUtils.execute(exec);
@@ -77,6 +78,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
                 .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(properties.getUrl())
                 .parameters(CollectionUtils.wrap("principal", username))
+                .headers(properties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
             try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {

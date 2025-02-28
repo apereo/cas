@@ -61,6 +61,7 @@ public class RestfulSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
                 .method(HttpMethod.GET)
                 .url(url)
                 .parameters(parameters)
+                .headers(properties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null) {

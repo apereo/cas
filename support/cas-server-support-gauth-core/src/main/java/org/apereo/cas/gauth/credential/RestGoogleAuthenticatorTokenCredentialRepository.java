@@ -270,6 +270,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.GET)
                 .url(rest.getUrl())
+                .headers(rest.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
         } finally {

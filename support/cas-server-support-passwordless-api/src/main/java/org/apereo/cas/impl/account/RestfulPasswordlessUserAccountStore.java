@@ -54,6 +54,7 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
                 .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(StringUtils.appendIfMissing(restProperties.getUrl(), "/").concat(request.getUsername()))
                 .parameters(parameters)
+                .headers(restProperties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
 

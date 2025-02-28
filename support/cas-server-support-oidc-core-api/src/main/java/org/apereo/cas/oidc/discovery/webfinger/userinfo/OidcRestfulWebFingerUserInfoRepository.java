@@ -61,6 +61,7 @@ public class OidcRestfulWebFingerUserInfoRepository implements OidcWebFingerUser
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(properties.getUrl())
+                .headers(properties.getHeaders())
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);

@@ -91,6 +91,7 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
                 .method(HttpMethod.GET)
                 .url(properties.getUrl())
                 .parameters(parameters)
+                .headers(properties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && response.getCode() == HttpStatus.SC_OK) {
@@ -119,6 +120,7 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
                 .url(properties.getUrl())
+                .headers(properties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && response.getCode() == HttpStatus.SC_OK) {
