@@ -38,6 +38,7 @@ class SyncopePersonAttributeDaoTests {
             "cas.authn.attribute-repository.syncope.basic-auth-username=admin",
             "cas.authn.attribute-repository.syncope.basic-auth-password=password",
             "cas.authn.attribute-repository.syncope.search-filter=username=={user}",
+            "cas.authn.attribute-repository.syncope.include-user-groups=true",
             "cas.authn.attribute-repository.syncope.attribute-mappings.username=userId",
             "cas.authn.attribute-repository.syncope.attribute-mappings.syncopeUserAttr_email=email",
             "cas.authn.attribute-repository.syncope.attribute-mappings.syncopeUserAttr_description=email_description"
