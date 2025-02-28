@@ -1,7 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "timezone": "America/Los_Angeles",
-
   "extends": [
     ":dependencyDashboard",
     ":preserveSemverRanges",
@@ -21,7 +20,7 @@
     "docker-compose",
     "github-actions"
   ],
-  "rebaseWhen": "never",
+  "rebaseWhen": "behind-base-branch",
   "automerge": false,
   "regexManagers": [
     {
