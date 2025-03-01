@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers.logout;
 
+import org.apereo.cas.authentication.RootCasException;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -42,13 +43,12 @@ class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyBadEndpointRequest() throws Throwable {
+    void verifyBadEndpointRequest() {
         val request = getHttpRequestForEndpoint("unknown/issuer");
         request.setRequestURI("unknown/issuer");
         val response = new MockHttpServletResponse();
-        val mv = oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, StringUtils.EMPTY,
-            StringUtils.EMPTY, request, response);
-        assertEquals(HttpStatus.BAD_REQUEST, mv.getStatusCode());
+        assertThrows(RootCasException.class, () -> oidcLogoutEndpointController.handleRequestInternal(StringUtils.EMPTY, StringUtils.EMPTY,
+            StringUtils.EMPTY, request, response));
     }
 
     @Test

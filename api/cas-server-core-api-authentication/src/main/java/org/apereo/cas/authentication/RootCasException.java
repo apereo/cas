@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +19,8 @@ import java.util.List;
  */
 @Getter
 @Accessors(chain = true)
+@ToString(callSuper = true, of = "code")
+@SuppressWarnings("OverrideThrowableToString")
 public class RootCasException extends RuntimeException {
 
     @Serial
