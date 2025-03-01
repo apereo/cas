@@ -262,6 +262,10 @@ public interface OidcConstants {
      * JWT content type.
      */
     String CONTENT_TYPE_JWT = "application/jwt";
+    /**
+     * The post logout redirect uri.
+     */
+    String POST_LOGOUT_REDIRECT_URI = "post_logout_redirect_uri";
 
     /**
      * Standard openid connect scopes.
