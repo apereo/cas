@@ -2776,6 +2776,56 @@ async function initializeConfigurationOperations() {
 
     $("#encryptConfigButton").off().on("click", () => encryptOrDecryptConfig("encrypt"));
     $("#decryptConfigButton").off().on("click", () => encryptOrDecryptConfig("decrypt"));
+    
+    if (actuatorEndpoints.configurationmetadata) {
+
+        const configSearchResultsTable = $("#configSearchResultsTable").DataTable({
+            pageLength: 10,
+            drawCallback: settings => {
+                $("#configSearchResultsTable tr").addClass("mdc-data-table__row");
+                $("#configSearchResultsTable td").addClass("mdc-data-table__cell");
+            }
+        });
+        configSearchResultsTable.clear();
+        
+        $("button[name=configSearchButton]").off().on("click", () => {
+            $("#configSearchResults").hide();
+            configSearchResultsTable.clear();
+            
+            const form = document.getElementById("fmConfigSearch");
+            if (!form.reportValidity()) {
+                return false;
+            }
+            const searchQuery = $("#configSearchQuery").val();
+            Swal.fire({
+                icon: "info",
+                title: `Fetching Results`,
+                text: "Please wait while configuration metadata repository is consulted to find matches...",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            $.get(`${actuatorEndpoints.configurationmetadata}/${searchQuery}`, response => {
+                for (const entry of response) {
+                    configSearchResultsTable.row.add({
+                        0: entry.id,
+                        1: entry.description
+                    });
+                }
+                $("#configSearchResults").show();
+                configSearchResultsTable.draw();
+            })
+                .fail((xhr, status, error) => {
+                    console.error("Error fetching data:", error);
+                    displayBanner(xhr);
+                })
+                .always(() => {
+                    Swal.close();
+                });
+        });
+    }
 }
 
 async function initializeCasProtocolOperations() {
@@ -2936,7 +2986,7 @@ async function initializeMultitenancyOperations() {
                         <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
                     </button>
                 `;
-                
+
                 tenantsTable.row.add({
                     0: `<code>${tenant.id}</code>`,
                     1: `<code>${tenant.description ?? ""}</code>`,
@@ -3653,6 +3703,10 @@ async function initializePalantir() {
                 $("#config-encryption-tab").addClass("d-none");
                 $("#casConfigSecurity").parent().remove();
             }
+            if (!actuatorEndpoints.configurationmetadata) {
+                $("#casConfigSearch").addClass("d-none");
+            }
+
             if (!actuatorEndpoints.oidcjwks) {
                 $("#oidcprotocol").parent().remove();
                 $("#oidcProtocolContainer").addClass("d-none");

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,10 +28,13 @@ class CasConfigurationMetadataServerEndpointTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyOperation() {
         val repository = new CasConfigurationMetadataRepository();
-        val endpoint = new CasConfigurationMetadataServerEndpoint(casProperties, repository);
+        val endpoint = new CasConfigurationMetadataServerEndpoint(casProperties, applicationContext, repository);
         val result = endpoint.properties();
         assertNotNull(result);
         assertFalse(result.isEmpty());

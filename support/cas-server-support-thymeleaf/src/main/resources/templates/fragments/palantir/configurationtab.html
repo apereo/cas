@@ -19,21 +19,22 @@
                 <li><a href="#environment-tab">Environment</a></li>
                 <li><a href="#config-tab">Configuration</a></li>
                 <li id="casConfigSecurity"><a href="#config-encryption-tab">Security</a></li>
+                <li id="casConfigSearch"><a href="#config-search">Search</a></li>
             </ul>
 
             <div id="environment-tab">
-             <table id="configurationTable" class="mdc-data-table__table table table-striped noborder">
-                <thead>
-                <tr class="mdc-data-table__header-row">
-                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Source</th>
-                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
-                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
-                </tr>
-                </thead>
-                <tbody class="mdc-data-table__content">
-                </tbody>
-            </table>
-         </div>
+                 <table id="configurationTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Source</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+            </div>
 
             <div id="config-tab">
                 <table id="configPropsTable" class="mdc-data-table__table table table-striped noborder">
@@ -82,6 +83,48 @@
                     </div>
                 </form>
                 
+            </div>
+
+            <div id="config-search">
+                <p>You can search the CAS configuration metadata to query for a configuration property.</p>
+                <form id="fmConfigSearch" class="d-block" onsubmit="return false;">
+                    <section class="cas-field form-group my-3 mdc-input-group d-flex">
+                        <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                            <label for="configSearchQuery"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Query</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="configSearchQuery"
+                                       tabindex="0" id="configSearchQuery" size="50" autocomplete="off" required/>
+                            </label>
+                        </div>
+                    </section>
+                    <div class="d-flex">
+                        <button type="submit" name="configSearchButton" id="configSearchButton"
+                                class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-magnify" aria-hidden="true"></i>Search</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div id="configSearchResults" class="hide">
+                     <table id="configSearchResultsTable" class="mdc-data-table__table table table-striped noborder">
+                        <thead>
+                        <tr class="mdc-data-table__header-row">
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
+                        </tr>
+                        </thead>
+                        <tbody class="mdc-data-table__content">
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         

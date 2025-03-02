@@ -22,15 +22,15 @@ class ConfigurationMetadataSearchResultTests {
         val properties = repository.getRepository().getAllProperties();
         val prop = properties.get("server.port");
         assertNotNull(prop);
-        val r = new ConfigurationMetadataSearchResult(prop, repository);
-        assertEquals(prop.getDefaultValue(), r.getDefaultValue());
-        assertEquals(prop.getId(), r.getId());
-        assertEquals(prop.getName(), r.getName());
-        assertEquals(prop.getType(), r.getType());
-        assertEquals(prop.getShortDescription(), r.getShortDescription());
-        assertEquals(prop.getDescription(), r.getDescription());
-        assertEquals(prop.getDefaultValue(), r.getDefaultValue());
-        assertNotNull(r.getGroup());
+        val result = new ConfigurationMetadataSearchResult(prop);
+        assertEquals(prop.getDefaultValue(), result.getDefaultValue());
+        assertEquals(prop.getId(), result.getId());
+        assertEquals(prop.getName(), result.getName());
+        assertEquals(prop.getType(), result.getType());
+        assertEquals(prop.getShortDescription(), result.getShortDescription());
+        assertEquals(prop.getDescription(), result.getDescription());
+        assertEquals(prop.getDefaultValue(), result.getDefaultValue());
+        assertNotNull(result.getGroup());
 
     }
 }
