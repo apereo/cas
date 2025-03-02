@@ -1,5 +1,6 @@
 package org.apereo.cas.lucene;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +25,7 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.NIOFSDirectory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,28 +48,32 @@ public class LuceneSearchService {
     private final List<String> indexFields;
     private final List<String> textFields;
 
-    public void deleteIndexes() throws IOException {
-        FileUtils.deleteDirectory(indexDirectory);
+    /**
+     * Delete indexes.
+     */
+    public void deleteIndexes() {
+        FunctionUtils.doUnchecked(__ -> FileUtils.deleteDirectory(indexDirectory));
     }
 
     /**
      * Index.
      *
      * @param input the input
-     * @throws IOException the io exception
      */
-    public void createIndexes(final InputStream input) throws IOException {
-        val analyzer = new StandardAnalyzer();
-        val config = new IndexWriterConfig(analyzer);
-        try (val directory = FSDirectory.open(indexDirectory.toPath());
-             val indexWriter = new IndexWriter(directory, config)) {
-            val rootNode = MAPPER.readTree(input);
-            for (val indexField : indexFields) {
-                if (rootNode.has(indexField)) {
-                    indexNode(rootNode.get(indexField), indexWriter);
+    public void createIndexes(final InputStream input) {
+        FunctionUtils.doAndHandle(__ -> {
+            val analyzer = new StandardAnalyzer();
+            val config = new IndexWriterConfig(analyzer);
+            try (val directory = new NIOFSDirectory(indexDirectory.toPath());
+                 val indexWriter = new IndexWriter(directory, config)) {
+                val rootNode = MAPPER.readTree(input);
+                for (val indexField : indexFields) {
+                    if (rootNode.has(indexField)) {
+                        indexNode(rootNode.get(indexField), indexWriter);
+                    }
                 }
             }
-        }
+        });
     }
 
     /**
@@ -161,6 +167,12 @@ public class LuceneSearchService {
     }
 
     public record SearchResult(List<ResultEntry> entries) {
+        /**
+         * Gets value.
+         *
+         * @param name the name
+         * @return the value
+         */
         @JsonIgnore
         public Optional<String> getValue(final String name) {
             return entries
@@ -170,6 +182,12 @@ public class LuceneSearchService {
                 .map(ResultEntry::value);
         }
 
+        /**
+         * Gets long.
+         *
+         * @param name the name
+         * @return the long
+         */
         @JsonIgnore
         public Optional<Long> getLong(final String name) {
             return getValue(name).map(Long::valueOf);

@@ -51,7 +51,7 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
 
     private boolean requiredModuleAutomated;
 
-    public ConfigurationMetadataSearchResult(final ConfigurationMetadataProperty prop, final CasConfigurationMetadataRepository repository) {
+    public ConfigurationMetadataSearchResult(final ConfigurationMetadataProperty prop) {
         try {
             setDefaultValue(prop.getDefaultValue());
             setDeprecation(prop.getDeprecation());

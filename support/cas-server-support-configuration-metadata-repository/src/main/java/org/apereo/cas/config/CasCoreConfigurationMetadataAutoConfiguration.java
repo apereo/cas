@@ -11,6 +11,7 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.condition.Conditi
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
@@ -28,9 +29,12 @@ public class CasCoreConfigurationMetadataAutoConfiguration {
     @ConditionalOnAvailableEndpoint
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasConfigurationMetadataServerEndpoint configurationMetadataServerEndpoint(
-        @Qualifier("casConfigurationMetadataRepository") final CasConfigurationMetadataRepository casConfigurationMetadataRepository,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier("casConfigurationMetadataRepository")
+        final CasConfigurationMetadataRepository casConfigurationMetadataRepository,
         final CasConfigurationProperties casProperties) {
-        return new CasConfigurationMetadataServerEndpoint(casProperties, casConfigurationMetadataRepository);
+        return new CasConfigurationMetadataServerEndpoint(casProperties,
+            applicationContext, casConfigurationMetadataRepository);
     }
 
     @Bean
