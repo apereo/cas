@@ -60,7 +60,7 @@
   ],
   "labels": ["Bot", "Renovate"],
   "schedule": [
-    "after 5pm and before 9am every weekday"
+    "after 5pm and before 9am every day"
   ],
   "gradle": {
     "enabled": true
