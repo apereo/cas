@@ -1,0 +1,24 @@
+{
+  "records": [
+    {
+      "id": 1,
+      "name": "server.port",
+      "description": "this is a description for a field name"
+    },
+    {
+      "id": 2,
+      "name": "cas.server.name",
+      "description": "this is a new field with-a description"
+    },
+    {
+      "id": 3,
+      "name": "cas.server.fancy-name",
+      "description": "this is the fancy name"
+    }
+  ],
+  "metadata": {
+    "id": 100,
+    "name": "cas.system.metadata",
+    "description": "this is a metadata field"
+  }
+}
