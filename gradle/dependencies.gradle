@@ -1312,6 +1312,26 @@ ext.libraries = [
                 dependencies.create(libs.gson.get()) {
                 }
         ],
+        lucene                    : [
+                dependencies.create(libs.lucene.core.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "org.slf4j", module: "slf4j-log4j12")
+                    exclude(group: "com.google.code.gson", module: "gson")
+                },
+                dependencies.create(libs.lucene.queryparser.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "org.slf4j", module: "slf4j-log4j12")
+                    exclude(group: "com.google.code.gson", module: "gson")
+                },
+                dependencies.create(libs.lucene.analysis.common.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "org.slf4j", module: "slf4j-log4j12")
+                    exclude(group: "com.google.code.gson", module: "gson")
+                }
+        ],
         squareup                   : [
                 dependencies.create(libs.retrofit.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")

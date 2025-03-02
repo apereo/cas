@@ -145,6 +145,7 @@ log4j = "2.24.3"
 logback = "1.5.17"
 logbackAccess = "1.5.17"
 lombok = "1.18.36"
+lucene = "10.1.0"
 mailgun = "1.1.4"
 mailjet = "5.2.5"
 mariaDb = "3.5.2"
@@ -480,6 +481,9 @@ logback-access = { module = "ch.qos.logback:logback-access", version.ref = "logb
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 logback-core = { module = "ch.qos.logback:logback-core", version.ref = "logback" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp3" }
+lucene-core = { module = "org.apache.lucene:lucene-core", version.ref = "lucene" }
+lucene-queryparser = { module = "org.apache.lucene:lucene-queryparser", version.ref = "lucene" }
+lucene-analysis-common = { module = "org.apache.lucene:lucene-analysis-common", version.ref = "lucene" }
 mailgun-java = { module = "com.mailgun:mailgun-java", version.ref = "mailgun" }
 mailjet-client = { module = "com.mailjet:mailjet-client", version.ref = "mailjet" }
 mariadb-java-client = { module = "org.mariadb.jdbc:mariadb-java-client", version.ref = "mariaDb" }

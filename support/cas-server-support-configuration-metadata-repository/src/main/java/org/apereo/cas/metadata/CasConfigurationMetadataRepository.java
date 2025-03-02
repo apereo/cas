@@ -1,19 +1,21 @@
 package org.apereo.cas.metadata;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.lucene.LuceneSearchService;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.configurationmetadata.CasConfigurationMetadataRepositoryJsonBuilder;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataRepository;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,41 +28,31 @@ import java.util.stream.Collectors;
  */
 @Getter
 public class CasConfigurationMetadataRepository {
-    private final ConfigurationMetadataRepository repository;
+    private static final String CONFIGURATION_METADATA_RESOURCE_PATTERN = "classpath*:META-INF/spring-configuration-metadata.json";
 
-    /**
-     * Instantiates a new Cas configuration metadata repository.
-     */
+    private final ConfigurationMetadataRepository repository;
+    private final LuceneSearchService luceneSearchService = new LuceneSearchService(
+        new File(FileUtils.getTempDirectory(), getClass().getSimpleName()),
+        List.of("properties"), List.of("name", "description"));
+
     public CasConfigurationMetadataRepository() {
-        this("classpath*:META-INF/spring-configuration-metadata.json");
+        this(CONFIGURATION_METADATA_RESOURCE_PATTERN);
     }
 
-    /**
-     * Instantiates a new CAS configuration metadata repository.
-     * Scans the context looking for spring configuration metadata
-     * resources and then loads them all into a repository instance.
-     *
-     * @param resource the resource
-     */
     public CasConfigurationMetadataRepository(final String resource) {
         val builder = CasConfigurationMetadataRepositoryJsonBuilder.create();
         FunctionUtils.doUnchecked(__ -> {
             val resources = new PathMatchingResourcePatternResolver().getResources(resource);
             Arrays.stream(resources).forEach(Unchecked.consumer(r -> {
                 try (val in = r.getInputStream()) {
-                    builder.withJsonResource(in);
+                    val data = in.readAllBytes();
+                    try (val indexInputStream = new ByteArrayInputStream(data);
+                         val metadataInputStream = new ByteArrayInputStream(data)) {
+                        luceneSearchService.createIndexes(indexInputStream);
+                        builder.withJsonResource(metadataInputStream);
+                    }
                 }
             }));
-        });
-        repository = builder.build();
-    }
-
-    public CasConfigurationMetadataRepository(final Resource resource) {
-        val builder = CasConfigurationMetadataRepositoryJsonBuilder.create();
-        FunctionUtils.doUnchecked(__ -> {
-            try (val in = resource.getInputStream()) {
-                builder.withJsonResource(in);
-            }
         });
         repository = builder.build();
     }
