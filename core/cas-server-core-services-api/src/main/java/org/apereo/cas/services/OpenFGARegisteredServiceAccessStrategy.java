@@ -66,6 +66,8 @@ public class OpenFGARegisteredServiceAccessStrategy extends BaseRegisteredServic
     @ExpressionLanguageCapable
     private String token;
 
+    private String userType;
+
     @Override
     public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
         HttpResponse response = null;
@@ -82,7 +84,7 @@ public class OpenFGARegisteredServiceAccessStrategy extends BaseRegisteredServic
             val checkEntity = AuthorizationRequestEntity.builder()
                 .object(StringUtils.defaultIfBlank(this.object, request.getService().getId()))
                 .relation(StringUtils.defaultIfBlank(this.relation, "owner"))
-                .user(request.getPrincipalId())
+                .user(StringUtils.defaultIfBlank(this.userType, "user") + ":" + request.getPrincipalId())
                 .build()
                 .toJson();
             val exec = HttpExecutionRequest.builder()
