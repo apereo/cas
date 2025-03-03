@@ -1,16 +1,19 @@
 package org.apereo.cas;
 
-import com.vdurmont.semver4j.Semver;
+
+import org.semver4j.Semver;
 
 public record DependencyRange(Semver startingVersion, Semver endingVersion) {
+
     public boolean isQualifiedForPatchUpgrade() {
-        return startingVersion.getMajor().equals(endingVersion.getMajor())
-            && startingVersion.getMinor().equals(endingVersion.getMinor())
+        var patchUpdate = startingVersion.getMajor() == endingVersion.getMajor()
+            && startingVersion.getMinor() == endingVersion.getMinor()
             && endingVersion.getPatch() > startingVersion.getPatch();
+        return patchUpdate || startingVersion.equals(endingVersion);
     }
 
     public boolean isQualifiedForMinorUpgrade() {
-        return startingVersion.getMajor().equals(endingVersion.getMajor())
+        return startingVersion.getMajor() == endingVersion.getMajor()
             && endingVersion.getMinor() > startingVersion.getMinor();
     }
 

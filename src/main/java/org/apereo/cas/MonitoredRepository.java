@@ -16,12 +16,12 @@ import org.apereo.cas.github.PullRequestReview;
 import org.apereo.cas.github.TimelineEntry;
 import org.apereo.cas.github.Workflows;
 import com.github.zafarkhaja.semver.Version;
-import com.vdurmont.semver4j.Semver;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.semver4j.Semver;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -148,15 +148,15 @@ public class MonitoredRepository {
         matcher = pattern.matcher(pr.getTitle());
         if (matcher.find()) {
             var initialVersion = matcher.group(2);
-            var startingVersion = new Semver(initialVersion, Semver.SemverType.LOOSE);
-            if (startingVersion.getPatch() == null) {
-                startingVersion = new Semver(initialVersion + ".0", Semver.SemverType.LOOSE);
+            var startingVersion = new Semver(initialVersion);
+            if (startingVersion.getPatch() <= 0) {
+                startingVersion = new Semver(initialVersion + ".0");
             }
             var targetVersion = matcher.group(3);
             if (!StringUtils.hasText(targetVersion) || targetVersion.startsWith(".")) {
                 targetVersion = matcher.group(4);
             }
-            var endingVersion = new Semver(targetVersion, Semver.SemverType.LOOSE);
+            var endingVersion = new Semver(targetVersion);
             return Optional.of(new DependencyRange(startingVersion, endingVersion));
         }
         return Optional.empty();
