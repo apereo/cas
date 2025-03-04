@@ -70,6 +70,8 @@ public class OpenFGAAuthorizationPolicy implements ResourceAuthorizationPolicy {
 
     @ExpressionLanguageCapable
     private String relation;
+
+    private String userType;
     
     @Override
     public AuthorizationResult evaluate(final AuthorizableResource resource, final AuthorizationRequest request) {
@@ -87,7 +89,7 @@ public class OpenFGAAuthorizationPolicy implements ResourceAuthorizationPolicy {
             val checkEntity = AuthorizationRequestEntity.builder()
                 .object(request.getNamespace() + ':' + request.getMethod() + ':' + request.getUri())
                 .relation(StringUtils.defaultIfBlank(SpringExpressionLanguageValueResolver.getInstance().resolve(this.relation), "owner"))
-                .user(request.getPrincipal().getId())
+                .user(StringUtils.defaultIfBlank(this.userType, "user") + ':' + request.getPrincipal().getId())
                 .build()
                 .toJson();
             val exec = HttpExecutionRequest.builder()

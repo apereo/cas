@@ -353,7 +353,8 @@ An authorization policy that passes the request to [OpenFGA](https://openfga.dev
   "token": "...",
   "apiUrl": "...",
   "storeId": "...",
-  "relation": "..."  
+  "relation": "...",
+  "userType": "user", 
 }
 ```
 
@@ -365,6 +366,7 @@ The following parameters are passed to OpenFGA:
 | `apiUrl`   | <sup>[1]</sup> OpenFGA base API endpoint that ultimately invokes the `check` API.                  |
 | `storeId`  | <sup>[1]</sup> The authorization store identifier.                                                 |
 | `relation` | <sup>[1]</sup> The relation or the type of access in the authorization tuple; defaults to `owner`. |
+| `userType` | <sup>[1]</sup> Indicates the type of principal. Defaults to `user`.                                |
   
 The `object` field in the API request is composed of the following elements:
 
