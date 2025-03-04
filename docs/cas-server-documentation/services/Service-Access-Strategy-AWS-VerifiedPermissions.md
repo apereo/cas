@@ -11,6 +11,10 @@ category: Services
 [Amazon Verified Permissions](https://aws.amazon.com/verified-permissions/) is a scalable permissions 
 management and fine-grained authorization service for the applications that you build.
 
+Support is enabled by including the following module in the overlay:
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-aws" %}
+
 This access strategy builds an authorization request and submits it to Amazon Verified Permissions. The specifics
 of the authorization request are taught to CAS using the settings typically defined within the access strategy itself:
 

@@ -492,6 +492,7 @@ layout: null
         *   [Groovy](/cas/{{ version }}/services/Service-Access-Strategy-Groovy.html)
         *   [Grouper](/cas/{{ version }}/services/Service-Access-Strategy-Grouper.html)
         *   [OpenFGA](/cas/{{ version }}/services/Service-Access-Strategy-OpenFGA.html)
+        *   [Permify](/cas/{{ version }}/services/Service-Access-Strategy-Permify.html)
         *   [SCIM](/cas/{{ version }}/services/Service-Access-Strategy-SCIM.html)
         *   [Cerbos](/cas/{{ version }}/services/Service-Access-Strategy-Cerbos.html)
         *   [Permit.io](/cas/{{ version }}/services/Service-Access-Strategy-PermitIO.html)
