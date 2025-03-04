@@ -51,8 +51,8 @@ class CasThymeleafTemplatesDirectorTests {
 
         val director = new CasThymeleafTemplatesDirector(plan);
         assertNotNull(director.getExceptionClassSimpleName(new AuthenticationException()));
-        assertEquals(LOGIN_URL + "?", director.getUrlExternalForm(new URI(LOGIN_URL).toURL()));
-        assertEquals(LOGIN_URL_WITH_CLIENT_NAME + "&", director.getUrlExternalForm(new URI(LOGIN_URL_WITH_CLIENT_NAME).toURL()));
+        assertEquals(LOGIN_URL + '?', director.getUrlExternalForm(new URI(LOGIN_URL).toURL()));
+        assertEquals(LOGIN_URL_WITH_CLIENT_NAME + '&', director.getUrlExternalForm(new URI(LOGIN_URL_WITH_CLIENT_NAME).toURL()));
         assertTrue(director.isLoginFormViewable(mock(WebEngineContext.class)));
         assertTrue(director.isLoginFormUsernameInputVisible(mock(WebEngineContext.class)));
         assertFalse(director.isLoginFormUsernameInputDisabled(mock(WebEngineContext.class)));
