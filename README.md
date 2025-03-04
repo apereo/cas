@@ -69,13 +69,15 @@ The following features are supported by the CAS project:
 * OAuth v2 Protocol
 * OpenID Connect Protocol
 * WS-Federation Passive Requestor Protocol
-* Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Remote, Apache Cassandra, Trusted, BASIC, MongoDB, Pac4J and more.
-* Delegated authentication to WS-FED, Facebook, Twitter, SAML IdP, OpenID Connect, CAS and more.
-* Authorization via ABAC, Time/Date, REST, Internet2's Grouper and more.
-* HA clustered deployments via Hazelcast, JPA, Apache Cassandra, Memcached, Apache Ignite, MongoDB, Redis, DynamoDb, and more.
-* Application registration backed by JSON, LDAP, YAML, Apache Cassandra, JPA, MongoDB, DynamoDb, Redis and more.
-* Multifactor authentication via Duo Security, Simple MFA, YubiKey, RSA, Google Authenticator, WebAuthn and more.
+* Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Remote, Apache Cassandra, Trusted, BASIC, MongoDB and more.
+* Delegated (social) authentication to external identity providers such as WS-FED, SAML2, OpenID Connect, OAuth CAS and more.
+* Authorization via Heimdall, OpenFGA, OPA, ABAC, Time/Date, REST, Internet2's Grouper and more.
+* HA clustered deployments via Hazelcast, JPA, Hazelcast, Memcached, Apache Ignite, MongoDB, Redis, DynamoDb, and more.
+* Application registration backed by JSON, LDAP, YAML, Google Cloud, JPA, MongoDB, DynamoDb, Redis and more.
+* Multifactor authentication via Duo Security, Simple MFA, YubiKey, RSA, Google Authenticator, WebAuthn FIDO2 and more.
 * Administrative UIs to manage logging, monitoring, statistics, configuration, client registration and more.
+* Email and SMS notification options via Twilio, Mailgun, SendGrid, Amazon SES and more.
+* User attribute consent and management via LDAP, RDBMS, MongoDB, DynamoDb and more.
 * Global and per-application user interface theme and branding.
 * Password management and password policy enforcement.
 * Deployment options using Apache Tomcat, Jetty, Undertow, packaged and running as Docker containers.
