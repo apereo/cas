@@ -5,9 +5,7 @@
 # Central Authentication Service (CAS)
 
 [![License](https://img.shields.io/hexpm/l/plug.svg?style=for-the-badge&logo=apache)](https://github.com/apereo/cas/blob/master/LICENSE)
-[![Twitter](https://img.shields.io/badge/Apereo%20CAS-Twitter-blue.svg?style=for-the-badge&logo=twitter)](https://twitter.com/apereo)
 [![Slack](https://img.shields.io/badge/Slack-join%20chat-blue.svg?style=for-the-badge&logo=slack)][casslack]
-[![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg?style=for-the-badge&logo=stackoverflow)](http://stackoverflow.com/questions/tagged/cas)
 [![Support](https://img.shields.io/badge/Support-Mailing%20Lists-green.svg?colorB=ff69b4&style=for-the-badge)][cassupport]
 
 ## Introduction
@@ -95,8 +93,10 @@ The foundations of CAS are built upon: [Spring Boot][springboot] and
 Apereo CAS is 100% free open source software managed by [Apereo](https://www.apereo.org/), licensed under [Apache v2](LICENSE). Our
 community has access to all releases of the CAS software with absolutely no costs. We welcome contributions from our community of all
 types and sizes. The time and effort to develop and maintain this project is dedicated by a group
-of [volunteers and contributors][githubcontributors]. Commercial support options may be [found here][cassupport].
+of [volunteers and contributors][githubcontributors]. 
 If you (or your employer) benefit from this project, please consider becoming a [Friend of Apereo](https://www.apereo.org/friends) and contribute.
+
+Commercial support options may be [found here][cassupport].
 
 [cascodecov]: https://codecov.io/gh/apereo/cas
 [devlocity]: https://develocity.apereo.org
