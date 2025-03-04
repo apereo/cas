@@ -51,7 +51,7 @@ public interface Principal extends Serializable {
      * @return the attribute
      */
     @JsonIgnore
-    default <T> T getSingleValuedAttribute(String name, Class<T> expectedType) {
+    default <T> T getSingleValuedAttribute(final String name, final Class<T> expectedType) {
         if (containsAttribute(name)) {
             val values = getAttributes().get(name);
             return values
