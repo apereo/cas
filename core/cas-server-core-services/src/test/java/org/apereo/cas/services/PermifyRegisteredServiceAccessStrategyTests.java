@@ -1,12 +1,12 @@
 package org.apereo.cas.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.val;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
