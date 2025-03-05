@@ -1,7 +1,13 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
+import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,21 +21,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
-import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
-import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.http.HttpExecutionRequest;
-import org.apereo.cas.util.http.HttpUtils;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,6 +49,8 @@ public class PermifyRegisteredServiceAccessStrategy extends BaseRegisteredServic
 
     @Serial
     private static final long serialVersionUID = -2108201604115278441L;
+    
+    private static final int DEPTH = 20;
 
     @ExpressionLanguageCapable
     private String apiUrl;
@@ -130,7 +129,7 @@ public class PermifyRegisteredServiceAccessStrategy extends BaseRegisteredServic
         );
         
         return new PermifyRequest(entity, expressionResolver.resolve(permission),
-            subject, context, new PermifyMetadata(20));
+            subject, context, new PermifyMetadata(DEPTH));
     }
     
     public record PermifyEntity(String type, String id) {
@@ -147,6 +146,11 @@ public class PermifyRegisteredServiceAccessStrategy extends BaseRegisteredServic
     public record PermifyRequest(PermifyEntity entity, String permission,
         PermifySubject subject, PermifyContext context, PermifyMetadata metadata) {
 
+        /**
+         * Convert to JSON.
+         *
+         * @return the string
+         */
         public String toJson() {
             return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(this));
         }
