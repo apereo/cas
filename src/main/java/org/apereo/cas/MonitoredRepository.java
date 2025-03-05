@@ -1,5 +1,11 @@
 package org.apereo.cas;
 
+import com.github.zafarkhaja.semver.Version;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apereo.cas.github.Base;
 import org.apereo.cas.github.Branch;
 import org.apereo.cas.github.CheckRun;
@@ -15,12 +21,6 @@ import org.apereo.cas.github.PullRequestFile;
 import org.apereo.cas.github.PullRequestReview;
 import org.apereo.cas.github.TimelineEntry;
 import org.apereo.cas.github.Workflows;
-import com.github.zafarkhaja.semver.Version;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.semver4j.Semver;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StringUtils;
@@ -156,6 +156,7 @@ public class MonitoredRepository {
             if (!StringUtils.hasText(targetVersion) || targetVersion.startsWith(".")) {
                 targetVersion = matcher.group(4);
             }
+
             var endingVersion = new Semver(targetVersion);
             return Optional.of(new DependencyRange(startingVersion, endingVersion));
         }
@@ -179,7 +180,7 @@ public class MonitoredRepository {
         }
         return false;
     }
-    
+
     public boolean autoMergePullRequest(final PullRequest pr) {
         if (pr.isMergeable() && pr.isBot()) {
             if (canBotPullRequestBeMerged(pr)) {
@@ -198,37 +199,48 @@ public class MonitoredRepository {
                     }
 
                     var files = getPullRequestFiles(pr);
-                    var firstFile = files.getFirst().getFilename();
-                    if (firstFile.endsWith("package.json")) {
-                        if (rangeResult.get().isQualifiedForMinorUpgrade()) {
-                            log.info("Merging minor dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
-                            labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
-                            return approveAndMergePullRequest(pr, false);
+                    if (files.size() == 1) {
+                        var firstFile = files.getFirst().getFilename();
+                        
+                        if (firstFile.endsWith("package.json")) {
+                            if (rangeResult.get().isQualifiedForMinorUpgrade()) {
+                                log.info("Merging minor dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                                labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
+                                return approveAndMergePullRequest(pr, false);
+                            }
                         }
-                    }
 
-                    if (firstFile.endsWith("libs.versions.toml")) {
-                        var stagingRepository = pr.isTargetedAtRepository(gitHubProperties.getStagingRepository().getFullName());
-                        if (stagingRepository && (rangeResult.get().isQualifiedForMinorUpgrade() || rangeResult.get().isQualifiedForMajorUpgrade())) {
-                            if (pr.getAssignee() == null) {
-                                log.info("Assigning major dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
-                                gitHub.assignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
-                            } else if (pr.getAssignee().getLogin().equalsIgnoreCase("apereocas-bot")) {
-                                var checkrun = getLatestCompletedCheckRunsFor(pr, "build-pull-request");
-                                if (checkrun == null || checkrun.getCount() == 0) {
-                                    log.info("Unassigning and re-assigning major dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
-                                    gitHub.unassignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
+                        if (firstFile.endsWith("libs.versions.toml")) {
+                            var stagingRepository = pr.isTargetedAtRepository(gitHubProperties.getStagingRepository().getFullName());
+                            if (stagingRepository && (rangeResult.get().isQualifiedForMinorUpgrade() || rangeResult.get().isQualifiedForMajorUpgrade())) {
+                                if (pr.getAssignee() == null) {
+                                    log.info("Assigning major dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                                     gitHub.assignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
-                                }
-                                if (checkrun != null && checkrun.getCount() == 1) {
-                                    var run = checkrun.getRuns().getFirst();
-                                    if (run.getStatus().equalsIgnoreCase(Workflows.WorkflowRunStatus.COMPLETED.getName())
-                                        && run.getConclusion().equalsIgnoreCase("success")) {
-                                        log.info("Merging major dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
-                                        labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
-                                        return approveAndMergePullRequest(pr, false);
+                                } else if (pr.getAssignee().getLogin().equalsIgnoreCase("apereocas-bot")) {
+                                    var checkrun = getLatestCompletedCheckRunsFor(pr, "build-pull-request");
+                                    if (checkrun == null || checkrun.getCount() == 0) {
+                                        log.info("Unassigning and re-assigning major dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                                        gitHub.unassignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
+                                        gitHub.assignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
+                                    }
+                                    if (checkrun != null && checkrun.getCount() == 1) {
+                                        var run = checkrun.getRuns().getFirst();
+                                        if (run.getStatus().equalsIgnoreCase(Workflows.WorkflowRunStatus.COMPLETED.getName())
+                                            && run.getConclusion().equalsIgnoreCase("success")) {
+                                            log.info("Merging major dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                                            labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
+                                            return approveAndMergePullRequest(pr, false);
+                                        }
                                     }
                                 }
+                            }
+                        }
+
+                        if (firstFile.endsWith("Dockerfile")) {
+                            if (rangeResult.get().isQualifiedForMinorUpgrade() || rangeResult.get().isQualifiedForPatchUpgrade()) {
+                                log.info("Merging docker dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                                labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
+                                return approveAndMergePullRequest(pr, false);
                             }
                         }
                     }
@@ -243,11 +255,11 @@ public class MonitoredRepository {
             var admins = getGitHubProperties().getRepository().getAdmins();
             var approvedByAdmin = timeline
                 .stream()
-                .anyMatch(r ->
-                    r.isLabeled()
-                        && r.getLabel().getName().equals(CasLabels.LABEL_AUTO_MERGE.getTitle())
-                        && r.getActor() != null
-                        && admins.contains(r.getActor().getLogin()));
+                .anyMatch(timelineEntry ->
+                    timelineEntry.isLabeled()
+                        && timelineEntry.getLabel().getName().equals(CasLabels.LABEL_AUTO_MERGE.getTitle())
+                        && timelineEntry.getActor() != null
+                        && admins.contains(timelineEntry.getActor().getLogin()));
             if (approvedByAdmin) {
                 log.info("Merging admin-approved pull request {}", pr);
                 return approveAndMergePullRequest(pr);
