@@ -17,6 +17,7 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -73,6 +74,8 @@ public class CasWebSecurityConfigurerAdapter {
     private final CasConfigurationProperties casProperties;
 
     private final WebEndpointProperties webEndpointProperties;
+    
+    private final ManagementServerProperties managementServerProperties;
 
     private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
 
@@ -173,6 +176,7 @@ public class CasWebSecurityConfigurerAdapter {
         patterns.add(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN);
         patterns.add("/");
         patterns.add(webEndpointProperties.getBasePath());
+        FunctionUtils.doIfNotBlank(managementServerProperties.getBasePath(), patterns::add);
         patterns.addAll(casProperties.getMonitor().getEndpoints().getIgnoredEndpoints());
         return patterns;
     }
@@ -180,7 +184,8 @@ public class CasWebSecurityConfigurerAdapter {
     protected void configureEndpointAccessToDenyUndefined(
         final HttpSecurity http, final ApplicationContext applicationContext) {
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
-        pathMappedEndpoints.getObject()
+        val mappedEndpoints = pathMappedEndpoints.getObject();
+        mappedEndpoints
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .forEach(Unchecked.consumer(endpoint -> {

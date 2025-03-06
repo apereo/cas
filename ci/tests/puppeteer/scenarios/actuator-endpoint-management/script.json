@@ -1,0 +1,28 @@
+{
+  "dependencies": "reports,metrics,configuration-metadata-repository,events,monitor",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=AUTHENTICATED",
+
+    "--spring.security.user.name=casuser",
+    "--spring.security.user.password=M#ll0n",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.authn.accept.name=STATIC",
+    "--cas.tgc.pin-to-session=false",
+
+    "--logging.level.org.springframework.security=info",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--management.server.port=8449",
+    "--management.server.base-path=/controls",
+    
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ]
+}
