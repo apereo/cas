@@ -149,14 +149,16 @@ public class CheckSpringConfigurationFactories {
                         }
                     }
 
-                    var autoconfig = Arrays.asList(file.getParent().toFile().listFiles(ff -> ff.getName().endsWith("AutoConfiguration.java")));
-                    var noneMatch = autoconfig.stream().noneMatch(f -> {
-                        var autoText = readFile(f.toPath());
-                        return autoText.contains(classname);
-                    });
-                    if (noneMatch) {
-                        error("Configuration class %s is not imported by auto configuration(s) %s", classname, autoconfig.toArray());
-                        count.incrementAndGet();
+                    if (!text.contains("AutoConfigurationRequired")) {
+                        var autoconfig = Arrays.asList(file.getParent().toFile().listFiles(ff -> ff.getName().endsWith("AutoConfiguration.java")));
+                        var noneMatch = autoconfig.stream().noneMatch(f -> {
+                            var autoText = readFile(f.toPath());
+                            return autoText.contains(classname);
+                        });
+                        if (noneMatch) {
+                            error("Configuration class %s is not imported by auto configuration(s) %s", classname, autoconfig.toArray());
+                            count.incrementAndGet();
+                        }
                     }
 
                     if (text.contains("public static class " + classname)) {
