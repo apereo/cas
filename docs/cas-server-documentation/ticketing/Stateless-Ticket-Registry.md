@@ -58,7 +58,7 @@ The stateless ticket registry may not be a suitable solution for all deployment 
 compromises and security trade-offs. The following is a list of limitations and caveats that one should be aware of:
 
 <div class="alert alert-info">:information_source: <strong>Life Advice</strong><p>
-Depending on your point of view, any one of the caveats noted above could be argued as a minor lapse in security. Lessened security constraints 
+Depending on your point of view, any one of the caveats noted here could be argued as a minor lapse in security. Lessened security constraints 
 around generated tickets or the inability to manage one's single sign-on session remotely, etc might be a deal breaker for you. Needless to say, 
 you should examine and understand the security trade-offs carefully before you decide to use this option, or any option for that matter.
 </p></div>
