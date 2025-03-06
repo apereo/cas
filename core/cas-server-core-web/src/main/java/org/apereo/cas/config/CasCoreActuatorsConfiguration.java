@@ -40,6 +40,7 @@ import java.util.Collections;
  */
 @Configuration(value = "CasCoreActuatorsConfiguration", proxyBeanMethods = false)
 @Lazy(false)
+@SuppressWarnings("AutoConfigurationRequired")
 class CasCoreActuatorsConfiguration {
 
     @Bean
