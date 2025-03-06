@@ -26,6 +26,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
+import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -174,10 +175,12 @@ class CasWebSecurityConfiguration {
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
             final List<CasWebSecurityConfigurer> configurersList,
             final WebEndpointProperties webEndpointProperties,
+            final ManagementServerProperties managementServerProperties,
             final CasConfigurationProperties casProperties,
             final WebProperties webProperties) {
             val adapter = new CasWebSecurityConfigurerAdapter(casProperties,
-                webEndpointProperties, pathMappedEndpoints, configurersList,
+                webEndpointProperties, managementServerProperties,
+                pathMappedEndpoints, configurersList,
                 securityContextRepository, webProperties);
             return adapter::configureWebSecurity;
         }
@@ -192,12 +195,13 @@ class CasWebSecurityConfiguration {
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
             final List<CasWebSecurityConfigurer> configurersList,
             final WebEndpointProperties webEndpointProperties,
+            final ManagementServerProperties managementServerProperties,
             final SecurityProperties securityProperties,
             final CasConfigurationProperties casProperties,
             final WebProperties webProperties) throws Exception {
             val adapter = new CasWebSecurityConfigurerAdapter(casProperties,
-                webEndpointProperties, pathMappedEndpoints, configurersList,
-                securityContextRepository, webProperties);
+                webEndpointProperties, managementServerProperties,
+                pathMappedEndpoints, configurersList, securityContextRepository, webProperties);
             return adapter.configureHttpSecurity(http, applicationContext).build();
         }
     }
