@@ -92,6 +92,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.getObject().execute(audit);
             if (accessResult.isExecutionFailure()) {
+                LOGGER.warn("Service [{}] is not authorized", resolved);
                 httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
                 httpServletRequest.setAttribute(RequestDispatcher.ERROR_EXCEPTION, accessResult.getException().orElse(null));
                 return Optional.empty();

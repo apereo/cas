@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.Unchecked;
@@ -28,6 +29,7 @@ import java.util.Optional;
  * @since 5.3.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAuditableExecution {
 
     private final ConfigurableApplicationContext applicationContext;
@@ -208,6 +210,8 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                     .authentication(context.getAuthentication().orElse(null))
                     .build();
                 result.setException(UnauthorizedServiceException.denied("Unauthorized"));
+                LOGGER.warn("Service is not registered in the service registry."
+                    + "Service is [{}] and registered service is [{}]", result.getService(), result.getRegisteredService());
                 return result;
             });
     }
