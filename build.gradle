@@ -160,6 +160,7 @@ allprojects {
     afterEvaluate { project ->
         if (rootProject.generateGitProperties) {
             gitProperties {
+                dotGitDirectory = project.rootProject.layout.projectDirectory.dir(".git")
                 customProperty 'project.group', project.group
                 customProperty 'project.name', project.name
                 customProperty 'project.version', project.version
