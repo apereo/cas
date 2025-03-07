@@ -81,7 +81,7 @@
       "matchUpdateTypes": ["major", "minor"]
     },
     {
-      "matchDepNames": ["com\\.h2database:h2"],
+      "matchDepNames": ["com.h2database:h2"],
       "matchManagers": ["maven"],
       "enabled": false
     },
