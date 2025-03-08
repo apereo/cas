@@ -42,7 +42,7 @@ Inline scripts always begin with the syntax `groovy {...}` and are passed the cu
 attributes as an `attributes` binding variable. The result of the script can be a single/collection of value(s).
 
 The above configuration will produce a `uid` attribute for the application whose value is a concatenation of
-the original value of `uid` plus the words ` is great`, so the final result would be `piper is great`.
+the original value of `uid` plus the words `is great`. The final result would be `piper is great`.
 
 To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
