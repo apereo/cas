@@ -207,6 +207,7 @@ layout: null
     *   [Cerbos](/cas/{{ version }}/services/Service-Access-Strategy-Cerbos.html)
     *   [SCIM](/cas/{{ version }}/services/Service-Access-Strategy-SCIM.html)
     *   [Permit.io](/cas/{{ version }}/services/Service-Access-Strategy-PermitIO.html)
+    *   [Permify](/cas/{{ version }}/services/Service-Access-Strategy-Permify.html)
     *   [Open Policy Agent](/cas/{{ version }}/services/Service-Access-Strategy-OpenPolicyAgent.html)
     *   [AWS Verified Permissions](/cas/{{ version }}/services/Service-Access-Strategy-AWS-VerifiedPermissions.html)
 
