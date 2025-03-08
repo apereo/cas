@@ -168,13 +168,13 @@ public class MonitoredRepository {
             var files = getPullRequestFiles(pr);
             if (files.stream().allMatch(file -> file.getFilename().endsWith("locust/requirements.txt"))) {
                 log.info("Merging bot pull request for Locust {}", pr);
-                return approveAndMergePullRequest(pr);
+                return approveAndMergePullRequest(pr, false);
             }
             if (files.stream().allMatch(file -> file.getFilename().matches(".github/workflows/.+.yml"))) {
                 var rangeResult = extractBotDependencyRange(pr);
                 if (rangeResult.isPresent() && (rangeResult.get().isQualifiedForPatchUpgrade() || rangeResult.get().isQualifiedForMinorUpgrade())) {
                     log.info("Merging bot pull request {} for GitHub Actions for dependency range {}", pr, rangeResult.get());
-                    return approveAndMergePullRequest(pr);
+                    return approveAndMergePullRequest(pr, false);
                 }
             }
         }
@@ -189,10 +189,13 @@ public class MonitoredRepository {
             try {
                 var rangeResult = extractBotDependencyRange(pr);
                 if (rangeResult.isPresent()) {
-                    var startingVersion = rangeResult.get().startingVersion();
-                    var endingVersion = rangeResult.get().endingVersion();
+                    var dependencyVersion = rangeResult.get();
+                    var stagingRepository = pr.isTargetedAtRepository(gitHubProperties.getStagingRepository().getFullName());
 
-                    if (rangeResult.get().isQualifiedForPatchUpgrade()) {
+                    var startingVersion = dependencyVersion.startingVersion();
+                    var endingVersion = dependencyVersion.endingVersion();
+
+                    if (dependencyVersion.isQualifiedForPatchUpgrade()) {
                         log.info("Merging patch dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                         labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
                         return approveAndMergePullRequest(pr, false);
@@ -201,9 +204,9 @@ public class MonitoredRepository {
                     var files = getPullRequestFiles(pr);
                     if (files.size() == 1) {
                         var firstFile = files.getFirst().getFilename();
-                        
+
                         if (firstFile.endsWith("package.json")) {
-                            if (rangeResult.get().isQualifiedForMinorUpgrade()) {
+                            if (dependencyVersion.isQualifiedForMinorUpgrade()) {
                                 log.info("Merging minor dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                                 labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
                                 return approveAndMergePullRequest(pr, false);
@@ -211,15 +214,14 @@ public class MonitoredRepository {
                         }
 
                         if (firstFile.endsWith("libs.versions.toml")) {
-                            var stagingRepository = pr.isTargetedAtRepository(gitHubProperties.getStagingRepository().getFullName());
-                            if (stagingRepository && (rangeResult.get().isQualifiedForMinorUpgrade() || rangeResult.get().isQualifiedForMajorUpgrade())) {
+                            if (stagingRepository && (dependencyVersion.isQualifiedForMinorUpgrade() || dependencyVersion.isQualifiedForMajorUpgrade())) {
                                 if (pr.getAssignee() == null) {
                                     log.info("Assigning major dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                                     gitHub.assignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
                                 } else if (pr.getAssignee().getLogin().equalsIgnoreCase("apereocas-bot")) {
                                     var checkrun = getLatestCompletedCheckRunsFor(pr, "build-pull-request");
                                     if (checkrun == null || checkrun.getCount() == 0) {
-                                        log.info("Unassigning and re-assigning major dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                                        log.info("Unassigning and re-assigning dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                                         gitHub.unassignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
                                         gitHub.assignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
                                     }
@@ -227,7 +229,7 @@ public class MonitoredRepository {
                                         var run = checkrun.getRuns().getFirst();
                                         if (run.getStatus().equalsIgnoreCase(Workflows.WorkflowRunStatus.COMPLETED.getName())
                                             && run.getConclusion().equalsIgnoreCase("success")) {
-                                            log.info("Merging major dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                                            log.info("Merging dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                                             labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
                                             return approveAndMergePullRequest(pr, false);
                                         }
@@ -236,9 +238,9 @@ public class MonitoredRepository {
                             }
                         }
 
-                        if (firstFile.endsWith("Dockerfile")) {
-                            if (rangeResult.get().isQualifiedForMinorUpgrade() || rangeResult.get().isQualifiedForPatchUpgrade()) {
-                                log.info("Merging docker dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                        if (firstFile.endsWith("Dockerfile") || firstFile.matches(".*ci\\/tests\\/.+\\/.+\\.sh")) {
+                            if (dependencyVersion.isQualifiedForMinorUpgrade() || dependencyVersion.isQualifiedForPatchUpgrade()) {
+                                log.info("Merging dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                                 labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
                                 return approveAndMergePullRequest(pr, false);
                             }
@@ -273,12 +275,12 @@ public class MonitoredRepository {
     }
 
     public static Optional<Milestone> getMilestoneForBranch(final List<Milestone> milestones, final String branch) {
-        val branchVersion = Version.valueOf(branch.replace(".x", "." + Integer.MAX_VALUE));
+        val branchVersion = Version.parse(branch.replace(".x", "." + Integer.MAX_VALUE));
         return milestones.stream()
             .filter(milestone -> {
-                val milestoneVersion = Version.valueOf(milestone.getTitle());
-                return milestoneVersion.getMajorVersion() == branchVersion.getMajorVersion()
-                    && milestoneVersion.getMinorVersion() == branchVersion.getMinorVersion();
+                val milestoneVersion = Version.parse(milestone.getTitle());
+                return milestoneVersion.majorVersion() == branchVersion.majorVersion()
+                    && milestoneVersion.minorVersion() == branchVersion.minorVersion();
             })
             .findFirst();
     }
@@ -287,8 +289,8 @@ public class MonitoredRepository {
         if (master.isPresent() && master.get().getNumber().equalsIgnoreCase(ms.getNumber())) {
             return "master";
         }
-        val branchVersion = Version.valueOf(ms.getTitle());
-        return branchVersion.getMajorVersion() + "." + branchVersion.getMinorVersion() + ".x";
+        val branchVersion = Version.parse(ms.getTitle());
+        return branchVersion.majorVersion() + "." + branchVersion.minorVersion() + ".x";
     }
 
     public Version getCurrentVersionInMaster() {
@@ -397,6 +399,7 @@ public class MonitoredRepository {
             commitTitle += " [ci skip]";
             commitMessage += " [ci skip]";
         }
+        log.debug("Merging pull request {} into base branch", pr);
         return gitHub.mergeIntoBase(getOrganization(), getName(),
             pr, commitTitle, commitMessage,
             pr.getHead().getSha(), "squash");
