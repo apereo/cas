@@ -20,7 +20,7 @@ public class MapToJsonAttributeConverter implements AttributeConverter<Map<Strin
         .minimal(true).defaultTypingEnabled(true).build().toObjectMapper();
 
     @Override
-    public String convertToDatabaseColumn(final Map<String, ? extends Object> map) {
+    public String convertToDatabaseColumn(final Map<String, ?> map) {
         return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(map));
     }
 

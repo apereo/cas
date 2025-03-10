@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.zip.Deflater;
@@ -205,7 +206,7 @@ public class CompressionUtils {
                                              final Function<Object, File> converter,
                                              final String prefix) {
         return Unchecked.supplier(() -> {
-            val date = LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm"));
+            val date = LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm", Locale.ENGLISH));
             val file = Files.createTempFile(String.format("%s-%s", prefix, date), ".zip").toFile();
             Files.deleteIfExists(file.toPath());
             val env = new HashMap<String, Object>();

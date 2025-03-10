@@ -335,8 +335,7 @@ public class CasDocumentationApplication {
         patterns.add("\\{@value (\\{*.+?\\}*)\\}");
         patterns.add("\\{@code (\\{*.+?\\}*)\\}");
 
-        for (var i = 0; i < patterns.size(); i++) {
-            var pattern = patterns.get(i);
+        for (var pattern : patterns) {
             var matcher = Pattern.compile(pattern).matcher(description);
             try {
                 while (matcher.find()) {

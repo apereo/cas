@@ -26,28 +26,26 @@
              data-lang="en" th:data-alias="${siteAlias}" data-width="auto"></div>
         <span id="vaError" />
         <script th:inline="javascript">
-            window.onload = () => {
+            window.onload = () =>
                 iwstart("vaStartAuthentication", (iw, data) => {
                     if (data.action === "authentication" && data.code === "ok") {
-                        document.getElementById('otp').value = data.result.values[1];
+                        document.getElementById("otp").value = data.result.values[1];
                         document.getElementById("otpForm").submit();
                     }
                     if (data.type === "error" && data.code === "nok") {
                         if (data.result.reason === "no_profile") {
                             iwterminate();
-                            setTimeout(() => {
+                            setTimeout(() =>
                                 iwstart("vaStartActivation", (iw, data) => {
                                     if (data.type === "success" && data.code === "ok" && data.action === "activation") {
                                         window.location.href = window.location.href;
                                     }
-                                });
-                            }, 0);
+                                }), 0);
                         } else if (data.result.reason === "force_close") {
-                            document.getElementById('vaError').textContent = 'Error: enable third-party cookies for this browser!';
+                            document.getElementById("vaError").textContent = "Error: enable third-party cookies for this browser!";
                         }
                     }
                 });
-            };
         </script>
     </div>
 </main>

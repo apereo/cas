@@ -42,9 +42,7 @@ async function verifyNormalFlows(page) {
 
     await cas.log(`Introspecting access token ${accessToken}`);
     await cas.doGet(`https://localhost:8443/cas/oidc/introspect?token=${accessToken}`,
-        (res) => {
-            assert(res.data.active === true);
-        }, (error) => {
+        (res) => assert(res.data.active === true), (error) => {
             throw `Introspection operation failed: ${error}`;
         }, {
             "Authorization": authzHeader,
@@ -53,9 +51,7 @@ async function verifyNormalFlows(page) {
 
     await cas.log(`Introspecting refresh token ${refreshToken}`);
     await cas.doGet(`https://localhost:8443/cas/oidc/introspect?token=${refreshToken}`,
-        (res) => {
-            assert(res.data.active === true);
-        }, (error) => {
+        (res) => assert(res.data.active === true), (error) => {
             throw `Introspection operation failed: ${error}`;
         }, {
             "Authorization": authzHeader,

@@ -13,11 +13,7 @@
 <body>
     <span th:fragment="attributes">
         <script type="text/javascript">
-            (() => {
-                document.addEventListener('DOMContentLoaded', () => {
-                    $('#attributesTable').DataTable();
-                });
-            })();
+            (() => document.addEventListener("DOMContentLoaded", () => $("#attributesTable").DataTable()))();
         </script>
 
         <div class="profile-content w-100 mdc-data-table table-responsive noborder"

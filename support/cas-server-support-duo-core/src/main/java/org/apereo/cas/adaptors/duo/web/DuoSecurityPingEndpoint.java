@@ -55,7 +55,6 @@ public class DuoSecurityPingEndpoint extends BaseCasActuatorEndpoint {
             .stream()
             .filter(Objects::nonNull)
             .filter(BeanSupplier::isNotProxy)
-            .map(duoSecurityMultifactorAuthenticationProvider -> duoSecurityMultifactorAuthenticationProvider)
             .filter(provider -> StringUtils.isBlank(providerId) || provider.matches(providerId))
             .forEach(p -> {
                 val duoService = p.getDuoAuthenticationService();

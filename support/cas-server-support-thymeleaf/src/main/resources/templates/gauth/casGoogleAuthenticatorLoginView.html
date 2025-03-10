@@ -240,9 +240,7 @@
                                     $('#errorPanel').hide();
                                     $("#regform").submit();
                                 })
-                                .fail((data, status, jqxhr) => {
-                                    $('#errorPanel').show("fast", "swing");
-                                });
+                                .fail((data, status, jqxhr) => $("#errorPanel").show("fast", "swing"));
                         }
                     }, false);
                 </script>

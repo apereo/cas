@@ -12,7 +12,7 @@ def run(final Object... args) {
     def block = false
     def ssoEnabled = true
 
-    def randomValue = UUID.randomUUID().toString();
+    def randomValue = UUID.randomUUID().toString()
     def links = [Continue: "https://localhost:8443/cas/login?service=https://localhost:9859/anything/external/" + randomValue]
     logger.info("Interrupt links are [{}]", links)
     return new InterruptResponse("Interrupted", links, block, ssoEnabled)

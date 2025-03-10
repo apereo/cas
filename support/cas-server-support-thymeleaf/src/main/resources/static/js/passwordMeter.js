@@ -13,9 +13,7 @@ function jqueryReady() {
             progressBarClass4: 'progress-bar-success'
         }, options);
 
-        $(settings.passwordInput).keyup(event => {
-            UpdateProgressBar();
-        });
+        $(settings.passwordInput).keyup(event => UpdateProgressBar());
         
         return this.each(function () {
             settings.progressBar = this;
@@ -86,9 +84,7 @@ function jqueryReady() {
     }
 
     if (password !== null && password !== undefined) {
-        password.addEventListener('keyup', event => {
-            validate();
-        });
+        password.addEventListener('keyup', event => validate());
         password.addEventListener('input', validate);
         confirmed.addEventListener('input', validate);
     }

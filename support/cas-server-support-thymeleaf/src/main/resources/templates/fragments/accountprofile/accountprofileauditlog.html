@@ -14,25 +14,23 @@
     <span th:fragment="auditlog">
         <script type="text/javascript">
 
-            ((material, bootstrap) => {
-                document.addEventListener('DOMContentLoaded', () => {
-                    $('#auditLogTable').DataTable();
-                    let dialogId = 'audit-dialog';
+            ((material, bootstrap) =>
+                document.addEventListener("DOMContentLoaded", () => {
+                    $("#auditLogTable").DataTable();
+                    let dialogId = "audit-dialog";
                     let dialog = material ?
                         material.dialog.MDCDialog.attachTo(document.getElementById(dialogId)) :
                         new bootstrap.Modal(document.getElementById(dialogId), {});
-                    document.getElementsByName("viewAuditEntryDetails").forEach(btn => {
-                        btn.addEventListener('click', event => {
+                    document.getElementsByName("viewAuditEntryDetails").forEach(btn =>
+                        btn.addEventListener("click", event => {
                             let caller = event.target || event.srcElement;
                             let json = $(caller).next("span").text().trim();
                             $("#auditEntryDetails").text(json);
                             hljs.highlightAll();
-                            dialog[material ? 'open' : 'show']();
+                            dialog[material ? "open" : "show"]();
                             event.preventDefault();
-                        }, false);
-                    });
-                });
-            })(window.mdc ? mdc : null, window.bootstrap ? bootstrap : null);
+                        }, false));
+                }))(window.mdc ? mdc : null, window.bootstrap ? bootstrap : null);
         </script>
 
         <div class="mdc-dialog modal" id="audit-dialog" role="alertdialog"

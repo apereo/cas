@@ -36,9 +36,7 @@ const fs = require("fs");
             assert(count === totalAttempts + 1);
             fs.rmSync(`${__dirname}/events.zip`, {force: true});
 
-            await cas.createZipFile(`${__dirname}/events.zip`, (archive) => {
-                res.data[1].forEach((entry) => archive.append(JSON.stringify(entry), { name: `event-${entry.id}.json`}));
-            });
+            await cas.createZipFile(`${__dirname}/events.zip`, (archive) => res.data[1].forEach((entry) => archive.append(JSON.stringify(entry), {name: `event-${entry.id}.json`})));
 
         }, async (error) => {
             throw error;

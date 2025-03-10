@@ -64,7 +64,8 @@ public class DateTimeUtils {
 
         if (result == null) {
             try {
-                result = LocalDateTime.parse(value.toUpperCase(Locale.ENGLISH), DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a"));
+                result = LocalDateTime.parse(value.toUpperCase(Locale.ENGLISH),
+                    DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a", Locale.ENGLISH));
             } catch (final Exception e) {
                 result = null;
             }
@@ -72,7 +73,8 @@ public class DateTimeUtils {
 
         if (result == null) {
             try {
-                result = LocalDateTime.parse(value.toUpperCase(Locale.ENGLISH), DateTimeFormatter.ofPattern("MM/dd/yyyy h:mm a"));
+                result = LocalDateTime.parse(value.toUpperCase(Locale.ENGLISH),
+                    DateTimeFormatter.ofPattern("MM/dd/yyyy h:mm a", Locale.ENGLISH));
             } catch (final Exception e) {
                 result = null;
             }
@@ -80,7 +82,8 @@ public class DateTimeUtils {
 
         if (result == null) {
             try {
-                result = LocalDateTime.parse(value, DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm"));
+                result = LocalDateTime.parse(value,
+                    DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm", Locale.ENGLISH));
             } catch (final Exception e) {
                 result = null;
             }
@@ -88,7 +91,8 @@ public class DateTimeUtils {
 
         if (result == null) {
             try {
-                val ld = LocalDate.parse(value, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+                val ld = LocalDate.parse(value,
+                    DateTimeFormatter.ofPattern("MM/dd/yyyy", Locale.ENGLISH));
                 result = LocalDateTime.of(ld, LocalTime.now(ZoneId.systemDefault()));
             } catch (final Exception e) {
                 result = null;

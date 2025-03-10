@@ -42,7 +42,6 @@ public class DuoSecurityPasswordlessUserAccountStore implements PasswordlessUser
             .stream()
             .filter(Objects::nonNull)
             .filter(BeanSupplier::isNotProxy)
-            .map(duoSecurityMultifactorAuthenticationProvider -> duoSecurityMultifactorAuthenticationProvider)
             .filter(provider -> provider.getDuoAuthenticationService().getProperties().isPasswordlessAuthenticationEnabled())
             .map(provider -> {
                 val duoService = provider.getDuoAuthenticationService();

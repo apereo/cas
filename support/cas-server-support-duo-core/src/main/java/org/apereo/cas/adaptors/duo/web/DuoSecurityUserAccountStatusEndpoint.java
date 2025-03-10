@@ -59,7 +59,6 @@ public class DuoSecurityUserAccountStatusEndpoint extends BaseCasActuatorEndpoin
             .stream()
             .filter(Objects::nonNull)
             .filter(BeanSupplier::isNotProxy)
-            .map(duoSecurityMultifactorAuthenticationProvider -> duoSecurityMultifactorAuthenticationProvider)
             .filter(provider -> StringUtils.isBlank(providerId) || provider.matches(providerId))
             .forEach(provider -> {
                 val duoService = provider.getDuoAuthenticationService();

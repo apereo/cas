@@ -611,9 +611,7 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
                 text: "Please wait while your authentication attempt is processed...",
                 allowOutsideClick: false,
                 showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
+                didOpen: () => Swal.showLoading()
             });
             
             setTimeout(() => {

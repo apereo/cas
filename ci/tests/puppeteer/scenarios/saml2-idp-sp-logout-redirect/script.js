@@ -25,7 +25,7 @@ const path = require("path");
         });
         await cas.goto(page2, "https://localhost:8443/cas/idp/profile/SAML2/POST/SLO");
         await cas.logPage(page2);
-        assert(await page2.url().startsWith("https://localhost:9859/get"));
+        assert(page2.url().startsWith("https://localhost:9859/get"));
         success = true;
     } finally {
         if (success) {

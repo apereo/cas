@@ -50,9 +50,7 @@
                         .then(otp => {
                             document.getElementById('otp').value = otp;
                             $('#otpForm').submit();
-                        }).catch(e => {
-                        $('#otpError').css('display', 'block');
-                    });
+                        }).catch(e => $("#otpError").css("display", "block"));
                 }
                 return false;
             }

@@ -163,12 +163,8 @@ TypeAheadControl.prototype.draw = function (b) {
         }
         a.handleKeyDown(c)
     };
-    this.textBox.onblur = () => {
-        a.hideDrop()
-    };
-    this.textBox.onfocus = () => {
-        a.handleChange()
-    };
+    this.textBox.onblur = () => a.hideDrop();
+    this.textBox.onfocus = () => a.handleChange();
     if (null == b || b) {
         this.textBox.focus()
     }
@@ -896,9 +892,7 @@ function IdPSelectUI() {
             aT = "&" + aT
         }
         aU.href = aP + aT;
-        aU.onclick = () => {
-            aH(z(aO))
-        };
+        aU.onclick = () => aH(z(aO));
         if (null != aR) {
             var aW = ap(undefined, "PreferredIdPImg");
             aW.appendChild(aR);
@@ -1087,9 +1081,7 @@ function IdPSelectUI() {
         aM.setAttribute("type", "radio");
         aM.setAttribute("checked", "checked");
         aM.setAttribute("name", aN);
-        aM.onclick = () => {
-            E(0)
-        };
+        aM.onclick = () => E(0);
         div = ap(undefined, "autoDispatchTile");
         div.appendChild(aM);
         div.appendChild(document.createTextNode(A("autoFollow.never")));
@@ -1147,9 +1139,7 @@ function IdPSelectUI() {
     var l = (aN, aM) => {
         aN.id = aL + aM
     };
-    var am = (aN, aM) => {
-        aN.setAttribute("class", aj + aM)
-    };
+    var am = (aN, aM) => aN.setAttribute("class", aj + aM);
     var aD = aM => document.getElementById(aL + aM);
     var aH = aM => {
         J(aM);

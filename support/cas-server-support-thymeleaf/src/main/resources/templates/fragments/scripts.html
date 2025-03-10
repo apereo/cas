@@ -16,9 +16,7 @@
     if (typeof resourceLoadedSuccessfully === "function") {
         resourceLoadedSuccessfully();
     }
-    $(() => {
-        typeof cssVars === "function" && cssVars({onlyLegacy: true});
-    });
+    $(() => typeof cssVars === "function" && cssVars({onlyLegacy: true}));
     let trackGeoLocation = /*[[${trackGeoLocation}]]*/ === "true";
 </script>
 

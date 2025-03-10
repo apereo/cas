@@ -211,10 +211,7 @@ function initializeFooterButtons() {
                                     type: "PUT",
                                     contentType: "application/json",
                                     data: fileContent,
-                                    success: response => {
-
-                                        $("#reloadAll").click();
-                                    },
+                                    success: response => $("#reloadAll").click(),
                                     error: (xhr, status, error) => {
                                         console.error("File upload failed:", error);
                                         displayBanner(xhr);
@@ -430,9 +427,7 @@ async function initializeAccessStrategyOperations() {
                     }
                     accessStrategyAttributesTable.draw();
                     updateNavigationSidebar();
-                    $("#authorizedServiceNavigation").off().on("click", () => {
-                        navigateToApplication(response.registeredService.id);
-                    });
+                    $("#authorizedServiceNavigation").off().on("click", () => navigateToApplication(response.registeredService.id));
                 },
                 error: (xhr, status, error) => {
                     $("#accessStrategyEditorContainer").addClass("d-none");
@@ -882,9 +877,7 @@ async function initializeSsoSessionOperations() {
                             url: `${actuatorEndpoints.ssosessions}/users/${username}`,
                             type: "DELETE",
                             contentType: "application/x-www-form-urlencoded",
-                            success: (response, status, xhr) => {
-                                ssoSessionsTable.clear().draw();
-                            },
+                            success: (response, status, xhr) => ssoSessionsTable.clear().draw(),
                             error: (xhr, status, error) => {
                                 console.error("Error fetching data:", error);
                                 displayBanner(xhr);
@@ -908,9 +901,7 @@ async function initializeSsoSessionOperations() {
                 text: "Please wait while single sign-on sessions are retrieved...",
                 allowOutsideClick: false,
                 showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
+                didOpen: () => Swal.showLoading()
             });
             ssoSessionsTable.clear();
 
@@ -1073,9 +1064,7 @@ async function initializeLoggingOperations() {
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(loggerData),
-                    success: response => {
-                        $(this).css("background-color", determineLoggerColor(level));
-                    },
+                    success: response => $(this).css("background-color", determineLoggerColor(level)),
                     error: (xhr, status, error) => {
                         console.error("Failed", error);
                         displayBanner(xhr);
@@ -1193,9 +1182,7 @@ async function initializeLoggingOperations() {
                             logDataStream.scrollTop(logDataStream.prop("scrollHeight"));
                         }
                     },
-                    error: (xhr, status, error) => {
-                        console.error("Streaming logs failed:", error);
-                    }
+                    error: (xhr, status, error) => console.error("Streaming logs failed:", error)
                 });
             }
         }
@@ -1215,9 +1202,7 @@ async function initializeLoggingOperations() {
                                 logFileStream.scrollTop(logFileStream.prop("scrollHeight"));
                             }
                         },
-                        error: (xhr, status, error) => {
-                            console.error("Streaming logs failed:", error);
-                        }
+                        error: (xhr, status, error) => console.error("Streaming logs failed:", error)
                     });
                 }
             }, $("#logRefreshFilter").val());
@@ -1295,9 +1280,7 @@ async function initializeAuditEventsOperations() {
                             }
                             auditEventsTable.draw();
                         },
-                        error: (xhr, textStatus, errorThrown) => {
-                            console.error("Error fetching data:", errorThrown);
-                        }
+                        error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown)
                     });
                 }
             }, $("#auditEventsRefreshFilter").val());
@@ -2338,9 +2321,7 @@ async function initializeAuthenticationOperations() {
                 text: "Please wait while data is being retrieved...",
                 allowOutsideClick: false,
                 showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
+                didOpen: () => Swal.showLoading()
             });
 
             $.get(url, payload => {
@@ -2803,9 +2784,7 @@ async function initializeConfigurationOperations() {
                 text: "Please wait while configuration metadata repository is consulted to find matches...",
                 allowOutsideClick: false,
                 showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
+                didOpen: () => Swal.showLoading()
             });
             $.get(`${actuatorEndpoints.configurationmetadata}/${searchQuery}`, response => {
                 for (const entry of response) {
@@ -2821,9 +2800,7 @@ async function initializeConfigurationOperations() {
                     console.error("Error fetching data:", error);
                     displayBanner(xhr);
                 })
-                .always(() => {
-                    Swal.close();
-                });
+                .always(() => Swal.close());
         });
     }
 }
@@ -2857,9 +2834,7 @@ async function initializeCasProtocolOperations() {
             $("#casProtocolServiceEditorContainer").removeClass("d-none");
 
             updateNavigationSidebar();
-            $("#casProtocolServiceNavigation").off().on("click", () => {
-                navigateToApplication(data.registeredService.id);
-            });
+            $("#casProtocolServiceNavigation").off().on("click", () => navigateToApplication(data.registeredService.id));
         }).fail((xhr, status, error) => {
             displayBanner(xhr);
             $("#casProtocolEditorContainer").addClass("d-none");
@@ -2896,9 +2871,7 @@ async function initializeTrustedMultifactorOperations() {
                 text: "Please wait while registered multifactor trusted devices are retrieved...",
                 allowOutsideClick: false,
                 showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
+                didOpen: () => Swal.showLoading()
             });
 
             $.get(`${actuatorEndpoints.multifactortrusteddevices}/${username}`, response => {
@@ -3032,9 +3005,7 @@ async function initializeMultifactorOperations() {
                 text: "Please wait while registered multifactor devices are retrieved...",
                 allowOutsideClick: false,
                 showConfirmButton: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
+                didOpen: () => Swal.showLoading()
             });
 
             mfaDevicesTable.clear();
@@ -3193,7 +3164,7 @@ async function initializeThrottlesOperations() {
     if (actuatorEndpoints.throttles) {
         fetchThrottledAttempts();
 
-        $("button[name=releaseThrottlesButton]").off().on("click", () => {
+        $("button[name=releaseThrottlesButton]").off().on("click", () =>
             Swal.fire({
                 title: "Are you sure you want to release throttled entries?",
                 text: "Released entries, when eligible, will be removed from the authentication throttling store.",
@@ -3209,18 +3180,13 @@ async function initializeThrottlesOperations() {
                             data: {
                                 clear: false
                             },
-                            success: (response, textStatus, jqXHR) => {
-                                fetchThrottledAttempts();
-                            },
-                            error: (jqXHR, textStatus, errorThrown) => {
-                                displayBanner(jqXHR);
-                            }
+                            success: (response, textStatus, jqXHR) => fetchThrottledAttempts(),
+                            error: (jqXHR, textStatus, errorThrown) => displayBanner(jqXHR)
                         });
                     }
-                });
-        });
+                }));
 
-        $("button[name=clearThrottlesButton]").off().on("click", () => {
+        $("button[name=clearThrottlesButton]").off().on("click", () =>
             Swal.fire({
                 title: "Are you sure you want to clear throttled entries?",
                 text: "All entries will be removed from the authentication throttling store.",
@@ -3236,16 +3202,11 @@ async function initializeThrottlesOperations() {
                             data: {
                                 clear: true
                             },
-                            success: (response, textStatus, jqXHR) => {
-                                fetchThrottledAttempts();
-                            },
-                            error: (jqXHR, textStatus, errorThrown) => {
-                                displayBanner(jqXHR);
-                            }
+                            success: (response, textStatus, jqXHR) => fetchThrottledAttempts(),
+                            error: (jqXHR, textStatus, errorThrown) => displayBanner(jqXHR)
                         });
                     }
-                });
-        });
+                }));
     }
 }
 
@@ -3582,18 +3543,15 @@ async function initializeSAML2ProtocolOperations() {
                                 entityId: $("#saml2MetadataCacheEntityId").val(),
                                 serviceId: $("#saml2MetadataCacheService").val()
                             },
-                            success: (response, textStatus, jqXHR) => {
+                            success: (response, textStatus, jqXHR) =>
                                 Swal.fire({
                                     title: "Cached metadata record(s) removed.",
                                     text: "Cached metadata entry has been removed successfully.",
                                     showConfirmButton: false,
                                     icon: "success",
                                     timer: 1000
-                                });
-                            },
-                            error: (jqXHR, textStatus, errorThrown) => {
-                                displayBanner(jqXHR);
-                            }
+                                }),
+                            error: (jqXHR, textStatus, errorThrown) => displayBanner(jqXHR)
                         });
                     }
                 });
@@ -3756,7 +3714,7 @@ async function initializePalantir() {
 
                 $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
                 activateDashboardTab(selectedTab);
-                initializeCasFeatures().then(() => {
+                initializeCasFeatures().then(() =>
                     Promise.all([
                         initializeAllCharts(),
                         initializeScheduledTasksOperations(),
@@ -3780,8 +3738,7 @@ async function initializePalantir() {
                         initializeMultitenancyOperations(),
                         initializeTrustedMultifactorOperations(),
                         initializeAuditEventsOperations()
-                    ]);
-                });
+                    ]));
             }
         }, 2);
         $("#dashboard").removeClass("d-none");
@@ -3812,9 +3769,7 @@ function selectSidebarMenuButton(selectedItem) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    $(".jqueryui-tabs").tabs().off().on("click", () => {
-        updateNavigationSidebar();
-    });
+    $(".jqueryui-tabs").tabs().off().on("click", () => updateNavigationSidebar());
     $(".jqueryui-menu").menu();
     $(".jqueryui-selectmenu").selectmenu();
 
@@ -3841,14 +3796,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    initializePalantir().then(r => {
-
+    initializePalantir().then(r =>
         Swal.fire({
             title: "Palantir is ready!",
             text: "Palantir is successfully initialized and is ready for use.",
             showConfirmButton: false,
             icon: "success",
             timer: 800
-        });
-    });
+        }));
 });
