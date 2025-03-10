@@ -130,7 +130,7 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
             val mappedAttribute = mappingEntry.getValue();
             switch (mappedAttribute) {
                 case null -> mappedAttributesBuilder.put(sourceAttrName, null);
-                case final String __ -> {
+                case final String value -> {
                     val mappedSet = new HashSet<String>();
                     mappedSet.add(mappedAttribute.toString());
                     mappedAttributesBuilder.put(sourceAttrName, mappedSet);
