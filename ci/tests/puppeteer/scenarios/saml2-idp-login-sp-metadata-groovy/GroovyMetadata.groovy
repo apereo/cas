@@ -14,5 +14,4 @@ def run(Object... args) {
         response?.close()
         httpClient.close()
     }
-    return null
 }

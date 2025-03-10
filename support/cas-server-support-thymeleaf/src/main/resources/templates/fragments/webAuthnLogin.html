@@ -179,9 +179,7 @@
                             text: "Your authentication attempt is in progress. Do not close this window!",
                             allowOutsideClick: false,
                             showConfirmButton: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
+                            didOpen: () => Swal.showLoading()
                         });
                         return true;
                     });

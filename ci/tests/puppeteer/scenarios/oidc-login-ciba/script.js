@@ -51,9 +51,7 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
             },
             (res) => {
                 throw `CIBA operation MUST fail but instead it passed incorrectly: ${res.data}`;
-            }, (error) => {
-                cas.log(`CIBA operation failed correctly: ${error}`);
-            });
+            }, (error) => cas.log(`CIBA operation failed correctly: ${error}`));
     }
     await cas.sleep(3000);
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -148,9 +146,7 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
         await cas.separator();
         await verifyDeliveryMode("clientpoll", "poll", "");
         
-        server.close(() => {
-            cas.log("Exiting server...");
-        });
+        server.close(() => cas.log("Exiting server..."));
     });
 
 })();

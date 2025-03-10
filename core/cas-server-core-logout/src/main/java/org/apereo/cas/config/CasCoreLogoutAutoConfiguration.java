@@ -85,7 +85,6 @@ public class CasCoreLogoutAutoConfiguration {
                     return builder;
                 })
                 .filter(BeanSupplier::isNotProxy)
-                .map(singleLogoutServiceLogoutUrlBuilder -> singleLogoutServiceLogoutUrlBuilder)
                 .sorted(Comparator.comparing(SingleLogoutServiceLogoutUrlBuilder::getOrder))
                 .collect(Collectors.toList());
             return new ChainingSingleLogoutServiceLogoutUrlBuilder(results);

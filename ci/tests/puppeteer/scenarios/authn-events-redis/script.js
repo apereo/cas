@@ -38,9 +38,7 @@ async function getAllEvents() {
     assert(count === totalAttempts + 1);
 
     fs.rmSync(`${__dirname}/events.zip`, {force: true});
-    await cas.createZipFile(`${__dirname}/events.zip`, async (archive) => {
-        body[1].forEach((entry) => archive.append(JSON.stringify(entry), { name: `event-${entry.id}.json`}));
-    });
+    await cas.createZipFile(`${__dirname}/events.zip`, async (archive) => body[1].forEach((entry) => archive.append(JSON.stringify(entry), {name: `event-${entry.id}.json`})));
     
     await cas.log("Deleting all events...");
     await cas.doDelete("https://localhost:8443/cas/actuator/events");

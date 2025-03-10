@@ -271,7 +271,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
                     AnnotationAwareOrderComparator.sortIfNecessary(result);
                     return result;
                 })
-                .orElseGet(() -> new ArrayList<>());
+                .orElseGet(ArrayList::new);
 
             val pac4j = casProperties.getAuthn().getPac4j();
             if (StringUtils.isNotBlank(pac4j.getRest().getUrl())) {
@@ -308,7 +308,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
                     AnnotationAwareOrderComparator.sortIfNecessary(result);
                     return result;
                 })
-                .orElseGet(() -> new ArrayList<>());
+                .orElseGet(ArrayList::new);
 
             return new JdbcDelegatedIdentityProviderFactory(jdbcTemplate,
                 casProperties, customizers, casSslContext, clientsCache, applicationContext);

@@ -1,4 +1,4 @@
-configurations.all {
+configurations.configureEach {
     exclude(group: "org.apache.logging.log4j", module: "log4j-api")
     exclude(group: "org.apache.logging.log4j", module: "log4j-web")
     exclude(group: "org.apache.logging.log4j", module: "log4j-jakarta-web")

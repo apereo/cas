@@ -215,7 +215,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 return document;
             })
             .filter(Objects::nonNull)
-            .map(redisTicketDocument -> redisTicketDocument)
             .map(document -> deserializeTicket(document.json(), document.type()))
             .map(this::decodeTicket)
             .filter(Objects::nonNull)

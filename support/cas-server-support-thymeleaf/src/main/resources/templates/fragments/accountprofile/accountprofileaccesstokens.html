@@ -11,11 +11,7 @@
 <span th:fragment="accesstokens">
 
     <script type="text/javascript">
-            (() => {
-                document.addEventListener('DOMContentLoaded', () => {
-                    $('#oidcAccessTokensTable').DataTable();
-                });
-            })();
+            (() => document.addEventListener("DOMContentLoaded", () => $("#oidcAccessTokensTable").DataTable()))();
     </script>
 
     <div id="divOidcAccessTokens" th:if="${oidcAccessTokens}" class="profile-content w-100" style="display: none;">

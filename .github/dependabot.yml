@@ -8,13 +8,14 @@ updates:
       - "Bot"
       - "Dependabot"
     open-pull-requests-limit: 10
+    groups: {}
     ignore:
-      - dependency-name: org.bouncycastle:bcprov-jdk15on
+      - dependency-name: "org.bouncycastle:bcprov-jdk15on"
         versions:
           - "1.68"
-      - dependency-name: com.h2database:h2
+      - dependency-name: "com.h2database:h2"
         versions:
           - "*"
       - dependency-name: "software.amazon.awssdk:*"
         update-types:
-          - "version-update:semver-patch"   # Ignore patch updates
+          - "version-update:semver-patch"

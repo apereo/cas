@@ -3,7 +3,7 @@ def isServiceAccessAllowed(RegisteredService registeredService, Service service)
 }
 
 def isServiceAccessAllowedForSso(RegisteredService registeredService) {
-    return registeredService != null;
+    return registeredService != null
 }
 
 def authorizeRequest(RegisteredServiceAccessStrategyRequest request) {

@@ -13,11 +13,7 @@
 <body>
 <span th:fragment="applications">
         <script type="text/javascript">
-            (() => {
-                document.addEventListener('DOMContentLoaded', () => {
-                    $('#applicationsTable').DataTable();
-                });
-            })();
+            (() => document.addEventListener("DOMContentLoaded", () => $("#applicationsTable").DataTable()))();
         </script>
 
 

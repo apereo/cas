@@ -38,7 +38,7 @@ const cas = require("../../cas.js");
     await cas.sleep(2000);
 
     await cas.log(await page.url());
-    assert(await page.url().startsWith("https://localhost:9859/anything/1"));
+    assert(page.url().startsWith("https://localhost:9859/anything/1"));
     await cas.sleep(2000);
     await cas.assertInnerTextContains(page, "pre", "OC-1-");
 

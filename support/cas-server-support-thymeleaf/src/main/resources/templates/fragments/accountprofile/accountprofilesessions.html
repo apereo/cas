@@ -13,25 +13,23 @@
 <body>
 <span th:fragment="sessions">
         <script type="text/javascript">
-            ((material, bootstrap) => {
-                document.addEventListener('DOMContentLoaded', () => {
-                    $('#sessionsTable').DataTable();
-                    let dialogId = 'sessions-dialog';
+            ((material, bootstrap) =>
+                document.addEventListener("DOMContentLoaded", () => {
+                    $("#sessionsTable").DataTable();
+                    let dialogId = "sessions-dialog";
                     let dialog = material ?
                         material.dialog.MDCDialog.attachTo(document.getElementById(dialogId)) :
                         new bootstrap.Modal(document.getElementById(dialogId), {});
-                    document.getElementsByName("viewSessionDetails").forEach(btn => {
-                        btn.addEventListener('click', event => {
+                    document.getElementsByName("viewSessionDetails").forEach(btn =>
+                        btn.addEventListener("click", event => {
                             let caller = event.target || event.srcElement;
                             let json = $(caller).next("span").text().trim();
                             $("#sessionDetails").text(json);
                             hljs.highlightAll();
-                            dialog[material ? 'open' : 'show']();
+                            dialog[material ? "open" : "show"]();
                             event.preventDefault();
-                        }, false);
-                    });
-                });
-            })(window.mdc ? mdc : null, window.bootstrap ? bootstrap : null);
+                        }, false));
+                }))(window.mdc ? mdc : null, window.bootstrap ? bootstrap : null);
         </script>
 
         <div class="mdc-dialog modal" id="sessions-dialog" role="alertdialog"

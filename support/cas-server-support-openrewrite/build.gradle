@@ -33,13 +33,13 @@ tasks.register("createOpenRewriteRecipe") {
 
     doFirst {
         def model = [:]
-        model.put("recipeName", recipeName)
-        model.put("tomcatVersion", tomcatVersion)
-        model.put("casVersion", casVersion)
-        model.put("javaVersion", sourceCompatibility)
-        model.put("jibVersion", jibVersion)
-        model.put("gradleVersion", gradleVersion)
-        model.put("springBootVersion", springBootVersion)
+        (model["recipeName"] = recipeName)
+        (model["tomcatVersion"] = tomcatVersion)
+        (model["casVersion"] = casVersion)
+        (model["javaVersion"] = sourceCompatibility)
+        (model["jibVersion"] = jibVersion)
+        (model["gradleVersion"] = gradleVersion)
+        (model["springBootVersion"] = springBootVersion)
 
         def engine = new groovy.text.GStringTemplateEngine()
         def recipe = engine.createTemplate(templateContents).make(model).toString()

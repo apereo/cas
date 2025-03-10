@@ -43,9 +43,7 @@ const querystring = require("querystring");
     }
 
     await cas.logg("Checking for SSO sessions for all users");
-    await cas.doGet(`${baseUrl}/ssoSessions?type=ALL`, async (res) => {
-        assert(res.status === 200);
-    }, (err) => {
+    await cas.doGet(`${baseUrl}/ssoSessions?type=ALL`, async (res) => assert(res.status === 200), (err) => {
         throw err;
     });
 

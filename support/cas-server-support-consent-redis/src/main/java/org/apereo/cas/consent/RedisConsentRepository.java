@@ -53,7 +53,6 @@ public class RedisConsentRepository implements ConsentRepository {
             return redisKeys
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
-                .map(consentDecision -> consentDecision)
                 .collect(Collectors.toList());
         }
     }
@@ -64,7 +63,6 @@ public class RedisConsentRepository implements ConsentRepository {
             return redisKeys
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
-                .map(consentDecision -> consentDecision)
                 .collect(Collectors.toList());
         }
     }

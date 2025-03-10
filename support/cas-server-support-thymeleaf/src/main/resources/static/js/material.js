@@ -25,9 +25,7 @@ let cas = {
         let selectors = document.querySelectorAll('.mdc-select');
         for (const selector of selectors) {
             const select = new mdc.select.MDCSelect(selector);
-            select.listen('MDCSelect:change', () => {
-                $('#source').val(select.value);
-            });
+            select.listen('MDCSelect:change', () => $("#source").val(select.value));
             $('#source').val(select.value);
         }
 
@@ -168,9 +166,7 @@ let header = {
     attachNotificationToggle: dialog => {
         let btn = document.getElementById('cas-notifications-menu');
         if (btn != null) {
-            btn.addEventListener('click', () => {
-                dialog.open();
-            });
+            btn.addEventListener('click', () => dialog.open());
         }
     }
 };

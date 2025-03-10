@@ -27,9 +27,7 @@ const cas = require("../../cas.js");
     });
 
     await cas.logg("Checking for SSO sessions via paging filters");
-    await cas.doGet(`${baseUrl}?type=ALL&from=1&count=2`, (res) => {
-        assert(res.status === 200);
-    }, (err) => {
+    await cas.doGet(`${baseUrl}?type=ALL&from=1&count=2`, (res) => assert(res.status === 200), (err) => {
         throw err;
     });
 

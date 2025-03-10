@@ -54,9 +54,7 @@
                     neon.initOnline()
                         .then(logins => {
                         })
-                        .catch(e => {
-                            $('#inweboErrorForm').submit();
-                        });
+                        .catch(e => $("#inweboErrorForm").submit());
                 };
 
                 function doEnroll() {
@@ -70,9 +68,7 @@
                     }
                     if (code !== '' && pin !== '') {
                         neon.activateWithPin(code, pin)
-                            .then(login => {
-                                $('#startBrowserForm').submit();
-                            }).catch(e => {
+                            .then(login => $("#startBrowserForm").submit()).catch(e => {
                             $('#enrollError').css('display', 'block');
                             $('#enrollBadPinConfirmation').css('display', 'none');
                         });

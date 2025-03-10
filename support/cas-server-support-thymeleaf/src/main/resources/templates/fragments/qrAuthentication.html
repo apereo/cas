@@ -80,7 +80,7 @@
             $(() => {
                 let socket = new SockJS(endpoint);
                 stompClient = Stomp.over(socket);
-                stompClient.connect({}, frame => {
+                stompClient.connect({}, frame =>
                     stompClient.subscribe(`${prefix}/${topic}/verify`, result => {
                         console.log(result.body);
                         let body = JSON.parse(result.body);
@@ -93,8 +93,7 @@
                             $("#qrform #deviceId").val(body.deviceId);
                             $("#qrform").submit();
                         }
-                    });
-                });
+                    }));
             });
 
             /*]]>*/

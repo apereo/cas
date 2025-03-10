@@ -115,8 +115,8 @@ enum TestCategories {
     X509(true, true),
     ZooKeeper(true, true)
 
-    boolean parallelEnabled;
-    private ptsEnabled;
+    boolean parallelEnabled
+    private ptsEnabled
     
     TestCategories() {
         parallelEnabled = false
@@ -137,12 +137,12 @@ if (rootProject.tasks.findByName("testCategories") == null) {
     rootProject.tasks.register("testCategories") {
         description = "Display all available test categories"
         doLast {
-            def pattern = System.getenv().get("CATEGORY_REGEX") ?: ".*"
+            def pattern = System.getenv()["CATEGORY_REGEX"] ?: ".*"
             def categoryMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
             def result = TestCategories.values()
                     .findAll { it.name().find(categoryMatchPattern) }
                     .toSorted({ o1, o2 ->
-                        o1.name().compareTo(o2.name())
+                        (o1.name() <=> o2.name())
                     })
                     .collect { it.name().toLowerCase(Locale.ENGLISH) }
             println(groovy.json.JsonOutput.toJson(result))
@@ -160,7 +160,7 @@ if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
 
         doLast {
             def scenarios = []
-            def pattern = System.getenv().get("SCENARIO_REGEX") ?: ".*"
+            def pattern = System.getenv()["SCENARIO_REGEX"] ?: ".*"
             def scenarioMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
 
             scenariosDirectory.eachDirMatch(scenarioMatchPattern) {

@@ -386,9 +386,7 @@ function showOverlay(artifactId, type) {
     }
   };
   $('body').append("<div id='overlaydialog'></div>");
-  $(document).on("click", e => {
-      $("#overlaydialog").dialog('destroy');
-  });
+  $(document).on("click", e => $("#overlaydialog").dialog("destroy"));
 
   $("#overlaydialog").append(iframe).dialog(dialogConfig).dialog('open');
 }
@@ -552,9 +550,7 @@ function previous(id) {
 
 const removeActiveClasses = ulElement => {
     const lis = ulElement.querySelectorAll('li');
-    Array.prototype.forEach.call(lis, li => {
-        li.classList.remove('active');
-    });
+    Array.prototype.forEach.call(lis, li => li.classList.remove("active"));
 };
 
 const getChildPosition = element => {

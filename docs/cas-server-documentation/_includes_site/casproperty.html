@@ -148,9 +148,7 @@
 {% endcapture -%}
                                             {{ yamlprop | markdownify | replace: "\n", "<br>" }}
                                             <script>
-                                                setTimeout(() => {
-                                                    $('#yamlproperty{{singlePropertyKey}} td.gl').empty();
-                                                }, 250);
+                                                setTimeout(() => $("#yamlproperty{{singlePropertyKey}} td.gl").empty(), 250);
                                             </script>
 
                                             <p/>

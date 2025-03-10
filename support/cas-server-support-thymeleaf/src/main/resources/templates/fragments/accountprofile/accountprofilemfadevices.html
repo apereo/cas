@@ -10,25 +10,23 @@
 <body>
 <span th:fragment="mfadevices">
         <script type="text/javascript">
-            ((material, bootstrap) => {
-                document.addEventListener('DOMContentLoaded', () => {
-                    $('#mfaDevicesTable').DataTable();
-                    let dialogId = 'mfaDevice-dialog';
+            ((material, bootstrap) =>
+                document.addEventListener("DOMContentLoaded", () => {
+                    $("#mfaDevicesTable").DataTable();
+                    let dialogId = "mfaDevice-dialog";
                     let dialog = material ?
                         material.dialog.MDCDialog.attachTo(document.getElementById(dialogId)) :
                         new bootstrap.Modal(document.getElementById(dialogId), {});
-                    document.getElementsByName("viewMfaDeviceDetails").forEach(btn => {
-                        btn.addEventListener('click', event => {
+                    document.getElementsByName("viewMfaDeviceDetails").forEach(btn =>
+                        btn.addEventListener("click", event => {
                             let caller = event.target || event.srcElement;
                             let json = $(caller).next("span").text().trim();
                             $("#mfaDeviceDetails").text(json);
                             hljs.highlightAll();
-                            dialog[material ? 'open' : 'show']();
+                            dialog[material ? "open" : "show"]();
                             event.preventDefault();
-                        }, false);
-                    });
-                });
-            })(window.mdc ? mdc : null, window.bootstrap ? bootstrap : null);
+                        }, false));
+                }))(window.mdc ? mdc : null, window.bootstrap ? bootstrap : null);
         </script>
         <div class="mdc-dialog modal" id="mfaDevice-dialog" role="alertdialog"
              aria-modal="true" aria-labelledby="mfa-dialog-title" aria-describedby="mfa-dialog-content">

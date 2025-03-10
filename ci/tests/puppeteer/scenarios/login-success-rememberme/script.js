@@ -58,18 +58,14 @@ async function fetchSsoSessions() {
         assert(tgt !== undefined);
     }
     await cas.doDelete("https://localhost:8443/cas/actuator/ticketRegistry/clean", 200,
-        async (res) => {
-            assert(res.status === 200);
-        }, async (err) => {
+        async (res) => assert(res.status === 200), async (err) => {
             throw err;
         }, {
             "Accept": "application/json",
             "Content-Type": "application/x-www-form-urlencoded"
         });
     
-    await cas.doGet("https://localhost:8443/cas/actuator/ssoSessions?type=ALL", async (res) => {
-        assert(res.status === 200);
-    }, (err) => {
+    await cas.doGet("https://localhost:8443/cas/actuator/ssoSessions?type=ALL", async (res) => assert(res.status === 200), (err) => {
         throw err;
     });
 }

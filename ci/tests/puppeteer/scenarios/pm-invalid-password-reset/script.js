@@ -19,9 +19,7 @@ const assert = require("assert");
         "",
         {
             "Content-Type": "application/json"
-        }, (res) => {
-            assert(res.status === 200);
-        }, (error) => {
+        }, (res) => assert(res.status === 200), (error) => {
             throw `Operation failed: ${error}`;
         });
     await cas.sleep(2000);

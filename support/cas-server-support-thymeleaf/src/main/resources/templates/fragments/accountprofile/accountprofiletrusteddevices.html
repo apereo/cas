@@ -10,25 +10,23 @@
 <body>
 <span th:fragment="trusteddevices">
         <script type="text/javascript">
-            ((material, bootstrap) => {
-                document.addEventListener('DOMContentLoaded', () => {
-                    $('#trustedDevicesTable').DataTable();
-                    let dialogId = 'trustedDevice-dialog';
+            ((material, bootstrap) =>
+                document.addEventListener("DOMContentLoaded", () => {
+                    $("#trustedDevicesTable").DataTable();
+                    let dialogId = "trustedDevice-dialog";
                     let dialog = material ?
                         material.dialog.MDCDialog.attachTo(document.getElementById(dialogId)) :
                         new bootstrap.Modal(document.getElementById(dialogId), {});
-                    document.getElementsByName("viewTrustedDeviceDetails").forEach(btn => {
-                        btn.addEventListener('click', event => {
+                    document.getElementsByName("viewTrustedDeviceDetails").forEach(btn =>
+                        btn.addEventListener("click", event => {
                             let caller = event.target || event.srcElement;
                             let json = $(caller).next("span").text().trim();
                             $("#trustedDeviceDetails").text(json);
                             hljs.highlightAll();
-                            dialog[material ? 'open' : 'show']();
+                            dialog[material ? "open" : "show"]();
                             event.preventDefault();
-                        }, false);
-                    });
-                });
-            })(window.mdc ? mdc : null, window.bootstrap ? bootstrap : null);
+                        }, false));
+                }))(window.mdc ? mdc : null, window.bootstrap ? bootstrap : null);
         </script>
         <div class="mdc-dialog modal" id="trustedDevice-dialog" role="alertdialog"
              aria-modal="true" aria-labelledby="trusted-dialog-title" aria-describedby="trusted-dialog-content">
