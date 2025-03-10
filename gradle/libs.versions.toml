@@ -506,6 +506,7 @@ micrometer-registry-new-relic = { module = "io.micrometer:micrometer-registry-ne
 micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
 micrometer-registry-signalfx = { module = "io.micrometer:micrometer-registry-signalfx", version.ref = "micrometer" }
 micrometer-registry-statsd = { module = "io.micrometer:micrometer-registry-statsd", version.ref = "micrometer" }
+micrometer-registry-otel = { module = "io.micrometer:micrometer-registry-otlp", version.ref = "micrometer" }
 micrometer-registry-wavefront = { module = "io.micrometer:micrometer-registry-wavefront", version.ref = "micrometer" }
 micrometer-tracing-bridge-brave = { module = "io.micrometer:micrometer-tracing-bridge-brave", version.ref = "micrometerOtel" }
 micrometer-tracing-bridge-otel = { module = "io.micrometer:micrometer-tracing-bridge-otel", version.ref = "micrometerOtel" }

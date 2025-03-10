@@ -12,4 +12,5 @@ dependencies {
 
     implementation libraries.metrics
     implementation libraries.tracingotel
+    implementation libraries.opentelemetry
 }
