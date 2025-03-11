@@ -8,6 +8,10 @@ def run(final Object... args) {
     def requestContext = args[4]
     def logger = args[5]
 
-    logger.debug("Constructing interrupt response for [{}]", principal)
-    return new InterruptResponse("Hello World!", [link1:"google.com", link2:"yahoo.com"], false, true)
+    logger.info("Constructing interrupt response for [{}]", principal)
+    if (principal.id == "blockuser") {
+        logger.warn("Blocking user [{}]", principal)
+        return new InterruptResponse("Blocked!", [link1:"https://apereo.github.io"], true, false)
+    }
+    return new InterruptResponse("Hello World!", [link1:"https://google.com", link2:"https://yahoo.com"], false, true)
 }
