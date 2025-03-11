@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
 import java.net.URI;
+import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -44,6 +45,25 @@ class FinalizeInterruptFlowActionTests {
     @Qualifier(CasWebflowConstants.ACTION_ID_FINALIZE_INTERRUPT)
     private Action action;
 
+    @Test
+    void verifyFinalizedInterruptBlockedExternalRedirect() throws Throwable {
+        val context = MockRequestContext.create(applicationContext).withUserAgent();
+        context.setParameter("link", "https://google.com");
+
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
+        WebUtils.putRegisteredService(context, CoreAuthenticationTestUtils.getRegisteredService());
+
+        val interrupt = InterruptResponse.interrupt();
+        interrupt.setBlock(true);
+        InterruptUtils.putInterruptIn(context, interrupt);
+        assertThrows(UnauthorizedServiceException.class, () -> action.execute(context));
+
+        interrupt.setLinks(Map.of("link1", "https://google.com"));
+        InterruptUtils.putInterruptIn(context, interrupt);
+        val event = action.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+    }
+    
     @Test
     void verifyFinalizedInterruptBlocked() throws Throwable {
         val context = MockRequestContext.create(applicationContext);

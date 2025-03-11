@@ -7,6 +7,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -20,13 +21,14 @@ import java.util.Optional;
  * @since 5.2.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class FinalizeInterruptFlowAction extends BaseCasWebflowAction {
     private final InterruptTrackingEngine interruptTrackingEngine;
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val response = InterruptUtils.getInterruptFrom(requestContext);
-        if (response.isBlock()) {
+        if (response.isBlock() && !requestContext.getRequestParameters().contains("link")) {
             val registeredService = WebUtils.getRegisteredService(requestContext);
             val accessUrl = Optional.ofNullable(registeredService)
                 .map(service -> service.getAccessStrategy().getUnauthorizedRedirectUrl())
@@ -38,8 +40,20 @@ public class FinalizeInterruptFlowAction extends BaseCasWebflowAction {
                 externalContext.recordResponseComplete();
                 return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_STOP);
             }
+            LOGGER.warn("Interrupt response has blocked the authentication flow");
             throw UnauthorizedServiceException.denied("Rejected");
         }
+
+        if (requestContext.getRequestParameters().contains("link")) {
+            val link = requestContext.getRequestParameters().get("link");
+            LOGGER.debug("Finalizing interrupt flow with link [{}]", link);
+            val validLink = response.getLinks().containsValue(link);
+            if (!validLink) {
+                LOGGER.warn("Link [{}] is not valid and is not part of the interrupt response", link);
+                throw UnauthorizedServiceException.denied("Rejected");
+            }
+        }
+        
         val authentication = WebUtils.getAuthentication(requestContext);
         interruptTrackingEngine.trackInterrupt(requestContext, response);
         WebUtils.putAuthentication(authentication, requestContext);
