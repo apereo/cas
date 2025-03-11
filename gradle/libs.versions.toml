@@ -144,6 +144,7 @@ lettuceMod = "4.2.0"
 log4j = "2.24.3"
 logback = "1.5.17"
 logbackAccess = "1.5.17"
+loki = "0.9.32"
 lombok = "1.18.36"
 lucene = "10.1.0"
 mailgun = "1.1.4"
@@ -477,6 +478,7 @@ log4j-jcl = { module = "org.apache.logging.log4j:log4j-jcl", version.ref = "log4
 log4j-layout-template-json = { module = "org.apache.logging.log4j:log4j-layout-template-json", version.ref = "log4j" }
 log4j-slf4j2-impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
 log4j-spring-cloud-config-client = { module = "org.apache.logging.log4j:log4j-spring-cloud-config-client", version.ref = "log4j" }
+log4j-loki = { module = "pl.tkowalcz.tjahzi:log4j2-appender-nodep", version.ref = "loki" }
 logback-access = { module = "ch.qos.logback:logback-access", version.ref = "logbackAccess" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 logback-core = { module = "ch.qos.logback:logback-core", version.ref = "logback" }

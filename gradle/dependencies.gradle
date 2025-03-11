@@ -254,6 +254,11 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
+        loki              : [
+                dependencies.create(libs.log4j.loki.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                }
+        ],
         oshi                       : [
                 dependencies.create(libs.oshi.core.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")

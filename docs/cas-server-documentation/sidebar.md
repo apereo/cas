@@ -696,6 +696,7 @@ layout: null
         *   [Sentry](/cas/{{ version }}/logging/Logging-Sentry.html)
         *   [SysLog](/cas/{{ version }}/logging/Logging-SysLog.html)
         *   [Splunk](/cas/{{ version }}/logging/Logging-Splunk.html)
+        *   [Loki](/cas/{{ version }}/logging/Logging-Loki.html)
         *   [Logback](/cas/{{ version }}/logging/Logging-Logback.html)
     *   [Audits](#auditsoverview)
         *   [Overview](/cas/{{ version }}/audits/Audits.html)
