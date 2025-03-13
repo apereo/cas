@@ -1,10 +1,10 @@
 package org.apereo.cas.azure;
 
+import org.apereo.cas.util.app.ApplicationEntrypointInitializer;
 import com.microsoft.applicationinsights.attach.ApplicationInsights;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.app.ApplicationEntrypointInitializer;
 
 /**
  * This is {@link AzureInsightsAgentInitializer}.
