@@ -167,7 +167,8 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
         val handlerResolvers = getAuthenticationHandlerResolvers(transaction);
         LOGGER.debug("Authentication handler resolvers for this transaction are [{}]", handlerResolvers);
 
-        val resolvedHandlers = handlerResolvers.stream()
+        val resolvedHandlers = handlerResolvers
+            .stream()
             .filter(BeanSupplier::isNotProxy)
             .filter(Unchecked.predicate(r -> r.supports(handlers, transaction)))
             .map(Unchecked.function(r -> r.resolve(handlers, transaction)))
@@ -208,7 +209,8 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
             .filter(handler -> {
                 if (StringUtils.isNotBlank(clientInfo.getTenant())) {
                     val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(clientInfo.getTenant()).orElseThrow();
-                    return tenantDefinition.getAuthenticationPolicy().getAuthenticationHandlers().contains(handler.getName());
+                    val authenticationHandlers = tenantDefinition.getAuthenticationPolicy().getAuthenticationHandlers();
+                    return authenticationHandlers == null || authenticationHandlers.isEmpty() || authenticationHandlers.contains(handler.getName());
                 }
                 return true;
             })

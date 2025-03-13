@@ -68,7 +68,12 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
     protected TicketGrantingTicket produceTicket(final Authentication authentication,
                                                  final String tgtId, final Service service) {
         val expirationPolicy = getExpirationPolicyBuilder(service, authentication);
-        return new TicketGrantingTicketImpl(tgtId, authentication, expirationPolicy.orElseThrow());
+        val ticket = new TicketGrantingTicketImpl(tgtId, authentication, expirationPolicy.orElseThrow());
+        Optional.ofNullable(service)
+            .map(Service::getTenant)
+            .or(() -> Optional.ofNullable((String) authentication.getSingleValuedAttribute(AuthenticationManager.TENANT_ID_ATTRIBUTE)))
+            .ifPresent(ticket::setTenantId);
+        return ticket;
     }
 
     protected Optional<ExpirationPolicy> getExpirationPolicyBuilder(final Service service,

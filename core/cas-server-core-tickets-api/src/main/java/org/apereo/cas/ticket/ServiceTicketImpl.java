@@ -75,6 +75,7 @@ public class ServiceTicketImpl extends AbstractTicket
         }
         this.grantedTicketAlready = Boolean.TRUE;
         val proxyGrantingTicket = new ProxyGrantingTicketImpl(id, service, ticketGrantingTicket, authentication, expirationPolicy);
+        proxyGrantingTicket.setTenantId(service.getTenant());
         if (ticketGrantingTicket != null) {
             ticketGrantingTicket.getProxyGrantingTickets().put(proxyGrantingTicket.getId(), service);
         }

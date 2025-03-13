@@ -54,6 +54,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
         val expirationPolicyToUse = determineExpirationPolicyForService(service);
         val ticketId = produceTicketIdentifier(service, null, credentialsProvided);
         val result = new ServiceTicketImpl(ticketId, null, service, credentialsProvided, expirationPolicyToUse).setAuthentication(authentication);
+        result.setTenantId(service.getTenant());
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [%s] is of type %s when we were expecting %s".formatted(result, result.getClass(), clazz));
         }
@@ -93,7 +94,6 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
             expirationPolicyToUse,
             credentialProvided,
             serviceTicketSessionTrackingPolicy);
-
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [%s] is of type %s when we were expecting %s".formatted(result, result.getClass(), clazz));
         }
