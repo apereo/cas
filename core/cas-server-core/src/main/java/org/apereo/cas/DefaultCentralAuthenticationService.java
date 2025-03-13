@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.multitenancy.UnknownTenantException;
 import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
@@ -45,6 +46,7 @@ import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
@@ -228,6 +230,21 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                             serviceTicketId, serviceTicket.getService().getId(), resolvedService.getId());
                         throw new UnrecognizableServiceForServiceTicketValidationException(selectedService);
                     }
+                    if (StringUtils.isNotBlank(serviceTicket.getTenantId())) {
+                        if (!StringUtils.equalsIgnoreCase(resolvedService.getTenant(), serviceTicket.getTenantId())) {
+                            LOGGER.warn("Service ticket [{}] is not assigned to the same tenant [{}] as the service [{}]",
+                                serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
+                            throw new UnknownTenantException("Unknown tenant %s for service ticket %s"
+                                .formatted(resolvedService.getTenant(), serviceTicketId));
+                        }
+                        if (configurationContext.getTenantExtractor().getTenantsManager().findTenant(serviceTicket.getTenantId()).isEmpty()) {
+                            LOGGER.warn("Service ticket [{}] is not assigned to a known valid tenant [{}] for service [{}]",
+                                serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
+                            throw new UnknownTenantException("Unknown tenant %s for service ticket %s"
+                                .formatted(serviceTicket.getTenantId(), serviceTicketId));
+                        }
+                    }
+                    
                     serviceTicket.update();
                     if (!serviceTicket.isStateless()) {
                         configurationContext.getTicketRegistry().updateTicket(serviceTicket);
