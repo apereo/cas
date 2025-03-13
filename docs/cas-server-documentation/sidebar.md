@@ -697,6 +697,7 @@ layout: null
         *   [SysLog](/cas/{{ version }}/logging/Logging-SysLog.html)
         *   [Splunk](/cas/{{ version }}/logging/Logging-Splunk.html)
         *   [Loki](/cas/{{ version }}/logging/Logging-Loki.html)
+        *   [Azure Data Explorer](/cas/{{ version }}/logging/Logging-Azure-DataExplorer.html)
         *   [Logback](/cas/{{ version }}/logging/Logging-Logback.html)
     *   [Audits](#auditsoverview)
         *   [Overview](/cas/{{ version }}/audits/Audits.html)

@@ -10,6 +10,7 @@ ext {
 
 dependencies {
     implementation libraries.azureinsightsagent
+    implementation libraries.azurekustolog4j
 
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-webflow")
