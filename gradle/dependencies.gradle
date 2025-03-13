@@ -152,6 +152,12 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                 },
         ],
+        azurekustolog4j : [
+            dependencies.create(libs.azure.kusto.log4j.get()) {
+                exclude(group: "org.slf4j", module: "slf4j-api")
+                exclude(group: "org.apache.logging.log4j", module: "log4j-core")
+            }
+        ],
         elasticapmagent : [
                 dependencies.create(libs.apm.agent.attach.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
