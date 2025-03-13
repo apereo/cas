@@ -57,8 +57,10 @@ public interface AuthenticationHandlerResolver extends Ordered {
             .stream()
             .filter(handler -> handler.getState() == AuthenticationHandlerStates.ACTIVE)
             .collect(Collectors.toCollection(LinkedHashSet::new));
-        LOGGER.debug("Default authentication handlers used for this transaction are [{}]",
-            handlers.stream().map(AuthenticationHandler::getName).collect(Collectors.joining(",")));
+        if (LOGGER.isDebugEnabled()) {
+            val handlerNames = handlers.stream().map(AuthenticationHandler::getName).collect(Collectors.joining(","));
+            LOGGER.debug("Default authentication handlers used for this transaction are [{}]", handlerNames);
+        }
         return handlers;
     }
 

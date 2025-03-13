@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.metadata;
 
 import org.apereo.cas.authentication.AuthenticationBuilder;
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -46,13 +47,11 @@ public class ClientInfoAuthenticationMetaDataPopulator extends BaseAuthenticatio
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (clientInfo != null) {
-            transaction.getPrimaryCredential()
-                .ifPresent(credential -> {
-                    addAttribute(builder, ATTRIBUTE_CLIENT_IP_ADDRESS, clientInfo.getClientIpAddress());
-                    addAttribute(builder, ATTRIBUTE_SERVER_IP_ADDRESS, clientInfo.getServerIpAddress());
-                    addAttribute(builder, ATTRIBUTE_USER_AGENT, clientInfo.getUserAgent());
-                    addAttribute(builder, ATTRIBUTE_GEO_LOCATION, clientInfo.getGeoLocation());
-                });
+            addAttribute(builder, ATTRIBUTE_CLIENT_IP_ADDRESS, clientInfo.getClientIpAddress());
+            addAttribute(builder, ATTRIBUTE_SERVER_IP_ADDRESS, clientInfo.getServerIpAddress());
+            addAttribute(builder, ATTRIBUTE_USER_AGENT, clientInfo.getUserAgent());
+            addAttribute(builder, ATTRIBUTE_GEO_LOCATION, clientInfo.getGeoLocation());
+            addAttribute(builder, AuthenticationManager.TENANT_ID_ATTRIBUTE, clientInfo.getTenant());
         }
     }
 

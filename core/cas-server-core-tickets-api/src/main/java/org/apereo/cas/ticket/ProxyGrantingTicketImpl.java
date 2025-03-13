@@ -55,6 +55,7 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
                                         final TicketTrackingPolicy trackingPolicy) {
         val proxyTicket = new ProxyTicketImpl(id, this, service, false, expirationPolicy);
         proxyTicket.setAuthentication(getAuthentication());
+        proxyTicket.setTenantId(service.getTenant());
         trackingPolicy.trackTicket(this, proxyTicket);
         return proxyTicket;
     }
