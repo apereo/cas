@@ -147,16 +147,15 @@ public class MonitoredRepository {
         pattern = Pattern.compile("Bump (.+) from (\\d+\\.\\d+(\\.\\d+)*).* to (\\d+\\.\\d+(\\.\\d+)*).*");
         matcher = pattern.matcher(pr.getTitle());
         if (matcher.find()) {
-            var initialVersion = matcher.group(2);
-            var startingVersion = new Semver(initialVersion);
-            if (startingVersion.getPatch() <= 0) {
-                startingVersion = new Semver(initialVersion + ".0");
-            }
+            var initialVersion = matcher.group(2).replaceAll("(\\d+.\\d+.\\d+).\\d+", "$1");
+            var startingVersion = Semver.coerce(initialVersion);
             var targetVersion = matcher.group(3);
             if (!StringUtils.hasText(targetVersion) || targetVersion.startsWith(".")) {
                 targetVersion = matcher.group(4);
             }
-            var endingVersion = new Semver(targetVersion);
+            targetVersion = targetVersion.replaceAll("(\\d+.\\d+.\\d+).\\d+", "$1");
+            
+            var endingVersion = Semver.coerce(targetVersion);
             return Optional.of(new DependencyRange(startingVersion, endingVersion));
         }
 
@@ -165,16 +164,13 @@ public class MonitoredRepository {
         matcher = pattern.matcher(pr.getTitle());
         if (matcher.find()) {
             var initialVersion = matcher.group(2);
-            var startingVersion = new Semver(initialVersion);
-            if (startingVersion.getPatch() <= 0) {
-                startingVersion = new Semver(initialVersion + ".0");
-            }
+            var startingVersion =Semver.coerce(initialVersion.replaceAll("(\\d+.\\d+.\\d+).\\d+", "$1"));
             var targetVersion = matcher.group(3);
             if (!StringUtils.hasText(targetVersion) || targetVersion.startsWith(".")) {
                 targetVersion = matcher.group(4);
             }
 
-            var endingVersion = new Semver(targetVersion);
+            var endingVersion = Semver.coerce(targetVersion.replaceAll("(\\d+.\\d+.\\d+).\\d+", "$1"));
             return Optional.of(new DependencyRange(startingVersion, endingVersion));
         }
         return Optional.empty();
