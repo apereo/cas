@@ -145,6 +145,13 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
+        azureinsightsagent : [
+                dependencies.create(libs.azure.insights.agent.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                },
+        ],
         elasticapmagent : [
                 dependencies.create(libs.apm.agent.attach.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")

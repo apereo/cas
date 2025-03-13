@@ -714,6 +714,7 @@ layout: null
     *   [Spring Boot Admin](/cas/{{ version }}/monitoring/Configuring-SpringBootAdmin.html)
     *   [JavaMelody](/cas/{{ version }}/monitoring/Configuring-Monitoring-JavaMelody.html)
     *   [Elastic APM](/cas/{{ version }}/monitoring/Configuring-Monitoring-ElasticAPM.html)
+    *   [Azure Insights](/cas/{{ version }}/monitoring/Configuring-Monitoring-AzureInsights.html)
     *   [Sentry](/cas/{{ version }}/logging/Logging-Sentry.html)
     *   [Metrics](#metricsoverview)
         *   [Overview](/cas/{{ version }}/monitoring/Configuring-Metrics.html)
