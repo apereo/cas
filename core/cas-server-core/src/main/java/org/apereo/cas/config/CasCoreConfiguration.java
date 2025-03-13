@@ -15,6 +15,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
@@ -126,6 +127,8 @@ class CasCoreConfiguration {
             final AuthenticationPolicy authenticationPolicy,
             @Qualifier(LockRepository.BEAN_NAME)
             final LockRepository casTicketRegistryLockRepository,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final ConfigurableApplicationContext applicationContext) {
             return CentralAuthenticationServiceContext.builder()
                 .authenticationServiceSelectionPlan(authenticationServiceSelectionPlan)
@@ -140,6 +143,7 @@ class CasCoreConfiguration {
                 .servicesManager(servicesManager)
                 .authenticationPolicy(authenticationPolicy)
                 .principalResolver(principalResolver)
+                .tenantExtractor(tenantExtractor)
                 .build();
         }
     }
