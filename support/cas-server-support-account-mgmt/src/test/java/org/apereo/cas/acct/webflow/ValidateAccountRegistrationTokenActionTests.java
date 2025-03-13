@@ -50,13 +50,13 @@ class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConfigurerT
 
     @Test
     void verifyOperationFails() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, validateAction.execute(context).getId());
     }
 
     @Test
     void verifyPassRegistrationRequest() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         context.setRemoteAddr("127.0.0.1");
         context.setLocalAddr("127.0.0.1");

@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
@@ -118,6 +120,8 @@ class DelegatedAuthenticationSaml2Configuration {
             final OpenSamlConfigBean configBean,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory serviceFactory,
             @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
             final DelegatedIdentityProviders identityProviders,
             @Qualifier("delegatedClientDistributedSessionStore")
@@ -126,7 +130,8 @@ class DelegatedAuthenticationSaml2Configuration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new DelegatedSaml2ClientFinishLogoutAction(identityProviders,
-                    delegatedClientDistributedSessionStore, configBean, ticketRegistry, ticketFactory))
+                    delegatedClientDistributedSessionStore, configBean,
+                    ticketRegistry, ticketFactory, serviceFactory))
                 .withId(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_CLIENT_FINISH_LOGOUT)
                 .build()
                 .get();

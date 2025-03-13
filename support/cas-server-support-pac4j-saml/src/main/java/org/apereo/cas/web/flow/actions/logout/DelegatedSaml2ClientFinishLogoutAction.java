@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.logout;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.pac4j.core.context.CallContext;
@@ -55,6 +57,8 @@ public class DelegatedSaml2ClientFinishLogoutAction extends BaseCasWebflowAction
     private final TicketRegistry ticketRegistry;
 
     private final TicketFactory ticketFactory;
+    
+    private final ServiceFactory serviceFactory;
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
@@ -98,10 +102,15 @@ public class DelegatedSaml2ClientFinishLogoutAction extends BaseCasWebflowAction
                                 val samlRequestParam = Optional.ofNullable(urlBuilder.getFirstQueryParam(SamlProtocolConstants.PARAMETER_SAML_REQUEST));
                                 samlRequestParam.ifPresent(Unchecked.consumer(samlRequest -> {
                                     val logoutRequest = SamlUtils.convertToSamlObject(openSamlConfigBean, samlRequest.getValue(), LogoutRequest.class);
+                                    val service = serviceFactory.createService(logoutRequest.getIssuer().getValue());
+                                    service.setTenant(ClientInfoHolder.getClientInfo().getTenant());
+
                                     val logoutRequestTicketId = TransientSessionTicketFactory.normalizeTicketId(logoutRequest.getID());
                                     val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
                                     val transientSessionTicket = transientFactory.create(logoutRequestTicketId,
-                                        Map.of(DelegatedAuthenticationClientLogoutRequest.class.getName(), delegatedClientLogoutRequest));
+                                        service,
+                                        Map.of(DelegatedAuthenticationClientLogoutRequest.class.getName(), delegatedClientLogoutRequest)
+                                    );
                                     val storedTicket = ticketRegistry.addTicket(transientSessionTicket);
                                     DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequestTicket(requestContext, storedTicket);
                                 }));
