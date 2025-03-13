@@ -3,6 +3,7 @@ aceEditor = "1.38.0"
 acmeClient = "3.5.1"
 amazonDax = "2.0.5"
 amazonSdk = "2.30.38"
+azureInsights = "3.7.1"
 animateCss = "4.1.1"
 apacheCassandra = "4.19.0"
 apacheCxf = "4.1.1"
@@ -280,6 +281,7 @@ azure-identity = { module = "com.azure:azure-identity", version.ref = "azureIden
 azure-maps-geolocation = { module = "com.azure:azure-maps-geolocation", version.ref = "azureMapsGeoLocation" }
 azure-maps-search = { module = "com.azure:azure-maps-search", version.ref = "azureMapsSearch" }
 azure-spring-data-cosmos = { module = "com.azure:azure-spring-data-cosmos", version.ref = "springDataCosmosDb" }
+azure-insights-agent = { module = "com.microsoft.azure:applicationinsights-runtime-attach", version.ref = "azureInsights" }
 base64-js = { module = "org.webjars.npm:base64-js", version.ref = "base64Js" }
 bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncyCastle" }
 bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncyCastle" }

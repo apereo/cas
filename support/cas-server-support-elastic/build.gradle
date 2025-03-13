@@ -2,7 +2,7 @@ description = "Apereo CAS Elastic Monitoring & Observability Support"
 ext {
     publishMetadata = true
     projectMetadata = [
-            category: "Elastic Authentication",
+            category: "Monitoring",
             title: "Elastic",
             aliases: ["elastic", "elk", "elasticapm"]
     ]
