@@ -144,6 +144,23 @@ public class MonitoredRepository {
             var endingVersion = new Semver(matcher.group(2));
             return Optional.of(new DependencyRange(startingVersion, endingVersion));
         }
+        pattern = Pattern.compile("Bump (.+) from (\\d+\\.\\d+(\\.\\d+)*).* to (\\d+\\.\\d+(\\.\\d+)*).*");
+        matcher = pattern.matcher(pr.getTitle());
+        if (matcher.find()) {
+            var initialVersion = matcher.group(2);
+            var startingVersion = new Semver(initialVersion);
+            if (startingVersion.getPatch() <= 0) {
+                startingVersion = new Semver(initialVersion + ".0");
+            }
+            var targetVersion = matcher.group(3);
+            if (!StringUtils.hasText(targetVersion) || targetVersion.startsWith(".")) {
+                targetVersion = matcher.group(4);
+            }
+            var endingVersion = new Semver(targetVersion);
+            return Optional.of(new DependencyRange(startingVersion, endingVersion));
+        }
+
+        
         pattern = Pattern.compile("chore\\(deps\\): bump (.+) from (\\d+\\.\\d+(\\.\\d+)*).* to (\\d+\\.\\d+(\\.\\d+)*).*");
         matcher = pattern.matcher(pr.getTitle());
         if (matcher.find()) {
