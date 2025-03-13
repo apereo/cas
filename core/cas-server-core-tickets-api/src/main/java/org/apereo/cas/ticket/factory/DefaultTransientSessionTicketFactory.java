@@ -9,11 +9,10 @@ import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
-
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
 import java.io.Serializable;
 import java.util.Map;
 
@@ -48,7 +47,7 @@ public class DefaultTransientSessionTicketFactory implements TransientSessionTic
                                                                            final Service service,
                                                                            final Map<String, Serializable> properties) {
         val ticket = new TransientSessionTicketImpl(id, expirationPolicy, service, properties);
-        ticket.setTenantId(service.getTenant());
+        FunctionUtils.doIfNotNull(service, __ -> ticket.setTenantId(service.getTenant()));
         return ticket;
     }
 
