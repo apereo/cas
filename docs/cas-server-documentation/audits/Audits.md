@@ -30,15 +30,16 @@ The following endpoints are provided by CAS:
 
 Audits can be managed via the following strategies.
 
-| Storage     | Description                             |
-|-------------|-----------------------------------------|
-| File System | [See this guide](Audits-File.html).     |
-| JPA         | [See this guide](Audits-Database.html). |
-| MongoDb     | [See this guide](Audits-MongoDb.html).  |
-| Redis       | [See this guide](Audits-Redis.html).    |
-| DynamoDb    | [See this guide](Audits-DynamoDb.html). |
-| REST        | [See this guide](Audits-REST.html).     |
-| Custom      | [See this guide](Audits-Custom.html).   |
+| Storage      | Description                                 |
+|--------------|---------------------------------------------|
+| File System  | [See this guide](Audits-File.html).         |
+| JPA          | [See this guide](Audits-Database.html).     |
+| MongoDb      | [See this guide](Audits-MongoDb.html).      |
+| Redis        | [See this guide](Audits-Redis.html).        |
+| DynamoDb     | [See this guide](Audits-DynamoDb.html).     |
+| AWS Firehose | [See this guide](Audits-AWS-Firehose.html). |
+| REST         | [See this guide](Audits-REST.html).         |
+| Custom       | [See this guide](Audits-Custom.html).       |
 
 ## Audit Events
 

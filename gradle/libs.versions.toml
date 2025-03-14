@@ -348,6 +348,7 @@ eureka-client = { module = "com.netflix.eureka:eureka-client", version.ref = "eu
 expressly = { module = "org.glassfish.expressly:expressly", version.ref = "jakartaElImpl" }
 fediz-core = { module = "org.apache.cxf.fediz:fediz-core", version.ref = "apacheFediz" }
 firebase-admin = { module = "com.google.firebase:firebase-admin", version.ref = "firebaseAdmin" }
+firehose = { module = "software.amazon.awssdk:firehose", version.ref = "amazonSdk" }
 fluent-logger = { module = "org.fluentd:fluent-logger", version.ref = "fluentd" }
 fluentd-log4j-appender = { module = "io.github.technologize:fluentd-log4j-appender", version.ref = "fluentdLog4j" }
 font-awesome = { module = "org.webjars:font-awesome", version.ref = "fontAwesome" }

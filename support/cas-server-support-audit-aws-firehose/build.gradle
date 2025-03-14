@@ -1,0 +1,47 @@
+description = "Apereo CAS AWS Firehose Audit Log Support"
+
+ext {
+
+    publishMetadata = true
+    projectMetadata = [
+            category: "Audits",
+            title: "Audits via AWS Firehose"
+    ]
+}
+
+dependencies {
+    api project(":api:cas-server-core-api")
+    api project(":api:cas-server-core-api-audit")
+
+    implementation libraries.awsfirehose
+
+    implementation project(":support:cas-server-support-aws")
+    implementation project(":support:cas-server-support-dynamodb-core")
+
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-audit-api")
+
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-scripting")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-web-api")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-notifications")
+
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-audit", configuration: "tests")
+}

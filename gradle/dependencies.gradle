@@ -811,6 +811,16 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
+        awsfirehose : [
+                dependencies.create(libs.firehose.get()) {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                }
+        ],
         awsverifiedpermissions          : [
                 dependencies.create(libs.verifiedpermissions.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
