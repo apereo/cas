@@ -708,6 +708,7 @@ layout: null
         *   [MongoDb](/cas/{{ version }}/audits/Audits-MongoDb.html)
         *   [Redis](/cas/{{ version }}/audits/Audits-Redis.html)
         *   [REST](/cas/{{ version }}/audits/Audits-REST.html)
+        *   [AWS Firehose](/cas/{{ version }}/audits/Audits-AWS-Firehose.html)
         *   [Custom](/cas/{{ version }}/audits/Audits-Custom.html)
 
 * [Monitoring & Statistics](#monitoroverview)

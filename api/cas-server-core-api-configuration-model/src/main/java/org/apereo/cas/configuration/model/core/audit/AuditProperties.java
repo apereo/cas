@@ -75,4 +75,10 @@ public class AuditProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AuditGroovyProperties groovy = new AuditGroovyProperties();
+
+    /**
+     * Family of sub-properties pertaining to Amazon Firehose/Kinesis audit destinations.
+     */
+    @NestedConfigurationProperty
+    private AuditAmazonFirehoseProperties amazonFirehose = new AuditAmazonFirehoseProperties();
 }
