@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Elastic APM Monitoring
+title: CAS - Azure Monitor Application Insights
 category: Monitoring & Statistics
 ---
 
