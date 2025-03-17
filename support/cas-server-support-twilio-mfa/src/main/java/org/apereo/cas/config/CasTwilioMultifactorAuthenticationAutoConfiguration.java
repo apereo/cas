@@ -3,6 +3,8 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.trusted.web.flow.BasicMultifactorTrustedWebflowConfigurer;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -47,6 +49,9 @@ public class CasTwilioMultifactorAuthenticationAutoConfiguration {
     public static class CasTwilioMultifactorTrustConfiguration {
         private static final int WEBFLOW_CONFIGURER_ORDER = 100;
 
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.twilio.trusted-device-enabled")
+            .isTrue().evenIfMissing();
+
         @ConditionalOnMissingBean(name = "mfaTwilioMultifactorTrustWebflowConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -59,22 +64,34 @@ public class CasTwilioMultifactorAuthenticationAutoConfiguration {
             final FlowBuilderServices flowBuilderServices,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
-            val cfg = new BasicMultifactorTrustedWebflowConfigurer(flowBuilderServices,
-                flowDefinitionRegistry,
-                mfaTwilioAuthenticatorFlowRegistry,
-                applicationContext, casProperties,
-                MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
-            cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
-            return cfg;
+
+            return BeanSupplier.of(CasWebflowConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val cfg = new BasicMultifactorTrustedWebflowConfigurer(flowBuilderServices,
+                        flowDefinitionRegistry,
+                        mfaTwilioAuthenticatorFlowRegistry,
+                        applicationContext, casProperties,
+                        MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
+                    cfg.setOrder(WEBFLOW_CONFIGURER_ORDER + 1);
+                    return cfg;
+                })
+                .otherwiseProxy()
+                .get();
         }
 
         @ConditionalOnMissingBean(name = "casTwilioMultifactorTrustWebflowExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer casTwilioMultifactorTrustWebflowExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("mfaTwilioMultifactorTrustWebflowConfigurer")
             final CasWebflowConfigurer mfaTwilioMultifactorTrustWebflowConfigurer) {
-            return plan -> plan.registerWebflowConfigurer(mfaTwilioMultifactorTrustWebflowConfigurer);
+            return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerWebflowConfigurer(mfaTwilioMultifactorTrustWebflowConfigurer))
+                .otherwiseProxy()
+                .get();
         }
     }
 }

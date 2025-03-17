@@ -28,6 +28,11 @@ public class CasTwilioMultifactorAuthenticationProperties extends BaseMultifacto
     private static final long serialVersionUID = -9123748853833491119L;
 
     /**
+     * Indicates whether this provider should support trusted devices.
+     */
+    private boolean trustedDeviceEnabled;
+    
+    /**
      * Settings related to throttling requests using bucket4j.
      */
     @NestedConfigurationProperty
