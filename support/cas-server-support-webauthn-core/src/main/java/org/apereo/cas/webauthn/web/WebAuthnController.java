@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -101,9 +102,14 @@ public class WebAuthnController extends BaseWebAuthnController {
         final boolean requireResidentKey,
         @RequestParam(value = "sessionToken", required = false, defaultValue = StringUtils.EMPTY)
         final String sessionTokenBase64,
+        final Principal authenticatedPrincipal,
         final HttpServletRequest request,
         final HttpServletResponse response)
         throws Exception {
+
+        if (!StringUtils.equalsIgnoreCase(username, authenticatedPrincipal.getName())) {
+            return messagesJson(ResponseEntity.badRequest(), "Unauthorized request");
+        }
 
         val result = server.startRegistration(
             username,
@@ -144,8 +150,14 @@ public class WebAuthnController extends BaseWebAuthnController {
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_AUTHENTICATE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> startAuthentication(
+        final Principal authenticatedPrincipal,
         @RequestParam(value = "username", required = false)
         final String username) throws Exception {
+        
+        if (!StringUtils.equalsIgnoreCase(username, authenticatedPrincipal.getName())) {
+            return messagesJson(ResponseEntity.badRequest(), "Unauthorized request");
+        }
+        
         val request = server.startAuthentication(Optional.ofNullable(username));
         if (request.isRight()) {
             return startResponse(new StartAuthenticationResponse(request.right().orElseThrow()));
