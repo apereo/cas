@@ -117,4 +117,11 @@ public interface CredentialMetadata extends Serializable {
      * @param tenant the tenant
      */
     void setTenant(String tenant);
+
+    /**
+     * Remove property.
+     *
+     * @param name the name
+     */
+    void removeProperty(String name);
 }

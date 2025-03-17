@@ -1250,6 +1250,11 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_SIMPLE_MFA_SEND_TOKEN = "sendSimpleToken";
     /**
+     * State id 'sendTwilioToken'.
+     */
+    String STATE_ID_MFA_TWILIO_SEND_TOKEN = "sendTwilioToken";
+
+    /**
      * State id 'verifyEmail'.
      */
     String STATE_ID_SIMPLE_MFA_VERIFY_EMAIL = "verifyEmail";
@@ -2026,9 +2031,14 @@ public interface CasWebflowConstants {
      */
     String ACTION_ID_CONFIRM_CONSENT = "confirmConsentAction";
     /**
+     * Action id 'mfaTwilioMultifactorSendTokenAction'.
+     */
+    String ACTION_ID_MFA_TWILIO_SEND_TOKEN = "mfaTwilioMultifactorSendTokenAction";
+    /**
      * Action id 'mfaSimpleMultifactorSendTokenAction'.
      */
     String ACTION_ID_MFA_SIMPLE_SEND_TOKEN = "mfaSimpleMultifactorSendTokenAction";
+    
     /**
      * Action id 'mfaSimpleMultifactorVerifyEmailAction'.
      */

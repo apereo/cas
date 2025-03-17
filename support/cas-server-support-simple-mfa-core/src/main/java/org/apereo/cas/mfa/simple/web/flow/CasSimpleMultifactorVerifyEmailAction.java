@@ -1,6 +1,5 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
@@ -92,12 +91,6 @@ public class CasSimpleMultifactorVerifyEmailAction extends AbstractMultifactorAu
         return EmailValidator.getInstance().isValid(emailAddress)
             && properties.getMail().isRegistrationEnabled()
             && RegexUtils.matches(properties.getMail().getAcceptedEmailPattern(), emailAddress);
-    }
-
-    private String getThrottledRequestKeyFor(final Authentication authentication,
-                                             final RequestContext requestContext) {
-        val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
-        return principal.getId();
     }
 
     protected CasSimpleMultifactorAuthenticationTicket getOrCreateToken(final RequestContext requestContext, final Principal principal) {

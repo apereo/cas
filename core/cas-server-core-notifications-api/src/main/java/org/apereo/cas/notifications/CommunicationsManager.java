@@ -103,7 +103,7 @@ public interface CommunicationsManager {
     /**
      * Is communication channel available.
      *
-     * @return the boolean
+     * @return true or false
      */
     default boolean isCommunicationChannelAvailable() {
         return isMailSenderDefined() || isSmsSenderDefined() || isPhoneOperatorDefined() || isNotificationSenderDefined();

@@ -14,6 +14,10 @@ public class MultifactorAuthenticationFailedException extends AuthenticationExce
 
     private static final String CODE = "MULTIFACTOR_AUTHN_FAILED";
 
+    public MultifactorAuthenticationFailedException(final String msg) {
+        super(msg);
+    }
+
     public MultifactorAuthenticationFailedException(final Throwable cause) {
         super(cause);
     }

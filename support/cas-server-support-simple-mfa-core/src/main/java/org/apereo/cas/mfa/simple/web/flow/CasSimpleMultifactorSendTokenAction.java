@@ -342,12 +342,6 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
             }));
     }
 
-    private String getThrottledRequestKeyFor(final Authentication authentication,
-                                             final RequestContext requestContext) {
-        val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
-        return principal.getId();
-    }
-
     public record CandidateRecipientAddress(TokenSharingStrategyOptions option, String hash,
         String contact, String obfuscated) implements Serializable {
     }

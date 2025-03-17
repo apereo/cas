@@ -107,4 +107,9 @@ public class BasicCredentialMetadata implements CredentialMetadata {
     public boolean containsProperty(final String key) {
         return properties.containsKey(key);
     }
+
+    @Override
+    public void removeProperty(final String name) {
+        this.properties.remove(name);
+    }
 }

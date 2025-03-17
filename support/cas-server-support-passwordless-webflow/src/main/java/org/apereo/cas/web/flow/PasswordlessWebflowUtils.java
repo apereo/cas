@@ -164,7 +164,7 @@ public class PasswordlessWebflowUtils {
      * Is multifactor authentication allowed.
      *
      * @param context the context
-     * @return the boolean
+     * @return true or false
      */
     public static boolean isMultifactorAuthenticationAllowed(final RequestContext context) {
         return context.getFlowScope().getBoolean("passwordlessMultifactorAuthenticationAllowed", Boolean.FALSE);
@@ -174,7 +174,7 @@ public class PasswordlessWebflowUtils {
      * Is delegated authentication allowed.
      *
      * @param context the context
-     * @return the boolean
+     * @return true or false
      */
     public static boolean isDelegatedAuthenticationAllowed(final RequestContext context) {
         return context.getFlowScope().getBoolean("passwordlessDelegatedAuthenticationAllowed", Boolean.FALSE);

@@ -26,7 +26,7 @@ public interface RegisteredServicePrincipalAccessStrategyEnforcer {
      * Authorize boolean.
      *
      * @param context the context
-     * @return the boolean
+     * @return true or false
      */
     Boolean authorize(PrincipalAccessStrategyContext context);
 

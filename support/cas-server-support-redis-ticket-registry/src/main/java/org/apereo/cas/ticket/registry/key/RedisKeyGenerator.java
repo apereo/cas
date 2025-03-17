@@ -86,7 +86,7 @@ public interface RedisKeyGenerator {
     /**
      * Is ticket key generator?.
      *
-     * @return the boolean
+     * @return true or false
      */
     boolean isTicketKeyGenerator();
 

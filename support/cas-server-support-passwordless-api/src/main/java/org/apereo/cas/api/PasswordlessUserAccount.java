@@ -82,7 +82,7 @@ public class PasswordlessUserAccount implements Serializable {
     /**
      * Has contact information.
      *
-     * @return the boolean
+     * @return true or false
      */
     public boolean hasContactInformation() {
         return StringUtils.isNotBlank(getPhone()) || StringUtils.isNotBlank(getEmail());

@@ -117,7 +117,7 @@ public abstract class BaseScimService<T extends ScimProperties> implements ScimS
      *
      * @param scimService the scim service
      * @param user        the user
-     * @return the boolean
+     * @return true or false
      */
     public Optional<User> updateUser(final ScimRequestBuilder scimService, final User user) {
         val response = scimService
@@ -149,7 +149,7 @@ public abstract class BaseScimService<T extends ScimProperties> implements ScimS
      *
      * @param scimService the scim service
      * @param user        the user
-     * @return the boolean
+     * @return true or false
      */
     public Optional<User> createUser(final ScimRequestBuilder scimService, final User user) {
         val response = scimService
@@ -164,7 +164,7 @@ public abstract class BaseScimService<T extends ScimProperties> implements ScimS
      *
      * @param scimService the scim service
      * @param group       the group
-     * @return the boolean
+     * @return true or false
      */
     public boolean createOrUpdateGroups(final ScimRequestBuilder scimService, final Group group) {
         val response = findGroup(scimService, group.getDisplayName().orElseThrow());
