@@ -15,7 +15,7 @@ public interface ResourceAuthorizer {
      * Authorize boolean.
      *
      * @param resource the resource
-     * @return the boolean
+     * @return true or false
      */
     AuthorizationResult evaluate(AuthorizationRequest request, AuthorizableResource resource);
 }

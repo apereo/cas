@@ -1,6 +1,5 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProvider;
@@ -73,12 +72,6 @@ public class CasSimpleMultifactorUpdateEmailAction extends AbstractMultifactorAu
         }
         WebUtils.addErrorMessageToContext(requestContext, ERROR_CODE_TOKEN_FAILED);
         return error();
-    }
-
-    private String getThrottledRequestKeyFor(final Authentication authentication,
-                                             final RequestContext requestContext) {
-        val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
-        return principal.getId();
     }
 
 }

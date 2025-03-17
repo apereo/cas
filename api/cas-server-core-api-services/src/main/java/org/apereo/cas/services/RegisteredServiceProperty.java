@@ -802,7 +802,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * Is not assigned to boolean.
          *
          * @param service the service
-         * @return the boolean
+         * @return true or false
          */
         @JsonIgnore
         public boolean isNotAssignedTo(final RegisteredService service) {
@@ -814,7 +814,7 @@ public interface RegisteredServiceProperty extends Serializable {
          *
          * @param service     the service
          * @param valueFilter the value filter
-         * @return the boolean
+         * @return true or false
          */
         @JsonIgnore
         public boolean isNotAssignedTo(final RegisteredService service, final Predicate<String> valueFilter) {

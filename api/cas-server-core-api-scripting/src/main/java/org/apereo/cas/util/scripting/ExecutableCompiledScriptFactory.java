@@ -119,7 +119,7 @@ public interface ExecutableCompiledScriptFactory {
      * Is inline script boolean.
      *
      * @param input the input
-     * @return the boolean
+     * @return true or false
      */
     default boolean isInlineScript(final String input) {
         return getInlineScript(input).isPresent();
@@ -129,7 +129,7 @@ public interface ExecutableCompiledScriptFactory {
      * Is external script boolean.
      *
      * @param input the input
-     * @return the boolean
+     * @return true or false
      */
     default boolean isExternalScript(final String input) {
         return getExternalScript(input).isPresent();

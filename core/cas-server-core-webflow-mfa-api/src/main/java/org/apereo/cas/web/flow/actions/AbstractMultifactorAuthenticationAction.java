@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
@@ -51,5 +52,11 @@ public abstract class AbstractMultifactorAuthenticationAction<T extends Multifac
             .findFirst()
             .map(r -> r.resolve(principal))
             .orElseThrow(() -> new IllegalStateException("Unable to resolve principal for multifactor authentication"));
+    }
+
+    protected String getThrottledRequestKeyFor(final Authentication authentication,
+                                               final RequestContext requestContext) {
+        val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
+        return principal.getId();
     }
 }

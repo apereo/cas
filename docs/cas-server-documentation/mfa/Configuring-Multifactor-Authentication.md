@@ -33,6 +33,7 @@ The following multifactor providers are supported by CAS.
 | Google Authenticator | `mfa-gauth`    | [See this guide](GoogleAuthenticator-Authentication.html). |
 | FIDO2 WebAuthN       | `mfa-webauthn` | [See this guide](FIDO2-WebAuthn-Authentication.html).      |
 | CAS Simple           | `mfa-simple`   | [See this guide](Simple-Multifactor-Authentication.html).  |
+| Twilio               | `mfa-twilio`   | [See this guide](Twilio-Multifactor-Authentication.html).  |
 | Inwebo               | `mfa-inwebo`   | [See this guide](Inwebo-Authentication.html).              |
 | Custom               | Custom         | [See this guide](Custom-MFA-Authentication.html).          |
 

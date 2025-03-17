@@ -53,6 +53,7 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
     protected final Event doExecute(final RequestContext requestContext) throws Exception {
         val activeFlow = requestContext.getActiveFlow();
         try {
+            requestContext.getMessageContext().clearMessages();
             WebUtils.putActiveFlow(requestContext);
             return doExecuteInternal(requestContext);
         } catch (final Exception e) {

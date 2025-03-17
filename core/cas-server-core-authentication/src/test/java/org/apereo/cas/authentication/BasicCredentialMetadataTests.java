@@ -29,13 +29,15 @@ class BasicCredentialMetadataTests {
 
     @Test
     void verifySerializeABasicCredentialMetaDataToJson() throws Throwable {
-        val cmd = new BasicCredentialMetadata(new UsernamePasswordCredential());
-        cmd.putProperty("key", "value").putProperties(Map.of("one", "two"));
-        assertTrue(cmd.containsProperty("one"));
-        assertNotNull(cmd.getProperty("key", String.class));
-        MAPPER.writeValue(JSON_FILE, cmd);
+        val credentialMetadata = new BasicCredentialMetadata(new UsernamePasswordCredential());
+        credentialMetadata.putProperty("key", "value").putProperties(Map.of("one", "two"));
+        assertTrue(credentialMetadata.containsProperty("one"));
+        assertNotNull(credentialMetadata.getProperty("key", String.class));
+        MAPPER.writeValue(JSON_FILE, credentialMetadata);
         val credentialMetaDataRead = MAPPER.readValue(JSON_FILE, BasicCredentialMetadata.class);
-        assertEquals(cmd, credentialMetaDataRead);
+        assertEquals(credentialMetadata, credentialMetaDataRead);
+        credentialMetadata.removeProperty("one");
+        assertFalse(credentialMetadata.containsProperty("one"));
     }
 }
 

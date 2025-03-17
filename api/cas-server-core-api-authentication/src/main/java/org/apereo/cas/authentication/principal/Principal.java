@@ -79,7 +79,7 @@ public interface Principal extends Serializable {
      * Contains attribute by name.
      *
      * @param name the name
-     * @return the boolean
+     * @return true or false
      */
     default boolean containsAttribute(final String name) {
         return getAttributes().containsKey(name);

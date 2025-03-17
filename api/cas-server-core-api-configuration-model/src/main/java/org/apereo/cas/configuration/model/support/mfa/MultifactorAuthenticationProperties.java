@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactor
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.twilio.CasTwilioMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.yubikey.YubiKeyMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -89,6 +90,13 @@ public class MultifactorAuthenticationProperties implements Serializable {
     @NestedConfigurationProperty
     private CasSimpleMultifactorAuthenticationProperties simple = new CasSimpleMultifactorAuthenticationProperties();
 
+    /**
+     * Activate and configure a multifactor authentication provider via Twilio.
+     */
+    @NestedConfigurationProperty
+    private CasTwilioMultifactorAuthenticationProperties twilio = new CasTwilioMultifactorAuthenticationProperties();
+
+    
     /**
      * Activate and configure a multifactor authentication provider via Duo Security.
      */
