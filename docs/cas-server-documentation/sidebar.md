@@ -854,6 +854,7 @@ layout: null
     *   [Sending Notifications](#notificationsoverview)
         *   [Overview](/cas/{{ version }}/notifications/Notifications-Configuration.html)
         *   [Google Firebase](/cas/{{ version }}/notifications/Notifications-Configuration-FCM.html)
+        *   [Apple Push Notification](/cas/{{ version }}/notifications/Notifications-Configuration-APN.html)
         *   [Slack](/cas/{{ version }}/notifications/Notifications-Configuration-Slack.html)
         *   [Custom](/cas/{{ version }}/notifications/Notifications-Configuration-Custom.html)
 

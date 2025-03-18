@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -42,6 +43,7 @@ public class GoogleFirebaseCloudMessagingProperties implements Serializable {
      * This can optional if you set the environment variable {@code GOOGLE_APPLICATION_CREDENTIALS} to the file path
      * of the JSON file that contains your service account key. If this is undefined, the property value will be used instead.
      */
+    @NestedConfigurationProperty
     private SpringResourceProperties serviceAccountKey;
 
     /**

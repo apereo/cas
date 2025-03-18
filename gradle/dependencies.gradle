@@ -129,6 +129,13 @@ ext.libraries = [
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                 }
         ],
+        pushy              : [
+                dependencies.create(libs.pushy.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                }
+        ],
         firebaseadmin              : [
                 dependencies.create(libs.google.api.client.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")

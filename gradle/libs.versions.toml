@@ -182,6 +182,7 @@ otel = "1.48.0"
 pac4j = "6.1.1"
 permitio = "2.2.0"
 postgresql = "42.7.5"
+pushy = "0.15.4"
 quartz = "2.5.0"
 redisLettuce = "6.5.5.RELEASE"
 retrofit = "2.11.0"
@@ -575,6 +576,7 @@ pac4j-saml = { module = "org.pac4j:pac4j-saml", version.ref = "pac4j" }
 permit-sdk-java = { module = "io.permit:permit-sdk-java", version.ref = "permitio" }
 polyglot = { module = "org.graalvm.polyglot:polyglot", version.ref = "graalVm" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+pushy = { module = "com.eatthepath:pushy", version.ref = "pushy" }
 quartz = { module = "org.quartz-scheduler:quartz", version.ref = "quartz" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 s3 = { module = "software.amazon.awssdk:s3", version.ref = "amazonSdk" }

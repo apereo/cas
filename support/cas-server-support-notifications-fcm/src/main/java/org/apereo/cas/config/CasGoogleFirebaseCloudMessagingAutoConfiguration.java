@@ -44,25 +44,28 @@ public class CasGoogleFirebaseCloudMessagingAutoConfiguration {
     @Configuration(value = "GoogleFirebaseCloudMessagingInternalConfiguration", proxyBeanMethods = false)
     static class GoogleFirebaseCloudMessagingInternalConfiguration {
 
-        private static GoogleCredentials getCredentials(final CasConfigurationProperties casProperties) throws Exception {
-            try {
-                return GoogleCredentials.getApplicationDefault();
-            } catch (final Exception e) {
-                val firebase = casProperties.getGoogleFirebaseMessaging();
+        private static GoogleCredentials getCredentials(
+            final CasConfigurationProperties casProperties) throws Exception {
+            val firebase = casProperties.getGoogleFirebaseMessaging();
+            if (firebase.getServiceAccountKey().getLocation() != null) {
                 val keyPath = firebase.getServiceAccountKey().getLocation().getFile().getCanonicalPath();
                 return GoogleCredentials.fromStream(new FileInputStream(keyPath)).createScoped(firebase.getScopes());
             }
+            return GoogleCredentials.getApplicationDefault();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "firebaseCloudMessagingNotificationSender")
-        public NotificationSender firebaseCloudMessagingNotificationSender(final CasConfigurationProperties casProperties) throws Exception {
+        public NotificationSender firebaseCloudMessagingNotificationSender(
+            final CasConfigurationProperties casProperties) throws Exception {
             val firebase = casProperties.getGoogleFirebaseMessaging();
-            val options = FirebaseOptions.builder().setCredentials(getCredentials(casProperties))
-                .setDatabaseUrl(firebase.getDatabaseUrl()).build();
-            FirebaseApp.initializeApp(options);
-            return new GoogleFirebaseCloudMessagingNotificationSender(firebase);
+            val options = FirebaseOptions.builder()
+                .setCredentials(getCredentials(casProperties))
+                .setDatabaseUrl(firebase.getDatabaseUrl())
+                .build();
+            val firebaseApp = FirebaseApp.initializeApp(options);
+            return new GoogleFirebaseCloudMessagingNotificationSender(firebase, firebaseApp);
         }
     }
 }
