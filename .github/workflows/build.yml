@@ -12,7 +12,7 @@ env:
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   DEVELOCITY_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
   JDK_CURRENT: 21
-  JDK_LATEST: 23
+  JDK_LATEST: 24
   JDK_DISTRIBUTION: "oracle"
 
 ##########################################################################
