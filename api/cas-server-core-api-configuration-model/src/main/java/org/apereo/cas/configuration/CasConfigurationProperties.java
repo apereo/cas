@@ -27,6 +27,7 @@ import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.apereo.cas.configuration.model.support.account.AccountManagementRegistrationProperties;
 import org.apereo.cas.configuration.model.support.acme.AcmeProperties;
 import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
+import org.apereo.cas.configuration.model.support.apn.APNMessagingProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.model.support.aws.AmazonSecurityTokenServiceProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
@@ -248,6 +249,12 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private GoogleFirebaseCloudMessagingProperties googleFirebaseMessaging = new GoogleFirebaseCloudMessagingProperties();
+
+    /**
+     * Apple Push Notification functionality.
+     */
+    @NestedConfigurationProperty
+    private APNMessagingProperties apnMessaging = new APNMessagingProperties();
 
     /**
      * Slack Messaging functionality.
