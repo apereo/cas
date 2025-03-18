@@ -78,21 +78,18 @@ public class WebAuthnController extends BaseWebAuthnController {
     /**
      * Start registration and provide response entity.
      *
-     * @param username           the username
-     * @param displayName        the display name
-     * @param credentialNickname the credential nickname
-     * @param requireResidentKey the require resident key
-     * @param sessionTokenBase64 the session token base 64
-     * @param request            the request
-     * @param response           the response
+     * @param displayName            the display name
+     * @param credentialNickname     the credential nickname
+     * @param requireResidentKey     the require resident key
+     * @param sessionTokenBase64     the session token base 64
+     * @param authenticatedPrincipal the authenticated principal
+     * @param request                the request
+     * @param response               the response
      * @return the response entity
      * @throws Exception the exception
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_REGISTER, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> startRegistration(
-        @NonNull
-        @RequestParam("username")
-        final String username,
         @NonNull
         @RequestParam("displayName")
         final String displayName,
@@ -106,13 +103,9 @@ public class WebAuthnController extends BaseWebAuthnController {
         final HttpServletRequest request,
         final HttpServletResponse response)
         throws Exception {
-
-        if (!StringUtils.equalsIgnoreCase(username, authenticatedPrincipal.getName())) {
-            return messagesJson(ResponseEntity.badRequest(), "Unauthorized request");
-        }
-
+        
         val result = server.startRegistration(
-            username,
+            authenticatedPrincipal.getName(),
             Optional.of(displayName),
             Optional.ofNullable(credentialNickname),
             requireResidentKey
@@ -144,21 +137,14 @@ public class WebAuthnController extends BaseWebAuthnController {
     /**
      * Start authentication and provide response entity.
      *
-     * @param username the username
      * @return the response entity
      * @throws Exception the exception
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_AUTHENTICATE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> startAuthentication(
-        final Principal authenticatedPrincipal,
-        @RequestParam(value = "username", required = false)
-        final String username) throws Exception {
-        
-        if (!StringUtils.equalsIgnoreCase(username, authenticatedPrincipal.getName())) {
-            return messagesJson(ResponseEntity.badRequest(), "Unauthorized request");
-        }
-        
-        val request = server.startAuthentication(Optional.ofNullable(username));
+        final Principal authenticatedPrincipal) throws Exception {
+
+        val request = server.startAuthentication(Optional.ofNullable(authenticatedPrincipal.getName()));
         if (request.isRight()) {
             return startResponse(new StartAuthenticationResponse(request.right().orElseThrow()));
         }
