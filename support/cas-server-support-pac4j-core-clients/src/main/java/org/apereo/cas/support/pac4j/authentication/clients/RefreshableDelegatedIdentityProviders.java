@@ -1,11 +1,13 @@
 package org.apereo.cas.support.pac4j.authentication.clients;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.WebContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +20,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class RefreshableDelegatedIdentityProviders extends Clients implements DelegatedIdentityProviders {
-    private final DelegatedIdentityProviderFactory delegatedIdentityProviderFactory;
+    protected final DelegatedIdentityProviderFactory delegatedIdentityProviderFactory;
 
     public RefreshableDelegatedIdentityProviders(final String callbackUrl,
                                                  final DelegatedIdentityProviderFactory delegatedIdentityProviderFactory) {
@@ -31,6 +33,11 @@ public class RefreshableDelegatedIdentityProviders extends Clients implements De
         setClients(buildDelegatedClients());
         init();
         return super.findClient(name);
+    }
+
+    @Override
+    public List<Client> findAllClients(final Service service, final WebContext webContext) {
+        return findAllClients();
     }
 
     @Override

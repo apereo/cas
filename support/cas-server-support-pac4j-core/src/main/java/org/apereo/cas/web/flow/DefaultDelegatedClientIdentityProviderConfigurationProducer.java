@@ -14,6 +14,7 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.IndirectClient;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -48,8 +50,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
 
         LOGGER.debug("Initialized context with request parameters [{}]", webContext.getRequestParameters());
 
-        val clients = configurationContext.getObject().getIdentityProviders();
-        val allClients = clients.findAllClients();
+        val allClients = findAllClients(service, webContext);
         val providers = allClients
             .stream()
             .filter(client -> client instanceof IndirectClient
@@ -128,5 +129,10 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
         return configurationContext.getObject().getDelegatedClientIdentityProviderAuthorizers()
             .stream()
             .allMatch(Unchecked.predicate(authz -> authz.isDelegatedClientAuthorizedForService(client, service, context)));
+    }
+
+    protected List<Client> findAllClients(final WebApplicationService service, final WebContext webContext) {
+        val clients = configurationContext.getObject().getIdentityProviders();
+        return clients.findAllClients(service, webContext);
     }
 }
