@@ -8,8 +8,9 @@
     <Loggers>
         <Logger name="org.apereo.cas" level="error" />
         <Logger name="org.springframework.security" level="warn" />
-        <Logger name="org.springframework.security.config.annotation.web.builders.WebSecurity" level="error" />
+        <Logger name="org.springframework.security.config.annotation.web.builders.WebSecurity" level="warn" />
         <Logger name="org.springframework.webflow" level="warn" />
+        <Logger name="org.springframework.web" level="warn" />
         <Logger name="org.springframework.boot" level="warn" />
         <Root level="error">
             <AppenderRef ref="console"/>
