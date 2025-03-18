@@ -26,6 +26,7 @@ public class APNMessagingNotificationSender implements NotificationSender {
     protected final APNMessagingProperties properties;
 
     @Override
+    @SuppressWarnings("FutureReturnValueIgnored")
     public boolean notify(final Principal principal, final Map<String, String> messageData) {
         val deviceToken = principal.getSingleValuedAttribute(properties.getRegistrationTokenAttributeName(), String.class);
         val payload = new SimpleApnsPayloadBuilder()
