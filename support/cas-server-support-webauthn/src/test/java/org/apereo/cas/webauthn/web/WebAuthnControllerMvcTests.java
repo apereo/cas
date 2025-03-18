@@ -128,7 +128,10 @@ class WebAuthnControllerMvcTests {
         executeRequest(WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE, new MockHttpServletRequest(), new MockHttpServletResponse(), true, HttpStatus.SC_FORBIDDEN);
 
         val csrfResult = fetchAndStoreCsrfToken();
-        executeRequest(WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE, csrfResult.getRequest(), csrfResult.getResponse(), true, HttpStatus.SC_OK);
+        /*
+          Authentication should pass but the user is not registered.
+         */
+        executeRequest(WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE, csrfResult.getRequest(), csrfResult.getResponse(), true, HttpStatus.SC_BAD_REQUEST);
     }
 
     private void populateSecurityContext(final MvcResult result) throws Exception {

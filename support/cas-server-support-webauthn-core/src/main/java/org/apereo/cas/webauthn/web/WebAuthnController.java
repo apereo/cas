@@ -144,7 +144,7 @@ public class WebAuthnController extends BaseWebAuthnController {
     public ResponseEntity<Object> startAuthentication(
         final Principal authenticatedPrincipal) throws Exception {
 
-        val request = server.startAuthentication(Optional.ofNullable(authenticatedPrincipal.getName()));
+        val request = server.startAuthentication(Optional.ofNullable(authenticatedPrincipal).map(Principal::getName));
         if (request.isRight()) {
             return startResponse(new StartAuthenticationResponse(request.right().orElseThrow()));
         }
