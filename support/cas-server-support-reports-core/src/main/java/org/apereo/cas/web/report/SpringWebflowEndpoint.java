@@ -118,8 +118,8 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
             stateMap.put("entryActions", acts);
         }
 
-        if (state instanceof ActionState) {
-            acts = StreamSupport.stream(((ActionState) state).getActionList().spliterator(), false)
+        if (state instanceof final ActionState actionState) {
+            acts = StreamSupport.stream(actionState.getActionList().spliterator(), false)
                 .map(SpringWebflowEndpoint::convertActionToString)
                 .collect(Collectors.toList());
             if (!acts.isEmpty()) {

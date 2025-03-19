@@ -47,18 +47,17 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
                                                    final OAuth20AccessToken accessToken,
                                                    final HttpServletResponse response) {
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, accessToken.getClientId());
-        if (!(service instanceof OidcRegisteredService)) {
-            return super.renderProfileForModel(userProfile, accessToken, response);
+        if (service instanceof final OidcRegisteredService oidcRegisteredService) {
+            return FunctionUtils.doAndHandle(() -> {
+                if (signingAndEncryptionService.shouldSignToken(oidcRegisteredService)
+                    || signingAndEncryptionService.shouldEncryptToken(oidcRegisteredService)) {
+                    return signAndEncryptUserProfileClaims(userProfile, response, oidcRegisteredService);
+                }
+                return buildPlainUserProfileClaims(userProfile, response, oidcRegisteredService);
+            }, e -> ResponseEntity.badRequest().body("Unable to produce user profile claims")).get();
         }
 
-        return FunctionUtils.doAndHandle(() -> {
-            val registeredService = (OidcRegisteredService) service;
-            if (signingAndEncryptionService.shouldSignToken(registeredService)
-                || signingAndEncryptionService.shouldEncryptToken(registeredService)) {
-                return signAndEncryptUserProfileClaims(userProfile, response, registeredService);
-            }
-            return buildPlainUserProfileClaims(userProfile, response, registeredService);
-        }, e -> ResponseEntity.badRequest().body("Unable to produce user profile claims")).get();
+        return super.renderProfileForModel(userProfile, accessToken, response);
     }
 
     protected ResponseEntity<String> buildPlainUserProfileClaims(final Map<String, Object> userProfile,

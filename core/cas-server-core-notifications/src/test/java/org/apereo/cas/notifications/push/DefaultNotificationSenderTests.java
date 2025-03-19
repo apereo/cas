@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(CasTestExtension.class)
 class DefaultNotificationSenderTests {
     @Autowired
-    @Qualifier("notificationSender")
+    @Qualifier(NotificationSender.BEAN_NAME)
     private NotificationSender notificationSender;
 
     @Test

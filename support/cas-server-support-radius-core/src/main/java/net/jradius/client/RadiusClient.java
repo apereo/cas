@@ -122,8 +122,8 @@ public class RadiusClient {
                     elements.put(pd.getName(), pd);
                 }
             }
-            for (var arg : args) {
-                int eq = arg.indexOf('=');
+            for (val arg : args) {
+                val eq = arg.indexOf('=');
                 if (eq > 0) {
                     var name = arg.substring(0, eq);
                     var value = arg.substring(eq + 1);

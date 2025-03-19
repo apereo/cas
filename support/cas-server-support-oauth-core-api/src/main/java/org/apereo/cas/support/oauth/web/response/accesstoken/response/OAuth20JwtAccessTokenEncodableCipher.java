@@ -54,8 +54,7 @@ class OAuth20JwtAccessTokenEncodableCipher implements EncodableCipher<String, St
 
     @Override
     public String encode(final String value, final Object[] parameters) {
-        if (registeredService instanceof final OAuthRegisteredService oauthRegisteredService
-            && shouldEncodeAsJwt()) {
+        if (registeredService instanceof OAuthRegisteredService && shouldEncodeAsJwt()) {
             return FunctionUtils.doUnchecked(() -> {
                 val request = getJwtRequestBuilder();
                 return configurationContext.getAccessTokenJwtBuilder().build(request);

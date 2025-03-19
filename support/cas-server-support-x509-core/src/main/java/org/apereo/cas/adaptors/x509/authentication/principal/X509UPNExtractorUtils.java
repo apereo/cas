@@ -126,7 +126,7 @@ public class X509UPNExtractorUtils {
             if (LOGGER.isTraceEnabled()) {
                 if (sanItem.size() == 2) {
                     val name = sanItem.get(1);
-                    val value = name instanceof String ? name : name instanceof byte[] ? getAltnameSequence((byte[]) name) : name;
+                    val value = name instanceof String ? name : name instanceof final byte[] array ? getAltnameSequence(array) : name;
                     LOGGER.trace("Found subject alt name of type [{}] with value [{}]", sanItem.getFirst(), value);
                 } else {
                     LOGGER.trace("SAN item of unexpected size found: [{}]", sanItem);

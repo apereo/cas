@@ -67,8 +67,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     protected final ApplicationContext applicationContext;
 
     protected static String getPrincipalIdFrom(final Ticket ticket) {
-        return ticket instanceof AuthenticationAwareTicket
-            ? Optional.ofNullable(((AuthenticationAwareTicket) ticket).getAuthentication())
+        return ticket instanceof final AuthenticationAwareTicket authenticationAwareTicket
+            ? Optional.ofNullable(authenticationAwareTicket.getAuthentication())
             .map(auth -> auth.getPrincipal().getId()).orElse(StringUtils.EMPTY)
             : StringUtils.EMPTY;
     }

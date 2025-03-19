@@ -18,7 +18,7 @@ import java.util.jar.Manifest;
  * @since 3.0.0
  */
 @UtilityClass
-@SuppressWarnings("CatchAndPrintStackTrace")
+@SuppressWarnings({"CatchAndPrintStackTrace", "TimeInStaticInitializer"})
 public class CasVersion {
     private static final String IMPLEMENTATION_DATE;
 

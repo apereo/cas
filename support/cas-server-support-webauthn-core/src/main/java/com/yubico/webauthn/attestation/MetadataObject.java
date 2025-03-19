@@ -103,9 +103,9 @@ public class MetadataObject {
 
     @JsonIgnore
     public List<X509Certificate> getParsedTrustedCertificates() throws CertificateException {
-        List<X509Certificate> list = new ArrayList<>();
-        for (final String trustedCertificate : trustedCertificates) {
-            X509Certificate x509Certificate = CertificateParser.parsePem(trustedCertificate);
+        val list = new ArrayList<X509Certificate>();
+        for (val trustedCertificate : trustedCertificates) {
+            val x509Certificate = CertificateParser.parsePem(trustedCertificate);
             list.add(x509Certificate);
         }
         return list;

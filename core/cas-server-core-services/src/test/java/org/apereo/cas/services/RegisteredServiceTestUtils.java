@@ -166,10 +166,10 @@ public class RegisteredServiceTestUtils {
         baseRegisteredService.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
         baseRegisteredService.setLogoutUrl("https://sys.example.org/logout.png");
 
-        if (baseRegisteredService instanceof CasRegisteredService) {
+        if (baseRegisteredService instanceof final CasRegisteredService casRegisteredService) {
             val policy = new RegexMatchingRegisteredServiceProxyPolicy();
             policy.setPattern("^http.+");
-            ((CasRegisteredService) baseRegisteredService).setProxyPolicy(policy);
+            casRegisteredService.setProxyPolicy(policy);
         }
         baseRegisteredService.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
 

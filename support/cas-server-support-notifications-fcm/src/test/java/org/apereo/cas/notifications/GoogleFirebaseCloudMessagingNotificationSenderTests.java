@@ -46,7 +46,7 @@ class GoogleFirebaseCloudMessagingNotificationSenderTests {
     private NotificationSender firebaseCloudMessagingNotificationSender;
 
     @Autowired
-    @Qualifier("notificationSender")
+    @Qualifier(NotificationSender.BEAN_NAME)
     private NotificationSender notificationSender;
 
     @BeforeAll
