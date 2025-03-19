@@ -21,8 +21,8 @@ public final class DefaultCloseableDataSource implements CloseableDataSource {
 
     @Override
     public void close() throws IOException {
-        if (this.targetDataSource instanceof Closeable) {
-            ((Closeable) this.targetDataSource).close();
+        if (this.targetDataSource instanceof final Closeable closeable) {
+            closeable.close();
         }
     }
 }

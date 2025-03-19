@@ -174,8 +174,9 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             .service(service)
             .principal(principal)
             .applicationContext(applicationContext)
-            .attributeReleasePolicyPredicate(policy -> !(policy instanceof OidcRegisteredServiceAttributeReleasePolicy)
-                || scopes.contains(((OidcRegisteredServiceAttributeReleasePolicy) policy).getScopeType()))
+            .attributeReleasePolicyPredicate(policy ->
+                !(policy instanceof final OidcRegisteredServiceAttributeReleasePolicy oidcPolicy)
+                    || scopes.contains(oidcPolicy.getScopeType()))
             .build();
         return oidcService.getAttributeReleasePolicy().getAttributes(releasePolicyContext);
     }

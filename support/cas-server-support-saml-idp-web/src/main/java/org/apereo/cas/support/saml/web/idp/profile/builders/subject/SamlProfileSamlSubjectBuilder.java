@@ -105,9 +105,9 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
     private SAMLObject encryptNameIdIfNecessary(final SAMLObject subjectNameId,
                                                 final SamlProfileBuilderContext context) {
         if (!(subjectNameId instanceof EncryptedID)
-            && subjectNameId instanceof NameID
-            && NameIDType.ENCRYPTED.equalsIgnoreCase(((NameIDType) subjectNameId).getFormat())) {
-            return samlObjectEncrypter.encode((NameID) subjectNameId, context.getRegisteredService(), context.getAdaptor());
+            && subjectNameId instanceof final NameID nameId
+            && NameIDType.ENCRYPTED.equalsIgnoreCase(nameId.getFormat())) {
+            return samlObjectEncrypter.encode(nameId, context.getRegisteredService(), context.getAdaptor());
         }
         return subjectNameId;
     }

@@ -80,23 +80,22 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
         Assert.notNull(transcoder, "Transcoder cannot be null");
         Assert.notNull(webflowProperties, "Webflow properties cannot be null");
 
-        if (!(key instanceof ClientFlowExecutionKey)) {
-            throw new IllegalArgumentException(
-                "Expected instance of ClientFlowExecutionKey but got " + key.getClass().getName());
-        }
-        try {
-            val encoded = ((ClientFlowExecutionKey) key).getData();
-            val state = (SerializedFlowExecutionState) transcoder.decode(encoded);
+        if (key instanceof final ClientFlowExecutionKey clientFlowExecutionKey) {
+            try {
+                val encoded = clientFlowExecutionKey.getData();
+                val state = (SerializedFlowExecutionState) transcoder.decode(encoded);
 
-            if (webflowProperties.getSession().isPinToSession()) {
-                verifyWebflowSessionIsCorrectlyPinned(state);
+                if (webflowProperties.getSession().isPinToSession()) {
+                    verifyWebflowSessionIsCorrectlyPinned(state);
+                }
+                val conversationScope = state.getConversationScope();
+                val flow = flowDefinitionLocator.getFlowDefinition(state.getFlowId());
+                return flowExecutionFactory.restoreFlowExecution(state.getExecution(), flow, key, conversationScope, this.flowDefinitionLocator);
+            } catch (final Exception e) {
+                throw new ClientFlowExecutionRepositoryException("Error decoding flow execution", e);
             }
-            val conversationScope = state.getConversationScope();
-            val flow = flowDefinitionLocator.getFlowDefinition(state.getFlowId());
-            return flowExecutionFactory.restoreFlowExecution(state.getExecution(), flow, key, conversationScope, this.flowDefinitionLocator);
-        } catch (final Exception e) {
-            throw new ClientFlowExecutionRepositoryException("Error decoding flow execution", e);
         }
+        throw new IllegalArgumentException("Expected instance of ClientFlowExecutionKey but got " + key.getClass().getName());
     }
 
     protected void verifyWebflowSessionIsCorrectlyPinned(final SerializedFlowExecutionState state) {

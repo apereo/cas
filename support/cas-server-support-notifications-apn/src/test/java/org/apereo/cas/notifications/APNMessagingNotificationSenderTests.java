@@ -37,10 +37,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 class APNMessagingNotificationSenderTests {
     @Autowired
-    @Qualifier("notificationSender")
+    @Qualifier(NotificationSender.BEAN_NAME)
     private NotificationSender notificationSender;
-
-
+    
     @Test
     void verifyOperation() throws Exception {
         val id = UUID.randomUUID().toString();

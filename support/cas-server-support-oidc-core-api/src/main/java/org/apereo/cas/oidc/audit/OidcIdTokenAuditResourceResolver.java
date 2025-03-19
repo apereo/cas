@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
-import org.jose4j.jwt.JwtClaims;
 import java.util.HashMap;
 
 /**
@@ -30,7 +29,7 @@ public class OidcIdTokenAuditResourceResolver extends ReturnValueAsStringResourc
 
         val idTokenContext = (IdTokenGenerationContext) auditableTarget.getArgs()[0];
         val accessToken = idTokenContext.getAccessToken();
-        if (returnValue instanceof OidcIdToken(String token, JwtClaims claims)) {
+        if (returnValue instanceof OidcIdToken(var token, var claims)) {
             if (claims.hasClaim(OidcConstants.TXN)) {
                 val txn = FunctionUtils.doUnchecked(() -> claims.getStringClaimValue(OidcConstants.TXN));
                 FunctionUtils.doIfNotNull(txn, __ -> values.put(OidcConstants.TXN, txn));

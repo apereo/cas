@@ -6,7 +6,6 @@ import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.exception.HexException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.DEROctetString;
 
@@ -35,15 +34,15 @@ public class ExtensionMatcher implements DeviceMatcher {
 
     @Override
     public boolean matches(final X509Certificate attestationCertificate, final JsonNode parameters) {
-        String matchKey = parameters.get(EXTENSION_KEY).asText();
-        JsonNode matchValue = parameters.get(EXTENSION_VALUE);
-        byte[] extensionValue = attestationCertificate.getExtensionValue(matchKey);
+        val matchKey = parameters.get(EXTENSION_KEY).asText();
+        val matchValue = parameters.get(EXTENSION_VALUE);
+        val extensionValue = attestationCertificate.getExtensionValue(matchKey);
         if (extensionValue != null) {
             if (matchValue == null) {
                 return true;
             } else {
                 try {
-                    final ASN1Primitive value = ASN1Primitive.fromByteArray(extensionValue);
+                    val value = ASN1Primitive.fromByteArray(extensionValue);
 
                     if (matchValue.isObject()) {
                         if (matchTypedValue(matchKey, matchValue, value)) {
@@ -64,8 +63,8 @@ public class ExtensionMatcher implements DeviceMatcher {
     }
 
     private static boolean matchStringValue(final String matchKey, final JsonNode matchValue, final ASN1Primitive value) {
-        if (value instanceof DEROctetString) {
-            final String readValue = new String(((ASN1OctetString) value).getOctets(), CHARSET);
+        if (value instanceof final DEROctetString octetString) {
+            val readValue = new String(octetString.getOctets(), CHARSET);
             return matchValue.asText().equals(readValue);
         }
         LOGGER.debug("Expected text string value for extension {}, was: {}", matchKey, value);
@@ -73,7 +72,7 @@ public class ExtensionMatcher implements DeviceMatcher {
     }
 
     private static boolean matchTypedValue(final String matchKey, final JsonNode matchValue, final ASN1Primitive value) {
-        final String extensionValueType = matchValue.get(EXTENSION_VALUE_TYPE).textValue();
+        val extensionValueType = matchValue.get(EXTENSION_VALUE_TYPE).textValue();
         return switch (extensionValueType) {
             case EXTENSION_VALUE_TYPE_HEX -> matchHex(matchKey, matchValue, value);
             default -> throw new IllegalArgumentException(
@@ -84,7 +83,7 @@ public class ExtensionMatcher implements DeviceMatcher {
     }
 
     private static boolean matchHex(final String matchKey, final JsonNode matchValue, final ASN1Primitive value) {
-        final String matchValueString = matchValue.get(EXTENSION_VALUE_VALUE).textValue();
+        val matchValueString = matchValue.get(EXTENSION_VALUE_VALUE).textValue();
         final ByteArray matchBytes;
         try {
             matchBytes = ByteArray.fromHex(matchValueString);

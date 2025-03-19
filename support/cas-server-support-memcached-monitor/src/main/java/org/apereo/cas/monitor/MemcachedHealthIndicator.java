@@ -67,8 +67,8 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
                         val capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
                         val evictions = Long.parseLong(statsMap.get("evictions"));
 
-                        val name = key instanceof InetSocketAddress
-                            ? ((InetSocketAddress) key).getHostName()
+                        val name = key instanceof final InetSocketAddress socketAddress
+                            ? socketAddress.getHostName()
                             : key.toString();
                         statsList.add(new SimpleCacheStatistics(size, capacity, evictions, name));
                     }

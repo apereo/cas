@@ -41,8 +41,8 @@ public class RelaxedPropertyNames implements Iterable<String> {
      */
     public static RelaxedPropertyNames forCamelCase(final String name) {
         val result = new StringBuilder();
-        for (int i = 0; i < name.length(); i++) {
-            char c = name.charAt(i);
+        for (var i = 0; i < name.length(); i++) {
+            val c = name.charAt(i);
             result.append(Character.isUpperCase(c) && !result.isEmpty()
                           && result.charAt(result.length() - 1) != '-'
                 ? "-" + Character.toLowerCase(c) : c);

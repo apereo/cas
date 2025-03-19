@@ -161,7 +161,7 @@ class CompoundCondition implements BeanCondition {
                     }
                     return StringUtils.isNotBlank(result);
                 }
-                if (cond instanceof BooleanCondition(Boolean value)) {
+                if (cond instanceof BooleanCondition(var value)) {
                     return BooleanUtils.toBoolean(value);
                 }
                 return false;

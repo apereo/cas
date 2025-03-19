@@ -25,9 +25,8 @@ public final class FingerprintMatcher implements DeviceMatcher {
         val fingerprints = parameters.get(FINGERPRINTS_KEY);
         if (fingerprints.isArray()) {
             try {
-                String fingerprint =
-                    Hashing.sha1().hashBytes(attestationCertificate.getEncoded()).toString().toLowerCase(Locale.ENGLISH);
-                for (final JsonNode candidate : fingerprints) {
+                val fingerprint = Hashing.sha1().hashBytes(attestationCertificate.getEncoded()).toString().toLowerCase(Locale.ENGLISH);
+                for (val candidate : fingerprints) {
                     if (fingerprint.equals(candidate.asText().toLowerCase(Locale.ENGLISH))) {
                         return true;
                     }

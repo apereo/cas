@@ -362,10 +362,9 @@ subprojects {
             it.options.errorprone.allErrorsAsWarnings = false
             it.options.errorprone.disableWarningsInGeneratedCode = true
             it.options.errorprone.excludedPaths = ".*com/duosecurity.*"
-            it.options.errorprone.errorproneArgs = ['-Xep:StatementSwitchToExpressionSwitch:OFF',
-                                                    '-Xep:ClassCanBeStatic:OFF',
-                                                    '-Xep:NotJavadoc:OFF',
+            it.options.errorprone.errorproneArgs = ['-Xep:ClassCanBeStatic:OFF',
                                                     '-Xep:JavaUtilDate:OFF',
+                                                    '-Xep:StringConcatToTextBlock:OFF',
                                                     '-Xep:AddressSelection:OFF']
             casCompilerArgs.add("-XDcompilePolicy=byfile")
             casCompilerArgs.add("-XDshould-stop.ifError=FLOW")

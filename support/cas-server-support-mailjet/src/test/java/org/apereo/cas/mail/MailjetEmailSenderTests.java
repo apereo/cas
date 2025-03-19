@@ -1,12 +1,5 @@
 package org.apereo.cas.mail;
 
-/**
- * This is {@link MailjetEmailSenderTests}.
- *
- * @author Misagh Moayyed
- * @since 7.1.0
- */
-
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMailjetEmailSenderAutoConfiguration;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;

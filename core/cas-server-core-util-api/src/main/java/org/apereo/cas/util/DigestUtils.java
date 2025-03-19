@@ -206,7 +206,7 @@ public class DigestUtils {
             digest.update(salt);
 
             var hashedPassword = digest.digest(value.getBytes(StandardCharsets.UTF_8));
-            for (int i = 0; i < iterations - 1; i++) {
+            for (var i = 0; i < iterations - 1; i++) {
                 hashedPassword = digest.digest(hashedPassword);
             }
             return EncodingUtils.hexEncode(hashedPassword);

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 25000)
 class CasCoreNotificationsAutoConfigurationTests {
     @Autowired
-    @Qualifier("notificationSender")
+    @Qualifier(NotificationSender.BEAN_NAME)
     private NotificationSender notificationSender;
 
     @Autowired
