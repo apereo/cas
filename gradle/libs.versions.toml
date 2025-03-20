@@ -133,6 +133,7 @@ json = "20250107"
 jsonSmart = "2.5.2"
 jsonassert = "1.5.3"
 jsoup = "1.19.1"
+jsr305 = "3.0.2"
 jta = "2.0.1"
 jtds = "1.3.1"
 junit = "5.12.1"
@@ -461,6 +462,7 @@ orgjson = { module = "org.json:json", version.ref = "json" }
 json-smart = { module = "net.minidev:json-smart", version.ref = "jsonSmart" }
 jsonassert = { module = "org.skyscreamer:jsonassert", version.ref = "jsonassert" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+jsr305 = { module = "com.google.code.findbugs:jsr305", version.ref = "jsr305" }
 jtds = { module = "net.sourceforge.jtds:jtds", version.ref = "jtds" }
 jul-to-slf4j = { module = "org.slf4j:jul-to-slf4j", version.ref = "slf4j" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
