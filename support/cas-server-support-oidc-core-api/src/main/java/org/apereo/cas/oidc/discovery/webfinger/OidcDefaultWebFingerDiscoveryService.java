@@ -37,7 +37,7 @@ public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscov
                                                                                + "(([^\\?#:/]+)"
                                                                                + "(:(\\d*))?)"
                                                                                + ')'
-                                                                               + "([^\\?#]+)?"
+                                                                               + "([^\\?#]*)?"
                                                                                + "(\\?([^#]+))?"
                                                                                + "(#(.*))?"
                                                                                + '$'

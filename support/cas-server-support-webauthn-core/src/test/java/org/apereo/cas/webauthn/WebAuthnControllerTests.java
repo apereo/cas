@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.authentication.TestingAuthenticationToken;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -50,11 +51,12 @@ class WebAuthnControllerTests {
 
     @Test
     void verifyStartAuthentication() throws Throwable {
+        val authenticatedPrincipal = new TestingAuthenticationToken("casuser", List.of());
         val server = mock(WebAuthnServer.class);
         val controller = new WebAuthnController(server);
 
         when(server.startAuthentication(any())).thenReturn(Either.left(List.of("failed")));
-        var result = controller.startAuthentication("casuser");
+        var result = controller.startAuthentication(authenticatedPrincipal, "casuser");
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
 
         val publicKeyRequest = PublicKeyCredentialRequestOptions.builder()
@@ -73,7 +75,7 @@ class WebAuthnControllerTests {
             assertionRequest);
 
         when(server.startAuthentication(any())).thenReturn(Either.right(assertion));
-        result = controller.startAuthentication("casuser");
+        result = controller.startAuthentication(authenticatedPrincipal, "casuser");
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
@@ -138,6 +140,7 @@ class WebAuthnControllerTests {
 
     @Test
     void verifyStartRegistration() throws Throwable {
+        val authenticatedPrincipal = new TestingAuthenticationToken("casuser", List.of());
         val server = mock(WebAuthnServer.class);
         val controller = new WebAuthnController(server);
 
@@ -163,11 +166,11 @@ class WebAuthnControllerTests {
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
-        var result = controller.startRegistration("casuser", "displayName", "nickName", false, "sessionToken", request, response);
+        var result = controller.startRegistration("casuser", authenticatedPrincipal, "displayName", "nickName", false, "sessionToken", request, response);
         assertEquals(HttpStatus.OK, result.getStatusCode());
 
         when(server.startRegistration(anyString(), any(), any(), any(ResidentKeyRequirement.class), any())).thenReturn(Either.left("failed"));
-        result = controller.startRegistration("casuser", "displayName", "nickName", false, "sessionToken", request, response);
+        result = controller.startRegistration("casuser", authenticatedPrincipal, "displayName", "nickName", false, "sessionToken", request, response);
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
