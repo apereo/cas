@@ -1083,6 +1083,9 @@ ext.libraries = [
                 dependencies.create(libs.jakarta.xml.bind.api.get()) {
                     transitive = false
                 },
+                dependencies.create(libs.jsr305.get()) {
+                    transitive = false
+                },
                 dependencies.create(libs.jaxb.impl.get()) {
                     transitive = false
                 },
