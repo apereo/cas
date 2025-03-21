@@ -41,6 +41,12 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
+### Spring Boot 3.5
+
+The migration of the entire codebase to Spring Boot `3.5` is ongoing, and at the moment is waiting for the wider ecosystem
+of supporting frameworks and libraries to catch up to changes. We anticipate the work to finalize in the next few
+release candidates and certainly prior to the final release.
+
 ### OpenRewrite Recipes
 
 CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
@@ -56,63 +62,15 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, the total number of jobs stands at approximately `508` distinct scenarios. The overall
-test coverage of the CAS codebase is approximately `94%`.
-   
-### WebAuthN via QR Codes
+and scenarios. At the moment, total number of jobs stands at approximately `511` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
+are now configured to run with parallelism enabled.
 
-CAS can be configured to support FIDO2 WebAuthn authentication using QR codes. Once 
-enabled, [this feature](../mfa/FIDO2-WebAuthn-Authentication-QRCode.html) allows users to authenticate
-using a secondary FIDO2-enabled secondary device by scanning a QR code presented by CAS.
-  
-### Passwordless Authentication Selection
+### Java 24
 
-[Passwordless Authentication](../authentication/Passwordless-Authentication-UserSelectionMenu.html) at the direction of the
-account store can now be instructed to allow the user to select from a menu of available authentication options.
-   
-### Mailgun Integration
-
-Support for [Mailgun](../notifications/Sending-Email-Configuration-Mailgun.html) is now available for sending email messages.
-
-### SAML2 Metadata via DynamoDb
-
-SAML2 metadata for service providers and CAS as the identity provider 
-can now be stored and fetched from [Amazon DynamoDb](../installation/Configuring-SAML2-DynamicMetadata-DynamoDb.html).
-
-### Google Cloud Storage Service Registry
-
-CAS can now store service and application definitions in [Google Cloud Storage](../services/GCP-Storage-Service-Management.html).
-
-### Database Authentication via Stored Procedures
-
-CAS can now authenticate users by invoking [stored procedures](../authentication/Database-Authentication-StoredProcedure.html) in SQL databases.
+As described, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. We are still waiting for the
+wider ecosystem of supporting frameworks and libraries to catch up to Java `24`. We anticipate the work to finalize in the next few
+release candidates and certainly prior to the final release. Remember that the baseline requirement will remain unchanged
+and this is just a preparatory step to ensure CAS is ready for the next version of Java.
 
 ## Other Stuff
-   
-- [OAuth Refresh Tokens](../authentication/OAuth-Authentication-Clients.html) can optionally be generated as JWTs. 
-- [Email notifications](../notifications/Sending-Email-Configuration.html) now test the connection to the email server before sending the actual message.
-
-## Library Upgrades
-
-- Spring Boot
-- Spring
-- Apache Tomcat
-- Java Melody
-- Logback
-- Spring Integration
-- Apache CXF
-- Spring Retry
-- Zipkin Brave
-- Spring Shell
-- Micrometer
-- Thymeleaf
-- Amazon SDK
-- Jetty
-- Gradle
-- Spring Data
-- Apache Log4j
-- Apache CXF
-- Hibernate
-- Sentry
-- Spring Session
-- GCP Logging
