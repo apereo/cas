@@ -77,7 +77,7 @@ You might be running CAS inside a [servlet container](Configuring-Servlet-Contai
 
 With this setup, the CAS login screen may still warn you about a non-secure connection. There is no setting in CAS that would allow you to control/adjust this, as this is entirely controlled by the container itself. All CAS cares about is whether the incoming connection request identifies itself as a secure connection. So to remove the warning, you will need to look into your container's configuration and docs to see how the connection may be secured between the proxy and CAS. 
 
-For [Apache Tomcat](https://tomcat.apache.org/tomcat-10.1-doc/config/http.html), you may be able to adjust the connector that talks to the proxy with a `secure=true` attribute.
+For [Apache Tomcat](https://tomcat.apache.org/tomcat-11.0-doc/config/http.html), you may be able to adjust the connector that talks to the proxy with a `secure=true` attribute.
 
 ## Application X "redirected you too many times" 
 

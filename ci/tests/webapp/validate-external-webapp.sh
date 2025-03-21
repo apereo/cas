@@ -31,7 +31,7 @@ tomcatVersion=$(cat gradle/libs.versions.toml | grep "^tomcat = " | awk -F"=" '{
 echo "Apache Tomcat version: ${tomcatVersion}"
 
 tomcatVersionTag="v${tomcatVersion}"
-tomcatUrl="https://archive.apache.org/dist/tomcat/tomcat-10/${tomcatVersionTag}/bin/apache-tomcat-${tomcatVersion}.zip"
+tomcatUrl="https://archive.apache.org/dist/tomcat/tomcat-11/${tomcatVersionTag}/bin/apache-tomcat-${tomcatVersion}.zip"
 
 export CATALINA_HOME=./apache-tomcat-${tomcatVersion}
 rm -Rf ${CATALINA_HOME}
