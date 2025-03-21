@@ -33,7 +33,7 @@ GRADLE_BUILD_OPTIONS="-q --no-daemon -x check -x test -x javadoc --configure-on-
 REPOSITORY_NAME="apereo/cas"
 REPOSITORY_ADDR="https://${GH_PAGES_TOKEN}@github.com/${REPOSITORY_NAME}"
 
-branchVersion="master"
+branchVersion="7.2.x"
 propFilter=".+"
 generateData=true
 audit=true

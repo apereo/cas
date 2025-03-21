@@ -24,12 +24,12 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
+      - 7.2.x
       - '!**.**.**'
       - '!heroku-*'
   pull_request:
     types: [ labeled ]
-    branches: [ master, pr-* ]
+    branches: [ 7.2.x, pr-* ]
 
 ##########################################################################
 

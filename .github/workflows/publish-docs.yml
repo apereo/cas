@@ -13,7 +13,7 @@ env:
   DEVELOCITY_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
-  DOCS_BRANCH: master
+  DOCS_BRANCH: 7.2.x
   RUBY_VERSION: '3.4.2'
 
 ##########################################################################
@@ -22,12 +22,12 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
+      - 7.2.x
       - '!**.**.**'
       - '!heroku-*'
   pull_request:
     types: [ labeled ]
-    branches: [ master, pr-* ]
+    branches: [ 7.2.x, pr-* ]
 
 concurrency:
   group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"

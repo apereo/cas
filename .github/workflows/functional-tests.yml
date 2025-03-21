@@ -38,19 +38,9 @@ env:
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 18 * * *'
   push:
-    branches:
-      - master
-      - '!**.**.**'
-      - '!heroku-*'
-  pull_request:
-    types: [ labeled ]
-    branches:
-      - master
-      - 'pr-*'
-      - '!**.**.**'
+    branches-ignore:
+      - '**'
 
 concurrency:
   group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"

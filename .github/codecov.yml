@@ -1,6 +1,6 @@
 codecov:
   max_report_age: off
-  strict_yaml_branch: master
+  strict_yaml_branch: 7.2.x
 
 coverage:
   round: up
@@ -19,7 +19,7 @@ coverage:
           - "src"
        # advanced
         branches: 
-          - master
+          - 7.2.x
         if_not_found: success
         if_ci_failed: error
         informational: false

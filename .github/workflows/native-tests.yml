@@ -37,11 +37,10 @@ env:
   SCENARIO_REGEX: ".*"
 
 on:
-#  push:
-#    branches: [ master ]
   workflow_dispatch:
-  schedule:
-    - cron: '0 10 */2 * *'
+  push:
+    branches-ignore:
+      - '**'
 
 concurrency:
   group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"

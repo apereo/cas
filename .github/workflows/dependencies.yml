@@ -21,8 +21,9 @@ concurrency:
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 19 * * *'
+  push:
+    branches-ignore:
+      - '**'
 ##########################################################################
 
 jobs:
