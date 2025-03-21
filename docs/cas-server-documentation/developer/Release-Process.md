@@ -101,7 +101,7 @@ on:
 ```
 
 <div class="alert alert-warning">:information_source: <strong>Remember</strong><p>Make sure nothing else in these workflows
-points to the <code>master</code> branch</p>.</div>
+points to the <code>master</code> branch</p></div>
 
 Then disable the following workflows:
 
