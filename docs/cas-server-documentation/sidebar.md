@@ -733,7 +733,6 @@ layout: null
             *   [Graphite](/cas/{{ version }}/monitoring/Configuring-Metrics-Storage-Graphite.html) 
             *   [InfluxDb](/cas/{{ version }}/monitoring/Configuring-Metrics-Storage-InfluxDb.html) 
             *   [NewRelic](/cas/{{ version }}/monitoring/Configuring-Metrics-Storage-NewRelic.html) 
-            *   [SignalFx](/cas/{{ version }}/monitoring/Configuring-Metrics-Storage-SignalFx.html) 
             *   [StatsD](/cas/{{ version }}/monitoring/Configuring-Metrics-Storage-StatsD.html) 
             *   [Wavefront](/cas/{{ version }}/monitoring/Configuring-Metrics-Storage-Wavefront.html) 
             *   [AppOptics](/cas/{{ version }}/monitoring/Configuring-Metrics-Storage-AppOptics.html) 

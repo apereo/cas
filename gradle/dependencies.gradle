@@ -1768,6 +1768,11 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-lang", module: "commons-lang")
                 },
+                dependencies.create(libs.micrometer.java21.get()) {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                },
                 dependencies.create(libs.micrometer.observation.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1819,11 +1824,6 @@ ext.libraries = [
                     exclude(group: "commons-lang", module: "commons-lang")
                 },
                 dependencies.create(libs.micrometer.registry.atlas.get()) {
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                },
-                dependencies.create(libs.micrometer.registry.signalfx.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-lang", module: "commons-lang")

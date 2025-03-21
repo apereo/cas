@@ -97,4 +97,4 @@ send monitoring events to Azure Monitor Application Insights.
 
 ## Other Stuff
               
--            
+- Support for SignalFX has been removed, given its deprecation status in Micrometer.           

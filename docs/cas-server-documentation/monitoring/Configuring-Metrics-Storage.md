@@ -14,7 +14,6 @@ CAS metrics may be routed to varying types of databases for storage and analytic
 - Graphite
 - Ganglia
 - Atlas
-- SignalFx
 - Statsd
 - InfluxDb
 - Prometheus

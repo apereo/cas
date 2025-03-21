@@ -99,27 +99,11 @@ dependencyResolutionManagement {
             mavenContent { releasesOnly() }
         }
         maven {
-            url = "https://repo.spring.io/snapshot"
-            content {
-                includeGroupByRegex ".*springframework.*"
-                includeGroupByRegex ".*projectreactor.*"
-                includeGroupByRegex ".*micrometer.*"
-            }
-            mavenContent { snapshotsOnly() }
-        }
-        maven {
             url = "https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates"
             content {
                 includeGroupByRegex ".*netflix.*"
             }
             mavenContent { releasesOnly() }
-        }
-        maven {
-            url = "https://projectlombok.org/edge-releases"
-            content {
-                includeGroupByRegex ".*projectlombok.*"
-            }
-            mavenContent { snapshotsOnly() }
         }
     }
 }
