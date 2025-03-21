@@ -15,7 +15,7 @@ may be used, in the [WAR Overlay](WAR-Overlay-Installation.html) :
 
 While there is no official project support, the following containers should be compatible with a CAS deployment:
 
-* [Apache Tomcat](https://tomcat.apache.org/) (At a minimum, Apache Tomcat `10` is required)
+* [Apache Tomcat](https://tomcat.apache.org/) (At a minimum, Apache Tomcat `11` is required)
 * [JBoss](https://www.jboss.org/)
 * [Wildfly](https://wildfly.org/)
 * [Undertow](http://undertow.io/)

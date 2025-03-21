@@ -42,7 +42,7 @@ login option in the user interface to trigger the browser for X.509.
 
 ## External Apache Tomcat
 
-Anything said here extends the [Apache Tomcat reference for SSL](https://tomcat.apache.org/tomcat-10.1-doc/ssl-howto.html).
+Anything said here extends the [Apache Tomcat reference for SSL](https://tomcat.apache.org/tomcat-11.0-doc/ssl-howto.html).
 
 The Tomcat server is configured in `$CATALINA_HOME/conf/server.xml` with one or more `<Connector>` elements. Each of these elements 
 defines one port number on which Tomcat will listen for requests. Connectors that support SSL are configured with one or two files 
