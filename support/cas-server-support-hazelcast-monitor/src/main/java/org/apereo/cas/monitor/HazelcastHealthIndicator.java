@@ -7,6 +7,7 @@ import com.hazelcast.map.IMap;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.ArrayList;
 
@@ -20,26 +21,24 @@ import java.util.ArrayList;
 @ToString
 public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
-    /**
-     * CAS Hazelcast Instance.
-     */
-    private final HazelcastInstanceProxy instance;
+    private final ObjectProvider<HazelcastInstance> instance;
 
     public HazelcastHealthIndicator(final long evictionThreshold, final long threshold,
-                                    final HazelcastInstance instance) {
+                                    final ObjectProvider<HazelcastInstance> instance) {
         super(evictionThreshold, threshold);
-        this.instance = (HazelcastInstanceProxy) instance;
+        this.instance = instance;
     }
 
     @Override
     protected CacheStatistics[] getStatistics() {
-        val stats = instance.getConfig().getMapConfigs().keySet();
+        val hazelcastInstance = (HazelcastInstanceProxy) instance.getObject();
+        val stats = hazelcastInstance.getConfig().getMapConfigs().keySet();
         val statsList = new ArrayList<CacheStatistics>(stats.size());
         stats.forEach(key -> {
-            val map = instance.getMap(key);
-            val memoryStats = instance.getOriginal().getMemoryStats();
+            val map = hazelcastInstance.getMap(key);
+            val memoryStats = hazelcastInstance.getOriginal().getMemoryStats();
             LOGGER.debug("Starting to collect hazelcast statistics for map [{}] identified by key [{}]...", map, key);
-            statsList.add(new HazelcastStatistics(map, instance.getCluster().getMembers().size(), memoryStats));
+            statsList.add(new HazelcastStatistics(map, hazelcastInstance.getCluster().getMembers().size(), memoryStats));
         });
         return statsList.toArray(CacheStatistics[]::new);
     }
