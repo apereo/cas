@@ -176,7 +176,7 @@ public class MongoDbConnectionFactory {
                     collection.dropIndex(indexKeys);
                 }
                 LOGGER.debug("Creating index [{}] on collection [{}]", index, collectionName);
-                mongoTemplate.indexOps(collectionName).ensureIndex(index);
+                mongoTemplate.indexOps(collectionName).createIndex(index);
             } catch (final Exception e) {
                 LoggingUtils.warn(LOGGER, e);
             }

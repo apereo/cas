@@ -156,8 +156,8 @@ mariaDb = "3.5.2"
 material = "14.0.0"
 maxmind = "4.2.1"
 mdiFont = "7.4.47"
-micrometer = "1.14.5"
-micrometerOtel = "1.4.4"
+micrometer = "1.15.0-M3"
+micrometerOtel = "1.5.0-M3"
 mockito = "5.16.1"
 mockitoInline = "5.2.0"
 mongoDriver = "5.4.0"
@@ -199,34 +199,34 @@ snakeYaml = "2.4"
 socketJsClient = "1.5.1"
 splunkLogging = "1.11.8"
 spring = "6.2.5"
-springBoot = "3.4.4"
+springBoot = "3.5.0-M3"
 springBootAdmin = "3.4.5"
 springCloudAzure = "5.21.0"
-springCloudBus = "4.2.1"
-springCloudCommons = "4.2.1"
-springCloudConfig = "4.2.1"
-springCloudConsul = "4.2.1"
-springCloudEureka = "4.2.1"
-springCloudKubernetesConfig = "3.2.1"
-springCloudVault = "4.2.1"
-springCloudZookeeper = "4.2.1"
-springDataCassandra = "4.4.4"
-springDataCommons = "3.4.4"
+springCloudBus = "4.3.0-M2"
+springCloudCommons = "4.3.0-M2"
+springCloudConfig = "4.3.0-M2"
+springCloudConsul = "4.3.0-M2"
+springCloudEureka = "4.3.0-M2"
+springCloudKubernetesConfig = "3.3.0-M2"
+springCloudVault = "4.3.0-M2"
+springCloudZookeeper = "4.3.0-M2"
+springDataCassandra = "4.5.0-M2"
+springDataCommons = "3.5.0-M2"
 springDataCosmosDb = "5.21.0"
-springDataMongoDb = "4.4.4"
-springDataRedis = "3.4.4"
+springDataMongoDb = "4.5.0-M2"
+springDataRedis = "4.0.0-M1"
 springDoc = "2.8.5"
-springIntegration = "6.4.3"
-springKafka = "3.3.4"
-springRabbit = "3.2.4"
+springIntegration = "6.5.0-M3"
+springKafka = "4.0.0-M1"
+springRabbit = "4.0.0-M2"
 springRetry = "2.0.11"
-springSecurity = "6.4.4"
+springSecurity = "6.5.0-M3"
 springSecurityRsa = "1.1.5"
 springSession = "3.4.2"
 springSessionMongo = "3.4.2"
 springShell = "3.4.0"
 springWebflow = "3.0.1"
-springWs = "4.0.12"
+springWs = "4.1.0-M1"
 spymemcached = "2.12.3"
 stompWebSocket = "2.3.4"
 streamBuffer = "2.1.0"
@@ -503,6 +503,7 @@ metrics-core = { module = "io.dropwizard.metrics:metrics-core", version.ref = "d
 micrometer-commons = { module = "io.micrometer:micrometer-commons", version.ref = "micrometer" }
 micrometer-core = { module = "io.micrometer:micrometer-core", version.ref = "micrometer" }
 micrometer-jakarta9 = { module = "io.micrometer:micrometer-jakarta9", version.ref = "micrometer" }
+micrometer-java21 = { module = "io.micrometer:micrometer-java21", version.ref = "micrometer" }
 micrometer-observation = { module = "io.micrometer:micrometer-observation", version.ref = "micrometer" }
 micrometer-registry-atlas = { module = "io.micrometer:micrometer-registry-atlas", version.ref = "micrometer" }
 micrometer-registry-cloudwatch2 = { module = "io.micrometer:micrometer-registry-cloudwatch2", version.ref = "micrometer" }
@@ -514,7 +515,6 @@ micrometer-registry-influx = { module = "io.micrometer:micrometer-registry-influ
 micrometer-registry-jmx = { module = "io.micrometer:micrometer-registry-jmx", version.ref = "micrometer" }
 micrometer-registry-new-relic = { module = "io.micrometer:micrometer-registry-new-relic", version.ref = "micrometer" }
 micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
-micrometer-registry-signalfx = { module = "io.micrometer:micrometer-registry-signalfx", version.ref = "micrometer" }
 micrometer-registry-statsd = { module = "io.micrometer:micrometer-registry-statsd", version.ref = "micrometer" }
 micrometer-registry-otel = { module = "io.micrometer:micrometer-registry-otlp", version.ref = "micrometer" }
 micrometer-registry-wavefront = { module = "io.micrometer:micrometer-registry-wavefront", version.ref = "micrometer" }

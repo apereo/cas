@@ -70,10 +70,9 @@ public class CosmosDbObjectFactory {
                 .keyManager(casSSLContext.getKeyManagerFactory())
                 .build();
             val cosmosDbConfigs = new CosmosDbConfigs(sslContext);
-            val configs = ReflectionUtils.findRequiredField(builder.getClass(), "configs");
+            val configs = ReflectionUtils.getRequiredField(builder.getClass(), "configs");
             configs.trySetAccessible();
             configs.set(builder, cosmosDbConfigs);
-            
         });
         this.client = builder.buildClient();
     }

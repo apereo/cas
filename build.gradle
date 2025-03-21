@@ -11,10 +11,6 @@ buildscript {
             url = "https://repo.spring.io/milestone"
             mavenContent { releasesOnly() }
         }
-        maven {
-            url = "https://repo.spring.io/snapshot"
-            mavenContent { snapshotsOnly() }
-        }
     }
 
     dependencies {
