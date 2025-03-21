@@ -5,7 +5,7 @@ const assert = require("assert");
 const redirectUrl = "https://localhost:9859/anything/cas";
 
 async function fetchCode(page) {
-    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20offline_access&prompt=login&redirect_uri=${redirectUrl}`;
+    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=${encodeURIComponent("openid offline_access")}&prompt=login&redirect_uri=${redirectUrl}`;
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
@@ -73,7 +73,7 @@ async function fetchProfile(accessToken) {
 }
 
 async function refreshTokens(refreshToken, clientId, successHandler, errorHandler) {
-    let accessTokenParams = "scope=openid%offline_access";
+    let accessTokenParams = `scope=${encodeURIComponent("openid offline_access")}`;
     accessTokenParams += `&grant_type=refresh_token&refresh_token=${refreshToken}`;
 
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}`;

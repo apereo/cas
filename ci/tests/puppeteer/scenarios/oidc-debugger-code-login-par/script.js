@@ -9,7 +9,7 @@ const assert = require("assert");
     const authzUrl = "https://localhost:8443/cas/oidc/oidcAuthorize";
     const params = "client_id=client&" +
         "redirect_uri=https://localhost:9859/post&" +
-        "scope=openid%20email%20profile%20address%20phone&" +
+        `scope=${encodeURIComponent("openid email profile address phone")}&` +
         "response_type=code&" +
         "response_mode=form_post&" +
         "nonce=vn4qulthnx";

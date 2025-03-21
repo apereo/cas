@@ -4,7 +4,7 @@ const assert = require("assert");
 
 async function fetchIdToken(page, maxAge, successHandler) {
     const redirectUrl = "https://localhost:9859/anything/cas";
-    let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20email%20profile&redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&state=1735fd6c43c14`;
+    let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=${encodeURIComponent("openid email profile")}&redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&state=1735fd6c43c14`;
     if (maxAge !== undefined && maxAge > 0) {
         url += `&max_age=${maxAge}`;
     }
