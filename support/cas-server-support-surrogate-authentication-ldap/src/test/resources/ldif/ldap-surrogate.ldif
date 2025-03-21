@@ -10,6 +10,18 @@ sn: CAS
 uid: $user
 employeeType: banderson
 
+dn: cn=$nouser,ou=surrogates,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: account
+cn: $nouser
+userPassword: 123456
+mail: $nouser@example.org
+sn: CAS
+uid: $nouser
+employeeType: nosurrogate
+
 dn: cn=$admin,ou=surrogates,dc=example,dc=org
 objectClass: organizationalRole
 objectClass: inetOrgPerson
@@ -44,3 +56,27 @@ userPassword: 123456
 sn: CAS
 uid: nomail
 employeeType: nothing
+
+dn: cn=$nosurrogate,ou=admins,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: account
+cn: $nosurrogate
+userPassword: 123456
+mail: $user@example.org
+sn: CAS
+uid: $nosurrogate
+employeeType: nosurrogate
+
+dn: cn=$otheruser,ou=admins,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: account
+cn: $otheruser
+userPassword: 123456
+mail: $otheruser@example.org
+sn: CAS
+uid: $otheruser
+employeeType: banderson

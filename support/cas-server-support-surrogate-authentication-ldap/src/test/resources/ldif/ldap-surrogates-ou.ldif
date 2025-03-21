@@ -2,3 +2,8 @@ dn: ou=surrogates,dc=example,dc=org
 objectClass: organizationalUnit
 objectClass: top
 ou: surrogates
+
+dn: ou=admins,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: admins
