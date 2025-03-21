@@ -46,6 +46,12 @@ The following items are new improvements and enhancements presented in this rele
 The migration of the entire codebase to Spring Boot `3.5` is ongoing, and at the moment is waiting for the wider ecosystem 
 of supporting frameworks and libraries to catch up to changes. We anticipate the work to finalize in the next few 
 release candidates and certainly prior to the final release.
+   
+### Apache Tomcat 11
+
+CAS is now able to run on and requires Apache Tomcat `11.x` and the codebase has been updated to support the latest
+version of Apache Tomcat. You can technically still run the CAS server on Apache Tomcat `10.x` but that
+is not recommended at all and could very likely break CAS core functionality or cause unexpected behavior.
 
 ### OpenRewrite Recipes
 
@@ -68,7 +74,7 @@ are now configured to run with parallelism enabled.
   
 ### Java 24
 
-As described, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. CAS is however
+As described earlier, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. CAS is however
 able to compile and run with Java `24` as well. Again, remember that the baseline requirement will remain unchanged
 and this is just a preparatory step to ensure CAS is ready for the next version of Java.
  

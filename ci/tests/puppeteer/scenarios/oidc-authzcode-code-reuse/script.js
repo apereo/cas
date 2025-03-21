@@ -8,7 +8,7 @@ const assert = require("assert");
 
     const redirectUrl = "https://github.com/apereo/cas";
 
-    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20email%20profile%20address%20phone&redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&state=1735fd6c43c14`;
+    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=${encodeURIComponent("openid email profile address phone")}&redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&state=1735fd6c43c14`;
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
