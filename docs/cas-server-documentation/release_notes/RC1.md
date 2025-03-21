@@ -68,10 +68,27 @@ are now configured to run with parallelism enabled.
   
 ### Java 24
 
-As described, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. We are still waiting for the
-wider ecosystem of supporting frameworks and libraries to catch up to Java `24`. We anticipate the work to finalize in the next few
-release candidates and certainly prior to the final release. Remember that the baseline requirement will remain unchanged
+As described, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. CAS is however
+able to compile and run with Java `24` as well. Again, remember that the baseline requirement will remain unchanged
 and this is just a preparatory step to ensure CAS is ready for the next version of Java.
+ 
+### Apple Notifications
+
+It is possible to use APN for sending notifications to [Apple devices](../notifications/Notifications-Configuration-APN.html).
+
+### Twilio Multifactor Provider
+
+Twilio [can now be used](../mfa/Twilio-Multifactor-Authentication.html) as a standalone multifactor authentication provider.
+        
+### Amazon Firehose Audits
+
+[AWS Firehose](../audits/Audits-AWS-Firehose.html) can be used to send audit events to Amazon Firehose.
+     
+### Azure Monitor Application Insights
+
+[Azure Monitor](../monitoring/Configuring-Monitoring-AzureInsights.html) can be used to 
+send monitoring events to Azure Monitor Application Insights.
 
 ## Other Stuff
               
+-            
