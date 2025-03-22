@@ -114,12 +114,12 @@ public class ConfigurationMetadataGenerator {
             throw new RuntimeException("Could not locate file " + inputSpringConfigurationMetadata.getCanonicalPath());
         }
         LOGGER.info("Project directory [{}]", projectDirectory);
-        val values = new TypeReference<Map<String, Set<ConfigurationMetadataProperty>>>() {
-        };
-        final Map<String, Set> jsonMap = (Map) MAPPER.readValue(inputSpringConfigurationMetadata, values);
-        final Set<ConfigurationMetadataProperty> properties = jsonMap.get("properties");
-        final Set<ConfigurationMetadataProperty> groups = jsonMap.get("groups");
-
+        final Map<String, Object> jsonMap = MAPPER.readValue(inputSpringConfigurationMetadata, new TypeReference<>() {});
+        final List<ConfigurationMetadataProperty> properties = MAPPER.convertValue(jsonMap.get("properties"), new TypeReference<>() {});
+        Objects.requireNonNull(properties);
+        final List<ConfigurationMetadataProperty> groups = MAPPER.convertValue(jsonMap.get("groups"), new TypeReference<>() {});
+        Objects.requireNonNull(groups);
+        
         processMappableProperties(properties, groups);
         processNestedTypes(properties, groups);
 
@@ -133,7 +133,6 @@ public class ConfigurationMetadataGenerator {
         jsonMap.put("properties", properties.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
         jsonMap.put("groups", groups.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataProperty::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
         jsonMap.put("hints", hints.parallelStream().sorted(Comparator.comparing(ConfigurationMetadataHint::getName)).collect(Collectors.toCollection(LinkedHashSet::new)));
-
         MAPPER.writerWithDefaultPrettyPrinter().writeValue(outputSpringConfigurationMetadata, jsonMap);
     }
 
@@ -223,7 +222,7 @@ public class ConfigurationMetadataGenerator {
         return hints;
     }
 
-    protected static void processDeprecatedProperties(final Set<ConfigurationMetadataProperty> properties) {
+    protected static void processDeprecatedProperties(final List<ConfigurationMetadataProperty> properties) {
         properties.stream()
             .filter(p -> p.getDeprecation() != null)
             .forEach(property -> property.getDeprecation().setLevel(Deprecation.Level.ERROR));
@@ -233,8 +232,8 @@ public class ConfigurationMetadataGenerator {
         return MAPPER.writeValueAsString(value);
     }
 
-    protected static void removeNestedConfigurationPropertyGroups(final Set<ConfigurationMetadataProperty> properties,
-                                                                  final Set<ConfigurationMetadataProperty> groups) {
+    protected static void removeNestedConfigurationPropertyGroups(final List<ConfigurationMetadataProperty> properties,
+                                                                  final List<ConfigurationMetadataProperty> groups) {
         var it = properties.iterator();
         while (it.hasNext()) {
             var entry = it.next();
@@ -264,8 +263,8 @@ public class ConfigurationMetadataGenerator {
         }
     }
 
-    protected void processMappableProperties(final Set<ConfigurationMetadataProperty> properties,
-                                             final Set<ConfigurationMetadataProperty> groups) {
+    protected void processMappableProperties(final List<ConfigurationMetadataProperty> properties,
+                                             final List<ConfigurationMetadataProperty> groups) {
         val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
         val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
 
@@ -296,8 +295,8 @@ public class ConfigurationMetadataGenerator {
         groups.addAll(collectedGroups);
     }
 
-    protected void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties,
-                                               final Set<ConfigurationMetadataProperty> groups) throws Exception {
+    protected void processNestedEnumProperties(final List<ConfigurationMetadataProperty> properties,
+                                               final List<ConfigurationMetadataProperty> groups) throws Exception {
         val propertiesToProcess = properties.stream()
             .filter(e -> {
                 val matcher = NESTED_CLASS_PATTERN.matcher(e.getType());
@@ -405,7 +404,7 @@ public class ConfigurationMetadataGenerator {
     }
 
 
-    protected void processTopLevelEnumTypes(final Set<ConfigurationMetadataProperty> properties) throws Exception {
+    protected void processTopLevelEnumTypes(final List<ConfigurationMetadataProperty> properties) throws Exception {
         for (val property : properties) {
             var typePath = ConfigurationMetadataClassSourceLocator.buildTypeSourcePath(projectDirectory.getCanonicalPath(), property.getType());
             var typeFile = new File(typePath);
@@ -430,7 +429,7 @@ public class ConfigurationMetadataGenerator {
         }
     }
 
-    protected void processNestedTypes(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
+    protected void processNestedTypes(final List<ConfigurationMetadataProperty> properties, final List<ConfigurationMetadataProperty> groups) {
         val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
         val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
         LOGGER.trace("Processing nested configuration types...");
