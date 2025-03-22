@@ -836,5 +836,9 @@
         "level": "error"
       }
     }
-  ]
+  ],
+  "ignored": {
+    "properties": [
+    ]
+  }
 }
