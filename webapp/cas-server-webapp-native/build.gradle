@@ -199,6 +199,8 @@ processAot {
     list.add("java.management/sun.management=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.rmi/sun.rmi.transport=ALL-UNNAMED")
     list.add("-Xdebug")
     list.add("-Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n")
 
