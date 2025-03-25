@@ -46,9 +46,14 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-center"
+
+                
+                <div id="identityProvidersPanel"
+                     class="d-flex justify-content-center flex-wrap"
                      th:style="'visibility:' + ${delegatedAuthenticationProviderPrimary != null ? 'hidden' : 'visible'}">
-                    <ul class="list-unstyled d-flex flex-column m-0 flex-fill">
+
+                   <ul class="list-unstyled d-flex flex-column m-0 flex-fill"
+                       th:if="${#lists.size(delegatedAuthenticationProviderConfigurations) <= 10}">
                         <li class="p-1 login-provider-item"
                             th:each="entry: ${delegatedAuthenticationProviderConfigurations}"
                             th:switch="${entry.type}">
@@ -95,25 +100,56 @@
                             </script>
 
                         </li>
-                        <li th:if="${identityProviderDiscoveryEnabled}">
-                            <script type="text/javascript" th:inline="javascript">
-                                /*<![CDATA[*/
-                                let url = /*[[@{/idp/discovery}]]*/ ;
-
-                                let returnUrl = /*[[${cas.server.name} + @{/idp/discovery/redirect}]]*/ ;
-
-                                if (window.location.search) {
-                                    returnUrl += encodeURIComponent(window.location.search);
-                                }
-                                url += `?return=${returnUrl}`;
-                                let link = `<a href='${url}' id="saml2IdPDiscovery" class='mdc-button mdc-button--raised d-block'>
-                                   <i class='mdi mdi-shield' aria-hidden='true'></i>
-                                   <span class="mdc-button__label">SAML2 Identity Provider Discovery</span></a>`;
-                                document.write(link);
-                                /*]]>*/
-                            </script>
-                        </li>
                     </ul>
+                    
+                   <div class="w-100 mt-2">
+                       <select id="identityProviderOptions"
+                               th:if="${#lists.size(delegatedAuthenticationProviderConfigurations) > 10}"
+                               class="d-flex flex-column m-0 flex-fill custom-select mw-100">
+                           <option th:each="entry : ${delegatedAuthenticationProviderConfigurations}"
+                                   th:title="${#strings.defaultString(entry.title,entry.name)}"
+                                   th:id="${entry.name}"
+                                   th:value="${entry.name}"
+                                   th:text="${#strings.defaultString(entry.title,entry.name)}"/>
+                       </select>
+                   </div>
+
+                    <div class="clearfix"></div>
+                    
+                    <div id="identityProviderDiscoveryPanel"
+                         class="d-flex justify-content-center mt-4"
+                         th:if="${identityProviderDiscoveryEnabled}">
+                        <script type="text/javascript" th:inline="javascript">
+                            /*<![CDATA[*/
+                            let url = /*[[@{/idp/discovery}]]*/ ;
+
+                            let returnUrl = /*[[${cas.server.name} + @{/idp/discovery/redirect}]]*/ ;
+
+                            if (window.location.search) {
+                                returnUrl += encodeURIComponent(window.location.search);
+                            }
+                            url += `?return=${returnUrl}`;
+
+                            const link = $("<a>", {
+                                href: url,
+                                id: "saml2IdPDiscovery",
+                                class: "mdc-button mdc-button--raised d-block"
+                            }).append(
+                                $("<i>", {
+                                    class: "mdi mdi-shield",
+                                    "aria-hidden": "true"
+                                }),
+                                $("<span>", {
+                                    class: "mdc-button__label",
+                                    text: "SAML2 Identity Provider Discovery"
+                                })
+                            );
+                            $("#identityProviderDiscoveryPanel").append(link);
+                            
+                            /*]]>*/
+                        </script>
+                    </div>
+                    
                 </div>
             </div>
 
@@ -150,6 +186,42 @@
 
             <script type="text/javascript" th:inline="javascript">
                 /*<![CDATA[*/
+                
+                const identityProviderOptions = $('#identityProviderOptions');
+                const options = identityProviderOptions.find('option');
+                const sorted = options.sort((a, b) => $(a).text().localeCompare($(b).text()));
+                identityProviderOptions.empty().append(sorted).prop("selectedIndex", 0);
+
+                $(identityProviderOptions).on('change', function () {
+                    const selectedValue = $(this).val();
+
+                    const formAction = /*[[@{/login}]]*/;
+                    const flowExecutionKey = /*[[${flowExecutionKey}]]*/;
+
+                    const form = $('<form>', {
+                        method: 'POST',
+                        action: formAction
+                    });
+
+                    $('<input>', {
+                        type: 'hidden',
+                        name: 'client_name',
+                        value: selectedValue
+                    }).appendTo(form);
+                    $('<input>', {
+                        type: 'hidden',
+                        name: '_eventId',
+                        value: 'delegatedAuthenticationRedirect'
+                    }).appendTo(form);
+                    $('<input>', {
+                        type: 'hidden',
+                        name: 'execution',
+                        value: flowExecutionKey
+                    }).appendTo(form);
+
+                    form.appendTo('body').submit();
+                });
+
 
                 let primaryUrl = /*[[${delegatedAuthenticationProviderPrimary?.redirectUrl}]]*/;
                 let primaryName = /*[[${delegatedAuthenticationProviderPrimary?.name}]]*/;

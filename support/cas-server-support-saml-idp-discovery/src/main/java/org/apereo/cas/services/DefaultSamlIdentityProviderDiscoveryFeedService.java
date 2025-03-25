@@ -58,7 +58,7 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
             .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast)
             .peek(InitializableObject::init)
-            .map(SAML2Client::getServiceProviderResolvedEntityId)
+            .map(SAML2Client::getIdentityProviderResolvedEntityId)
             .collect(Collectors.toList());
     }
 
@@ -70,7 +70,7 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
             .stream()
             .filter(entity -> entity.getEntityID().equals(entityID))
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(() -> new IllegalArgumentException("No identity provider found for discovery feed's entity ID: " + entityID));
         val samlClient = identityProviders.findAllClients()
             .stream()
             .filter(SAML2Client.class::isInstance)
@@ -78,7 +78,7 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
             .peek(InitializableObject::init)
             .filter(c -> c.getIdentityProviderResolvedEntityId().equalsIgnoreCase(idp.getEntityID()))
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(() -> new IllegalArgumentException("No SAML identity provider found for entity ID: " + entityID));
 
         val webContext = new JEEContext(httpServletRequest, httpServletResponse);
         val service = argumentExtractor.extractService(httpServletRequest);

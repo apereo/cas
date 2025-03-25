@@ -81,7 +81,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             }
 
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
-            LOGGER.warn("No delegated authentication providers could be determined based on the provided configuration. "
+            LOGGER.info("No delegated authentication providers could be determined based on the provided configuration. "
                 + "Either no identity providers are configured, or the current access strategy rules prohibit CAS from using authentication providers");
         }
         return providers;
@@ -96,9 +96,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             val webContext = new JEEContext(request, response);
 
             val currentService = WebUtils.getService(requestContext);
-            LOGGER.debug("Initializing client [{}] with request parameters [{}] and service [{}]",
-                client, requestContext.getRequestParameters(), currentService);
-            initializeClientIdentityProvider(client);
+            initializeClientIdentityProvider(client, requestContext);
 
             val customizers = configurationContext.getObject().getDelegatedClientAuthenticationRequestCustomizers();
             if (customizers.isEmpty() || customizers.stream()
@@ -116,8 +114,11 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
         }, throwable -> Optional.<DelegatedClientIdentityProviderConfiguration>empty()).get();
     }
 
-    protected void initializeClientIdentityProvider(final IndirectClient client) throws Throwable {
+    protected void initializeClientIdentityProvider(final IndirectClient client, final RequestContext context) throws Throwable {
         if (!client.isInitialized()) {
+            val currentService = WebUtils.getService(context);
+            LOGGER.trace("Initializing client [{}] with request parameters [{}] and service [{}]",
+                client, context.getRequestParameters(), currentService);
             client.init(true);
         }
         FunctionUtils.throwIf(!client.isInitialized(), DelegatedAuthenticationFailureException::new);

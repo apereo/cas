@@ -1,7 +1,10 @@
 package org.apereo.cas.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 
@@ -13,11 +16,14 @@ import java.io.Serial;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
+@SuperBuilder
 public class SamlIdentityProviderLogoEntity extends SamlIdentityProviderBasicEntity {
     @Serial
     private static final long serialVersionUID = -3901349236417720095L;
 
-    private String height;
+    private Integer height;
 
-    private String width;
+    private Integer width;
 }

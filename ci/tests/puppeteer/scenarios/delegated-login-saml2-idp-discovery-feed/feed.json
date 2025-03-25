@@ -1,0 +1,24 @@
+[
+  {
+    "entityID": "http://localhost:9443/simplesaml/saml2/idp/metadata.php",
+    "DisplayNames": [
+      {
+        "value": "simplesaml",
+        "lang": "en"
+      }
+    ],
+    "Descriptions": [
+      {
+        "value": "An identity provider for the people, by the people.",
+        "lang": "en"
+      }
+    ],
+    "Logos": [
+      {
+        "value": "https://simplesamlphp.org/res/ssplogo-fish-2.svg",
+        "height": "90",
+        "width": "62"
+      }
+    ]
+  }
+]

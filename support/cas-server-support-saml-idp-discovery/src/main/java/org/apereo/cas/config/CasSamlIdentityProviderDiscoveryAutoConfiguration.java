@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.entity.SamlIdentityProviderEntity;
 import org.apereo.cas.entity.SamlIdentityProviderEntityParser;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.DefaultSamlIdentityProviderDiscoveryFeedService;
@@ -135,13 +134,8 @@ public class CasSamlIdentityProviderDiscoveryAutoConfiguration {
             .stream()
             .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast)
-            .forEach(client -> {
-                client.init(client.getIdentityProviderMetadataResolver() == null);
-                val entity = new SamlIdentityProviderEntity();
-                client.getIdentityProviderMetadataResolver().resolve();
-                entity.setEntityID(client.getIdentityProviderResolvedEntityId());
-                parsers.add(new SamlIdentityProviderEntityParser(entity));
-            });
+            .forEach(Unchecked.consumer(client -> parsers.add(SamlIdentityProviderEntityParser.fromClient(client))));
+
         return BeanContainer.of(parsers);
     }
 }

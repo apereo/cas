@@ -3,6 +3,14 @@
     <IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol urn:mace:shibboleth:1.0">
         <Extensions>
             <shibmd:Scope regexp="false">example.org</shibmd:Scope>
+            <mdui:UIInfo xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
+                <mdui:DisplayName xml:lang="en">CarmenWiki</mdui:DisplayName>
+                <mdui:Description xml:lang="en">Enterprise Wiki Service at the Ohio State University.</mdui:Description>
+                <mdui:InformationURL xml:lang="en">https://ocio.osu.edu/services/view/carmenwiki-wiki-services</mdui:InformationURL>
+                <mdui:PrivacyStatementURL xml:lang="en">https://saml.example.org/x/jyLeAQ</mdui:PrivacyStatementURL>
+                <mdui:Logo height="85" width="141" xml:lang="en">https://saml.example.org/download/attachments/9666561/global.logo</mdui:Logo>
+                <mdui:Keywords xml:lang="en">K1</mdui:Keywords>
+            </mdui:UIInfo>
         </Extensions>
         <KeyDescriptor use="signing">
             <ds:KeyInfo>
@@ -50,12 +58,7 @@
                 </ds:X509Data>
             </ds:KeyInfo>
         </KeyDescriptor>
-
-        <!--
-        <ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding"
-                                   Location="https://cas.example.org:8443/cas/idp/profile/SAML1/SOAP/ArtifactResolution" index="1"/>
-        -->
-
+        
         <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://cas.example.org:8443/cas/idp/profile/SAML2/POST/SLO"/>
 
         <NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
@@ -66,57 +69,4 @@
         <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://cas.example.org:8443/cas/idp/profile/SAML2/Redirect/SSO"/>
         <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://cas.example.org:8443/cas/idp/profile/SAML2/SOAP/ECP"/>
     </IDPSSODescriptor>
-
-    <!--
-    <AttributeAuthorityDescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
-        <Extensions>
-            <shibmd:Scope regexp="false">example.org</shibmd:Scope>
-        </Extensions>
-        <KeyDescriptor use="signing">
-            <ds:KeyInfo>
-                <ds:X509Data>
-                    <ds:X509Certificate>MIIDHTCCAgWgAwIBAgIUBoTZLmXqzMMYRfoxqyOdnRfTiK0wDQYJKoZIhvcNAQEL
-BQAwGjEYMBYGA1UEAwwPY2FzLmV4YW1wbGUub3JnMB4XDTE4MDIxMDEyMTIxNFoX
-DTM4MDIxMDEyMTIxNFowGjEYMBYGA1UEAwwPY2FzLmV4YW1wbGUub3JnMIIBIjAN
-BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnLB3Ls9GRvKf/1gJzLFjq7R2t60/
-GiWtDnoYlyuQUbPt2qO4cfOQersKSW6KK/lZ8D5s9rZHsU8B21zDwjWUrwhEE65b
-wCVp+YAcyzrVKxxyr7GrApl862z28DShjY6v8fHYX/AKjSOPti+6byABYwOuRcbj
-SS8Nq//4bWzzOem8X5WVOM9SzoiGgzvUmjgRUYruchfRF4Orr6y9IrN2V1SPxy+n
-4aOGUw0ecMZKyhQUbvcgyiNkjp5+aEK7NtEH8YCoG2oTnlEITSj3/WLEoLbLX/1G
-Swu0vvgyXxcP9NKtk8hqQOOUVGuD+mlGpbnNE2IMBWT4UbcpnBkG3rIh+QIDAQAB
-o1swWTAdBgNVHQ4EFgQU4cHQlvnX/jEw1fGxQDTZCmeSmFcwOAYDVR0RBDEwL4IP
-Y2FzLmV4YW1wbGUub3JnhhxjYXMuZXhhbXBsZS5vcmcvaWRwL21ldGFkYXRhMA0G
-CSqGSIb3DQEBCwUAA4IBAQALloCBP1WR8+WjbWvm4zQZ/ofWciAgyck648ahf8od
-64+O3xbVZmc47gBVqvrM+/09AivZVeR1159PpTzZ6HXnwuNx1etoeQ7nLxDoPa0N
-sNK3LJgtHqCNdqVxjmcXaDqxP3M9I18+YrCy9YfWBn+rhM2M90OusYl9o5MSwbm4
-fxvTohqNYpK39zkZiIGDRqZKcTCPIfvqr/+18ihtyzSFw4w/AW3nIhlzGc/KTzuX
-L8vDExXyOq58Vg3AgYFcpJkREEcQvaJO0iJmc5EVmCHydxbE9NCtnh44YCT6K2Rr
-4OyJRySBYHGKV4ZBBTLMsC4UClvG8+K4NSqo2BKU9zPF</ds:X509Certificate>
-                </ds:X509Data>
-            </ds:KeyInfo>
-        </KeyDescriptor>
-        <AttributeService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" Location="https://cas.example.org:8443/cas/idp/profile/SAML1/SOAP/AttributeQuery"/>
-        <AttributeService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://cas.example.org:8443/cas/idp/profile/SAML2/SOAP/AttributeQuery"/>
-    </AttributeAuthorityDescriptor>
-    -->
-
-    <!--
-    <Organization>
-        <OrganizationName xml:lang="en">Institution Name</OrganizationName>
-        <OrganizationDisplayName xml:lang="en">Institution DisplayName</OrganizationDisplayName>
-        <OrganizationURL xml:lang="en">URL</OrganizationURL>
-    </Organization>
-    <ContactPerson contactType="administrative">
-        <GivenName>John Smith</GivenName>
-        <EmailAddress>jsmith@example.org</EmailAddress>
-    </ContactPerson>
-    <ContactPerson contactType="technical">
-        <GivenName>John Smith</GivenName>
-        <EmailAddress>jsmith@example.org</EmailAddress>
-    </ContactPerson>
-    <ContactPerson contactType="support">
-        <GivenName>IT Services Support</GivenName>
-        <EmailAddress>support@example.org</EmailAddress>
-    </ContactPerson>
-    -->
 </EntityDescriptor>

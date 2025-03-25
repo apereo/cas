@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
 import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.io.Serializable;

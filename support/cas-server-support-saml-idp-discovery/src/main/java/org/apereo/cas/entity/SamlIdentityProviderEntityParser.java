@@ -1,15 +1,24 @@
 package org.apereo.cas.entity;
 
+import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Iterables;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.hjson.JsonValue;
+import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.criterion.EntityRoleCriterion;
+import org.opensaml.saml.ext.saml2mdui.UIInfo;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
+import org.pac4j.saml.client.SAML2Client;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 import java.io.InputStreamReader;
@@ -17,6 +26,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -31,7 +42,7 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Getter
-    private final Set<SamlIdentityProviderEntity> identityProviders = new LinkedHashSet<>(0);
+    private final Set<SamlIdentityProviderEntity> identityProviders = new LinkedHashSet<>();
 
     private FileWatcherService discoveryFeedResourceWatchers;
 
@@ -51,7 +62,11 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
     }
 
     public SamlIdentityProviderEntityParser(final SamlIdentityProviderEntity... entity) {
-        identityProviders.addAll(Arrays.asList(entity));
+        this(Arrays.asList(entity));
+    }
+
+    public SamlIdentityProviderEntityParser(final List<SamlIdentityProviderEntity> entity) {
+        identityProviders.addAll(entity);
     }
 
     /**
@@ -88,5 +103,69 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
         if (discoveryFeedResourceWatchers != null) {
             discoveryFeedResourceWatchers.close();
         }
+    }
+
+    /**
+     * Import from saml identity provider.
+     *
+     * @param client the client
+     * @return the saml identity provider entity parser
+     * @throws Exception the exception
+     */
+    public static SamlIdentityProviderEntityParser fromClient(final SAML2Client client) throws Exception {
+        client.init(client.getIdentityProviderMetadataResolver() == null || !client.isInitialized());
+        val entities = determineEntityDescriptors(client)
+            .stream()
+            .filter(EntityDescriptor::isValid)
+            .map(entityDescriptor -> {
+                val entity = new SamlIdentityProviderEntity();
+                entity.setEntityID(entityDescriptor.getEntityID());
+
+                val idpSSODescriptor = entityDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS);
+                Optional.ofNullable(idpSSODescriptor)
+                    .map(IDPSSODescriptor::getExtensions)
+                    .map(ext -> ext.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME))
+                    .stream()
+                    .flatMap(List::stream)
+                    .map(UIInfo.class::cast)
+                    .forEach(uiInfo -> {
+                        uiInfo.getDisplayNames().forEach(value ->
+                            entity.getDisplayNames().add(SamlIdentityProviderBasicEntity.builder().lang(value.getXMLLang()).value(value.getValue()).build()));
+                        uiInfo.getDescriptions().forEach(value ->
+                            entity.getDescriptions().add(SamlIdentityProviderBasicEntity.builder().lang(value.getXMLLang()).value(value.getValue()).build()));
+                        uiInfo.getKeywords().forEach(value ->
+                            entity.getKeywords().add(SamlIdentityProviderBasicEntity.builder().lang(value.getXMLLang())
+                                .value(org.springframework.util.StringUtils.collectionToCommaDelimitedString(value.getKeywords())).build()));
+                        uiInfo.getInformationURLs().forEach(value ->
+                            entity.getInformationUrls().add(SamlIdentityProviderBasicEntity.builder().lang(value.getXMLLang()).value(value.getURI()).build()));
+                        uiInfo.getPrivacyStatementURLs().forEach(value ->
+                            entity.getPrivacyStatementUrls().add(SamlIdentityProviderBasicEntity.builder().lang(value.getXMLLang()).value(value.getURI()).build()));
+                        uiInfo.getLogos().forEach(value ->
+                            entity.getLogos().add(SamlIdentityProviderLogoEntity.builder().lang(value.getXMLLang())
+                                .value(value.getURI()).width(value.getWidth()).height(value.getHeight()).build()));
+                    });
+
+                if (entity.getDisplayNames().isEmpty()) {
+                    val clientDisplayName = client.getCustomProperties().containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME)
+                        ? client.getCustomProperties().get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME).toString()
+                        : client.getName();
+                    entity.getDisplayNames().add(SamlIdentityProviderBasicEntity.builder()
+                        .lang(Locale.ENGLISH.toLanguageTag()).value(clientDisplayName).build());
+                }
+                return entity;
+            })
+            .toList();
+
+        return new SamlIdentityProviderEntityParser(entities);
+    }
+
+    private static List<EntityDescriptor> determineEntityDescriptors(final SAML2Client saml2Client) throws Exception {
+        val resolver = saml2Client.getIdentityProviderMetadataResolver();
+        if (resolver.getEntityDescriptorElement() instanceof final EntityDescriptor entityDescriptor) {
+            return List.of(entityDescriptor);
+        }
+        val metadataResolver = resolver.resolve();
+        val providers = metadataResolver.resolve(new CriteriaSet(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME)));
+        return Arrays.asList(Iterables.toArray(providers, EntityDescriptor.class));
     }
 }

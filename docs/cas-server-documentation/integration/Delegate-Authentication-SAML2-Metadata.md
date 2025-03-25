@@ -36,6 +36,9 @@ SAML2 metadata for both the delegated identity provider as well as the (CAS) ser
 {% tab pac4jsaml2md Identity Provider %}
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.saml[].metadata" includes=".identity" id="pac4jsaml2metadata" %}
+       
+If you intend to support multiple identity providers via a metadata aggregate, 
+please [review this guide](Delegate-Authentication-SAML2-Metadata-Aggregate.html).
 
 {% endtab %}
 

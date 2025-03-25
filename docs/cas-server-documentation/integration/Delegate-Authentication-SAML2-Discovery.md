@@ -19,6 +19,8 @@ to [embed and present a discovery service](https://wiki.shibboleth.net/confluenc
 as part of delegated authentication. Configured SAML2 identity providers in the CAS configuration
 used for delegated authentication are presented as options for discovery. 
 
+{% include_cached casproperties.html properties="cas.authn.pac4j.saml-discovery" %}
+
 CAS is also able to directly consume multiple JSON feeds
 that contain discovery metadata about available identity providers. The discovery JSON feed 
 may be fetched from a URL (i.e. exposed by a Shibboleth Service Provider) or it may
@@ -43,13 +45,18 @@ directly be consumed as a JSON file with the following structure:
 }]
 ```
 
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>The JSON feed has the ability
+to overwrite MDUI information found in an existing identity provider's metadata, if any.</p></div>
+
+## Endpoints
+
 The following endpoints are available:
 
-| Endpoint                  | Description                                                              |
-|---------------------------|--------------------------------------------------------------------------|
-| `/idp/discovery`          | Identity provider discovery landing page.                                |
-| `/idp/discovery/feed`     | Identity provider discovery JSON feed.                                   |
-| `/idp/discovery/redirect` | Return endpoint to let CAS invoke the identity provider after selection. |
+| Endpoint                  | Description                                                                                                       |
+|---------------------------|-------------------------------------------------------------------------------------------------------------------|
+| `/idp/discovery`          | Identity provider discovery landing page.                                                                         |
+| `/idp/discovery/feed`     | Identity provider discovery JSON feed. Accepts an optional `entityID` parameter, treated as a regular expression. |
+| `/idp/discovery/redirect` | Return endpoint to let CAS invoke the identity provider after selection.                                          |
 
 Applications may directly invoke the discovery service via `[cas-server-prefix]/idp/discovery`. The discovery service may also 
 be invoked using the discovery protocol via `[cas-server-prefix]/idp/discovery?entityID=[service-provider-entity-id]&return=[cas-server-prefix]/idp/discovery/redirect`. 

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.saml2;
 
+import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.support.pac4j.authentication.attributes.GroovyAttributeConverter;
 import org.apereo.cas.test.CasTestExtension;
@@ -33,12 +34,41 @@ import static org.mockito.Mockito.*;
 @Tag("SAML2Web")
 class DelegatedSaml2IdentityProviderTests {
 
-    @SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class, properties = "cas.custom.properties.delegation-test.enabled=false")
+    @SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class,
+        properties = "cas.custom.properties.delegation-test.enabled=false")
     @ExtendWith(CasTestExtension.class)
     abstract static class BaseTests {
         @Autowired
         @Qualifier("pac4jDelegatedClientFactory")
         protected DelegatedIdentityProviderFactory delegatedIdentityProviderFactory;
+    }
+
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
+        "cas.authn.pac4j.saml[0].keystore-password=1234567890",
+        "cas.authn.pac4j.saml[0].private-key-password=1234567890",
+        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata-aggregate.xml",
+        "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp2.xml",
+        "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
+        "cas.authn.pac4j.core.lazy-init=false"
+    })
+    @Import(SamlMessageStoreTestConfiguration.class)
+    class Saml2ClientsWithAggregateIdentityProviders extends BaseTests {
+        @Test
+        void verifyClient() {
+            val clients = delegatedIdentityProviderFactory.build().stream().map(SAML2Client.class::cast).toList();
+            assertEquals(2, clients.size());
+            assertTrue(clients.stream().anyMatch(c ->
+                c.getCustomProperties().get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME).equals("Lafayette College")));
+            assertTrue(clients.stream().anyMatch(c ->
+                c.getCustomProperties().get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME).equals("Cornell University")));
+
+            val metadataResolver = clients.getFirst().getConfiguration().getIdentityProviderMetadataResolver();
+            assertNotNull(metadataResolver.getEntityId());
+            assertNotNull(metadataResolver.getMetadata());
+            assertNotNull(metadataResolver.getEntityDescriptorElement());
+        }
     }
 
     @Nested

@@ -15,7 +15,7 @@ import java.util.List;
 @FunctionalInterface
 public interface ConfigurableDelegatedClientBuilder extends NamedObject {
 
-    
+
     /**
      * Supply list of clients.
      *
@@ -27,14 +27,15 @@ public interface ConfigurableDelegatedClientBuilder extends NamedObject {
     /**
      * Configure base client.
      *
-     * @param client   the prepared client
+     * @param client           the prepared client
      * @param clientProperties the client properties
      * @param properties       the properties
      * @return the base client
+     * @throws Exception the exception
      */
-    default BaseClient configure(final BaseClient client,
-                                 final Pac4jBaseClientProperties clientProperties,
-                                 final CasConfigurationProperties properties) {
-        return client;
+    default List<? extends BaseClient> configure(final BaseClient client,
+                                                 final Pac4jBaseClientProperties clientProperties,
+                                                 final CasConfigurationProperties properties) throws Exception {
+        return List.of(client);
     }
 }

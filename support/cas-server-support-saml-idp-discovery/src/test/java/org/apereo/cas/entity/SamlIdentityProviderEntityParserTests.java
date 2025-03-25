@@ -1,19 +1,20 @@
 package org.apereo.cas.entity;
 
+import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
+import org.apereo.cas.web.saml2.Saml2TestClientsBuilder;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.pac4j.saml.client.SAML2Client;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -48,5 +49,26 @@ class SamlIdentityProviderEntityParserTests {
         entity.setEntityID("org.example");
         val parser = new SamlIdentityProviderEntityParser(entity);
         assertEquals(1, parser.getIdentityProviders().size());
+    }
+
+    @Test
+    void verifySaml2IdentityProvider() throws Exception {
+        val saml2Config = Saml2TestClientsBuilder.newSAML2Configuration(Saml2TestClientsBuilder.IDP_METADATA_PATH);
+        val saml2Client = new SAML2Client(saml2Config);
+        saml2Client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, "SAML2ClientDiscovery");
+        saml2Client.setCallbackUrl("https://callback.example.org");
+        saml2Client.setName("SAML2ClientDiscovery");
+        val parser = SamlIdentityProviderEntityParser.fromClient(saml2Client);
+        assertEquals(1, parser.getIdentityProviders().size());
+    }
+
+    @Test
+    void verifySaml2IdentityProvidersViaAggregate() throws Exception {
+        val saml2Config = Saml2TestClientsBuilder.newSAML2Configuration("src/test/resources/idp-metadata-aggregate.xml");
+        val saml2Client = new SAML2Client(saml2Config);
+        saml2Client.setCallbackUrl("https://callback.example.org");
+        saml2Client.setName("SAML2ClientDiscoveryAggregate");
+        val parser = SamlIdentityProviderEntityParser.fromClient(saml2Client);
+        assertEquals(2, parser.getIdentityProviders().size());
     }
 }

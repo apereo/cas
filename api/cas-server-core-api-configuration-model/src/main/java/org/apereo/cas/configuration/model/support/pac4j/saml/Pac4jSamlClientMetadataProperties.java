@@ -33,7 +33,7 @@ public class Pac4jSamlClientMetadataProperties implements Serializable {
      */
     @RequiredProperty
     private String identityProviderMetadataPath;
-
+    
     /**
      * SAML2 service provider metadata settings.
      */

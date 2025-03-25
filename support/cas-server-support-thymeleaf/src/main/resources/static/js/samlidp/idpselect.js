@@ -245,7 +245,7 @@ TypeAheadControl.prototype.showDrop = function () {
         }
     }
     this.dropDown.style.visibility = "visible";
-    this.dropDown.style.width = this.textBox.offsetWidth + "px";
+    this.dropDown.style.width = `${this.textBox.offsetWidth}px`;
     this.textBox.setAttribute("aria-expanded", "true")
 };
 TypeAheadControl.prototype.doSelected = function () {
@@ -282,7 +282,7 @@ TypeAheadControl.prototype.populateDropDown = function (d) {
     var f;
     while (c < d.length) {
         a = document.createElement("li");
-        a.id = "IdPSelectOption" + c;
+        a.id = `IdPSelectOption${c}`;
         f = d[c][0];
         if (null !== d[c][2]) {
             b = document.createElement("img");
@@ -294,7 +294,7 @@ TypeAheadControl.prototype.populateDropDown = function (d) {
             if (f.length > this.maxchars - 2) {
                 f = f.substring(0, this.maxchars - 2)
             }
-            f = " " + f
+            f = ` ${f}`
         } else {
             if (f.length > this.maxchars) {
                 f = f.substring(0, this.maxchars)
@@ -306,8 +306,8 @@ TypeAheadControl.prototype.populateDropDown = function (d) {
         c++
     }
     var e = this.getXY();
-    this.dropDown.style.left = e[0] + "px";
-    this.dropDown.style.top = e[1] + "px";
+    this.dropDown.style.left = `${e[0]}px`;
+    this.dropDown.style.top = `${e[1]}px`;
     this.showDrop()
 };
 TypeAheadControl.prototype.getXY = function () {
@@ -333,7 +333,7 @@ TypeAheadControl.prototype.select = function (b) {
         if (c == b) {
             c.className = "IdPSelectCurrent";
             c.setAttribute("aria-selected", "true");
-            this.textBox.setAttribute("aria-activedescendant", "IdPSelectOption" + a);
+            this.textBox.setAttribute("aria-activedescendant", `IdPSelectOption${a}`);
             this.doSelected();
             this.dropDown.current = a;
             this.origin.value = this.results[a][1];
@@ -352,7 +352,7 @@ TypeAheadControl.prototype.downSelect = function () {
             this.dropDown.current = 0;
             this.dropDown.childNodes[0].className = "IdPSelectCurrent";
             this.dropDown.childNodes[0].setAttribute("aria-selected", "true");
-            this.textBox.setAttribute("aria-activedescendant", "IdPSelectOption" + 0);
+            this.textBox.setAttribute("aria-activedescendant", `IdPSelectOption0`);
             this.doSelected();
             this.origin.value = this.results[0][1];
             this.origin.textValue = this.results[0][0]
@@ -362,7 +362,7 @@ TypeAheadControl.prototype.downSelect = function () {
                 this.dropDown.current++;
                 this.dropDown.childNodes[this.dropDown.current].className = "IdPSelectCurrent";
                 this.dropDown.childNodes[this.dropDown.current].setAttribute("aria-selected", "true");
-                this.textBox.setAttribute("aria-activedescendant", "IdPSelectOption" + this.dropDown.current);
+                this.textBox.setAttribute("aria-activedescendant", `IdPSelectOption${this.dropDown.current}`);
                 this.doSelected();
                 this.origin.value = this.results[this.dropDown.current][1];
                 this.origin.textValue = this.results[this.dropDown.current][0]
@@ -376,7 +376,7 @@ TypeAheadControl.prototype.upSelect = function () {
         this.dropDown.current--;
         this.dropDown.childNodes[this.dropDown.current].className = "IdPSelectCurrent";
         this.dropDown.childNodes[this.dropDown.current].setAttribute("aria-selected", "true");
-        this.textBox.setAttribute("aria-activedescendant", "IdPSelectOption" + this.dropDown.current);
+        this.textBox.setAttribute("aria-activedescendant", `IdPSelectOption${this.dropDown.current}`);
         this.doSelected();
         this.origin.value = this.results[this.dropDown.current][1];
         this.origin.textValue = this.results[this.dropDown.current][0]
@@ -441,11 +441,11 @@ function IdPSelectUI() {
         if ((null != Q) && (null != i(Q))) {
             var aM = b();
             if (aM.length != 0) {
-                var aO = aG + "=" + encodeURIComponent(aM[0]);
+                var aO = `${aG}=${encodeURIComponent(aM[0])}`;
                 if (B.indexOf("?") == -1) {
-                    aO = "?" + aO
+                    aO = `?${aO}`
                 } else {
-                    aO = "&" + aO
+                    aO = `&${aO}`
                 }
                 q(aJ, B + aO);
                 return
@@ -543,7 +543,7 @@ function IdPSelectUI() {
             return false
         }
         if (!aa) {
-            s("No language support for " + a3);
+            s(`No language support for ${a3}`);
             aa = d
         }
         if (aT.testGUI) {
@@ -629,7 +629,7 @@ function IdPSelectUI() {
         if (aN != null && aT.myEntityID !== null) {
             aN.forEach(el => {
                 if (!aT.myEntityID.includes(el)) {
-                    O(A("fatal.wrongEntityId") + '"' + aN + '" != "' + aT.myEntityID + '"');
+                    O(`${A("fatal.wrongEntityId")}"${aN}" != "${aT.myEntityID}"`);
                     return false
                 }
             });
@@ -654,11 +654,11 @@ function IdPSelectUI() {
                 q(aV, B);
                 return false
             } else {
-                var aO = aG + "=" + encodeURIComponent(aP[0]);
+                var aO = `${aG}=${encodeURIComponent(aP[0])}`;
                 if (B.indexOf("?") == -1) {
-                    aO = "?" + aO
+                    aO = `?${aO}`
                 } else {
-                    aO = "&" + aO
+                    aO = `&${aO}`
                 }
                 q(aV, B + aO);
                 return false
@@ -776,7 +776,7 @@ function IdPSelectUI() {
             return false
         }
         if (aI()) {
-            aP += "?random=" + (Math.random() * 1000000)
+            aP += `?random=${Math.random() * 1000000}`
         }
         aO.open("GET", aP, false);
         if (typeof aO.overrideMimeType == "function") {
@@ -852,7 +852,7 @@ function IdPSelectUI() {
         aO.src = aP.value;
         var aQ = aE(aT);
         if (aQ.length > T) {
-            aQ = aQ.substring(0, T) + "..."
+            aQ = `${aQ.substring(0, T)}...`
         }
         aO.alt = aQ;
         var aM = aP.width;
@@ -883,13 +883,13 @@ function IdPSelectUI() {
     var M = (aO, aV, aN) => {
         var aM = ap(undefined, "PreferredIdPButton");
         var aU = document.createElement("a");
-        var aT = aG + "=" + encodeURIComponent(z(aO));
+        var aT = `${aG}=${encodeURIComponent(z(aO))}`;
         var aP = B;
         var aR = H(aO, aN);
         if (aP.indexOf("?") == -1) {
-            aT = "?" + aT
+            aT = `?${aT}`
         } else {
-            aT = "&" + aT
+            aT = `&${aT}`
         }
         aU.href = aP + aT;
         aU.onclick = () => aH(z(aO));
@@ -901,7 +901,7 @@ function IdPSelectUI() {
         var aS = ap(undefined, "TextDiv");
         var aQ = aE(aO);
         if (aQ.length > N) {
-            aQ = aQ.substring(0, N) + "..."
+            aQ = `${aQ.substring(0, N)}...`
         }
         aM.title = aQ;
         aS.appendChild(document.createTextNode(aQ));
@@ -977,7 +977,7 @@ function IdPSelectUI() {
             U.style.display = "none"
         }
         var aO = document.createElement("label");
-        aO.setAttribute("for", aL + "Input");
+        aO.setAttribute("for", `${aL}Input`);
         if (aN) {
             aF(aO, "idpEntry.label")
         } else {
@@ -1027,7 +1027,7 @@ function IdPSelectUI() {
             j.style.display = "none"
         }
         var aT = document.createElement("label");
-        aT.setAttribute("for", aL + "Selector");
+        aT.setAttribute("for", `${aL}Selector`);
         if (aP) {
             aF(aT, "idpList.label")
         } else {
@@ -1098,7 +1098,7 @@ function IdPSelectUI() {
             };
             div = ap(undefined, "autoDispatchTile");
             div.appendChild(aM);
-            div.appendChild(document.createTextNode(A("autoFollow.time" + aO)));
+            div.appendChild(document.createTextNode(A(`autoFollow.time${aO}`)));
             autoDispatchTile.appendChild(div)
         }
         aP.appendChild(autoDispatchTile)
@@ -1107,7 +1107,7 @@ function IdPSelectUI() {
         var aM = document.createElement("input");
         aM.setAttribute("type", "submit");
         aM.value = A("submitButton.label");
-        l(aM, aN + "Button");
+        l(aM, `${aN}Button`);
         return aM
     };
     var x = aN => {
@@ -1151,7 +1151,7 @@ function IdPSelectUI() {
             aN = d[aM]
         }
         if (!aN) {
-            aN = "Missing message for " + aM
+            aN = `Missing message for ${aM}`
         }
         return aN
     };
@@ -1176,7 +1176,7 @@ function IdPSelectUI() {
         if (null !== aM) {
             return aM
         }
-        s("No Name entry in any language for " + z(aN));
+        s(`No Name entry in any language for ${z(aN)}`);
         return z(aN)
     };
     var I = aN => {
@@ -1259,7 +1259,7 @@ function IdPSelectUI() {
         } else {
             aM = new Date(0)
         }
-        document.cookie = Q + "=1;path=/;expires=" + aM.toUTCString()
+        document.cookie = `${Q}=1;path=/;expires=${aM.toUTCString()}`
     };
     var i = aO => {
         var aQ, aN;
@@ -1315,7 +1315,7 @@ function IdPSelectUI() {
             cookieTTL = K * 24 * 60 * 60 * 1000;
             aM = new Date(aN.getTime() + cookieTTL)
         }
-        document.cookie = "_saml_idp=" + aO.join("%20") + "; path = /" + ((aM === null) ? "" : "; expires=" + aM.toUTCString())
+        document.cookie = `_saml_idp=${aO.join("%20")}; path = /${(aM === null) ? "" : `; expires=${aM.toUTCString()}`}`
     };
     var w = aV => {
         var aM = "", aQ, aO, aN, aU, aT, aS, aR;

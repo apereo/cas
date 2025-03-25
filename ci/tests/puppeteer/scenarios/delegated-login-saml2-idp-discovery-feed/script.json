@@ -1,0 +1,31 @@
+{
+  "dependencies": "saml-idp-discovery,pac4j-webflow,pac4j-saml",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].service-provider-entity-id=cas:apereo:pac4j:saml",
+    "--cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/sp-metadata.xml",
+    "--cas.authn.pac4j.saml[0].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/samlKeystore.jks",
+    "--cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=http://localhost:9443/simplesaml/saml2/idp/metadata.php",
+    "--cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
+    "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
+
+    "--cas.authn.pac4j.saml[1].keystore-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[1].private-key-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[1].service-provider-entity-id=cas:apereo:pac4j:saml",
+    "--cas.authn.pac4j.saml[1].metadata.service-provider.file-system.location=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/sp-metadata.xml",
+    "--cas.authn.pac4j.saml[1].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/samlKeystore.jks",
+    "--cas.authn.pac4j.saml[1].metadata.identity-provider-metadata-path=https://md.incommon.org/InCommon/InCommon-metadata-idp-only.xml",
+    "--cas.authn.pac4j.saml[1].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
+    "--cas.authn.pac4j.saml[1].client-name=SAML2InCommon",
+    
+    "--cas.authn.pac4j.saml-discovery.resource[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/feed.json"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}
