@@ -119,7 +119,6 @@ if (!providers.systemProperty("skipSonarqube").present) {
             property "sonar.gradle.skipCompile", true
             property "sonar.coverage.exclusions", exclusions
             property "sonar.java.coveragePlugin", "jacoco"
-            property "sonar.internal.analysis.dbd", false
         }
     }
 }
