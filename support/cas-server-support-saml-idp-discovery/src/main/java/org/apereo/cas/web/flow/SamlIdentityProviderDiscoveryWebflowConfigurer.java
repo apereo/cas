@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -24,11 +25,7 @@ public class SamlIdentityProviderDiscoveryWebflowConfigurer extends AbstractCasW
     @Override
     protected void doInitialize() {
         val flow = getLoginFlow();
-        if (flow != null) {
-            flow.getStartActionList().add(requestContext -> {
-                requestContext.getFlowScope().put("identityProviderDiscoveryEnabled", Boolean.TRUE);
-                return null;
-            });
-        }
+        flow.getStartActionList().add(new ConsumerExecutionAction(requestContext ->
+            requestContext.getFlowScope().put("identityProviderDiscoveryEnabled", Boolean.TRUE)));
     }
 }

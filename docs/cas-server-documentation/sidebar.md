@@ -246,6 +246,7 @@ layout: null
             *   [Overview](/cas/{{ version }}/integration/Delegate-Authentication-SAML2.html) 
             *   [Metadata Management](#delegationsaml2md) 
                 *   [Overview](/cas/{{ version }}/integration/Delegate-Authentication-SAML2-Metadata.html) 
+                *   [Aggregates](/cas/{{ version }}/integration/Delegate-Authentication-SAML2-Metadata-Aggregate.html) 
                 *   [File System](/cas/{{ version }}/integration/Delegate-Authentication-SAML2-Metadata-FileSystem.html) 
                 *   [JDBC](/cas/{{ version }}/integration/Delegate-Authentication-SAML2-Metadata-JDBC.html) 
                 *   [MongoDb](/cas/{{ version }}/integration/Delegate-Authentication-SAML2-Metadata-MongoDb.html) 

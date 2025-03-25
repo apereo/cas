@@ -75,7 +75,7 @@ div.IdPSelectPreferredIdPButton img
     max-height: 64px;  /* Specify max to allow scaling, percent doesn't work */
     margin-top: 3px ;
     margin-bottom: 3px ;
-    border: solid 0px #000000;  /* Strip any embellishments the brower may give us */
+    border: solid 0px #000000;  /* Strip any embellishments the browser may give us */
     margin-left: auto; /* Auto centring */
     margin-right: auto;  /* Auto centring */
 
@@ -88,7 +88,7 @@ div.IdPSelectPreferredIdPButton div.IdPSelectTextDiv
     font-weight: normal;
     max-width: 95%;
     height: 30px;       /* Specify max height to allow two lines.  The 
-                         * Javascript controlls the max length of the
+                         * Javascript controls the max length of the
                          * strings 
                          */
 }

@@ -50,11 +50,11 @@ public abstract class BaseDelegatedClientIdentityProviderAuthorizer implements D
 
     protected boolean handleAuthorizationForService(final String clientName, final Service service) throws Throwable {
         if (service == null || StringUtils.isBlank(service.getId())) {
-            LOGGER.debug("Can not evaluate delegated authentication policy without a service");
+            LOGGER.trace("Can not evaluate delegated authentication policy without a service");
             return true;
         }
         if (StringUtils.isBlank(clientName)) {
-            LOGGER.debug("No identity provider is provided to enforce authorization for delegated authentication. SSO session "
+            LOGGER.trace("No identity provider is provided to enforce authorization for delegated authentication. SSO session "
                 + "may have been established without delegated authentication");
             return true;
         }

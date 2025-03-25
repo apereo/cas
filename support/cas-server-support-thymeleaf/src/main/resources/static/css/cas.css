@@ -584,6 +584,7 @@ span button.toolbar {
 
 .mdc-button--raised:not(:disabled, .reveal-password) {
     margin-right: 4px;
+    padding-top: 3px;
     border-radius: 9px 9px 9px 9px;
     filter: drop-shadow(2px 2px 4px #023b53);
     background-color: var(--cas-theme-primary, #153E50);
@@ -895,6 +896,9 @@ select.palantir {
     margin-right: auto;
 }
 
+.login-providers {
+    max-width: 50%;
+}
 
 /** jQuery UI **/
 

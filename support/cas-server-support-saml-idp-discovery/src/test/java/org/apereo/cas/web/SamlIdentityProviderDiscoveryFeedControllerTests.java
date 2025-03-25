@@ -11,6 +11,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.saml2.BaseSaml2DelegatedAuthenticationTests;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,14 +48,14 @@ class SamlIdentityProviderDiscoveryFeedControllerTests {
 
     @Test
     void verifyFeed() throws Throwable {
-        assertFalse(controller.getDiscoveryFeed().isEmpty());
-        assertNotNull(controller.home());
-        assertNotNull(controller.redirect("https://cas.example.org/idp",
-            new MockHttpServletRequest(), new MockHttpServletResponse()));
+        val httpServletRequest = new MockHttpServletRequest();
+        assertFalse(controller.getDiscoveryFeed(StringUtils.EMPTY).isEmpty());
+        assertFalse(controller.getDiscoveryFeed("https://cas.example.org/idp").isEmpty());
+        assertNotNull(controller.home(httpServletRequest));
+        assertNotNull(controller.redirect("https://cas.example.org/idp", httpServletRequest, new MockHttpServletResponse()));
 
         assertThrows(UnauthorizedServiceException.class, () -> {
-            val request = new MockHttpServletRequest();
-            request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "https://service.example");
+            httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "https://service.example");
 
             val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
             val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
@@ -64,7 +65,7 @@ class SamlIdentityProviderDiscoveryFeedControllerTests {
             val service = RegisteredServiceTestUtils.getRegisteredService("https://service.example");
             service.setAccessStrategy(accessStrategy);
             servicesManager.save(service);
-            controller.redirect("https://cas.example.org/idp", request, new MockHttpServletResponse());
+            controller.redirect("https://cas.example.org/idp", httpServletRequest, new MockHttpServletResponse());
         });
     }
 }

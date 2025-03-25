@@ -12,7 +12,7 @@ const path = require("path");
     await cas.pressEnter(page);
     await cas.sleep(4000);
     await cas.logPage(page);
-
+    
     await cas.loginWith(page, "user1", "password");
     await cas.sleep(2000);
 
