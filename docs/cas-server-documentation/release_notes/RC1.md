@@ -80,7 +80,13 @@ and this is just a preparatory step to ensure CAS is ready for the next version 
  
 ### Apple Notifications
 
-It is possible to use APN for sending notifications to [Apple devices](../notifications/Notifications-Configuration-APN.html).
+You can now use APN for sending notifications to [Apple devices](../notifications/Notifications-Configuration-APN.html).
+  
+### SAML2 Delegated Authentication
+
+[SAML2 Delegated Authentication](../integration/Delegate-Authentication-SAML2-Metadata-Aggregate.html) flows 
+are modified to support identity provider metadata aggregates, removing the need to register individual identity
+providers and simplifying the configuration process.
 
 ### Twilio Multifactor Provider
 
