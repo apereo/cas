@@ -26,7 +26,7 @@ class SecurityContextUtilsTests {
         when(principal.getAttributes()).thenReturn(Map.of("name", List.of("CAS")));
         val context = SecurityContextUtils.createSecurityContext(principal, new MockHttpServletRequest());
         assertTrue(context.getAuthentication().isAuthenticated());
-        assertEquals(context.getAuthentication().getName(), principal.getId());
+        assertEquals("id", context.getAuthentication().getName());
     }
 
     @Test
@@ -40,6 +40,6 @@ class SecurityContextUtilsTests {
         
         val context = SecurityContextUtils.createSecurityContext(ticket, new MockHttpServletRequest());
         assertTrue(context.getAuthentication().isAuthenticated());
-        assertEquals(context.getAuthentication().getName(), principal.getId());
+        assertEquals("id", context.getAuthentication().getName());
     }
 }
