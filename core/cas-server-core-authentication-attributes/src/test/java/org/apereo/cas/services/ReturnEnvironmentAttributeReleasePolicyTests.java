@@ -57,7 +57,7 @@ class ReturnEnvironmentAttributeReleasePolicyTests {
         System.setProperty("MYKEY", UUID.randomUUID().toString());
 
         val policy = new ReturnEnvironmentAttributeReleasePolicy();
-        policy.setEnvironmentVariables(CollectionUtils.wrap("TMPDIR", "TEMP"));
+        policy.setEnvironmentVariables(CollectionUtils.wrap("JAVA_OPTS", "JAVA"));
         policy.setSystemProperties(CollectionUtils.wrap("MYKEY", "KEY"));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal();
@@ -72,7 +72,7 @@ class ReturnEnvironmentAttributeReleasePolicyTests {
             .build();
         val results = policy.getAttributes(releasePolicyContext);
         assertEquals(3, results.size());
-        assertTrue(results.containsKey("TEMP"));
+        assertTrue(results.containsKey("JAVA"));
         assertTrue(results.containsKey("KEY"));
         assertTrue(results.containsKey("applicationProfiles"));
     }
