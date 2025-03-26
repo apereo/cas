@@ -257,7 +257,7 @@ zxcvbn = "4.4.2"
 # This section handles Gradle build classpath dependency versions
 #################################################################
 gradleGit = "2.5.0"
-gradleLombok = "8.13"
+gradleLombok = "8.13.1"
 gradleDependencyVersions = "0.52.0"
 gradleErrorProne = "4.1.0"
 gradleGraalVmNative = "0.10.6"
