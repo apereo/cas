@@ -101,14 +101,17 @@ class RestAuthenticationHandlerTests {
 
             val res = getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class));
             assertEquals("casuser", res.getPrincipal().getId());
+            assertEquals(1, webServer.getRequestCount());
 
             webServer.responseBody("{}");
             assertThrows(FailedLoginException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
+            assertEquals(2, webServer.getRequestCount());
 
             webServer.responseStatus(HttpStatus.FORBIDDEN);
             assertThrows(AccountDisabledException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
+            assertEquals(3, webServer.getRequestCount());
 
 
             webServer.responseStatus(HttpStatus.UNAUTHORIZED);
