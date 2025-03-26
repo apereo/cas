@@ -10,6 +10,8 @@ import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.support.pac4j.authentication.attributes.GroovyAttributeConverter;
 import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegatedClient;
 import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegatedClientBuilder;
+import org.apereo.cas.support.saml.EntityDescriptorMetadataResolver;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -61,6 +63,7 @@ import java.util.stream.Collectors;
 public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientBuilder {
     private final CasSSLContext casSslContext;
     private final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory;
+    private final OpenSamlConfigBean configBean;
 
     @Override
     public List<ConfigurableDelegatedClient> build(final CasConfigurationProperties casProperties) {
@@ -230,18 +233,22 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                     .filter(EntityDescriptor::isValid)
                     .map(entityDescriptor -> {
                         val configuration = saml2Client.getConfiguration();
+                        val clientName = client.getName() + '-' + RandomUtils.nextLong();
+
                         LOGGER.trace("Loading SAML2 client for identity provider with entity id [{}]", entityDescriptor.getEntityID());
+                        val singleMetadataResolver = buildMetadataResolver(entityDescriptor, saml2Client);
+
                         val singleClient = new SAML2Client(
                             configuration
                                 .withIdentityProviderEntityId(entityDescriptor.getEntityID())
-                                .withIdentityProviderMetadataResolver(new DelegatingSaml2MetadataResolver(metadataResolver, entityDescriptor))
-                        );  
+                                .withIdentityProviderMetadataResolver(new DelegatingSaml2MetadataResolver(singleMetadataResolver, entityDescriptor))
+                        );
 
-                        DelegatedIdentityProviderFactory.configureClientName(singleClient, client.getName() + '-' + RandomUtils.nextLong());
+                        DelegatedIdentityProviderFactory.configureClientName(singleClient, clientName);
                         DelegatedIdentityProviderFactory.configureClientCustomProperties(singleClient, saml2Properties);
                         DelegatedIdentityProviderFactory.configureClientCallbackUrl(singleClient, saml2Properties, properties.getServer().getLoginUrl());
                         singleClient.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_IDENTITY_PROVIDER_METADATA_AGGREGATE, true);
-                        
+
                         val idpSSODescriptor = entityDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS);
                         Optional.ofNullable(idpSSODescriptor)
                             .map(IDPSSODescriptor::getExtensions)
@@ -261,6 +268,14 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
             }
         }
         return ConfigurableDelegatedClientBuilder.super.configure(client, clientProperties, properties);
+    }
+
+    protected MetadataResolver buildMetadataResolver(final EntityDescriptor entityDescriptor, final SAML2Client client) {
+        return FunctionUtils.doUnchecked(() -> {
+            val metadataResolver = new EntityDescriptorMetadataResolver(entityDescriptor, configBean);
+            metadataResolver.initialize();
+            return metadataResolver;
+        });
     }
 
     @RequiredArgsConstructor

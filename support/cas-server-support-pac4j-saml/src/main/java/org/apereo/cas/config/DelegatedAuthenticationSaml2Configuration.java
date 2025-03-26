@@ -200,11 +200,13 @@ class DelegatedAuthenticationSaml2Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "delegatedSaml2ClientBuilder")
         public ConfigurableDelegatedClientBuilder delegatedSaml2ClientBuilder(
+            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+            final OpenSamlConfigBean configBean,
             @Qualifier(DelegatedIdentityProviderFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
             final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory,
             @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext) {
-            return new DelegatedClientSaml2Builder(casSslContext, samlMessageStoreFactory);
+            return new DelegatedClientSaml2Builder(casSslContext, samlMessageStoreFactory, configBean);
         }
 
         @Bean
