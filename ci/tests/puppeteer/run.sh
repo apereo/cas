@@ -622,7 +622,7 @@ function buildAndRun() {
       eval "$cmd"
     done
 
-    systemProperties=$(jq -r 'if (.systemProperties // []) | length == 0 then "" else .systemProperties[] | "-D" + . end' "${config}" | paste -sd' ' -)
+    systemProperties=$(jq -r 'if (.systemProperties // []) | length == 0 then "-DTEST_TYPE=PUPPETEER" else .systemProperties[] | "-D" + . end' "${config}" | paste -sd' ' -)
     
     bootstrapScript=$(jq -j '.bootstrapScript // empty' "${config}")
     bootstrapScript="${bootstrapScript//\$\{PWD\}/${PWD}}"
