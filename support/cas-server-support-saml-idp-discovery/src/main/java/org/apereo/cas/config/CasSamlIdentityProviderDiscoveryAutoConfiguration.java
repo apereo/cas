@@ -129,8 +129,8 @@ public class CasSamlIdentityProviderDiscoveryAutoConfiguration {
             .filter(res -> res.getLocation() != null)
             .forEach(Unchecked.consumer(res -> parsers.add(new SamlIdentityProviderEntityParser(res.getLocation()))));
 
-        identityProviders
-            .findAllClients()
+        val allClients = identityProviders.findAllClients();
+        allClients
             .stream()
             .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast)
