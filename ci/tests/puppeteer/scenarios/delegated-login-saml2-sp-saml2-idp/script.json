@@ -3,7 +3,9 @@
   "conditions": {
     "docker": "true"
   },
-
+  "systemProperties": [
+    "LOG_SUMMARY_ENABLED=false"
+  ],
   "properties": [
 
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",

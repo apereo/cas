@@ -622,6 +622,8 @@ function buildAndRun() {
       eval "$cmd"
     done
 
+    systemProperties=$(jq -r 'if (.systemProperties // []) | length == 0 then "" else .systemProperties[] | "-D" + . end' "${config}" | paste -sd' ' -)
+    
     bootstrapScript=$(jq -j '.bootstrapScript // empty' "${config}")
     bootstrapScript="${bootstrapScript//\$\{PWD\}/${PWD}}"
     bootstrapScript="${bootstrapScript//\$\{SCENARIO\}/${scenarioName}}"
@@ -706,7 +708,7 @@ function buildAndRun() {
           runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
         fi
         runArgs="${runArgs} -XX:TieredStopAtLevel=1 "
-        printcyan "Launching CAS instance #${c} with properties [${properties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
+        printcyan "Launching CAS instance #${c} with properties [${properties}], system properties [${systemProperties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
 
         springAppJson=$(jq -j '.SPRING_APPLICATION_JSON // empty' "${config}")
         [ -n "${springAppJson}" ] && export SPRING_APPLICATION_JSON=${springAppJson}
@@ -720,6 +722,7 @@ function buildAndRun() {
           ${targetArtifact} -Dcom.sun.net.ssl.checkRevocation=false \
             -Dlog.console.stacktraces=true \
             -DaotSpringActiveProfiles=none \
+            "$systemProperties" \
             --spring.main.lazy-initialization=false \
             --spring.devtools.restart.enabled=false \
             --management.endpoints.web.discovery.enabled=true \
@@ -758,6 +761,7 @@ function buildAndRun() {
           printcyan "Launching CAS instance #${c} under port ${serverPort} from ${casArtifactToRun}"
           java ${runArgs} \
             -Dlog.console.stacktraces=true \
+            "$systemProperties" \
             -jar "${casArtifactToRun}" \
             -Dcom.sun.net.ssl.checkRevocation=false \
             --server.port=${serverPort} \
