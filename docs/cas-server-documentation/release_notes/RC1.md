@@ -103,4 +103,5 @@ send monitoring events to Azure Monitor Application Insights.
 
 ## Other Stuff
               
-- Support for SignalFX has been removed, given its deprecation status in Micrometer.           
+- Support for SignalFX has been removed, given its deprecation status in Micrometer.
+- Apache Kafka integration tests have switched to testing against Apache Kafka `4.0.0`.
