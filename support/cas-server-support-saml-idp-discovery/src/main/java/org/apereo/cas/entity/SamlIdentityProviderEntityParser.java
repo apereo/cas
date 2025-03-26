@@ -160,12 +160,13 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
     }
 
     private static List<EntityDescriptor> determineEntityDescriptors(final SAML2Client saml2Client) throws Exception {
-        val resolver = saml2Client.getIdentityProviderMetadataResolver();
-        if (resolver.getEntityDescriptorElement() instanceof final EntityDescriptor entityDescriptor) {
+        val idpMetadataResolver = saml2Client.getIdentityProviderMetadataResolver();
+        val metadataResolver = idpMetadataResolver.resolve();
+        val providers = metadataResolver.resolve(new CriteriaSet(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME)));
+        if (Iterables.size(providers) == 1
+            && idpMetadataResolver.getEntityDescriptorElement() instanceof final EntityDescriptor entityDescriptor) {
             return List.of(entityDescriptor);
         }
-        val metadataResolver = resolver.resolve();
-        val providers = metadataResolver.resolve(new CriteriaSet(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME)));
         return Arrays.asList(Iterables.toArray(providers, EntityDescriptor.class));
     }
 }
