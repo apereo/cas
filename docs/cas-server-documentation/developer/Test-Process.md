@@ -242,6 +242,9 @@ A basic modest outline of the test configuration may be:
   "environmentVariables": [
     "NAME=VALUE"
   ],
+  "systemProperties": [
+    "NAME=VALUE"
+  ],
   "requirements": {
     "graalvm": {
       "build": false

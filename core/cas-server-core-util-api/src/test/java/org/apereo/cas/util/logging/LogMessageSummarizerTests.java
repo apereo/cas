@@ -28,6 +28,14 @@ class LogMessageSummarizerTests {
         val defaultLogMessageSummarizer = new DefaultLogMessageSummarizer();
         assertNotNull(defaultLogMessageSummarizer.summarizeStackTrace(null, new IllegalArgumentException()));
     }
+
+    @Test
+    void verifyActivation() {
+        val defaultLogMessageSummarizer = new DefaultLogMessageSummarizer();
+        assertTrue(defaultLogMessageSummarizer.shouldSummarize(LOGGER));
+        System.setProperty(DefaultLogMessageSummarizer.SYSTEM_PROPERTY_LOG_SUMMARY_ENABLED, Boolean.FALSE.toString());
+        assertFalse(defaultLogMessageSummarizer.shouldSummarize(LOGGER));
+    }
 }
 
 

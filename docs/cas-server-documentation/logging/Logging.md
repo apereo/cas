@@ -244,3 +244,6 @@ If you need to disable summary mode altogether, the following contents should be
 ```bash
 org.apereo.cas.util.logging.DisabledLogMessageSummarizer
 ```
+
+You may also control the log summarization behavior via the system property `LOG_SUMMARY_ENABLED` set to `false`. 
+
