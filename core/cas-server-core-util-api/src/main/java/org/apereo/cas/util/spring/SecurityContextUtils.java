@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetadata;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.util.RandomUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
@@ -11,6 +12,7 @@ import lombok.val;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,7 +51,8 @@ public class SecurityContextUtils {
     public static SecurityContext createSecurityContext(final Principal principal, final HttpServletRequest request) {
         val authorities = principal.getAttributes().keySet().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-        val authenticationToken = new PreAuthenticatedAuthenticationToken(principal,
+        val user = new User(principal.getId(), RandomUtils.generateSecureRandomId(), authorities);
+        val authenticationToken = new PreAuthenticatedAuthenticationToken(user,
             new SecurityContextCredential(principal.getId()), authorities);
         authenticationToken.setAuthenticated(true);
         authenticationToken.setDetails(new PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails(request, authorities));
