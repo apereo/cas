@@ -137,6 +137,11 @@ public class MonitoredRepository {
             close(pr);
             return Optional.empty();
         }
+        if (pr.getTitle().startsWith("Bump") && pr.getTitle().matches("Bump.+from.+-M[0-9]+")) {
+            log.debug("Ignoring Milestone dependency upgrade {}", pr);
+            return Optional.empty();
+        }
+        
         var pattern = Pattern.compile("`(\\d+\\.\\d+\\.\\d+).*` \\-\\> `(\\d+\\.\\d+\\.\\d+).*`");
         var matcher = pattern.matcher(pr.getBody());
         if (matcher.find()) {
@@ -144,6 +149,15 @@ public class MonitoredRepository {
             var endingVersion = new Semver(matcher.group(2));
             return Optional.of(new DependencyRange(startingVersion, endingVersion));
         }
+
+        pattern = Pattern.compile("`(\\d+\\.\\d+(\\.\\d+)*).*` \\-\\> `(\\d+\\.\\d+(\\.\\d+)*).*`");
+        matcher = pattern.matcher(pr.getBody());
+        if (matcher.find()) {
+            var startingVersion = Semver.coerce(matcher.group(1));
+            var endingVersion = Semver.coerce(matcher.group(3));
+            return Optional.of(new DependencyRange(startingVersion, endingVersion));
+        }
+        
         pattern = Pattern.compile("Bump (.+) from (\\d+\\.\\d+(\\.\\d+)*).* to (\\d+\\.\\d+(\\.\\d+)*).*");
         matcher = pattern.matcher(pr.getTitle());
         if (matcher.find()) {
