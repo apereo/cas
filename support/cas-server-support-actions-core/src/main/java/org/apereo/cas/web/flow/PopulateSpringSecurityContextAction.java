@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -47,7 +49,8 @@ public class PopulateSpringSecurityContextAction extends BaseCasWebflowAction {
         val principal = resolvePrincipal(authn.getPrincipal(), requestContext);
         val authorities = principal.getAttributes().keySet().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-        val secAuth = new PreAuthenticatedAuthenticationToken(principal, authn.getCredentials(), authorities);
+        val user = new User(principal.getId(), RandomUtils.generateSecureRandomId(), authorities);
+        val secAuth = new PreAuthenticatedAuthenticationToken(user, authn.getCredentials(), authorities);
         secAuth.setAuthenticated(true);
 
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);

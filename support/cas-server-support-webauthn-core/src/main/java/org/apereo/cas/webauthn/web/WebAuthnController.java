@@ -167,10 +167,7 @@ public class WebAuthnController {
             final Principal authenticatedPrincipal,
             @RequestParam(value = "username", required = false)
         final String username) throws Exception {
-        if (!StringUtils.equalsIgnoreCase(username, authenticatedPrincipal.getName())) {
-            return messagesJson(ResponseEntity.badRequest(), "Unauthorized request");
-        }
-        val request = server.startAuthentication(Optional.ofNullable(username));
+        val request = server.startAuthentication(Optional.ofNullable(authenticatedPrincipal).map(Principal::getName));
         if (request.isRight()) {
             return startResponse(new StartAuthenticationResponse(request.right().get()));
         }
