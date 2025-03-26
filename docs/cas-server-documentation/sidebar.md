@@ -291,6 +291,7 @@ layout: null
             *   [Deny All](/cas/{{ version }}/integration/Attribute-Release-Policy-DenyAll.html)           
             *   [Return All](/cas/{{ version }}/integration/Attribute-Release-Policy-ReturnAll.html)         
             *   [Return Static](/cas/{{ version }}/integration/Attribute-Release-Policy-ReturnStatic.html)      
+            *   [Return Environment](/cas/{{ version }}/integration/Attribute-Release-Policy-ReturnEnvironment.html)      
             *   [Return Allowed ](/cas/{{ version }}/integration/Attribute-Release-Policy-ReturnAllowed.html)     
             *   [Return Encrypted](/cas/{{ version }}/integration/Attribute-Release-Policy-ReturnEncrypted.html)   
             *   [Return Mapped](/cas/{{ version }}/integration/Attribute-Release-Policy-ReturnMapped.html)      

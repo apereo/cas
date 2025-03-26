@@ -58,6 +58,7 @@ import org.apereo.cas.services.RemoteEndpointServiceAccessStrategy;
 import org.apereo.cas.services.RestfulRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.apereo.cas.services.ReturnEnvironmentAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnRestfulAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnStaticAttributeReleasePolicy;
@@ -147,6 +148,7 @@ class CasCoreServicesComponentSerializationConfiguration {
             plan.registerSerializableClass(ReturnAllAttributeReleasePolicy.class);
             plan.registerSerializableClass(ReturnStaticAttributeReleasePolicy.class);
             plan.registerSerializableClass(ReturnMappedAttributeReleasePolicy.class);
+            plan.registerSerializableClass(ReturnEnvironmentAttributeReleasePolicy.class);
             plan.registerSerializableClass(GroovyScriptAttributeReleasePolicy.class);
             plan.registerSerializableClass(ReturnRestfulAttributeReleasePolicy.class);
             plan.registerSerializableClass(PatternMatchingAttributeReleasePolicy.class);
