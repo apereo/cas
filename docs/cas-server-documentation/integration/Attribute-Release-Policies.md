@@ -67,6 +67,7 @@ authentication protocol at hand. Remember to verify attribute release capabiliti
 | Deny All             | [See this page](Attribute-Release-Policy-DenyAll.html).           |
 | Return All           | [See this page](Attribute-Release-Policy-ReturnAll.html).         |
 | Return Static        | [See this page](Attribute-Release-Policy-ReturnStatic.html).      |
+| Return Environment   | [See this page](Attribute-Release-Policy-ReturnEnvironment.html). |
 | Return Allowed       | [See this page](Attribute-Release-Policy-ReturnAllowed.html).     |
 | Return Encrypted     | [See this page](Attribute-Release-Policy-ReturnEncrypted.html).   |
 | Return Mapped        | [See this page](Attribute-Release-Policy-ReturnMapped.html).      |
