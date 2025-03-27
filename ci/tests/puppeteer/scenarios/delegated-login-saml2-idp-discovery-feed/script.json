@@ -22,6 +22,7 @@
     "--cas.authn.pac4j.saml[1].metadata.service-provider.file-system.location=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/sp-metadata.xml",
     "--cas.authn.pac4j.saml[1].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/samlKeystore.jks",
     "--cas.authn.pac4j.saml[1].metadata.identity-provider-metadata-path=https://md.incommon.org/InCommon/InCommon-metadata-idp-only.xml",
+    "--cas.authn.pac4j.saml[1].metadata.identity-provider-metadata-aggregate=true",
     "--cas.authn.pac4j.saml[1].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
     "--cas.authn.pac4j.saml[1].client-name=SAML2InCommon",
     
