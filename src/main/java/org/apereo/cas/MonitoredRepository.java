@@ -240,7 +240,7 @@ public class MonitoredRepository {
                             }
                         }
 
-                        if (firstFile.endsWith("libs.versions.toml")) {
+                        if (firstFile.endsWith("libs.versions.toml") || firstFile.endsWith("settings.gradle")) {
                             if (stagingRepository && (dependencyVersion.isQualifiedForMinorUpgrade() || dependencyVersion.isQualifiedForMajorUpgrade())) {
                                 if (pr.getAssignee() == null) {
                                     log.info("Assigning major dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
