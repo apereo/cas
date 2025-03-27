@@ -33,7 +33,17 @@ public class Pac4jSamlClientMetadataProperties implements Serializable {
      */
     @RequiredProperty
     private String identityProviderMetadataPath;
-    
+
+    /**
+     * Indicate whether the identity provider metadata is an aggregate
+     * and contains more than one IDP entity. Doing so will allow CAS
+     * to resolve and load the identity provider entities from the aggregate
+     * and register them individually with the runtime.
+     * The resolution process will attempt to use the {@code UIInfo} element
+     * for each identity provider entity to extract things like Display Name, etc.
+     */
+    private boolean identityProviderMetadataAggregate;
+
     /**
      * SAML2 service provider metadata settings.
      */

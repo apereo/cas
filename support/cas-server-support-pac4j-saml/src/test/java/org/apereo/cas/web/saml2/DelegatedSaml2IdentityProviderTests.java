@@ -49,6 +49,7 @@ class DelegatedSaml2IdentityProviderTests {
         "cas.authn.pac4j.saml[0].keystore-password=1234567890",
         "cas.authn.pac4j.saml[0].private-key-password=1234567890",
         "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata-aggregate.xml",
+        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-aggregate=true",
         "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp2.xml",
         "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
         "cas.authn.pac4j.core.lazy-init=false"
