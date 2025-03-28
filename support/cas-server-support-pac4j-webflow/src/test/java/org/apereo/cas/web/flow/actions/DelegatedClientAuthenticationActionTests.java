@@ -94,7 +94,7 @@ class DelegatedClientAuthenticationActionTests {
             context.withUserAgent();
             context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FakeClient");
 
-            val client = identityProviders.findClient("FakeClient").get();
+            val client = identityProviders.findClient("FakeClient").orElseThrow();
             val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
             val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
             context.setParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());

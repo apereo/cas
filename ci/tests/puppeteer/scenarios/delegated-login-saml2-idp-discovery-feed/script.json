@@ -3,6 +3,9 @@
   "conditions": {
     "docker": "true"
   },
+  "systemProperties": [
+    "LOG_SUMMARY_ENABLED=false"
+  ],
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -26,7 +29,8 @@
     "--cas.authn.pac4j.saml[1].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
     "--cas.authn.pac4j.saml[1].client-name=SAML2InCommon",
     
-    "--cas.authn.pac4j.saml-discovery.resource[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/feed.json"
+    "--cas.authn.pac4j.saml-discovery.resource[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/feed.json",
+    "--logging.level.org.opensaml=warn"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.FlowExecution;
@@ -66,8 +67,9 @@ class CasWebflowSecurityContextRepositoryTests {
         requestContext.setParameter(CasDefaultFlowUrlHandler.DEFAULT_FLOW_EXECUTION_KEY_PARAMETER, UUID.randomUUID().toString());
         assertTrue(securityContextRepository.containsContext(requestContext.getHttpServletRequest()));
         val secContext = securityContextRepository.loadDeferredContext(requestContext.getHttpServletRequest()).get();
-        val principal = (Principal) secContext.getAuthentication().getPrincipal();
-        assertEquals(USERNAME, principal.getId());
+        val principal = (User) secContext.getAuthentication().getPrincipal();
+        assertEquals(USERNAME, principal.getUsername());
+        assertEquals(USERNAME, secContext.getAuthentication().getName());
         assertTrue(secContext.getAuthentication().getAuthorities().size() > 1);
         assertTrue(secContext.getAuthentication().getAuthorities().stream()
             .anyMatch(auth -> "ROLE_USER".equalsIgnoreCase(auth.getAuthority())));

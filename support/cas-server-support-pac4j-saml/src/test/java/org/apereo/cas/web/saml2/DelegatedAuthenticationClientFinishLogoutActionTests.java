@@ -73,7 +73,8 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
 
         val callContext = new CallContext(new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse()), new JEESessionStore());
         val action = (WithLocationAction) samlClient.getLogoutActionBuilder()
-            .getLogoutAction(callContext, userProfile, "https://google.com").orElseThrow();
+            .getLogoutAction(callContext, userProfile, "https://google.com")
+            .orElseThrow();
 
         val logoutRequest = DelegatedAuthenticationClientLogoutRequest.builder()
             .target("https://google.com")

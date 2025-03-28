@@ -10,7 +10,6 @@ import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.support.pac4j.authentication.attributes.GroovyAttributeConverter;
 import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegatedClient;
 import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegatedClientBuilder;
-import org.apereo.cas.support.saml.EntityDescriptorMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -19,18 +18,16 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.google.common.collect.Iterables;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.opensaml.core.xml.XMLObject;
+import org.apache.commons.lang3.time.StopWatch;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.pac4j.core.client.BaseClient;
@@ -38,18 +35,20 @@ import org.pac4j.core.profile.converter.AttributeConverter;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.metadata.DefaultSAML2MetadataSigner;
-import org.pac4j.saml.metadata.SAML2MetadataResolver;
+import org.pac4j.saml.metadata.SAML2DelegatingMetadataResolver;
+import org.pac4j.saml.metadata.SAML2InMemoryMetadataGenerator;
 import org.pac4j.saml.metadata.SAML2ServiceProviderRequestedAttribute;
 import org.pac4j.saml.store.EmptyStoreFactory;
 import org.pac4j.saml.store.HttpSessionStoreFactory;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
-import org.pac4j.saml.util.Configuration;
 import org.springframework.beans.factory.ObjectProvider;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -61,9 +60,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientBuilder {
-    private final CasSSLContext casSslContext;
-    private final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory;
-    private final OpenSamlConfigBean configBean;
+    protected final CasSSLContext casSslContext;
+    protected final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory;
+    protected final OpenSamlConfigBean configBean;
 
     @Override
     public List<ConfigurableDelegatedClient> build(final CasConfigurationProperties casProperties) {
@@ -230,75 +229,94 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
             val metadataResolver = idpMetadataResolver.resolve();
             val providers = metadataResolver.resolve(new CriteriaSet(new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME)));
             if (Iterables.size(providers) > 1) {
-                return Arrays.stream(Iterables.toArray(providers, EntityDescriptor.class))
-                    .parallel()
-                    .filter(EntityDescriptor::isValid)
-                    .map(entityDescriptor -> {
-                        val configuration = saml2Client.getConfiguration();
-                        val clientName = client.getName() + '-' + RandomUtils.nextLong();
+                val stopWatch = new StopWatch();
+                stopWatch.start();
+                val results = new ArrayList<SAML2Client>();
+                try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+                    val futures = Arrays.stream(Iterables.toArray(providers, EntityDescriptor.class))
+                        .parallel()
+                        .map(entityDescriptor -> executor.submit(
+                            () -> buildSaml2ClientFromAggregate(saml2Client, entityDescriptor, saml2Properties, properties)))
+                        .toList();
 
-                        LOGGER.trace("Loading SAML2 client for identity provider with entity id [{}]", entityDescriptor.getEntityID());
-                        val singleMetadataResolver = buildMetadataResolver(entityDescriptor, saml2Client);
-
-                        val singleClient = new SAML2Client(
-                            configuration
-                                .withIdentityProviderEntityId(entityDescriptor.getEntityID())
-                                .withIdentityProviderMetadataResolver(new DelegatingSaml2MetadataResolver(singleMetadataResolver, entityDescriptor))
-                        );
-
-                        DelegatedIdentityProviderFactory.configureClientName(singleClient, clientName);
-                        DelegatedIdentityProviderFactory.configureClientCustomProperties(singleClient, saml2Properties);
-                        DelegatedIdentityProviderFactory.configureClientCallbackUrl(singleClient, saml2Properties, properties.getServer().getLoginUrl());
-                        singleClient.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_IDENTITY_PROVIDER_METADATA_AGGREGATE, true);
-
-                        val idpSSODescriptor = entityDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS);
-                        Optional.ofNullable(idpSSODescriptor)
-                            .map(IDPSSODescriptor::getExtensions)
-                            .map(ext -> ext.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME))
-                            .stream()
-                            .flatMap(List::stream)
-                            .map(UIInfo.class::cast)
-                            .filter(uiInfo -> !uiInfo.getDisplayNames().isEmpty())
-                            .map(uiInfo -> uiInfo.getDisplayNames().getFirst().getValue())
-                            .filter(StringUtils::isNotBlank)
-                            .forEach(value -> singleClient.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, value));
-
-                        singleClient.init();
-                        return singleClient;
-                    })
-                    .toList();
+                    for (val future : futures) {
+                        results.add(future.get());
+                    }
+                    executor.shutdown();
+                }
+                stopWatch.stop();
+                LOGGER.info("Loaded [{}] SAML2 identity provider metadata in [{}]",
+                    results.size(), stopWatch.getDuration());
+                return results;
             }
         }
         return ConfigurableDelegatedClientBuilder.super.configure(client, clientProperties, properties);
     }
 
-    protected MetadataResolver buildMetadataResolver(final EntityDescriptor entityDescriptor, final SAML2Client client) {
-        return FunctionUtils.doUnchecked(() -> {
-            val metadataResolver = new EntityDescriptorMetadataResolver(entityDescriptor, configBean);
-            metadataResolver.initialize();
-            return metadataResolver;
-        });
+    protected SAML2Client buildSaml2ClientFromAggregate(final SAML2Client saml2Client,
+                                                        final EntityDescriptor entityDescriptor,
+                                                        final Pac4jSamlClientProperties saml2Properties,
+                                                        final CasConfigurationProperties properties) {
+        val configuration = saml2Client.getConfiguration();
+        LOGGER.trace("Loading SAML2 client for identity provider with entity id [{}]", entityDescriptor.getEntityID());
+
+        val singleConfiguration = createSaml2Configuration(entityDescriptor, configuration);
+        val singleClient = createSaml2Client(saml2Client, singleConfiguration);
+
+        val clientName = saml2Client.getName() + '-' + RandomUtils.nextLong();
+        DelegatedIdentityProviderFactory.configureClientName(singleClient, clientName);
+        DelegatedIdentityProviderFactory.configureClientCustomProperties(singleClient, saml2Properties);
+        DelegatedIdentityProviderFactory.configureClientCallbackUrl(singleClient, saml2Properties, properties.getServer().getLoginUrl());
+        singleClient.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_IDENTITY_PROVIDER_METADATA_AGGREGATE, true);
+
+        val idpSSODescriptor = entityDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS);
+        Optional.ofNullable(idpSSODescriptor)
+            .map(IDPSSODescriptor::getExtensions)
+            .map(ext -> ext.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME))
+            .stream()
+            .flatMap(List::stream)
+            .map(UIInfo.class::cast)
+            .filter(uiInfo -> !uiInfo.getDisplayNames().isEmpty())
+            .map(uiInfo -> uiInfo.getDisplayNames().getFirst().getValue())
+            .filter(StringUtils::isNotBlank)
+            .findFirst()
+            .ifPresent(value -> singleClient.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, value));
+        if (!properties.getAuthn().getPac4j().getCore().isLazyInit()) {
+            singleClient.init();
+        }
+        return singleClient;
     }
 
-    @RequiredArgsConstructor
-    @Getter
-    private static final class DelegatingSaml2MetadataResolver implements SAML2MetadataResolver {
-        private final MetadataResolver delegate;
-        private final XMLObject entityDescriptorElement;
-
-        @Override
-        public MetadataResolver resolve(final boolean force) {
-            return delegate;
-        }
-
-        @Override
-        public String getEntityId() {
-            return ((EntityDescriptor) entityDescriptorElement).getEntityID();
-        }
-
-        @Override
-        public String getMetadata() {
-            return Configuration.serializeSamlObject(entityDescriptorElement).toString();
-        }
+    private static SAML2Configuration createSaml2Configuration(final EntityDescriptor entityDescriptor,
+                                                               final SAML2Configuration configuration) {
+        val singleConfiguration = configuration.withMetadataGenerator(new SAML2InMemoryMetadataGenerator());
+        singleConfiguration.setIdentityProviderEntityId(entityDescriptor.getEntityID());
+        singleConfiguration.setIdentityProviderMetadataResolver(new SAML2DelegatingMetadataResolver(entityDescriptor));
+        return singleConfiguration;
     }
+
+    private static SAML2Client createSaml2Client(final SAML2Client saml2Client,
+                                                 final SAML2Configuration singleConfiguration) {
+        val singleClient = new SAML2Client(singleConfiguration);
+        singleClient.setDecrypter(saml2Client.getDecrypter());
+        singleClient.setSignatureSigningParametersProvider(saml2Client.getSignatureSigningParametersProvider());
+        singleClient.setContextProvider(saml2Client.getContextProvider());
+        singleClient.setSignatureSigningParametersProvider(saml2Client.getSignatureSigningParametersProvider());
+        singleClient.setReplayCache(saml2Client.getReplayCache());
+        singleClient.setAuthnResponseValidator(saml2Client.getAuthnResponseValidator());
+        singleClient.setSoapPipelineProvider(saml2Client.getSoapPipelineProvider());
+        singleClient.setLogoutValidator(saml2Client.getLogoutValidator());
+        singleClient.setRedirectionActionBuilder(saml2Client.getRedirectionActionBuilder());
+        singleClient.setCredentialsExtractor(saml2Client.getCredentialsExtractor());
+        singleClient.setAuthenticator(saml2Client.getAuthenticator());
+        singleClient.setLogoutProcessor(saml2Client.getLogoutProcessor());
+        singleClient.setLogoutActionBuilder(saml2Client.getLogoutActionBuilder());
+        singleClient.setServiceProviderMetadataResolver(saml2Client.getServiceProviderMetadataResolver());
+        singleClient.setStateGenerator(saml2Client.getStateGenerator());
+        singleClient.setWebSsoMessageSender(saml2Client.getWebSsoMessageSender());
+        singleClient.setLogoutRequestMessageSender(saml2Client.getLogoutRequestMessageSender());
+        return singleClient;
+    }
+
+
 }
