@@ -60,10 +60,10 @@ class DelegatedSaml2IdentityProviderTests {
         void verifyClient() {
             val clients = delegatedIdentityProviderFactory.build().stream().map(SAML2Client.class::cast).toList();
             assertEquals(2, clients.size());
-            assertTrue(clients.stream().anyMatch(c ->
-                c.getCustomProperties().get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME).equals("Lafayette College")));
-            assertTrue(clients.stream().anyMatch(c ->
-                c.getCustomProperties().get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME).equals("Cornell University")));
+            assertTrue(clients.stream().anyMatch(client ->
+                client.getCustomProperties().get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME).equals("Lafayette College")));
+            assertTrue(clients.stream().anyMatch(client ->
+                client.getCustomProperties().get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME).equals("Cornell University")));
 
             val metadataResolver = clients.getFirst().getConfiguration().getIdentityProviderMetadataResolver();
             assertNotNull(metadataResolver.getEntityId());
