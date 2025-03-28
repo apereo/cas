@@ -1,7 +1,6 @@
 package org.apereo.cas.web.security.authentication;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;

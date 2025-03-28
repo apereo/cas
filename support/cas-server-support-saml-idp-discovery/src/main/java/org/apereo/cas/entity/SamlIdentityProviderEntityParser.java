@@ -113,14 +113,15 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
      * @throws Exception the exception
      */
     public static SamlIdentityProviderEntityParser fromClient(final SAML2Client client) throws Exception {
-        client.init(client.getIdentityProviderMetadataResolver() == null || !client.isInitialized());
+        LOGGER.trace("Initializing SAML2 identity provider [{}]", client.getName());
+        client.init();
         val entities = determineEntityDescriptors(client)
             .stream()
             .filter(EntityDescriptor::isValid)
             .map(entityDescriptor -> {
                 val entity = new SamlIdentityProviderEntity();
                 entity.setEntityID(entityDescriptor.getEntityID());
-
+                
                 val idpSSODescriptor = entityDescriptor.getIDPSSODescriptor(SAMLConstants.SAML20P_NS);
                 Optional.ofNullable(idpSSODescriptor)
                     .map(IDPSSODescriptor::getExtensions)
@@ -152,6 +153,7 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
                     entity.getDisplayNames().add(SamlIdentityProviderBasicEntity.builder()
                         .lang(Locale.ENGLISH.toLanguageTag()).value(clientDisplayName).build());
                 }
+                LOGGER.trace("Found SAML2 identity provider [{}]", entity);
                 return entity;
             })
             .toList();
