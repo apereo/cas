@@ -292,6 +292,7 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
         val singleConfiguration = configuration.withMetadataGenerator(new SAML2InMemoryMetadataGenerator());
         singleConfiguration.setIdentityProviderEntityId(entityDescriptor.getEntityID());
         singleConfiguration.setIdentityProviderMetadataResolver(new SAML2DelegatingMetadataResolver(entityDescriptor));
+        singleConfiguration.setCredentialProvider(configuration.getCredentialProvider());
         return singleConfiguration;
     }
 
