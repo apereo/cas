@@ -142,6 +142,7 @@ graalvmNative {
             buildArgs.add('--enable-sbom')
             buildArgs.add('--emit build-report')
             buildArgs.add('--gc=G1')
+            buildArgs.add('--enable-monitoring=jfr')
 
             buildArgs.add('-march=native')
 //            buildArgs.add('--pgo-instrument')
