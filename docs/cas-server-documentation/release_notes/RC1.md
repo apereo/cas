@@ -70,7 +70,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
 and scenarios. At the moment, total number of jobs stands at approximately `511` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
-are now configured to run with parallelism enabled.
+are now configured to run with parallelism enabled.      
   
 ### Java 24
 
@@ -81,7 +81,13 @@ and this is just a preparatory step to ensure CAS is ready for the next version 
 ### Apple Notifications
 
 You can now use APN for sending notifications to [Apple devices](../notifications/Notifications-Configuration-APN.html).
-  
+
+### Google Authenticator Multifactor Authentication
+
+Deleting a registered device during Google Authenticator multifactor authentication flows will require the device
+removal to be verified with a multifactor authentication challenge. Likewise, registering additional devices
+and accounts will also require the user to verify the action with a multifactor authentication challenge.
+
 ### SAML2 Delegated Authentication
 
 [SAML2 Delegated Authentication](../integration/Delegate-Authentication-SAML2-Metadata-Aggregate.html) flows 

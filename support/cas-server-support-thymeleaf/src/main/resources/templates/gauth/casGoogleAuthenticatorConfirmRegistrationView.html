@@ -12,9 +12,30 @@
 <body id="cas">
     <main class="container mt-3 mb-3">
         <div layout:fragment="content" id="login" class="mdc-card card p-4 m-auto w-lg-66">
+
+            <!-- Confirmation Dialog -->
+            <div th:replace="~{fragments/gauthConfirmation :: gauthConfirmation (
+            dialogId='confirm-del-dialog',
+            title='screen.authentication.gauth.delete.title', description='screen.authentication.gauth.delete.desc',
+            eventId='delete', registerAccount=false, actionButton='confirmAcctDeleteBtn', actionButtonLabel='screen.welcome.button.proceed')}">
+                <a href="fragments/gauthConfirmation.html">Confirm</a>
+            </div>
+            <!-- Confirmation Dialog -->
+            
             <p>The following devices are registered for <code th:text="${principal.id}"></code>:</p>
 
             <div class="card-text">
+                <script type="text/javascript">
+                    function confirmDelete(button) {
+                        const deviceId = button.dataset.deviceId;
+                        console.log(`Confirm removal of account: ${deviceId}`);
+                        document.getElementById('confirmAccountId').value  = deviceId;
+                        cas.openDialog('confirm-del-dialog');
+                    }
+                    // onclick=""
+                    // $(this).parent('form').find('input[name=_eventId]').val('delete'); $(this).parent('form').submit();
+                </script>
+                
                 <div th:each="device: ${registeredDevices}" class="border-bottom py-4">
                     <form th:name="${'form-' + device.id}" th:id="${'form-' + device.id}" method="post">
                         <h4 class="d-flex align-items-center">
@@ -38,8 +59,11 @@
                         </button>
                         <button th:id="${'delButton-' + device.id}"
                                 th:if="${#bools.isTrue(#objects.nullSafe(mfaDeviceRegistrationEnabled,true))}"
-                                onclick="$(this).parent('form').find('input[name=_eventId]').val('delete'); $(this).parent('form').submit();"
-                                class="mdc-button mdc-button--raised" th:value="#{screen.authentication.gauth.deletedevice}">
+                                onclick="confirmDelete(this)"
+                                type="button"
+                                th:data-device-id="${device.id}"
+                                class="mdc-button mdc-button--raised"
+                                th:value="#{screen.authentication.gauth.deletedevice}">
                             <span class="mdc-button__label" th:text="#{screen.authentication.gauth.deletedevice}">Use</span>
                         </button>
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}" />

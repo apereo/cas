@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasGoogleAuthenticatorAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
@@ -76,6 +77,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     void verifyCreate() throws Throwable {
         val casuser = getUsernameUnderTest();
         val acct = getAccount("verifyCreate", casuser);
+        acct.setProperties(CollectionUtils.wrapList("prop1", "prop2"));
         assertNotNull(acct);
         val repo = getRegistry("verifyCreate");
 
@@ -85,6 +87,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
             .validationCode(acct.getValidationCode())
             .scratchCodes(acct.getScratchCodes())
             .name(casuser)
+            .properties(acct.getProperties())
             .build();
         val stored = repo.save(toSave);
         assertNotNull(repo.get(stored.getId()));
@@ -101,6 +104,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     void verifySaveAndUpdate() throws Throwable {
         val casuser = getUsernameUnderTest();
         val acct = getAccount("verifySaveAndUpdate", casuser);
+        acct.setProperties(CollectionUtils.wrapList("prop1", "prop2"));
         val repo = getRegistry("verifySaveAndUpdate");
         var toSave = OneTimeTokenAccount.builder()
             .username(acct.getUsername())

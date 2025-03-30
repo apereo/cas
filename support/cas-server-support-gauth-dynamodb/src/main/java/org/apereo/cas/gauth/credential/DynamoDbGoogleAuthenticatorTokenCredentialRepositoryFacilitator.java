@@ -49,6 +49,7 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
         val name = item.get(ColumnNames.NAME.getColumnName()).s();
         val secret = item.get(ColumnNames.SECRET.getColumnName()).s();
         val scratchCodes = item.get(ColumnNames.SCRATCH_CODES.getColumnName()).ss();
+        val properties = item.get(ColumnNames.PROPERTIES.getColumnName()).ss();
         val registrationTime = DateTimeUtils.zonedDateTimeOf(Long.parseLong(item.get(ColumnNames.REGISTRATION_DATE.getColumnName()).n()));
         return GoogleAuthenticatorAccount.builder()
             .id(id)
@@ -58,6 +59,7 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
             .secretKey(secret)
             .username(userId)
             .validationCode(validationCode)
+            .properties(properties)
             .build();
     }
 
@@ -68,6 +70,8 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
         values.put(ColumnNames.SECRET.getColumnName(), AttributeValue.builder().s(String.valueOf(record.getSecretKey())).build());
         values.put(ColumnNames.SCRATCH_CODES.getColumnName(), AttributeValue.builder()
             .ss(record.getScratchCodes().stream().map(String::valueOf).collect(Collectors.toList())).build());
+        values.put(ColumnNames.PROPERTIES.getColumnName(), AttributeValue.builder()
+            .ss(record.getProperties().stream().map(String::valueOf).collect(Collectors.toList())).build());
         val time = record.getRegistrationDate().toInstant().toEpochMilli();
         values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
         values.put(ColumnNames.REGISTRATION_DATE.getColumnName(),
@@ -279,6 +283,10 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
          * scratch code column.
          */
         SCRATCH_CODES("scratchCodes"),
+        /**
+         * properties column.
+         */
+        PROPERTIES("properties"),
         /**
          * registration time column.
          */

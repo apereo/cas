@@ -143,6 +143,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                             act.setSecretKey(encoded.getSecretKey());
                             act.setScratchCodes(encoded.getScratchCodes());
                             act.setValidationCode(encoded.getValidationCode());
+                            act.setProperties(encoded.getProperties());
                             writeAccountsToJsonRepository(accounts);
                             return encoded;
                         })

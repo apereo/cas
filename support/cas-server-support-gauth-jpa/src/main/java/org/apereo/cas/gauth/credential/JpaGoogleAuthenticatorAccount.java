@@ -55,6 +55,7 @@ public class JpaGoogleAuthenticatorAccount extends GoogleAuthenticatorAccount {
                 .stream()
                 .map(code -> BigInteger.valueOf(code.longValue()))
                 .collect(Collectors.toList()))
+            .properties(acct.getProperties())
             .registrationDate(acct.getRegistrationDate())
             .name(acct.getName())
             .source(acct.getSource())
