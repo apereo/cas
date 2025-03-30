@@ -35,7 +35,7 @@
     "unzipper": "0.12.3",
     "wait-on": "8.0.3",
     "xml2js": "0.6.2",
-    "yaml": "2.7.0"
+    "yaml": "2.7.1"
   },
   "devDependencies": {
     "@eslint/js": "9.23.0",
