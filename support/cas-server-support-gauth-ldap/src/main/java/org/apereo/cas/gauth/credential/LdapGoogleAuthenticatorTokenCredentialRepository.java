@@ -154,6 +154,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
                 ac.setValidationCode(account.getValidationCode());
                 ac.setScratchCodes(account.getScratchCodes());
                 ac.setSecretKey(account.getSecretKey());
+                ac.setProperties(account.getProperties());
             }, () -> existingAccounts.add(account));
 
             val accountsToSave = existingAccounts.stream()

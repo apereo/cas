@@ -57,6 +57,11 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
      */
     public static final String TABLE_NAME_SCRATCH_CODES = "scratch_codes";
 
+    /**
+     * Table name used to hold otp properties.
+     */
+    public static final String TABLE_NAME_OTP_PROPERTIES = "otp_properties";
+
     @Serial
     private static final long serialVersionUID = -8289105320642735252L;
 
@@ -81,6 +86,12 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @Column(nullable = false, columnDefinition = "numeric", precision = 255, scale = 0)
     @Builder.Default
     private List<Number> scratchCodes = new ArrayList<>();
+
+    @ElementCollection(targetClass = String.class)
+    @CollectionTable(name = TABLE_NAME_OTP_PROPERTIES, joinColumns = @JoinColumn(name = "id"))
+    @Column(nullable = false, columnDefinition = "VARCHAR(1024)")
+    @Builder.Default
+    private List<String> properties = new ArrayList<>();
 
     @Column(nullable = false)
     @JsonProperty("username")

@@ -85,6 +85,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
                         act.setSecretKey(account.getSecretKey());
                         act.setScratchCodes(account.getScratchCodes());
                         act.setValidationCode(account.getValidationCode());
+                        act.setProperties(account.getProperties());
                     });
             }
             return encoded;

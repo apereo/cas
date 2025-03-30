@@ -440,12 +440,15 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         public Action googleAccountDeleteDeviceAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
+            @Qualifier("googleAuthenticatorOneTimeTokenCredentialValidator")
+            final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> googleAuthenticatorOneTimeTokenCredentialValidator,
             @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
             final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new GoogleAuthenticatorDeleteAccountAction(googleAuthenticatorAccountRegistry))
+                .withAction(() -> new GoogleAuthenticatorDeleteAccountAction(
+                    googleAuthenticatorAccountRegistry, googleAuthenticatorOneTimeTokenCredentialValidator))
                 .withId(CasWebflowConstants.ACTION_ID_GOOGLE_ACCOUNT_DELETE_DEVICE)
                 .build()
                 .get();
