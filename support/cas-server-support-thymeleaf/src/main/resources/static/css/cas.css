@@ -459,6 +459,10 @@ form button i.mdi {
     padding-bottom: 0.8rem;
 }
 
+.pb-3 {
+    padding-bottom: 1.4rem !important;
+}
+
 .bg-primary {
     background-color: rgba(21, 62, 80, 0.2);
     background-color: var(--cas-theme-primary-bg, rgba(21, 62, 80, 0.2));

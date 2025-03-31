@@ -13,30 +13,38 @@
     <main class="container mt-3 mb-3">
         <div layout:fragment="content" id="login" class="mdc-card card p-4 m-auto w-lg-66">
 
-            <!-- Confirmation Dialog -->
+            <!-- Confirmation Dialog For Removals -->
             <div th:replace="~{fragments/gauthConfirmation :: gauthConfirmation (
             dialogId='confirm-del-dialog',
             title='screen.authentication.gauth.delete.title', description='screen.authentication.gauth.delete.desc',
-            eventId='delete', registerAccount=false, actionButton='confirmAcctDeleteBtn', actionButtonLabel='screen.welcome.button.proceed')}">
+            eventId='delete', confirmationType='delete', actionButton='confirmAcctDeleteBtn', actionButtonLabel='screen.welcome.button.proceed')}">
+                <a href="fragments/gauthConfirmation.html">Confirm</a>
+            </div>
+            <!-- Confirmation Dialog -->
+
+            <!-- Confirmation Dialog For Registration -->
+            <div th:replace="~{fragments/gauthConfirmation :: gauthConfirmation (
+            dialogId='confirm-registration-dialog',
+            title='screen.authentication.gauth.confirm.title', description='screen.authentication.gauth.confirm.desc',
+            eventId='register', confirmationType='add', actionButton='confirmAcctRegisterBtn', actionButtonLabel='screen.welcome.button.register')}">
                 <a href="fragments/gauthConfirmation.html">Confirm</a>
             </div>
             <!-- Confirmation Dialog -->
             
-            <p>The following devices are registered for <code th:text="${principal.id}"></code>:</p>
+            <p th:text="#{screen.authentication.gauth.currentdevices(${principal.id})}"></p>
 
             <div class="card-text">
                 <script type="text/javascript">
                     function confirmDelete(button) {
-                        const deviceId = button.dataset.deviceId;
-                        console.log(`Confirm removal of account: ${deviceId}`);
-                        document.getElementById('confirmAccountId').value  = deviceId;
+                        document.getElementById('confirmAccountId').value = button.dataset.deviceId;
                         cas.openDialog('confirm-del-dialog');
                     }
-                    // onclick=""
-                    // $(this).parent('form').find('input[name=_eventId]').val('delete'); $(this).parent('form').submit();
+                    function confirmRegistration(button) {
+                        cas.openDialog('confirm-registration-dialog');
+                    }
                 </script>
                 
-                <div th:each="device: ${registeredDevices}" class="border-bottom py-4">
+                <div th:each="device: ${registeredDevices}" class="border-bottom pb-3">
                     <form th:name="${'form-' + device.id}" th:id="${'form-' + device.id}" method="post">
                         <h4 class="d-flex align-items-center">
                             <ul style="list-style: none">
@@ -73,12 +81,16 @@
                 </div>
             </div>
 
-            <form method="post" id="fm2" th:if="${gauthMultipleDeviceRegistrationEnabled && #bools.isTrue(#objects.nullSafe(mfaDeviceRegistrationEnabled,true))}">
+            <form method="post" id="fm2"
+                  th:if="${gauthMultipleDeviceRegistrationEnabled && #bools.isTrue(#objects.nullSafe(mfaDeviceRegistrationEnabled,true))}">
                 <p>
                 <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
                 <input type="hidden" name="_eventId_register" value="Register"/>
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                <button id="register" class="mdc-button mdc-button--raised btn btn-primary me-2" name="register" accesskey="r" value="Register">
+                <button id="register" class="mdc-button mdc-button--raised btn btn-primary me-2"
+                        type="button"
+                        onclick="confirmRegistration(this)"
+                        name="register" accesskey="r" value="Register">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
                 </button>
             </form>

@@ -18,7 +18,7 @@
         <div th:replace="~{fragments/gauthConfirmation :: gauthConfirmation (
             dialogId='confirm-reg-dialog',
             title='screen.authentication.gauth.confirm.title', description='screen.authentication.gauth.confirm.desc',
-            eventId='submit', registerAccount=true, actionButton='registerButton', actionButtonLabel='screen.welcome.button.register')}">
+            eventId='submit', confirmationType='create', actionButton='registerButton', actionButtonLabel='screen.welcome.button.register')}">
             <a href="fragments/gauthConfirmation.html">Confirm</a>
         </div>
         <!-- Confirmation Dialog -->

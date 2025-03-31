@@ -27,6 +27,7 @@ import org.apereo.cas.gauth.credential.RestGoogleAuthenticatorTokenCredentialRep
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorTokenRepositoryCleaner;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorAccountCheckRegistrationAction;
+import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorConfirmAccountRegistrationAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorDeleteAccountAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorPrepareLoginAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorSaveRegistrationAction;
@@ -430,6 +431,26 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new OneTimeTokenAccountConfirmSelectionRegistrationAction(googleAuthenticatorAccountRegistry))
                 .withId(CasWebflowConstants.ACTION_ID_GOOGLE_CONFIRM_SELECTION)
+                .build()
+                .get();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_CONFIRM_REGISTRATION)
+        public Action googleAccountConfirmRegistrationAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("googleAuthenticatorOneTimeTokenCredentialValidator")
+            final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> googleAuthenticatorOneTimeTokenCredentialValidator,
+            @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
+            final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new GoogleAuthenticatorConfirmAccountRegistrationAction(
+                    googleAuthenticatorAccountRegistry, googleAuthenticatorOneTimeTokenCredentialValidator))
+                .withId(CasWebflowConstants.ACTION_ID_GOOGLE_CONFIRM_REGISTRATION)
                 .build()
                 .get();
         }

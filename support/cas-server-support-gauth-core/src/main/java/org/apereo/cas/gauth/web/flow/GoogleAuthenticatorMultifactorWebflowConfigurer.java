@@ -98,11 +98,11 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
             confirmRegViewState.getEntryActionList().add(setPrincipalAction);
             confirmRegViewState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_GOOGLE_PREPARE_LOGIN));
 
-            createTransitionForState(confirmRegViewState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION);
+            createTransitionForState(confirmRegViewState, CasWebflowConstants.TRANSITION_ID_REGISTER,
+                CasWebflowConstants.STATE_ID_VIEW_REGISTRATION, CasWebflowConstants.ACTION_ID_GOOGLE_CONFIRM_REGISTRATION);
             createTransitionForState(confirmRegViewState, CasWebflowConstants.TRANSITION_ID_DELETE, "googleAccountDeleteDevice");
-            createTransitionForState(confirmRegViewState, CasWebflowConstants.TRANSITION_ID_SELECT,
-                CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM,
-                createEvaluateAction(CasWebflowConstants.ACTION_ID_GOOGLE_CONFIRM_SELECTION));
+            createTransitionForState(confirmRegViewState, CasWebflowConstants.TRANSITION_ID_SELECT, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM,
+                CasWebflowConstants.ACTION_ID_GOOGLE_CONFIRM_SELECTION);
 
             val deleteDeviceState = createActionState(flow, "googleAccountDeleteDevice", CasWebflowConstants.ACTION_ID_GOOGLE_ACCOUNT_DELETE_DEVICE);
             createTransitionForState(deleteDeviceState, CasWebflowConstants.STATE_ID_SUCCESS, acctRegCheckState.getId());
