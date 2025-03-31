@@ -487,6 +487,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             targetState, false, Map.of(), actions);
     }
 
+    @Override
     public Transition createTransitionForState(final TransitionableState state,
                                                final String criteriaOutcome,
                                                final String targetState,

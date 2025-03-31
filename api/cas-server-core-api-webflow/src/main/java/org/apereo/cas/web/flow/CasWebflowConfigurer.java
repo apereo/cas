@@ -527,6 +527,20 @@ public interface CasWebflowConfigurer extends Ordered, NamedObject {
     Transition createTransitionForState(TransitionableState state,
                                         String criteriaOutcome,
                                         String targetState,
+                                        String... actions);
+
+    /**
+     * Create transition for state transition.
+     *
+     * @param state           the state
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @param actions         the actions
+     * @return the transition
+     */
+    Transition createTransitionForState(TransitionableState state,
+                                        String criteriaOutcome,
+                                        String targetState,
                                         Action... actions);
 
     /**
