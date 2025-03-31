@@ -91,6 +91,7 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH)))
                 .url(properties.getUri())
                 .httpClient(httpClient)
+                .maximumRetryAttempts(1)
                 .build();
             response = HttpUtils.execute(exec);
             val status = HttpStatus.resolve(Objects.requireNonNull(response).getCode());
