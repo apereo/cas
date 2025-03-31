@@ -2071,6 +2071,12 @@ public interface CasWebflowConstants {
      * Action id 'googleAccountConfirmSelectionAction'.
      */
     String ACTION_ID_GOOGLE_CONFIRM_SELECTION = "googleAccountConfirmSelectionAction";
+
+    /**
+     * Action id 'googleAccountConfirmRegistrationAction'.
+     */
+    String ACTION_ID_GOOGLE_CONFIRM_REGISTRATION = "googleAccountConfirmRegistrationAction";
+
     /**
      * Action id 'googleAccountDeleteDeviceAction'.
      */

@@ -16,14 +16,14 @@
     <div th:fragment="gauthConfirmation">
         <div class="mdc-dialog" th:id="${dialogId}" role="alertdialog"
              aria-modal="true" aria-labelledby="notif-dialog-title" aria-describedby="notif-dialog-content">
-            <form method="post" id="fm1" class="fm-v clearfix">
+            <form method="post" th:id="${'fm-' + dialogId}" class="fm-v clearfix">
                 <div class="mdc-dialog__container">
                     <div class="mdc-dialog__surface">
                         <h2 class="mdc-dialog__title mt-lg-2" id="notif-dialog-title" th:utext="#{${title}}"> Confirm Account</h2>
                         <div class="mdc-dialog__content" id="notif-dialog-content">
                             <div class="mdc-typography--body1">
                                 <div class="banner banner-danger alert alert-danger banner-dismissible"
-                                     role="alert" style="display: none" id="errorPanel">
+                                     role="alert" style="display: none" th:id="${'errorPanel-' + dialogId}">
                                     <a href="#" class="close" onclick="$(this).parent().hide();" th:aria-label="#{screen.pm.button.close}">
                                         <span class="mdi mdi-close-box" aria-hidden="true"></span>
                                     </a>
@@ -66,7 +66,7 @@
                                                 <span class="visually-hidden">Toggle Token</span>
                                             </button>
                                         </div>
-                                        <div th:if="${registerAccount}">
+                                        <div th:if="${confirmationType == 'create'}">
                                             <br>
                                             <div class="d-flex">
                                                 <label for="accountName"
@@ -88,8 +88,56 @@
                                                 <script>document.getElementById("accountName").value = randomWord();</script>
                                             </div>
                                         </div>
-                                        <div th:unless="${registerAccount}">
+                                        <div th:if="${confirmationType == 'delete'}">
                                             <input type="hidden" id="confirmAccountId" name="accountId" />
+                                        </div>
+                                        <div th:if="${confirmationType == 'add'}">
+                                            <br/>
+                                            <div class="mdc-select mdc-select--outlined mdc-select--required mdc-menu-surface--fullwidth authn-source">
+                                                <input type="hidden" name="accountId">
+                                                <div class="mdc-select__anchor"
+                                                     role="button"
+                                                     aria-required="true"
+                                                     aria-haspopup="listbox"
+                                                     aria-expanded="false">
+                                                    <span class="mdc-line__ripple"></span>
+                                                    <span class="mdc-notched-outline">
+                                                            <span class="mdc-notched-outline__leading"></span>
+                                                            <span class="mdc-notched-outline__notch">
+                                                                <span id="outlined-select-label" class="mdc-floating-label"
+                                                                      th:utext="#{screen.account.mfadevices.title}">Registered Accounts</span>
+                                                            </span>
+                                                            <span class="mdc-notched-outline__trailing"></span>
+                                                        </span>
+                                                    <span class="mdc-select__selected-text-container">
+                                                            <span class="mdc-select__selected-text"/>
+                                                        </span>
+                                                    <span class="mdc-select__dropdown-icon">
+                                                            <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5"
+                                                                 focusable="false">
+                                                                <polygon class="mdc-select__dropdown-icon-inactive" stroke="none"
+                                                                         fill-rule="evenodd" points="7 10 12 15 17 10">
+                                                                </polygon>
+                                                                <polygon class="mdc-select__dropdown-icon-active" stroke="none"
+                                                                         fill-rule="evenodd" points="7 15 12 10 17 15">
+                                                                </polygon>
+                                                            </svg>
+                                                        </span>
+                                                    <span class="mdc-line-ripple"></span>
+                                                </div>
+
+                                                <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
+                                                    <ul class="mdc-list" role="listbox">
+                                                        <li th:each="account,iter : ${registeredDevices}" class="mdc-list-item "
+                                                            th:id="${account.id}"
+                                                            th:classappend="${iter.index == 0 ? 'mdc-list-item--selected' : ''}"
+                                                            th:data-value="${account.id}" role="option">
+                                                            <span class="mdc-list-item__ripple"></span>
+                                                            <span class="mdc-list-item__text" th:utext="${account.name}">Device</span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </section>
@@ -113,28 +161,26 @@
             <script type="text/javascript" th:inline="javascript">
                 /*<![CDATA[*/
 
-                let buttonId = /*[[${actionButton}]]*/;
-                const btn = document.getElementById(buttonId);
-                btn.addEventListener('click', event => {
-                    if (document.getElementById("fm1").reportValidity()) {
-                        let endpoint = $('#fm1').attr('action');
+                document.getElementById(/*[[${actionButton}]]*/).addEventListener('click', event => {
+                    if (document.getElementById("fm-" + /*[[${dialogId}]]*/).reportValidity()) {
+                        let endpoint = $('#fm-' + /*[[${dialogId}]]*/).attr('action');
                         event.preventDefault();
-                        $('#errorPanel').hide();
+                        $('#errorPanel-' + /*[[${dialogId}]]*/).hide();
 
-                        let formData = $("#fm1").serializeArray();
+                        let formData = $('#fm-' + /*[[${dialogId}]]*/).serializeArray();
                         formData.push({
                             name: "validate",
                             value: true
                         });
                         $.post(endpoint, formData)
                             .done((data, status, jqxhr) => {
-                                $('#errorPanel').hide();
-                                $("#fm1").submit();
+                                $('#errorPanel-' + /*[[${dialogId}]]*/).hide();
+                                $('#fm-' + /*[[${dialogId}]]*/).submit();
                             })
-                            .fail((data, status, jqxhr) => $("#errorPanel").show("fast", "swing"));
+                            .fail((data, status, jqxhr) => $('#errorPanel-' + /*[[${dialogId}]]*/).show("fast", "swing"));
                     }
                 }, false);
-                /*]]>*/
+                // /*]]>*/
             </script>
         </div>
     </div>

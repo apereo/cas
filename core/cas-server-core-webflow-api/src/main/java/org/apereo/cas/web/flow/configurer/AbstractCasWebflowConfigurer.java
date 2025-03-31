@@ -487,6 +487,15 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             targetState, false, Map.of(), actions);
     }
 
+    public Transition createTransitionForState(final TransitionableState state,
+                                               final String criteriaOutcome,
+                                               final String targetState,
+                                               final String... actions) {
+        val finalActions = Arrays.stream(actions).map(this::createEvaluateAction).toArray(Action[]::new);
+        return createTransitionForState(state, criteriaOutcome,
+            targetState, false, Map.of(), finalActions);
+    }
+
     @Override
     public Transition createTransitionForState(final Flow flow, final String stateId,
                                                final String criteriaOutcome,
