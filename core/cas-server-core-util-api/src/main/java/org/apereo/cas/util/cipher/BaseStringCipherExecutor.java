@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 
 /**
@@ -255,6 +256,9 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     }
 
     private String decryptAndVerify(final Serializable value, final Key encryptionKey, final Key signingKey) {
+        Objects.requireNonNull(value, () -> """
+            Value to verify/decrypt cannot be null. This is likely because keys used to sign and encrypt the value do not match.
+            """.stripIndent().trim());
         var encodedObj = value.toString();
         if (isEncryptionPossible(encryptionKey)) {
             LOGGER.trace("Attempting to decrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
@@ -269,6 +273,10 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
     }
 
     private String verifyAndDecrypt(final Serializable value, final Key encryptionKey, final Key signingKey) {
+        Objects.requireNonNull(value, () -> """
+            Value to verify/decrypt cannot be null. This is likely because keys used to sign and encrypt the value do not match.
+            """.stripIndent().trim());
+        
         val currentValue = value.toString().getBytes(StandardCharsets.UTF_8);
         val encoded = FunctionUtils.doIf(this.signingEnabled, () -> {
             LOGGER.trace("Attempting to verify signature based on signing key defined by [{}]", getSigningKeySetting());

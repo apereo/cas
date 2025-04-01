@@ -37,7 +37,10 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @SpringBootTest(classes = BaseGoogleAuthenticatorTests.SharedTestConfiguration.class,
-    properties = "cas.authn.mfa.gauth.json.location=file:${java.io.tmpdir}/repository.json")
+    properties = {
+        "cas.authn.mfa.gauth.crypto.enabled=false",
+        "cas.authn.mfa.gauth.json.location=file:${java.io.tmpdir}/repository.json"
+    })
 @Getter
 @Tag("MFAProvider")
 @ExtendWith(CasTestExtension.class)
@@ -54,7 +57,7 @@ class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeT
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
+
     @Test
     void verifyFails() throws Throwable {
         val resource = mock(Resource.class);

@@ -54,13 +54,19 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 .flatMap(List::stream)
                 .filter(ac -> ac.getId() == id)
                 .findFirst()
+                .map(this::decode)
                 .orElse(null);
         });
     }
 
     @Override
     public OneTimeTokenAccount get(final String username, final long id) {
-        return lock.tryLock(() -> get(username).stream().filter(ac -> ac.getId() == id).findFirst().orElse(null));
+        return lock.tryLock(() -> get(username)
+            .stream()
+            .filter(ac -> ac.getId() == id)
+            .findFirst()
+            .map(this::decode)
+            .orElse(null));
     }
 
     @Override
@@ -97,8 +103,11 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     public Collection<? extends OneTimeTokenAccount> load() {
         return lock.tryLock(() -> {
             try {
-                return readAccountsFromJsonRepository().values()
-                    .stream().flatMap(List::stream).collect(Collectors.toList());
+                return readAccountsFromJsonRepository()
+                    .values()
+                    .stream()
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
             } catch (final Exception e) {
                 LoggingUtils.error(LOGGER, e);
             }

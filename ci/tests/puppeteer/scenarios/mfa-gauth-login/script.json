@@ -8,7 +8,8 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=gauthCredentialRepository",
     "--management.endpoints.access.default=UNRESTRICTED",
-    
+
+    "--cas.authn.mfa.gauth.crypto.enabled=false",
     "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.authn.mfa.gauth.core.multiple-device-registration-enabled=true",
     "--cas.authn.mfa.gauth.id=GoogleAuth"

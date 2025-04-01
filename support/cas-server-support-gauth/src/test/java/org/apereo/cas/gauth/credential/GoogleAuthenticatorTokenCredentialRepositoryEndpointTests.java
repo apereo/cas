@@ -13,11 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link GoogleAuthenticatorTokenCredentialRepositoryEndpointTests}.
@@ -26,7 +27,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Import(BaseGoogleAuthenticatorTests.SharedTestConfiguration.class)
-@TestPropertySource(properties = "management.endpoint.gauthCredentialRepository.access=UNRESTRICTED")
+@TestPropertySource(properties = {
+    "cas.authn.mfa.gauth.crypto.enabled=false",
+    "management.endpoint.gauthCredentialRepository.access=UNRESTRICTED"
+})
 @Getter
 @Tag("MFAProvider")
 class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends AbstractCasEndpointTests {
@@ -61,7 +65,7 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
         googleAuthenticatorMultifactorAuthenticationProvider.getDeviceManager().removeRegisteredDevice(principal, device.getId());
         assertFalse(googleAuthenticatorMultifactorAuthenticationProvider.getDeviceManager().hasRegisteredDevices(principal));
     }
-    
+
     @Test
     void verifyOperation() {
         val acct = registry.create(UUID.randomUUID().toString());
@@ -95,9 +99,29 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
             .scratchCodes(acct.getScratchCodes())
             .name(UUID.randomUUID().toString())
             .build();
-        val request = new MockHttpServletRequest();
         val content = new GoogleAuthenticatorAccountSerializer(applicationContext).toString(toSave);
-        request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.CREATED, endpoint.importAccount(request).getStatusCode());
+        mockMvc.perform(post("/actuator/gauthCredentialRepository/import")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(content)
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isCreated());
+    }
+
+    @Test
+    void verifyUsernameAndDeviceId() throws Throwable {
+        val acct = registry.create(UUID.randomUUID().toString());
+        val toSave = GoogleAuthenticatorAccount.builder()
+            .username(acct.getUsername())
+            .secretKey(acct.getSecretKey())
+            .validationCode(acct.getValidationCode())
+            .scratchCodes(acct.getScratchCodes())
+            .name(UUID.randomUUID().toString())
+            .build();
+        mockMvc.perform(get("/actuator/gauthCredentialRepository/%s/%s".formatted(acct.getUsername(), acct.getId()))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk());
     }
 }

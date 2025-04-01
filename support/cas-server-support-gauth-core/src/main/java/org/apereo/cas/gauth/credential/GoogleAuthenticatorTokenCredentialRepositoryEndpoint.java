@@ -58,10 +58,28 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
      * @return the one time token account
      */
     @GetMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Load and get all accounts for the user", parameters = @Parameter(name = "username", required = true, description = "The username to look up"))
+    @Operation(summary = "Load and get all accounts for the user", parameters =
+        @Parameter(name = "username", required = true, description = "The username to look up"))
     public Collection<? extends OneTimeTokenAccount> get(
         @PathVariable final String username) {
         return repository.getObject().get(username);
+    }
+
+    /**
+     * Get one time token account.
+     *
+     * @param username the username
+     * @param deviceId the device id
+     * @return the one time token account
+     */
+    @GetMapping(path = "/{username}/{deviceId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Load and get all accounts for the user", parameters = {
+        @Parameter(name = "username", required = true, description = "The username to look up"),
+        @Parameter(name = "deviceId", required = true, description = "The device id to look up")
+    })
+    public OneTimeTokenAccount getByUserAndId(
+        @PathVariable final String username, @PathVariable final Long deviceId) {
+        return repository.getObject().get(username, deviceId);
     }
 
     /**
