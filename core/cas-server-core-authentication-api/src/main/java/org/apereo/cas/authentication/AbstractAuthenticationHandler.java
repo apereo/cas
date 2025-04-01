@@ -11,6 +11,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -61,6 +64,11 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      * and the lifecycle in which it can be invoked or activated.
      */
     private AuthenticationHandlerStates state = AuthenticationHandlerStates.ACTIVE;
+
+    /**
+     * Arbitrary runtime properties that may be used to configure the handler.
+     */
+    private Map<String, Serializable> tags = new LinkedHashMap<>();
 
     protected AbstractAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                             final PrincipalFactory principalFactory, final Integer order) {

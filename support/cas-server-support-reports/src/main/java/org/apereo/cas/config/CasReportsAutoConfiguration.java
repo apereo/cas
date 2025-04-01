@@ -396,6 +396,7 @@ public class CasReportsAutoConfiguration {
 
     @Configuration(value = "MultitenancyEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Multitenancy)
     static class MultitenancyEndpointsConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint

@@ -4,10 +4,13 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.util.NamedObject;
-
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.Ordered;
-
+import java.io.Serializable;
 import java.security.GeneralSecurityException;
+import java.util.Map;
 
 /**
  * An authentication handler authenticates a single credential. In many cases credentials are authenticated by
@@ -103,4 +106,33 @@ public interface AuthenticationHandler extends Ordered, NamedObject {
         return AuthenticationHandlerStates.ACTIVE;
     }
 
+    /**
+     * Gets properties.
+     *
+     * @return the properties
+     */
+    default Map<String, Serializable> getTags() {
+        return Map.of();
+    }
+
+    /**
+     * Is disposable handler?.
+     *
+     * @return true/false
+     */
+    default boolean isDisposable() {
+        return this instanceof DisposableBean
+            && BooleanUtils.isTrue((Boolean) getTags().getOrDefault(DisposableBean.class.getName(), Boolean.FALSE));
+    }
+
+    /**
+     * Mark disposable authentication handler.
+     *
+     * @return the authentication handler
+     */
+    @CanIgnoreReturnValue
+    default AuthenticationHandler markDisposable() {
+        getTags().put(DisposableBean.class.getName(), Boolean.TRUE);
+        return this;
+    }
 }

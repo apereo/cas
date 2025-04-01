@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -221,42 +222,50 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         val handlerSet = authenticationEventExecutionPlan.resolveAuthenticationHandlers(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);
 
-        for (val credential : credentials) {
-            LOGGER.debug("Attempting to authenticate credential [{}]", credential);
+        try {
+            for (val credential : credentials) {
+                LOGGER.debug("Attempting to authenticate credential [{}]", credential);
 
-            val itHandlers = handlerSet.iterator();
-            var proceedWithNextHandler = true;
-            while (proceedWithNextHandler && itHandlers.hasNext()) {
-                val handler = itHandlers.next();
-                if (handler.supports(credential)) {
-                    try {
-                        val resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
-                        LOGGER.debug("Attempting authentication of [{}] using [{}]", credential.getId(), handler.getName());
-                        authenticateAndResolvePrincipal(authenticationBuilder, credential, resolver, handler, transaction.getService());
+                val itHandlers = handlerSet.iterator();
+                var proceedWithNextHandler = true;
+                while (proceedWithNextHandler && itHandlers.hasNext()) {
+                    val handler = itHandlers.next();
+                    if (handler.supports(credential)) {
+                        try {
+                            val resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
+                            LOGGER.debug("Attempting authentication of [{}] using [{}]", credential.getId(), handler.getName());
+                            authenticateAndResolvePrincipal(authenticationBuilder, credential, resolver, handler, transaction.getService());
 
-                        val authnResult = authenticationBuilder.build();
-                        val executionResult = evaluateAuthenticationPolicies(authnResult, transaction, handlerSet);
-                        proceedWithNextHandler = !executionResult.isSuccess();
-                    } catch (final GeneralSecurityException e) {
-                        handleAuthenticationException(e, handler.getName(), authenticationBuilder);
-                        proceedWithNextHandler = shouldAuthenticationChainProceedOnFailure(transaction, e);
-                    } catch (final Exception e) {
-                        LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
-                            + "find authentication handler that supports [{}] of type [{}]. Examine the configuration to "
-                            + "ensure a method of authentication is defined and analyze CAS logs at DEBUG level to trace "
-                            + "the authentication event.", credential, credential.getClass().getSimpleName());
+                            val authnResult = authenticationBuilder.build();
+                            val executionResult = evaluateAuthenticationPolicies(authnResult, transaction, handlerSet);
+                            proceedWithNextHandler = !executionResult.isSuccess();
+                        } catch (final GeneralSecurityException e) {
+                            handleAuthenticationException(e, handler.getName(), authenticationBuilder);
+                            proceedWithNextHandler = shouldAuthenticationChainProceedOnFailure(transaction, e);
+                        } catch (final Exception e) {
+                            LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
+                                + "find authentication handler that supports [{}] of type [{}]. Examine the configuration to "
+                                + "ensure a method of authentication is defined and analyze CAS logs at DEBUG level to trace "
+                                + "the authentication event.", credential, credential.getClass().getSimpleName());
 
-                        handleAuthenticationException(e, handler.getName(), authenticationBuilder);
-                        proceedWithNextHandler = shouldAuthenticationChainProceedOnFailure(transaction, e);
+                            handleAuthenticationException(e, handler.getName(), authenticationBuilder);
+                            proceedWithNextHandler = shouldAuthenticationChainProceedOnFailure(transaction, e);
+                        }
+                    } else {
+                        LOGGER.debug("Authentication handler [{}] does not support the credential type [{}].",
+                            handler.getName(), credential);
                     }
-                } else {
-                    LOGGER.debug("Authentication handler [{}] does not support the credential type [{}].",
-                        handler.getName(), credential);
+                }
+            }
+            evaluateFinalAuthentication(authenticationBuilder, transaction, handlerSet);
+            return authenticationBuilder;
+        } finally {
+            for (val handler : handlerSet) {
+                if (handler.isDisposable() && handler instanceof final DisposableBean db) {
+                    db.destroy();
                 }
             }
         }
-        evaluateFinalAuthentication(authenticationBuilder, transaction, handlerSet);
-        return authenticationBuilder;
     }
 
     protected void evaluateFinalAuthentication(final AuthenticationBuilder builder,
