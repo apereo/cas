@@ -148,7 +148,7 @@ log4j = "2.24.3"
 logback = "1.5.18"
 logbackAccess = "1.5.18"
 loki = "0.9.32"
-lombok = "1.18.36"
+lombok = "1.18.38"
 lucene = "10.1.0"
 mailgun = "1.1.5"
 mailjet = "5.2.6"
@@ -491,6 +491,7 @@ logback-access = { module = "ch.qos.logback:logback-access", version.ref = "logb
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 logback-core = { module = "ch.qos.logback:logback-core", version.ref = "logback" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp3" }
+project-lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 lucene-core = { module = "org.apache.lucene:lucene-core", version.ref = "lucene" }
 lucene-queryparser = { module = "org.apache.lucene:lucene-queryparser", version.ref = "lucene" }
 lucene-analysis-common = { module = "org.apache.lucene:lucene-analysis-common", version.ref = "lucene" }

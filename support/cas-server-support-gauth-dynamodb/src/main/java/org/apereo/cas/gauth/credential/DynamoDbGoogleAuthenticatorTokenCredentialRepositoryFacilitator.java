@@ -22,6 +22,7 @@ import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +50,9 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
         val name = item.get(ColumnNames.NAME.getColumnName()).s();
         val secret = item.get(ColumnNames.SECRET.getColumnName()).s();
         val scratchCodes = item.get(ColumnNames.SCRATCH_CODES.getColumnName()).ss();
-        val properties = item.get(ColumnNames.PROPERTIES.getColumnName()).ss();
+        val properties = item.containsKey(ColumnNames.PROPERTIES.getColumnName())
+            ? item.get(ColumnNames.PROPERTIES.getColumnName()).ss()
+            : new ArrayList<>();
         val registrationTime = DateTimeUtils.zonedDateTimeOf(Long.parseLong(item.get(ColumnNames.REGISTRATION_DATE.getColumnName()).n()));
         return GoogleAuthenticatorAccount.builder()
             .id(id)
@@ -70,8 +73,10 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
         values.put(ColumnNames.SECRET.getColumnName(), AttributeValue.builder().s(String.valueOf(record.getSecretKey())).build());
         values.put(ColumnNames.SCRATCH_CODES.getColumnName(), AttributeValue.builder()
             .ss(record.getScratchCodes().stream().map(String::valueOf).collect(Collectors.toList())).build());
-        values.put(ColumnNames.PROPERTIES.getColumnName(), AttributeValue.builder()
-            .ss(record.getProperties().stream().map(String::valueOf).collect(Collectors.toList())).build());
+
+        if (!record.getProperties().isEmpty()) {
+            values.put(ColumnNames.PROPERTIES.getColumnName(), AttributeValue.builder().ss(record.getProperties()).build());
+        }
         val time = record.getRegistrationDate().toInstant().toEpochMilli();
         values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
         values.put(ColumnNames.REGISTRATION_DATE.getColumnName(),
