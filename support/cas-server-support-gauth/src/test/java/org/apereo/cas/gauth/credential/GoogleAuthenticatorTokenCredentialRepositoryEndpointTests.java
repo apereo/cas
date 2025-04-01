@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import java.util.UUID;
@@ -67,7 +66,7 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
     }
 
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val acct = registry.create(UUID.randomUUID().toString());
         val toSave = GoogleAuthenticatorAccount.builder()
             .username(acct.getUsername())
@@ -77,16 +76,39 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
             .name(UUID.randomUUID().toString())
             .build();
         registry.save(toSave);
-        assertNotNull(endpoint.get(acct.getUsername()));
-        assertFalse(endpoint.load().isEmpty());
 
-        val entity = endpoint.exportAccounts();
-        assertEquals(HttpStatus.OK, entity.getStatusCode());
+        mockMvc.perform(get("/actuator/gauthCredentialRepository/%s".formatted(acct.getUsername()))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk());
 
-        endpoint.delete(acct.getUsername());
-        assertTrue(endpoint.get(acct.getUsername()).isEmpty());
-        endpoint.deleteAll();
-        assertTrue(endpoint.load().isEmpty());
+        mockMvc.perform(get("/actuator/gauthCredentialRepository")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk());
+
+        mockMvc.perform(get("/actuator/gauthCredentialRepository/export")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk());
+
+
+        mockMvc.perform(delete("/actuator/gauthCredentialRepository/%s".formatted(acct.getUsername()))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk());
+        assertTrue(registry.get(acct.getUsername()).isEmpty());
+
+        mockMvc.perform(delete("/actuator/gauthCredentialRepository")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk());
+        assertTrue(registry.load().isEmpty());
     }
 
     @Test
@@ -111,7 +133,7 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
     @Test
     void verifyUsernameAndDeviceId() throws Throwable {
         val acct = registry.create(UUID.randomUUID().toString());
-        val toSave = GoogleAuthenticatorAccount.builder()
+        GoogleAuthenticatorAccount.builder()
             .username(acct.getUsername())
             .secretKey(acct.getSecretKey())
             .validationCode(acct.getValidationCode())
