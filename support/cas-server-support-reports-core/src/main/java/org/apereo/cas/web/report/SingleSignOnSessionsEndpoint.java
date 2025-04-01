@@ -74,6 +74,14 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor;
 
+    /**
+     * Instantiates a new Single sign on sessions endpoint.
+     *
+     * @param ticketRegistry              the ticket registry
+     * @param applicationContext          the application context
+     * @param casProperties               the cas properties
+     * @param singleLogoutRequestExecutor the single logout request executor
+     */
     public SingleSignOnSessionsEndpoint(
         final ObjectProvider<TicketRegistry> ticketRegistry,
         final ConfigurableApplicationContext applicationContext,
@@ -102,6 +110,8 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
      * Gets sso sessions for user.
      *
      * @param username the username
+     * @param request  the request
+     * @param response the response
      * @return the sso sessions for user
      */
     @DeleteMapping(path = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -219,7 +229,18 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
     @Getter
     enum SsoSessionReportOptions {
 
-        ALL("ALL"), PROXIED("PROXIED"), DIRECT("DIRECT");
+        /**
+         * All sso session report options.
+         */
+        ALL("ALL"),
+        /**
+         * Proxied sso session report options.
+         */
+        PROXIED("PROXIED"),
+        /**
+         * Direct sso session report options.
+         */
+        DIRECT("DIRECT");
 
         private final String type;
     }
@@ -229,19 +250,61 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @Getter
     enum SsoSessionAttributeKeys {
+        /**
+         * Authenticated principal sso session attribute keys.
+         */
         AUTHENTICATED_PRINCIPAL("authenticated_principal"),
+        /**
+         * Authentication date sso session attribute keys.
+         */
         AUTHENTICATION_DATE("authentication_date"),
+        /**
+         * Creation date formatted sso session attribute keys.
+         */
         CREATION_DATE_FORMATTED("creation_date_formatted"),
+        /**
+         * Last used date formatted sso session attribute keys.
+         */
         LAST_USED_DATE_FORMATTED("last_used_date_formatted"),
+        /**
+         * Authentication date formatted sso session attribute keys.
+         */
         AUTHENTICATION_DATE_FORMATTED("authentication_date_formatted"),
+        /**
+         * Ticket granting ticket id sso session attribute keys.
+         */
         TICKET_GRANTING_TICKET_ID("ticket_granting_ticket"),
+        /**
+         * Authentication attributes sso session attribute keys.
+         */
         AUTHENTICATION_ATTRIBUTES("authentication_attributes"),
+        /**
+         * Principal attributes sso session attribute keys.
+         */
         PRINCIPAL_ATTRIBUTES("principal_attributes"),
+        /**
+         * Proxied by sso session attribute keys.
+         */
         PROXIED_BY("proxied_by"),
+        /**
+         * Authenticated services sso session attribute keys.
+         */
         AUTHENTICATED_SERVICES("authenticated_services"),
+        /**
+         * Is proxied sso session attribute keys.
+         */
         IS_PROXIED("is_proxied"),
+        /**
+         * Remember me sso session attribute keys.
+         */
         REMEMBER_ME("remember_me"),
+        /**
+         * Expiration policy sso session attribute keys.
+         */
         EXPIRATION_POLICY("expiration_policy"),
+        /**
+         * Number of uses sso session attribute keys.
+         */
         NUMBER_OF_USES("number_of_uses");
 
         private final String attributeKey;
@@ -256,6 +319,9 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
         }
     }
 
+    /**
+     * The type Sso sessions request.
+     */
     @Getter
     @Setter
     @AllArgsConstructor

@@ -61,7 +61,7 @@ public class GoogleAuthenticatorConfirmAccountRegistrationAction extends BaseCas
 
         if (!isAccountRegistrationVerified(requestContext, account)) {
             LOGGER.warn("Account registration is not verified for [{}]", account.getId());
-            throw new FailedLoginException("Unauthorized account registration attempt " + account.getId());
+            throw new FailedLoginException("Unauthorized account registration attempt for id " + account.getId());
         }
 
         accountRegistrationUnverified(requestContext, account);

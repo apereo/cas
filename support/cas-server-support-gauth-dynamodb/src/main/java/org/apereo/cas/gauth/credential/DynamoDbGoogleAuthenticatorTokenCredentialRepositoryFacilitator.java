@@ -52,7 +52,7 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
         val scratchCodes = item.get(ColumnNames.SCRATCH_CODES.getColumnName()).ss();
         val properties = item.containsKey(ColumnNames.PROPERTIES.getColumnName())
             ? item.get(ColumnNames.PROPERTIES.getColumnName()).ss()
-            : new ArrayList<>();
+            : new ArrayList<String>();
         val registrationTime = DateTimeUtils.zonedDateTimeOf(Long.parseLong(item.get(ColumnNames.REGISTRATION_DATE.getColumnName()).n()));
         return GoogleAuthenticatorAccount.builder()
             .id(id)

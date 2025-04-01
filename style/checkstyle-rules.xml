@@ -64,12 +64,13 @@
         <module name="JavadocVariable">
             <property name="id" value="javadocForAllPublicFields"/>
             <property name="severity" value="error"/>
-            <property name="scope" value="public"/>
+            <property name="accessModifiers" value="public"/>
             <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER|casProperties"/>
         </module>
         <module name="JavadocVariable">
             <property name="id" value="javadocForPropertyFields"/>
             <property name="severity" value="error"/>
+            <property name="accessModifiers" value="public"/>
             <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER"/>
         </module>
         <module name="JavadocStyle">

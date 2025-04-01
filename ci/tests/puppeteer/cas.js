@@ -250,10 +250,19 @@ exports.loginWith = async (page, user = "casuser", password = "Mellon",
     return undefined;
 };
 
-exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
+exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser", deviceId = undefined) => {
     await this.log(`Fetching Scratch codes for ${user}...`);
-    return this.doGet(`https://localhost:8443/cas/actuator/gauthCredentialRepository/${user}`,
-        (res) => JSON.stringify(res.data[0].scratchCodes[0]),
+    let url = `https://localhost:8443/cas/actuator/gauthCredentialRepository/${user}`;
+    if (deviceId !== undefined) {
+        url += `/${deviceId}`;
+    }
+    return this.doGet(url,
+        (res) => {
+            if (deviceId !== undefined) {
+                return JSON.stringify(res.data.scratchCodes[0]);
+            }
+            return JSON.stringify(res.data[0].scratchCodes[0]);
+        },
         (error) => {
             throw error;
         }, {

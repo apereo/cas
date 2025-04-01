@@ -180,10 +180,25 @@ public class DynamoDbServiceRegistryFacilitator {
     @Getter
     @RequiredArgsConstructor
     private enum ColumnNames {
+        /**
+         * Id column names.
+         */
         ID("id"),
+        /**
+         * Name column names.
+         */
         NAME("name"),
+        /**
+         * Description column names.
+         */
         DESCRIPTION("description"),
+        /**
+         * Service id column names.
+         */
         SERVICE_ID("serviceId"),
+        /**
+         * Encoded column names.
+         */
         ENCODED("encoded");
 
         private final String columnName;

@@ -232,10 +232,28 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
         private Map<String, Object> meta;
     }
 
+    /**
+     * Enum representing the possible authorization effect types returned by Cerbos API.
+     */
     private enum Actions {
+        /**
+         * Indicates that the effect is not specified or unknown.
+         */
         EFFECT_UNSPECIFIED,
+
+        /**
+         * Indicates that the action is allowed.
+         */
         EFFECT_ALLOW,
+
+        /**
+         * Indicates that the action is denied.
+         */
         EFFECT_DENY,
+
+        /**
+         * Indicates that no policy matched the request.
+         */
         EFFECT_NO_MATCH
     }
 }

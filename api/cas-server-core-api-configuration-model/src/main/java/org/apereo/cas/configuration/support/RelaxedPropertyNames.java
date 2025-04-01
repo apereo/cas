@@ -75,14 +75,19 @@ public class RelaxedPropertyNames implements Iterable<String> {
      */
     private enum Variation {
 
+        /**
+         * The None.
+         */
         NONE {
             @Override
             public String apply(final String value) {
                 return value;
             }
-
         },
 
+        /**
+         * The Lowercase.
+         */
         LOWERCASE {
             @Override
             public String apply(final String value) {
@@ -91,6 +96,9 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
         },
 
+        /**
+         * The Uppercase.
+         */
         UPPERCASE {
             @Override
             public String apply(final String value) {
@@ -99,6 +107,12 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
         };
 
+        /**
+         * Apply variation.
+         *
+         * @param value the value
+         * @return the string
+         */
         public abstract String apply(String value);
 
     }

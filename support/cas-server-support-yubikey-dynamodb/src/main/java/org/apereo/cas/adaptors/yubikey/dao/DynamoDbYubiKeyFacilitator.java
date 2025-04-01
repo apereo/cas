@@ -206,7 +206,18 @@ public class DynamoDbYubiKeyFacilitator {
     @Getter
     @RequiredArgsConstructor
     private enum ColumnNames {
-        ID("id"), USERNAME("username"), DEVICE_IDENTIFIERS("deviceIdentifiers");
+        /**
+         * Id column names.
+         */
+        ID("id"),
+        /**
+         * Username column names.
+         */
+        USERNAME("username"),
+        /**
+         * Device identifiers column names.
+         */
+        DEVICE_IDENTIFIERS("deviceIdentifiers");
 
         private final String columnName;
     }
