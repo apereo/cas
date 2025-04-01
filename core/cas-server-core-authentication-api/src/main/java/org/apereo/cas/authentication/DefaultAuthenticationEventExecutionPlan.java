@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.handler.TenantAuthenticationHandlerBuilder;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.multitenancy.TenantExtractor;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.Getter;
@@ -38,6 +38,8 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 @Accessors(chain = true)
 public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEventExecutionPlan {
+    private final List<TenantAuthenticationHandlerBuilder> tenantAuthenticationHandlerBuilders = new ArrayList<>();
+
     private final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>();
 
     private final List<AuthenticationPostProcessor> authenticationPostProcessors = new ArrayList<>();
@@ -60,6 +62,14 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     @Override
     public boolean registerAuthenticationHandler(final AuthenticationHandler handler) {
         return registerAuthenticationHandlerWithPrincipalResolver(handler, null);
+    }
+
+    @Override
+    public void registerTenantAuthenticationHandlerBuilder(final TenantAuthenticationHandlerBuilder handler) {
+        if (BeanSupplier.isNotProxy(handler)) {
+            LOGGER.trace("Registering tenant authentication builder [{}] into the execution plan", handler);
+            tenantAuthenticationHandlerBuilders.add(handler);
+        }
     }
 
     @Override
@@ -214,9 +224,27 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
                 }
                 return true;
             })
-            .toArray(AuthenticationHandler[]::new);
-        AnnotationAwareOrderComparator.sortIfNecessary(handlers);
-        return new LinkedHashSet<>(CollectionUtils.wrapList(handlers));
+            .collect(Collectors.toList());
+
+        if (StringUtils.isNotBlank(clientInfo.getTenant())) {
+            val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(clientInfo.getTenant()).orElseThrow();
+            if (!tenantDefinition.getProperties().isEmpty()) {
+                getTenantAuthenticationHandlerBuilders()
+                    .stream()
+                    .map(builder -> builder.build(tenantDefinition))
+                    .forEach(handlers::addAll);
+            }
+        }
+
+        AnnotationAwareOrderComparator.sort(handlers);
+        return Set.copyOf(handlers);
+    }
+
+    @Override
+    public Collection<TenantAuthenticationHandlerBuilder> getTenantAuthenticationHandlerBuilders() {
+        val list = new ArrayList<>(this.tenantAuthenticationHandlerBuilders);
+        AnnotationAwareOrderComparator.sort(list);
+        return list;
     }
 
     @Override

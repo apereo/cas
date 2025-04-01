@@ -20,6 +20,7 @@ dependencies {
         implementation libraries.springsecurityconfig
         implementation libraries.springsecurityweb
 
+        implementation project(":core:cas-server-core-multitenancy")
         testImplementation project(":core:cas-server-core-services")
         testImplementation project(":core:cas-server-core-tickets")
         testImplementation project(":core:cas-server-core-web")

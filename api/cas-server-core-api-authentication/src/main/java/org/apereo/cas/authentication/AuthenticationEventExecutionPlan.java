@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.handler.TenantAuthenticationHandlerBuilder;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.multitenancy.TenantExtractor;
 
@@ -33,6 +34,13 @@ public interface AuthenticationEventExecutionPlan {
      * @return true/false
      */
     boolean registerAuthenticationHandler(AuthenticationHandler handler);
+
+    /**
+     * Register tenant authentication handler builder.
+     *
+     * @param handler the handler
+     */
+    void registerTenantAuthenticationHandlerBuilder(TenantAuthenticationHandlerBuilder handler);
 
     /**
      * Register authentication handlers.
@@ -146,6 +154,13 @@ public interface AuthenticationEventExecutionPlan {
      * @return the authentication handlers
      */
     Set<AuthenticationHandler> getAuthenticationHandlers();
+
+    /**
+     * Gets tenant authentication handler builders.
+     *
+     * @return the tenant authentication handler builders
+     */
+    Collection<TenantAuthenticationHandlerBuilder> getTenantAuthenticationHandlerBuilders();
 
     /**
      * Gets authentication handlers by a filter.
