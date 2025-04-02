@@ -211,7 +211,7 @@ layout: null
     *   [Open Policy Agent](/cas/{{ version }}/services/Service-Access-Strategy-OpenPolicyAgent.html)
     *   [AWS Verified Permissions](/cas/{{ version }}/services/Service-Access-Strategy-AWS-VerifiedPermissions.html)
 
-* [Multitenancy](#multitenancy
+* [Multitenancy](#multitenancy)
     *   [Overview](/cas/{{ version }}/multitenancy/Multitenancy-Overview.html)
 
 * [Delegation & Proxying](#delegationauthn)
