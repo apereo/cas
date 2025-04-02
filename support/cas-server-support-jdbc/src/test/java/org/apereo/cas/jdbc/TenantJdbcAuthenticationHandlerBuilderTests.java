@@ -2,7 +2,6 @@ package org.apereo.cas.jdbc;
 
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.multitenancy.TenantsManager;
 import org.apereo.cas.test.CasTestExtension;
