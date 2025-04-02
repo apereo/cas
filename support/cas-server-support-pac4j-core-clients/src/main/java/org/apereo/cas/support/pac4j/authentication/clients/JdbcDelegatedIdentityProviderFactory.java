@@ -59,7 +59,7 @@ public class JdbcDelegatedIdentityProviderFactory extends BaseDelegatedIdentityP
         }
 
         if (!properties.isEmpty()) {
-            val bound = CasConfigurationProperties.bindFrom(getClass().getSimpleName(), properties);
+            val bound = CasConfigurationProperties.bindFrom(properties);
             if (bound.isPresent()) {
                 return buildAllIdentityProviders(bound.get());
             }

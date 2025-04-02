@@ -23,9 +23,5 @@ public class TenantEmailCommunicationPolicy implements Serializable {
     @Serial
     private static final long serialVersionUID = 8552529921936294263L;
 
-    private String host;
-    private int port;
-    private String username;
-    private String password;
     private String from;
 }

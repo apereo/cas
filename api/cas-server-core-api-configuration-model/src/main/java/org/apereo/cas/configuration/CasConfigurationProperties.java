@@ -56,6 +56,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -123,7 +124,7 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private HeimdallAuthorizationProperties heimdall = new HeimdallAuthorizationProperties();
-   
+
     /**
      * ACME functionality.
      */
@@ -321,7 +322,7 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private DatabaseProperties jdbc = new DatabaseProperties();
-    
+
     /**
      * Integration settings for amazon sts.
      */
@@ -403,13 +404,27 @@ public class CasConfigurationProperties implements Serializable {
     /**
      * Bind from map.
      *
-     * @param source  the source
      * @param payload the payload
      * @return the optional
      */
-    public static Optional<CasConfigurationProperties> bindFrom(final String source, final Map<String, Object> payload) {
-        val binder = new Binder(ConfigurationPropertySources.from(new MapPropertySource(source, payload)));
-        val bound = binder.bind(CasConfigurationProperties.PREFIX, Bindable.of(CasConfigurationProperties.class));
+    public static Optional<CasConfigurationProperties> bindFrom(final Map<String, Object> payload) {
+        return bindFrom(payload, CasConfigurationProperties.class);
+    }
+
+    /**
+     * Bind from map.
+     *
+     * @param <T>     the type parameter
+     * @param payload the payload
+     * @param clazz   the clazz
+     * @return the optional
+     */
+    public static <T> Optional<T> bindFrom(final Map<String, Object> payload,
+                                           final Class<T> clazz) {
+        val annotation = clazz.getAnnotation(ConfigurationProperties.class);
+        val name = StringUtils.defaultIfBlank(annotation.prefix(), annotation.value());
+        val binder = new Binder(ConfigurationPropertySources.from(new MapPropertySource(clazz.getSimpleName(), payload)));
+        val bound = binder.bind(name, Bindable.of(clazz));
         return bound.isBound() ? Optional.of(bound.get()) : Optional.empty();
     }
 }

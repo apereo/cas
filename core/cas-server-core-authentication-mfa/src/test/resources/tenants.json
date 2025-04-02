@@ -5,14 +5,9 @@
       "@class": "org.apereo.cas.multitenancy.TenantDefinition",
       "id": "shire",
       "description": "Example tenant",
-      "multifactorAuthenticationPolicy": {
-        "@class": "org.apereo.cas.multitenancy.DefaultTenantMultifactorAuthenticationPolicy",
-        "globalProviderIds": [
-          "java.util.HashSet",
-          [
-            "mfa-dummy"
-          ]
-        ]
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.authn.mfa.triggers.global.global-provider-id": "mfa-dummy"
       }
     }
   ]
