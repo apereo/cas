@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Import;
     CasJdbcQueryEncodeAuthenticationConfiguration.class,
     CasJdbcSearchAuthenticationConfiguration.class,
     CasJdbcStoredProcedureAuthenticationConfiguration.class,
+    CasJdbcAuthenticationMultitenancyConfiguration.class,
     CasPersonDirectoryJdbcConfiguration.class
 })
 public class CasJdbcAuthenticationAutoConfiguration {

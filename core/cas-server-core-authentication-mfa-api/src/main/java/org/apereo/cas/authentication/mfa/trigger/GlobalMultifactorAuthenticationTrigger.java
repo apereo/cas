@@ -93,8 +93,7 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
 
     protected Set<String> findGlobalProviderIds(final HttpServletRequest httpServletRequest) {
         return tenantExtractor.extract(httpServletRequest)
-            .map(TenantDefinition::getProperties)
-            .flatMap(CasConfigurationProperties::bindFrom)
+            .flatMap(TenantDefinition::bindProperties)
             .map(properties -> {
                 val globalProviderId = properties.getAuthn().getMfa().getTriggers().getGlobal().getGlobalProviderId();
                 return StringUtils.commaDelimitedListToSet(globalProviderId);

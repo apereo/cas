@@ -22,7 +22,7 @@ public interface TenantAuthenticationHandlerBuilder {
      */
     default List<? extends AuthenticationHandler> build(final TenantDefinition tenantDefinition) {
         if (!tenantDefinition.getProperties().isEmpty()) {
-            val casProperties = CasConfigurationProperties.bindFrom(tenantDefinition.getProperties()).orElseThrow();
+            val casProperties = tenantDefinition.bindProperties().orElseThrow();
             return buildInternal(tenantDefinition, casProperties);
         }
         return List.of();

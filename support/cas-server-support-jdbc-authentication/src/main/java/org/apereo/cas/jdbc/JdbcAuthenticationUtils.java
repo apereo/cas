@@ -14,7 +14,6 @@ import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthentica
 import org.apereo.cas.configuration.model.support.jdbc.authn.SearchJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.ServicesManager;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -133,7 +132,7 @@ public class JdbcAuthenticationUtils {
                                                                  final PrincipalFactory jdbcPrincipalFactory,
                                                                  final ServicesManager servicesManager,
                                                                  final PasswordPolicyContext queryPasswordPolicyConfiguration) {
-        
+
         val handler = new QueryDatabaseAuthenticationHandler(properties, servicesManager, jdbcPrincipalFactory, JpaBeans.newDataSource(properties));
         configureJdbcAuthenticationHandler(handler, queryPasswordPolicyConfiguration, properties, applicationContext);
         return handler;
@@ -179,5 +178,35 @@ public class JdbcAuthenticationUtils {
             jdbcPrincipalFactory, JpaBeans.newDataSource(properties));
         configureJdbcAuthenticationHandler(handler, searchModePasswordPolicyConfiguration, properties, applicationContext);
         return handler;
+    }
+
+    /**
+     * New authentication handler.
+     *
+     * @param properties            the properties
+     * @param applicationContext    the application context
+     * @param jdbcPrincipalFactory  the jdbc principal factory
+     * @param servicesManager       the services manager
+     * @param passwordPolicyContext the search mode password policy configuration
+     * @return the authentication handler
+     */
+    public static AuthenticationHandler newAuthenticationHandler(final BaseJdbcAuthenticationProperties properties,
+                                                                 final ConfigurableApplicationContext applicationContext,
+                                                                 final PrincipalFactory jdbcPrincipalFactory,
+                                                                 final ServicesManager servicesManager,
+                                                                 final PasswordPolicyContext passwordPolicyContext) {
+        return switch (properties) {
+            case QueryJdbcAuthenticationProperties query -> newAuthenticationHandler(query, applicationContext, jdbcPrincipalFactory,
+                servicesManager, passwordPolicyContext);
+            case QueryEncodeJdbcAuthenticationProperties queryEncode -> newAuthenticationHandler(queryEncode, applicationContext, jdbcPrincipalFactory,
+                servicesManager, passwordPolicyContext);
+            case ProcedureJdbcAuthenticationProperties procedure -> newAuthenticationHandler(procedure, applicationContext, jdbcPrincipalFactory,
+                servicesManager, passwordPolicyContext);
+            case SearchJdbcAuthenticationProperties search -> newAuthenticationHandler(search, applicationContext, jdbcPrincipalFactory,
+                servicesManager, passwordPolicyContext);
+            case BindJdbcAuthenticationProperties bind -> newAuthenticationHandler(bind, applicationContext, jdbcPrincipalFactory,
+                servicesManager, passwordPolicyContext);
+            default -> throw new IllegalStateException("Unexpected value: " + properties.getClass().getName());
+        };
     }
 }
