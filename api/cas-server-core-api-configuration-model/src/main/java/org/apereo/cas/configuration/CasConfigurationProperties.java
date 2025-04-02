@@ -421,10 +421,15 @@ public class CasConfigurationProperties implements Serializable {
      */
     public static <T> Optional<T> bindFrom(final Map<String, Object> payload,
                                            final Class<T> clazz) {
-        val annotation = clazz.getAnnotation(ConfigurationProperties.class);
-        val name = StringUtils.defaultIfBlank(annotation.prefix(), annotation.value());
-        val binder = new Binder(ConfigurationPropertySources.from(new MapPropertySource(clazz.getSimpleName(), payload)));
-        val bound = binder.bind(name, Bindable.of(clazz));
-        return bound.isBound() ? Optional.of(bound.get()) : Optional.empty();
+        if (!payload.isEmpty()) {
+            val annotation = clazz.getAnnotation(ConfigurationProperties.class);
+            val name = StringUtils.defaultIfBlank(annotation.prefix(), annotation.value());
+            val binder = new Binder(ConfigurationPropertySources.from(new MapPropertySource(clazz.getSimpleName(), payload)));
+            val bound = binder.bind(name, Bindable.of(clazz));
+            if (bound.isBound()) {
+                return Optional.of(bound.get());
+            }
+        }
+        return Optional.empty();
     }
 }

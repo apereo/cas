@@ -16,3 +16,8 @@ If multiple iterations are used, the bytecode hash of the first iteration is reh
 is converted to hex before comparing it to the database value.
 
 {% include_cached casproperties.html properties="cas.authn.jdbc.encode" %}
+
+## Multitenancy
+
+Configuration settings for database authentication can be specified in a multitenant environment.
+Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.

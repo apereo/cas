@@ -1,0 +1,38 @@
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.authn.jdbc.procedure[0].procedure-name": "sp_authenticate",
+        "cas.authn.jdbc.procedure[0].user": "postgres",
+        "cas.authn.jdbc.procedure[0].password": "password",
+        "cas.authn.jdbc.procedure[0].driver-class": "org.postgresql.Driver",
+        "cas.authn.jdbc.procedure[0].url": "jdbc:postgresql://localhost:5432/users",
+        "cas.authn.jdbc.procedure[0].dialect": "org.hibernate.dialect.PostgreSQLDialect",
+        "cas.authn.jdbc.bind[0].name": "BindHandler",
+        "cas.authn.jdbc.bind[0].order": "1000",
+        "cas.authn.jdbc.bind[0].driver-class": "org.hsqldb.jdbcDriver",
+        "cas.authn.jdbc.bind[0].url": "jdbc:hsqldb:mem:cas-hsql-authn-db",
+        "cas.authn.jdbc.bind[0].dialect": "org.hibernate.dialect.HSQLDialect",
+        "cas.authn.jdbc.encode[0].sql": "SELECT * FROM users WHERE uid=?",
+        "cas.authn.jdbc.query[0].password-encoder.type": "DEFAULT",
+        "cas.authn.jdbc.query[0].password-encoder.encoding-algorithm": "SHA-256",
+        "cas.authn.jdbc.query[0].sql": "SELECT * FROM users WHERE uid=?",
+        "cas.authn.jdbc.query[0].field-password": "psw",
+        "cas.authn.jdbc.query[0].credential-criteria": ".*",
+        "cas.authn.jdbc.query[0].user": "sa",
+        "cas.authn.jdbc.query[0].password": "",
+        "cas.authn.jdbc.query[0].driver-class": "org.hsqldb.jdbcDriver",
+        "cas.authn.jdbc.query[0].url": "jdbc:hsqldb:mem:cas-hsql-authn-db",
+        "cas.authn.jdbc.query[0].dialect": "org.hibernate.dialect.HSQLDialect",
+        "cas.authn.jdbc.query[0].field-user": "uid",
+        "cas.authn.jdbc.query[0].field-password": "psw",
+        "cas.authn.jdbc.query[0].table-users": "custom_users_table",
+        "cas.authn.jdbc.search[0].order": "1000"
+      }
+    }
+  ]
+]

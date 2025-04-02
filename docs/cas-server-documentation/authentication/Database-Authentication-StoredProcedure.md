@@ -32,3 +32,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 ```
+
+## Multitenancy
+
+Configuration settings for database authentication can be specified in a multitenant environment.
+Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.

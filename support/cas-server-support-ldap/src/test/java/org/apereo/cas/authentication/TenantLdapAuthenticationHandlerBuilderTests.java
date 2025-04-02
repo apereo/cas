@@ -15,19 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.context.TestPropertySource;
-
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.awaitility.Awaitility.*;
 
 /**
  * This is {@link TenantLdapAuthenticationHandlerBuilderTests}.
@@ -57,7 +45,7 @@ class TenantLdapAuthenticationHandlerBuilderTests {
         request.setLocalAddr("185.88.151.11");
         request.setContextPath("/tenants/shire/login");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-        
+
         val credential = new UsernamePasswordCredential("admin", "password");
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
             .newTransaction(credential);

@@ -1,6 +1,5 @@
 package org.apereo.cas.notifications.mail;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.multitenancy.TenantCommunicationPolicy;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantEmailCommunicationPolicy;
@@ -24,7 +23,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import jakarta.mail.internet.MimeMessage;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -142,8 +140,7 @@ public class DefaultEmailSender implements EmailSender {
         final EmailMessageRequest emailMessageRequest) {
         return tenantExtractor.getTenantsManager()
             .findTenant(emailMessageRequest.getTenant())
-            .map(TenantDefinition::getProperties)
-            .flatMap(props -> CasConfigurationProperties.bindFrom(props, MailProperties.class))
+            .flatMap(tenantDefinition -> tenantDefinition.bindPropertiesTo(MailProperties.class))
             .orElse(mailProperties);
     }
 
@@ -152,9 +149,7 @@ public class DefaultEmailSender implements EmailSender {
         return tenantExtractor.getTenantsManager()
             .findTenant(emailMessageRequest.getTenant())
             .map(TenantDefinition::getCommunicationPolicy)
-            .filter(Objects::nonNull)
             .map(TenantCommunicationPolicy::getEmailCommunicationPolicy)
-            .filter(Objects::nonNull)
             .stream()
             .findFirst();
     }
