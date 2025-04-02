@@ -1,8 +1,16 @@
 package org.apereo.cas.syncope;
 
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
+import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.model.support.syncope.BaseSyncopeSearchProperties;
+import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -12,6 +20,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Splitter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import java.util.ArrayList;
@@ -359,4 +369,38 @@ public class SyncopeUtils {
         return entity;
     }
 
+    /**
+     * New authentication handlers list.
+     *
+     * @param syncope                            the syncope
+     * @param applicationContext                 the application context
+     * @param syncopePrincipalFactory            the syncope principal factory
+     * @param servicesManager                    the services manager
+     * @param syncopePasswordPolicyConfiguration the syncope password policy configuration
+     * @return the list
+     */
+    public static List<? extends AuthenticationHandler> newAuthenticationHandlers(
+        final SyncopeAuthenticationProperties syncope,
+        final ConfigurableApplicationContext applicationContext,
+        final PrincipalFactory syncopePrincipalFactory,
+        final ServicesManager servicesManager,
+        final PasswordPolicyContext syncopePasswordPolicyConfiguration) {
+        if (syncope.isDefined()) {
+            return Splitter.on(",").splitToList(syncope.getDomain())
+                .stream()
+                .map(domain -> {
+                    val handler = new SyncopeAuthenticationHandler(syncope, servicesManager, syncopePrincipalFactory, domain.trim());
+                    handler.setState(syncope.getState());
+                    handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(syncope.getPasswordEncoder(), applicationContext));
+                    handler.setPasswordPolicyConfiguration(syncopePasswordPolicyConfiguration);
+                    val predicate = CoreAuthenticationUtils.newCredentialSelectionPredicate(syncope.getCredentialCriteria());
+                    handler.setCredentialSelectionPredicate(predicate);
+                    val transformer = PrincipalNameTransformerUtils.newPrincipalNameTransformer(syncope.getPrincipalTransformation());
+                    handler.setPrincipalNameTransformer(transformer);
+                    return handler;
+                })
+                .collect(Collectors.toList());
+        }
+        return List.of();
+    }
 }

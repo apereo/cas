@@ -45,3 +45,8 @@ provided by Apache Syncope are collected by CAS:
 | `syncopeUserAttrs`            |
 
 Note that attributes are only collected if they contain a value.
+
+## Multitenancy
+
+Configuration settings for database authentication can be specified in a multitenant environment.
+Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.
