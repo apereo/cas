@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.mail;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.multitenancy.TenantCommunicationPolicy;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantEmailCommunicationPolicy;
@@ -107,12 +108,22 @@ public class DefaultEmailSender implements EmailSender {
 
     protected JavaMailSenderImpl applyProperties(final JavaMailSenderImpl sender,
                                                  final EmailMessageRequest emailRequest) {
-        applyEmailServerProperties(sender, emailRequest);
+        val effectiveProperties = findTenantEmailProperties(emailRequest);
 
-        val javaMailProperties = asProperties(mailProperties.getProperties());
-        val protocol = StringUtils.defaultIfBlank(mailProperties.getProtocol(), "smtp");
+        sender.setHost(effectiveProperties.getHost());
+        if (effectiveProperties.getPort() != null) {
+            sender.setPort(effectiveProperties.getPort());
+        }
+        sender.setUsername(effectiveProperties.getUsername());
+        sender.setPassword(effectiveProperties.getPassword());
 
-        val ssl = mailProperties.getSsl();
+        sender.setProtocol(effectiveProperties.getProtocol());
+        sender.setDefaultEncoding(effectiveProperties.getDefaultEncoding().name());
+
+        val javaMailProperties = asProperties(effectiveProperties.getProperties());
+        val protocol = StringUtils.defaultIfBlank(effectiveProperties.getProtocol(), "smtp");
+
+        val ssl = effectiveProperties.getSsl();
         if (ssl.isEnabled()) {
             javaMailProperties.setProperty("mail." + protocol + ".ssl.enable", "true");
         }
@@ -127,29 +138,16 @@ public class DefaultEmailSender implements EmailSender {
         return sender;
     }
 
-    protected void applyEmailServerProperties(final JavaMailSenderImpl sender,
-                                              final EmailMessageRequest emailMessageRequest) {
-        val tenantEmailCommunicationPolicy = findTenantEmailCommunicationPolicy(emailMessageRequest);
-        tenantEmailCommunicationPolicy.ifPresentOrElse(policy -> {
-            sender.setHost(policy.getHost());
-            if (policy.getPort() > 0) {
-                sender.setPort(policy.getPort());
-            }
-            sender.setUsername(policy.getUsername());
-            sender.setPassword(policy.getPassword());
-        }, () -> {
-            sender.setHost(mailProperties.getHost());
-            if (mailProperties.getPort() != null) {
-                sender.setPort(mailProperties.getPort());
-            }
-            sender.setUsername(mailProperties.getUsername());
-            sender.setPassword(mailProperties.getPassword());
-        });
-        sender.setProtocol(mailProperties.getProtocol());
-        sender.setDefaultEncoding(mailProperties.getDefaultEncoding().name());
+    protected MailProperties findTenantEmailProperties(
+        final EmailMessageRequest emailMessageRequest) {
+        return tenantExtractor.getTenantsManager()
+            .findTenant(emailMessageRequest.getTenant())
+            .map(TenantDefinition::getProperties)
+            .flatMap(props -> CasConfigurationProperties.bindFrom(props, MailProperties.class))
+            .orElse(mailProperties);
     }
 
-    private Optional<TenantEmailCommunicationPolicy> findTenantEmailCommunicationPolicy(
+    protected Optional<TenantEmailCommunicationPolicy> findTenantEmailCommunicationPolicy(
         final EmailMessageRequest emailMessageRequest) {
         return tenantExtractor.getTenantsManager()
             .findTenant(emailMessageRequest.getTenant())

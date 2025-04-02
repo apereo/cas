@@ -22,13 +22,19 @@ public interface TenantAuthenticationHandlerBuilder {
      */
     default List<? extends AuthenticationHandler> build(final TenantDefinition tenantDefinition) {
         if (!tenantDefinition.getProperties().isEmpty()) {
-            val casProperties = CasConfigurationProperties.bindFrom(getClass().getSimpleName(),
-                tenantDefinition.getProperties()).orElseThrow();
+            val casProperties = CasConfigurationProperties.bindFrom(tenantDefinition.getProperties()).orElseThrow();
             return buildInternal(tenantDefinition, casProperties);
         }
         return List.of();
     }
 
+    /**
+     * Build internal list of handlers.
+     *
+     * @param tenantDefinition the tenant definition
+     * @param casProperties    the cas properties
+     * @return the list
+     */
     List<? extends AuthenticationHandler> buildInternal(TenantDefinition tenantDefinition,
                                                         CasConfigurationProperties casProperties);
 }

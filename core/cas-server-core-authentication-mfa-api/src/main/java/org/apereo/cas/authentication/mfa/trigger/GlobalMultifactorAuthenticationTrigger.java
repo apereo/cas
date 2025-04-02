@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredService;
 import lombok.Getter;
@@ -92,7 +93,12 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
 
     protected Set<String> findGlobalProviderIds(final HttpServletRequest httpServletRequest) {
         return tenantExtractor.extract(httpServletRequest)
-            .map(tenantDefinition -> tenantDefinition.getMultifactorAuthenticationPolicy().getGlobalProviderIds())
+            .map(TenantDefinition::getProperties)
+            .flatMap(CasConfigurationProperties::bindFrom)
+            .map(properties -> {
+                val globalProviderId = properties.getAuthn().getMfa().getTriggers().getGlobal().getGlobalProviderId();
+                return StringUtils.commaDelimitedListToSet(globalProviderId);
+            })
             .filter(providers -> !providers.isEmpty())
             .orElseGet(() -> {
                 val globalProviderId = casProperties.getAuthn().getMfa().getTriggers().getGlobal().getGlobalProviderId();
