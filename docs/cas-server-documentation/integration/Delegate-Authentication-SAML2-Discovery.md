@@ -19,6 +19,8 @@ to [embed and present a discovery service](https://wiki.shibboleth.net/confluenc
 as part of delegated authentication. Configured SAML2 identity providers in the CAS configuration
 used for delegated authentication are presented as options for discovery. 
 
+{% include_cached casproperties.html properties="cas.authn.pac4j.saml-discovery" %}
+
 CAS is also able to directly consume multiple JSON feeds
 that contain discovery metadata about available identity providers. The discovery JSON feed 
 may be fetched from a URL (i.e. exposed by a Shibboleth Service Provider) or it may
