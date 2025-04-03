@@ -93,6 +93,7 @@ class SyncopeAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer syncopeMultitenancyAuthenticationPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
             @Qualifier("syncopePrincipalFactory")
             final PrincipalFactory syncopePrincipalFactory,
             @Qualifier("syncopePasswordPolicyConfiguration")
@@ -100,10 +101,12 @@ class SyncopeAuthenticationConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return plan -> {
-                val builder = new TenantSyncopeAuthenticationHandlerBuilder(
-                    syncopePasswordPolicyConfiguration, syncopePrincipalFactory,
-                    applicationContext, servicesManager);
-                plan.registerTenantAuthenticationHandlerBuilder(builder);
+                if (casProperties.getMultitenancy().getCore().isEnabled()) {
+                    val builder = new TenantSyncopeAuthenticationHandlerBuilder(
+                        syncopePasswordPolicyConfiguration, syncopePrincipalFactory,
+                        applicationContext, servicesManager);
+                    plan.registerTenantAuthenticationHandlerBuilder(builder);
+                }
             };
         }
     }

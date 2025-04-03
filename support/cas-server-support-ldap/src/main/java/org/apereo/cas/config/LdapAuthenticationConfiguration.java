@@ -169,13 +169,16 @@ class LdapAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer ldapMultitenancyAuthenticationPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
             @Qualifier("ldapPrincipalFactory")
             final PrincipalFactory ldapPrincipalFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return plan -> {
-                val builder = new TenantLdapAuthenticationHandlerBuilder(applicationContext, ldapPrincipalFactory, servicesManager);
-                plan.registerTenantAuthenticationHandlerBuilder(builder);
+                if (casProperties.getMultitenancy().getCore().isEnabled()) {
+                    val builder = new TenantLdapAuthenticationHandlerBuilder(applicationContext, ldapPrincipalFactory, servicesManager);
+                    plan.registerTenantAuthenticationHandlerBuilder(builder);
+                }
             };
         }
     }

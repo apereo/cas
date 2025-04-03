@@ -40,14 +40,17 @@ class CasJdbcAuthenticationMultitenancyConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer jdbcMultitenancyAuthenticationPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return plan -> {
-                val passwordPolicyConfiguration = new PasswordPolicyContext();
-                val principalFactory = PrincipalFactoryUtils.newPrincipalFactory();
-                val builder = new TenantJdbcAuthenticationHandlerBuilder(passwordPolicyConfiguration, principalFactory,
-                    applicationContext, servicesManager);
-                plan.registerTenantAuthenticationHandlerBuilder(builder);
+                if (casProperties.getMultitenancy().getCore().isEnabled()) {
+                    val passwordPolicyConfiguration = new PasswordPolicyContext();
+                    val principalFactory = PrincipalFactoryUtils.newPrincipalFactory();
+                    val builder = new TenantJdbcAuthenticationHandlerBuilder(passwordPolicyConfiguration, principalFactory,
+                        applicationContext, servicesManager);
+                    plan.registerTenantAuthenticationHandlerBuilder(builder);
+                }
             };
         }
     }
