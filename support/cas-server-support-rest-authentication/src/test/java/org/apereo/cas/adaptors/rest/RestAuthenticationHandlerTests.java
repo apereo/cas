@@ -6,17 +6,6 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasCoreAutoConfiguration;
-import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
-import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.CasRestAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
@@ -51,19 +40,7 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = {
-    CasRestAuthenticationAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    CasCoreAuthenticationAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class,
-    CasPersonDirectoryAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    CasCoreScriptingAutoConfiguration.class,
-    CasCoreLogoutAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    CasCoreAutoConfiguration.class
-},
+@SpringBootTest(classes = BaseRestAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.rest[0].uri=http://localhost:${random.int[3000,9000]}/authn")
 @Tag("RestfulApiAuthentication")
 @ExtendWith(CasTestExtension.class)

@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.rest.RestAuthenticationHandler;
+import org.apereo.cas.adaptors.rest.TenantRestAuthenticationHandlerBuilder;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
@@ -21,6 +21,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
@@ -55,14 +56,12 @@ public class CasRestAuthenticationAutoConfiguration {
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val rest = casProperties.getAuthn().getRest();
-        return BeanContainer.of(rest.stream()
-            .map(prop -> {
-                val handler = new RestAuthenticationHandler(servicesManager, restAuthenticationPrincipalFactory, prop, httpClient);
-                handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(prop.getPasswordEncoder(), applicationContext));
-                handler.setState(prop.getState());
-                return handler;
-            })
-            .toList());
+        val handlers = rest
+            .stream()
+            .map(prop -> new RestAuthenticationHandler(servicesManager,
+                restAuthenticationPrincipalFactory, prop, applicationContext, httpClient))
+            .toList();
+        return BeanContainer.of(handlers);
     }
 
     @ConditionalOnMissingBean(name = "casRestAuthenticationEventExecutionPlanConfigurer")
@@ -74,5 +73,32 @@ public class CasRestAuthenticationAutoConfiguration {
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         final PrincipalResolver defaultPrincipalResolver) {
         return plan -> plan.registerAuthenticationHandlersWithPrincipalResolver(restAuthenticationHandler.toList(), defaultPrincipalResolver);
+    }
+
+
+    @Configuration(value = "RestMultitenancyAuthenticationConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Multitenancy)
+    static class RestMultitenancyAuthenticationConfiguration {
+        @ConditionalOnMissingBean(name = "restMultitenancyAuthenticationPlanConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationEventExecutionPlanConfigurer restMultitenancyAuthenticationPlanConfigurer(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
+            final HttpClient httpClient,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("restAuthenticationPrincipalFactory")
+            final PrincipalFactory restAuthenticationPrincipalFactory,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return plan -> {
+                if (casProperties.getMultitenancy().getCore().isEnabled()) {
+                    val builder = new TenantRestAuthenticationHandlerBuilder(applicationContext,
+                        restAuthenticationPrincipalFactory, servicesManager, httpClient);
+                    plan.registerTenantAuthenticationHandlerBuilder(builder);
+                }
+            };
+        }
     }
 }

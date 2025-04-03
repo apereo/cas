@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -18,6 +19,7 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.NameValuePair;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import javax.security.auth.login.AccountExpiredException;
@@ -71,10 +74,13 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     public RestAuthenticationHandler(final ServicesManager servicesManager,
                                      final PrincipalFactory principalFactory,
                                      final RestAuthenticationProperties properties,
+                                     final ConfigurableApplicationContext applicationContext,
                                      final HttpClient httpClient) {
         super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
         this.properties = properties;
         this.httpClient = httpClient;
+        setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(properties.getPasswordEncoder(), applicationContext));
+        setState(properties.getState());
     }
 
     @Override
@@ -89,7 +95,7 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 .basicAuthUsername(credential.getUsername())
                 .basicAuthPassword(credential.toPassword())
                 .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH)))
-                .url(properties.getUri())
+                .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUri()))
                 .httpClient(httpClient)
                 .build();
             response = HttpUtils.execute(exec);
