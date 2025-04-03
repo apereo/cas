@@ -98,7 +98,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     }
 
     @Override
-    public void save(final Stream<RegisteredService> toSave) {
+    public void save(final Stream<? extends RegisteredService> toSave) {
         toSave.forEach(this::save);
     }
 

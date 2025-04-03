@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManagerConfigurationContext;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -24,14 +25,15 @@ public class DefaultServicesManager extends AbstractServicesManager {
 
     @Override
     public Collection<RegisteredService> getServicesForDomain(final String domain) {
-        return getCacheableServicesStream()
-            .get()
-            .sorted(Comparator.naturalOrder())
-            .collect(Collectors.toList());
+        return collectServices();
     }
 
     @Override
     protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
+        return collectServices();
+    }
+
+    private List<RegisteredService> collectServices() {
         return getCacheableServicesStream()
             .get()
             .sorted(Comparator.naturalOrder())
