@@ -4,7 +4,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
 
 import lombok.NoArgsConstructor;
+import lombok.val;
 import org.springframework.boot.Banner;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration;
@@ -35,11 +37,12 @@ public class CasCommandLineShellApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
-        new SpringApplicationBuilder(CasCommandLineShellApplication.class)
+        val applicationContext = new SpringApplicationBuilder(CasCommandLineShellApplication.class)
             .banner(new DefaultCasBanner())
             .bannerMode(Banner.Mode.CONSOLE)
             .logStartupInfo(true)
             .web(WebApplicationType.NONE)
             .run(args);
+        System.exit(SpringApplication.exit(applicationContext));
     }
 }
