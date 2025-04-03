@@ -34,10 +34,16 @@ import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.profile.converter.AttributeConverter;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
+import org.pac4j.saml.context.SAML2ContextProvider;
+import org.pac4j.saml.logout.SAML2LogoutActionBuilder;
+import org.pac4j.saml.logout.processor.SAML2LogoutProcessor;
 import org.pac4j.saml.metadata.DefaultSAML2MetadataSigner;
 import org.pac4j.saml.metadata.SAML2DelegatingMetadataResolver;
 import org.pac4j.saml.metadata.SAML2InMemoryMetadataGenerator;
 import org.pac4j.saml.metadata.SAML2ServiceProviderRequestedAttribute;
+import org.pac4j.saml.redirect.SAML2RedirectionActionBuilder;
+import org.pac4j.saml.sso.artifact.DefaultSOAPPipelineProvider;
+import org.pac4j.saml.state.SAML2StateGenerator;
 import org.pac4j.saml.store.EmptyStoreFactory;
 import org.pac4j.saml.store.HttpSessionStoreFactory;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
@@ -301,19 +307,23 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
         val singleClient = new SAML2Client(singleConfiguration);
         singleClient.setDecrypter(saml2Client.getDecrypter());
         singleClient.setSignatureSigningParametersProvider(saml2Client.getSignatureSigningParametersProvider());
-        singleClient.setContextProvider(saml2Client.getContextProvider());
+
+        val contextProvider = new SAML2ContextProvider(singleConfiguration.getIdentityProviderMetadataResolver(),
+            saml2Client.getServiceProviderMetadataResolver(), saml2Client.getConfiguration().getSamlMessageStoreFactory());
+        singleClient.setContextProvider(contextProvider);
+        
         singleClient.setSignatureSigningParametersProvider(saml2Client.getSignatureSigningParametersProvider());
         singleClient.setReplayCache(saml2Client.getReplayCache());
         singleClient.setAuthnResponseValidator(saml2Client.getAuthnResponseValidator());
-        singleClient.setSoapPipelineProvider(saml2Client.getSoapPipelineProvider());
+        singleClient.setSoapPipelineProvider(new DefaultSOAPPipelineProvider(singleClient));
         singleClient.setLogoutValidator(saml2Client.getLogoutValidator());
-        singleClient.setRedirectionActionBuilder(saml2Client.getRedirectionActionBuilder());
+        singleClient.setRedirectionActionBuilder(new SAML2RedirectionActionBuilder(singleClient));
         singleClient.setCredentialsExtractor(saml2Client.getCredentialsExtractor());
         singleClient.setAuthenticator(saml2Client.getAuthenticator());
-        singleClient.setLogoutProcessor(saml2Client.getLogoutProcessor());
-        singleClient.setLogoutActionBuilder(saml2Client.getLogoutActionBuilder());
+        singleClient.setLogoutProcessor(new SAML2LogoutProcessor(singleClient));
+        singleClient.setLogoutActionBuilder(new SAML2LogoutActionBuilder(singleClient));
         singleClient.setServiceProviderMetadataResolver(saml2Client.getServiceProviderMetadataResolver());
-        singleClient.setStateGenerator(saml2Client.getStateGenerator());
+        singleClient.setStateGenerator(new SAML2StateGenerator(singleClient));
         singleClient.setWebSsoMessageSender(saml2Client.getWebSsoMessageSender());
         singleClient.setLogoutRequestMessageSender(saml2Client.getLogoutRequestMessageSender());
         return singleClient;
