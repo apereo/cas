@@ -18,7 +18,7 @@ import java.util.Optional;
 public class GroovyExecutableCompiledScriptFactory implements ExecutableCompiledScriptFactory {
     @Override
     public ExecutableCompiledScript fromResource(final Resource resource, final boolean watchResource) {
-        return new WatchableGroovyScriptResource(resource);
+        return new WatchableGroovyScriptResource(resource, watchResource);
     }
 
     @Override
