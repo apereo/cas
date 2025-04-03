@@ -87,6 +87,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-webconfig")
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-account-mgmt")
+    testImplementation project(":support:cas-server-support-json-service-registry")
     
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

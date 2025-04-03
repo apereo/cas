@@ -32,7 +32,7 @@ public interface ServicesManager extends Ordered, NamedObject {
      *
      * @param toSave the services to import and save
      */
-    void save(Stream<RegisteredService> toSave);
+    void save(Stream<? extends RegisteredService> toSave);
 
     /**
      * Register a service with CAS, or update an existing an entry.
