@@ -19,4 +19,14 @@ public interface WebflowDecorator {
      * @throws Throwable the throwable
      */
     void decorate(RequestContext requestContext) throws Throwable;
+
+    /**
+     * No op webflow decorator.
+     *
+     * @return the webflow decorator
+     */
+    static WebflowDecorator noOp() {
+        return requestContext -> {
+        };
+    }
 }

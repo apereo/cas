@@ -5,9 +5,13 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.multitenancy.DefaultTenantExtractor;
 import org.apereo.cas.multitenancy.DefaultTenantsManager;
 import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.multitenancy.TenantWebflowDecorator;
 import org.apereo.cas.multitenancy.TenantsManager;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
+import org.apereo.cas.web.flow.decorator.WebflowDecorator;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +19,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -48,7 +53,7 @@ public class CasCoreMultitenancyAutoConfiguration {
         final TenantsManager tenantsManager) {
         return new DefaultTenantExtractor(tenantsManager, casProperties);
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "casMultitenancyEndpointConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -64,5 +69,21 @@ public class CasCoreMultitenancyAutoConfiguration {
                 return this;
             }
         };
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "casMultitenancyWebflowDecorator")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public WebflowDecorator casMultitenancyWebflowDecorator(
+        @Qualifier(TenantExtractor.BEAN_NAME)
+        final TenantExtractor tenantExtractor,
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
+        return BeanSupplier.of(WebflowDecorator.class)
+            .when(BeanCondition.on("cas.multitenancy.core.enabled")
+                .isTrue().given(applicationContext.getEnvironment()))
+            .supply(() -> new TenantWebflowDecorator(tenantExtractor))
+            .otherwise(WebflowDecorator::noOp)
+            .get();
     }
 }

@@ -10,7 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -37,32 +39,25 @@ import java.util.List;
  * @since 4.1
  */
 @Slf4j
-@Getter
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
     protected static final PrettyPrinter MINIMAL_PRETTY_PRINTER = new MinimalPrettyPrinter();
 
     @Serial
     private static final long serialVersionUID = -8415599777321259365L;
 
-    private final ConfigurableApplicationContext applicationContext;
+    @Getter
     private final PrettyPrinter prettyPrinter;
+    @Getter
+    private final ConfigurableApplicationContext applicationContext;
+    @Getter
     private final Class<T> typeToSerialize;
-    private final ObjectReader typeReader;
-    private final ObjectWriter typeWriter;
+    
+    private ObjectReader typeReader;
+    private ObjectWriter typeWriter;
 
     private ObjectMapper objectMapper;
-
-    protected BaseJacksonSerializer(final PrettyPrinter prettyPrinter,
-                                    final ConfigurableApplicationContext applicationContext,
-                                    final Class<T> typeToSerialize) {
-        this.applicationContext = applicationContext;
-        this.typeToSerialize = typeToSerialize;
-        this.prettyPrinter = prettyPrinter;
-
-        this.typeReader = getObjectMapper().readerFor(typeToSerialize);
-        this.typeWriter = getObjectMapper().writerFor(typeToSerialize).with(prettyPrinter);
-    }
-
+    
     protected BaseJacksonSerializer(
         final ConfigurableApplicationContext applicationContext,
         final Class typeToSerialize) {
@@ -110,17 +105,17 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
 
     @Override
     public void to(final OutputStream out, final T object) {
-        FunctionUtils.doUnchecked(__ -> typeWriter.writeValue(out, object));
+        FunctionUtils.doUnchecked(__ -> getTypeWriter().writeValue(out, object));
     }
 
     @Override
     public void to(final Writer writer, final T object) {
-        FunctionUtils.doUnchecked(__ -> typeWriter.writeValue(writer, object));
+        FunctionUtils.doUnchecked(__ -> getTypeWriter().writeValue(writer, object));
     }
 
     @Override
     public void to(final File out, final T object) {
-        FunctionUtils.doUnchecked(__ -> typeWriter.writeValue(out, object));
+        FunctionUtils.doUnchecked(__ -> getTypeWriter().writeValue(out, object));
     }
 
     @Override
@@ -172,6 +167,7 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
                 .builder()
                 .defaultTypingEnabled(isDefaultTypingEnabled())
                 .jsonFactory(getJsonFactory())
+                .applicationContext(applicationContext)
                 .build()
                 .toObjectMapper();
             configureObjectMapper(objectMapper);
@@ -200,7 +196,7 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
     protected T readObjectFromString(final String jsonString) {
         try {
             LOGGER.trace("Attempting to parse [{}]", jsonString);
-            return typeReader.readValue(jsonString);
+            return getTypeReader().readValue(jsonString);
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse [{}] to deserialize into type [{}]. This may be caused "
                     + "in the absence of a configuration/support module that knows how to interpret the fragment, "
@@ -236,6 +232,20 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
 
     private static String readHumanJson(final Reader json) throws Exception {
         return JsonValue.readHjson(json).toString();
+    }
+
+    protected ObjectReader getTypeReader() {
+        if (typeReader == null) {
+            typeReader = getObjectMapper().readerFor(getTypeToSerialize());
+        }
+        return typeReader;
+    }
+
+    protected ObjectWriter getTypeWriter() {
+        if (typeWriter == null) {
+            typeWriter = getObjectMapper().writerFor(typeToSerialize).with(prettyPrinter);
+        }
+        return typeWriter;
     }
 
 }

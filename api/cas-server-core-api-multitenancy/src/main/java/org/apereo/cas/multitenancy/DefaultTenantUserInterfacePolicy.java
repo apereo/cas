@@ -21,4 +21,6 @@ import java.io.Serial;
 public class DefaultTenantUserInterfacePolicy implements TenantUserInterfacePolicy {
     @Serial
     private static final long serialVersionUID = 3238689336491450327L;
+
+    private String themeName;
 }

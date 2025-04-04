@@ -117,8 +117,12 @@ class CasCoreUtilConfiguration {
         }
 
         @Bean
-        public static ObjectMapper objectMapper() {
-            return JacksonObjectMapperFactory.builder().build().toObjectMapper();
+        public static ObjectMapper objectMapper(final ConfigurableApplicationContext applicationContext) {
+            return JacksonObjectMapperFactory
+                .builder()
+                .applicationContext(applicationContext)
+                .build()
+                .toObjectMapper();
         }
 
     }
