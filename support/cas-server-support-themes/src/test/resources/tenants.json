@@ -1,0 +1,14 @@
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "description": "Example tenant",
+      "userInterfacePolicy": {
+        "@class": "org.apereo.cas.multitenancy.DefaultTenantUserInterfacePolicy",
+        "themeName": "shire"
+      }
+    }
+  ]
+]

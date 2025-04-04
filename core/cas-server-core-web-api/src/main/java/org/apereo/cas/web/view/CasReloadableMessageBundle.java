@@ -1,16 +1,20 @@
 package org.apereo.cas.web.view;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.springframework.context.MessageSource;
+import org.springframework.context.support.AbstractResourceBasedMessageSource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import jakarta.annotation.Nonnull;
 import java.util.Locale;
 
 /**
- * An extension of the {@link ReloadableResourceBundleMessageSource} whose sole concern
- * is to print a WARN message in cases where a language key is not found in the active and
- * default bundles.
+ * An extension of the {@link ReloadableResourceBundleMessageSource}.
  *
  * <p>Note: By default, if a key not found in a localized bundle, Spring will auto-fallback
  * to the default bundle that is {@code messages.properties}. However, if the key is also
@@ -24,32 +28,41 @@ import java.util.Locale;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@Slf4j
+@RequiredArgsConstructor
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
+    private final TenantExtractor tenantExtractor;
 
     @Override
     protected String getMessageInternal(final String code, final Object[] args, final Locale locale) {
-        if (locale != null && !locale.equals(Locale.ENGLISH)) {
-            val foundCode = getBasenameSet().stream().anyMatch(basename -> {
-                val filename = basename + '_' + locale;
-                LOGGER.trace("Examining bundle [{}] for the key [{}]", filename, code);
-                val holder = getProperties(filename);
-                return holder.getProperties() != null && holder.getProperty(code) != null;
-            });
-            if (!foundCode) {
-                LOGGER.trace("The key [{}] cannot be found in the bundle for the locale [{}]", code, locale);
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        if (clientInfo != null && StringUtils.isNotBlank(clientInfo.getTenant())) {
+            val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(clientInfo.getTenant()).orElseThrow();
+            val boundProperties = tenantDefinition.bindProperties();
+            if (boundProperties.isPresent()) {
+                val properties = boundProperties.get();
+                properties.getMessageBundle().getBaseNames().addAll(getBasenameSet());
+                val bean = configure(new ReloadableResourceBundleMessageSource(), properties);
+                return bean.getMessage(code, args, locale);
             }
         }
         return super.getMessageInternal(code, args, locale);
     }
 
-    @Override
-    protected String getDefaultMessage(@Nonnull final String code) {
-        val messageToReturn = super.getDefaultMessage(code);
-        if (StringUtils.isNotBlank(messageToReturn) && messageToReturn.equals(code)) {
-            LOGGER.trace("The code [{}] cannot be found in the default language bundle and will be used as the message itself.", code);
-        }
-        return messageToReturn;
+    /**
+     * Configure message source.
+     *
+     * @param bean          the bean
+     * @param casProperties the cas properties
+     * @return the message source
+     */
+    public static MessageSource configure(final AbstractResourceBasedMessageSource bean,
+                                          final CasConfigurationProperties casProperties) {
+        val mb = casProperties.getMessageBundle();
+        bean.setDefaultEncoding(mb.getEncoding());
+        bean.setCacheSeconds(Long.valueOf(Beans.newDuration(mb.getCacheSeconds()).toSeconds()).intValue());
+        bean.setFallbackToSystemLocale(mb.isFallbackSystemLocale());
+        bean.setUseCodeAsDefaultMessage(mb.isUseCodeMessage());
+        bean.setBasenames(mb.getBaseNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+        return bean;
     }
-
 }

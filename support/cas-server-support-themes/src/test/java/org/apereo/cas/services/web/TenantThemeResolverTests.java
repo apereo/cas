@@ -3,8 +3,8 @@ package org.apereo.cas.services.web;
 import org.apereo.cas.BaseThemeTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
-import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,32 +12,36 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.ui.context.ThemeSource;
-import java.util.Locale;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.web.servlet.ThemeResolver;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DefaultCasThemeSourceTests}.
+ * This is {@link TenantThemeResolverTests}.
  *
  * @author Misagh Moayyed
- * @since 6.6.0
+ * @since 7.3.0
  */
 @Tag("Web")
 @SpringBootTest(classes = BaseThemeTests.SharedTestConfiguration.class,
-    properties = "cas.view.template-prefixes[0]=classpath:/ext-templates")
+    properties = {
+        "cas.multitenancy.core.enabled=true",
+        "cas.multitenancy.json.location=classpath:/tenants.json"
+    })
 @ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-class DefaultCasThemeSourceTests {
+class TenantThemeResolverTests {
     @Autowired
-    @Qualifier("themeSource")
-    private ThemeSource themeSource;
+    private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("themeResolver")
+    private ThemeResolver themeResolver;
 
     @Test
-    void verifyCustomSource() {
-        val theme = themeSource.getTheme("my-theme");
-        assertNotNull(theme);
-        val message = theme.getMessageSource().getMessage("cas.theme.name",
-            ArrayUtils.EMPTY_OBJECT_ARRAY, Locale.getDefault());
-        assertEquals("MyTheme", message);
+    void verifyOperation() throws Exception {
+        val requestContext = MockRequestContext.create(applicationContext);
+        requestContext.setContextPath("/tenants/shire/login");
+        assertEquals("shire", themeResolver.resolveThemeName(requestContext.getHttpServletRequest()));
     }
 }

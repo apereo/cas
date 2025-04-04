@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.multitenancy.TenantThemeResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.AggregateCasThemeSource;
 import org.apereo.cas.services.web.ChainingThemeResolver;
@@ -66,12 +68,14 @@ public class CasThemesAutoConfiguration {
         }
         return new DefaultCasThemeSource(casProperties);
     }
-
+    
     @ConditionalOnMissingBean(name = "casThemeResolver")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ThemeResolver themeResolver(
         final ObjectProvider<CasConfigurationProperties> casProperties,
+        @Qualifier(TenantExtractor.BEAN_NAME)
+        final ObjectProvider<TenantExtractor> tenantExtractor,
         @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
         final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies,
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -107,6 +111,13 @@ public class CasThemesAutoConfiguration {
             .addResolver(header)
             .addResolver(serviceThemeResolver)
             .addResolver(fixedResolver);
+
+        if (casProperties.getObject().getMultitenancy().getCore().isEnabled()) {
+            val tenantThemeResolver = new TenantThemeResolver(tenantExtractor, servicesManager,
+                authenticationRequestServiceSelectionStrategies, casProperties);
+            tenantThemeResolver.setDefaultThemeName(defaultThemeName);
+            chainingThemeResolver.addResolver(tenantThemeResolver);
+        }
         chainingThemeResolver.setDefaultThemeName(defaultThemeName);
         return chainingThemeResolver;
     }

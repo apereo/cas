@@ -32,7 +32,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.io.Serial;
 import java.net.URI;
@@ -78,6 +80,8 @@ public class JacksonObjectMapperFactory {
 
     private final JsonFactory jsonFactory;
 
+    private final ConfigurableApplicationContext applicationContext;
+
     /**
      * Produce an object mapper for YAML serialization/de-serialization.
      *
@@ -110,16 +114,16 @@ public class JacksonObjectMapperFactory {
         objectMapper.setInjectableValues(new JacksonInjectableValueSupplier(() -> injectedValues));
     }
 
-    private static List<JacksonObjectMapperCustomizer> getObjectMapperCustomizers() {
+    private List<JacksonObjectMapperCustomizer> getObjectMapperCustomizers() {
         val customizers = ServiceLoader.load(JacksonObjectMapperCustomizer.class)
             .stream()
             .map(ServiceLoader.Provider::get)
             .filter(BeanSupplier::isNotProxy)
             .collect(Collectors.toList());
 
-        val applicationContext = ApplicationContextProvider.getApplicationContext();
-        if (applicationContext != null) {
-            val customizerBeans = applicationContext.getBeansOfType(JacksonObjectMapperCustomizer.class).values();
+        val effectiveContext = ObjectUtils.defaultIfNull(applicationContext, ApplicationContextProvider.getApplicationContext());
+        if (effectiveContext != null) {
+            val customizerBeans = effectiveContext.getBeansOfType(JacksonObjectMapperCustomizer.class).values();
             customizers.addAll(customizerBeans);
         }
         AnnotationAwareOrderComparator.sort(customizers);

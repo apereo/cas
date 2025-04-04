@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
@@ -47,6 +48,7 @@ public abstract class BaseThemeTests {
     @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
         CasThemesAutoConfiguration.class,
+        CasCoreMultitenancyAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,

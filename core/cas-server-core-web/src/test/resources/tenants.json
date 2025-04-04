@@ -1,0 +1,14 @@
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "description": "Example tenant",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.message-bundle.base-names": "classpath:/shire_messages"
+      }
+    }
+  ]
+]

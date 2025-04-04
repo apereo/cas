@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.RootCasException;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.multitenancy.UnknownTenantException;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.web.support.MappedExceptionErrorViewResolver;
@@ -23,7 +23,6 @@ import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.view.CasReloadableMessageBundle;
 import org.apereo.cas.web.view.DynamicHtmlView;
 import lombok.val;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
@@ -113,17 +112,14 @@ class CasCoreWebConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casMessageSource")
         public MessageSource messageSource(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
-            @Qualifier("casCommonMessages") final Properties casCommonMessages) {
-            val bean = new CasReloadableMessageBundle();
-            val mb = casProperties.getMessageBundle();
-            bean.setDefaultEncoding(mb.getEncoding());
-            bean.setCacheSeconds(Long.valueOf(Beans.newDuration(mb.getCacheSeconds()).toSeconds()).intValue());
-            bean.setFallbackToSystemLocale(mb.isFallbackSystemLocale());
-            bean.setUseCodeAsDefaultMessage(mb.isUseCodeMessage());
-            bean.setBasenames(mb.getBaseNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
-            bean.setCommonMessages(casCommonMessages);
-            return bean;
+            @Qualifier("casCommonMessages")
+            final Properties casCommonMessages) {
+            val messageBundle = new CasReloadableMessageBundle(tenantExtractor);
+            messageBundle.setCommonMessages(casCommonMessages);
+            return CasReloadableMessageBundle.configure(messageBundle, casProperties);
         }
     }
 

@@ -71,6 +71,10 @@ The basic construct for a tenant definition should match the following:
           "@class": "org.apereo.cas.multitenancy.TenantEmailCommunicationPolicy",
           "from": "..."
         }
+      },
+      "userInterfacePolicy": {
+        "@class": "org.apereo.cas.multitenancy.DefaultTenantUserInterfacePolicy",
+        "themeName": "shire"
       }
     }
   ]
@@ -103,18 +107,19 @@ A registered tenant definition supports the following fields and capabilities:
 | `authenticationPolicy`          | Describes the criteria for primary authentication, list of allowed authentication handlers, etc. |
 | `delegatedAuthenticationPolicy` | Describes the criteria for external authentication, list of allowed identity providers, etc.     |
 | `communicationPolicy`           | Describes how the tenant should communicate with users to send out email messages, etc.          |
+| `userInterfacePolicy`           | Describes how the tenant should control settings relevant for user interface pages.              |
   
 ### Authentication Policy
       
 The tenant authentication policy supports the following fields:
 
-| Field                    | Description                                                                                                 |
-|--------------------------|-------------------------------------------------------------------------------------------------------------|
-| `authenticationHandlers` | List of authentication handlers pre-built available to this tenant, invoked during authentication attempts. |
+| Field                    | Description                                                                                                   |
+|--------------------------|---------------------------------------------------------------------------------------------------------------|
+| `authenticationHandlers` | List of authentication handlers *pre-built* available to this tenant, invoked during authentication attempts. |
       
 CAS features and modules that are multitenant-aware also have the ability to build their own list of authentication
 handlers dynamically and on the fly without relying on the static list of authentication handlers that are bootstrapped
-during startup. Please check the documentation for each feature or module to see if it supports multitenancy.
+during startup, noted via the `authenticationHandlers` field above.
 
 Authentication handlers that are built dynamically for each tenant may be defined using the following strategy:
 
@@ -122,13 +127,15 @@ Authentication handlers that are built dynamically for each tenant may be define
 @Bean
 public AuthenticationEventExecutionPlanConfigurer myTenantAuthentication() {
     return plan -> {
-        val builder = new MyTenantAuthenticationHandlerBuilder(...);
+        var builder = new MyTenantAuthenticationHandlerBuilder(...);
         plan.registerTenantAuthenticationHandlerBuilder(builder);
     };
 }
 ```
 
 [See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+
+Please check the documentation for each feature or module to see if it supports multitenancy.
 
 ### Authentication Protocol Policy
 
@@ -160,8 +167,31 @@ This construct allows one to isolate communication strategies per tenant.
 | Field      | Description                                             |
 |------------|---------------------------------------------------------|
 | `from`     | The `FROM` address assigned to the email message sent.  |
-  
-  
+
+### User Interface Policy
+
+The tenant user interface policy controls per-tenant settings that describe a theme.
+The theme defined will allow CAS to pull the appropriate theme 
+resource [defined here](../ux/User-Interface-Customization-Themes-Static.html).
+                
+Furthermore, the theme definition is able to point to its own message bundle for various language keys:
+
+```json
+{
+  "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+  "id": "shire",
+  "description": "Example tenant",
+  "properties": {
+    "@class": "java.util.LinkedHashMap",
+    "cas.message-bundle.base-names": "classpath:/shire_messages"
+  }
+}
+```
+
+Note that the tenant language bundle may only define what it actually requires. It is not necessary
+to define the entire set of language keys that are available in the default CAS bundle. The default
+bundles are still picked up to fill in the gaps for any missing keys.
+
 ### Tenant Properties
 
 The tenant properties field is a map of CAS properties that are effective for this tenant. CAS features

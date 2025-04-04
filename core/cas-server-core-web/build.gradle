@@ -27,7 +27,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-scripting")
-
+    testImplementation project(":core:cas-server-core-multitenancy")
+    
     testRuntimeOnly libraries.webjars
     testRuntimeOnly libraries.webjarsbootstrap
     testRuntimeOnly libraries.webjarspalantir

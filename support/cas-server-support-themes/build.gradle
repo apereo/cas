@@ -19,7 +19,8 @@ dependencies {
     implementation project(":core:cas-server-core-notifications")
     
     implementation project(":support:cas-server-support-themes-core")
-
+    implementation project(":core:cas-server-core-multitenancy")
+    
     testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(":core:cas-server-core")

@@ -534,7 +534,7 @@ class CasCoreWebflowConfiguration {
                     LOGGER.trace("Decorating login webflow using [{}]", groovyScript);
                     return new GroovyLoginWebflowDecorator(groovyScript);
                 })
-                .otherwiseProxy()
+                .otherwise(WebflowDecorator::noOp)
                 .get();
         }
 
@@ -552,7 +552,7 @@ class CasCoreWebflowConfiguration {
                     LOGGER.trace("Decorating login webflow REST endpoint [{}]", decorator.getRest().getUrl());
                     return new RestfulLoginWebflowDecorator(decorator.getRest());
                 })
-                .otherwiseProxy()
+                .otherwise(WebflowDecorator::noOp)
                 .get();
         }
     }
