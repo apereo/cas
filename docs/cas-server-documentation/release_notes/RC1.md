@@ -75,12 +75,18 @@ are now configured to run with parallelism enabled.
 ### Java 24
 
 As described earlier, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. CAS is however
-able to compile and run with Java `24` as well. Again, remember that the baseline requirement will remain unchanged
-and this is just a preparatory step to ensure CAS is ready for the next version of Java.
+able to compile and run with Java `24` as well with an updated version of the Gradle build tool. Again, remember that 
+the baseline requirement will remain unchanged and this is just a preparatory step to ensure CAS is ready for the next version of Java.
  
 ### Apple Notifications
 
 You can now use APN for sending notifications to [Apple devices](../notifications/Notifications-Configuration-APN.html).
+
+### Multitenancy
+
+CAS can now be configured to run in a [multitenant mode](../multitenancy/Multitenancy-Overview.html).
+Each registered tenant with CAS may define its own various policies, allowing the server to compose and combine
+multiple configuration options in one single deployment.
 
 ### Google Authenticator Multifactor Authentication
 
@@ -109,5 +115,8 @@ send monitoring events to Azure Monitor Application Insights.
 
 ## Other Stuff
               
-- Support for SignalFX has been removed, given its deprecation status in Micrometer.
+- Support for SignalFX metrics has been removed, given its deprecation status in Micrometer.
 - Apache Kafka integration tests have switched to testing against Apache Kafka `4.0.0`.
+- [CAS command-line shell](../installation/Configuring-Commandline-Shell.html) can now run in interactive mode. Furthermore, `exit` and `quit` command functionality is also restored.
+- Connection mode for [CosmosDb Service Registry](../services/CosmosDb-Service-Management.html) can now be configured to either `GATEWAY` or `DIRECT`.
+- [Duo Security Multifactor Authentication](../mfa/DuoSecurity-Authentication.html) is given the option to track session data in browser storage or ticket registry.
