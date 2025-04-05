@@ -10,4 +10,4 @@ fi
 echo -e "Fetching InCommon MDQ signing certificate..."
 cd $TMPDIR && pwd
 mkdir ${SCENARIO_FOLDER}/saml-md
-curl -o inc-md-cert-mdq.pem http://md.incommon.org/certs/inc-md-cert-mdq.pem
+curl --retry 5 --retry-delay 2 --retry-connrefused --max-time 30 -o inc-md-cert-mdq.pem https://md.incommon.org/certs/inc-md-cert-mdq.pem
