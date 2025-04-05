@@ -71,6 +71,26 @@ class DuoSecurityUniversalPromptPrepareLoginActionTests {
             assertTrue(context.getFlowScope().contains("duoUniversalPromptLoginUrl"));
         }
     }
+
+    @Nested
+    @TestPropertySource(properties = "cas.authn.mfa.duo[0].session-storage-type=TICKET_REGISTRY")
+    class TicketRegistryStorageTests extends BaseDuoSecurityUniversalPromptTests {
+        @Test
+        void verifyOperation() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            val authentication = RegisteredServiceTestUtils.getAuthentication();
+            WebUtils.putAuthentication(authentication, context);
+            WebUtils.putAuthenticationResult(RegisteredServiceTestUtils.getAuthenticationResult(authentication.getPrincipal().getId()), context);
+            WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
+            val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(
+                DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER, applicationContext).orElseThrow();
+            MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, provider);
+            val result = duoUniversalPromptPrepareLoginAction.execute(context);
+            assertNotNull(result);
+            assertNotNull(result.getAttributes().get("result"));
+            assertTrue(context.getFlowScope().contains("duoUniversalPromptLoginUrl"));
+        }
+    }
     
     @Nested
     @TestPropertySource(properties = "cas.authn.mfa.duo[0].principal-attribute=email")
