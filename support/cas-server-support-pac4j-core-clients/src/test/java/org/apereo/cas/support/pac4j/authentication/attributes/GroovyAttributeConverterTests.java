@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication.attributes;
 
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     CasCoreUtilAutoConfiguration.class,
     CasCoreScriptingAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

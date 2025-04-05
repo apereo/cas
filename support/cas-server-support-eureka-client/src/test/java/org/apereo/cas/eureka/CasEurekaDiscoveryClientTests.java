@@ -1,5 +1,6 @@
 package org.apereo.cas.eureka;
 
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasEurekaDiscoveryClientAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -31,6 +32,7 @@ class CasEurekaDiscoveryClientTests {
     @SpringBootTestAutoConfigurations
     @SpringBootTest(classes = {
         CasCoreWebAutoConfiguration.class,
+        CasCoreMultitenancyAutoConfiguration.class,
         CasEurekaDiscoveryClientAutoConfiguration.class,
         UtilAutoConfiguration.class,
         DiscoveryClientOptionalArgsConfiguration.class,
