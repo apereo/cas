@@ -58,6 +58,7 @@ import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
@@ -495,7 +496,7 @@ class PasswordManagementWebflowConfiguration {
                     val recaptcha = casProperties.getAuthn().getPm().getGoogleRecaptcha();
                     return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha), passwordResetCaptchaActivationStrategy);
                 })
-                .otherwiseProxy()
+                .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
 
@@ -529,7 +530,7 @@ class PasswordManagementWebflowConfiguration {
                         requestContext -> WebUtils.putRecaptchaPasswordManagementEnabled(requestContext, recaptcha),
                         recaptcha);
                 })
-                .otherwiseProxy()
+                .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
 
         }

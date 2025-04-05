@@ -12,6 +12,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeaturesEnabled;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -68,7 +69,7 @@ class DuoSecurityPasswordlessAuthenticationConfiguration {
             .withAction(() -> BeanSupplier.of(Action.class)
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new DuoSecurityVerifyPasswordlessAuthenticationAction(authenticationSystemSupport, duoAuthenticationWebflowEventResolver))
-                .otherwiseProxy()
+                .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get())
             .withId(CasWebflowConstants.ACTION_ID_DUO_PASSWORDLESS_VERIFY)
             .build()

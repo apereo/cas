@@ -528,7 +528,7 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(CONDITION.given(applicationContext.getEnvironment()))
                     .supply(() -> new ValidateCaptchaAction(passwordlessCaptchaValidator, captchaActivationStrategy))
-                    .otherwiseProxy()
+                    .otherwise(() -> ConsumerExecutionAction.NONE)
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_VALIDATE_CAPTCHA)
                 .build()
