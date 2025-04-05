@@ -10,7 +10,7 @@ const cas = require("../../cas.js");
     await cas.pressEnter(page);
     await cas.screenshot(page);
     await cas.log("Waiting for Duo MFA to complete...");
-    await cas.sleep(12000);
+    await cas.sleep(8000);
     await cas.screenshot(page);
     await cas.log("Checking for service ticket...");
     await cas.assertTicketParameter(page);
