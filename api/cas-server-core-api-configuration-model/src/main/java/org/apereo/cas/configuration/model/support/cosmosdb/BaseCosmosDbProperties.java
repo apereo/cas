@@ -4,11 +4,9 @@ import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -147,4 +145,17 @@ public abstract class BaseCosmosDbProperties implements Serializable {
      * </ul>
      */
     private String indexingMode = "NONE";
+
+    /**
+     * Controls the connection mode.
+     * Supported values are: {@code GATEWAY} and {@code DIRECT}.
+     * <ul>
+     *     <li>{@code GATEWAY}: HTTPS over REST. Java HTTPS stack (Apache HttpClient). Generally robust.
+     *      Limited bulk support. Works with HTTP proxies. Uses Java’s trust store + hostname verifier.</li>
+     *     <li>{@code DIRECT}: Custom binary protocol over TCP (RNTBD). Netty (manual TLS/SSL context & connections).
+     *      Highly efficient, but sensitive to connection issues. Does not support HTTP proxies. Uses Netty TLS.
+     *     </li>
+     * </ul>
+     */
+    private String mode = "GATEWAY";
 }
