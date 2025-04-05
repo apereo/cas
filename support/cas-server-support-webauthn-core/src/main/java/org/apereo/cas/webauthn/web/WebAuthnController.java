@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -106,6 +107,7 @@ public class WebAuthnController {
         @NonNull
         @RequestParam("username")
         final String username,
+        final Principal authenticatedPrincipal,
         @NonNull
         @RequestParam("displayName")
         final String displayName,
@@ -119,6 +121,10 @@ public class WebAuthnController {
         final HttpServletResponse response)
         throws Exception {
 
+        if (!StringUtils.equalsIgnoreCase(username, authenticatedPrincipal.getName())) {
+            return messagesJson(ResponseEntity.badRequest(), "Unauthorized request");
+        }
+        
         val result = server.startRegistration(
             username,
             Optional.of(displayName),
@@ -158,9 +164,10 @@ public class WebAuthnController {
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_AUTHENTICATE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> startAuthentication(
-        @RequestParam(value = "username", required = false)
+            final Principal authenticatedPrincipal,
+            @RequestParam(value = "username", required = false)
         final String username) throws Exception {
-        val request = server.startAuthentication(Optional.ofNullable(username));
+        val request = server.startAuthentication(Optional.ofNullable(authenticatedPrincipal).map(Principal::getName));
         if (request.isRight()) {
             return startResponse(new StartAuthenticationResponse(request.right().get()));
         }

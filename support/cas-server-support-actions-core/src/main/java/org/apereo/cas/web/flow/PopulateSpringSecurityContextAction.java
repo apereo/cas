@@ -1,23 +1,26 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
-import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.support.WebUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -47,7 +50,8 @@ public class PopulateSpringSecurityContextAction extends BaseCasWebflowAction {
         val principal = resolvePrincipal(authn.getPrincipal(), requestContext);
         val authorities = principal.getAttributes().keySet().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-        val secAuth = new PreAuthenticatedAuthenticationToken(principal, authn.getCredentials(), authorities);
+        val user = new User(principal.getId(), RandomUtils.generateSecureRandomId(), authorities);
+        val secAuth = new PreAuthenticatedAuthenticationToken(user, authn.getCredentials(), authorities);
         secAuth.setAuthenticated(true);
 
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -62,13 +66,13 @@ public class PopulateSpringSecurityContextAction extends BaseCasWebflowAction {
 
     protected Principal resolvePrincipal(final Principal principal, final RequestContext requestContext) {
         val resolvers = new ArrayList<>(requestContext.getActiveFlow().getApplicationContext()
-            .getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());
+                .getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());
         AnnotationAwareOrderComparator.sort(resolvers);
         return resolvers
-            .stream()
-            .filter(resolver -> resolver.supports(principal))
-            .findFirst()
-            .map(r -> r.resolve(principal))
-            .orElse(principal);
+                .stream()
+                .filter(resolver -> resolver.supports(principal))
+                .findFirst()
+                .map(r -> r.resolve(principal))
+                .orElse(principal);
     }
 }
