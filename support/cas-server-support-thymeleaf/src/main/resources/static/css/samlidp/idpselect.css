@@ -99,7 +99,16 @@ div.IdPSelectPreferredIdPButton div.IdPSelectTextDiv
 #idpSelectInput, #idpSelectSelector
 {
     width: 80%;
+    padding: 5px 5px;
+    box-sizing: border-box;
+    border: .5px solid #007bff;
+    border-radius: 6px;
 }
+
+#idpSelectInput:focus {
+    background-color: whitesmoke;
+}
+
 /*
  * For some reason a <select> width includes the border and an
  * <input> doesn't hence we have to force a margin onto the <select>
