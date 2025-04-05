@@ -27,10 +27,23 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
     "--cas.ticket.st.time-to-kill-in-seconds=30",
+    "--cas.ticket.tst.time-to-kill-in-seconds=60",
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=duoAdmin",
     "--management.endpoints.access.default=UNRESTRICTED"
   ],
-  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh",
+  "variations": [
+    {
+      "properties": [
+        "--cas.authn.mfa.duo[0].session-storage-type=BROWSER_STORAGE"
+      ]
+    },
+    {
+      "properties": [
+        "--cas.authn.mfa.duo[0].session-storage-type=TICKET_REGISTRY"
+      ]
+    }
+  ]
 }
