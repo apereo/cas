@@ -3,9 +3,7 @@ package org.apereo.cas.cosmosdb;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.cosmosdb.BaseCosmosDbProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
@@ -24,8 +22,8 @@ import io.netty.handler.ssl.SslProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.util.ReflectionUtils;
-
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -42,38 +40,41 @@ public class CosmosDbObjectFactory {
     private final CosmosClient client;
 
     public CosmosDbObjectFactory(final BaseCosmosDbProperties properties,
-                                 final CasSSLContext casSSLContext) {
+                                 final CasSSLContext casSSLContext) throws Exception {
         this.properties = properties;
         val throttlingRetryOptions = new ThrottlingRetryOptions()
             .setMaxRetryAttemptsOnThrottledRequests(properties.getMaxRetryAttemptsOnThrottledRequests())
             .setMaxRetryWaitTime(Beans.newDuration(properties.getMaxRetryWaitTime()));
 
         val uri = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUri());
-        val builder = new CosmosClientBuilder()
+        var builder = new CosmosClientBuilder()
             .endpoint(uri)
             .key(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getKey()))
             .preferredRegions(properties.getPreferredRegions())
             .consistencyLevel(ConsistencyLevel.valueOf(properties.getConsistencyLevel()))
-            .directMode()
             .contentResponseOnWriteEnabled(false)
             .clientTelemetryEnabled(properties.isAllowTelemetry())
             .userAgentSuffix(properties.getUserAgentSuffix())
             .throttlingRetryOptions(throttlingRetryOptions)
-            .endpointDiscoveryEnabled(properties.isEndpointDiscoveryEnabled())
-            .directMode();
+            .endpointDiscoveryEnabled(properties.isEndpointDiscoveryEnabled());
+
+        if (StringUtils.equalsIgnoreCase(properties.getMode(), "gateway")) {
+            builder = builder.gatewayMode();
+        } else if (StringUtils.equalsIgnoreCase(properties.getMode(), "direct")) {
+            builder = builder.directMode();
+        }
+        
         LOGGER.debug("Building CosmosDb client for [{}]", uri);
-        FunctionUtils.doUnchecked(__ -> {
-            val sslContext = SslContextBuilder
-                .forClient()
-                .sslProvider(SslProvider.JDK)
-                .trustManager(casSSLContext.getTrustManagerFactory())
-                .keyManager(casSSLContext.getKeyManagerFactory())
-                .build();
-            val cosmosDbConfigs = new CosmosDbConfigs(sslContext);
-            val configs = ReflectionUtils.getRequiredField(builder.getClass(), "configs");
-            configs.trySetAccessible();
-            configs.set(builder, cosmosDbConfigs);
-        });
+        val sslContext = SslContextBuilder
+            .forClient()
+            .sslProvider(SslProvider.JDK)
+            .trustManager(casSSLContext.getTrustManagerFactory())
+            .keyManager(casSSLContext.getKeyManagerFactory())
+            .build();
+        val cosmosDbConfigs = new CosmosDbConfigs(sslContext);
+        val configs = ReflectionUtils.getRequiredField(builder.getClass(), "configs");
+        configs.trySetAccessible();
+        configs.set(builder, cosmosDbConfigs);
         this.client = builder.buildClient();
     }
 

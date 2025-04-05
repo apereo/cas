@@ -40,7 +40,7 @@ public class CasCosmosDbServiceRegistryAutoConfiguration {
     public CosmosDbObjectFactory cosmosDbObjectFactory(
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
-        final CasConfigurationProperties casProperties) {
+        final CasConfigurationProperties casProperties) throws Exception {
         return new CosmosDbObjectFactory(casProperties.getServiceRegistry().getCosmosDb(), casSslContext);
     }
 
