@@ -8,7 +8,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pass
   grouper:
-    image: "i2incommon/grouper:5.17.1"
+    image: "i2incommon/grouper:5.17.2"
     restart: always
     container_name: grouper-core
     ports:
@@ -31,7 +31,7 @@ services:
       timeout: 10s
       retries: 5
   grouper-ws:
-    image: "i2incommon/grouper:5.17.1"
+    image: "i2incommon/grouper:5.17.2"
     restart: always
     container_name: grouper-ws
     depends_on:
