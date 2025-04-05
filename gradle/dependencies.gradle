@@ -3370,11 +3370,11 @@ ext.libraries = [
                 },
         ],
         wss4j                      : [
-                dependencies.create("com.github.mmoayyed.ws-wss4j:wss4j-bindings:$wss4jVersion") {
+                dependencies.create("org.apache.wss4j:wss4j-bindings:$wss4jVersion") {
                 },
-                dependencies.create("com.github.mmoayyed.ws-wss4j:wss4j-policy:$wss4jVersion") {
+                dependencies.create("org.apache.wss4j:wss4j-policy:$wss4jVersion") {
                 },
-                dependencies.create("com.github.mmoayyed.ws-wss4j:wss4j-ws-security-stax:$wss4jVersion") {
+                dependencies.create("org.apache.wss4j:wss4j-ws-security-stax:$wss4jVersion") {
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-security-api")
@@ -3395,7 +3395,7 @@ ext.libraries = [
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-api")
                     exclude(group: "org.opensaml", module: "opensaml-core")
                 },
-                dependencies.create("com.github.mmoayyed.ws-wss4j:wss4j-ws-security-policy-stax:$wss4jVersion") {
+                dependencies.create("org.apache.wss4j:wss4j-ws-security-policy-stax:$wss4jVersion") {
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-security-api")
@@ -3416,7 +3416,7 @@ ext.libraries = [
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-api")
                     exclude(group: "org.opensaml", module: "opensaml-core")
                 },
-                dependencies.create("com.github.mmoayyed.ws-wss4j:wss4j-ws-security-dom:$wss4jVersion") {
+                dependencies.create("org.apache.wss4j:wss4j-ws-security-dom:$wss4jVersion") {
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-impl")
@@ -3438,7 +3438,7 @@ ext.libraries = [
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-api")
                     exclude(group: "org.opensaml", module: "opensaml-core")
                 },
-                dependencies.create("com.github.mmoayyed.ws-wss4j:wss4j-ws-security-common:$wss4jVersion") {
+                dependencies.create("org.apache.wss4j:wss4j-ws-security-common:$wss4jVersion") {
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-impl")

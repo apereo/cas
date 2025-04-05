@@ -104,13 +104,6 @@ dependencyResolutionManagement {
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://jitpack.io"
-            content {
-                includeGroupByRegex ".*wss4j.*"
-            }
-            mavenContent { releasesOnly() }
-        }
-        maven {
             url "https://projectlombok.org/edge-releases"
             content {
                 includeGroupByRegex ".*projectlombok.*"
