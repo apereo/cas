@@ -8,6 +8,7 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page, "https://github.com");
 
     await cas.loginWith(page);
+    await cas.sleep(1000);
 
     await cas.gotoLogin(page);
     await cas.sleep(1000);

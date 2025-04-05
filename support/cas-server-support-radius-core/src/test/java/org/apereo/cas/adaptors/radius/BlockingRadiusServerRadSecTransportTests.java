@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.radius;
 
 import org.apereo.cas.authentication.CasSSLContext;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -27,7 +28,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 @EnabledOnOs(OS.LINUX)
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = CasCoreWebAutoConfiguration.class, properties = "cas.http-client.trust-store.file=classpath:truststore.jks")
+@SpringBootTest(classes = {
+    CasCoreMultitenancyAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class
+},
+    properties = "cas.http-client.trust-store.file=classpath:truststore.jks")
 class BlockingRadiusServerRadSecTransportTests {
     @Autowired
     @Qualifier(CasSSLContext.BEAN_NAME)

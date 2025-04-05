@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.redis;
 
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasRedisEventsAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -28,7 +29,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasRedisEventsAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class
+    CasCoreWebAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class
 },
     properties = {
         "cas.events.redis.host=localhost",

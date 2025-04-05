@@ -21,6 +21,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-notifications")
+    implementation project(":core:cas-server-core-multitenancy")
 
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-tickets")

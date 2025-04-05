@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -25,7 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 @ExtendWith(CasTestExtension.class)
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = CasCoreWebAutoConfiguration.class)
+@SpringBootTest(classes = {
+    CasCoreMultitenancyAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class ChainingSingleSignOnParticipationStrategyTests {
     @Autowired
