@@ -1007,7 +1007,7 @@ exports.refreshBusContext = async (url = "https://localhost:8443/cas") => {
 };
 
 exports.loginDuoSecurityBypassCode = async (page, username = "casuser", currentCodes = undefined) => {
-    await this.sleep(8000);
+    await this.sleep(12000);
     await this.click(page, "button#passcode");
     const bypassCodes = currentCodes ?? await this.fetchDuoSecurityBypassCodes(username);
     await this.log(`Duo Security: Retrieved bypass codes ${bypassCodes}`);

@@ -2,11 +2,10 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.ticket.registry.AbstractTicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.azure.cosmos.CosmosContainer;
-import com.azure.cosmos.implementation.NotFoundException;
 import com.azure.cosmos.models.CosmosBulkOperations;
 import com.azure.cosmos.models.CosmosItemOperation;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
@@ -19,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -60,6 +58,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
             val encTicketId = digestIdentifier(ticketId);
             val metadata = StringUtils.isNotBlank(ticketId) ? ticketCatalog.find(ticketId) : null;
             if (metadata == null || StringUtils.isBlank(encTicketId)) {
+                LOGGER.warn("Ticket id [{}] cannot be found in the ticket catalog or cannot be encoded", ticketId);
                 return null;
             }
             val container = getTicketContainer(metadata);
@@ -67,10 +66,10 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
             val document = container.readItem(encTicketId, new PartitionKey(metadata.getPrefix()), CosmosDbTicketDocument.class).getItem();
             val result = decodeTicket(ticketSerializationManager.deserializeTicket(document.getTicket(), document.getType()));
             return predicate != null && predicate.test(result) ? result : null;
-        } catch (final NotFoundException e) {
-            LOGGER.debug("Ticket id [{}] cannot be found", ticketId);
-            return null;
-        } 
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, "Ticket id [%s] cannot be found".formatted(ticketId), e);
+        }
+        return null;
     }
 
     @Override
