@@ -180,7 +180,7 @@ class PasswordManagementForgotUsernameConfiguration {
                     val recaptcha = casProperties.getAuthn().getPm().getForgotUsername().getGoogleRecaptcha();
                     return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha), forgotUsernameCaptchaActivationStrategy);
                 })
-                .otherwiseProxy()
+                .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
 
@@ -200,7 +200,7 @@ class PasswordManagementForgotUsernameConfiguration {
                         requestContext -> WebUtils.putRecaptchaForgotUsernameEnabled(requestContext, recaptcha),
                         recaptcha);
                 })
-                .otherwiseProxy()
+                .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
 

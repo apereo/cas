@@ -12,6 +12,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SpnegoCredentialsAction;
 import org.apereo.cas.web.flow.SpnegoNegotiateCredentialsAction;
+import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.client.BaseSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.flow.client.HostNameSpnegoKnownClientSystemsFilterAction;
@@ -157,7 +158,7 @@ class SpnegoWebflowActionsConfiguration {
                         Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(),
                         searchOperation, spnegoProperties.getSpnegoAttributeName());
                 })
-                .otherwiseProxy()
+                .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
     }

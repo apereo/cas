@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
 import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
@@ -482,7 +481,7 @@ class SamlIdPEndpointsConfiguration {
         @Bean
         public CipherExecutor samlIdPDistributedSessionCookieCipherExecutor(final CasConfigurationProperties casProperties) {
             val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-            return FunctionUtils.doIf(type == SessionStorageTypes.TICKET_REGISTRY,
+            return FunctionUtils.doIf(type.isTicketRegistry(),
                 () -> {
                     val cookie = casProperties.getAuthn().getSamlIdp().getCore().getSessionReplication().getCookie();
                     val crypto = cookie.getCrypto();

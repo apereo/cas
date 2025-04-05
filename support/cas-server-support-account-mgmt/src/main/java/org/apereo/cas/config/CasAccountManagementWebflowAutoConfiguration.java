@@ -413,7 +413,7 @@ public class CasAccountManagementWebflowAutoConfiguration {
                         .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_VALIDATE_CAPTCHA)
                         .build()
                         .get())
-                .otherwiseProxy()
+                .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
 
