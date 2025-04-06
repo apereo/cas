@@ -32,7 +32,7 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
     private static final long serialVersionUID = 3359382317533639638L;
 
     /**
-     * The discovery endpoint to locate the provide metadata.
+     * The discovery endpoint to locate the provider metadata.
      */
     @RequiredProperty
     private String discoveryUri;

@@ -70,6 +70,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * credentials and it will automatically generate a new assertion for you. By default, the SAML client
      * will accept assertions based on a previous authentication for one hour.
      * You can adjust this behavior by modifying this setting. The unit of time here is seconds.
+     * To disable this check entirely, set the value to zero.
      */
     @DurationCapable
     private String maximumAuthenticationLifetime = "PT3600S";

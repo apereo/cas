@@ -33,22 +33,23 @@ public class RestfulDelegatedClientUserProfileProvisioner extends BaseDelegatedC
                         final BaseClient client, final Credential credential) {
         HttpResponse response = null;
         try {
-            val headers = new HashMap<String, String>();
-            headers.put("principalId", principal.getId());
-            headers.put("principalAttributes", principal.getAttributes().toString());
-            headers.put("profileId", profile.getId());
-            headers.put("profileTypedId", profile.getTypedId());
-            headers.put("profileAttributes", profile.getAttributes().toString());
-            headers.put("clientName", client.getName());
-            headers.putAll(restProperties.getHeaders());
+            val body = new HashMap<String, Object>();
+            body.put("principalId", principal.getId());
+            body.put("principalAttributes", principal.getAttributes());
+            body.put("profileId", profile.getId());
+            body.put("profileTypedId", profile.getTypedId());
+            body.put("profileAttributes", profile.getAttributes());
+            body.put("clientName", client.getName());
+            body.putAll(restProperties.getHeaders());
 
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(restProperties.getUrl())
-                .headers(headers)
-                .build();
+                .headers(restProperties.getHeaders())
+                .build()
+                .body(body);
 
             response = HttpUtils.execute(exec);
             if (response != null) {

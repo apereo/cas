@@ -1,8 +1,15 @@
 package org.apereo.cas.util.http;
 
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpMethod;
@@ -17,7 +24,12 @@ import java.util.Map;
  */
 @SuperBuilder
 @Getter
+@With
+@AllArgsConstructor
 public class HttpExecutionRequest {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
+
     private final HttpClient httpClient;
 
     @NonNull
@@ -38,7 +50,7 @@ public class HttpExecutionRequest {
 
     @Builder.Default
     private final int maximumRetryAttempts = 3;
-    
+
     @Builder.Default
     private final Map<String, String> parameters = new LinkedHashMap<>();
 
@@ -61,5 +73,18 @@ public class HttpExecutionRequest {
      */
     boolean isBearerAuthentication() {
         return StringUtils.isNotBlank(bearerToken);
+    }
+
+
+    /**
+     * Convert this record into JSON.
+     *
+     * @return the string
+     */
+    @JsonIgnore
+    @CanIgnoreReturnValue
+    public HttpExecutionRequest body(final Object body) {
+        return withEntity(FunctionUtils.doUnchecked(
+            () -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(body)));
     }
 }
