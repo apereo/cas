@@ -261,7 +261,7 @@ gradleLombok = "8.13.1"
 gradleDependencyVersions = "0.52.0"
 gradleErrorProne = "4.1.0"
 gradleGraalVmNative = "0.10.6"
-gradleSonarqube = "6.0.1.5171"
+gradleSonarqube = "6.1.0.5360"
 gradleNexusPublishing = "2.0.0"
 gradleJib = "3.4.5"
 
