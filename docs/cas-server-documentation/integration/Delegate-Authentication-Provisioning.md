@@ -45,9 +45,10 @@ To prepare CAS to support and integrate with Apache Groovy, please [review this 
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.provisioning.rest" %}
 
-Provisioning tasks can be carried out using an external REST endpoint expected to receive the following:
+Provisioning tasks can be carried out using an external REST endpoint expected to 
+receive the following in the request body:
 
-| Header                | Description                                                                         |
+| Attribute             | Description                                                                         |
 |-----------------------|-------------------------------------------------------------------------------------|
 | `principalId`         | CAS authenticated principal identifier.                                             |
 | `principalAttributes` | CAS authenticated principal attributes.                                             |
