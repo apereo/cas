@@ -528,11 +528,11 @@ public class LdapUtils {
                     val bindRequest = new SimpleBindRequest(props.getBindDn(), props.getBindCredential());
                     pooledCf.setPassivator(new BindConnectionPassivator(bindRequest));
                     LOGGER.debug("Created [{}] passivator for [{}]", props.getPoolPassivator(), props.getLdapUrl());
-                } else {
+                } else if (LOGGER.isInfoEnabled()) {
                     val values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
                         .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
                         .collect(Collectors.toList());
-                    LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
+                    LOGGER.info("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
                             + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
                             + "set the pool passivator setting to one of [{}]",
                         props.getPoolPassivator(), props.getLdapUrl(), values);

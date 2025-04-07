@@ -1,0 +1,4 @@
+def scenario = System.getenv("SCENARIO")
+def config = "${project.rootDir}/ci/tests/puppeteer/scenarios/${scenario}/classpath"
+println "Including source set directory ${config}"
+sourceSets.main.resources.srcDirs += config

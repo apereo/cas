@@ -11,6 +11,7 @@ const assert = require("assert");
 
         const service = "https://localhost:9859/anything/attributes";
         await cas.gotoLoginWithAuthnMethod(page, service, "mfa-duo");
+        await cas.sleep(2000);
 
         await cas.loginWith(page, "duocode", "Mellon");
         await cas.sleep(4000);

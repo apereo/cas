@@ -117,9 +117,7 @@ class CasCoreWebConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("casCommonMessages")
             final Properties casCommonMessages) {
-            val messageBundle = new CasReloadableMessageBundle(tenantExtractor);
-            messageBundle.setCommonMessages(casCommonMessages);
-            return CasReloadableMessageBundle.configure(messageBundle, casProperties);
+            return new CasReloadableMessageBundle(tenantExtractor, casProperties, casCommonMessages);
         }
     }
 

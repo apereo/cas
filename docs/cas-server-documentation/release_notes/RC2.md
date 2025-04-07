@@ -4,7 +4,7 @@ title: CAS - Release Notes
 category: Planning
 ---
 
-# 7.2.0-RC2 Release Notes
+# 7.3.0-RC2 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
 you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note

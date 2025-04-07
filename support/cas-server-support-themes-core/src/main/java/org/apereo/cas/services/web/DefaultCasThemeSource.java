@@ -1,6 +1,7 @@
 package org.apereo.cas.services.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.util.ResourceUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +43,15 @@ public class DefaultCasThemeSource extends ResourceBundleThemeSource {
     }
 
     protected MessageSource createExtendedMessageSource(final String basename) {
-        val source = (HierarchicalMessageSource) super.createMessageSource(StringUtils.replace(basename, "-default", "-custom"));
-        source.setParentMessageSource(super.createMessageSource(basename));
+        if (StringUtils.equalsIgnoreCase(basename, ThemeProperties.DEFAULT_THEME_NAME)) {
+            val customTheme = StringUtils.replace(basename, "-default", "-custom");
+            val source = (HierarchicalMessageSource) super.createMessageSource(customTheme);
+            source.setParentMessageSource(super.createMessageSource(basename));
+            return source;
+        }
+        val source = (HierarchicalMessageSource) super.createMessageSource(basename);
+        val defaultSource = super.createMessageSource(ThemeProperties.DEFAULT_THEME_NAME);
+        source.setParentMessageSource(defaultSource);
         return source;
     }
 

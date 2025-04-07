@@ -3,7 +3,6 @@ package org.apereo.cas.web.view;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.multitenancy.TenantExtractor;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +11,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.support.AbstractResourceBasedMessageSource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import java.util.Locale;
+import java.util.Properties;
 
 /**
  * An extension of the {@link ReloadableResourceBundleMessageSource}.
@@ -28,9 +28,16 @@ import java.util.Locale;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RequiredArgsConstructor
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
     private final TenantExtractor tenantExtractor;
+
+    public CasReloadableMessageBundle(final TenantExtractor tenantExtractor,
+                                      final CasConfigurationProperties casProperties,
+                                      final Properties commonMessages) {
+        this.tenantExtractor = tenantExtractor;
+        configure(this, casProperties);
+        setCommonMessages(commonMessages);
+    }
 
     @Override
     protected String getMessageInternal(final String code, final Object[] args, final Locale locale) {
@@ -55,14 +62,15 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
      * @param casProperties the cas properties
      * @return the message source
      */
-    public static MessageSource configure(final AbstractResourceBasedMessageSource bean,
-                                          final CasConfigurationProperties casProperties) {
+    private MessageSource configure(final AbstractResourceBasedMessageSource bean,
+                                    final CasConfigurationProperties casProperties) {
         val mb = casProperties.getMessageBundle();
         bean.setDefaultEncoding(mb.getEncoding());
         bean.setCacheSeconds(Long.valueOf(Beans.newDuration(mb.getCacheSeconds()).toSeconds()).intValue());
         bean.setFallbackToSystemLocale(mb.isFallbackSystemLocale());
         bean.setUseCodeAsDefaultMessage(mb.isUseCodeMessage());
         bean.setBasenames(mb.getBaseNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
+        bean.setCommonMessages(getCommonMessages());
         return bean;
     }
 }

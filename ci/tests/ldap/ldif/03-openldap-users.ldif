@@ -25,3 +25,26 @@ pwdMaxFailure: 3
 pwdMinLength: 6
 pwdLockout: TRUE
 pwdLockoutDuration: 0
+
+dn: uid=casadmin,ou=People,dc=example,dc=org
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: pwdPolicy
+objectClass: pwdPolicyChecker
+givenName: Admin
+uid: casadmin
+sn: Apereo
+cn: Admin User
+userPassword: P@ssw0rd
+telephoneNumber: 223456789
+mail: casadmin@example.org
+pwdAttribute: userPassword
+pwdExpireWarning: 10
+pwdGraceAuthNLimit: 5
+pwdMaxAge: 10
+pwdMaxFailure: 3
+pwdMinLength: 6
+pwdLockout: FALSE
+pwdLockoutDuration: 0
