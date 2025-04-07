@@ -939,7 +939,7 @@ exports.goto = async (page, url, retryCount = 5) => {
         attempts += 1;
         try {
             await this.logg(`Navigating to: ${url}`);
-            response = await page.goto(url, { waitUntil: "networkidle2" });
+            response = await page.goto(url);
             assert(await page.evaluate(() => document.title) !== null);
         } catch (err) {
             this.logr(`#${attempts}: Failed to goto to ${url}.`);
