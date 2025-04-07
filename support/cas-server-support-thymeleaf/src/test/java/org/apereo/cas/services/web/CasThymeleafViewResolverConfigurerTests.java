@@ -1,6 +1,7 @@
 package org.apereo.cas.services.web;
 
 import org.apereo.cas.BaseThymeleafTests;
+import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import lombok.val;
@@ -61,7 +62,7 @@ class CasThymeleafViewResolverConfigurerTests {
 
     @Test
     void verifyDirectView() throws Throwable {
-        val resolver = themeViewResolverFactory.create("cas-theme-default");
+        val resolver = themeViewResolverFactory.create(ThemeProperties.DEFAULT_THEME_NAME);
         val view = resolver.resolveViewName("oneCustomView", Locale.ENGLISH);
         assertNotNull(view);
         assertTrue(((AbstractThymeleafView) view).getStaticVariables().containsKey("cas"));

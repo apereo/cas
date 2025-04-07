@@ -1,5 +1,6 @@
 <footer th:if="${'true' == #strings.defaultString(#themes.code('cas.footer.show'), 'true')}"
-        class="py-3 d-flex justify-content-center align-items-center cas-footer">
+        class="py-3 d-flex justify-content-center align-items-center cas-footer"
+        id="casFooter">
     <span id="copyright" th:utext="#{copyright}" class="me-2 d-inline-block">Copyright Apereo, Inc</span>
     <span id="poweredBy" class="px-3 d-inline-block">
         <span th:utext="#{poweredBy}">Powered by </span><a href="https://github.com/apereo/cas">Apereo CAS</a>

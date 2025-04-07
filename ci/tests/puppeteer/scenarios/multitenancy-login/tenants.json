@@ -5,6 +5,10 @@
       "@class": "org.apereo.cas.multitenancy.TenantDefinition",
       "id": "shire",
       "description": "This is the Shire tenant definition",
+      "userInterfacePolicy": {
+        "@class": "org.apereo.cas.multitenancy.DefaultTenantUserInterfacePolicy",
+        "themeName": "shire-theme"
+      },
       "authenticationPolicy": {
         "@class": "org.apereo.cas.multitenancy.DefaultTenantAuthenticationPolicy",
         "authenticationHandlers": [
@@ -22,6 +26,16 @@
             "CasClient1"
           ]
         ]
+      },
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.message-bundle.base-names": "classpath:/shire_messages",
+        "cas.authn.ldap[0].type": "DIRECT",
+        "cas.authn.ldap[0].pool-passivator": "none",
+        "cas.authn.ldap[0].dn-format": "uid=%s,ou=people,dc=example,dc=org",
+        "cas.authn.ldap[0].ldap-url": "ldap://localhost:11389",
+        "cas.authn.ldap[0].enhance-with-entry-resolver": "false",
+        "cas.authn.ldap[0].additional-attributes": "*,+"
       }
     },
     {
