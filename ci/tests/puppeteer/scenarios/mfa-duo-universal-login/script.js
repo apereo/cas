@@ -2,11 +2,10 @@ const cas = require("../../cas.js");
 const assert = require("assert");
 
 (async () => {
-    let failed = false;
     const browser = await cas.newBrowser(cas.browserOptions());
+    const context = await browser.createBrowserContext();
     try {
-
-        const page = await cas.newPage(browser);
+        const page = await cas.newPage(context);
         await cas.updateDuoSecurityUserStatus("duocode");
 
         const service = "https://localhost:9859/anything/attributes";
@@ -79,13 +78,8 @@ const assert = require("assert");
         assert(payload.form.ticket !== undefined);
         assert(payload.method === "POST");
         await cas.gotoLogout(page);
-    } catch (e) {
-        failed = true;
-        throw e;
     } finally {
+        await context.close();
         await browser.close();
-        if (!failed) {
-            await process.exit(0);
-        }
     }
 })();
