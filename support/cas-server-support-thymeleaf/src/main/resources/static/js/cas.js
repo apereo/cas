@@ -151,7 +151,7 @@ function logGeoLocationError(error) {
 
 function showGeoPosition(position) {
     let loc = `${position.coords.latitude},${position.coords.longitude},${position.coords.accuracy},${position.timestamp}`;
-    console.log(`Tracking geolocation for ${loc}`);
+    // console.log(`Tracking geolocation for ${loc}`);
     $("[name=\"geolocation\"]").val(loc);
 }
 
@@ -174,7 +174,7 @@ function preserveAnchorTagOnForm() {
         } else {
             action += location.search + encodeURIComponent(location.hash);
         }
-        console.log(`Preserving URL fragment in form action: ${action}`);
+        // console.log(`Preserving URL fragment in form action: ${action}`);
         $("#fm1").attr("action", action);
 
     });
@@ -196,24 +196,24 @@ function preventFormResubmission() {
 
 function writeToLocalStorage(browserStorage) {
     if (typeof (Storage) === "undefined") {
-        console.log("Browser does not support local storage for write-ops");
+        console.log("Browser does not support local storage for write ops");
     } else {
         let payload = readFromLocalStorage(browserStorage);
         window.localStorage.removeItem("CAS");
         payload[browserStorage.context] = browserStorage.payload;
         window.localStorage.setItem("CAS", JSON.stringify(payload));
-        console.log(`Stored ${browserStorage.payload} in local storage under key ${browserStorage.context}`);
+        // console.log(`Stored ${browserStorage.payload} in local storage under key ${browserStorage.context}`);
     }
 }
 
 function readFromLocalStorage(browserStorage) {
     if (typeof (Storage) === "undefined") {
-        console.log("Browser does not support local storage for read-ops");
+        console.log("Browser does not support local storage for read ops");
         return null;
     }
     try {
         let payload = window.localStorage.getItem("CAS");
-        console.log(`Read ${payload} in local storage`);
+        // console.log(`Read ${payload} in local storage`);
         return payload === null ? {} : JSON.parse(payload);
     } catch (e) {
         console.log(`Failed to read from local storage: ${e}`);
@@ -238,7 +238,7 @@ function writeToSessionStorage(browserStorage) {
         window.sessionStorage.removeItem("CAS");
         payload[browserStorage.context] = browserStorage.payload;
         window.sessionStorage.setItem("CAS", JSON.stringify(payload));
-        console.log(`Stored ${browserStorage.payload} in session storage under key ${browserStorage.context}`);
+        // console.log(`Stored ${browserStorage.payload} in session storage under key ${browserStorage.context}`);
     }
 }
 
@@ -247,7 +247,7 @@ function clearSessionStorage() {
         console.log("Browser does not support session storage for write-ops");
     } else {
         window.sessionStorage.clear();
-        console.log("Cleared session storage");
+        // console.log("Cleared session storage");
     }
 }
 
@@ -258,7 +258,7 @@ function readFromSessionStorage(browserStorage) {
     }
     try {
         let payload = window.sessionStorage.getItem("CAS");
-        console.log(`Read ${payload} in session storage`);
+        // console.log(`Read ${payload} in session storage`);
         return payload === null ? {} : JSON.parse(payload);
     } catch (e) {
         console.log(`Failed to read from session storage: ${e}`);

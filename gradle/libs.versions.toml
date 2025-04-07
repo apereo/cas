@@ -108,6 +108,7 @@ jakartaJstl = "3.0.2"
 jakartaServlet = "6.1.0"
 jakartaSoapApi = "3.0.2"
 jakartaValidation = "3.1.1"
+jansi = "2.4.1"
 jasypt = "1.9.3"
 javaMelody = "2.5.1"
 javaParser = "3.26.4"
@@ -146,7 +147,7 @@ ldaptive = "2.4.1"
 lettuceMod = "4.2.1"
 log4j = "2.24.3"
 logback = "1.5.18"
-logbackAccess = "1.5.18"
+logbackAccess = "2.0.6"
 loki = "0.9.32"
 lombok = "1.18.38"
 lucene = "10.1.0"
@@ -429,6 +430,7 @@ jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api",
 jakarta-xml-bind-api = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version.ref = "jaxbApi" }
 jakarta-xml-soap-api = { module = "jakarta.xml.soap:jakarta.xml.soap-api", version.ref = "jakartaSoapApi" }
 jakarta-xml-ws-api = { module = "jakarta.xml.ws:jakarta.xml.ws-api", version.ref = "wsApi" }
+jansi = { module = "org.fusesource.jansi:jansi", version.ref = "jansi" }
 jasypt = { module = "org.jasypt:jasypt", version.ref = "jasypt" }
 java-driver-core = { module = "org.apache.cassandra:java-driver-core", version.ref = "apacheCassandra" }
 java-driver-mapper-runtime = { module = "org.apache.cassandra:java-driver-mapper-runtime", version.ref = "apacheCassandra" }
@@ -487,7 +489,7 @@ log4j-layout-template-json = { module = "org.apache.logging.log4j:log4j-layout-t
 log4j-slf4j2-impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
 log4j-spring-cloud-config-client = { module = "org.apache.logging.log4j:log4j-spring-cloud-config-client", version.ref = "log4j" }
 log4j-loki = { module = "pl.tkowalcz.tjahzi:log4j2-appender-nodep", version.ref = "loki" }
-logback-access = { module = "ch.qos.logback:logback-access", version.ref = "logbackAccess" }
+logback-access = { module = "ch.qos.logback.access:logback-access-common", version.ref = "logbackAccess" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 logback-core = { module = "ch.qos.logback:logback-core", version.ref = "logback" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp3" }
