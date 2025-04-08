@@ -4,7 +4,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.pm.web.flow.actions.BasePasswordManagementActionTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -19,8 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.UUID;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link PasswordManagementEndpointTests}.
@@ -43,10 +42,6 @@ class PasswordManagementEndpointTests extends BasePasswordManagementActionTests 
     @Autowired
     @Qualifier("mockMvc")
     protected MockMvc mockMvc;
-
-    @Autowired
-    @Qualifier(ServicesManager.BEAN_NAME)
-    protected ServicesManager servicesManager;
     
     @Test
     void verifyOperation() throws Throwable {
