@@ -9,7 +9,6 @@ import com.google.api.gax.core.NoCredentialsProvider;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -26,7 +25,6 @@ import org.springframework.core.env.Environment;
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     BaseGoogleCloudSecretsManagerTests.BaseGoogleCloudSecretsManagerTestConfiguration.class,
-    PropertyPlaceholderAutoConfiguration.class,
     CasGoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration.class
 }, properties = {
     "spring.cloud.gcp.secretmanager.enabled=true",

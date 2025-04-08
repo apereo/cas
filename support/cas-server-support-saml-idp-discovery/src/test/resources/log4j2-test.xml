@@ -10,6 +10,8 @@
         <Logger name="org.opensaml" level="warn" />
         <Logger name="PROTOCOL_MESSAGE" level="warn" />
         <Logger name="org.apache.xml.security" level="off" />
+        <Logger name="org.springframework" level="error" />
+        <Logger name="org.springframework.aop" level="warn" />
         <Root level="error">
             <AppenderRef ref="console"/>
         </Root>

@@ -54,6 +54,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-pac4j-oidc")
     testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(":support:cas-server-support-webconfig")
 
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")

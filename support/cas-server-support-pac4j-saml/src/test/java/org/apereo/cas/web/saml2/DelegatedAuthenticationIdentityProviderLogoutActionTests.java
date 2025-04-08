@@ -70,11 +70,10 @@ class DelegatedAuthenticationIdentityProviderLogoutActionTests {
 
     @Test
     void verifyPostLogout() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
+        val context = MockRequestContext.create(applicationContext).withUserAgent();
         context.setMethod(HttpMethod.POST);
         val tgt = prepCredential(context, UUID.randomUUID().toString(), "AutomaticPostLogoutClient");
         context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "AutomaticPostLogoutClient");
-        context.withUserAgent();
         try (val webServer = new MockWebServer(HttpStatus.OK)) {
             webServer.start();
             val continuation = SingleLogoutContinuation.builder().url("http://localhost:%s".formatted(webServer.getPort()));

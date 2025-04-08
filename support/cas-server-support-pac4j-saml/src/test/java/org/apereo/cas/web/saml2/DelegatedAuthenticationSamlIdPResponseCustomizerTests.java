@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAsserti
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlIdPResponseCustomizer;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -20,6 +21,7 @@ import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +47,13 @@ class DelegatedAuthenticationSamlIdPResponseCustomizerTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
-    void verifyOperation() {
+    void verifyOperation() throws Throwable {
+        val requestContext = MockRequestContext.create(applicationContext);
+        
         val assertion = mock(Assertion.class);
         val authnStatement = mock(AuthnStatement.class);
         val authnContext = mock(AuthnContext.class);
@@ -68,6 +75,8 @@ class DelegatedAuthenticationSamlIdPResponseCustomizerTests {
                 .attributes(Map.of(Pac4jConstants.CLIENT_NAME, "SAML2Client"))
                 .build()))
             .registeredService(registeredService)
+            .httpRequest(requestContext.getHttpServletRequest())
+            .httpResponse(requestContext.getHttpServletResponse())
             .build();
 
         val builder = mock(Saml20ObjectBuilder.class);

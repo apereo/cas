@@ -34,9 +34,7 @@ class DelegatedClientAuthenticationFailureActionTests {
 
     @Test
     void verifyFailsOperation() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-
-        context.withUserAgent();
+        val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
 
         assertNull(delegatedAuthenticationFailureAction.execute(context));
         assertFalse(context.getFlowScope().contains("code"));

@@ -44,6 +44,8 @@ import static org.mockito.Mockito.*;
 @Tag("AuthenticationHandler")
 class DelegatedClientAuthenticationHandlerTests {
 
+    private static final String CALLBACK_URL = "http://localhost:8080/callback";
+
     private static final String ID = "123456789";
 
     private FacebookClient fbClient;
@@ -65,6 +67,7 @@ class DelegatedClientAuthenticationHandlerTests {
             processor, "customDelegatedAuthenticationPreProcessor");
 
         fbClient = new FacebookClient();
+        fbClient.setCallbackUrl(CALLBACK_URL);
         val factory = DelegatedIdentityProviderFactory.withClients(List.of(fbClient));
         val clients = new DefaultDelegatedIdentityProviders(factory, mock(TenantExtractor.class));
 

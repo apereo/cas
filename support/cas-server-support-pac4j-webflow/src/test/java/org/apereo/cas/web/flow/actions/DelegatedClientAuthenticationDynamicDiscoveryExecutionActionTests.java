@@ -39,9 +39,7 @@ class DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests {
 
     @Test
     void verifyOperationWithClient() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-
-        context.withUserAgent();
+        val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         context.setParameter("username", "cas@example.org");
 
         val result = delegatedAuthenticationDiscoveryAction.execute(context);

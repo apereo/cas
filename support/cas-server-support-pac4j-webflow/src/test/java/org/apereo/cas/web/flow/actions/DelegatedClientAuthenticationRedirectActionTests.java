@@ -59,8 +59,7 @@ class DelegatedClientAuthenticationRedirectActionTests {
     }
 
     private MockRequestContext getMockRequestContext() throws Exception {
-        val context = MockRequestContext.create(applicationContext);
-        context.withUserAgent();
+        val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         return context;
     }
 

@@ -19,6 +19,7 @@ import org.springframework.boot.actuate.autoconfigure.observation.ObservationAut
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
@@ -29,6 +30,7 @@ import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServic
 import org.springframework.boot.autoconfigure.ssl.SslAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
@@ -58,6 +60,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ImportAutoConfiguration(classes = {
+    PropertyPlaceholderAutoConfiguration.class,
     AopAutoConfiguration.class,
     CompositeMeterRegistryAutoConfiguration.class,
     DispatcherServletAutoConfiguration.class,
@@ -97,6 +100,7 @@ import java.lang.annotation.Target;
     ManagementServerProperties.class,
     WebEndpointProperties.class,
     WebProperties.class,
+    ServerProperties.class,
     MailProperties.class,
     SecurityProperties.class,
     CasConfigurationProperties.class
