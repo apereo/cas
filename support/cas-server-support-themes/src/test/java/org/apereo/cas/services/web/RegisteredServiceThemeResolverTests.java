@@ -60,8 +60,7 @@ class RegisteredServiceThemeResolverTests {
     class ExampleThemeTests extends BaseThemeTests {
         @Test
         void verifyNoAccess() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-            context.withUserAgent();
+            val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             val strategy = new DefaultRegisteredServiceAccessStrategy(false, true);
             registeredService.setAccessStrategy(strategy);

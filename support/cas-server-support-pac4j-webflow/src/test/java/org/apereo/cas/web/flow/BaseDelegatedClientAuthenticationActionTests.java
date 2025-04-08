@@ -76,8 +76,7 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
     
 
     protected void assertStartAuthentication(final Service service) throws Throwable {
-        val requestContext = MockRequestContext.create(applicationContext);
-        requestContext.withUserAgent();
+        val requestContext = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
 
         val flow = new Flow("mockFlow");
         flow.addVariable(new FlowVariable("credential",

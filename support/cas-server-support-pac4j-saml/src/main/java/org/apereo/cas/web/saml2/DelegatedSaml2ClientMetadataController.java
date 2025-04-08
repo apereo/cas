@@ -48,7 +48,7 @@ public class DelegatedSaml2ClientMetadataController {
     }
 
     private static ResponseEntity<String> getNotAcceptableResponseEntity() {
-        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     /**

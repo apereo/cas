@@ -40,8 +40,7 @@ class DelegatedClientAuthenticationCredentialSelectionFinalizeActionTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-        context.withUserAgent();
+        val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         val profile = DelegatedAuthenticationCandidateProfile.builder()
             .attributes(CoreAuthenticationTestUtils.getAttributes())
             .id(UUID.randomUUID().toString())

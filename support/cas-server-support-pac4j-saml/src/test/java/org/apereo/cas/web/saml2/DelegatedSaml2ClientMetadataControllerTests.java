@@ -72,7 +72,7 @@ class DelegatedSaml2ClientMetadataControllerTests {
         assertNotNull(mockMvc.perform(get(DelegatedSaml2ClientMetadataController.BASE_ENDPOINT_SERVICE_PROVIDER + "/UnknownClient/metadata")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .accept(MediaType.APPLICATION_XML))
-            .andExpect(status().isNotAcceptable())
+            .andExpect(status().isNotFound())
             .andReturn()
             .getResponse()
             .getContentAsString());

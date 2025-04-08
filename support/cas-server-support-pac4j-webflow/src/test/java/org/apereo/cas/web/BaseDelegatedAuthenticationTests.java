@@ -40,6 +40,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  */
 public abstract class BaseDelegatedAuthenticationTests {
     @ImportAutoConfiguration({
+        CasWebAppAutoConfiguration.class,
         CasDelegatedAuthenticationOidcAutoConfiguration.class,
         CasDelegatedAuthenticationCasAutoConfiguration.class,
         CasDelegatedAuthenticationAutoConfiguration.class,
@@ -58,8 +59,7 @@ public abstract class BaseDelegatedAuthenticationTests {
         CasThymeleafAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        CasCoreMultitenancyAutoConfiguration.class,
-        CasWebAppAutoConfiguration.class
+        CasCoreMultitenancyAutoConfiguration.class
     })
     @SpringBootTestAutoConfigurations
     @SpringBootConfiguration(proxyBeanMethods = false)

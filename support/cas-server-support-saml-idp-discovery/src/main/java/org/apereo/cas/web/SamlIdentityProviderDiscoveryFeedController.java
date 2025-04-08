@@ -101,7 +101,7 @@ public class SamlIdentityProviderDiscoveryFeedController {
      * @param httpServletResponse the http servlet response
      * @return the view
      */
-    @GetMapping(path = "/redirect")
+    @GetMapping(path = "/redirect", produces = MediaType.ALL_VALUE, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public View redirect(
         @RequestParam("entityID")
         final String entityID,

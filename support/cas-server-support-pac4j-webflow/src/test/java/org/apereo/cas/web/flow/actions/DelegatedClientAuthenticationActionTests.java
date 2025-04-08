@@ -72,8 +72,7 @@ class DelegatedClientAuthenticationActionTests {
 
         @Test
         void verifyCredentialSelectionStart() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-            context.withUserAgent();
+            val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
             context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FakeClient");
             val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
 
@@ -90,8 +89,7 @@ class DelegatedClientAuthenticationActionTests {
 
         @Test
         void verifyCredentialSelectionFinish() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-            context.withUserAgent();
+            val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
             context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FakeClient");
 
             val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
@@ -125,9 +123,7 @@ class DelegatedClientAuthenticationActionTests {
 
         @Test
         void verifyExecutionFailureWithUnauthzResponse() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-
-            context.withUserAgent();
+            val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
             servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId()));
             context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
@@ -144,9 +140,7 @@ class DelegatedClientAuthenticationActionTests {
 
         @Test
         void verifyFinishAuthenticationAuthzFailure() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-
-            context.withUserAgent();
+            val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
             context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FakeClient");
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
             context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
@@ -161,9 +155,7 @@ class DelegatedClientAuthenticationActionTests {
 
         @Test
         void verifyFinishAuthentication() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-
-            context.withUserAgent();
+            val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
             context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FakeClient");
 
             context.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, "theme");
@@ -194,9 +186,7 @@ class DelegatedClientAuthenticationActionTests {
 
         @Test
         void verifyStopWebflowOnCredentialFailure() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-
-            context.withUserAgent();
+            val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
             context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "BadCredentialsClient");
 
             context.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, "theme");
@@ -216,9 +206,7 @@ class DelegatedClientAuthenticationActionTests {
 
         @Test
         void verifyFailedAuthentication() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-
-            context.withUserAgent();
+            val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
             context.setParameter("error_message", "bad authn");
             context.setParameter("error_code", "403");
             context.setParameter("error_description", "authentication failed");
@@ -230,9 +218,7 @@ class DelegatedClientAuthenticationActionTests {
 
         @Test
         void verifySsoAuthenticationWithUnauthorizedSso() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-
-            context.withUserAgent();
+            val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
             val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
             val client = identityProviders.findClient("FakeClient", webContext).orElseThrow();
 
@@ -257,9 +243,7 @@ class DelegatedClientAuthenticationActionTests {
 
         @Test
         void verifySsoAuthentication() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-
-            context.withUserAgent();
+            val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
             val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
             val client = identityProviders.findClient("FakeClient", webContext).orElse(null);
             val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
@@ -300,8 +284,7 @@ class DelegatedClientAuthenticationActionTests {
 
         @Test
         void verifyLogoutRequestWithOkAction() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-            context.withUserAgent();
+            val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
             context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "LogoutClient");
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
             servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
@@ -317,8 +300,7 @@ class DelegatedClientAuthenticationActionTests {
 
         @Test
         void verifyLogoutRequestWithFormPost() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-            context.withUserAgent();
+            val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
             context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "AutomaticPostLogoutClient");
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
             servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
@@ -334,8 +316,7 @@ class DelegatedClientAuthenticationActionTests {
 
         @Test
         void verifyServerSideRedirectAuthentication() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-            context.withUserAgent();
+            val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
 
             val service = CoreAuthenticationTestUtils.getService("https://delegated2.example.org");
             servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
@@ -353,8 +334,7 @@ class DelegatedClientAuthenticationActionTests {
 
         @Test
         void verifySsoAuthenticationUnauthz() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-            context.withUserAgent();
+            val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
 
             context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FakeClient");
             val service = CoreAuthenticationTestUtils.getService("https://delegated3.example.org");

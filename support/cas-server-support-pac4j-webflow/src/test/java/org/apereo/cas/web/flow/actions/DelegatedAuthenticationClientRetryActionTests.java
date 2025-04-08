@@ -36,8 +36,7 @@ class DelegatedAuthenticationClientRetryActionTests {
 
     @Test
     void verifyOperationWithRedirect() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-        context.withUserAgent();
+        val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "CasClient");
         val result = retryAction.execute(context);
         assertNull(result);

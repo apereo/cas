@@ -36,7 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = {
     BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class,
     CasSamlIdentityProviderDiscoveryAutoConfiguration.class
-}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+},
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class SamlIdentityProviderDiscoveryFeedControllerTests {
 
@@ -85,7 +86,7 @@ class SamlIdentityProviderDiscoveryFeedControllerTests {
                 .accept(MediaType.APPLICATION_JSON)
                 .queryParam("entityID", "https://cas.example.org/idp")
             )
-            .andExpect(status().isOk())
+            .andExpect(status().isMovedTemporarily())
             .andReturn()
             .getModelAndView();
         assertNotNull(mv.getView());
@@ -105,6 +106,6 @@ class SamlIdentityProviderDiscoveryFeedControllerTests {
                 .queryParam(CasProtocolConstants.PARAMETER_SERVICE, "https://service.example")
                 .queryParam("entityID", "https://cas.example.org/idp")
             )
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isUnauthorized());
     }
 }

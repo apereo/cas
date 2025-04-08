@@ -61,8 +61,7 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Test
     @Order(1)
     void verifyOperationWithRedirect() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-        context.withUserAgent();
+        val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
         WebUtils.putLogoutRedirectUrl(context, "https://google.com");
 
@@ -93,8 +92,7 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Test
     @Order(1)
     void verifyOperationNoLogoutRedirectUrl() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-        context.withUserAgent();
+        val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
         val logoutRequest = DelegatedAuthenticationClientLogoutRequest.builder().status(200).build();
         DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequest(context, logoutRequest);
@@ -106,8 +104,7 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Test
     @Order(1)
     void verifyOperationWithRelay() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-        context.withUserAgent();
+        val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         context.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
         val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
         assertNull(result);
@@ -116,8 +113,7 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
     @Test
     @Order(100)
     void verifyOperationFailsWithError() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-        context.withUserAgent();
+        val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         context.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
 
         val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());

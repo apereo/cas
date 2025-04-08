@@ -38,15 +38,13 @@ class DelegatedClientAuthenticationStoreWebflowStateActionTests {
 
     @Test
     void verifyMissingClient() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-        context.withUserAgent();
+        val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         assertThrows(UnauthorizedServiceException.class, () -> delegatedAuthenticationStoreWebflowAction.execute(context));
     }
 
     @Test
     void verifyClient() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-        context.withUserAgent();
+        val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "CasClient");
         val result = delegatedAuthenticationStoreWebflowAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_REDIRECT, result.getId());

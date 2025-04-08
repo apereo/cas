@@ -49,8 +49,7 @@ class DelegatedAuthenticationClientLogoutActionTests {
     private ConfigurableApplicationContext applicationContext;
     @Test
     void verifyOperationWithProfile() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-        context.withUserAgent();
+        val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
 
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
 
@@ -78,8 +77,7 @@ class DelegatedAuthenticationClientLogoutActionTests {
 
     @Test
     void verifyOperationWithNoProfile() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-        context.withUserAgent();
+        val context = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
         val result = delegatedAuthenticationClientLogoutAction.execute(context);
         assertNull(result);
         assertNotEquals(HttpStatus.SC_MOVED_TEMPORARILY, context.getHttpServletResponse().getStatus());
