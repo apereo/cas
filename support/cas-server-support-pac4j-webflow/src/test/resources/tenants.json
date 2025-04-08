@@ -5,6 +5,10 @@
       "@class": "org.apereo.cas.multitenancy.TenantDefinition",
       "id": "shire",
       "description": "Example tenant",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.authn.pac4j.cas[0].login-url": "https://localhost:8444/cas/login"
+      },
       "delegatedAuthenticationPolicy": {
         "@class": "org.apereo.cas.multitenancy.DefaultTenantDelegatedAuthenticationPolicy",
         "allowedProviders": [
