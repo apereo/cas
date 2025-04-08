@@ -68,7 +68,10 @@ class DelegatedClientAuthenticationHandlerTests {
 
         fbClient = new FacebookClient();
         fbClient.setCallbackUrl(CALLBACK_URL);
-        val factory = DelegatedIdentityProviderFactory.withClients(List.of(fbClient));
+        
+        val factory = mock(DelegatedIdentityProviderFactory.class);
+        when(factory.build()).thenReturn(List.of(fbClient));
+        when(factory.rebuild()).thenReturn(List.of(fbClient));
         val clients = new DefaultDelegatedIdentityProviders(factory, mock(TenantExtractor.class));
 
         handler = new DelegatedClientAuthenticationHandler(new Pac4jDelegatedAuthenticationCoreProperties(),

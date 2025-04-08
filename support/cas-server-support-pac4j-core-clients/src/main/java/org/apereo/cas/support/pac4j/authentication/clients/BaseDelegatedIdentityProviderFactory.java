@@ -14,10 +14,12 @@ import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.BaseClient;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link BaseDelegatedIdentityProviderFactory}.
@@ -41,28 +43,45 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
 
     private final CasReentrantLock lock = new CasReentrantLock();
 
-    protected abstract List<BaseClient> loadIdentityProviders() throws Exception;
+    protected abstract List<BaseClient> load() throws Exception;
 
+    @Override
+    public void destroy() throws Exception {
+        val clients = retrieve(casProperties.getServer().getName());
+        Optional.ofNullable(clients)
+            .stream()
+            .filter(Closeable.class::isInstance)
+            .map(Closeable.class::cast)
+            .forEach(Unchecked.consumer(Closeable::close));
+    }
 
     @Override
     public final List<BaseClient> build() {
         return lock.tryLock(() -> {
             val core = casProperties.getAuthn().getPac4j().getCore();
-            val currentClients = getCachedClients().isEmpty() || !core.isLazyInit() ? loadIdentityProviders() : getCachedClients();
-            clientsCache.put(casProperties.getServer().getName(), currentClients);
+            val currentClients = !core.isLazyInit() || retrieve(casProperties.getServer().getName()).isEmpty()
+                ? load()
+                : retrieve(casProperties.getServer().getName());
+            store(casProperties.getServer().getName(), currentClients);
             return currentClients;
         });
+    }
+
+    @Override
+    public void store(final String key, final List<BaseClient> currentClients) {
+        clientsCache.put(key, currentClients);
+    }
+
+    @Override
+    public List<BaseClient> retrieve(final String key) {
+        val cachedClients = clientsCache.getIfPresent(key);
+        return ObjectUtils.defaultIfNull(cachedClients, new ArrayList<>());
     }
 
     @Override
     public List<BaseClient> rebuild() {
         clientsCache.invalidateAll();
         return build();
-    }
-
-    protected List<BaseClient> getCachedClients() {
-        val cachedClients = clientsCache.getIfPresent(casProperties.getServer().getName());
-        return ObjectUtils.defaultIfNull(cachedClients, new ArrayList<>());
     }
 
     protected BaseClient configureClient(final BaseClient client,

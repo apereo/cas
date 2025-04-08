@@ -49,7 +49,7 @@ public class JdbcDelegatedIdentityProviderFactory extends BaseDelegatedIdentityP
     }
 
     @Override
-    protected List<BaseClient> loadIdentityProviders() throws Exception {
+    protected List<BaseClient> load() throws Exception {
         val configList = fetchIdentityProviderConfiguration();
         val properties = new LinkedHashMap<String, Object>();
         for (val config : configList) {
