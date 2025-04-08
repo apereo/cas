@@ -82,7 +82,7 @@ class SamlIdentityProviderDiscoveryFeedControllerTests {
         assertFalse(mv.getModel().isEmpty());
 
         mv = mockMvc.perform(get(SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY + "/redirect")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .queryParam("entityID", "https://cas.example.org/idp")
             )
@@ -101,11 +101,11 @@ class SamlIdentityProviderDiscoveryFeedControllerTests {
         servicesManager.save(service);
 
         mockMvc.perform(get(SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY + "/redirect")
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .queryParam(CasProtocolConstants.PARAMETER_SERVICE, "https://service.example")
                 .queryParam("entityID", "https://cas.example.org/idp")
             )
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isForbidden());
     }
 }
