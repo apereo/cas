@@ -11,6 +11,7 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,7 +44,8 @@ class DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests {
     @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        val client = identityProviders.findClient("CasClient").orElseThrow();
+        val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
+        val client = identityProviders.findClient("CasClient", webContext).orElseThrow();
         val provider = DelegatedClientIdentityProviderConfiguration.builder().name(client.getName()).build();
         val clientConfig = Set.of(provider);
         delegatedClientIdentityProviderConfigurationPostProcessor.process(context, clientConfig);

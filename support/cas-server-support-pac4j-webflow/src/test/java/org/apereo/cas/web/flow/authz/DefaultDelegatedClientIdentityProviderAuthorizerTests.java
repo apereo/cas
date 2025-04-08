@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,7 +62,10 @@ class DefaultDelegatedClientIdentityProviderAuthorizerTests {
 
         protected void verifyAuthorizationForService(final RequestContext requestContext) throws Throwable {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val client = identityProviders.findClient("CasClient").orElseThrow();
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            val webContext = new JEEContext(request, response);
+            
+            val client = identityProviders.findClient("CasClient", webContext).orElseThrow();
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
             assertTrue(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, null, request));
             assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));
@@ -94,7 +98,10 @@ class DefaultDelegatedClientIdentityProviderAuthorizerTests {
     class DefaultTests extends BaseTests {
         @Test
         void verifyClientNameFromAuth() throws Throwable {
-            val client = identityProviders.findClient("CasClient").orElseThrow();
+            val requestContext = MockRequestContext.create(applicationContext);
+            val webContext = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
+
+            val client = identityProviders.findClient("CasClient", webContext).orElseThrow();
             val authn = RegisteredServiceTestUtils.getAuthentication("casuser",
                 Map.of(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, List.of(client.getName())));
 
@@ -106,7 +113,6 @@ class DefaultDelegatedClientIdentityProviderAuthorizerTests {
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
             registeredService.setAccessStrategy(accessStrategy);
             servicesManager.save(registeredService);
-            val requestContext = MockRequestContext.create(applicationContext);
             assertTrue(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForAuthentication(authn, service, requestContext));
         }
 
@@ -127,15 +133,17 @@ class DefaultDelegatedClientIdentityProviderAuthorizerTests {
         void verifyAuthorizationByTenant() throws Throwable {
             val requestContext = MockRequestContext.create(applicationContext);
             requestContext.setContextPath("/tenants/shire/login");
+            val request = requestContext.getHttpServletRequest();
 
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            var client = identityProviders.findClient("CasClient").orElseThrow();
+            val webContext = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
+
+            var client = identityProviders.findClient("CasClient", webContext).orElseThrow();
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
             servicesManager.save(registeredService);
             assertTrue(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));
 
-            client = identityProviders.findClient("LogoutClient").orElseThrow();
+            client = identityProviders.findClient("LogoutClient", webContext).orElseThrow();
             assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));
         }
     }

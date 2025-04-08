@@ -66,7 +66,8 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
         DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
         WebUtils.putLogoutRedirectUrl(context, "https://google.com");
 
-        val samlClient = (SAML2Client) identityProviders.findClient("SAML2RedirectLogoutClient").orElseThrow();
+        val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
+        val samlClient = (SAML2Client) identityProviders.findClient("SAML2RedirectLogoutClient", webContext).orElseThrow();
         samlClient.init();
         val userProfile = new SAML2Profile();
         userProfile.setId("casuser");
@@ -118,7 +119,9 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
         val context = MockRequestContext.create(applicationContext);
         context.withUserAgent();
         context.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
-        val samlClient = (SAML2Client) identityProviders.findClient("SAML2Client").orElseThrow();
+
+        val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
+        val samlClient = (SAML2Client) identityProviders.findClient("SAML2Client", webContext).orElseThrow();
         samlClient.init();
 
         val handler = mock(LogoutProcessor.class);

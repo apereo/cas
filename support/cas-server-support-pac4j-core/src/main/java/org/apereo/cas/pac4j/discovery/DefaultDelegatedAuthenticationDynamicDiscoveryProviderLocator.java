@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.IndirectClient;
+import org.pac4j.core.context.WebContext;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
@@ -47,7 +48,7 @@ public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator imple
     private final CasConfigurationProperties properties;
 
     @Override
-    public Optional<IndirectClient> locate(final DynamicDiscoveryProviderRequest request) throws Throwable {
+    public Optional<IndirectClient> locate(final DynamicDiscoveryProviderRequest request, final WebContext webContext) throws Throwable {
         val resource = properties.getAuthn().getPac4j().getCore().getDiscoverySelection().getJson().getLocation();
         val mappings = MAPPER.readValue(resource.getInputStream(),
             new TypeReference<Map<String, DelegatedAuthenticationDynamicDiscoveryProvider>>() {
@@ -60,7 +61,7 @@ public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator imple
             .sorted(Comparator.comparingInt(o -> o.getValue().getOrder()))
             .map(entry -> getMatchingProvider(principal, entry.getKey(), entry.getValue()))
             .filter(Objects::nonNull)
-            .map(provider -> identityProviders.findClient(provider.getClientName()))
+            .map(provider -> identityProviders.findClient(provider.getClientName(), webContext))
             .flatMap(Optional::stream)
             .map(IndirectClient.class::cast)
             .findFirst();

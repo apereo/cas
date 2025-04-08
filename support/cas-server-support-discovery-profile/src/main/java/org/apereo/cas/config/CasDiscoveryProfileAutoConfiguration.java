@@ -63,8 +63,10 @@ public class CasDiscoveryProfileAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint(
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasServerProfileRegistrar.BEAN_NAME) final ObjectProvider<CasServerProfileRegistrar> casServerProfileRegistrar) {
-            return new CasServerDiscoveryProfileEndpoint(casProperties, casServerProfileRegistrar);
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasServerProfileRegistrar.BEAN_NAME)
+            final ObjectProvider<CasServerProfileRegistrar> casServerProfileRegistrar) {
+            return new CasServerDiscoveryProfileEndpoint(casProperties, applicationContext, casServerProfileRegistrar);
         }
     }
 

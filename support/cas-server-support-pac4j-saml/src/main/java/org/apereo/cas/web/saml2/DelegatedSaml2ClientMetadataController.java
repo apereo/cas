@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link DelegatedSaml2ClientMetadataController}.
@@ -53,9 +56,13 @@ public class DelegatedSaml2ClientMetadataController {
      *
      * @return the first service provider metadata
      */
-    @GetMapping(BASE_ENDPOINT_SERVICE_PROVIDER + "/metadata")
-    public ResponseEntity<String> getFirstServiceProviderMetadata() {
-        val saml2Client = identityProviders.findAllClients()
+    @GetMapping(value = BASE_ENDPOINT_SERVICE_PROVIDER + "/metadata",
+        consumes = MediaType.ALL_VALUE,
+        produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> getFirstServiceProviderMetadata(final HttpServletRequest request,
+                                                                  final HttpServletResponse response) {
+        val webContext = new JEEContext(request, response);
+        val saml2Client = identityProviders.findAllClients(webContext)
             .stream()
             .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast).findFirst();
@@ -66,11 +73,16 @@ public class DelegatedSaml2ClientMetadataController {
     /**
      * Gets first idp metadata.
      *
+     * @param request  the request
+     * @param response the response
      * @return the first service provider metadata
      */
-    @GetMapping(BASE_ENDPOINT_SERVICE_PROVIDER + "/idp/metadata")
-    public ResponseEntity<String> getFirstIdentityProviderMetadata() {
-        val saml2Client = identityProviders.findAllClients()
+    @GetMapping(path = BASE_ENDPOINT_SERVICE_PROVIDER + "/idp/metadata", consumes = MediaType.ALL_VALUE,
+        produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<String> getFirstIdentityProviderMetadata(final HttpServletRequest request,
+                                                                   final HttpServletResponse response) {
+        val webContext = new JEEContext(request, response);
+        val saml2Client = identityProviders.findAllClients(webContext)
             .stream()
             .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast).findFirst();
@@ -84,11 +96,13 @@ public class DelegatedSaml2ClientMetadataController {
      * @param client the client
      * @return the service provider metadata by name
      */
-    @GetMapping(BASE_ENDPOINT_SERVICE_PROVIDER + "/{client}/metadata")
+    @GetMapping(path = BASE_ENDPOINT_SERVICE_PROVIDER + "/{client}/metadata", consumes = MediaType.ALL_VALUE,
+        produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> getServiceProviderMetadataByName(
-        @PathVariable("client")
-        final String client) {
-        val saml2Client = identityProviders.findClient(client);
+        @PathVariable("client") final String client,
+        final HttpServletRequest request, final HttpServletResponse response) {
+        val webContext = new JEEContext(request, response);
+        val saml2Client = identityProviders.findClient(client, webContext);
         return saml2Client.map(value -> getSaml2ClientServiceProviderMetadataResponseEntity((SAML2Client) value))
             .orElseGet(DelegatedSaml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
@@ -99,11 +113,14 @@ public class DelegatedSaml2ClientMetadataController {
      * @param client the client
      * @return the service provider metadata by name
      */
-    @GetMapping(BASE_ENDPOINT_SERVICE_PROVIDER + "/{client}/idp/metadata")
+    @GetMapping(path = BASE_ENDPOINT_SERVICE_PROVIDER + "/{client}/idp/metadata", consumes = MediaType.ALL_VALUE,
+        produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> getIdentityProviderMetadataByName(
         @PathVariable("client")
-        final String client) {
-        val saml2Client = identityProviders.findClient(client);
+        final String client,
+        final HttpServletRequest request, final HttpServletResponse response) {
+        val webContext = new JEEContext(request, response);
+        val saml2Client = identityProviders.findClient(client, webContext);
         return saml2Client.map(value -> getSaml2ClientIdentityProviderMetadataResponseEntity((SAML2Client) value))
             .orElseGet(DelegatedSaml2ClientMetadataController::getNotAcceptableResponseEntity);
     }

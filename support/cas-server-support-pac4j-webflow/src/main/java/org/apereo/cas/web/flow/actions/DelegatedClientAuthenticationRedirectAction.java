@@ -61,7 +61,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val ticket = requestContext.getFlowScope().get(TransientSessionTicket.class.getName(), TransientSessionTicket.class);
-        val client = locateClientIdentityProvider(ticket);
+        val client = locateClientIdentityProvider(ticket, requestContext);
         initializeClientIdentityProvider(client);
         val action = getRedirectionAction(ticket, requestContext);
         LOGGER.debug("Determined final redirect action for client [{}] as [{}]", client, action.toString());
@@ -93,7 +93,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
             .ifPresent(Unchecked.consumer(service -> configureWebContextForRegisteredService(webContext, ticket)));
 
         val clientName = ticket.getProperty(Client.class.getName(), String.class);
-        return configContext.getIdentityProviders().findClient(clientName)
+        return configContext.getIdentityProviders().findClient(clientName, webContext)
             .map(IndirectClient.class::cast)
             .stream()
             .peek(client -> configContext.getDelegatedClientAuthenticationRequestCustomizers()
@@ -144,9 +144,13 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
         FunctionUtils.throwIf(!client.isInitialized(), DelegatedAuthenticationFailureException::new);
     }
 
-    protected IndirectClient locateClientIdentityProvider(final TransientSessionTicket ticket) {
+    protected IndirectClient locateClientIdentityProvider(final TransientSessionTicket ticket, final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        val webContext = new JEEContext(request, response);
+        
         val clientName = ticket.getProperty(Client.class.getName(), String.class);
-        return configContext.getIdentityProviders().findClient(clientName)
+        return configContext.getIdentityProviders().findClient(clientName, webContext)
             .map(IndirectClient.class::cast)
             .stream()
             .findFirst()

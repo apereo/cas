@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Action;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -63,11 +62,11 @@ class DelegatedClientAuthenticationActionSamlTests {
     @Test
     void verifySaml2LogoutResponse() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        val client = identityProviders.findClient("SAML2Client").get();
+        val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
+        val client = identityProviders.findClient("SAML2Client", webContext).orElseThrow();
 
         context.withUserAgent();
         context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, client.getName());
-        val webContext = new JEEContext(context.getHttpServletRequest(), new MockHttpServletResponse());
         context.setMethod(HttpMethod.POST);
 
         val logoutResponse = getLogoutResponse();

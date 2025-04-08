@@ -37,7 +37,7 @@ public class DelegatedAuthenticationIdentityProviderLogoutAction extends BaseCas
         val webContext = new JEEContext(request, response);
         val clientName = configContext.getDelegatedClientNameExtractor().extract(webContext)
             .orElseThrow(() -> new IllegalArgumentException("Unable to determine delegated client name"));
-        val client = configContext.getIdentityProviders().findClient(clientName)
+        val client = configContext.getIdentityProviders().findClient(clientName, webContext)
             .orElseThrow(() -> new IllegalArgumentException("Unable to determine delegated client for " + clientName));
         LOGGER.debug("Received logout request from [{}]", client.getName());
 

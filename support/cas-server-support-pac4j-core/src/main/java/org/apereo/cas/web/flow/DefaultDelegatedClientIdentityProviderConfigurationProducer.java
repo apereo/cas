@@ -132,7 +132,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             .allMatch(Unchecked.predicate(authz -> authz.isDelegatedClientAuthorizedForService(client, service, context)));
     }
 
-    protected List<Client> findAllClients(final WebApplicationService service, final WebContext webContext) {
+    protected List<? extends Client> findAllClients(final WebApplicationService service, final WebContext webContext) {
         val clients = configurationContext.getObject().getIdentityProviders();
         return clients.findAllClients(service, webContext);
     }

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.client.BaseClient;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,7 +42,8 @@ class DefaultDelegatedAuthenticationCredentialExtractorTests {
     @Test
     void verifyOperation() throws Exception {
         val requestContext = MockRequestContext.create(applicationContext);
-        val client = identityProviders.findClient("FakeClient").map(BaseClient.class::cast).orElseThrow();
+        val webContext = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
+        val client = identityProviders.findClient("FakeClient", webContext).map(BaseClient.class::cast).orElseThrow();
         val results = delegatedAuthenticationCredentialExtractor.extract(client, requestContext);
         assertFalse(results.isEmpty());
         assertNotNull(WebUtils.getCredential(requestContext));

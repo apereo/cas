@@ -13,7 +13,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.web.servlet.MockMvc;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link DelegatedSaml2ClientMetadataJdbcTests}.
@@ -38,9 +41,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class DelegatedSaml2ClientMetadataJdbcTests {
     @Autowired
-    @Qualifier("delegatedSaml2ClientMetadataController")
-    private DelegatedSaml2ClientMetadataController delegatedSaml2ClientMetadataController;
-
+    @Qualifier("mockMvc")
+    private MockMvc mockMvc;
 
     @BeforeAll
     public static void setUp() {
@@ -50,10 +52,19 @@ class DelegatedSaml2ClientMetadataJdbcTests {
         template.execute("DROP TABLE IF EXISTS sp_metadata");
         template.execute("CREATE TABLE sp_metadata (entityId VARCHAR(255), metadata TEXT)");
     }
-    
+
     @Test
-    void verifyOperation() {
-        assertNotNull(delegatedSaml2ClientMetadataController.getFirstServiceProviderMetadata());
-        assertTrue(delegatedSaml2ClientMetadataController.getServiceProviderMetadataByName("SAML2Client").getStatusCode().is2xxSuccessful());
+    void verifyOperation() throws Exception {
+        assertNotNull(mockMvc.perform(get(DelegatedSaml2ClientMetadataController.BASE_ENDPOINT_SERVICE_PROVIDER + "/metadata"))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString());
+
+        assertNotNull(mockMvc.perform(get(DelegatedSaml2ClientMetadataController.BASE_ENDPOINT_SERVICE_PROVIDER + "/SAML2Client/metadata"))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString());
     }
 }

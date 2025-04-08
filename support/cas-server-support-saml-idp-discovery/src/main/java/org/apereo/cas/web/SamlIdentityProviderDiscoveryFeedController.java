@@ -47,14 +47,18 @@ public class SamlIdentityProviderDiscoveryFeedController {
     /**
      * Gets discovery feed.
      *
+     * @param request  the request
+     * @param response the response
      * @param entityID the entity id
      * @return the discovery feed
      */
     @GetMapping(path = "/feed", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<SamlIdentityProviderEntity> getDiscoveryFeed(
+        final HttpServletRequest request,
+        final HttpServletResponse response,
         @RequestParam(value = "entityID", required = false)
         final String entityID) {
-        val feed = samlIdentityProviderDiscoveryFeedService.getDiscoveryFeed();
+        val feed = samlIdentityProviderDiscoveryFeedService.getDiscoveryFeed(request, response);
         if (StringUtils.hasText(entityID)) {
             return feed
                 .stream()
@@ -67,14 +71,15 @@ public class SamlIdentityProviderDiscoveryFeedController {
     /**
      * Home.
      *
-     * @param request the request
+     * @param request  the request
+     * @param response the response
      * @return the model and view
      */
     @GetMapping
-    public ModelAndView home(final HttpServletRequest request) {
+    public ModelAndView home(final HttpServletRequest request, final HttpServletResponse response) {
         val model = new HashMap<String, Object>();
 
-        val entityIds = samlIdentityProviderDiscoveryFeedService.getEntityIds();
+        val entityIds = samlIdentityProviderDiscoveryFeedService.getEntityIds(request, response);
 
         LOGGER.debug("Using identity provider entity ids [{}]", entityIds);
         model.put("entityIds", entityIds);
@@ -96,7 +101,7 @@ public class SamlIdentityProviderDiscoveryFeedController {
      * @param httpServletResponse the http servlet response
      * @return the view
      */
-    @GetMapping(path = "redirect")
+    @GetMapping(path = "/redirect")
     public View redirect(
         @RequestParam("entityID")
         final String entityID,

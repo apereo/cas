@@ -11,6 +11,7 @@ import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.redirect.RedirectionActionBuilder;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -29,9 +30,12 @@ public class DelegatedAuthenticationClientRetryAction extends BaseCasWebflowActi
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             val clientName = DelegationWebflowUtils.getDelegatedAuthenticationClientName(requestContext);
-            val client = identityProviders.findClient(clientName).map(IndirectClient.class::cast).orElseThrow();
+
+            val webContext = new JEEContext(request, response);
+            val client = identityProviders.findClient(clientName, webContext).map(IndirectClient.class::cast).orElseThrow();
             val config = providerConfigurationProducer.produce(requestContext, client).orElseThrow();
 
             val urlBuilder = new URIBuilder(config.getRedirectUrl());

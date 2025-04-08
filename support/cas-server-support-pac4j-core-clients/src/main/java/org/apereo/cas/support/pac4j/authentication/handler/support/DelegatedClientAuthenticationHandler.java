@@ -65,21 +65,22 @@ public class DelegatedClientAuthenticationHandler extends BaseDelegatedClientAut
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws PreventedException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential,
+                                                                    final Service service) throws PreventedException {
         return FunctionUtils.doAndHandle(() -> {
-            val clientCredentials = (ClientCredential) credential;
-            LOGGER.debug("Located client credentials as [{}]", clientCredentials);
-
-            LOGGER.trace("Client name: [{}]", clientCredentials.getClientName());
-            val client = identityProviders.findClient(clientCredentials.getClientName())
-                .map(BaseClient.class::cast)
-                .orElseThrow(() -> new IllegalArgumentException("Unable to determine client based on client name "
-                    + clientCredentials.getClientName()));
-            LOGGER.trace("Delegated client is: [{}]", client);
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
             val webContext = new JEEContext(Objects.requireNonNull(request),
                 Objects.requireNonNull(response));
+            val clientCredentials = (ClientCredential) credential;
+            LOGGER.debug("Located client credentials as [{}]", clientCredentials);
+
+            LOGGER.trace("Client name: [{}]", clientCredentials.getClientName());
+            val client = identityProviders.findClient(clientCredentials.getClientName(), webContext)
+                .map(BaseClient.class::cast)
+                .orElseThrow(() -> new IllegalArgumentException("Unable to determine client based on client name "
+                    + clientCredentials.getClientName()));
+            LOGGER.trace("Delegated client is: [{}]", client);
 
             var userProfileResult = Optional.ofNullable(clientCredentials.getUserProfile());
             if (userProfileResult.isEmpty()) {

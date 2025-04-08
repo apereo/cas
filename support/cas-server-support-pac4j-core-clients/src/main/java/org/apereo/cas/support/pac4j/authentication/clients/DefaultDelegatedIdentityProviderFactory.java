@@ -9,6 +9,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.io.Closeable;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,14 +24,14 @@ public class DefaultDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
         final CasConfigurationProperties casProperties,
         final Collection<DelegatedClientFactoryCustomizer> customizers,
         final CasSSLContext casSSLContext,
-        final Cache<String, Collection<BaseClient>> clientsCache,
+        final Cache<String, List<BaseClient>> clientsCache,
         final ConfigurableApplicationContext applicationContext) {
         super(casProperties, customizers, casSSLContext, clientsCache, applicationContext);
     }
 
     @Override
-    protected Collection<BaseClient> loadIdentityProviders() throws Exception {
-        return buildAllIdentityProviders(casProperties);
+    protected List<BaseClient> loadIdentityProviders() throws Exception {
+        return buildFrom(casProperties);
     }
 
     @Override

@@ -58,7 +58,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
         return FunctionUtils.doAndHandle(
                 () -> Optional.ofNullable(clientName)
                     .filter(StringUtils::isNotBlank)
-                    .map(name -> configContext.getIdentityProviders().findClient(name))
+                    .map(name -> configContext.getIdentityProviders().findClient(name, webContext))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .filter(client -> isDelegatedClientAuthorizedForService(client, service, requestContext))

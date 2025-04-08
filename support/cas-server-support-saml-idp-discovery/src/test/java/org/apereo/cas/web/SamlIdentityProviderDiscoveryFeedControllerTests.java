@@ -7,11 +7,10 @@ import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.saml2.BaseSaml2DelegatedAuthenticationTests;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,10 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link SamlIdentityProviderDiscoveryFeedControllerTests}.
@@ -35,37 +36,75 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class,
     CasSamlIdentityProviderDiscoveryAutoConfiguration.class
-})
+}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class SamlIdentityProviderDiscoveryFeedControllerTests {
-    @Autowired
-    @Qualifier("identityProviderDiscoveryFeedController")
-    private SamlIdentityProviderDiscoveryFeedController controller;
 
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("mockMvc")
+    private MockMvc mockMvc;
+
     @Test
     void verifyFeed() throws Throwable {
-        val httpServletRequest = new MockHttpServletRequest();
-        assertFalse(controller.getDiscoveryFeed(StringUtils.EMPTY).isEmpty());
-        assertFalse(controller.getDiscoveryFeed("https://cas.example.org/idp").isEmpty());
-        assertNotNull(controller.home(httpServletRequest));
-        assertNotNull(controller.redirect("https://cas.example.org/idp", httpServletRequest, new MockHttpServletResponse()));
+        var mv = mockMvc.perform(get(SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk())
+            .andReturn()
+            .getModelAndView();
+        assertNotNull(mv.getModel());
+        assertFalse(mv.getModel().isEmpty());
 
-        assertThrows(UnauthorizedServiceException.class, () -> {
-            httpServletRequest.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "https://service.example");
+        mv = mockMvc.perform(get(SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk())
+            .andReturn()
+            .getModelAndView();
+        assertNotNull(mv.getModel());
+        assertFalse(mv.getModel().isEmpty());
 
-            val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-            val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
-            policy.setAllowedProviders(List.of("OtherClient"));
-            policy.setPermitUndefined(false);
-            accessStrategy.setDelegatedAuthenticationPolicy(policy);
-            val service = RegisteredServiceTestUtils.getRegisteredService("https://service.example");
-            service.setAccessStrategy(accessStrategy);
-            servicesManager.save(service);
-            controller.redirect("https://cas.example.org/idp", httpServletRequest, new MockHttpServletResponse());
-        });
+        mockMvc.perform(get(SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY + "/feed")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .queryParam("entityID", "https://cas.example.org/idp")
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", Matchers.hasSize(1)));
+        assertNotNull(mv.getModel());
+        assertFalse(mv.getModel().isEmpty());
+
+        mv = mockMvc.perform(get(SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY + "/redirect")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .queryParam("entityID", "https://cas.example.org/idp")
+            )
+            .andExpect(status().isOk())
+            .andReturn()
+            .getModelAndView();
+        assertNotNull(mv.getView());
+
+        val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
+        val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
+        policy.setAllowedProviders(List.of("OtherClient"));
+        policy.setPermitUndefined(false);
+        accessStrategy.setDelegatedAuthenticationPolicy(policy);
+        val service = RegisteredServiceTestUtils.getRegisteredService("https://service.example");
+        service.setAccessStrategy(accessStrategy);
+        servicesManager.save(service);
+
+        mockMvc.perform(get(SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY + "/redirect")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .queryParam(CasProtocolConstants.PARAMETER_SERVICE, "https://service.example")
+                .queryParam("entityID", "https://cas.example.org/idp")
+            )
+            .andExpect(status().isBadRequest());
     }
 }

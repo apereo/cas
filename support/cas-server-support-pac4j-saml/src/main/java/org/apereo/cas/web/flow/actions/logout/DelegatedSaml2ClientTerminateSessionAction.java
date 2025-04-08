@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.Client;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -35,7 +36,7 @@ import java.util.Optional;
 public class DelegatedSaml2ClientTerminateSessionAction extends BaseCasWebflowAction {
     private final DelegatedIdentityProviders identityProviders;
     private final SessionStore sessionStore;
-    
+
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -43,7 +44,7 @@ public class DelegatedSaml2ClientTerminateSessionAction extends BaseCasWebflowAc
         val context = new JEEContext(request, response);
 
         val currentProfile = findCurrentProfile(context);
-        val clientResult = findCurrentClient(currentProfile);
+        val clientResult = findCurrentClient(currentProfile, context);
         if (clientResult.isPresent()) {
             val client = clientResult.get();
             DelegationWebflowUtils.putDelegatedAuthenticationClientName(requestContext, client.getName());
@@ -53,13 +54,13 @@ public class DelegatedSaml2ClientTerminateSessionAction extends BaseCasWebflowAc
         return null;
     }
 
-    protected Optional<Client> findCurrentClient(final UserProfile currentProfile) {
+    protected Optional<? extends Client> findCurrentClient(final UserProfile currentProfile, final WebContext webContext) {
         return currentProfile == null
             ? Optional.empty()
-            : identityProviders.findClient(currentProfile.getClientName());
+            : identityProviders.findClient(currentProfile.getClientName(), webContext);
     }
-    
-    protected UserProfile findCurrentProfile(final JEEContext webContext) {
+
+    protected UserProfile findCurrentProfile(final WebContext webContext) {
         val pm = new ProfileManager(webContext, this.sessionStore);
         val profile = pm.getProfile();
         return profile.orElse(null);

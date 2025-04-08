@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.CallContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.exception.http.RedirectionAction;
 import org.pac4j.core.exception.http.WithLocationAction;
@@ -52,7 +53,7 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
         val context = new JEEContext(request, response);
 
         val currentProfile = findCurrentProfile(context);
-        val clientResult = findCurrentClient(currentProfile);
+        val clientResult = findCurrentClient(currentProfile, context);
         if (clientResult.isPresent()) {
             val client = clientResult.get();
             LOGGER.debug("Handling logout for delegated authentication client [{}]", client);
@@ -68,7 +69,7 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
         val context = new JEEContext(request, response);
 
         val currentProfile = findCurrentProfile(context);
-        val clientResult = findCurrentClient(currentProfile);
+        val clientResult = findCurrentClient(currentProfile, context);
         if (clientResult.isPresent()) {
             val client = clientResult.get();
             LOGGER.trace("Located client [{}]", client);
@@ -109,9 +110,9 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
         return profile.orElse(null);
     }
 
-    protected Optional<Client> findCurrentClient(final UserProfile currentProfile) {
+    protected Optional<? extends Client> findCurrentClient(final UserProfile currentProfile, final WebContext context) {
         return currentProfile == null
             ? Optional.empty()
-            : identityProviders.findClient(currentProfile.getClientName());
+            : identityProviders.findClient(currentProfile.getClientName(), context);
     }
 }

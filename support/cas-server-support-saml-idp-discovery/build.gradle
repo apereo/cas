@@ -43,6 +43,8 @@ dependencies {
     implementation libraries.pac4jsaml
     implementation libraries.nimbus
 
+    testImplementation libraries.springboottomcat
+    
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
@@ -60,6 +62,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-pac4j-webflow")
     testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(":support:cas-server-support-webconfig")
 
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")

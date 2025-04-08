@@ -27,6 +27,7 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-core-clients")
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-pac4j-webflow")
+    testImplementation project(":support:cas-server-support-webconfig")
     
     implementation libraries.pac4jsaml
     implementation libraries.pac4jcore
