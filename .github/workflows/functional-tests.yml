@@ -90,6 +90,7 @@ jobs:
     outputs:
       scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
       scenarios511: ${{ steps.get-scenarios511.outputs.scenarios511 }}
+      scenarios766: ${{ steps.get-scenarios511.outputs.scenarios766 }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -115,6 +116,9 @@ jobs:
       - id: get-scenarios511
         name: Get Scenarios 255-511
         run: echo "scenarios511=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=255 -PpuppeteerScenariosTo=511)" >> $GITHUB_OUTPUT
+      - id: get-scenarios766
+        name: Get Scenarios 511-766
+        run: echo "scenarios766=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=511 -PpuppeteerScenariosTo=766)" >> $GITHUB_OUTPUT
 
   ##########################################################################
   puppeteer-tests-255:
@@ -177,6 +181,60 @@ jobs:
       fail-fast: false
       matrix:
         scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios511)}}
+    name: ${{matrix.scenario}}
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+          cache: 'gradle'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Initialize
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
+      - name: Configure CI
+        run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
+      - name: Set up Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION_REQUIRED }}
+          check-latest: true
+          cache: 'npm'
+          cache-dependency-path: ./ci/tests/puppeteer/package.json
+      - name: AppArmor User Namespace Restrictions
+        run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+      - name: Run Tests
+        uses: nick-fields/retry@v3
+        with:
+          max_attempts: ${{ env.MAX_ATTEMPTS }}
+          retry_on: error
+          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          shell: bash
+          command: |
+            export RUNNER_OS=${{ runner.os }}
+            ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: screenshots-${{matrix.scenario}}
+          path: ./ci/tests/puppeteer/screenshots/*.png
+          if-no-files-found: ignore
+          retention-days: 2
+##########################################################################
+
+  puppeteer-tests-766:
+    runs-on: ubuntu-latest
+    needs: [puppeteer-scenarios]
+    continue-on-error: false
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios766)}}
     name: ${{matrix.scenario}}
     timeout-minutes: 25
     steps:
