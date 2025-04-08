@@ -36,7 +36,7 @@ public abstract class BaseDelegatedClientAuthenticationCredentialResolver
                 val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
                 val webContext = new JEEContext(request, response);
                 val client = configContext.getIdentityProviders()
-                    .findClient(credentials.getClientName())
+                    .findClient(credentials.getClientName(), webContext)
                     .orElseThrow(() -> new IllegalArgumentException("Unable to locate client"));
 
                 val callContext = new CallContext(webContext, configContext.getSessionStore());

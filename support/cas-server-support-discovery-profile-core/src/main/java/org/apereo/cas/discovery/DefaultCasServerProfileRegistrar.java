@@ -17,6 +17,8 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -52,7 +54,7 @@ public class DefaultCasServerProfileRegistrar implements CasServerProfileRegistr
 
 
     @Override
-    public CasServerProfile getProfile() {
+    public CasServerProfile getProfile(final HttpServletRequest request, final HttpServletResponse response) {
         val profile = new CasServerProfile();
         profile.setRegisteredServiceTypesSupported(locateRegisteredServiceTypesSupported());
         profile.setMultifactorAuthenticationProviderTypesSupported(locateMultifactorAuthenticationProviderTypesSupported());
@@ -60,7 +62,7 @@ public class DefaultCasServerProfileRegistrar implements CasServerProfileRegistr
         profile.setAvailableAuthenticationHandlers(locateAvailableAuthenticationHandlers());
         profile.setTicketTypesSupported(locateTicketTypesSupported());
         val customizers = applicationContext.getBeansOfType(CasServerProfileCustomizer.class).values();
-        customizers.forEach(customizer -> customizer.customize(profile));
+        customizers.forEach(customizer -> customizer.customize(profile, request, response));
         return profile;
     }
 

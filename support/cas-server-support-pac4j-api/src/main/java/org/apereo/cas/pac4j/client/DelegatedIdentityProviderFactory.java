@@ -1,6 +1,7 @@
 package org.apereo.cas.pac4j.client;
 
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -13,7 +14,6 @@ import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
 import org.pac4j.core.http.callback.QueryParameterCallbackUrlResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -38,14 +38,23 @@ public interface DelegatedIdentityProviderFactory {
      *
      * @return the set
      */
-    Collection<BaseClient> build();
+    List<BaseClient> build();
 
     /**
      * Rebuild collection and invalidate the cached entries, if any.
      *
      * @return the collection
      */
-    Collection<BaseClient> rebuild();
+    List<BaseClient> rebuild();
+
+    /**
+     * Build from properties.
+     *
+     * @param properties the properties
+     * @return the list
+     * @throws Exception the exception
+     */
+    List<BaseClient> buildFrom(CasConfigurationProperties properties) throws Exception;
 
     /**
      * Factory that produces static list of clients.
@@ -57,13 +66,18 @@ public interface DelegatedIdentityProviderFactory {
         return new DelegatedIdentityProviderFactory() {
 
             @Override
-            public Collection<BaseClient> build() {
+            public List<BaseClient> build() {
                 return clients;
             }
 
             @Override
-            public Collection<BaseClient> rebuild() {
+            public List<BaseClient> rebuild() {
                 return clients;
+            }
+
+            @Override
+            public List<BaseClient> buildFrom(final CasConfigurationProperties properties) throws Exception {
+                throw new UnsupportedOperationException("Client factory does not support building from properties");
             }
         };
     }

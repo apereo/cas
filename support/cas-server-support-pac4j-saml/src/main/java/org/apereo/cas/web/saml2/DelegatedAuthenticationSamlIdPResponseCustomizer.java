@@ -5,14 +5,15 @@ import org.apereo.cas.support.saml.util.Saml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlIdPResponseCustomizer;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
 import org.pac4j.core.util.Pac4jConstants;
+import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.client.SAML2Client;
+import java.util.Objects;
 
 /**
  * This is {@link DelegatedAuthenticationSamlIdPResponseCustomizer}.
@@ -31,7 +32,9 @@ public class DelegatedAuthenticationSamlIdPResponseCustomizer implements SamlIdP
         LOGGER.debug("Attributes to evaluate to customize SAML2 assertion are [{}]", attributes);
         if (attributes.containsKey(Pac4jConstants.CLIENT_NAME) && !context.getRegisteredService().isSkipGeneratingAuthenticatingAuthority()) {
             val clientNames = CollectionUtils.toCollection(attributes.get(Pac4jConstants.CLIENT_NAME));
-            clientNames.forEach(clientName -> identityProviders.findClient(clientName.toString())
+            val webContext = new JEEContext(Objects.requireNonNull(context.getHttpRequest()),
+                Objects.requireNonNull(context.getHttpResponse()));
+            clientNames.forEach(clientName -> identityProviders.findClient(clientName.toString(), webContext)
                 .filter(SAML2Client.class::isInstance)
                 .map(SAML2Client.class::cast)
                 .ifPresent(client -> {

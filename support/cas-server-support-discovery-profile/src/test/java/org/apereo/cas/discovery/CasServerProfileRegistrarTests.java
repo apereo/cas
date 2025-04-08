@@ -18,6 +18,7 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasDiscoveryProfileAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -69,9 +70,10 @@ class CasServerProfileRegistrarTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyAction() {
+    void verifyAction() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        val profile = casServerProfileRegistrar.getProfile();
+        val profile = casServerProfileRegistrar.getProfile(context.getHttpServletRequest(), context.getHttpServletResponse());
         assertNotNull(profile);
         assertNotNull(profile.getAvailableAttributes());
         assertNotNull(profile.getMultifactorAuthenticationProviderTypesSupported());

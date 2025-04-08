@@ -63,13 +63,14 @@ class DelegatedClientOidcSessionManagerTests {
     void verifyOperation() throws Exception {
         assertNotNull(delegatedClientSaml2SessionManager.getName());
 
-        val oauthClient = identityProviders.findClient("OAuth20Client").orElseThrow();
-        val googleClient = identityProviders.findClient("GoogleClient").orElseThrow();
-        assertTrue(delegatedClientSaml2SessionManager.supports(googleClient));
-        assertTrue(delegatedClientSaml2SessionManager.supports(oauthClient));
-
         val context = MockRequestContext.create(applicationContext);
         val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
+
+
+        val oauthClient = identityProviders.findClient("OAuth20Client", webContext).orElseThrow();
+        val googleClient = identityProviders.findClient("GoogleClient", webContext).orElseThrow();
+        assertTrue(delegatedClientSaml2SessionManager.supports(googleClient));
+        assertTrue(delegatedClientSaml2SessionManager.supports(oauthClient));
 
         val ticket = new TransientSessionTicketImpl(UUID.randomUUID().toString(),
             NeverExpiresExpirationPolicy.INSTANCE, RegisteredServiceTestUtils.getService(), Map.of());

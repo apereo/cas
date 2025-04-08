@@ -1,5 +1,8 @@
 package org.apereo.cas.discovery;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 /**
  * This is {@link CasServerProfileRegistrar}.
  *
@@ -19,5 +22,5 @@ public interface CasServerProfileRegistrar {
      *
      * @return the profile
      */
-    CasServerProfile getProfile();
+    CasServerProfile getProfile(HttpServletRequest request, HttpServletResponse response);
 }

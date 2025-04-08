@@ -93,8 +93,8 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
             WebUtils.putServiceIntoFlowScope(requestContext, service);
         }
 
-        val client = identityProviders.findClient("CasClient").orElseThrow();
         val webContext = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
+        val client = identityProviders.findClient("CasClient", webContext).orElseThrow();
 
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, webContext, client);
         requestContext.setParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());

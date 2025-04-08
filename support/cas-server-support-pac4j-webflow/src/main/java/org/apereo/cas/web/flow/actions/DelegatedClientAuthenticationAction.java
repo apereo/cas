@@ -124,7 +124,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
             if (clientCredential.isPresent()) {
                 service = populateContextWithService(context, service);
-                val client = findDelegatedClientByName(clientName);
+                val client = findDelegatedClientByName(clientName, context);
                 verifyClientIsAuthorizedForService(context, service, client);
                 DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, client.getName());
                 if (isLogoutRequest) {
@@ -165,7 +165,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val tgt = WebUtils.getTicketGrantingTicketId(context);
         if (tgt != null) {
             configContext.getTicketRegistry().deleteTicket(tgt);
-            val client = findDelegatedClientByName(clientName);
+            val client = findDelegatedClientByName(clientName, context);
             verifyClientIsAuthorizedForService(context, resolvedService, client);
         }
     }
@@ -177,7 +177,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     protected Optional<ClientCredential> extractClientCredential(final RequestContext context, final String clientName) {
         return FunctionUtils.doIfNotBlank(clientName,
             () -> {
-                val client = findDelegatedClientByName(clientName);
+                val client = findDelegatedClientByName(clientName, context);
                 DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, client.getName());
 
                 val currentCredential = WebUtils.getCredential(context);
@@ -264,8 +264,12 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             .findFirst();
     }
 
-    protected BaseClient findDelegatedClientByName(final String clientName) {
-        val clientResult = configContext.getIdentityProviders().findClient(clientName);
+    protected BaseClient findDelegatedClientByName(final String clientName, final RequestContext context) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        
+        val webContext = new JEEContext(request, response);
+        val clientResult = configContext.getIdentityProviders().findClient(clientName, webContext);
         if (clientResult.isEmpty()) {
             LOGGER.warn("Delegated client [{}] can not be located", clientName);
             throw UnauthorizedServiceException.denied("Denied: %s".formatted(clientName));
@@ -295,13 +299,13 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     protected Service restoreAuthenticationRequestInContext(final RequestContext requestContext,
                                                             final String givenClientName) {
         try {
-            val clientResult = configContext.getIdentityProviders()
-                .findClient(givenClientName)
-                .map(BaseClient.class::cast)
-                .orElseThrow(() -> new IllegalArgumentException("Unable to find client " + givenClientName + " to restore authentication context"));
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             val webContext = new JEEContext(request, response);
+            val clientResult = configContext.getIdentityProviders()
+                .findClient(givenClientName, webContext)
+                .map(BaseClient.class::cast)
+                .orElseThrow(() -> new IllegalArgumentException("Unable to find client " + givenClientName + " to restore authentication context"));
             return delegatedClientAuthenticationWebflowManager.retrieve(requestContext, webContext, clientResult);
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);

@@ -4,14 +4,17 @@ import org.apereo.cas.config.CasDelegatedAuthenticationOidcAutoConfiguration;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpointContributor;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.client.BaseClient;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -49,10 +52,16 @@ class DelegatedClientsOidcEndpointContributorTests {
     @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
     private DelegatedIdentityProviders identityProviders;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
-    void verifyOperation() {
-        val oauthClient = identityProviders.findClient("OAuth20Client").map(BaseClient.class::cast).orElseThrow();
-        val googleClient = identityProviders.findClient("GoogleClient").map(BaseClient.class::cast).orElseThrow();
+    void verifyOperation() throws Exception {
+        val context = MockRequestContext.create(applicationContext).withUserAgent();
+        val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
+
+        val oauthClient = identityProviders.findClient("OAuth20Client", webContext).map(BaseClient.class::cast).orElseThrow();
+        val googleClient = identityProviders.findClient("GoogleClient", webContext).map(BaseClient.class::cast).orElseThrow();
         assertTrue(delegatedClientsOidcEndpointContributor.supports(googleClient));
         assertTrue(delegatedClientsOidcEndpointContributor.supports(oauthClient));
 

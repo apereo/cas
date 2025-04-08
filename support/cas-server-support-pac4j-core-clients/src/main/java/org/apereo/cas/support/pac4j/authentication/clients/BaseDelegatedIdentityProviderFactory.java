@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * This is {@link BaseDelegatedIdentityProviderFactory}.
@@ -36,17 +35,17 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
 
     protected final CasSSLContext casSSLContext;
 
-    protected final Cache<String, Collection<BaseClient>> clientsCache;
+    protected final Cache<String, List<BaseClient>> clientsCache;
 
     protected final ConfigurableApplicationContext applicationContext;
-    
+
     private final CasReentrantLock lock = new CasReentrantLock();
 
-    protected abstract Collection<BaseClient> loadIdentityProviders() throws Exception;
+    protected abstract List<BaseClient> loadIdentityProviders() throws Exception;
 
 
     @Override
-    public final Collection<BaseClient> build() {
+    public final List<BaseClient> build() {
         return lock.tryLock(() -> {
             val core = casProperties.getAuthn().getPac4j().getCore();
             val currentClients = getCachedClients().isEmpty() || !core.isLazyInit() ? loadIdentityProviders() : getCachedClients();
@@ -56,12 +55,12 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
     }
 
     @Override
-    public Collection<BaseClient> rebuild() {
+    public List<BaseClient> rebuild() {
         clientsCache.invalidateAll();
         return build();
     }
 
-    protected Collection<BaseClient> getCachedClients() {
+    protected List<BaseClient> getCachedClients() {
         val cachedClients = clientsCache.getIfPresent(casProperties.getServer().getName());
         return ObjectUtils.defaultIfNull(cachedClients, new ArrayList<>());
     }
@@ -83,13 +82,14 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
         LOGGER.debug("Configured external identity provider [{}]", client.getName());
         return client;
     }
-    
+
 
     protected void invokeClientCustomizers(final BaseClient client) {
         customizers.forEach(customizer -> customizer.customize(client));
     }
 
-    protected Set<BaseClient> buildAllIdentityProviders(final CasConfigurationProperties properties) throws Exception {
+    @Override
+    public List<BaseClient> buildFrom(final CasConfigurationProperties properties) throws Exception {
         val newClients = new LinkedHashSet<BaseClient>();
         val builders = getDelegatedClientBuilders();
         for (val builder : builders) {
@@ -106,7 +106,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
             }));
         }
 
-        return newClients;
+        return List.copyOf(newClients);
     }
 
     private List<ConfigurableDelegatedClientBuilder> getDelegatedClientBuilders() {

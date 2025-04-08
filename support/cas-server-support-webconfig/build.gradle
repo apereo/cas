@@ -41,6 +41,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-jpa-util")
     testImplementation project(":support:cas-server-support-ldap-core")
 
+
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-notifications")

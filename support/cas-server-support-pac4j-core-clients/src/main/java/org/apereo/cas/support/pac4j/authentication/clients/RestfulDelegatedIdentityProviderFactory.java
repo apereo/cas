@@ -41,13 +41,13 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
     public RestfulDelegatedIdentityProviderFactory(final Collection<DelegatedClientFactoryCustomizer> customizers,
                                                    final CasSSLContext casSSLContext,
                                                    final CasConfigurationProperties casProperties,
-                                                   final Cache<String, Collection<BaseClient>> clientsCache,
+                                                   final Cache<String, List<BaseClient>> clientsCache,
                                                    final ConfigurableApplicationContext applicationContext) {
         super(casProperties, customizers, casSSLContext, clientsCache, applicationContext);
     }
 
     @Override
-    protected Collection<BaseClient> loadIdentityProviders() throws Exception {
+    protected List<BaseClient> loadIdentityProviders() throws Exception {
         val restProperties = casProperties.getAuthn().getPac4j().getRest();
         val exec = HttpExecutionRequest
             .builder()
@@ -74,13 +74,13 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
         return new ArrayList<>();
     }
 
-    protected Collection<BaseClient> buildClientsBasedCasProperties(final String result) throws Exception {
+    protected List<BaseClient> buildClientsBasedCasProperties(final String result) throws Exception {
         val payload = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
         LOGGER.trace("CAS properties received as [{}]", payload);
         val properties = CasConfigurationProperties.bindFrom(payload);
         if (properties.isPresent()) {
             val props = (CasConfigurationProperties) properties.get();
-            return buildAllIdentityProviders(props);
+            return buildFrom(props);
         }
         return List.of();
     }

@@ -9,7 +9,6 @@
     <disallow pkg="org.junit" exact-match="true"/>
     <disallow pkg="org.jetbrains.annotations" exact-match="true"/>
     <disallow pkg="org.junit.Assert"/>
-    <disallow pkg="org.hamcrest"/>
     <disallow pkg="org\.junit\.(runners?|experimental\.categories)" regex="true" />
 
     <subpackage name="apereo.cas.util.junit">

@@ -42,14 +42,14 @@ public class JdbcDelegatedIdentityProviderFactory extends BaseDelegatedIdentityP
         final CasConfigurationProperties casProperties,
         final Collection<DelegatedClientFactoryCustomizer> customizers,
         final CasSSLContext casSSLContext,
-        final Cache<String, Collection<BaseClient>> clientsCache,
+        final Cache<String, List<BaseClient>> clientsCache,
         final ConfigurableApplicationContext applicationContext) {
         super(casProperties, customizers, casSSLContext, clientsCache, applicationContext);
         this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
-    protected Collection<BaseClient> loadIdentityProviders() throws Exception {
+    protected List<BaseClient> loadIdentityProviders() throws Exception {
         val configList = fetchIdentityProviderConfiguration();
         val properties = new LinkedHashMap<String, Object>();
         for (val config : configList) {
@@ -61,7 +61,7 @@ public class JdbcDelegatedIdentityProviderFactory extends BaseDelegatedIdentityP
         if (!properties.isEmpty()) {
             val bound = CasConfigurationProperties.bindFrom(properties);
             if (bound.isPresent()) {
-                return buildAllIdentityProviders(bound.get());
+                return buildFrom(bound.get());
             }
         }
         return List.of();

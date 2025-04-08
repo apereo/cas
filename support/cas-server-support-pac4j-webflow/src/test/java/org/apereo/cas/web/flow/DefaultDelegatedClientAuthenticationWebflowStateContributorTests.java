@@ -61,7 +61,7 @@ class DefaultDelegatedClientAuthenticationWebflowStateContributorTests {
 
         val context = new JEEContext(httpServletRequest, httpServletResponse);
 
-        val client = identityProviders.findClient("CasClient").orElseThrow();
+        val client = identityProviders.findClient("CasClient", context).orElseThrow();
         val details = contributor.store(requestContext, context, client);
         assertTrue(details.containsKey(CasProtocolConstants.PARAMETER_SERVICE));
         assertTrue(details.containsKey(CasProtocolConstants.PARAMETER_TARGET_SERVICE));

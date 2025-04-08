@@ -453,7 +453,7 @@ class OidcEndpointsConfiguration {
         @Bean
         public CasServerProfileCustomizer oidcCasServerProfileCustomizer(
             final CasConfigurationProperties casProperties) {
-            return profile -> profile.getDetails().put("userDefinedScopes",
+            return (profile, request, response) -> profile.getDetails().put("userDefinedScopes",
                 casProperties.getAuthn().getOidc().getCore().getUserDefinedScopes());
         }
     }

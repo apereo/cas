@@ -45,13 +45,12 @@ class DelegatedClientSaml2SessionManagerTests {
     @Test
     void verifyOperation() throws Exception {
         assertNotNull(delegatedClientSaml2SessionManager.getName());
-
-        val client = identityProviders.findClient("SAML2Client").orElseThrow();
-        assertTrue(delegatedClientSaml2SessionManager.supports(client));
-
         val context = MockRequestContext.create(applicationContext);
         val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
 
+        val client = identityProviders.findClient("SAML2Client", webContext).orElseThrow();
+        assertTrue(delegatedClientSaml2SessionManager.supports(client));
+        
         val ticket = new TransientSessionTicketImpl(UUID.randomUUID().toString(),
             NeverExpiresExpirationPolicy.INSTANCE, RegisteredServiceTestUtils.getService(), Map.of());
 

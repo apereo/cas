@@ -70,7 +70,7 @@ public class DelegatedSaml2ClientFinishLogoutAction extends BaseCasWebflowAction
         if (clientName == null) {
             clientName = requestContext.getRequestParameters().get(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
             if (StringUtils.isNotBlank(clientName)) {
-                identityProviders.findClient(clientName)
+                identityProviders.findClient(clientName, context)
                     .filter(SAML2Client.class::isInstance)
                     .map(SAML2Client.class::cast)
                     .ifPresent(client -> FunctionUtils.doAndHandle(__ -> {
@@ -88,7 +88,7 @@ public class DelegatedSaml2ClientFinishLogoutAction extends BaseCasWebflowAction
             val logoutRedirect = WebUtils.getLogoutRedirectUrl(requestContext, String.class);
             val delegatedClientLogoutRequest = DelegationWebflowUtils.getDelegatedAuthenticationLogoutRequest(requestContext,
                 DelegatedAuthenticationClientLogoutRequest.class);
-            identityProviders.findClient(clientName)
+            identityProviders.findClient(clientName, context)
                 .filter(SAML2Client.class::isInstance)
                 .map(SAML2Client.class::cast)
                 .ifPresent(client -> {
