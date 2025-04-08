@@ -82,6 +82,11 @@ via the following settings:
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.webflow" %}
 
+## Multitenancy
+
+Configuration settings for delegated authentication to any and all identity providers can be specified in a multitenant environment.
+Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.
+
 ## Troubleshooting
 
 To enable additional logging, configure the log4j configuration file to add the following levels:

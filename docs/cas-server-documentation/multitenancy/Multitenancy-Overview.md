@@ -206,7 +206,13 @@ multitenancy. Support for multitenancy is evolving and new features modules may 
 Please check the documentation for each feature or module to see if it supports multitenancy.
 </p></div>
 
-As an example, the following tenant definition is allowed to define its own email server settings:
+The following examples are available:
+
+{% tabs multitenancyexamples %}
+
+{% tab multitenancyexamples Email Server %}
+
+The following tenant definition is allowed to define its [email server](../notifications/Sending-Email-Configuration.html):
 
 ```json
 [
@@ -215,7 +221,6 @@ As an example, the following tenant definition is allowed to define its own emai
     {
       "@class": "org.apereo.cas.multitenancy.TenantDefinition",
       "id": "shire",
-      "description": "Example tenant",
       "properties": {
         "@class": "java.util.LinkedHashMap",
         "spring.mail.host": "localhost",
@@ -225,3 +230,80 @@ As an example, the following tenant definition is allowed to define its own emai
   ]
 ]
 ```
+
+{% endtab %}
+
+{% tab multitenancyexamples LDAP Authentication %}
+
+The following tenant definition is allowed to define its [LDAP authentication](../authentication/LDAP-Authentication.html):
+
+```json
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.authn.ldap[0].type": "DIRECT",
+        "cas.authn.ldap[0].dn-format": "uid=%s,ou=people,dc=example,dc=org",
+        "cas.authn.ldap[0].ldap-url": "ldap://localhost:11389"
+      }
+    }
+  ]
+]
+```
+
+{% endtab %}
+
+{% tab multitenancyexamples JDBC Authentication %}
+
+The following tenant definition is allowed to define its [JDBC authentication](../authentication/Database-Authentication.html):
+
+```json
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.authn.jdbc.procedure[0].procedure-name": "sp_authenticate",
+        "cas.authn.jdbc.procedure[0].user": "postgres",
+        "cas.authn.jdbc.procedure[0].password": "...",
+        "cas.authn.jdbc.procedure[0].driver-class": "org.postgresql.Driver",
+        "cas.authn.jdbc.procedure[0].url": "jdbc:postgresql://localhost:5432/users",
+        "cas.authn.jdbc.procedure[0].dialect": "org.hibernate.dialect.PostgreSQLDialect",
+      }
+    }
+  ]
+]
+```
+
+{% endtab %}
+
+{% tab multitenancyexamples Delegated Authentication %}
+
+The following tenant definition is allowed to define its [external identity provider](../integration/Delegate-Authentication.html):
+
+```json
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.authn.pac4j.cas[0].login-url": "https://sso.example.org/cas/login"
+      }
+    }
+  ]
+]
+```
+
+{% endtab %}
+
+{% endtabs %}

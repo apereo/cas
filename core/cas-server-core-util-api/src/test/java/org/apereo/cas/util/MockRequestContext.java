@@ -103,9 +103,9 @@ public class MockRequestContext extends MockRequestControlContext {
         return this;
     }
 
-    public MockRequestContext setContextPath(final String constContextPath) {
-        getHttpServletRequest().setContextPath(constContextPath);
-        getMockExternalContext().setContextPath(constContextPath);
+    public MockRequestContext setContextPath(final String contextPath) {
+        getHttpServletRequest().setContextPath(contextPath);
+        getMockExternalContext().setContextPath(contextPath);
         return this;
     }
 
