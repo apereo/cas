@@ -24,6 +24,7 @@ import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -111,6 +112,10 @@ public abstract class BasePasswordManagementActionTests {
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    protected ServicesManager servicesManager;
+    
     @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
         CasPasswordManagementAutoConfiguration.class,

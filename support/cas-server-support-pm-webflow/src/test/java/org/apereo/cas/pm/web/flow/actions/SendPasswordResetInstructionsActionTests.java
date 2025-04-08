@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -29,6 +30,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
+import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -96,7 +98,7 @@ class SendPasswordResetInstructionsActionTests {
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, sendPasswordResetInstructionsAction.execute(context).getId());
         }
     }
-    
+
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.pm.reset.mail.html=true",
@@ -134,22 +136,42 @@ class SendPasswordResetInstructionsActionTests {
     })
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     class NoMultifactorRegisteredDevicesTests extends BasePasswordManagementActionTests {
+
+        @BeforeEach
+        void setup() {
+            val service = RegisteredServiceTestUtils.getService();
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
+            servicesManager.save(registeredService);
+        }
         
         @Test
         @Order(1)
         void verifyActionRequiresMfa() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-            context.setParameter("username", "user-without-devices");
+            context.setParameter(SendPasswordResetInstructionsAction.REQUEST_PARAMETER_USERNAME, "user-without-devices");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             assertEquals(CasWebflowConstants.TRANSITION_ID_DENY, sendPasswordResetInstructionsAction.execute(context).getId());
+        }
+
+        @Test
+        @Order(2)
+        void verifyPasswordResetMfaBypass() throws Exception {
+            val context = MockRequestContext.create(applicationContext);
+            val provider = new TestMultifactorAuthenticationProvider();
+            provider.setBypassEvaluator(new PrincipalMultifactorAuthenticationProviderBypassEvaluator(
+                "groupMembership", "adopters", provider.getId(), applicationContext));
+            TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, provider);
+            context.setParameter(SendPasswordResetInstructionsAction.REQUEST_PARAMETER_USERNAME, "user-without-devices");
+            WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
         }
 
         @Test
         @Order(0)
         void verifyActionMultiUse() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-            context.setParameter("username", "casuser");
+            context.setParameter(SendPasswordResetInstructionsAction.REQUEST_PARAMETER_USERNAME, "casuser");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
             val tickets = ticketRegistry.getTickets();
@@ -157,7 +179,7 @@ class SendPasswordResetInstructionsActionTests {
             assertInstanceOf(MultiTimeUseOrTimeoutExpirationPolicy.class, tickets.iterator().next().getExpirationPolicy());
         }
     }
-    
+
     @Nested
     @Import(PasswordManagementTestConfiguration.class)
     class WithoutTokens extends BasePasswordManagementActionTests {
