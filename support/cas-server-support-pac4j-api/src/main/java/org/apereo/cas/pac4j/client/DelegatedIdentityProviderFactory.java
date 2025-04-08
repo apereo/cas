@@ -14,6 +14,7 @@ import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
 import org.pac4j.core.http.callback.QueryParameterCallbackUrlResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-public interface DelegatedIdentityProviderFactory {
+public interface DelegatedIdentityProviderFactory extends DisposableBean {
     /**
      * Logger instance.
      */
@@ -41,6 +42,22 @@ public interface DelegatedIdentityProviderFactory {
     List<BaseClient> build();
 
     /**
+     * Store.
+     *
+     * @param key            the key
+     * @param currentClients the current clients
+     */
+    void store(String key, List<BaseClient> currentClients);
+
+    /**
+     * Retrieve list.
+     *
+     * @param key the key
+     * @return the list
+     */
+    List<BaseClient> retrieve(String key);
+
+    /**
      * Rebuild collection and invalidate the cached entries, if any.
      *
      * @return the collection
@@ -55,32 +72,6 @@ public interface DelegatedIdentityProviderFactory {
      * @throws Exception the exception
      */
     List<BaseClient> buildFrom(CasConfigurationProperties properties) throws Exception;
-
-    /**
-     * Factory that produces static list of clients.
-     *
-     * @param clients the clients
-     * @return the delegated client factory
-     */
-    static DelegatedIdentityProviderFactory withClients(final List clients) {
-        return new DelegatedIdentityProviderFactory() {
-
-            @Override
-            public List<BaseClient> build() {
-                return clients;
-            }
-
-            @Override
-            public List<BaseClient> rebuild() {
-                return clients;
-            }
-
-            @Override
-            public List<BaseClient> buildFrom(final CasConfigurationProperties properties) throws Exception {
-                throw new UnsupportedOperationException("Client factory does not support building from properties");
-            }
-        };
-    }
 
     /**
      * Configure client name.

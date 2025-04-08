@@ -3,14 +3,10 @@ package org.apereo.cas.support.pac4j.authentication.clients;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import com.github.benmanes.caffeine.cache.Cache;
-import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.BaseClient;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.io.Closeable;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link DefaultDelegatedIdentityProviderFactory}.
@@ -18,7 +14,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class DefaultDelegatedIdentityProviderFactory extends BaseDelegatedIdentityProviderFactory implements DisposableBean {
+public class DefaultDelegatedIdentityProviderFactory extends BaseDelegatedIdentityProviderFactory {
 
     public DefaultDelegatedIdentityProviderFactory(
         final CasConfigurationProperties casProperties,
@@ -30,16 +26,7 @@ public class DefaultDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
     }
 
     @Override
-    protected List<BaseClient> loadIdentityProviders() throws Exception {
+    protected List<BaseClient> load() throws Exception {
         return buildFrom(casProperties);
-    }
-
-    @Override
-    public void destroy() {
-        Optional.ofNullable(getCachedClients())
-            .stream()
-            .filter(Closeable.class::isInstance)
-            .map(Closeable.class::cast)
-            .forEach(Unchecked.consumer(Closeable::close));
     }
 }
