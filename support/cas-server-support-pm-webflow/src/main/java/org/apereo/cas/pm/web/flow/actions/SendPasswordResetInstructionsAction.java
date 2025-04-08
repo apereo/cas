@@ -166,7 +166,9 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             val provider = selectMultifactorAuthenticationProvider(requestContext, principal);
             val service = WebUtils.getService(requestContext);
             val registeredService = servicesManager.findServiceBy(service);
-            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
+            if (service != null) {
+                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
+            }
 
             val authentication = new DefaultAuthenticationBuilder(principal)
                 .addCredential(new BasicIdentifiableCredential(query.getUsername()))
