@@ -316,6 +316,8 @@ class PasswordManagementWebflowConfiguration {
             final PrincipalResolver defaultPrincipalResolver,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
             @Qualifier(PasswordResetUrlBuilder.BEAN_NAME)
@@ -328,7 +330,7 @@ class PasswordManagementWebflowConfiguration {
                     .supply(() -> new SendPasswordResetInstructionsAction(casProperties, communicationsManager,
                         passwordManagementService, ticketRegistry, ticketFactory,
                         defaultPrincipalResolver, passwordResetUrlBuilder,
-                        multifactorAuthenticationProviderSelector, authenticationSystemSupport))
+                        multifactorAuthenticationProviderSelector, authenticationSystemSupport, servicesManager))
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_PASSWORD_RESET_SEND_INSTRUCTIONS)
                 .build()
