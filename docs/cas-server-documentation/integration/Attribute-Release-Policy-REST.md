@@ -9,7 +9,7 @@ category: Attributes
 # Attribute Release Policy - REST
 
 Only return the principal attributes that are explicitly allowed by contacting a REST endpoint. Endpoints must be designed to
-accept/process `application/json` and must be able to respond to a `GET` request. The expected response status code is `200` where the body of
+accept/process `application/json` and must be able to respond to a `GET` or `POST` request. The expected response status code is `200` where the body of
 the response includes a `Map` of attributes linked to their values.
 
 ```json
@@ -21,6 +21,7 @@ the response includes a `Map` of attributes linked to their values.
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnRestfulAttributeReleasePolicy",
     "endpoint" : "https://somewhere.example.org",
+    "method" : "GET",
     "headers": {
       "@class": "java.util.LinkedHashMap",
       "header": "value"
@@ -40,7 +41,7 @@ The following parameters are passed to the endpoint:
 | `principal` | The object representing the authenticated principal.                          |
 | `service`   | The object representing the corresponding service definition in the registry. |
 
-The body of the submitted request may also include a `Map` of currently resolved attributes.
+The body of the submitted request may also include a `Map` of currently resolved attributes when using `POST` method.
 
 The `allowedAttributes` field is an optional attribute that allows the policy to remap attributes virtually.
 If the attribute is undefined or empty, all received attributes will be considered authorized for release on
