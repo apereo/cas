@@ -120,3 +120,4 @@ send monitoring events to Azure Monitor Application Insights.
 - [CAS command-line shell](../installation/Configuring-Commandline-Shell.html) can now run in interactive mode. Furthermore, `exit` and `quit` command functionality is also restored.
 - Connection mode for [CosmosDb Service Registry](../services/CosmosDb-Service-Management.html) can now be configured to either `GATEWAY` or `DIRECT`.
 - [Duo Security Multifactor Authentication](../mfa/DuoSecurity-Authentication.html) is given the option to track session data in browser storage or ticket registry.
+- [CAS Initializr](../installation/WAR-Overlay-Initializr.html) now presents the ability to switch themes to assist with accessibility. Files presented in preview mode can now individually be copied or downloaded. 
