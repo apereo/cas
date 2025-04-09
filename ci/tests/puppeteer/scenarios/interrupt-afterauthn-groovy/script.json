@@ -1,13 +1,15 @@
 {
   "dependencies": "generic,interrupt-webflow,scripting",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
-
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-
     "--cas.interrupt.core.trigger-mode=AFTER_AUTHENTICATION",
     "--cas.interrupt.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/interrupt.groovy",
     "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.authn.accept.enabled=false"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

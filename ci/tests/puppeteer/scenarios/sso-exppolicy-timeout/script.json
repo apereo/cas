@@ -1,10 +1,13 @@
 {
   "dependencies": "core",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.service-registry.core.init-from-json=true",
     "--cas.ticket.tgt.timeout.max-time-to-live-in-seconds=3"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

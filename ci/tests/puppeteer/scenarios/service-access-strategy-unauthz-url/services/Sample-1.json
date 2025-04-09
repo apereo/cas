@@ -1,6 +1,6 @@
 {
   "@class": "org.apereo.cas.services.CasRegisteredService",
-  "serviceId": "https://.+github.io.*",
+  "serviceId": "^https://localhost:9859/anything/.*",
   "id": 1,
   "name": "Sample",
   "accessStrategy" : {

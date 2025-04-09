@@ -1,6 +1,8 @@
 {
   "dependencies": "aup-webflow,events-configuration,reports",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.access.default=UNRESTRICTED",
@@ -14,5 +16,6 @@
     
     "--cas.service-registry.core.init-from-json=true",
     "--cas.standalone.configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config.yml"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh",
 }

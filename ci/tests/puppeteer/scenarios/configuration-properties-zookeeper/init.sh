@@ -1,4 +1,8 @@
 set -e
+
+chmod +x "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+${PWD}/ci/tests/httpbin/run-httpbin-server.sh
+
 echo Starting Apache ZooKeeper Server
 ${PWD}/ci/tests/zookeeper/run-zookeeper-server.sh
 

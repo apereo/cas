@@ -22,7 +22,7 @@ async function verifyWithoutService() {
 async function verifyWithService() {
     const browser1 = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser1);
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.loginWith(page);
     await cas.sleep(2000);
     await browser1.close();
