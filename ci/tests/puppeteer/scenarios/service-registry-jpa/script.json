@@ -28,5 +28,5 @@
     "--cas.service-registry.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "--cas.service-registry.jpa.dialect=org.hibernate.dialect.MySQLDialect"
   ],
-  "initScript": "${PWD}/ci/tests/mysql/run-mysql-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh",
+  "initScript": "${PWD}/ci/tests/mysql/run-mysql-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

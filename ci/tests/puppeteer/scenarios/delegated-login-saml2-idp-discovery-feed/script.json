@@ -30,7 +30,9 @@
     "--cas.authn.pac4j.saml[1].client-name=SAML2InCommon",
     
     "--cas.authn.pac4j.saml-discovery.resource[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/feed.json",
-    "--logging.level.org.opensaml=warn"
+    "--logging.level.org.opensaml=warn",
+    "--logging.level.org.apereo.cas=info",
+    "--logging.level.org.pac4j=info"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

@@ -52,7 +52,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
 
         val allClients = findAllClients(service, webContext);
         val providers = allClients
-            .stream()
+            .parallelStream()
             .filter(client -> client instanceof IndirectClient
                 && isDelegatedClientAuthorizedForService(client, service, context))
             .map(IndirectClient.class::cast)
@@ -119,7 +119,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             val currentService = WebUtils.getService(context);
             LOGGER.trace("Initializing client [{}] with request parameters [{}] and service [{}]",
                 client, context.getRequestParameters(), currentService);
-            client.init(true);
+            client.init();
         }
         FunctionUtils.throwIf(!client.isInitialized(), DelegatedAuthenticationFailureException::new);
     }

@@ -227,7 +227,7 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
             && saml2Properties.getMetadata().isIdentityProviderMetadataAggregate()) {
             LOGGER.info("Loading SAML2 identity provider metadata from [{}]",
                 saml2Properties.getMetadata().getIdentityProviderMetadataPath());
-            saml2Client.init(saml2Client.getIdentityProviderMetadataResolver() == null || !saml2Client.isInitialized());
+            saml2Client.init();
             LOGGER.info("Loaded SAML2 identity provider metadata from [{}]",
                 saml2Properties.getMetadata().getIdentityProviderMetadataPath());
             val idpMetadataResolver = saml2Client.getIdentityProviderMetadataResolver();
@@ -287,9 +287,7 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
             .filter(StringUtils::isNotBlank)
             .findFirst()
             .ifPresent(value -> singleClient.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, value));
-        if (!properties.getAuthn().getPac4j().getCore().isLazyInit()) {
-            singleClient.init();
-        }
+        singleClient.init();
         return singleClient;
     }
 

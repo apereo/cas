@@ -27,7 +27,7 @@ const assert = require("assert");
     await cas.sleep(2000);
     await cas.logPage(page);
     const url = await page.url();
-    assert(url.includes("hhttps://localhost:9859/anything/cas"));
+    assert(url.includes("https://localhost:9859/anything/cas"));
     await cas.gotoLogout(page);
     
     await browser.close();
