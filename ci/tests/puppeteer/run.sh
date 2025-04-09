@@ -167,7 +167,7 @@ function parseArguments() {
       DISABLE_LINTER="true"
       shift 1
       ;;
-    --hd | --hdo)
+    --hd | --hdo | --hod | --doh)
       export HEADLESS="true"
       DEBUG="true"
       BUILDFLAGS="${BUILDFLAGS} --offline"

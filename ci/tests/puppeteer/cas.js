@@ -1027,10 +1027,12 @@ exports.loginDuoSecurityBypassCode = async (page, username = "casuser", currentC
         await this.screenshot(page);
         await this.pressEnter(page);
         await this.log("Waiting for Duo Security to accept bypass code...");
-        await this.sleep(10000);
+        await this.sleep(12000);
         const error = await this.isVisible(page, "div.message.error");
         if (error) {
             await this.log("Duo Security is unable to accept bypass code");
+            const msg = await this.innerText(page, "div.message.error");
+            await this.log(`Duo Security error message: ${msg}`);
             await this.screenshot(page);
             i++;
         } else {
