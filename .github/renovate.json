@@ -76,7 +76,11 @@
   },
   "packageRules": [
     {
-      "matchPackagePatterns": ["software\\.amazon\\.awssdk"],
+      "matchPackageNames": ["com.google.guava:guava"],
+      "excludeVersions": "/-android$/"
+    },
+    {
+      "matchPackageNames": ["software.amazon.awssdk:.*"],
       "matchManagers": ["maven"],
       "matchUpdateTypes": ["major", "minor"]
     },
