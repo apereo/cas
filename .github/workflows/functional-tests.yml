@@ -90,7 +90,7 @@ jobs:
     outputs:
       scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
       scenarios511: ${{ steps.get-scenarios511.outputs.scenarios511 }}
-      scenarios766: ${{ steps.get-scenarios511.outputs.scenarios766 }}
+      scenarios766: ${{ steps.get-scenarios766.outputs.scenarios766 }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
