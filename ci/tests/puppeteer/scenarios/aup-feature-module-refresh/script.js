@@ -6,7 +6,7 @@ const path = require("path");
 const assert = require("assert");
 
 (async () => {
-    const service = "https://apereo.github.io";
+    const service = "https://localhost:9859/anything/cas";
 
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
