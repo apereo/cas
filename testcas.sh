@@ -69,6 +69,7 @@ while (( "$#" )); do
         ;;
     --no-pts)
         flags+=" -DPTS_ENABLED=false "
+        task+="clean "
         shift
         ;;
     --with-coverage)
