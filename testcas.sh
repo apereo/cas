@@ -129,6 +129,10 @@ while (( "$#" )); do
         flags+=" -DignoreTestFailures=true "
         shift
         ;;
+    --no-config-cache)
+        flags+=" --no-configuration-cache "
+        shift
+        ;;
     --no-build-cache)
         flags+=" --no-build-cache "
         shift
