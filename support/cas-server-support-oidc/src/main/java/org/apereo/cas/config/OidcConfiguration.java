@@ -279,15 +279,19 @@ class OidcConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcWebFingerDiscoveryService")
         public OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService(
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(OidcWebFingerUserInfoRepository.BEAN_NAME)
             final OidcWebFingerUserInfoRepository oidcWebFingerUserInfoRepository,
             @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory) {
+
             return BeanSupplier.of(OidcWebFingerDiscoveryService.class)
                 .when(CONDITION_WEBFINGER.given(applicationContext.getEnvironment()))
-                .supply(Unchecked.supplier(() -> new OidcDefaultWebFingerDiscoveryService(oidcWebFingerUserInfoRepository,
-                    oidcServerDiscoverySettingsFactory.getObject())))
+                .supply(Unchecked.supplier(() -> new OidcDefaultWebFingerDiscoveryService(
+                    oidcWebFingerUserInfoRepository,
+                    oidcServerDiscoverySettingsFactory.getObject(),
+                    casProperties.getAuthn().getOidc().getWebfinger())))
                 .otherwiseProxy()
                 .get();
         }
