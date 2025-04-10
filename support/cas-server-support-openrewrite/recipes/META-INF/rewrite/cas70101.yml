@@ -1,0 +1,43 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apereo.cas.cas70101
+displayName: Upgrade CAS to version 7.0.10.1
+recipeList:
+  - org.openrewrite.gradle.AddProperty:
+      key: cas.version
+      value: 7.0.10.1
+      overwrite: true
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.AddProperty:
+      key: version
+      value: 7.0.10.1
+      overwrite: true
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.AddProperty:
+      key: sourceCompatibility
+      value: 21
+      overwrite: true
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.AddProperty:
+      key: targetCompatibility
+      value: 21
+      overwrite: true
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.AddProperty:
+      key: springBootVersion
+      value: 3.2.1
+      overwrite: true
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.UpdateGradleWrapper:
+      version: 8.5
+      addIfMissing: true
+  - org.openrewrite.gradle.AddProperty:
+      key: tomcatVersion
+      value: 10.1.31
+      overwrite: false
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.AddProperty:
+      key: jibVersion
+      value: 3.4.0
+      overwrite: true
+      filePattern: 'gradle.properties'
