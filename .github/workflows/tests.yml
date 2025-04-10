@@ -140,8 +140,7 @@ jobs:
                 ptsMode="RELEVANT_TESTS";
               fi
               echo "Running tests with PTS mode: $ptsMode"
-              ./gradlew clean --no-build-cache --no-configuration-cache
-              ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --pts $ptsMode --no-config-cache --no-build-cache
+              ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --pts $ptsMode
               [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
             fi
       - name: Check Coverage Report
