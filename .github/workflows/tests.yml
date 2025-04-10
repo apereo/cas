@@ -27,7 +27,7 @@ env:
   JDK_DISTRIBUTION: "corretto"
   RETRY_ATTEMPTS: 2
   RETRY_MINUTES: 40
-  CATEGORY_REGEX: ".*"
+  CATEGORY_REGEX: ".*grouper.*"
 ##########################################################################
 
 on:
