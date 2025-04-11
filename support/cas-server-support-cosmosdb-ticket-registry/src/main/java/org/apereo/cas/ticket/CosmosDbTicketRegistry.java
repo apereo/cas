@@ -53,7 +53,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> checkAndRemoveFromRegistry, final Predicate<Ticket> checkOnly) {
         try {
             val encTicketId = digestIdentifier(ticketId);
             val metadata = StringUtils.isNotBlank(ticketId) ? ticketCatalog.find(ticketId) : null;
@@ -65,7 +65,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Reading ticket with id [{}] from [{}]", encTicketId, container.getId());
             val document = container.readItem(encTicketId, new PartitionKey(metadata.getPrefix()), CosmosDbTicketDocument.class).getItem();
             val result = decodeTicket(ticketSerializationManager.deserializeTicket(document.getTicket(), document.getType()));
-            return predicate != null && predicate.test(result) ? result : null;
+            return checkAndRemoveFromRegistry != null && checkAndRemoveFromRegistry.test(result) ? result : null;
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, "Ticket id [%s] cannot be found".formatted(ticketId), e);
         }

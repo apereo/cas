@@ -72,10 +72,11 @@ public interface TicketRegistry {
      * Gets ticket from registry using a predicate.
      *
      * @param ticketId  the ticket id
-     * @param predicate the predicate that tests the ticket
+     * @param checkAndRemoveFromRegistry the predicate that tests the ticket and removes from registry when invalid
+     * @param checkOnly the predicate that tests the ticket
      * @return the ticket
      */
-    Ticket getTicket(String ticketId, Predicate<Ticket> predicate);
+    Ticket getTicket(String ticketId, Predicate<Ticket> checkAndRemoveFromRegistry, Predicate<Ticket> checkOnly);
 
     /**
      * Remove a specific ticket from the registry.
