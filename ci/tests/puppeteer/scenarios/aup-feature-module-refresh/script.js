@@ -3,7 +3,6 @@ const cas = require("../../cas.js");
 const YAML = require("yaml");
 const fs = require("fs");
 const path = require("path");
-const assert = require("assert");
 
 (async () => {
     const service = "https://localhost:9859/anything/cas";
@@ -38,9 +37,8 @@ const assert = require("assert");
     await cas.waitForNavigation(page);
     await cas.sleep(3000);
     await cas.assertTicketParameter(page);
-    const result = new URL(page.url());
     await cas.log(page);
-    assert(result.host === "localhost");
+    await cas.assertPageUrlHost(page, "localhost:9859");
     await updateConfig(configFile, configFilePath, false);
     await browser.close();
 })();
