@@ -78,6 +78,9 @@ public class JacksonObjectMapperFactory {
     @Builder.Default
     private final boolean minimal = false;
 
+    @Builder.Default
+    private final boolean sorted = false;
+
     private final JsonFactory jsonFactory;
 
     private final ConfigurableApplicationContext applicationContext;
@@ -143,6 +146,9 @@ public class JacksonObjectMapperFactory {
             .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, isDefaultViewInclusion())
             .configure(MapperFeature.USE_WRAPPER_NAME_AS_PROPERTY_NAME, isUseWrapperNameAsProperty())
 
+            .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, sorted)
+            .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, sorted)
+
             .configure(JsonWriteFeature.QUOTE_FIELD_NAMES.mappedFeature(), isQuoteFieldNames())
 
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, isFailOnUnknownProperties())
@@ -153,6 +159,7 @@ public class JacksonObjectMapperFactory {
 
             .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, isWriteDatesAsTimestamps())
+
             .build();
 
         obm
