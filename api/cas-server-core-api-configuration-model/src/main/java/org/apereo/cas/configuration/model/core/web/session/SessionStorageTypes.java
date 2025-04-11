@@ -24,5 +24,23 @@ public enum SessionStorageTypes {
      * as tickets. This state is tied to the user's agent/browser using a special cookie that would be used
      * to locate and restore that state. The cookie content may be signed and encrypted.
      */
-    TICKET_REGISTRY
+    TICKET_REGISTRY;
+
+    /**
+     * Is ticket registry?.
+     *
+     * @return true/false
+     */
+    public boolean isTicketRegistry() {
+        return this == TICKET_REGISTRY;
+    }
+
+    /**
+     * Is browser storage?.
+     *
+     * @return true/false
+     */
+    public boolean isBrowserStorage() {
+        return this == BROWSER_STORAGE;
+    }
 }

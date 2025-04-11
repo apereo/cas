@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditPrincipalResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
@@ -24,6 +25,8 @@ import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
@@ -102,6 +105,8 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
 
     protected final AuthenticationSystemSupport authenticationSystemSupport;
 
+    protected final ServicesManager servicesManager;
+
     @Audit(action = AuditableActions.REQUEST_CHANGE_PASSWORD,
         principalResolverName = AuditPrincipalResolvers.REQUEST_CHANGE_PASSWORD_PRINCIPAL_RESOLVER,
         actionResolverName = AuditActionResolvers.REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER,
@@ -149,12 +154,26 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         return getErrorEvent("contact.failed", "Failed to send the password reset link via email address or phone", requestContext);
     }
 
-    protected boolean doesPasswordResetRequireMultifactorAuthentication(final RequestContext requestContext) {
+    protected boolean doesPasswordResetRequireMultifactorAuthentication(final RequestContext requestContext) throws Throwable {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
         val providerId = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(requestContext);
-        return casProperties.getAuthn().getPm().getReset().isMultifactorAuthenticationEnabled()
+        var mfaRequired = casProperties.getAuthn().getPm().getReset().isMultifactorAuthenticationEnabled()
             && !providers.isEmpty() && StringUtils.isBlank(providerId);
+        if (mfaRequired) {
+            val query = WebUtils.getPasswordManagementQuery(requestContext, PasswordManagementQuery.class);
+            val principal = resolvedPrincipal(query.getUsername());
+            val provider = selectMultifactorAuthenticationProvider(requestContext, principal);
+            val service = WebUtils.getService(requestContext);
+            val registeredService = servicesManager.findServiceBy(service);
+            val authentication = new DefaultAuthenticationBuilder(principal)
+                .addCredential(new BasicIdentifiableCredential(query.getUsername()))
+                .build();
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val bypassEvaluator = provider.getBypassEvaluator();
+            mfaRequired = bypassEvaluator == null || bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request, service);
+        }
+        return mfaRequired;
     }
 
     protected boolean hasPrincipalRegisteredMultifactorAuthenticationDevice(final RequestContext requestContext) throws Throwable {
