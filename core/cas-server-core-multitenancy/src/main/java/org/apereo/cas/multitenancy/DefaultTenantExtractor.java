@@ -23,7 +23,7 @@ import java.util.Optional;
 @Getter
 public class DefaultTenantExtractor implements TenantExtractor {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).minimal(true).build().toObjectMapper();
+        .defaultTypingEnabled(true).minimal(true).sorted(true).build().toObjectMapper();
 
     private final TenantsManager tenantsManager;
 
