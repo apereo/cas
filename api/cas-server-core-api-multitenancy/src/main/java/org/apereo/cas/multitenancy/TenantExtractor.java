@@ -78,4 +78,12 @@ public interface TenantExtractor {
         }
         return null;
     }
+
+    /**
+     * Get tenant key string.
+     *
+     * @param tenantDefinition the tenant definition
+     * @return the string
+     */
+    String getTenantKey(TenantDefinition tenantDefinition);
 }

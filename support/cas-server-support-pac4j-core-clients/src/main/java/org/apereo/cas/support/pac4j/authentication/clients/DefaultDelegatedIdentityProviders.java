@@ -31,16 +31,21 @@ public class DefaultDelegatedIdentityProviders implements DelegatedIdentityProvi
         val tenant = tenantExtractor.extract(webContext.getRequestURL());
         if (tenant.isPresent()) {
             val definition = tenant.get();
-            val providers = definition.bindProperties()
-                .map(Unchecked.function(delegatedIdentityProviderFactory::buildFrom))
-                .stream()
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-            val policy = definition.getDelegatedAuthenticationPolicy();
-            if (policy != null && !policy.getAllowedProviders().isEmpty()) {
-                val builtProviders = new ArrayList<>(delegatedIdentityProviderFactory.build());
-                builtProviders.removeIf(client -> !policy.getAllowedProviders().contains(client.getName()));
-                providers.addAll(builtProviders);
+            val tenantKey = tenantExtractor.getTenantKey(definition);
+            var providers = delegatedIdentityProviderFactory.retrieve(tenantKey);
+            if (providers.isEmpty()) {
+                providers = definition.bindProperties()
+                    .map(Unchecked.function(delegatedIdentityProviderFactory::buildFrom))
+                    .stream()
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+                val policy = definition.getDelegatedAuthenticationPolicy();
+                if (policy != null && !policy.getAllowedProviders().isEmpty()) {
+                    val builtProviders = new ArrayList<>(delegatedIdentityProviderFactory.build());
+                    builtProviders.removeIf(client -> !policy.getAllowedProviders().contains(client.getName()));
+                    providers.addAll(builtProviders);
+                }
+                delegatedIdentityProviderFactory.store(tenantKey, providers);
             }
             return providers;
         }

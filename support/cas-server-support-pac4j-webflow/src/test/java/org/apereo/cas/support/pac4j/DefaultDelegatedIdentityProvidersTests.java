@@ -52,7 +52,10 @@ class DefaultDelegatedIdentityProvidersTests {
                 .setClientInfo();
 
             val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
-            val allClients = delegatedIdentityProviders.findAllClients(webContext);
+            var allClients = delegatedIdentityProviders.findAllClients(webContext);
+            assertEquals(1, allClients.size());
+
+            allClients = delegatedIdentityProviders.findAllClients(webContext);
             assertEquals(1, allClients.size());
         }
     }
