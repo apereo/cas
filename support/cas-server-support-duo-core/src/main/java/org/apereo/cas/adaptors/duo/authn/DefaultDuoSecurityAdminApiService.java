@@ -215,7 +215,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     private static void collectDuoSecurityUserAccountAttribute(final JSONObject userJson,
                                                                final String attribute,
                                                                final DuoSecurityUserAccount user) {
-        FunctionUtils.doIfNotNull(userJson.get(attribute), value -> user.addAttribute(attribute, value.toString()));
+        FunctionUtils.doIfNotNull(userJson.opt(attribute), value -> user.addAttribute(attribute, value.toString()));
     }
 
     private static void mapUserGroups(final JSONObject userJson, final DuoSecurityUserAccount user) throws JSONException {
