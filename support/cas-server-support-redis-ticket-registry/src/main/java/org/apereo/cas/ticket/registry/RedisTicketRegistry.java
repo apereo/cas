@@ -181,12 +181,12 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     }
 
     @Override
-    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> checkAndRemoveFromRegistry, final Predicate<Ticket> checkOnly) {
         return FunctionUtils.doAndHandle(() -> {
             val ticketPrefix = StringUtils.substring(ticketId, 0, ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR));
             val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(ticketPrefix).orElseThrow();
             val redisTicketsKey = redisKeyGenerator.forPrefixAndId(ticketPrefix, digestIdentifier(ticketId));
-            return getTicketFromRedis(predicate, redisTicketsKey, redisKeyGenerator);
+            return getTicketFromRedis(checkAndRemoveFromRegistry, checkOnly, redisTicketsKey, redisKeyGenerator);
         });
     }
 
@@ -241,7 +241,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                     .map(ticketId -> {
                         val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(TicketGrantingTicket.PREFIX).orElseThrow();
                         val redisTicketsKey = redisKeyGenerator.forPrefixAndId(redisKeyGenerator.getPrefix(), ticketId);
-                        return getTicketFromRedis(ticket -> !ticket.isExpired(), redisTicketsKey, redisKeyGenerator);
+                        return getTicketFromRedis(ticket -> !ticket.isExpired(), ticket -> !ticket.isExpired(),
+                                redisTicketsKey, redisKeyGenerator);
                     })
                     .map(this::decodeTicket)
                     .filter(Objects::nonNull)
@@ -432,15 +433,15 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         });
     }
 
-    protected Ticket getTicketFromRedis(final Predicate<Ticket> predicate, final String redisKeyPattern,
-                                        final RedisKeyGenerator redisKeyGenerator) {
+    protected Ticket getTicketFromRedis(final Predicate<Ticket> checkAndRemoveFromRegistry, final Predicate<Ticket> checkOnly,
+                                        final String redisKeyPattern, final RedisKeyGenerator redisKeyGenerator) {
         val rawTicketId = redisKeyGenerator.rawKey(redisKeyPattern);
         val cachedTicket = ticketCache.stream().parallel().map(cache -> cache.getIfPresent(rawTicketId)).filter(Objects::nonNull);
 
         val ticket = cachedTicket
             .findFirst()
             .map(this::decodeTicket)
-            .filter(predicate)
+            .filter(checkOnly)
             .stream()
             .findFirst()
             .orElseGet(() -> Stream.of(redisKeyPattern)
@@ -451,11 +452,11 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 .filter(Objects::nonNull)
                 .map(document -> deserializeTicket(document.json(), document.type()))
                 .map(this::decodeTicket)
-                .filter(predicate)
+                .filter(checkAndRemoveFromRegistry)
                 .findFirst()
                 .orElseGet(() -> handleMissingTicket(rawTicketId, redisKeyPattern)));
 
-        if (ticket != null && predicate.test(ticket) && !ticket.isExpired()) {
+        if (ticket != null && checkOnly.test(ticket) && !ticket.isExpired()) {
             ticketCache.ifAvailable(cache -> cache.put(rawTicketId, ticket));
             return ticket;
         }
