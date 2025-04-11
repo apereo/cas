@@ -215,7 +215,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         val registryTask = new TimerTask() {
             @Override
             public void run() {
-                for (int i = 0; i < 5; i++) {
+                for (var i = 0; i < 5; i++) {
                     FunctionUtils.doUnchecked(__ -> {
                         val tgt = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + RandomUtils.randomAlphabetic(16),
                             CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()),

@@ -189,18 +189,20 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         val user = new DuoSecurityUserAccount(userJson.getString("username"));
         user.setUserId(userJson.getString("user_id"));
         user.setStatus(DuoSecurityUserAccountStatus.from(userJson.getString("status")));
-        FunctionUtils.doIfNotNull(userJson.get("email"), value -> user.addAttribute("email", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.getString("user_id"), value -> user.addAttribute("user_id", value));
-        FunctionUtils.doIfNotNull(userJson.get("firstname"), value -> user.addAttribute("firstname", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.get("lastname"), value -> user.addAttribute("lastname", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.get("realname"), value -> user.addAttribute("realname", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.getBoolean("is_enrolled"), value -> user.addAttribute("is_enrolled", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.getLong("last_login"), value -> user.addAttribute("last_login", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.getLong("created"), value -> user.addAttribute("created", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.optString("alias1"), value -> user.addAttribute("alias1", value));
-        FunctionUtils.doIfNotNull(userJson.optString("alias2"), value -> user.addAttribute("alias2", value));
-        FunctionUtils.doIfNotNull(userJson.optString("notes"), value -> user.addAttribute("notes", value));
-        FunctionUtils.doIfNotNull(userJson.optString("lockout_reason"), value -> user.addAttribute("lockout_reason", value));
+
+        collectDuoSecurityUserAccountAttribute(userJson, "email", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "user_id", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "firstname", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "lastname", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "realname", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "is_enrolled", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "last_login", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "created", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "alias1", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "alias2", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "notes", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "lockout_reason", user);
+
         if (user.getStatus() != DuoSecurityUserAccountStatus.DENY && !user.isEnrolled()) {
             user.setStatus(DuoSecurityUserAccountStatus.ENROLL);
         }
@@ -210,9 +212,15 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         return user;
     }
 
+    private static void collectDuoSecurityUserAccountAttribute(final JSONObject userJson,
+                                                               final String attribute,
+                                                               final DuoSecurityUserAccount user) {
+        FunctionUtils.doIfNotNull(userJson.get(attribute), value -> user.addAttribute(attribute, value.toString()));
+    }
+
     private static void mapUserGroups(final JSONObject userJson, final DuoSecurityUserAccount user) throws JSONException {
         val groupsResponse = userJson.getJSONArray("groups");
-        for (int i = 0; groupsResponse != null && i < groupsResponse.length(); i++) {
+        for (var i = 0; groupsResponse != null && i < groupsResponse.length(); i++) {
             val json = groupsResponse.getJSONObject(i);
             if (json.has("group_id")) {
                 val group = new DuoSecurityUserAccountGroup(json.getString("group_id"),
@@ -229,7 +237,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
 
     private static void mapUserPhones(final JSONObject userJson, final DuoSecurityUserAccount user) throws JSONException {
         val phones = userJson.getJSONArray("phones");
-        for (int i = 0; phones != null && i < phones.length(); i++) {
+        for (var i = 0; phones != null && i < phones.length(); i++) {
             val phoneJson = phones.getJSONObject(i);
             val phone = new DuoSecurityUserDevice(phoneJson.getString("name"), phoneJson.getString("type"));
             phone.setActivated(phoneJson.optBoolean("activated"));

@@ -13,7 +13,7 @@
     "--cas.authn.attribute-repository.stub.attributes.last-name=CAS",
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
     
-    "--cas.authn.accept.users=duocode::Mellon",
+    "--cas.authn.accept.users=duocode1::Mellon",
     "--cas.authn.mfa.duo[0].account-status-enabled=true",
 
     "--cas.authn.mfa.duo[0].duo-admin-secret-key=${#environmentVars['DUO_SECURITY_ADMIN_SKEY']}",

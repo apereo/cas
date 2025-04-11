@@ -189,7 +189,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
             val allowedAttributes = new ArrayList<String>();
             allowedAttributes.add("uid");
             allowedAttributes.add("groovy { [ fullName: [ 'MyGivenName' + attributes['cn'][0] ] ] } ");
-            for (int i = 0; i < 5; i++) {
+            for (var i = 0; i < 5; i++) {
                 val policy = new ReturnAllowedAttributeReleasePolicy(allowedAttributes);
                 val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
                 val registeredService = CoreAuthenticationTestUtils.getRegisteredService();

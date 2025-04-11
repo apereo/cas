@@ -62,7 +62,7 @@ class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     @Test
     void verifySaveInStreams() {
         var servicesToImport = Stream.<RegisteredService>empty();
-        for (int i = 0; i < 1000; i++) {
+        for (var i = 0; i < 1000; i++) {
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true)
                 .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
             registeredService.setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);

@@ -430,18 +430,20 @@ exports.newPage = async (browser) => {
         throw err;
     }
 
-    page
-        .on("console", (message) => {
-            if (message.type() === "warning") {
-                this.logy(`Console ${message.type()}: ${message.text()}`);
-            } else if (message.type() === "error") {
-                this.logr(`Console ${message.type()}: ${message.text()}`);
-            } else {
-                this.log(`Console ${message.type()}: ${message.text()}`);
-            }
-        })
-        .on("pageerror", ({message}) => this.logr(`Console: ${message}`));
-
+    if (await this.isCiEnvironment()) {
+        page
+            .on("console", (message) => {
+                if (message.type() === "warning") {
+                    this.logy(`Console ${message.type()}: ${message.text()}`);
+                } else if (message.type() === "error") {
+                    this.logr(`Console ${message.type()}: ${message.text()}`);
+                } else {
+                    this.log(`Console ${message.type()}: ${message.text()}`);
+                }
+            })
+            .on("pageerror", ({message}) => this.logr(`Console: ${message}`));
+    }
+    
     try {
         await page.bringToFront();
     } catch (e) {
@@ -491,7 +493,7 @@ exports.assertMissingParameter = async (page, param) => {
 
 exports.sleep = async (ms = 1000) =>
     new Promise((resolve) => {
-        this.logg(`Waiting for ${ms / 1000} second(s)...`);
+        this.logb(`Waiting for ${ms / 1000} second(s)...`);
         setTimeout(resolve, ms);
     });
 
@@ -799,7 +801,7 @@ exports.updateDuoSecurityUserStatus = async (user = "casuser", status = "AUTH") 
 };
 
 exports.fetchDuoSecurityBypassCodes = async (user = "casuser") => {
-    await this.log(`Fetching Bypass codes from Duo Security for ${user}...`);
+    await this.log(`Fetching bypass codes from Duo Security for ${user}...`);
     const response = await this.doRequest(`https://localhost:8443/cas/actuator/duoAdmin/bypassCodes?username=${user}`,
         "POST", {
             "Accept": "application/json",
@@ -814,22 +816,24 @@ exports.base64Decode = async (data) => {
 };
 
 exports.screenshot = async (page) => {
-    const screenshotsDir = path.join(__dirname, "screenshots");
-    if (!fs.existsSync(screenshotsDir)) {
-        fs.mkdirSync(screenshotsDir);
-        await this.log(`Created screenshots directory: ${screenshotsDir}`);
-    }
-    const index = Date.now();
-    const filePath = path.join(screenshotsDir, `${process.env.SCENARIO}-${index}.png`);
-    try {
-        const url = await page.url();
-        await this.log(`Page URL when capturing screenshot: ${url}`);
-        await this.log(`Attempting to take a screenshot and save at ${filePath}`);
-        await page.setViewport({width: 1920, height: 1080});
-        await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true, optimizeForSpeed: true});
-        this.logg(`Screenshot saved at ${filePath}`);
-    } catch (e) {
-        this.logr(`Unable to capture screenshot ${filePath}: ${e}`);
+    if (await this.isCiEnvironment()) {
+        const screenshotsDir = path.join(__dirname, "screenshots");
+        if (!fs.existsSync(screenshotsDir)) {
+            fs.mkdirSync(screenshotsDir);
+            await this.log(`Created screenshots directory: ${screenshotsDir}`);
+        }
+        const index = Date.now();
+        const filePath = path.join(screenshotsDir, `${process.env.SCENARIO}-${index}.png`);
+        try {
+            const url = await page.url();
+            await this.log(`Page URL when capturing screenshot: ${url}`);
+            await this.log(`Attempting to take a screenshot and save at ${filePath}`);
+            await page.setViewport({width: 1920, height: 1080});
+            await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true, optimizeForSpeed: true});
+            this.logg(`Screenshot saved at ${filePath}`);
+        } catch (e) {
+            this.logr(`Unable to capture screenshot ${filePath}: ${e}`);
+        }
     }
 };
 
@@ -1011,15 +1015,27 @@ exports.refreshBusContext = async (url = "https://localhost:8443/cas") => {
 };
 
 exports.loginDuoSecurityBypassCode = async (page, username = "casuser", currentCodes = undefined) => {
-    await this.sleep(12000);
+    await this.sleep(10000);
     await this.click(page, "button#passcode");
-    const bypassCodes = currentCodes ?? await this.fetchDuoSecurityBypassCodes(username);
-    await this.log(`Duo Security: Retrieved bypass codes ${bypassCodes}`);
+
+    let bypassCodes = currentCodes;
+    if (bypassCodes === undefined || bypassCodes.length === 0) {
+        await this.log("Duo Security retrieving bypass codes...");
+        bypassCodes = await this.fetchDuoSecurityBypassCodes(username);
+        await this.log(`Duo Security retrieved ${bypassCodes.length} bypass codes: ${bypassCodes}`);
+    } else {
+        await this.log(`Using Duo Security ${bypassCodes.length} bypass codes ${bypassCodes}`);
+    }
+    
     let i = 0;
     const error = false;
     let accepted = false;
+    const usedBypassCodes = [];
+    
     while (!accepted && !error && i < bypassCodes.length) {
+        usedBypassCodes.push(bypassCodes[i]);
         const bypassCode = `${String(bypassCodes[i])}`;
+
         await page.keyboard.sendCharacter(bypassCode);
         await this.screenshot(page);
         await this.log(`Submitting Duo Security bypass code ${bypassCode}`);
@@ -1027,12 +1043,12 @@ exports.loginDuoSecurityBypassCode = async (page, username = "casuser", currentC
         await this.screenshot(page);
         await this.pressEnter(page);
         await this.log("Waiting for Duo Security to accept bypass code...");
-        await this.sleep(12000);
+        await this.sleep(10000);
         const error = await this.isVisible(page, "div.message.error");
         if (error) {
             await this.log("Duo Security is unable to accept bypass code");
             const msg = await this.innerText(page, "div.message.error");
-            await this.log(`Duo Security error message: ${msg}`);
+            await this.logr(`Duo Security error message: ${msg}`);
             await this.screenshot(page);
             i++;
         } else {
@@ -1040,6 +1056,18 @@ exports.loginDuoSecurityBypassCode = async (page, username = "casuser", currentC
             accepted = true;
         }
     }
+
+    for (const used of usedBypassCodes) {
+        const index = bypassCodes.indexOf(used);
+        if (index !== -1) {
+            bypassCodes.splice(index, 1);
+        }
+    }
+    await this.log(`Duo Security user ${username} used bypass codes: ${usedBypassCodes}. Remaining ${bypassCodes.length} bypass codes: ${bypassCodes}`);
+    return {
+        bypassCodes: bypassCodes,
+        usedBypassCodes: usedBypassCodes
+    };
 };
 
 exports.parseOtpAuthenticationUrl = async (url) => {
