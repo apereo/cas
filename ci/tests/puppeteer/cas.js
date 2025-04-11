@@ -144,7 +144,6 @@ exports.logPage = async (page) => {
     const url = await page.url();
     const mainFrame = page.mainFrame();
     await this.log(`Page URL: ${url}, Main frame URL: ${mainFrame.url()}`);
-    
 };
 
 exports.removeDirectoryOrFile = async (directory) => {
