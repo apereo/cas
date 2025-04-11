@@ -12,6 +12,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@FunctionalInterface
 public interface DelegatedIdentityProviders {
 
     /**
