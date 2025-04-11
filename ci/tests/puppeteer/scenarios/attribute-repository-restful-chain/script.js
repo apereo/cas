@@ -20,8 +20,9 @@ const cas = require("../../cas.js");
         mockServer = await cas.mockJsonServer(payload, 5423);
         const page = await cas.newPage(browser);
         await cas.gotoLogin(page, service);
-
+        await cas.sleep(1000);
         await cas.loginWith(page);
+        await cas.sleep(1000);
         const ticket = await cas.assertTicketParameter(page);
         const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
         await cas.logg(body);
