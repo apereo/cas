@@ -1,5 +1,4 @@
 
-const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
@@ -20,8 +19,8 @@ const cas = require("../../cas.js");
     await cas.sleep(2000);
 
     await cas.assertTicketParameter(page);
-    const result = new URL(page.url());
-    assert(result.host === "apereo.github.io");
+    await cas.logPage(page);
+    await cas.assertPageUrlHost(page, "apereo.github.io");
 
     await cas.gotoLogin(page);
     await cas.sleep(2000);
