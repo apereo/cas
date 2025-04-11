@@ -463,7 +463,7 @@ class RedisServerTicketRegistryTests {
             public void run() {
                 val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
                 val ticketGenerator = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY);
-                for (int i = 0; i < max; i++) {
+                for (var i = 0; i < max; i++) {
                     val tgtId = ticketGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
                     val tgt = new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
                     FunctionUtils.doUnchecked(__ -> ticketRegistry.addTicket(tgt));
@@ -547,7 +547,7 @@ class RedisServerTicketRegistryTests {
             @Override
             public void run() {
                 val ptGenerator = new ProxyTicketIdGenerator(10, StringUtils.EMPTY);
-                for (int i = 0; i < max; i++) {
+                for (var i = 0; i < max; i++) {
                     val proxyTicket = proxyGrantingTicket.grantProxyTicket(ptGenerator.getNewTicketId(ProxyTicket.PREFIX),
                             service, new HardTimeoutExpirationPolicy(20), serviceTicketSessionTrackingPolicy);
                     FunctionUtils.doUnchecked(__ -> ticketRegistry.addTicket(proxyTicket));

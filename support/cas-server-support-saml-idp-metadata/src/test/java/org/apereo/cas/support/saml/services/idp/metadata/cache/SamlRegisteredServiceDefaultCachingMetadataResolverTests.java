@@ -145,7 +145,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         assertNotNull(resolver.resolve(service1, getCriteriaFor("https://gitlab.com")));
         assertEquals(1, resolver.getCacheStatistics().loadSuccessCount());
 
-        for (int i = 0; i < 5; i++) {
+        for (var i = 0; i < 5; i++) {
             val resource = new ClassPathResource("placeholder-sp.xml");
             val data = FileUtils.readFileToString(resource.getFile(), StandardCharsets.UTF_8)
                 .replace("%ENTITY_ID%", "https://gitlab.com");

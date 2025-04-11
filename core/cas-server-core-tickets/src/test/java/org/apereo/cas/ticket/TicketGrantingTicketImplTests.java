@@ -223,7 +223,7 @@ class TicketGrantingTicketImplTests {
         void verifyDoubleGrantSameServiceTicketKeepAll() throws Throwable {
             val tgt = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), null, null,
                 CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
-            for (int i = 0; i < 5; i++) {
+            for (var i = 0; i < 5; i++) {
                 tgt.grantServiceTicket(
                     ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
                     RegisteredServiceTestUtils.getService(),
