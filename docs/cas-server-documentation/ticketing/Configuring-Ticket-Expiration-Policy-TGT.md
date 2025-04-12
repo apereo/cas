@@ -63,7 +63,15 @@ whose ticket granting ticket expiration policy is to deviate from the default co
     "id" : 10,
     "ticketGrantingTicketExpirationPolicy": {
       "@class": "org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy",
-      "maxTimeToLiveInSeconds": 5
+      "maxTimeToLiveInSeconds": 5,
+      "userAgents": {
+        "@class": "java.util.LinkedHashMap",
+        ".+Firefox.+": 30
+      },
+      "ipAddresses": {
+        "@class": "java.util.LinkedHashMap",
+        ".+123.456.+": 60
+      }
     }
 }
 ```
