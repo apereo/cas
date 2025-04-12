@@ -31,7 +31,7 @@ class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTests {
         val seconds = Beans.newDuration(casProperties.getTicket().getTgt().getPrimary().getMaxTimeToLiveInSeconds()).toSeconds();
         assertEquals(seconds, tgt.getExpirationPolicy().getTimeToLive());
     }
-    
+
     @Test
     void verifyExpirationPolicyPerAuthenticationAsSeconds() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("someTgtExpirationPolicy", CasRegisteredService.class);
@@ -57,8 +57,8 @@ class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTests {
     @Test
     void verifyCustomExpirationPolicy() throws Throwable {
         val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("customTgtExpirationPolicy", CasRegisteredService.class);
-        defaultSvc.setTicketGrantingTicketExpirationPolicy(
-            new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy(120));
+        val policy = new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy().setMaxTimeToLiveInSeconds(120);
+        defaultSvc.setTicketGrantingTicketExpirationPolicy(policy);
         servicesManager.save(defaultSvc);
 
         val service = RegisteredServiceTestUtils.getService("customTgtExpirationPolicy");

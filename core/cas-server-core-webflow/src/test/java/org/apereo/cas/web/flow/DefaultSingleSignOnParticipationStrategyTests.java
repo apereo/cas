@@ -117,8 +117,8 @@ class DefaultSingleSignOnParticipationStrategyTests {
     void verifyParticipateForServiceTgtExpirationPolicyWithoutTgt() throws Throwable {
         val mgr = mock(ServicesManager.class);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
-        registeredService.setTicketGrantingTicketExpirationPolicy(
-            new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy(2));
+        val policy = new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy().setMaxTimeToLiveInSeconds(2);
+        registeredService.setTicketGrantingTicketExpirationPolicy(policy);
         when(mgr.findServiceBy(any(Service.class))).thenReturn(registeredService);
 
         val context = MockRequestContext.create(applicationContext);
@@ -231,8 +231,8 @@ class DefaultSingleSignOnParticipationStrategyTests {
         val mgr = mock(ServicesManager.class);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAccessStrategy().isServiceAccessAllowedForSso(registeredService)).thenReturn(true);
-        when(registeredService.getTicketGrantingTicketExpirationPolicy())
-            .thenReturn(new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy(1));
+        val policy = new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy().setMaxTimeToLiveInSeconds(1);
+        when(registeredService.getTicketGrantingTicketExpirationPolicy()).thenReturn(policy);
         when(mgr.findServiceBy(any(Service.class))).thenReturn(registeredService);
 
         val context = MockRequestContext.create(applicationContext);
