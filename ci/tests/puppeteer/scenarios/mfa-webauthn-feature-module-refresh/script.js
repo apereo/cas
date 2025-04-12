@@ -1,7 +1,7 @@
 
 const assert = require("assert");
 const cas = require("../../cas.js");
-const YAML = require("yaml");
+
 const fs = require("fs");
 const path = require("path");
 
@@ -16,7 +16,7 @@ const path = require("path");
     await cas.log("Updating configuration and waiting for changes to reload...");
     const configFilePath = path.join(__dirname, "config.yml");
     const file = fs.readFileSync(configFilePath, "utf8");
-    const configFile = YAML.parse(file);
+    const configFile = await cas.parseYAML(file);
     await updateConfig(configFile, configFilePath, true);
     await cas.sleep(5000);
 
@@ -70,7 +70,7 @@ async function updateConfig(configFile, configFilePath, data) {
         }
     };
 
-    const newConfig = YAML.stringify(config);
+    const newConfig = await cas.toYAML(config);
     await cas.log(`Updated configuration:\n${newConfig}`);
     await fs.writeFileSync(configFilePath, newConfig);
     await cas.log(`Wrote changes to ${configFilePath}`);

@@ -27,6 +27,7 @@ const puppeteer = require("puppeteer");
 const speakeasy = require("speakeasy");
 const {createCanvas, loadImage} = require("@napi-rs/canvas");
 const jsQR = require("jsqr");
+const YAML = require("yaml");
 
 const USED_OTPS = [];
 
@@ -943,8 +944,9 @@ exports.goto = async (page, url, retryCount = 5) => {
         try {
             await this.logg(`Navigating to: ${url}`);
             response = await page.goto(url, {
-                waitUntil: "networkidle2"
+                waitUntil: "domcontentloaded"
             });
+            assert(page.mainFrame() && !page.isClosed(), "Page is closed or the main frame has detached itself");
             assert(await page.evaluate(() => document.title) !== null);
         } catch (err) {
             this.logr(`#${attempts}: Failed to goto to ${url}.`);
@@ -1126,6 +1128,10 @@ exports.readLocalStorage = async (page) => {
     this.log(results);
     return results;
 };
+
+exports.parseYAML = async (source) => YAML.parse(source);
+
+exports.toYAML = async (source) => YAML.stringify(source);
 
 exports.createZipFile = async (file, callback) => {
     const zip = fs.createWriteStream(file);
