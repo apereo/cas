@@ -3,16 +3,15 @@ const cas = require("../../cas.js");
 const assert = require("assert");
 const path = require("path");
 const fs = require("fs");
-const YAML = require("yaml");
 
 (async () => {
     const configFilePath = path.join(__dirname, "config.yml");
     const file = fs.readFileSync(configFilePath, "utf8");
-    const configFile = YAML.parse(file);
+    const configFile = await cas.parseYAML(file);
 
     const leak = await cas.randomNumber() * 100;
     await cas.log("Updating configuration and waiting for changes to reload...");
-    updateConfig(configFile, configFilePath, leak);
+    await updateConfig(configFile, configFilePath, leak);
     await cas.sleep(2000);
 
     await cas.refreshContext();
@@ -43,7 +42,7 @@ const YAML = require("yaml");
     await browser.close();
 })();
 
-function updateConfig(configFile, configFilePath, data) {
+async function updateConfig(configFile, configFilePath, data) {
     const config = {
         cas: {
             ticket: {
@@ -55,8 +54,8 @@ function updateConfig(configFile, configFilePath, data) {
             }
         }
     };
-    const newConfig = YAML.stringify(config);
-    cas.log(`Updated configuration:\n${newConfig}`);
-    fs.writeFileSync(configFilePath, newConfig);
-    cas.log(`Wrote changes to ${configFilePath}`);
+    const newConfig = await cas.toYAML(config);
+    await cas.log(`Updated configuration:\n${newConfig}`);
+    await fs.writeFileSync(configFilePath, newConfig);
+    await cas.log(`Wrote changes to ${configFilePath}`);
 }
