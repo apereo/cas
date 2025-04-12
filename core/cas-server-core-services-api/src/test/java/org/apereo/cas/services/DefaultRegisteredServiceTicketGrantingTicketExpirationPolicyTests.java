@@ -1,10 +1,12 @@
 package org.apereo.cas.services;
 
 
+import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
+import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -16,6 +18,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RegisteredService")
 class DefaultRegisteredServiceTicketGrantingTicketExpirationPolicyTests {
 
+    @BeforeEach
+    void setup() throws Exception {
+        MockRequestContext.create()
+            .setRemoteAddr("185.86.151.11")
+            .setLocalAddr("85.88.06.11")
+            .withUserAgent("Firefox")
+            .setClientInfo();
+    }
+    
     @Test
     void verifyOperation() {
         val policy = new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy();
@@ -27,5 +38,21 @@ class DefaultRegisteredServiceTicketGrantingTicketExpirationPolicyTests {
     void verifyNoPolicy() {
         val policy = new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy();
         assertTrue(policy.toExpirationPolicy().isEmpty());
+    }
+
+    @Test
+    void verifyPolicyByUserAgent() throws Exception {
+        val policy = new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy();
+        policy.setUserAgents(Map.of("Fire.+", 10L));
+        val expirationPolicy = policy.toExpirationPolicy().orElseThrow();
+        assertEquals(10L, expirationPolicy.getTimeToLive());
+    }
+
+    @Test
+    void verifyPolicyByIpAddress() throws Exception {
+        val policy = new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy();
+        policy.setIpAddresses(Map.of(".+86.151.+", 10L));
+        val expirationPolicy = policy.toExpirationPolicy().orElseThrow();
+        assertEquals(10L, expirationPolicy.getTimeToLive());
     }
 }

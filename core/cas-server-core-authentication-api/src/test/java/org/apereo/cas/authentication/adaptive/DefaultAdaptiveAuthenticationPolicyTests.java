@@ -74,8 +74,7 @@ class DefaultAdaptiveAuthenticationPolicyTests {
 
     @Test
     void verifyActionGeoLocationPass() throws Throwable {
-        val context = MockRequestContext.create();
-        context.setClientInfo();
+        val context = MockRequestContext.create().setClientInfo();
 
         val geoRequest = new GeoLocationRequest(51.5, -0.118);
         val props = new AdaptiveAuthenticationProperties();
