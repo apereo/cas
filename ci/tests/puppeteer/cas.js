@@ -66,6 +66,7 @@ const BROWSER_OPTIONS = {
         `--user-data-dir=${CHROMIUM_USER_DATA_DIR}/user-data-dir`,
         "--no-sandbox",
         "--disable-setuid-sandbox",
+        "--disable-features=site-per-process",
         "--disable-web-security",
         "--start-maximized",
         "--password-store=basic",
@@ -165,7 +166,7 @@ exports.click = async (page, button) =>
         buttonNode.click();
     }, button);
 
-exports.asciiart = async (text) => {
+exports.asciiart = (text) => {
     const art = figlet.textSync(text);
     console.log(colors.blue(art));
     console.log(`🔷 Puppeteer: ${colors.blue(require("puppeteer/package.json").version)}`);
@@ -418,6 +419,7 @@ exports.newPage = async (browser) => {
                 counter++;
                 await this.log("Opening a new browser page...");
                 page = await browser.newPage();
+                await this.sleep(500);
             } catch (e) {
                 this.logr(e);
                 await this.sleep(2000);
@@ -1148,7 +1150,7 @@ exports.unzipFile = async (file, targetDirectory) =>
         .pipe(unzipper.Extract({path: targetDirectory}))
         .on("close", () => this.log(`Files unzipped successfully @ ${targetDirectory}`));
 
-exports.prepareChromium = async () => {
+exports.prepareChromium = () => {
     this.log(`Chromium directory: ${CHROMIUM_USER_DATA_DIR}`);
     const targetDirectory = `${CHROMIUM_USER_DATA_DIR}/user-data-dir`;
     this.removeDirectoryOrFile(targetDirectory);

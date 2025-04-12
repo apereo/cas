@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,13 @@ public class ServiceAccessEnforcementAuditResourceResolver extends ReturnValueAs
         values.put("result", accessCheckOutcome);
         serviceAccessCheckResult.getService().ifPresent(service -> values.put("service", getServiceId(service)));
         serviceAccessCheckResult.getAuthentication().ifPresent(authn -> values.put("principal", determinePrincipal(authn)));
-        serviceAccessCheckResult.getRegisteredService().ifPresent(regSvc -> values.put("requiredAttributes", regSvc.getAccessStrategy().getRequiredAttributes()));
+        serviceAccessCheckResult.getRegisteredService()
+            .stream()
+            .map(RegisteredService::getAccessStrategy)
+            .filter(Objects::nonNull)
+            .filter(strategy -> !strategy.getRequiredAttributes().isEmpty())
+            .findFirst()
+            .ifPresent(strategy -> values.put("requiredAttributes", strategy.getRequiredAttributes()));
         return new String[]{auditFormat.serialize(values)};
     }
 
