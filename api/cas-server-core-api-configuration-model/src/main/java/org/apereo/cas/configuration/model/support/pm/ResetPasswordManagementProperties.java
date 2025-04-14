@@ -44,6 +44,12 @@ public class ResetPasswordManagementProperties implements CasFeatureModule, Seri
     private EmailProperties mail = new EmailProperties();
 
     /**
+     * Email settings for password reset confirmations.
+     */
+    @NestedConfigurationProperty
+    private EmailProperties confirmationMail = new EmailProperties();
+
+    /**
      * SMS settings for notifications.
      */
     @NestedConfigurationProperty
@@ -87,8 +93,12 @@ public class ResetPasswordManagementProperties implements CasFeatureModule, Seri
 
     public ResetPasswordManagementProperties() {
         mail.setText("Reset your password via this link: ${url}");
+        confirmationMail.setText("Your password reset request has been confirmed");
         sms.setText("Reset your password via this link: ${url}");
+
         mail.setSubject("Password Reset");
+        confirmationMail.setSubject("Password Reset Confirmation");
+
         crypto.getEncryption().setKeySize(EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }

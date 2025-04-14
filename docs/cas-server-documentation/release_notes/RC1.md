@@ -121,3 +121,4 @@ send monitoring events to Azure Monitor Application Insights.
 - Connection mode for [CosmosDb Service Registry](../services/CosmosDb-Service-Management.html) can now be configured to either `GATEWAY` or `DIRECT`.
 - [Duo Security Multifactor Authentication](../mfa/DuoSecurity-Authentication.html) is given the option to track session data in browser storage or ticket registry.
 - [CAS Initializr](../installation/WAR-Overlay-Initializr.html) now presents the ability to switch themes to assist with accessibility. Files presented in preview mode can now individually be copied or downloaded. 
+- [Password Reset](../password_management/Password-Management-Reset.html) operations will now send a confirmation email to the user when the password is successfully changed.

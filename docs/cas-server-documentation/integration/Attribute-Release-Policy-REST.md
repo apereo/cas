@@ -9,8 +9,8 @@ category: Attributes
 # Attribute Release Policy - REST
 
 Only return the principal attributes that are explicitly allowed by contacting a REST endpoint. Endpoints must be designed to
-accept/process `application/json` and must be able to respond to a `GET` request. The expected response status code is `200` where the body of
-the response includes a `Map` of attributes linked to their values.
+accept/process `application/json` and must be able to respond to the request via the indicated HTTP method. The expected response 
+status code is `200` where the body of the response includes a `Map` of attributes linked to their values.
 
 ```json
 {
@@ -20,6 +20,7 @@ the response includes a `Map` of attributes linked to their values.
   "id" : 100,
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnRestfulAttributeReleasePolicy",
+    "method" : "GET",
     "endpoint" : "https://somewhere.example.org",
     "headers": {
       "@class": "java.util.LinkedHashMap",

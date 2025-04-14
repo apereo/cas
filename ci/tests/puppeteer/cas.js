@@ -948,6 +948,7 @@ exports.goto = async (page, url, retryCount = 5) => {
             response = await page.goto(url, {
                 waitUntil: "domcontentloaded"
             });
+            await this.sleep(500);
             assert(page.mainFrame() && !page.isClosed(), "Page is closed or the main frame has detached itself");
             assert(await page.evaluate(() => document.title) !== null);
         } catch (err) {
