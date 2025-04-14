@@ -280,6 +280,12 @@ class PasswordManagementWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public Action passwordChangeAction(
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final CommunicationsManager communicationsManager,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+            final AuthenticationSystemSupport authenticationSystemSupport,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
@@ -291,7 +297,8 @@ class PasswordManagementWebflowConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .alwaysMatch()
-                    .supply(() -> new PasswordChangeAction(passwordManagementService, passwordValidationService))
+                    .supply(() -> new PasswordChangeAction(passwordManagementService, passwordValidationService,
+                        authenticationSystemSupport, defaultPrincipalResolver, communicationsManager, casProperties))
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_PASSWORD_CHANGE)
                 .build()

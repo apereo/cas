@@ -10,10 +10,10 @@ const assert = require("assert");
     await cas.assertInnerText(page, "#forgotPasswordLink", "Reset your password");
     await cas.click(page, "#forgotPasswordLink");
     await cas.sleep(2000);
-    
+
     await cas.type(page,"#username", "duobypass");
     await cas.pressEnter(page);
-    await cas.waitForNavigation(page);
+    await cas.sleep(3000);
     await cas.assertInnerText(page, "#content h2", "Password Reset Instructions Sent Successfully.");
     await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
 
@@ -26,7 +26,7 @@ const assert = require("assert");
     await cas.type(page,"#password", "Jv!e0mKD&dCNl^Q");
     await cas.type(page,"#confirmedPassword", "Jv!e0mKD&dCNl^Q");
     await cas.pressEnter(page);
-    await cas.waitForNavigation(page);
+    await cas.sleep(2000);
     await cas.assertInnerText(page, "#content h2", "Password Change Successful");
     
     await browser.close();

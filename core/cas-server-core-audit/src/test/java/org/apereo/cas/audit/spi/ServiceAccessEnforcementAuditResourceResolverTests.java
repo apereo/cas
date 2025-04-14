@@ -35,7 +35,6 @@ class ServiceAccessEnforcementAuditResourceResolverTests {
         protected AuditResourceResolver serviceAccessEnforcementAuditResourceResolver;
     }
 
-
     @Nested
     @TestPropertySource(properties = "cas.audit.engine.include-validation-assertion=false")
     class WithoutAssertionTests extends BaseTests {

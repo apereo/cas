@@ -4,8 +4,9 @@ const cas = require("../../cas.js");
 
 async function verifyAuthenticationFlow(context, service) {
     const page = await cas.newPage(context);
-
     await cas.gotoLogin(page, service);
+    await cas.sleep(1000);
+
     await cas.click(page, "#rememberMeButton");
     await cas.loginWith(page);
     await cas.sleep(2000);

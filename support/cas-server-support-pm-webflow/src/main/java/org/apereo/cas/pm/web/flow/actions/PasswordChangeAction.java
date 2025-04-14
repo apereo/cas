@@ -1,8 +1,19 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.NullPrincipal;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.notifications.mail.EmailCommunicationResult;
+import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
+import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.pm.InvalidPasswordException;
 import org.apereo.cas.pm.PasswordChangeRequest;
+import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.event.PasswordChangeFailureEvent;
@@ -19,10 +30,14 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -44,13 +59,15 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
 
     private final PasswordValidationService passwordValidationService;
 
-    /**
-     * Gets password change request.
-     *
-     * @param requestContext the request context
-     * @return the password change request
-     */
-    protected static PasswordChangeRequest getPasswordChangeRequest(final RequestContext requestContext) {
+    private final AuthenticationSystemSupport authenticationSystemSupport;
+
+    private final PrincipalResolver principalResolver;
+
+    private final CommunicationsManager communicationsManager;
+
+    private final CasConfigurationProperties casProperties;
+
+    protected PasswordChangeRequest getPasswordChangeRequest(final RequestContext requestContext) {
         val bean = requestContext.getFlowScope().get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
         bean.setUsername(PasswordManagementWebflowUtils.getPasswordResetUsername(requestContext));
         return bean;
@@ -60,10 +77,10 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val clientInfo = ClientInfoHolder.getClientInfo();
-        
+
         val bean = getPasswordChangeRequest(requestContext);
         Optional.ofNullable(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class))
-                .ifPresent(credential -> bean.setCurrentPassword(credential.getPassword()));
+            .ifPresent(credential -> bean.setCurrentPassword(credential.getPassword()));
 
         try {
 
@@ -76,6 +93,10 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
                 val credential = new UsernamePasswordCredential(bean.getUsername(), bean.toPassword());
                 WebUtils.putCredential(requestContext, credential);
                 LOGGER.info("Password successfully changed for [{}]", bean.getUsername());
+
+                val email = passwordManagementService.findEmail(PasswordManagementQuery.builder().username(bean.getUsername()).build());
+                val result = sendPasswordResetConfirmationEmailToAccount(bean.getUsername(), email, requestContext);
+                LOGGER.debug("Password reset confirmation email sent to [{}] with result [{}]", result.getTo(), result.isSuccess());
 
                 applicationContext.publishEvent(new PasswordChangeSuccessEvent(this, clientInfo, bean));
                 return getSuccessEvent(requestContext, bean);
@@ -103,5 +124,38 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
     protected Event getErrorEvent(final RequestContext ctx, final String code, final String message, final Object... params) {
         WebUtils.addErrorMessageToContext(ctx, code, message, params);
         return error();
+    }
+
+    protected Principal resolvedPrincipal(final String username) throws Throwable {
+        val resolvedPrincipal = principalResolver.resolve(new BasicIdentifiableCredential(username));
+        return resolvedPrincipal instanceof NullPrincipal
+            ? authenticationSystemSupport.getPrincipalFactory().createPrincipal(username)
+            : resolvedPrincipal;
+    }
+
+    protected EmailCommunicationResult sendPasswordResetConfirmationEmailToAccount(
+        final String username, final String to, final RequestContext requestContext) throws Throwable {
+        val reset = casProperties.getAuthn().getPm().getReset().getConfirmationMail();
+        val person = resolvedPrincipal(username);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val locale = Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
+            .map(resolver -> resolver.resolveLocale(request));
+        val text = EmailMessageBodyBuilder
+            .builder()
+            .properties(reset)
+            .parameters(Map.of("principal", person))
+            .locale(locale)
+            .build()
+            .get();
+        LOGGER.debug("Sending password reset confirmation email to [{}] for username [{}]", to, username);
+        val emailRequest = EmailMessageRequest
+            .builder()
+            .emailProperties(reset)
+            .principal(person)
+            .to(List.of(to))
+            .locale(locale.orElseGet(Locale::getDefault))
+            .body(text)
+            .build();
+        return communicationsManager.email(emailRequest);
     }
 }
