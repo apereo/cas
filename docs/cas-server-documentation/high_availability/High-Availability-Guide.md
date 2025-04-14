@@ -193,8 +193,7 @@ if necessary. See [this guide](../webflow/Webflow-Customization-Sessions.html) t
 We _strongly_ recommend avoiding round robin DNS as a cost-effective alternative to a hardware load balancer.
 Client cache expiration policy is entirely uncontrollable, and typical cache expiration times are much longer than
 desirable periods for node failover. A [reverse proxy](http://httpd.apache.org/docs/current/mod/mod_proxy.html) or
-[software load balancer](http://www.linuxvirtualserver.org/software/ipvs.html) are recommended alternatives to hardware.
-
+software load balancer are recommended alternatives to hardware.
 
 ## HA Ticket Registry
 

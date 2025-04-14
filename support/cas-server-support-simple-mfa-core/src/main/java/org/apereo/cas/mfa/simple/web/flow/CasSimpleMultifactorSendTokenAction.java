@@ -107,6 +107,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         val emailSent = tryToSendEmail(requestContext, communicationStrategy, principal, allRecipients, token);
 
         if (!emailSent && !smsSent && (communicationsManager.isMailSenderDefined() || communicationsManager.isSmsSenderDefined())) {
+            LOGGER.debug("No email or SMS recipients found for [{}]", principal.getId());
             if (allRecipients.isEmpty()) {
                 return routeToEmailRegistrationFlow(principal, authentication, allRecipients);
             }
@@ -151,6 +152,8 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
             }
             return getEventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER, eventAttributes);
         }
+
+        LOGGER.warn("Email registration is not enabled for [{}]", principal.getId());
         return routeToErrorEvent();
     }
 
