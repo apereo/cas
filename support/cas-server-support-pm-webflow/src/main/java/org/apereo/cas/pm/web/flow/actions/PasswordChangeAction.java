@@ -94,9 +94,10 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
                 LOGGER.info("Password successfully changed for [{}]", bean.getUsername());
 
                 val email = passwordManagementService.findEmail(PasswordManagementQuery.builder().username(bean.getUsername()).build());
-                val result = sendPasswordResetConfirmationEmailToAccount(bean.getUsername(), email, requestContext);
-                LOGGER.debug("Password reset confirmation email sent to [{}] with result [{}]", result.getTo(), result.isSuccess());
-
+                if (StringUtils.isNotBlank(email)) {
+                    val result = sendPasswordResetConfirmationEmailToAccount(bean.getUsername(), email, requestContext);
+                    LOGGER.debug("Password reset confirmation email sent to [{}] with result [{}]", result.getTo(), result.isSuccess());
+                }
                 applicationContext.publishEvent(new PasswordChangeSuccessEvent(this, clientInfo, bean));
                 return getSuccessEvent(requestContext, bean);
             }
