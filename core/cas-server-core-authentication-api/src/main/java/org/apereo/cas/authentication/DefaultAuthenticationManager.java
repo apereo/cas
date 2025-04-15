@@ -162,7 +162,6 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
         try {
             AuthenticationHolder.setCurrentAuthentication(authenticationBuilder.build());
-            
             val handlerExecutionResult = handler.authenticate(credential, service);
             val authenticationHandlerName = handler.getName();
             authenticationBuilder.addSuccess(authenticationHandlerName, handlerExecutionResult);
