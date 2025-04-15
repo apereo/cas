@@ -81,6 +81,10 @@ the baseline requirement will remain unchanged and this is just a preparatory st
 ### Apple Notifications
 
 You can now use APN for sending notifications to [Apple devices](../notifications/Notifications-Configuration-APN.html).
+   
+### Apache Geode Ticket Registry
+
+CAS now supports [Apache Geode](../ticketing/Geode-Ticket-Registry.html) as a ticket registry.
 
 ### Multitenancy
 
