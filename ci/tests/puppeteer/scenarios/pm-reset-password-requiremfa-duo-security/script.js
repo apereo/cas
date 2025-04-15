@@ -13,7 +13,7 @@ const assert = require("assert");
 
     await cas.type(page,"#username", "duobypass");
     await cas.pressEnter(page);
-    await cas.sleep(3000);
+    await cas.sleep(6000);
     await cas.assertInnerText(page, "#content h2", "Password Reset Instructions Sent Successfully.");
     await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
 

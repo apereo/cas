@@ -18,8 +18,8 @@
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.access.default=UNRESTRICTED",
 
-    "--logging.level.org.apereo.cas=debug",
-    "--logging.level.org.springframework.webflow=debug"
+    "--logging.level.org.apereo.cas=info",
+    "--logging.level.org.springframework.webflow=info"
   ],
   "initScript": "${PWD}/ci/tests/aws/run-aws-server.sh"
 }

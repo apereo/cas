@@ -42,8 +42,11 @@
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.access.default=UNRESTRICTED",
 
-    "--cas.authn.pm.reset.number-of-uses=2",
-    "--cas.authn.pm.reset.expiration=PT5M"
+    "--cas.authn.pm.reset.number-of-uses=-1",
+    "--cas.authn.pm.reset.expiration=PT5M",
+
+    "--logging.level.org.apereo.cas=warn",
+    "--logging.level.org.springframework.webflow=warn"
   ],
   "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true",
   "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"

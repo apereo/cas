@@ -29,7 +29,7 @@
     "--cas.authn.accept.name=STATIC",
 
     "--logging.level.org.apache.cxf=info",
-    "--logging.level.org.apache.wss4j=debug",
+    "--logging.level.org.apache.wss4j=info",
 
     "--cas.http-client.host-name-verifier=none",
     

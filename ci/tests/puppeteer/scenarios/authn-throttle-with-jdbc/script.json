@@ -27,8 +27,7 @@
     "--cas.authn.throttle.jdbc.url=jdbc:postgresql://localhost:5432/audit",
     "--cas.authn.throttle.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect",
     
-
-    "--logging.level.org.apereo.cas.web.support=debug"
+    "--logging.level.org.apereo.cas.web.support=info"
   ],
   "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh",
   "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true"

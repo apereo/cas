@@ -87,7 +87,7 @@ public class ResetPasswordManagementProperties implements CasFeatureModule, Seri
 
     /**
      * How many times you can use the password reset link.
-     * Stricly lower than 1 means infinite.
+     * Strictly lower than 1 means infinite.
      */
     private int numberOfUses = -1;
 

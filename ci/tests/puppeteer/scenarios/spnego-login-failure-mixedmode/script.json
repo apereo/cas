@@ -3,7 +3,7 @@
 
   "properties": [
 
-    "--logging.level.org.apereo.cas.web.flow=debug",
+    "--logging.level.org.apereo.cas.web.flow=info",
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",

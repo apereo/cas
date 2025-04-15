@@ -15,7 +15,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
@@ -139,9 +138,6 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         val service = WebUtils.getService(requestContext);
         val url = buildPasswordResetUrl(query.getUsername(), service);
         if (url != null) {
-            val pm = casProperties.getAuthn().getPm();
-            val duration = Beans.newDuration(pm.getReset().getExpiration());
-            LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url, duration);
             val sendEmail = sendPasswordResetEmailToAccount(query.getUsername(), email, url, requestContext);
             val sendSms = sendPasswordResetSmsToAccount(phone, url);
             if (sendEmail.isSuccess() || sendSms) {

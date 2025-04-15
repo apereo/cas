@@ -7,7 +7,7 @@
     "--cas.authn.throttle.failure.range-seconds=10",
     "--cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
 
-    "--logging.level.org.apereo.cas.web.support=debug"
+    "--logging.level.org.apereo.cas.web.support=info"
   ]
 }
 

@@ -7,7 +7,7 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
-    "--logging.level.com.hazelcast=debug",
+    "--logging.level.com.hazelcast=info",
     
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.access.default=UNRESTRICTED",
