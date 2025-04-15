@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -40,7 +39,7 @@ public class WebAuthnValidateSessionCredentialTokenAction extends AbstractMultif
         val token = request.getParameter("token");
         if (StringUtils.isBlank(token)) {
             LOGGER.warn("Missing web authn token from the request");
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
         }
 
         LOGGER.debug("Received web authn token [{}]", token);
@@ -50,12 +49,12 @@ public class WebAuthnValidateSessionCredentialTokenAction extends AbstractMultif
         val session = sessionManager.getSession(WebAuthnCredential.from(credential));
         if (session.isEmpty()) {
             LOGGER.warn("Unable to locate existing session from the current token [{}]", token);
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
         }
         val result = webAuthnCredentialRepository.getUsernameForUserHandle(session.get());
         if (result.isEmpty()) {
             LOGGER.warn("Unable to locate user based on the given user handle");
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
         }
         val username = result.get();
         return FunctionUtils.doUnchecked(() -> {
@@ -65,7 +64,7 @@ public class WebAuthnValidateSessionCredentialTokenAction extends AbstractMultif
                 .build();
             LOGGER.debug("Finalized authentication attempt based on [{}]", authentication);
             WebUtils.putAuthentication(authentication, requestContext);
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
         });
     }
 }

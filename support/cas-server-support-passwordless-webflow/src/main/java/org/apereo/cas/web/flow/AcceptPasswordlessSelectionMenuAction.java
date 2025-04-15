@@ -9,7 +9,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -69,7 +68,7 @@ public class AcceptPasswordlessSelectionMenuAction extends BasePasswordlessCasWe
             case DELEGATION -> CasWebflowConstants.TRANSITION_ID_DELEGATED_AUTHENTICATION_REDIRECT;
         };
 
-        return new EventFactorySupport().event(this, finalEvent);
+        return eventFactory.event(this, finalEvent);
     }
 
     protected PasswordlessSelectionMenu extractSelectedAuthenticationOption(final RequestContext requestContext) {

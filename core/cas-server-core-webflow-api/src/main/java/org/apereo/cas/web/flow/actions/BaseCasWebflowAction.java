@@ -10,6 +10,7 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.execution.ActionExecutionException;
@@ -24,6 +25,8 @@ import java.util.Optional;
  * @since 6.5.0
  */
 public abstract class BaseCasWebflowAction extends AbstractAction {
+    protected final EventFactorySupport eventFactory = new EventFactorySupport();
+    
     /**
      * Is login flow active.
      *

@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
@@ -95,7 +94,7 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
 
     protected Event loadSurrogateAccounts(final RequestContext requestContext) throws Throwable {
         LOGGER.trace("Attempting to load surrogates...");
-        val eventFactorySupport = new EventFactorySupport();
+        val eventFactorySupport = eventFactory;
         if (loadSurrogates(requestContext)) {
             val accounts = WebUtils.getSurrogateAuthenticationAccounts(requestContext);
             val service = Optional.ofNullable(WebUtils.getService(requestContext));

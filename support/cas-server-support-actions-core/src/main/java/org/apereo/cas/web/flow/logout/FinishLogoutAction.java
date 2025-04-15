@@ -11,7 +11,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -38,7 +37,7 @@ public class FinishLogoutAction extends AbstractLogoutAction {
         val logoutRedirect = WebUtils.getLogoutRedirectUrl(context, String.class);
         if (StringUtils.isNotBlank(logoutRedirect)) {
             LOGGER.debug("Redirecting to [{}]", logoutRedirect);
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REDIRECT);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_REDIRECT);
         }
         val logoutPostUrl = WebUtils.getLogoutPostUrl(context);
         val logoutPostData = WebUtils.getLogoutPostData(context);
@@ -47,8 +46,8 @@ public class FinishLogoutAction extends AbstractLogoutAction {
             flowScope.put("originalUrl", logoutPostUrl);
             flowScope.put("parameters", logoutPostData);
             LOGGER.debug("Submitting POST logout request to [{}] with parameters [{}]", logoutPostUrl, logoutPostData);
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_POST);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_POST);
         }
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINISH);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_FINISH);
     }
 }

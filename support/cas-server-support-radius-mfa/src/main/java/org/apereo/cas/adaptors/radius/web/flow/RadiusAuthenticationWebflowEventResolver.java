@@ -4,7 +4,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.authentication.FinalMultifactorAuthenticationTransactionWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -37,7 +36,7 @@ public class RadiusAuthenticationWebflowEventResolver extends FinalMultifactorAu
         val attempts = context.getFlowScope().getLong(FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS, 0L) + 1;
         if (attempts >= allowedAuthenticationAttempts) {
             context.getFlowScope().remove(FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS);
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_CANCEL);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_CANCEL);
         }
         context.getFlowScope().put(FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS, attempts + 1);
         return super.getAuthenticationFailureErrorEvent(context, exception);

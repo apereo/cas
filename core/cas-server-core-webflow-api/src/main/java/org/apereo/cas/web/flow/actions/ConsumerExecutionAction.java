@@ -9,7 +9,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpStatus;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -68,7 +67,7 @@ public class ConsumerExecutionAction extends BaseCasWebflowAction {
     @Override
     public Event doExecuteInternal(final RequestContext requestContext) {
         this.task.accept(requestContext);
-        return StringUtils.isNotBlank(this.eventId) ? new EventFactorySupport().event(this, this.eventId) : null;
+        return StringUtils.isNotBlank(this.eventId) ? eventFactory.event(this, this.eventId) : null;
     }
 
     @Override

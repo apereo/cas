@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -76,7 +75,7 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
                 .build();
             var account = passwordlessUserAccountStore.findUser(request);
             account.ifPresent(o -> attributes.put("passwordlessAccount", passwordlessUserAccount));
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);
         }
     }
 

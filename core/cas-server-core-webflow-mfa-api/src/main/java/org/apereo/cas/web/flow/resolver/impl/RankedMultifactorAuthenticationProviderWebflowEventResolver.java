@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -183,7 +182,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         val attributes = new LocalAttributeMap<>();
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         attributes.put("url", HttpRequestUtils.getFullRequestUrl(request));
-        val success = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS, attributes);
+        val success = eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS, attributes);
         return CollectionUtils.wrapSet(success);
     }
 }

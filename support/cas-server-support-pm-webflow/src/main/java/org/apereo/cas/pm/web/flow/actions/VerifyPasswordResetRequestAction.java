@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Objects;
@@ -78,7 +77,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
                 LOGGER.trace("Security questions are enabled; proceeding...");
                 return success();
             }
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SECURITY_QUESTIONS_DISABLED);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_SECURITY_QUESTIONS_DISABLED);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, "Password reset token could not be located or verified", e);
             return error();

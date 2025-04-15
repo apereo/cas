@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
@@ -48,7 +47,7 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         val account = getDuoSecurityUserAccount(principal);
-        val eventFactorySupport = new EventFactorySupport();
+        val eventFactorySupport = eventFactory;
         if (account.getStatus() == DuoSecurityUserAccountStatus.ENROLL
             && StringUtils.isNotBlank(provider.getRegistration().getRegistrationUrl())) {
             val url = buildDuoRegistrationUrlFor(requestContext, provider, principal);

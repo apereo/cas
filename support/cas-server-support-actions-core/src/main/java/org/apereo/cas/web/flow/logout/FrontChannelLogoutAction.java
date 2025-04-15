@@ -15,7 +15,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Comparator;
@@ -75,13 +74,13 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
         if (!logoutUrls.isEmpty()) {
             WebUtils.putLogoutUrls(context, logoutUrls);
             context.getFlowScope().put("logoutPropagationType", casProperties.getSlo().getLogoutPropagationType());
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROPAGATE);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_PROPAGATE);
         }
 
         return getFinishLogoutEvent();
     }
 
     private Event getFinishLogoutEvent() {
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINISH);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_FINISH);
     }
 }

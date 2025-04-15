@@ -10,7 +10,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -66,6 +65,6 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
 
         populateContextWithAuthenticationResult(requestContext, authentication, service);
         LOGGER.debug("Proceed with multifactor authentication flow [{}] for user [{}]", result.get(), user);
-        return new EventFactorySupport().event(this, result.map(MultifactorAuthenticationProvider::getId).orElse(StringUtils.EMPTY));
+        return eventFactory.event(this, result.map(MultifactorAuthenticationProvider::getId).orElse(StringUtils.EMPTY));
     }
 }

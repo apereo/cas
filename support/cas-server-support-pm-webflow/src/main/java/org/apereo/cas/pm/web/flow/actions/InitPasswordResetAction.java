@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -81,7 +80,7 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
         WebUtils.putAuthenticationResultBuilder(authenticationResult, requestContext);
         WebUtils.putTargetTransition(requestContext, CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD);
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(requestContext, provider);
-        return new EventFactorySupport().event(this, provider.getId(),
+        return eventFactory.event(this, provider.getId(),
             new LocalAttributeMap<>(Map.of(MultifactorAuthenticationProvider.class.getName(), provider)));
     }
 

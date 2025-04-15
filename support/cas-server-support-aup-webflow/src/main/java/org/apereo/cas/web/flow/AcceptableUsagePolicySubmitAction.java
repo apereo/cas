@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -36,7 +35,7 @@ public class AcceptableUsagePolicySubmitAction extends BaseCasWebflowAction {
         return FunctionUtils.doUnchecked(() -> {
             LOGGER.trace("Submitting acceptable usage policy");
             if (repository.submit(requestContext)) {
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED);
+                return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED);
             }
             return error();
         });

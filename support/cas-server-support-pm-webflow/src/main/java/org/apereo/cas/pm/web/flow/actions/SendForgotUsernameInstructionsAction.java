@@ -30,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.servlet.support.RequestContextUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -137,6 +136,6 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
     protected Event getErrorEvent(final String code, final String defaultMessage, final RequestContext requestContext) {
         WebUtils.addErrorMessageToContext(requestContext, "screen.pm.forgotusername." + code, defaultMessage);
         LOGGER.error(defaultMessage);
-        return new EventFactorySupport().event(this, CasWebflowConstants.VIEW_ID_ERROR);
+        return eventFactory.event(this, CasWebflowConstants.VIEW_ID_ERROR);
     }
 }

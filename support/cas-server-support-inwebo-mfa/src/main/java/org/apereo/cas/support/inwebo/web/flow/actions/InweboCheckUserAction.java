@@ -10,7 +10,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -122,6 +121,6 @@ public class InweboCheckUserAction extends BaseCasWebflowAction {
     }
 
     protected Event customEvent(final String event) {
-        return new EventFactorySupport().event(this, event);
+        return eventFactory.event(this, event);
     }
 }

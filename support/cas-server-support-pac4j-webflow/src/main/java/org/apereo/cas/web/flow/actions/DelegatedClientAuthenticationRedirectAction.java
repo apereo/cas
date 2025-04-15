@@ -29,7 +29,6 @@ import org.pac4j.core.exception.http.WithLocationAction;
 import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -72,7 +71,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
         if (action instanceof WithContentAction) {
             handleIdentityProviderWithDynamicContent(requestContext, client, action);
         }
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 
     protected RedirectionAction getRedirectionAction(final TransientSessionTicket ticket,

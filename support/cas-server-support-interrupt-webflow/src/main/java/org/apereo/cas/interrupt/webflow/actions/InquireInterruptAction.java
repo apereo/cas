@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.HashMap;
@@ -80,7 +79,7 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
                 InterruptUtils.putInterruptIn(requestContext, interruptResponse);
                 InterruptUtils.putInterruptTriggerMode(requestContext, casProperties.getInterrupt().getCore().getTriggerMode());
                 WebUtils.putPrincipal(requestContext, authentication.getPrincipal());
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED);
+                return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED);
             })
             .orElseGet(() -> {
                 LOGGER.debug("Webflow interrupt is skipped since no inquirer produced a response");
@@ -145,7 +144,7 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
     }
 
     private Event getInterruptSkippedEvent() {
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED);
     }
 
     protected Optional<InterruptResponse> inquire(final RequestContext requestContext) {

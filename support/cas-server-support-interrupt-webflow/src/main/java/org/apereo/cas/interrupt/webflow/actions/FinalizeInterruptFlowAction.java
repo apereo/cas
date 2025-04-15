@@ -9,7 +9,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
@@ -38,7 +37,7 @@ public class FinalizeInterruptFlowAction extends BaseCasWebflowAction {
                 val externalContext = requestContext.getExternalContext();
                 externalContext.requestExternalRedirect(url);
                 externalContext.recordResponseComplete();
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_STOP);
+                return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_STOP);
             }
             LOGGER.warn("Interrupt response has blocked the authentication flow");
             throw UnauthorizedServiceException.denied("Rejected");

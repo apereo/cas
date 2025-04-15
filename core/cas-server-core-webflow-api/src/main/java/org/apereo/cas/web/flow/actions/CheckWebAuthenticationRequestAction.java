@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -29,9 +28,9 @@ public class CheckWebAuthenticationRequestAction extends BaseCasWebflowAction {
         val requestContentType = request.getContentType();
         if (StringUtils.isNotBlank(requestContentType) && RegexUtils.find(this.contentType, requestContentType)) {
             LOGGER.debug("Authentication request via type [{}] is not web-based", this.contentType);
-            return new EventFactorySupport().no(this);
+            return eventFactory.no(this);
         }
         LOGGER.debug("Authenticated request is identified as web-based via type [{}]", requestContentType);
-        return new EventFactorySupport().yes(this);
+        return eventFactory.yes(this);
     }
 }

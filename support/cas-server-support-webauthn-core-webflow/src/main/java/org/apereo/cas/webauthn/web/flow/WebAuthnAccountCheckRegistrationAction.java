@@ -9,7 +9,6 @@ import com.yubico.core.RegistrationStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -33,6 +32,6 @@ public class WebAuthnAccountCheckRegistrationAction extends AbstractMultifactorA
         if (!registrations.isEmpty()) {
             return success();
         }
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
     }
 }

@@ -7,7 +7,6 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -30,9 +29,9 @@ public class RenewAuthenticationRequestCheckAction extends BaseCasWebflowAction 
             val ssoParticipation = singleSignOnParticipationStrategy.supports(ssoRequest)
                 && singleSignOnParticipationStrategy.isParticipating(ssoRequest);
             if (ssoParticipation) {
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);
+                return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);
             }
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_RENEW);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_RENEW);
         });
     }
 }

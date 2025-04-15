@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
@@ -80,7 +79,7 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
             DelegationWebflowUtils.putDelegatedAuthenticationProviderPrimary(requestContext, clientConfig);
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, clientConfig.getName());
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
         }
         LOGGER.trace("Delegated identity provider could not be determined for [{}] based on [{}]", user, clients);
         return success();

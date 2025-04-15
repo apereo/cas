@@ -6,7 +6,6 @@ import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -33,6 +32,6 @@ public class InitializeCaptchaAction extends BaseCasWebflowAction {
                 WebUtils.putRecaptchaPropertiesFlowScope(requestContext, properties);
                 onActivationConsumer.accept(requestContext);
             });
-        return new EventFactorySupport().success(this);
+        return eventFactory.success(this);
     }
 }

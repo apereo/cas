@@ -9,7 +9,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -31,6 +30,6 @@ public class QRAuthenticationValidateTokenAction extends BaseCasWebflowAction {
         LOGGER.debug("Received QR token [{}] with device identifier [{}]", token, deviceId);
         val credential = new QRAuthenticationTokenCredential(token, deviceId);
         WebUtils.putCredential(requestContext, credential);
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
     }
 }

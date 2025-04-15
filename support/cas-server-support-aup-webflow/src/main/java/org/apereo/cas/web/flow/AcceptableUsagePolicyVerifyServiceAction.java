@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -46,7 +45,7 @@ public class AcceptableUsagePolicyVerifyServiceAction extends BaseCasWebflowActi
         if (registeredService != null) {
             val authentication = WebUtils.getAuthentication(context);
             val service = WebUtils.getService(context);
-            val eventFactorySupport = new EventFactorySupport();
+            val eventFactorySupport = eventFactory;
             val audit = AuditableContext.builder()
                 .service(service)
                 .authentication(authentication)
