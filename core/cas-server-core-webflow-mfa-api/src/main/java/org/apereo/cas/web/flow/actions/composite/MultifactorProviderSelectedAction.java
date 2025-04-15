@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -53,7 +52,7 @@ public class MultifactorProviderSelectedAction extends BaseCasWebflowAction {
             .orElseGet(() -> requestContext.getFlashScope().get(PARAMETER_SELECTED_MFA_PROVIDER, MultifactorAuthenticationProvider.class).getId());
         LOGGER.debug("Selected multifactor authentication provider is [{}]", selectedProvider);
         rememberSelectedMultifactorAuthenticationProvider(requestContext, selectedProvider);
-        return new EventFactorySupport().event(this, selectedProvider);
+        return eventFactory.event(this, selectedProvider);
     }
 
     protected void rememberSelectedMultifactorAuthenticationProvider(final RequestContext requestContext, final String selectedProvider) {

@@ -13,7 +13,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -50,7 +49,7 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
                 return null;
             }
             prepareConsentForRequestContext(requestContext);
-            return new EventFactorySupport().event(this, consentEvent);
+            return eventFactory.event(this, consentEvent);
         });
     }
 

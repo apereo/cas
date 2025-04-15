@@ -20,7 +20,6 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.util.InitializableObject;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -73,7 +72,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
                         requestContext.getFlowScope().put(TransientSessionTicket.class.getName(), ticket);
                         return ticket;
                     }))
-                    .map(ticket -> new EventFactorySupport().event(this,
+                    .map(ticket -> eventFactory.event(this,
                         CasWebflowConstants.TRANSITION_ID_REDIRECT, ticket.getClass().getName(), ticket))
                     .stream()
                     .findFirst()

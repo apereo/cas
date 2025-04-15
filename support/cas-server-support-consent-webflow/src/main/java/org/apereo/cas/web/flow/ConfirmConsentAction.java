@@ -11,7 +11,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -52,7 +51,7 @@ public class ConfirmConsentAction extends AbstractConsentAction {
 
             LOGGER.debug("Storing consent decision for service [{}]", service);
             consentEngine.storeConsentDecision(service, registeredService, authentication, reminder, unit, option);
-            return new EventFactorySupport().success(this);
+            return eventFactory.success(this);
         });
     }
 }

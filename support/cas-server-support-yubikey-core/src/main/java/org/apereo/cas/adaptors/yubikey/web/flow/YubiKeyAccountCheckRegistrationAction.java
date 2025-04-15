@@ -8,7 +8,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -29,6 +28,6 @@ public class YubiKeyAccountCheckRegistrationAction extends AbstractMultifactorAu
         if (registry.isYubiKeyRegisteredFor(uid)) {
             return success();
         }
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
     }
 }

@@ -24,7 +24,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -303,7 +302,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         }
 
         WebUtils.putPrincipal(requestContext, principal);
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SELECT, eventAttributes);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_SELECT, eventAttributes);
     }
 
     private static void putSmsRecipients(final RequestContext requestContext, final Map<String, CandidateRecipientAddress> validPhones) {
@@ -325,7 +324,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
 
     protected Event buildSuccessEvent(final CasSimpleMultifactorAuthenticationTicket token) {
         val attributes = new LocalAttributeMap<Object>("token", token.getId());
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS, attributes);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS, attributes);
     }
 
     protected void storeToken(final RequestContext requestContext, final CasSimpleMultifactorAuthenticationTicket token) throws Throwable {

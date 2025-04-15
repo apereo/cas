@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -143,6 +142,6 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
     }
 
     private Event newEvent(final String id, final Throwable error) {
-        return new EventFactorySupport().event(this, id, new LocalAttributeMap<>("error", error));
+        return eventFactory.event(this, id, new LocalAttributeMap<>("error", error));
     }
 }

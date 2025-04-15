@@ -11,7 +11,6 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
@@ -52,7 +51,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
         val account = findPasswordlessUserAccount(requestContext).orElseThrow(
             () -> UnauthorizedServiceException.denied("Unable to locate passwordless user account"));
         PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(requestContext, account);
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_CREATE);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_CREATE);
     }
 
 

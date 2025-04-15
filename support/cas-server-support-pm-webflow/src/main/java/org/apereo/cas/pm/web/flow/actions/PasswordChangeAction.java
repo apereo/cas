@@ -31,7 +31,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.web.servlet.support.RequestContextUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -116,7 +115,7 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
 
     protected Event getSuccessEvent(final RequestContext requestContext,
                                     final PasswordChangeRequest bean) {
-        return new EventFactorySupport()
+        return eventFactory
             .event(this, CasWebflowConstants.TRANSITION_ID_PASSWORD_UPDATE_SUCCESS,
                 new LocalAttributeMap<>("passwordChangeRequest", bean));
     }

@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationAction;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,7 +23,7 @@ public class GoogleAuthenticatorAccountCheckRegistrationAction extends OneTimeTo
     @Override
     protected Event routeToRegistration(final RequestContext requestContext, final Principal principal) {
         if (!casProperties.getAuthn().getMfa().getGauth().getCore().isDeviceRegistrationEnabled()) {
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_STOP);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_STOP);
         }
         return super.routeToRegistration(requestContext, principal);
     }

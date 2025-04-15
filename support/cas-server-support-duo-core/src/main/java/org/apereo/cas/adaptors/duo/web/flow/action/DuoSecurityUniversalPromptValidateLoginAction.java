@@ -20,7 +20,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -62,7 +61,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         if (requestParameters.contains(REQUEST_PARAMETER_CODE) && requestParameters.contains(REQUEST_PARAMETER_STATE)) {
             return handleDuoSecurityUniversalPromptResponse(requestContext);
         }
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SKIP);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_SKIP);
     }
 
     protected Event handleDuoSecurityUniversalPromptResponse(final RequestContext requestContext) throws Throwable {
@@ -84,7 +83,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             WebUtils.putTargetTransition(requestContext, CasWebflowConstants.TRANSITION_ID_SWITCH);
             WebUtils.putTargetState(requestContext, requestContext.getCurrentState().getId());
             WebUtils.putBrowserStorageContextKey(requestContext, sessionStore.getBrowserStorageContextKey());
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_RESTORE);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_RESTORE);
         }
 
         BrowserWebStorageSessionStore browserSessionStore = null;
@@ -120,7 +119,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                 WebUtils.putCredential(requestContext, credential);
             }
         }
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
     }
 
     private static JEEContext toWebContext(final RequestContext requestContext) {
@@ -228,7 +227,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                 }
             } catch (final Throwable e) {
                 LoggingUtils.warn(LOGGER, e);
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
+                return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
             } finally {
                 if (ticket != null) {
                     val flowScope = ticket.getProperty(FlowScope.class.getSimpleName(), Map.class);

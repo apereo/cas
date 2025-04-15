@@ -40,6 +40,8 @@ import java.util.Set;
 @Getter
 public abstract class AbstractCasWebflowEventResolver implements CasWebflowEventResolver {
 
+    protected final EventFactorySupport eventFactory = new EventFactorySupport();
+    
     private final CasWebflowEventResolutionConfigurationContext configurationContext;
 
     @Override
@@ -62,7 +64,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             event.getId(), event.getSource().getClass().getName());
         val targetState = WebUtils.getTargetTransition(context);
         return FunctionUtils.doIf(StringUtils.isNotBlank(targetState) && event.getId().equals(CasWebflowConstants.TRANSITION_ID_SUCCESS),
-                () -> new EventFactorySupport().event(this, targetState),
+                () -> eventFactory.event(this, targetState),
                 () -> event)
             .get();
     }
@@ -139,7 +141,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
     protected Event getAuthenticationFailureErrorEvent(final RequestContext context,
                                                        final Exception exception) {
-        return new EventFactorySupport().error(this, exception);
+        return eventFactory.error(this, exception);
     }
 
 }

@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -49,13 +48,13 @@ public class VerifyPasswordlessAccountAuthenticationAction extends BasePasswordl
         DelegationWebflowUtils.putDelegatedAuthenticationDisabled(requestContext, !isDelegationActive);
 
         if (user.isAllowSelectionMenu()) {
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SELECT);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_SELECT);
         }
         
         val requestPassword = doesPasswordlessAccountRequestPassword(user);
         WebUtils.putCasLoginFormViewable(requestContext, requestPassword);
         return requestPassword || user.getAllowedDelegatedClients().size() > 1
-            ? new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT)
+            ? eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_PROMPT)
             : success();
     }
 }

@@ -41,7 +41,7 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
      */
     public static final String REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED = "LogoutRequestConfirmed";
 
-    protected final EventFactorySupport eventFactorySupport = new EventFactorySupport();
+    protected final EventFactorySupport eventFactorySupport = eventFactory;
 
     protected final CentralAuthenticationService centralAuthenticationService;
 

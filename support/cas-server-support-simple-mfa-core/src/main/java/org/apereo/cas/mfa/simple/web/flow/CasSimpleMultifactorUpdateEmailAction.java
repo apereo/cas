@@ -14,7 +14,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -65,7 +64,7 @@ public class CasSimpleMultifactorUpdateEmailAction extends AbstractMultifactorAu
             multifactorAuthenticationService.update(principal,
                 Map.of(CasSimpleMultifactorVerifyEmailAction.TOKEN_PROPERTY_EMAIL_TO_REGISTER, emailAddress));
             MultifactorAuthenticationWebflowUtils.removeSimpleMultifactorAuthenticationToken(requestContext);
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_RESUME,
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_RESUME,
                 new LocalAttributeMap<>(Map.of(CasSimpleMultifactorVerifyEmailAction.TOKEN_PROPERTY_EMAIL_TO_REGISTER, emailAddress)));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

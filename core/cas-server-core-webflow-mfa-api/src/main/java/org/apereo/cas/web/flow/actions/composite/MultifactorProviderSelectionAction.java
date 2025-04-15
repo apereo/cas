@@ -6,7 +6,6 @@ import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import lombok.val;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -30,6 +29,6 @@ public class MultifactorProviderSelectionAction extends BaseCasWebflowAction {
             ? CasWebflowConstants.TRANSITION_ID_PROCEED
             : CasWebflowConstants.TRANSITION_ID_SELECT;
         val attributes = requestContext.getCurrentEvent().getAttributes();
-        return new EventFactorySupport().event(this, eventId, attributes);
+        return eventFactory.event(this, eventId, attributes);
     }
 }

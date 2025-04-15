@@ -9,7 +9,6 @@ import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -35,13 +34,13 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractMultifac
         }
         if (accounts.size() > 1) {
             MultifactorAuthenticationWebflowUtils.putOneTimeTokenAccounts(requestContext, accounts);
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_CONFIRM);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_CONFIRM);
         }
         MultifactorAuthenticationWebflowUtils.putOneTimeTokenAccount(requestContext, accounts.iterator().next());
         return success();
     }
 
     protected Event routeToRegistration(final RequestContext requestContext, final Principal principal) {
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
     }
 }

@@ -40,7 +40,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.servlet.support.RequestContextUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.net.URL;
@@ -133,7 +132,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             && !hasPrincipalRegisteredMultifactorAuthenticationDevice(requestContext)) {
             LOGGER.warn("No registered devices for multifactor authentication could be found for [{}]", query.getUsername());
             WebUtils.addErrorMessageToContext(requestContext, "screen.mfaDenied.message");
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_DENY);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_DENY);
         }
         val service = WebUtils.getService(requestContext);
         val url = buildPasswordResetUrl(query.getUsername(), service);
@@ -265,7 +264,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
                                   final RequestContext requestContext) {
         WebUtils.addErrorMessageToContext(requestContext, "screen.pm.reset." + code, defaultMessage);
         LOGGER.error(defaultMessage);
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
     }
 
     protected URL buildPasswordResetUrl(final String username,

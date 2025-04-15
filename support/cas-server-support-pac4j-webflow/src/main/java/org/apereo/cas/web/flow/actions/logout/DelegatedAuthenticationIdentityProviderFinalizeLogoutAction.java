@@ -13,7 +13,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
@@ -61,7 +60,7 @@ public class DelegatedAuthenticationIdentityProviderFinalizeLogoutAction extends
             .ifPresent(continuation ->
                 requestContext.getConversationScope().put(SingleLogoutContinuation.class.getName(), continuation));
         WebUtils.removeCredential(requestContext);
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_LOGOUT);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_LOGOUT);
     }
 
 }

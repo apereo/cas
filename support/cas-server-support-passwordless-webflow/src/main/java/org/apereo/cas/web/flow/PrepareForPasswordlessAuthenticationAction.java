@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -31,11 +30,11 @@ public class PrepareForPasswordlessAuthenticationAction extends BasePasswordless
 
         val registeredService = (WebBasedRegisteredService) WebUtils.getRegisteredService(requestContext);
         if (registeredService != null && registeredService.getPasswordlessPolicy() != null && !registeredService.getPasswordlessPolicy().isEnabled()) {
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_SKIP);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_SKIP);
         }
         
         if (!PasswordlessWebflowUtils.hasPasswordlessAuthenticationAccount(requestContext) && isLoginFlowActive(requestContext)) {
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_GET_USERID);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_GET_USERID);
         }
         return null;
     }

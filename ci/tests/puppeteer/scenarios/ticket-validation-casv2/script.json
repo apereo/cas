@@ -1,15 +1,20 @@
 {
-  "dependencies": "core",
-
+  "dependencies": "geode-ticket-registry",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--cas.ticket.crypto.enabled=true",
+    "--cas.ticket.crypto.enabled=false",
     
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.accept.name=STATIC",
 
+    "--cas.ticket.registry.geode.locators=none",
+    
     "--logging.level.org.apereo.cas.services.web.view=info"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
