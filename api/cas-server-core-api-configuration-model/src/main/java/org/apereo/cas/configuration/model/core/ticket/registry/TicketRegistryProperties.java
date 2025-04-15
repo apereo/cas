@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.Cassa
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.gcp.GoogleCloudFirestoreTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.geode.GeodeProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
@@ -78,6 +79,12 @@ public class TicketRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private IgniteProperties ignite = new IgniteProperties();
+
+    /**
+     * Apache Geode registry settings.
+     */
+    @NestedConfigurationProperty
+    private GeodeProperties geode = new GeodeProperties();
 
     /**
      * JPA registry settings.

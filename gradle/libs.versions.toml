@@ -65,6 +65,7 @@ firebaseAdmin = "9.4.3"
 fluentd = "0.3.4"
 fluentdLog4j = "1.0.0"
 fontAwesome = "6.7.2"
+geode = "1.15.1"
 googleApiClient = "2.7.2"
 googleAuth = "1.5.0"
 googleCloudLogging = "3.22.0"
@@ -372,6 +373,7 @@ apachegroovy-sql = { module = "org.apache.groovy:groovy-sql", version.ref = "gro
 apachegroovy-templates = { module = "org.apache.groovy:groovy-templates", version.ref = "groovy" }
 apachegroovy-xml = { module = "org.apache.groovy:groovy-xml", version.ref = "groovy" }
 apachegroovy-yaml = { module = "org.apache.groovy:groovy-yaml", version.ref = "groovy" }
+geode-core = { module = "org.apache.geode:geode-core", version.ref = "geode" }
 grouperclient = { module = "edu.internet2.middleware.grouper:grouperClient", version.ref = "grouper" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
