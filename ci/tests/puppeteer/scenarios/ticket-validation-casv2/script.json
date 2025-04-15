@@ -10,6 +10,6 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.accept.name=STATIC",
 
-    "--logging.level.org.apereo.cas.services.web.view=debug"
+    "--logging.level.org.apereo.cas.services.web.view=info"
   ]
 }

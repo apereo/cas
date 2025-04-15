@@ -12,7 +12,7 @@
 
     "--cas.authn.accept.enabled=false",
 
-    "--logging.level.org.ldaptive=debug",
+    "--logging.level.org.ldaptive=info",
     
     "--cas.authn.ldap[0].name=LDAP1",
     "--cas.authn.ldap[0].type=AUTHENTICATED",

@@ -19,7 +19,7 @@
 
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",
-    "--logging.level.org.apereo=debug",
+    "--logging.level.org.apereo=info",
 
     "--cas.authn.mfa.simple.token.core.time-to-kill-in-seconds=60",
     "--cas.authn.mfa.simple.mail.html=false",

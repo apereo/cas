@@ -15,8 +15,8 @@
 
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",
-    "--logging.level.org.apereo=debug",
-    "--logging.level.org.springframework.webflow=debug",
+    "--logging.level.org.apereo=info",
+    "--logging.level.org.springframework.webflow=info",
 
     "--cas.authn.mfa.simple.mail.from=cas@example.com",
     "--cas.authn.mfa.simple.mail.subject=CASToken",

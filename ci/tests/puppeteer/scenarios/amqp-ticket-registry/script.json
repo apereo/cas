@@ -6,7 +6,7 @@
   },
   "properties": [
 
-    "--logging.level.org.springframework.amqp=debug",
+    "--logging.level.org.springframework.amqp=info",
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",

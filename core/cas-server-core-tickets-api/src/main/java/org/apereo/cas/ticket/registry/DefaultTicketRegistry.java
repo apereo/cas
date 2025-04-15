@@ -27,7 +27,8 @@ public class DefaultTicketRegistry extends AbstractMapBasedTicketRegistry {
     private final Map<String, Ticket> mapInstance;
 
     public DefaultTicketRegistry(final TicketSerializationManager ticketSerializationManager,
-                                 final TicketCatalog ticketCatalog, final ConfigurableApplicationContext applicationContext) {
+                                 final TicketCatalog ticketCatalog,
+                                 final ConfigurableApplicationContext applicationContext) {
         this(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog, applicationContext);
     }
 
@@ -46,7 +47,8 @@ public class DefaultTicketRegistry extends AbstractMapBasedTicketRegistry {
                                  final Map<String, Ticket> storageMap,
                                  final QueueableTicketRegistryMessagePublisher ticketPublisher,
                                  final PublisherIdentifier publisherIdentifier) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext, ticketPublisher, publisherIdentifier);
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog,
+            applicationContext, ticketPublisher, publisherIdentifier);
         this.mapInstance = storageMap;
     }
 }
