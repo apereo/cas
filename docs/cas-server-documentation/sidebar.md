@@ -173,6 +173,7 @@ layout: null
         *   [Memory](/cas/{{ version }}/authentication/Configuring-Authentication-Events-Memory.html)
         *   [Redis](/cas/{{ version }}/authentication/Configuring-Authentication-Events-Redis.html)
         *   [MongoDb](/cas/{{ version }}/authentication/Configuring-Authentication-Events-MongoDb.html)
+        *   [Apache Kafka](/cas/{{ version }}/authentication/Configuring-Authentication-Events-Kafka.html)
     *   [ClearPass](/cas/{{ version }}/integration/ClearPass.html)
     *   [GUA](#guaoverview)
         *   [Overview](/cas/{{ version }}/authentication/GUA-Authentication.html)

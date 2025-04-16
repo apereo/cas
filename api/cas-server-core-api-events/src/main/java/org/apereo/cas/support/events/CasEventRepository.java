@@ -34,7 +34,7 @@ public interface CasEventRepository {
     /**
      * Remove all.
      */
-    void removeAll();
+    default void removeAll() {}
 
     /**
      * Save.
@@ -46,11 +46,13 @@ public interface CasEventRepository {
     CasEvent save(CasEvent event) throws Throwable;
 
     /**
-     * Load collection.
+     * Load collection of events.
      *
      * @return the collection
      */
-    Stream<? extends CasEvent> load();
+    default Stream<? extends CasEvent> load() {
+        return Stream.empty();
+    }
 
     /**
      * Load collection of events created after the given date.

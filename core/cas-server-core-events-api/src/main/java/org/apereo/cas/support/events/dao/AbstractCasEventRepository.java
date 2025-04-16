@@ -3,18 +3,15 @@ package org.apereo.cas.support.events.dao;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.util.DateTimeUtils;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.val;
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.actuate.audit.listener.AuditApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-
-import jakarta.annotation.Nonnull;
-
 import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -47,6 +44,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
 
     private final CasEventRepositoryFilter eventRepositoryFilter;
 
+    @Setter
     private ApplicationEventPublisher applicationEventPublisher;
 
     private static ZonedDateTime convertEventCreationTime(final CasEvent event) {
@@ -118,14 +116,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
                 return dt.isEqual(dateTime) || dt.isAfter(dateTime);
             });
     }
-
-    @Override
-    public void setApplicationEventPublisher(
-        @Nonnull
-        final ApplicationEventPublisher publisher) {
-        this.applicationEventPublisher = publisher;
-    }
-
+    
     /**
      * Save internal.
      *
