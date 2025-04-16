@@ -6,9 +6,9 @@ category: Ticketing
 
 {% include variables.html %}
 
-# Kafka Ticket Registry
+# Apache Kafka Ticket Registry
 
-The Kafka ticket registry is very much an extension of the [default ticket registry](Default-Ticket-Registry.html). 
+The Apache Kafka ticket registry is very much an extension of the [default ticket registry](Default-Ticket-Registry.html). 
 The difference is that ticket operations applied to the registry are broadcasted using Kafka topics
 to other listening CAS nodes. Each node keeps copies of ticket state on its own and only 
 instructs others to keep their copy accurate by broadcasting messages and data associated with each. 
