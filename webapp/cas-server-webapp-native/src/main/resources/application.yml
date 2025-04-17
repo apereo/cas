@@ -1,3 +1,7 @@
 spring:
   main:
     lazy-initialization: false
+management:
+  metrics:
+    enable:
+      jvm: false
