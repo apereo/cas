@@ -73,7 +73,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> checkAndRemoveFromRegistry, final Predicate<Ticket> checkOnly) {
         LOGGER.trace("Locating ticket [{}]", ticketId);
         val encodedTicketId = digestIdentifier(ticketId);
         if (StringUtils.isBlank(encodedTicketId)) {
@@ -96,9 +96,9 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
         val document = holder.iterator().next();
         val object = deserializeTicket(document.getData(), document.getType());
         val result = decodeTicket(object);
-        return FunctionUtils.doAndReturn(result != null && predicate.test(result), () -> result, () -> {
+        return FunctionUtils.doAndReturn(result != null && checkAndRemoveFromRegistry.test(result), () -> result, () -> {
             LOGGER.trace("The condition enforced by the predicate [{}] cannot successfully accept/test the ticket id [{}]", encodedTicketId,
-                predicate.getClass().getSimpleName());
+                    checkAndRemoveFromRegistry.getClass().getSimpleName());
             return null;
         });
     }

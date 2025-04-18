@@ -46,7 +46,7 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> checkAndRemoveFromRegistry, final Predicate<Ticket> checkOnly) {
         return FunctionUtils.doAndHandle(() -> {
             val metadata = ticketCatalog.find(ticketId);
             val withoutPrefix = StringUtils.removeStart(ticketId, metadata.getPrefix() + UniqueTicketIdGenerator.SEPARATOR);
@@ -56,7 +56,7 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
             val ticketCompactor = findTicketCompactor(metadata);
             LOGGER.trace("Raw compacted ticket to expand is [{}]", ticketContent);
             val ticketObject = ticketCompactor.expand(ticketContent);
-            if (ticketObject != null && predicate.test(ticketObject)) {
+            if (ticketObject != null && checkAndRemoveFromRegistry.test(ticketObject)) {
                 ticketObject.markTicketStateless();
                 return ticketObject;
             }

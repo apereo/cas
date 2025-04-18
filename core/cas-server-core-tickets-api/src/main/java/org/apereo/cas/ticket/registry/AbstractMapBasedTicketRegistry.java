@@ -49,7 +49,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     }
 
     @Override
-    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> checkAndRemoveFromRegistry, final Predicate<Ticket> checkOnly) {
         val encTicketId = digestIdentifier(ticketId);
         if (StringUtils.isBlank(ticketId)) {
             return null;
@@ -61,7 +61,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
         }
 
         val result = decodeTicket(found);
-        if (!predicate.test(result)) {
+        if (!checkAndRemoveFromRegistry.test(result)) {
             LOGGER.debug("Cannot successfully fetch ticket [{}]", ticketId);
             return null;
         }

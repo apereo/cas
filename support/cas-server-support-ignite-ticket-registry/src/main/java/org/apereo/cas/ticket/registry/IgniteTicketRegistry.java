@@ -128,7 +128,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     }
 
     @Override
-    public Ticket getTicket(final String ticketIdToGet, final Predicate<Ticket> predicate) {
+    public Ticket getTicket(final String ticketIdToGet, final Predicate<Ticket> checkAndRemoveFromRegistry, final Predicate<Ticket> checkOnly) {
         val ticketId = digestIdentifier(ticketIdToGet);
         if (StringUtils.isBlank(ticketId)) {
             return null;
@@ -148,7 +148,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
             return null;
         }
         val result = decodeTicket(ticket.getTicket());
-        return predicate.test(result) ? result : null;
+        return checkAndRemoveFromRegistry.test(result) ? result : null;
     }
 
     @Override

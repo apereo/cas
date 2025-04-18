@@ -107,7 +107,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     }
 
     @Override
-    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> checkAndRemoveFromRegistry, final Predicate<Ticket> checkOnly) {
         val encTicketId = digestIdentifier(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
             return null;
@@ -119,7 +119,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
                 val document = map.get(encTicketId);
                 if (document != null && document.getTicket() != null) {
                     val result = decodeTicket(document.getTicket());
-                    if (predicate != null && predicate.test(result)) {
+                    if (checkAndRemoveFromRegistry != null && checkAndRemoveFromRegistry.test(result)) {
                         return result;
                     }
                 }

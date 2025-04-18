@@ -101,14 +101,14 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public Ticket getTicket(final String ticketIdToGet, final Predicate<Ticket> predicate) {
+    public Ticket getTicket(final String ticketIdToGet, final Predicate<Ticket> checkAndRemoveFromRegistry, final Predicate<Ticket> checkOnly) {
         val clientFromPool = getClientFromPool();
         val ticketId = digestIdentifier(ticketIdToGet);
         try {
             val ticketFromCache = (Ticket) clientFromPool.get(ticketId);
             if (ticketFromCache != null) {
                 val result = decodeTicket(ticketFromCache);
-                if (predicate.test(result)) {
+                if (checkAndRemoveFromRegistry.test(result)) {
                     return result;
                 }
                 return null;

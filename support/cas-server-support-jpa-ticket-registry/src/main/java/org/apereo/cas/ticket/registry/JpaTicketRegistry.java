@@ -91,7 +91,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> checkAndRemoveFromRegistry, final Predicate<Ticket> checkOnly) {
         return transactionTemplate.execute(callback -> {
             try {
                 val encTicketId = digestIdentifier(ticketId);
@@ -104,7 +104,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                     val ticket = query.getSingleResult();
                     val entity = getJpaTicketEntityFactory().toTicket(ticket);
                     val result = decodeTicket(entity);
-                    return predicate.test(result) ? result : null;
+                    return checkAndRemoveFromRegistry.test(result) ? result : null;
                 }
             } catch (final NoResultException e) {
                 LOGGER.debug("No record could be found for ticket [{}]", ticketId);
