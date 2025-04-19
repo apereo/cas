@@ -43,7 +43,7 @@
     
     "--cas.logout.follow-service-redirects=true",
 
-    "--logging.level.PROTOCOL_MESSAGE=debug",
+    "--logging.level.PROTOCOL_MESSAGE=info",
     "--logging.level.org.springframework.webflow=info"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
