@@ -79,3 +79,4 @@ ci/tests/oidc/keycloak/server.*
 support/cas-server-support-palantir/src/main/resources/static/assets
 cas/lib
 *.jsa
+ci/tests/keycloak/data/server.*

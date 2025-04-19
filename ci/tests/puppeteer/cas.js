@@ -162,6 +162,9 @@ exports.removeDirectoryOrFile = async (directory) => {
 exports.click = async (page, button) =>
     page.evaluate((button) => {
         const buttonNode = document.querySelector(button);
+        if (buttonNode === null || button === undefined) {
+            throw `Button element not found with id ${button}`;
+        }
         console.log(`Clicking element ${button} with href ${buttonNode.href}`);
         buttonNode.click();
     }, button);
@@ -226,6 +229,12 @@ exports.inputValue = async (page, selector) => {
     const text = await page.evaluate((element) => element.value, element);
     await this.log(`Input value for selector [${selector}] is: [${text}]`);
     return text;
+};
+
+exports.assertInputValue = async(page, selector, value) => {
+    const inputValue = await this.inputValue(page, selector);
+    await this.log(`Checking input value for selector [${selector}] to be: [${value}]`);
+    assert(inputValue === value);
 };
 
 exports.waitForElement = async (page, selector, timeout = 10000) => page.waitForSelector(selector, {timeout: timeout});

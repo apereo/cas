@@ -642,7 +642,7 @@
             <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
             <property name="severity" value="error"/>
             <property name="format"
-                      value="^\s*(?!return|throw|private|public|protected|val)(final\s+)*\b(?!var)\w+\b\s*(\b[a-z]\w*\b)(\s*=\s+(?!null).+)*;"/>
+                      value="^\s*(?!return|throw|private|public|protected|val|yield)(final\s+)*\b(?!var)\w+\b\s*(\b[a-z]\w*\b)(\s*=\s+(?!null).+)*;"/>
             <property name="message" value="Use lombok.val or JDK var keyword when declaring variable definitions."/>
         </module>
 

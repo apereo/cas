@@ -1,6 +1,5 @@
 
 const cas = require("../../cas.js");
-const assert = require("assert");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -11,7 +10,6 @@ const assert = require("assert");
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
 
-    const hint = await cas.inputValue(page, "#username");
-    assert(hint === "casuser@localhost");
+    await cas.assertInputValue(page, "#username", "casuser@localhost");
     await browser.close();
 })();

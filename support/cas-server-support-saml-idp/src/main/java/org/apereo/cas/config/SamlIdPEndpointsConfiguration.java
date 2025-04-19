@@ -533,16 +533,15 @@ class SamlIdPEndpointsConfiguration {
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory) {
             val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-            switch (type) {
-                case TICKET_REGISTRY:
-                    return new TicketRegistrySessionStore(ticketRegistry, ticketFactory, samlIdPDistributedSessionCookieGenerator);
-                case BROWSER_STORAGE:
-                    return new BrowserWebStorageSessionStore(webflowCipherExecutor, "SamlIdPSessionStore");
-                default:
+            return switch (type) {
+                case TICKET_REGISTRY -> new TicketRegistrySessionStore(ticketRegistry, ticketFactory, samlIdPDistributedSessionCookieGenerator);
+                case BROWSER_STORAGE -> new BrowserWebStorageSessionStore(webflowCipherExecutor, "SamlIdPSessionStore");
+                default -> {
                     val jeeSessionStore = new JEESessionStore();
                     jeeSessionStore.setPrefix(SAML_SERVER_SUPPORT_PREFIX);
-                    return jeeSessionStore;
-            }
+                    yield jeeSessionStore;
+                }
+            };
         }
 
         @Bean
@@ -562,6 +561,7 @@ class SamlIdPEndpointsConfiguration {
         @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("samlIdPCallbackService")
@@ -642,6 +642,7 @@ class SamlIdPEndpointsConfiguration {
                 .samlDistributedSessionCookieGenerator(samlIdPDistributedSessionCookieGenerator)
                 .registeredServiceAccessStrategyEnforcer(registeredServiceAccessStrategyEnforcer)
                 .callbackService(samlIdPCallbackService)
+                .applicationContext(applicationContext)
                 .samlFaultResponseBuilder(samlProfileSamlAttributeQueryFaultResponseBuilder)
                 .build();
         }

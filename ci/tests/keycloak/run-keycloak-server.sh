@@ -10,6 +10,9 @@ export DOCKER_IMAGE="quay.io/keycloak/keycloak:latest"
 echo "Running Keycloak docker container..."
 docker stop keycloak || true && docker rm keycloak || true
 
+rm -f "$PWD"/ci/tests/keycloak/data/server.crt
+rm -f "$PWD"/ci/tests/keycloak/data/server.key
+
 openssl req -newkey rsa:2048 -nodes \
   -subj "/C=PE/ST=Lima/L=Lima/O=Acme Inc. /OU=IT Department/CN=acme.com" \
   -keyout "$PWD"/ci/tests/keycloak/data/server.key -x509 -days 3650 \

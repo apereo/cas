@@ -1,0 +1,22 @@
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "org:keycloak:samlsp",
+  "name": "Sample",
+  "id": 1,
+  "metadataLocation": "https://localhost:8989/realms/cas/broker/saml/endpoint/descriptor",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
+    "authorizedToReleaseAuthenticationAttributes": true
+  },
+  "attributeNameFormats": {
+    "@class": "java.util.HashMap",
+    "cn": "basic",
+    "firstName": "basic",
+    "givenName": "basic",
+    "lastName": "basic",
+    "surname": "basic",
+    "sn": "basic",
+    "name": "basic",
+    "department": "basic"
+  }
+}

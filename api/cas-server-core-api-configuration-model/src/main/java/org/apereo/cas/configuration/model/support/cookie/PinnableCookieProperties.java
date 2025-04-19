@@ -2,8 +2,11 @@ package org.apereo.cas.configuration.model.support.cookie;
 
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.With;
 import lombok.experimental.Accessors;
 import java.io.Serial;
 
@@ -19,6 +22,9 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
+@AllArgsConstructor
+@NoArgsConstructor
+@With
 public class PinnableCookieProperties extends CookieProperties {
 
     @Serial

@@ -1687,8 +1687,70 @@
   "enabledEventTypes": [],
   "adminEventsEnabled": false,
   "adminEventsDetailsEnabled": false,
-  "identityProviders": [],
-  "identityProviderMappers": [],
+  "identityProviders": [
+    {
+      "alias": "saml",
+      "providerId": "saml",
+      "enabled": true,
+      "updateProfileFirstLoginMode": "off",
+      "trustEmail": true,
+      "storeToken": false,
+      "addReadTokenRoleOnCreate": false,
+      "authenticateByDefault": false,
+      "linkOnly": false,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "config": {
+        "hideOnLoginPage": "",
+        "validateSignature": "false",
+        "samlXmlKeyNameTranformer": "KEY_ID",
+        "signingCertificate": "MIIDBTCCAe2gAwIBAgIUWmtmu/DpJ3JAu1NIkB3KxxUH/fMwDQYJKoZIhvcNAQELBQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTIwMTAzMDE1NTcwOVoXDTQwMTAzMDE1NTcwOVowFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA91VZ5EpfmqLvjJkB2wZebtzV2O6kl+5sWtIUMOCA3c14WWD1/a7IuhPK+idpjklevjohS4DKBwxjSvWmJX73ErVLfoiiXkUT2XsoqBenENwYNj/kS4Ogq8GXVg9gcDMRBzwXRPREu3r49H2LP/1hL0yxqR0EXh9u+RjlNs/0FuhHHG4u+UTjyKp/9vlBCWtC3gdg2vbRIYbgyv+J5qpfEmf0UYPlRPp6xji3Ln08HVPMjLRqE6nKftXDiHkSwFhuBTKhpaYS3py3fmE/+Dn9qQ4xKNqNnsLZzPgfGDkbBrZWnX6kmY2c2tW4Nv1U+/1rr5/rgHFD0esFRr0OX1C3gwIDAQABo08wTTAdBgNVHQ4EFgQUIvfd3VLhiD3OL0JG8B+Q58l5HqowLAYDVR0RBCUwI4IJbG9jYWxob3N0hhZsb2NhbGhvc3QvaWRwL21ldGFkYXRhMA0GCSqGSIb3DQEBCwUAA4IBAQCjnVVsf5lDZ0+SF+xOrU74feO4nSrdcLH9522n0k+6ld8Hk5mlcGSXhlzQf4fOY0NEBAhUDVawEpHmrm3njmzYHJPZqbcu+KT1l0bJm8dnfCq5ip4WYv4SuzxH/MizURwGXiESNwjJRqp3oWu57gmQaMCy/z6ufGC2/qveCPIFr+B/KLAewF4wdWYfL/OZ5JIpmrc7h1Ks/xW/hhR1vFJCm3UXLiIkP2zA4nWnkjIlGPDtDUXSZniRA+N3GWSlNzFwgsl1JpnCAzU/6dHAww7X0YxsPmJNtxohOjxKWeUkqiajEkNSOYiSPohMTrylS3Ke9MW3flNFIAFY/LVpZIlz",
+        "postBindingLogout": "false",
+        "nameIDPolicyFormat": "urn:mace:shibboleth:1.0:nameIdentifier",
+        "postBindingResponse": "true",
+        "singleLogoutServiceUrl": "https://localhost:8443/cas/idp/profile/SAML2/Redirect/SLO",
+        "backchannelSupported": "",
+        "signatureAlgorithm": "RSA_SHA256",
+        "wantAssertionsEncrypted": "",
+        "useJwksUrl": "true",
+        "wantAssertionsSigned": "",
+        "entityId": "org:keycloak:samlsp",
+        "postBindingAuthnRequest": "true",
+        "forceAuthn": "",
+        "singleSignOnServiceUrl": "https://localhost:8443/cas/idp/profile/SAML2/POST/SSO",
+        "wantAuthnRequestsSigned": "false",
+        "addExtensionsElementWithKeyInfo": "false",
+        "encryptionPublicKey": "MIIDBTCCAe2gAwIBAgIULXa+KvsttGpT+IwsO+MS9zLBNNIwDQYJKoZIhvcNAQELBQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTIwMTAzMDE1NTcwOVoXDTQwMTAzMDE1NTcwOVowFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnuZ27jP9nNqa4exVsR+bSVkRPhWow4bhptG3qZiqRsbDytd/67LKtgHyC601+jbpw5tfKP83+K9PT5EFAa62wDE0YedYzC+hJ3Wcv5thX+F748qnGzYxCvOI79wa2ygUcFh3CBYHO9pE5cDtuHheI5fswUJGI3QDBgpk8AKV+SXMi0WKm2dSzWeGQKgYkCatTqWz5/kotzmFfWughp2a07Zzzc3esOT+zPP/9IP59D0O/IqQl9bTkc1nlJ9uHCE+tMLt0/qh01pOGX1oIjDP9IhtmeN/xICYgNC1dBWhwlsMhi9RNISG5IV4uDpwFsUdgJqNhsn/McrTg7eP7Z3a7wIDAQABo08wTTAdBgNVHQ4EFgQUOgOtWxOqEbsmstImp9ZQ4gXJsPcwLAYDVR0RBCUwI4IJbG9jYWxob3N0hhZsb2NhbGhvc3QvaWRwL21ldGFkYXRhMA0GCSqGSIb3DQEBCwUAA4IBAQBukJLXTj2K0jApSjNvv7FXrwncXb7nvtH6/ni9Kt1PfeZoNOv3aNmGmRbqBHQQSPhJZU4etNZKkfpGTCxBge2Vlscp5jwwiw4w7RkYWBfGlu+1qmT8CdmDx2nQ+y8HtB2aoufAuXq6T7etg0aBQYlyKl8nZhtdW7dQq2jWKM3ybSxOgHjjirhecXovd6VVhqzQBoQluxIVlWLsoTbAX+4spJOw8CzaX32gtg0mdKCluLbvFO6X5r4gtW47UqkFlaivMjePiJP7lVk/jz864eaeUDQxbAs704Jk0KSTydVxj8V0sN6KF0knpcnHS0y2gYIxuQsUUQH/3G6rUvfAiH8U"
+      }
+    }
+  ],
+  "identityProviderMappers": [
+    {
+      "id": "4a03265a-a01e-4d9a-945c-c62b636a9350",
+      "name": "firstname-attribute-importer",
+      "identityProviderAlias": "saml",
+      "identityProviderMapper": "saml-user-attribute-idp-mapper",
+      "config": {
+        "syncMode": "INHERIT",
+        "user.attribute": "firstName",
+        "attribute.friendly.name": "firstName",
+        "attribute.name.format": "ATTRIBUTE_FORMAT_BASIC",
+        "attribute.name": "firstName"
+      }
+    },
+    {
+      "id": "fb55f9bc-57d7-4a8c-946f-e16e4823c336",
+      "name": "lastname-attribute-importer",
+      "identityProviderAlias": "saml",
+      "identityProviderMapper": "saml-user-attribute-idp-mapper",
+      "config": {
+        "syncMode": "INHERIT",
+        "user.attribute": "lastName",
+        "attribute.friendly.name": "lastName",
+        "attribute.name.format": "ATTRIBUTE_FORMAT_BASIC",
+        "attribute.name": "lastName"
+      }
+    }
+  ],
   "components": {
     "org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy": [
       {

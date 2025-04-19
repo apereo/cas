@@ -1731,6 +1731,11 @@ public interface CasWebflowConstants {
     String ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_TERMINATE_SESSION = "delegatedSaml2ClientTerminateSessionAction";
 
     /**
+     * Action id `delegatedSaml2ClientIdPRestoreSloRequestAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_IDP_RESTORE_SLO_REQUEST = "delegatedSaml2ClientIdPRestoreSloRequestAction";
+
+    /**
      * Action id `delegatedAuthenticationClientFinishLogoutAction`.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_RETRY = "delegatedAuthenticationClientRetryAction";

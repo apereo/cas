@@ -30,6 +30,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.opensaml.core.xml.XMLObject;
 import org.pac4j.core.context.session.SessionStore;
+import org.springframework.context.ApplicationContext;
 import jakarta.annotation.Nonnull;
 
 /**
@@ -124,4 +125,7 @@ public class SamlProfileHandlerConfigurationContext {
 
     @Nonnull
     private final PersonAttributeDao attributeRepository;
+
+    @Nonnull
+    private final ApplicationContext applicationContext;
 }
