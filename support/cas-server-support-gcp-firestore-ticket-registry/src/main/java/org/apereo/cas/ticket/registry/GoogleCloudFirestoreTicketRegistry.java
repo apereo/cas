@@ -54,7 +54,7 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> checkAndRemoveFromRegistry, final Predicate<Ticket> checkOnly) {
         return FunctionUtils.doUnchecked(() -> {
             LOGGER.debug("Locating ticket ticketId [{}]", ticketId);
             val encTicketId = digestIdentifier(ticketId);
@@ -75,7 +75,7 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
                     val decoded = deserializeTicket(document.getJson(), document.getType());
                     val result = decodeTicket(decoded);
 
-                    if (predicate.test(result)) {
+                    if (checkAndRemoveFromRegistry.test(result)) {
                         return result;
                     }
                 }

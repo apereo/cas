@@ -94,7 +94,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> checkAndRemoveFromRegistry, final Predicate<Ticket> checkOnly) {
         try {
             LOGGER.debug("Locating ticket ticketId [{}]", ticketId);
             val encTicketId = digestIdentifier(ticketId);
@@ -114,7 +114,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 val decoded = deserializeTicket(found.getJson(), found.getType());
                 val result = decodeTicket(decoded);
 
-                if (predicate.test(result)) {
+                if (checkAndRemoveFromRegistry.test(result)) {
                     return result;
                 }
                 return null;

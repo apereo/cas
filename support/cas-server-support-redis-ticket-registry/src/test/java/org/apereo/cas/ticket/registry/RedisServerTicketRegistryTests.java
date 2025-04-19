@@ -290,6 +290,8 @@ class RedisServerTicketRegistryTests {
                 originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));
             assertNull(getNewTicketRegistry().getTicket(ticketGrantingTicketId, __ -> {
                 throw new IllegalArgumentException();
+            }, __ -> {
+                throw new IllegalArgumentException();
             }));
             assertDoesNotThrow(() -> {
                 getNewTicketRegistry().addTicket((Ticket) null);

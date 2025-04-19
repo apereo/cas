@@ -115,7 +115,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> checkAndRemoveFromRegistry, final Predicate<Ticket> checkOnly) {
         val encTicketId = digestIdentifier(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
             return null;
@@ -123,7 +123,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
         LOGGER.debug("Retrieving ticket [{}]", ticketId);
         val ticket = dbTableService.get(ticketId, encTicketId);
         val decodedTicket = decodeTicket(ticket);
-        if (decodedTicket != null && predicate.test(decodedTicket)) {
+        if (decodedTicket != null && checkAndRemoveFromRegistry.test(decodedTicket)) {
             return decodedTicket;
         }
         return null;

@@ -127,7 +127,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                 return false;
             }
             return true;
-        });
+        }, ticket -> !ticket.isExpired());
         if (returnTicket != null) {
             val ticketAgeSeconds = getTicketAgeSeconds(returnTicket);
             if (ticketAgeSeconds < -1) {
