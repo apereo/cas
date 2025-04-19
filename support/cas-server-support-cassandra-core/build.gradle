@@ -1,7 +1,4 @@
 description = "Apereo CAS Apache Cassandra Core Support"
-ext {
-    terminateCompilerOnWarning = false
-}
 dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-configuration-api")

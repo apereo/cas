@@ -1,6 +1,5 @@
 description = "Apereo CAS Cassandra Service Registry"
 ext {
-    terminateCompilerOnWarning=false
     publishMetadata = true
     projectMetadata = [
             category: "Service Registries",
