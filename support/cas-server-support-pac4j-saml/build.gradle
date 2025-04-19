@@ -86,7 +86,9 @@ dependencies {
     testImplementation project(":support:cas-server-support-aws")
     testImplementation project(":support:cas-server-support-pac4j-oidc")
     testImplementation project(":support:cas-server-support-pac4j-cas")
-    
+    testImplementation project(":support:cas-server-support-saml-idp")
+    testImplementation project(":support:cas-server-support-consent-api")
+
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-pac4j-webflow", configuration: "tests")

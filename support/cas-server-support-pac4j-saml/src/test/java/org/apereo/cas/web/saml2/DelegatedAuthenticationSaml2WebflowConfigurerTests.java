@@ -26,7 +26,6 @@ class DelegatedAuthenticationSaml2WebflowConfigurerTests extends BaseWebflowConf
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT));
         flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGOUT);
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINISH_LOGOUT));
-
     }
 
 }

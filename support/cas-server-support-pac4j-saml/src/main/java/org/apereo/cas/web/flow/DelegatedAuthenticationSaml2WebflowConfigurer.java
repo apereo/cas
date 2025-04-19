@@ -43,6 +43,11 @@ public class DelegatedAuthenticationSaml2WebflowConfigurer extends AbstractCasWe
             val terminateSessionState = getState(logoutFlow, CasWebflowConstants.STATE_ID_TERMINATE_SESSION);
             terminateSessionState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_CLIENT_FINISH_LOGOUT));
             terminateSessionState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_TERMINATE_SESSION));
+
+            if (applicationContext.containsBean(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_IDP_RESTORE_SLO_REQUEST)) {
+                val doLogout = getState(logoutFlow, CasWebflowConstants.STATE_ID_DO_LOGOUT, ActionState.class);
+                doLogout.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_IDP_RESTORE_SLO_REQUEST));
+            }
         }
     }
 }

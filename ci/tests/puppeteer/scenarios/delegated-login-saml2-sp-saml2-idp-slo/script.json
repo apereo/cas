@@ -1,0 +1,50 @@
+{
+  "dependencies": "pac4j-webflow,pac4j-saml,saml-idp,reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.authn.attribute-repository.stub.attributes.cn=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.firstName=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.givenName=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.lastName=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.surname=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.sn=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.department=SSO",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    "--cas.http-client.host-name-verifier=none",
+
+    "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
+    "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
+    "--cas.authn.saml-idp.metadata.http.force-metadata-refresh=false",
+    "--cas.authn.saml-idp.logout.force-signed-logout-requests=false",
+    
+    "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].service-provider-entity-id=cas:apereo:pac4j:saml",
+    "--cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/sp-metadata.xml",
+    "--cas.authn.pac4j.saml[0].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/samlKeystore.jks",
+    "--cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=http://localhost:9443/simplesaml/saml2/idp/metadata.php",
+    "--cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
+    "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
+    "--cas.authn.pac4j.saml[0].principal-id-attribute=email",
+    
+    "--cas.authn.pac4j.core.session-replication.cookie.same-site-policy=none",
+    
+    "--cas.logout.follow-service-redirects=true",
+
+    "--logging.level.PROTOCOL_MESSAGE=debug",
+    "--logging.level.org.springframework.webflow=info"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

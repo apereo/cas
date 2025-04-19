@@ -76,16 +76,16 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         val samlLogoutRequest = getLogoutRequest(request).orElseThrow();
 
         val logoutRequestIssuer = SamlIdPUtils.getIssuerFromSamlObject(samlLogoutRequest);
-        val adaptorRes = SamlRegisteredServiceMetadataAdaptor.get(
+        val adapterResult = SamlRegisteredServiceMetadataAdaptor.get(
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(),
             samlRegisteredService, logoutRequestIssuer);
 
-        if (adaptorRes.isEmpty()) {
+        if (adapterResult.isEmpty()) {
             LOGGER.warn("Cannot find service provider metadata entity linked to [{}]", logoutRequestIssuer);
             return null;
         }
         
-        val adaptor = adaptorRes.get();
+        val adaptor = adapterResult.get();
         val binding = determineLogoutResponseBindingType(adaptor, samlRegisteredService);
         LOGGER.debug("Logout response binding type is determined as [{}]", binding);
 
@@ -140,7 +140,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         LOGGER.trace("Encoding logout response given endpoint [{}] for binding [{}]", location, sloService.getBinding());
 
         val encoder = new SamlIdPHttpRedirectDeflateEncoder(location, logoutResponse);
-        encoder.setRelayState(request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
+        encoder.setRelayState(fetchRelayState(request));
         encoder.doEncode();
         val redirectUrl = encoder.getRedirectUrl();
         LOGGER.debug("Final logout redirect URL is [{}]", redirectUrl);
@@ -166,9 +166,16 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
         LOGGER.trace("Logout message encoded in base64 is [{}]", message);
 
         val data = CollectionUtils.<String, Object>wrap(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, message);
-        val relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
+        val relayState = fetchRelayState(request);
         FunctionUtils.doIfNotNull(relayState, value -> data.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, value));
         return LogoutRedirectionResponse.builder().logoutPostUrl(Optional.ofNullable(location)).logoutPostData(data).build();
+    }
+
+    protected String fetchRelayState(final HttpServletRequest request) {
+        val relayState = StringUtils.defaultIfBlank((String) request.getAttribute(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE),
+            request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
+        LOGGER.debug("Relay state is [{}]", relayState);
+        return relayState;
     }
 
     protected LogoutResponse buildSamlLogoutResponse(final SamlRegisteredServiceMetadataAdaptor adaptor,

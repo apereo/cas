@@ -4,8 +4,11 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.With;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,6 +25,9 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
+@With
+@AllArgsConstructor
+@NoArgsConstructor
 public class CookieProperties implements CasFeatureModule, Serializable {
 
     @Serial

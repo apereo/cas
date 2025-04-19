@@ -73,8 +73,10 @@ public class MonitorProperties implements Serializable {
 
     /**
      * Options for monitoring Memcached resources.
+     * @deprecated Since 7.0.0
      */
     @NestedConfigurationProperty
+    @Deprecated
     private MemcachedMonitorProperties memcached = new MemcachedMonitorProperties();
 
     /**

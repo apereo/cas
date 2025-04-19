@@ -5,8 +5,10 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.With;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serial;
@@ -21,7 +23,8 @@ import java.io.Serial;
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-pac4j-api")
-
+@AllArgsConstructor
+@With
 public class CookieSessionReplicationProperties extends PinnableCookieProperties {
     /**
      * Default cookie name.
