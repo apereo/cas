@@ -1,6 +1,5 @@
 description = "Apereo CAS Cassandra Ticket Registry"
 ext {
-    terminateCompilerOnWarning=false
     publishMetadata = true
     projectMetadata = [
             category: "Ticket Registries",
