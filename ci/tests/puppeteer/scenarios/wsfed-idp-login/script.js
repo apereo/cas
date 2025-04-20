@@ -9,7 +9,7 @@ const cas = require("../../cas.js");
 
         await cas.log("Trying without an exising SSO session...");
         await cas.goto(page, "https://localhost:9876/fediz");
-        await cas.sleep(3000);
+        await cas.sleep(5000);
         await cas.screenshot(page);
         await page.waitForSelector("#logincas", {visible: true});
         await cas.click(page, "#logincas");
