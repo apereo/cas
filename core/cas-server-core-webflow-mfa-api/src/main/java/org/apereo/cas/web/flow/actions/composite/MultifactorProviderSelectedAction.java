@@ -4,12 +4,12 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -33,15 +33,9 @@ public class MultifactorProviderSelectedAction extends BaseCasWebflowAction {
 
     @Override
     protected Event doPreExecute(final RequestContext context) throws Exception {
-        val contextPath = context.getExternalContext().getContextPath();
-        val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
         val cookie = casProperties.getAuthn().getMfa().getCore().getProviderSelection().getCookie();
         if (cookie.isEnabled() && cookie.isAutoConfigureCookiePath()) {
-            val path = multifactorProviderCookieBuilder.getCookiePath();
-            if (StringUtils.isBlank(path)) {
-                LOGGER.debug("Setting path for cookies for multifactor authentication selection cookie generator to: [{}]", cookiePath);
-                multifactorProviderCookieBuilder.setCookiePath(cookiePath);
-            }
+            CookieUtils.configureCookiePath(context, multifactorProviderCookieBuilder);
         }
         return super.doPreExecute(context);
     }

@@ -11,6 +11,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -64,16 +65,16 @@ public class DelegatedAuthenticationSamlIdPSingleLogoutRequestProcessor implemen
             val samlLogoutRequest = (String) cookieValues.get(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
             val entityId = (String) cookieValues.get(SamlProtocolConstants.PARAMETER_ENTITY_ID);
             val relayState = (String) cookieValues.get(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
-            
+
             val service = serviceFactory.createService(entityId);
             service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, entityId);
             service.getAttributes().put(SamlProtocolConstants.PARAMETER_SAML_REQUEST, samlLogoutRequest);
             registeredService = servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-            
+
             WebUtils.putRegisteredService(request, registeredService);
             WebUtils.putSingleLogoutRequest(request, samlLogoutRequest);
-            
+
             request.setAttribute(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, relayState);
             requestContext.getFlowScope().put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, relayState);
             delegatedSaml2IdPSloRequestCookieGenerator.removeCookie(response);
@@ -95,19 +96,9 @@ public class DelegatedAuthenticationSamlIdPSingleLogoutRequestProcessor implemen
     }
 
     protected void autoConfigureCookieIfNecessary(final HttpServletRequest request) {
-        val contextPath = request.getContextPath();
-        val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
-        val cookieProps = casProperties.getAuthn().getPac4j()
-            .getCore()
-            .getSessionReplication()
-            .getCookie();
-
+        val cookieProps = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
         if (cookieProps.isAutoConfigureCookiePath()) {
-            val path = delegatedSaml2IdPSloRequestCookieGenerator.getCookiePath();
-            if (StringUtils.isBlank(path)) {
-                LOGGER.debug("Setting path for cookies for SAML2 logout request cookie generator to: [{}]", cookiePath);
-                delegatedSaml2IdPSloRequestCookieGenerator.setCookiePath(cookiePath);
-            }
+            CookieUtils.configureCookiePath(request, delegatedSaml2IdPSloRequestCookieGenerator);
         }
     }
 }

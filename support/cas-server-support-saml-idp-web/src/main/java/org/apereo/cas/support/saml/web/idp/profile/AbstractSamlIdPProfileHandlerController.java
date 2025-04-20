@@ -32,6 +32,7 @@ import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
+import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -486,19 +487,8 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val sessionStorageType = core.getSessionStorageType();
         if (sessionStorageType.isTicketRegistry()
             && core.getSessionReplication().getCookie().isAutoConfigureCookiePath()) {
-
-            val contextPath = request.getContextPath();
-            val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
-
             val cookieBuilder = configurationContext.getSamlDistributedSessionCookieGenerator();
-            val path = cookieBuilder.getCookiePath();
-            if (StringUtils.isBlank(path)) {
-                LOGGER.debug("Setting path for cookies for SAML2 distributed session cookie generator to: [{}]", cookiePath);
-                cookieBuilder.setCookiePath(cookiePath);
-            } else {
-                LOGGER.trace("SAML2 authentication cookie domain is [{}] with path [{}]",
-                    cookieBuilder.getCookieDomain(), path);
-            }
+            CookieUtils.configureCookiePath(request, cookieBuilder);
         }
     }
 

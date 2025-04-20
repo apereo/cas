@@ -10,12 +10,12 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
-
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-
+import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -25,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * @since 5.1.0
  */
 @UtilityClass
+@Slf4j
 public class CookieUtils {
 
     /**
@@ -48,10 +49,10 @@ public class CookieUtils {
      * @return the cookie retrieving cookie generator
      */
     public static CookieRetrievingCookieGenerator buildCookieRetrievingGenerator(final CookieValueManager cookieValueManager,
-                                                                                  final CookieGenerationContext context) {
+                                                                                 final CookieGenerationContext context) {
         return new CookieRetrievingCookieGenerator(context, cookieValueManager);
     }
-    
+
     /**
      * Gets ticket granting ticket from request.
      *
@@ -107,10 +108,10 @@ public class CookieUtils {
         }
         return (int) Beans.newDuration(maxAge).toSeconds();
     }
-    
+
     private static CookieGenerationContext.CookieGenerationContextBuilder buildCookieGenerationContextBuilder(
         final CookieProperties cookie) {
-        
+
         return CookieGenerationContext.builder()
             .name(cookie.getName())
             .path(cookie.getPath())
@@ -119,5 +120,36 @@ public class CookieUtils {
             .domain(cookie.getDomain())
             .sameSitePolicy(cookie.getSameSitePolicy())
             .httpOnly(cookie.isHttpOnly());
+    }
+
+    /**
+     * Configure cookie path.
+     *
+     * @param request       the request
+     * @param cookieBuilder the cookie builder
+     */
+    public static void configureCookiePath(final HttpServletRequest request, final CasCookieBuilder cookieBuilder) {
+        val contextPath = request.getContextPath();
+        val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
+
+        val path = cookieBuilder.getCookiePath();
+        if (StringUtils.isBlank(path)) {
+            LOGGER.debug("Setting cookie path for cookie [{}] to: [{}]", cookieBuilder.getCookieName(), cookiePath);
+            cookieBuilder.setCookiePath(cookiePath);
+        } else {
+            LOGGER.trace("Cookie domain is [{}] with path [{}] for cookie [{}]",
+                cookieBuilder.getCookieDomain(), path, cookieBuilder.getCookieName());
+        }
+    }
+
+    /**
+     * Configure cookie path.
+     *
+     * @param context       the context
+     * @param cookieBuilder the cookie builder
+     */
+    public static void configureCookiePath(final RequestContext context, final CasCookieBuilder cookieBuilder) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        configureCookiePath(request, cookieBuilder);
     }
 }
