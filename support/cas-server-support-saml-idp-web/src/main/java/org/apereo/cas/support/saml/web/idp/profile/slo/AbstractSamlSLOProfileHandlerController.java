@@ -58,13 +58,8 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
     private void handleLogoutRequest(final HttpServletResponse response, final HttpServletRequest request,
                                      final Pair<? extends SignableSAMLObject, MessageContext> pair,
                                      final String logoutRequestBinding) throws Throwable {
-        val logout = configurationContext.getCasProperties().getAuthn().getSamlIdp().getLogout();
         val logoutRequest = (LogoutRequest) pair.getKey();
         val messageContext = pair.getValue();
-
-        if (logout.isForceSignedLogoutRequests() && !SAMLBindingSupport.isMessageSigned(messageContext)) {
-            throw new SAMLException("Logout request is not signed but should be.");
-        }
 
         val entityId = SamlIdPUtils.getIssuerFromSamlObject(logoutRequest);
         LOGGER.trace("SAML logout request from entity id [{}] is signed", entityId);
@@ -81,6 +76,9 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         accessResult.throwExceptionIfNeeded();
         LOGGER.trace("SAML registered service tied to [{}] is [{}]", entityId, registeredService);
+
+        ensureLogoutRequestIsSignedIfNecessary(registeredService, messageContext);
+
         val facade = SamlRegisteredServiceMetadataAdaptor.get(
             configurationContext.getSamlRegisteredServiceCachingMetadataResolver(), registeredService, entityId).orElseThrow();
         if (SAMLBindingSupport.isMessageSigned(messageContext)) {
@@ -120,6 +118,22 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
 
         val requestDispatcher = request.getServletContext().getRequestDispatcher(CasProtocolConstants.ENDPOINT_LOGOUT);
         requestDispatcher.forward(request, response);
+    }
+
+    protected void ensureLogoutRequestIsSignedIfNecessary(final SamlRegisteredService registeredService,
+                                                          final MessageContext messageContext) throws SAMLException {
+        var ensureSignature = false;
+        if (registeredService.getSignLogoutRequest().isUndefined()) {
+            val logout = configurationContext.getCasProperties().getAuthn().getSamlIdp().getLogout();
+            ensureSignature = logout.isForceSignedLogoutRequests();
+        } else {
+            ensureSignature = registeredService.getSignLogoutRequest().isTrue();
+        }
+
+        if (ensureSignature && !SAMLBindingSupport.isMessageSigned(messageContext)) {
+            throw new SAMLException("Logout request is not signed but should be for service %s"
+                .formatted(registeredService.getServiceId()));
+        }
     }
 
     protected <T> T buildSamlObject(final QName qname, final Class<T> clazz) {

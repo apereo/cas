@@ -153,6 +153,10 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     @JacksonInject("signLogoutResponse")
     private TriStateBoolean signLogoutResponse = TriStateBoolean.UNDEFINED;
 
+    @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
+    @JacksonInject("signLogoutRequest")
+    private TriStateBoolean signLogoutRequest = TriStateBoolean.UNDEFINED;
+
     @JacksonInject("encryptAssertions")
     private boolean encryptAssertions;
 
