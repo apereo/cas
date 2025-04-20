@@ -3,6 +3,7 @@ package org.apereo.cas.tomcat;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
+import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatValveTypes;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -10,6 +11,7 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.catalina.Valve;
 import org.apache.catalina.authenticator.BasicAuthenticator;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.connector.Request;
@@ -34,6 +36,7 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
+import org.springframework.core.io.Resource;
 import org.springframework.util.ReflectionUtils;
 import jakarta.servlet.ServletException;
 import java.io.BufferedReader;
@@ -189,7 +192,8 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             valve.setEnabled(true);
             valve.setRotatable(true);
             valve.setBuffered(true);
-            tomcat.addEngineValves(valve);
+
+            addTomcatValve(tomcat, CasEmbeddedApacheTomcatValveTypes.ENGINE, valve);
         }
     }
 
@@ -296,40 +300,54 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             valve.setSslCipherUserKeySizeHeader(valveConfig.getSslCipherUserKeySizeHeader());
             valve.setSslClientCertHeader(valveConfig.getSslClientCertHeader());
             valve.setSslSessionIdHeader(valveConfig.getSslSessionIdHeader());
-            tomcat.addContextValves(valve);
+            addTomcatValve(tomcat, CasEmbeddedApacheTomcatValveTypes.CONTEXT, valve);
         }
     }
 
     private void configureRewriteValve(final TomcatServletWebServerFactory tomcat) {
-        val res = casProperties.getServer().getTomcat().getRewriteValve().getLocation();
-        if (ResourceUtils.doesResourceExist(res)) {
-            LOGGER.debug("Configuring rewrite valve at [{}]", res);
+        val properties = casProperties.getServer().getTomcat().getRewriteValve();
+        val configLocation = properties.getLocation();
 
-            val valve = new RewriteValve() {
-                @Override
-                public void startInternal() {
-                    FunctionUtils.doUnchecked(__ -> {
-                        super.startInternal();
-                        try (val is = res.getInputStream();
-                             val isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-                             val buffer = new BufferedReader(isr)) {
-                            parse(buffer);
-                        }
-                    });
-                }
-            };
-            valve.setAsyncSupported(true);
-            valve.setEnabled(true);
-
+        if (ResourceUtils.doesResourceExist(configLocation)) {
+            LOGGER.debug("Configuring rewrite valve at [{}]", configLocation);
+            val rewriteValve = getRewriteValve(configLocation);
             LOGGER.debug("Creating rewrite valve configuration for the embedded tomcat container...");
-            tomcat.addContextValves(valve);
+            addTomcatValve(tomcat, properties.getValveType(), rewriteValve);
+        }
+    }
+
+    private static RewriteValve getRewriteValve(final Resource configLocation) {
+        val rewriteValve = new RewriteValve() {
+            @Override
+            public void startInternal() {
+                FunctionUtils.doUnchecked(__ -> {
+                    super.startInternal();
+                    try (val is = configLocation.getInputStream();
+                         val isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+                         val buffer = new BufferedReader(isr)) {
+                        parse(buffer);
+                    }
+                });
+            }
+        };
+        rewriteValve.setAsyncSupported(true);
+        rewriteValve.setEnabled(true);
+        return rewriteValve;
+    }
+
+    private static void addTomcatValve(final TomcatServletWebServerFactory tomcat,
+                                       final CasEmbeddedApacheTomcatValveTypes type,
+                                       final Valve valve) {
+        switch (type) {
+            case CONTEXT -> tomcat.addContextValves(valve);
+            case ENGINE -> tomcat.addEngineValves(valve);
         }
     }
 
     private void configureRemoteUserValve(final TomcatServletWebServerFactory tomcat) {
         val valve = casProperties.getServer().getTomcat().getRemoteUserValve();
         if (StringUtils.isNotBlank(valve.getRemoteUserHeader())) {
-            tomcat.addContextValves(new RemoteUserValve());
+            addTomcatValve(tomcat, CasEmbeddedApacheTomcatValveTypes.CONTEXT, new RemoteUserValve());
         }
     }
 
