@@ -7,18 +7,16 @@ import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
-
+import org.apereo.cas.web.support.CookieUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.stereotype.Controller;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 
@@ -53,17 +51,8 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
         val replicationProps = getConfigurationContext().getCasProperties().getAuthn().getPac4j().getCore().getSessionReplication();
         val cookieAutoconfigured = replicationProps.getCookie().isAutoConfigureCookiePath();
         if (replicationProps.isReplicateSessions() && cookieAutoconfigured) {
-            val contextPath = request.getContextPath();
-            val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
-
-            val path = getConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookiePath();
-            if (StringUtils.isBlank(path)) {
-                LOGGER.debug("Setting path for cookies for OAuth distributed session cookie generator to: [{}]", cookiePath);
-                getConfigurationContext().getOauthDistributedSessionCookieGenerator().setCookiePath(cookiePath);
-            } else {
-                LOGGER.trace("OAuth distributed cookie domain is [{}] with path [{}]",
-                    getConfigurationContext().getOauthDistributedSessionCookieGenerator().getCookieDomain(), path);
-            }
+            val cookieBuilder = getConfigurationContext().getOauthDistributedSessionCookieGenerator();
+            CookieUtils.configureCookiePath(request, cookieBuilder);
         }
     }
 

@@ -18,6 +18,7 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
@@ -205,27 +206,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
     }
 
     protected void configureCookieGenerators(final RequestContext context) {
-        val contextPath = context.getExternalContext().getContextPath();
-        val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
-
-        if (casProperties.getWarningCookie().isAutoConfigureCookiePath()) {
-            val path = warnCookieGenerator.getCookiePath();
-            if (StringUtils.isBlank(path)) {
-                LOGGER.debug("Setting path for cookies for warn cookie generator to: [{}]", cookiePath);
-                warnCookieGenerator.setCookiePath(cookiePath);
-            } else {
-                LOGGER.trace("Warning cookie is set to [{}] with path [{}]", warnCookieGenerator.getCookieDomain(), path);
-            }
-        }
-
-        if (casProperties.getTgc().isAutoConfigureCookiePath()) {
-            val path = ticketGrantingTicketCookieGenerator.getCookiePath();
-            if (StringUtils.isBlank(path)) {
-                LOGGER.debug("Setting path for cookies for TGC cookie generator to: [{}]", cookiePath);
-                ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
-            } else {
-                LOGGER.trace("Ticket-granting cookie domain is [{}] with path [{}]", ticketGrantingTicketCookieGenerator.getCookieDomain(), path);
-            }
-        }
+        CookieUtils.configureCookiePath(context, warnCookieGenerator);
+        CookieUtils.configureCookiePath(context, ticketGrantingTicketCookieGenerator);
     }
 }

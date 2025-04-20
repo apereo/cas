@@ -18,6 +18,7 @@ import org.apereo.cas.web.flow.DelegatedAuthenticationSingleSignOnEvaluator;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
+import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -226,17 +227,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     protected Event doPreExecute(final RequestContext context) throws Exception {
         val replicationProps = configContext.getCasProperties().getAuthn().getPac4j().getCore().getSessionReplication();
         if (replicationProps.isReplicateSessions() && replicationProps.getCookie().isAutoConfigureCookiePath()) {
-            val contextPath = context.getExternalContext().getContextPath();
-            val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
-
-            val path = configContext.getDelegatedClientDistributedSessionCookieGenerator().getCookiePath();
-            if (StringUtils.isBlank(path)) {
-                LOGGER.debug("Setting path for cookies for distributed session cookie generator to: [{}]", cookiePath);
-                configContext.getDelegatedClientDistributedSessionCookieGenerator().setCookiePath(cookiePath);
-            } else {
-                LOGGER.trace("Delegated authentication cookie domain is [{}] with path [{}]",
-                    configContext.getDelegatedClientDistributedSessionCookieGenerator().getCookieDomain(), path);
-            }
+            val cookieBuilder = configContext.getDelegatedClientDistributedSessionCookieGenerator();
+            CookieUtils.configureCookiePath(context, cookieBuilder);
         }
         return super.doPreExecute(context);
     }
