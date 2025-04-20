@@ -6,7 +6,17 @@ docker run --rm -d -p9876:9876 -p8976:8076 \
   --name "fediz" apereo/fediz-client-webapp
 docker logs -f fediz &
 sleep 15
+docker ps | grep "fediz"
+retVal=$?
+if [ $retVal == 0 ]; then
+    echo "Fediz docker container is running."
+    docker logs -f keycloak &
+else
+    echo "Fediz docker container failed to start."
+fi
+echo "Waiting for Fediz to respond..."
 until curl -k -L --output /dev/null --silent --fail https://localhost:9876/fediz; do
     printf '.'
     sleep 1
 done
+echo "Fediz is up and running."
