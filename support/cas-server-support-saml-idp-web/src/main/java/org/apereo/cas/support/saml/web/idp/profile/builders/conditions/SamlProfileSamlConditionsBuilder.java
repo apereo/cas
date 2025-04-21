@@ -13,7 +13,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.saml2.core.Conditions;
 
-import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -26,8 +25,6 @@ import java.util.List;
  * @since 5.0.0
  */
 public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Conditions> {
-    @Serial
-    private static final long serialVersionUID = 126393045912318783L;
 
     private final CasConfigurationProperties casProperties;
 

@@ -33,7 +33,6 @@ import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -48,8 +47,6 @@ import java.util.Optional;
  */
 @Slf4j
 public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponseBuilder<Response> {
-    @Serial
-    private static final long serialVersionUID = 1488837627964481272L;
 
     public SamlProfileSaml2ResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext configurationContext) {
         super(configurationContext);

@@ -20,7 +20,6 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.Subject;
 
-import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -32,14 +31,11 @@ import java.time.ZonedDateTime;
  */
 @Slf4j
 public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Subject> {
-    @Serial
-    private static final long serialVersionUID = 4782621942035583007L;
-
     private final SamlProfileObjectBuilder<SAMLObject> ssoPostProfileSamlNameIdBuilder;
 
     private final CasConfigurationProperties casProperties;
 
-    private final transient SamlIdPObjectEncrypter samlObjectEncrypter;
+    private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
     public SamlProfileSamlSubjectBuilder(
         final OpenSamlConfigBean configBean,

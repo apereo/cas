@@ -23,7 +23,6 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.NameIDType;
 
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -37,8 +36,6 @@ import java.util.Optional;
  */
 @Slf4j
 public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<SAMLObject> {
-    @Serial
-    private static final long serialVersionUID = -6231886395225437320L;
 
     private final PersistentIdGenerator persistentIdGenerator;
 

@@ -38,7 +38,6 @@ import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
-import java.io.Serial;
 import java.net.InetAddress;
 import java.time.Clock;
 import java.time.Instant;
@@ -58,8 +57,6 @@ import java.util.Optional;
  */
 @Slf4j
 public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder implements Saml20ObjectBuilder {
-    @Serial
-    private static final long serialVersionUID = -4325127376598205277L;
 
     protected AbstractSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
         super(configBean);

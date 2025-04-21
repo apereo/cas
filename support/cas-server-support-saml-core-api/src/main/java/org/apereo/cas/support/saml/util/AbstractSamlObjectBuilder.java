@@ -52,8 +52,6 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
-import java.io.Serial;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.security.PrivateKey;
@@ -76,7 +74,7 @@ import java.util.Objects;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractSamlObjectBuilder implements Serializable {
+public abstract class AbstractSamlObjectBuilder {
 
     /**
      * The constant DEFAULT_ELEMENT_LOCAL_NAME_FIELD.
@@ -90,16 +88,13 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         .toObjectMapper();
 
     private static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
-
-    @Serial
-    private static final long serialVersionUID = -6833230731146922780L;
-
+    
     private static final String LOG_MESSAGE_ATTR_CREATED = "Created attribute value XMLObject: [{}]";
 
     /**
      * The Config bean.
      */
-    protected final transient OpenSamlConfigBean openSamlConfigBean;
+    protected final OpenSamlConfigBean openSamlConfigBean;
 
     /**
      * Sign SAML response.

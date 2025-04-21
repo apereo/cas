@@ -17,7 +17,6 @@ import org.opensaml.soap.soap11.FaultCode;
 import org.opensaml.soap.soap11.FaultString;
 import org.opensaml.soap.soap11.Header;
 
-import java.io.Serial;
 import java.util.Objects;
 
 /**
@@ -28,8 +27,6 @@ import java.util.Objects;
  * @since 4.2
  */
 public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSoap11ResponseBuilder {
-    @Serial
-    private static final long serialVersionUID = -1875903354216171261L;
 
     public SamlProfileSamlSoap11FaultResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext configurationContext) {
         super(configurationContext);
