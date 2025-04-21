@@ -26,7 +26,6 @@ import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDType;
 
-import java.io.Serial;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -41,8 +40,6 @@ import java.util.Optional;
  */
 @Slf4j
 public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AttributeStatement> {
-    @Serial
-    private static final long serialVersionUID = 1815697787562189088L;
 
     private final CasConfigurationProperties casProperties;
 

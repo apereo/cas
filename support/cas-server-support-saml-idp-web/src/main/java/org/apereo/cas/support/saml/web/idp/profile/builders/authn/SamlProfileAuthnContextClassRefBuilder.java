@@ -25,7 +25,6 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.springframework.beans.factory.ObjectProvider;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,9 +38,6 @@ import java.util.Objects;
  */
 @Slf4j
 public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AuthnContext> {
-
-    @Serial
-    private static final long serialVersionUID = 5783371664834470257L;
 
     private final MetadataResolver samlIdPMetadataResolver;
 

@@ -3,8 +3,6 @@ package org.apereo.cas.support.saml.web.idp.profile.slo;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 
-import java.io.Serial;
-
 /**
  * This is {@link SamlIdPLogoutResponseObjectBuilder}.
  *
@@ -12,8 +10,6 @@ import java.io.Serial;
  * @since 6.3.0
  */
 public class SamlIdPLogoutResponseObjectBuilder extends AbstractSaml20ObjectBuilder {
-    @Serial
-    private static final long serialVersionUID = 3841759791464862569L;
 
     public SamlIdPLogoutResponseObjectBuilder(final OpenSamlConfigBean configBean) {
         super(configBean);

@@ -31,7 +31,6 @@ import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
-import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -45,18 +44,15 @@ import java.util.Optional;
 @Slf4j
 public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectBuilder implements SingleLogoutMessageCreator {
 
-    @Serial
-    private static final long serialVersionUID = -5895467960534493675L;
-
     /**
      * The Services manager.
      */
-    protected final transient ServicesManager servicesManager;
+    protected final ServicesManager servicesManager;
 
     /**
      * The Saml registered service caching metadata resolver.
      */
-    protected final transient SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
+    protected final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     /**
      * SAML idp settings.
@@ -66,11 +62,11 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
     /**
      * Saml idp object signer.
      */
-    protected final transient SamlIdPObjectSigner samlObjectSigner;
+    protected final SamlIdPObjectSigner samlObjectSigner;
 
-    private final transient SOAPObjectBuilder<Envelope> envelopeBuilder;
+    private final SOAPObjectBuilder<Envelope> envelopeBuilder;
 
-    private final transient SOAPObjectBuilder<Body> bodyBuilder;
+    private final SOAPObjectBuilder<Body> bodyBuilder;
 
     public SamlIdPProfileSingleLogoutMessageCreator(final OpenSamlConfigBean configBean,
                                                     final ServicesManager servicesManager,

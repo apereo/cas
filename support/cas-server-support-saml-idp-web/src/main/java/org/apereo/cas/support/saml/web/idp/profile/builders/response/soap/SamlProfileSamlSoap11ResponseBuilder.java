@@ -15,7 +15,6 @@ import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Header;
 
-import java.io.Serial;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -28,10 +27,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlResponseBuilder<Envelope> {
-
-    @Serial
-    private static final long serialVersionUID = -1875903354216171261L;
-
+    
     public SamlProfileSamlSoap11ResponseBuilder(
         final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
         super(samlResponseBuilderConfigurationContext);
