@@ -557,9 +557,12 @@ class WebAuthnConfiguration {
 
                         }));
                         http.authorizeHttpRequests(customizer -> {
-                            val regEndpoints = PathPatternRequestMatcher.withDefaults().matcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**");
-                            val authEndpoints = PathPatternRequestMatcher.withDefaults().matcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**");
-                            val qrAuthEndpoints = PathPatternRequestMatcher.withDefaults().matcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnQRCodeController.ENDPOINT_QR_VERIFY + "/**");
+                            val regEndpoints = PathPatternRequestMatcher.withDefaults()
+                                .matcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**");
+                            val authEndpoints = PathPatternRequestMatcher.withDefaults()
+                                .matcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**");
+                            val qrAuthEndpoints = PathPatternRequestMatcher.withDefaults()
+                                .matcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnQRCodeController.ENDPOINT_QR_VERIFY + "/**");
                             customizer.requestMatchers(regEndpoints)
                                 .access(new WebExpressionAuthorizationManager("hasRole('USER') and isAuthenticated()"));
                             customizer.requestMatchers(authEndpoints, qrAuthEndpoints).permitAll();
