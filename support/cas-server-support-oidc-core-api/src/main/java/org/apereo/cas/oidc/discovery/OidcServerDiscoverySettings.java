@@ -1,8 +1,12 @@
 package org.apereo.cas.oidc.discovery;
 
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -25,6 +29,9 @@ public class OidcServerDiscoverySettings {
      */
     public static final String BEAN_NAME_FACTORY = "oidcServerDiscoverySettingsFactory";
 
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
+    
     @JsonProperty
     private final String issuer;
 
@@ -223,5 +230,15 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("frontchannel_logout_session_supported")
     public boolean isFrontchannelLogoutSessionSupported() {
         return isFrontchannelLogoutSupported();
+    }
+
+    /**
+     * To JSON string.
+     *
+     * @return the string
+     */
+    @JsonIgnore
+    public String toJson() {
+        return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(this));
     }
 }

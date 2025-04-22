@@ -232,6 +232,10 @@ public interface OidcConstants {
      * .well-known/openid-configuration path url.
      */
     String WELL_KNOWN_OPENID_CONFIGURATION_URL = WELL_KNOWN_URL + "/openid-configuration";
+    /**
+     * .well-known/openid-federation path url.
+     */
+    String WELL_KNOWN_OPENID_FEDERATION_URL = WELL_KNOWN_URL + "/openid-federation";
 
     /**
      * .well-known/oauth-authorization-server path url.
