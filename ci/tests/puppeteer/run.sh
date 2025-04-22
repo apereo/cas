@@ -681,10 +681,14 @@ function buildAndRun() {
       if [[ "${INITONLY}" == "false" ]]; then
         runArgs=$(jq -j '.jvmArgs // empty' "${config}")
         runArgs="${runArgs//\$\{PWD\}/${PWD}}"
-        runArgs="${runArgs} -Xms512m -Xmx2048m -Xss128m -server"
-        runArgs="${runArgs} --add-modules java.se --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED"
-        runArgs="${runArgs} --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED"
+        runArgs="${runArgs} -Xms512m -Xmx4096m -Xss128m -server"
+        runArgs="${runArgs} --add-modules java.se"
+        runArgs="${runArgs} --add-exports java.base/jdk.internal.ref=ALL-UNNAMED"
+        runArgs="${runArgs} --add-opens java.base/java.lang=ALL-UNNAMED"
+        runArgs="${runArgs} --add-opens java.base/sun.nio.ch=ALL-UNNAMED"
+        runArgs="${runArgs} --add-opens java.management/sun.management=ALL-UNNAMED"
         runArgs="${runArgs} --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED"
+        runArgs="${runArgs} --add-opens java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED"
         [ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
 
         properties=$(jq -j '.properties // empty | join(" ")' "${config}")

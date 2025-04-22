@@ -94,7 +94,7 @@ httpCore4 = "4.4.16"
 httpclient = "5.4.3"
 httpclient4 = "4.5.14"
 hypersistence = "3.9.9"
-influxDb = "7.2.0"
+influxDb = "1.0.0"
 ipGeoLocation = "1.0.16"
 jackson = "2.18.3"
 jacksonAsl = "1.9.13"
@@ -401,7 +401,7 @@ ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "apacheI
 ignite-indexing = { module = "org.apache.ignite:ignite-indexing", version.ref = "apacheIgnite" }
 ignite-log4j2 = { module = "org.apache.ignite:ignite-log4j2", version.ref = "apacheIgnite" }
 ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "apacheIgnite" }
-influxdb-client-java = { module = "com.influxdb:influxdb-client-java", version.ref = "influxDb" }
+influxdb-client-java = { module = "com.influxdb:influxdb3-java", version.ref = "influxDb" }
 ipgeolocation = { module = "io.ipgeolocation:ipgeolocation", version.ref = "ipGeoLocation" }
 jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
 jacksoncore = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }

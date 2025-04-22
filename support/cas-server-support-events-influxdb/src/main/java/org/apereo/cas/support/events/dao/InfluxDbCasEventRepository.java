@@ -6,18 +6,12 @@ import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.influxdb.annotations.Column;
-import com.influxdb.annotations.Measurement;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.Instant;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -41,11 +35,6 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     }
 
     @Override
-    public void removeAll() {
-        influxDbConnectionFactory.deleteAll();
-    }
-
-    @Override
     public CasEvent saveInternal(final CasEvent event) {
         event.assignIdIfNecessary();
         influxDbConnectionFactory.write(MEASUREMENT,
@@ -56,7 +45,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
                 "principalId", event.getPrincipalId(),
                 "geoLocation", Unchecked.supplier(() -> MAPPER.writeValueAsString(event.getGeoLocation())).get(),
                 "creationTime", event.getCreationTime(),
-                "tenant", event.getTenant(),
+                "tenant", StringUtils.defaultString(event.getTenant()),
                 "timestamp", String.valueOf(event.getTimestamp()),
                 "type", event.getType()));
         return event;
@@ -64,24 +53,23 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
 
     @Override
     public Stream<? extends CasEvent> load() {
-        val results = influxDbConnectionFactory.query(InfluxDbEvent.class);
+        val results = influxDbConnectionFactory.query(MEASUREMENT);
         return results
-            .stream()
-            .map(flux -> {
+            .map(pointValues -> {
                 val event = new CasEvent();
-                val geo = Unchecked.supplier(() -> MAPPER.readValue(flux.getGeoLocation(),
+                val geo = Unchecked.supplier(() -> MAPPER.readValue(pointValues.getTag("geoLocation"),
                         new TypeReference<GeoLocationRequest>() {
                         }))
                     .get();
                 event.putGeoLocation(geo);
-                event.setPrincipalId(flux.getPrincipalId());
-                event.setType(flux.getType());
-                event.setCreationTime(flux.getCreationTime());
-                event.putClientIpAddress(flux.getClientIpAddress());
-                event.putServerIpAddress(flux.getServerIpAddress());
-                event.putEventId(flux.getValue());
-                event.putTimestamp(Long.valueOf(flux.getTimestamp()));
-                event.putTenant(flux.getTenant());
+                event.setPrincipalId(pointValues.getTag("principalId"));
+                event.setType(pointValues.getTag("type"));
+                event.setCreationTime(pointValues.getTag("creationTime"));
+                event.putClientIpAddress(pointValues.getTag("clientIpAddress"));
+                event.putServerIpAddress(pointValues.getTag("serverIpAddress"));
+                event.putEventId(pointValues.getStringField("value"));
+                event.putTimestamp(Long.valueOf(Objects.requireNonNull(pointValues.getTag("timestamp"))));
+                event.putTenant(pointValues.getTag("tenant"));
                 return event;
             });
     }
@@ -91,42 +79,4 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
         influxDbConnectionFactory.close();
     }
 
-    @Measurement(name = MEASUREMENT)
-    @Getter
-    @Setter
-    @ToString
-    public static class InfluxDbEvent implements Serializable {
-        @Serial
-        private static final long serialVersionUID = -90633813914510237L;
-
-        @Column(timestamp = true)
-        private Instant time;
-
-        @Column(tag = true)
-        private String principalId;
-
-        @Column(tag = true)
-        private String type;
-
-        @Column(tag = true)
-        private String clientIpAddress;
-
-        @Column(tag = true)
-        private String serverIpAddress;
-
-        @Column(tag = true)
-        private String creationTime;
-
-        @Column(tag = true)
-        private String timestamp;
-
-        @Column(tag = true)
-        private String geoLocation;
-
-        @Column(tag = true)
-        private String tenant;
-
-        @Column
-        private String value;
-    }
 }
