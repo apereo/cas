@@ -356,7 +356,6 @@ subprojects {
             it.options.errorprone.disableAllChecks = !rootProject.ext.terminateCompilerOnWarning
             it.options.errorprone.allErrorsAsWarnings = false
             it.options.errorprone.disableWarningsInGeneratedCode = true
-            it.options.errorprone.excludedPaths = ".*com/duosecurity.*"
             it.options.errorprone.errorproneArgs = ['-Xep:ClassCanBeStatic:OFF',
                                                     '-Xep:JavaUtilDate:OFF',
                                                     '-Xep:StringConcatToTextBlock:OFF',

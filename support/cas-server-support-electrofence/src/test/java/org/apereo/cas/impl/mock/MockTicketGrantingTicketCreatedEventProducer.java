@@ -88,6 +88,7 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         dto.putAgent(getMockUserAgent());
         dto.putGeoLocation(getMockGeoLocation());
         dto.putDeviceFingerprint(RandomUtils.randomAlphanumeric(16));
+        dto.putTenant("CAS");
         casEventRepository.save(dto);
         return dto;
     }

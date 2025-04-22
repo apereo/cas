@@ -41,49 +41,54 @@ import java.util.Map;
 public class CasEvent implements Serializable {
 
     /**
-     * The constant FIELD_TIMESTAMP.
+     * Field name for the timestamp of the event.
      */
     public static final String FIELD_TIMESTAMP = "timestamp";
 
     /**
-     * The constant FIELD_EVENT_ID.
+     * Field name for the unique identifier of the event.
      */
     public static final String FIELD_EVENT_ID = "eventId";
 
     /**
-     * The constant FIELD_CLIENTIP.
+     * Field name for the client IP address associated with the event.
      */
     public static final String FIELD_CLIENT_IP = "clientip";
 
     /**
-     * The constant FIELD_SERVERIP.
+     * Field name for the server IP address associated with the event.
      */
     public static final String FIELD_SERVER_IP = "serverip";
 
     /**
-     * The constant FIELD_AGENT.
+     * Field name for the user agent or device information.
      */
     public static final String FIELD_AGENT = "agent";
 
     /**
-     * The constant FIELD_GEO_LATITUDE.
+     * Field name for the geographical latitude of the event's location.
      */
     public static final String FIELD_GEO_LATITUDE = "geoLatitude";
 
     /**
-     * The constant FIELD_GEO_LONGITUDE.
+     * Field name for the geographical longitude of the event's location.
      */
     public static final String FIELD_GEO_LONGITUDE = "geoLongitude";
 
     /**
-     * The constant FIELD_GEO_ACCURACY.
+     * Field name for the accuracy of the geographical location.
      */
     public static final String FIELD_GEO_ACCURACY = "geoAccuracy";
 
     /**
-     * The constant FIELD_GEO_TIMESTAMP.
+     * Field name for the timestamp of the geographical location data.
      */
     public static final String FIELD_GEO_TIMESTAMP = "geoTimestamp";
+
+    /**
+     * Field name for the tenant or organization associated with the event.
+     */
+    public static final String FIELD_TENANT = "tenant";
 
     @Serial
     private static final long serialVersionUID = -4206712375316470417L;
@@ -164,6 +169,16 @@ public class CasEvent implements Serializable {
         return put(FIELD_AGENT, dev);
     }
 
+    /**
+     * Put tenant.
+     *
+     * @param tenant the tenant
+     * @return the cas event
+     */
+    public CasEvent putTenant(final String tenant) {
+        return put(FIELD_TENANT, tenant);
+    }
+
     @JsonIgnore
     public Long getTimestamp() {
         return Long.valueOf(get(FIELD_TIMESTAMP));
@@ -187,6 +202,11 @@ public class CasEvent implements Serializable {
     @JsonIgnore
     public String getServerIpAddress() {
         return get(FIELD_SERVER_IP);
+    }
+
+    @JsonIgnore
+    public String getTenant() {
+        return get(FIELD_TENANT);
     }
 
     /**
@@ -264,11 +284,11 @@ public class CasEvent implements Serializable {
         request.setLatitude(get(FIELD_GEO_LATITUDE));
         return request;
     }
-    
+
     private CasEvent putGeoLatitude(final String s) {
         return put(FIELD_GEO_LATITUDE, s);
     }
-    
+
     private CasEvent putGeoLongitude(final String s) {
         return put(FIELD_GEO_LONGITUDE, s);
     }
