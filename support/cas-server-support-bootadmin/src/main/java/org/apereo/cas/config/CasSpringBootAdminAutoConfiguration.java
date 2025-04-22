@@ -36,7 +36,7 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.reactive.function.client.WebClient;
 
 /**
@@ -119,10 +119,10 @@ public class CasSpringBootAdminAutoConfiguration {
                     successHandler.setDefaultTargetUrl(adminContextPath);
                     http.authorizeHttpRequests(customizer -> customizer
                             .requestMatchers(
-                                new AntPathRequestMatcher(adminContextPath + "/assets/**"),
-                                new AntPathRequestMatcher(adminContextPath + "/login")).permitAll()
+                                PathPatternRequestMatcher.withDefaults().matcher(adminContextPath + "/assets/**"),
+                                PathPatternRequestMatcher.withDefaults().matcher(adminContextPath + "/login")).permitAll()
                             .requestMatchers(
-                                new AntPathRequestMatcher(adminContextPath + "/**")).authenticated()
+                                PathPatternRequestMatcher.withDefaults().matcher(adminContextPath + "/**")).authenticated()
                         )
                         .formLogin(customizer -> customizer.loginPage(adminContextPath + "/login").successHandler(successHandler))
                         .logout(customizer -> customizer.logoutUrl(adminContextPath + "/logout"));

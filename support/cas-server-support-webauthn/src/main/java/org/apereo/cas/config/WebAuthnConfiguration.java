@@ -86,7 +86,7 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Duration;
@@ -546,7 +546,7 @@ class WebAuthnConfiguration {
                     @SuppressWarnings("UnnecessaryMethodReference")
                     public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
                         http.csrf(customizer -> webAuthnCsrfTokenRepository.ifAvailable(repository -> {
-                            val pattern = new AntPathRequestMatcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
+                            val pattern = PathPatternRequestMatcher.withDefaults().matcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + "/**");
                             val delegate = new XorCsrfTokenRequestAttributeHandler();
                             delegate.setSecureRandom(RandomUtils.getNativeInstance());
                             customizer
@@ -557,9 +557,9 @@ class WebAuthnConfiguration {
 
                         }));
                         http.authorizeHttpRequests(customizer -> {
-                            val regEndpoints = new AntPathRequestMatcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**");
-                            val authEndpoints = new AntPathRequestMatcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**");
-                            val qrAuthEndpoints = new AntPathRequestMatcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnQRCodeController.ENDPOINT_QR_VERIFY + "/**");
+                            val regEndpoints = PathPatternRequestMatcher.withDefaults().matcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_REGISTER + "/**");
+                            val authEndpoints = PathPatternRequestMatcher.withDefaults().matcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE + "/**");
+                            val qrAuthEndpoints = PathPatternRequestMatcher.withDefaults().matcher(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN + WebAuthnQRCodeController.ENDPOINT_QR_VERIFY + "/**");
                             customizer.requestMatchers(regEndpoints)
                                 .access(new WebExpressionAuthorizationManager("hasRole('USER') and isAuthenticated()"));
                             customizer.requestMatchers(authEndpoints, qrAuthEndpoints).permitAll();

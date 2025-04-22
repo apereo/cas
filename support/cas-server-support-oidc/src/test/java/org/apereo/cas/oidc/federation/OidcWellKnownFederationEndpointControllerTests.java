@@ -2,8 +2,6 @@ package org.apereo.cas.oidc.federation;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/federation.jwks"
 })
 class OidcWellKnownFederationEndpointControllerTests extends AbstractOidcTests {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
-
     @Autowired
     @Qualifier("oidcWellKnownFederationController")
     protected OidcWellKnownFederationEndpointController oidcWellKnownController;

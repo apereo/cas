@@ -17,7 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 /**
  * This is {@link CasJavaMelodyAutoConfiguration}.
@@ -47,7 +47,7 @@ public class CasJavaMelodyAutoConfiguration {
             @Override
             @CanIgnoreReturnValue
             public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
-                http.authorizeHttpRequests(customizer -> customizer.requestMatchers(new AntPathRequestMatcher("/monitoring")).authenticated())
+                http.authorizeHttpRequests(customizer -> customizer.requestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/monitoring")).authenticated())
                     .httpBasic(customizer -> customizer.init(http));
                 return this;
             }

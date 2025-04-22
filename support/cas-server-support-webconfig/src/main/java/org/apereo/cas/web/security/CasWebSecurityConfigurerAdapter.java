@@ -34,7 +34,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.authentication.www.BasicAuthenticationConverter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.ResourceUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,7 +59,9 @@ public class CasWebSecurityConfigurerAdapter {
         @Override
         public <O extends BasicAuthenticationFilter> O postProcess(final O object) {
             val patternsToIgnore = getAllowedPatternsToIgnore()
-                .stream().map(AntPathRequestMatcher::new).collect(Collectors.toSet());
+                .stream()
+                .map(url -> PathPatternRequestMatcher.withDefaults().matcher(url))
+                .collect(Collectors.toSet());
             object.setAuthenticationConverter(new BasicAuthenticationConverter() {
                 @Override
                 public UsernamePasswordAuthenticationToken convert(final HttpServletRequest request) {
@@ -126,7 +128,11 @@ public class CasWebSecurityConfigurerAdapter {
         val patterns = getAllowedPatternsToIgnore();
         LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from http security", patterns);
         val requests = http.authorizeHttpRequests(customizer -> {
-            val matchers = patterns.stream().map(AntPathRequestMatcher::new).toList().toArray(new RequestMatcher[0]);
+            val matchers = patterns
+                .stream()
+                .map(url -> PathPatternRequestMatcher.withDefaults().matcher(url))
+                .toList()
+                .toArray(new RequestMatcher[0]);
             customizer.requestMatchers(matchers).permitAll();
         });
         webSecurityConfigurers
@@ -215,10 +221,10 @@ public class CasWebSecurityConfigurerAdapter {
     protected void configureEndpointAccessForStaticResources(final HttpSecurity requests) throws Exception {
         requests.authorizeHttpRequests(customizer -> {
             customizer.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll();
-            customizer.requestMatchers(new AntPathRequestMatcher("/resources/**")).permitAll();
-            customizer.requestMatchers(new AntPathRequestMatcher("/static/**")).permitAll();
-            customizer.requestMatchers(new AntPathRequestMatcher("/public/**")).permitAll();
-            customizer.requestMatchers(new AntPathRequestMatcher("/favicon**")).permitAll();
+            customizer.requestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/resources/**")).permitAll();
+            customizer.requestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/static/**")).permitAll();
+            customizer.requestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/public/**")).permitAll();
+            customizer.requestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/favicon**")).permitAll();
             Arrays.stream(webProperties.getResources().getStaticLocations())
                 .forEach(location -> {
                     if (location.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
@@ -226,7 +232,7 @@ public class CasWebSecurityConfigurerAdapter {
                         if (file.exists() && file.isDirectory()) {
                             val directories = Arrays.stream(file.listFiles(File::isDirectory)).toList();
                             LOGGER.info("Directories to authorize for static public resources are [{}]", directories);
-                            directories.forEach(directory -> customizer.requestMatchers(new AntPathRequestMatcher('/' + directory.getName() + "/**")).permitAll());
+                            directories.forEach(directory -> customizer.requestMatchers(PathPatternRequestMatcher.withDefaults().matcher('/' + directory.getName() + "/**")).permitAll());
                         }
                     }
                 });

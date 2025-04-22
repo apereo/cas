@@ -70,7 +70,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -246,11 +246,12 @@ class OidcEndpointsConfiguration {
                 @Override
                 public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
                     http.authorizeHttpRequests(customizer -> {
-                        val authEndpoints = new AntPathRequestMatcher("/**/" + OidcConstants.CIBA_URL + "/**");
+                        val authEndpoints = PathPatternRequestMatcher.withDefaults().matcher('/' + OidcConstants.CIBA_URL + "/**");
                         customizer.requestMatchers(authEndpoints).anonymous();
                     });
                     http.csrf(customizer -> {
-                        val pattern = new AntPathRequestMatcher("/**/" + OidcConstants.CIBA_URL + "/{clientId}/{cibaRequestId}", HttpMethod.POST.name());
+                        val path = '/' + OidcConstants.CIBA_URL + "/{clientId}/{cibaRequestId}";
+                        val pattern = PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, path);
                         val requestHandler = new XorCsrfTokenRequestAttributeHandler();
                         requestHandler.setCsrfRequestAttributeName(null);
                         requestHandler.setSecureRandom(RandomUtils.getNativeInstance());

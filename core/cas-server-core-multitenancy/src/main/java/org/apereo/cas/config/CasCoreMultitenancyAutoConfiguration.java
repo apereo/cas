@@ -23,7 +23,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 /**
  * This is {@link CasCoreMultitenancyAutoConfiguration}.
@@ -63,7 +63,7 @@ public class CasCoreMultitenancyAutoConfiguration {
             @CanIgnoreReturnValue
             public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
                 http.authorizeHttpRequests(customizer -> {
-                    val authEndpoints = new AntPathRequestMatcher("/tenants/**");
+                    val authEndpoints = PathPatternRequestMatcher.withDefaults().matcher("/tenants/**");
                     customizer.requestMatchers(authEndpoints).permitAll();
                 });
                 return this;
