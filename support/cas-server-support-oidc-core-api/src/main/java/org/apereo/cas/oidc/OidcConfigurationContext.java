@@ -48,4 +48,5 @@ public class OidcConfigurationContext extends OAuth20ConfigurationContext {
     private final OidcClientRegistrationRequestTranslator clientRegistrationRequestTranslator;
 
     private final OAuth20TokenSigningAndEncryptionService introspectionSigningAndEncryptionService;
+
 }

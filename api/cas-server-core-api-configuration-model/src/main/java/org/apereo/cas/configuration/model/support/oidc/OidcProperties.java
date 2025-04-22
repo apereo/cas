@@ -103,4 +103,10 @@ public class OidcProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OidcIdentityAssuranceProperties identityAssurance = new OidcIdentityAssuranceProperties();
+
+    /**
+     * Configuration properties to manage OIDC federation settings.
+     */
+    @NestedConfigurationProperty
+    private OidcFederationProperties federation = new OidcFederationProperties();
 }
