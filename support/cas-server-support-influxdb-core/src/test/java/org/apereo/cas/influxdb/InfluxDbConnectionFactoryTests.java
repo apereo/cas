@@ -1,24 +1,19 @@
 package org.apereo.cas.influxdb;
 
-import org.apereo.cas.configuration.model.core.events.InfluxDbEventsProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
-import com.influxdb.annotations.Column;
-import com.influxdb.annotations.Measurement;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.Instant;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,54 +23,36 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("InfluxDb")
-@EnabledIfListeningOnPort(port = 8086)
+@EnabledIfListeningOnPort(port = 8181)
+@SpringBootTestAutoConfigurations
+@SpringBootTest(
+    classes = RefreshAutoConfiguration.class,
+    properties = {
+        "cas.events.influx-db.database=CasEventsDatabase",
+        "cas.events.influx-db.token=${#systemProperties['java.io.tmpdir']}/.influxdb-token",
+        "cas.events.influx-db.url=http://localhost:8181"
+    })
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+@ExtendWith(SpringExtension.class)
 class InfluxDbConnectionFactoryTests {
-    private InfluxDbConnectionFactory factory;
-
-    @BeforeEach
-    void init() {
-        val props = new InfluxDbEventsProperties()
-            .setDatabase("casEventsDatabase")
-            .setOrganization("CAS")
-            .setPassword("password")
-            .setUsername("root")
-            .setUrl("http://localhost:8086");
-        factory = new InfluxDbConnectionFactory(props);
-        factory.deleteAll();
-    }
-
-    @AfterEach
-    public void shutdown() {
-        factory.deleteAll();
-        factory.close();
-    }
-
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     @Test
     void verifyWritePoint() {
-        factory.deleteAll();
-        factory.write("events", Map.of("value", 1234.5678), Map.of("hostname", "cas.example.org"));
-        val result = factory.query(InfluxEvent.class);
+        val factory = new InfluxDbConnectionFactory(casProperties.getEvents().getInfluxDb());
+        val measurement = "events%s".formatted(RandomUtils.nextLong());
+        factory.write(measurement,
+            Map.of("number", 1234.5678, "flag", true, "name", "ApereoCAS"),
+            Map.of("hostname", "cas.example.org"));
+        val result = factory.query(measurement).toList();
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
-        assertEquals("cas.example.org", result.getFirst().getHostname());
-        assertEquals(1234.5678, result.getFirst().getValue());
-    }
-
-    @Measurement(name = "events")
-    @Getter
-    @Setter
-    @ToString
-    public static class InfluxEvent implements Serializable {
-        @Serial
-        private static final long serialVersionUID = -7065491678170232623L;
-
-        @Column(name = "time", timestamp = true)
-        private Instant time;
-
-        @Column(name = "hostname", tag = true)
-        private String hostname;
-
-        @Column(name = "value")
-        private Double value;
+        val first = result.getFirst();
+        assertEquals("cas.example.org", first.getTag("hostname"));
+        assertEquals(1234.5678, first.getFloatField("number"));
+        assertEquals(true, first.getBooleanField("flag"));
+        assertEquals("ApereoCAS", first.getStringField("name"));
+        factory.close();
     }
 }
