@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import jakarta.annotation.Nonnull;
@@ -64,7 +64,7 @@ class CasPalantirWebMvcConfiguration {
                 successHandler.setTargetUrlParameter("redirectTo");
                 successHandler.setDefaultTargetUrl(PalantirConstants.URL_PATH_PALANTIR);
                 http.authorizeHttpRequests(customizer -> customizer
-                        .requestMatchers(new AntPathRequestMatcher(PalantirConstants.URL_PATH_PALANTIR + "/**")).authenticated()
+                        .requestMatchers(PathPatternRequestMatcher.withDefaults().matcher(PalantirConstants.URL_PATH_PALANTIR + "/**")).authenticated()
                     )
                     .formLogin(customizer -> customizer.loginPage(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN)
                         .permitAll().successHandler(successHandler));
