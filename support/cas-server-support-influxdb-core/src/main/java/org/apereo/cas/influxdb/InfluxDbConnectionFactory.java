@@ -44,15 +44,15 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
      * @param props the props
      */
     public InfluxDbConnectionFactory(final InfluxDbProperties props) {
-        this.influxDb = InfluxDBClientFactory.create(props.getUrl(), props.getUsername(), props.getPassword().toCharArray());
-        this.influxDb.enableGzip();
-        this.influxDb.setLogLevel(LogLevel.NONE);
+        influxDb = InfluxDBClientFactory.create(props.getUrl(), props.getUsername(), props.getPassword().toCharArray());
+        influxDb.enableGzip();
+        influxDb.setLogLevel(LogLevel.NONE);
         if (LOGGER.isDebugEnabled()) {
-            this.influxDb.setLogLevel(LogLevel.BODY);
+            influxDb.setLogLevel(LogLevel.BODY);
         } else if (LOGGER.isInfoEnabled()) {
-            this.influxDb.setLogLevel(LogLevel.BASIC);
+            influxDb.setLogLevel(LogLevel.BASIC);
         }
-        this.influxDbProperties = props;
+        influxDbProperties = props;
     }
 
     /**
@@ -87,7 +87,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
         val predicate = new DeletePredicateRequest();
         predicate.setStart(OffsetDateTime.now(Clock.systemUTC()).minus(10, ChronoUnit.DECADES));
         predicate.setStop(OffsetDateTime.now(Clock.systemUTC()));
-        this.influxDb.getDeleteApi().delete(predicate, influxDbProperties.getDatabase(),
+        influxDb.getDeleteApi().delete(predicate, influxDbProperties.getDatabase(),
             influxDbProperties.getOrganization());
     }
 
@@ -105,6 +105,6 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
 
     @Override
     public void close() {
-        this.influxDb.close();
+        influxDb.close();
     }
 }

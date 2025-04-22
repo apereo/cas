@@ -65,8 +65,8 @@ public class ConfigurationMetadataGenerator {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .setDefaultPrettyPrinter(new DefaultPrettyPrinter())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
         .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
         .findAndRegisterModules();
 
     private static final Pattern PATTERN_GENERICS = Pattern.compile(".+\\<(.+)\\>");

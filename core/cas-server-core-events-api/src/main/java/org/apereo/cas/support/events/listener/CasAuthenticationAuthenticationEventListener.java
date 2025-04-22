@@ -63,6 +63,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
             val location = determineGeoLocationFor(clientInfo);
             dto.putGeoLocation(location);
             dto.putDeviceFingerprint(clientInfo.getDeviceFingerprint());
+            dto.putTenant(clientInfo.getTenant());
         });
         return dto;
     }

@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.influxdb.annotations.Column;
@@ -15,7 +14,6 @@ import lombok.ToString;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
@@ -58,6 +56,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
                 "principalId", event.getPrincipalId(),
                 "geoLocation", Unchecked.supplier(() -> MAPPER.writeValueAsString(event.getGeoLocation())).get(),
                 "creationTime", event.getCreationTime(),
+                "tenant", event.getTenant(),
                 "timestamp", String.valueOf(event.getTimestamp()),
                 "type", event.getType()));
         return event;
@@ -66,20 +65,25 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     @Override
     public Stream<? extends CasEvent> load() {
         val results = influxDbConnectionFactory.query(InfluxDbEvent.class);
-        return results.stream().map(flux -> {
-            val event = new CasEvent();
-            val geo = Unchecked.supplier(() -> MAPPER.readValue(flux.getGeoLocation(), new TypeReference<GeoLocationRequest>() {
-            })).get();
-            event.putGeoLocation(geo);
-            event.setPrincipalId(flux.getPrincipalId());
-            event.setType(flux.getType());
-            event.setCreationTime(flux.getCreationTime());
-            event.putClientIpAddress(flux.getClientIpAddress());
-            event.putServerIpAddress(flux.getServerIpAddress());
-            event.putEventId(flux.getValue());
-            event.putTimestamp(Long.valueOf(flux.getTimestamp()));
-            return event;
-        });
+        return results
+            .stream()
+            .map(flux -> {
+                val event = new CasEvent();
+                val geo = Unchecked.supplier(() -> MAPPER.readValue(flux.getGeoLocation(),
+                        new TypeReference<GeoLocationRequest>() {
+                        }))
+                    .get();
+                event.putGeoLocation(geo);
+                event.setPrincipalId(flux.getPrincipalId());
+                event.setType(flux.getType());
+                event.setCreationTime(flux.getCreationTime());
+                event.putClientIpAddress(flux.getClientIpAddress());
+                event.putServerIpAddress(flux.getServerIpAddress());
+                event.putEventId(flux.getValue());
+                event.putTimestamp(Long.valueOf(flux.getTimestamp()));
+                event.putTenant(flux.getTenant());
+                return event;
+            });
     }
 
     @Override
@@ -118,6 +122,9 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
 
         @Column(tag = true)
         private String geoLocation;
+
+        @Column(tag = true)
+        private String tenant;
 
         @Column
         private String value;

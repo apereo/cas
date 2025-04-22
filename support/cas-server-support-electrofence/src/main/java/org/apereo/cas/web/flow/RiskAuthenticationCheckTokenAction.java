@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -57,6 +58,8 @@ public class RiskAuthenticationCheckTokenAction extends BaseCasWebflowAction {
 
     protected final ServiceFactory serviceFactory;
 
+    protected final TenantExtractor tenantExtractor;
+
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         try {
@@ -79,6 +82,7 @@ public class RiskAuthenticationCheckTokenAction extends BaseCasWebflowAction {
             val geoLocationRequest = HttpRequestUtils.getHttpServletRequestGeoLocation(jwtClaims.getStringClaim("geoLocation"));
             event.putGeoLocation(geoLocationRequest);
             event.setPrincipalId(jwtClaims.getSubject());
+            tenantExtractor.extract(requestContext).ifPresent(tenant -> event.putTenant(tenant.getId()));
 
             val now = LocalDateTime.now(Clock.systemUTC());
             val expirationDate = DateTimeUtils.localDateTimeOf(jwtClaims.getExpirationTime());

@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.impl.plans.RiskyAuthenticationException;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -142,13 +143,17 @@ class ElectronicFenceWebflowConfiguration {
             final ServicesManager servicesManager,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new RiskAuthenticationCheckTokenAction(casEventRepository, communicationsManager, servicesManager,
-                    principalResolver, cookieCipherExecutor, geoLocationService, casProperties, webApplicationServiceFactory))
+                .withAction(() -> new RiskAuthenticationCheckTokenAction(
+                    casEventRepository, communicationsManager, servicesManager,
+                    principalResolver, cookieCipherExecutor, geoLocationService,
+                    casProperties, webApplicationServiceFactory, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_RISK_AUTHENTICATION_TOKEN_CHECK)
                 .build()
                 .get();
