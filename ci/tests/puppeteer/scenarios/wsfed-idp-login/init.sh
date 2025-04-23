@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Running Fediz sample client web application using keystore ${CAS_KEYSTORE}"
-docker run --rm -d -p9876:9876 -p8976:8076 \
+docker run --rm -d -p9876:9876 -p5008:5008 -p8976:8076 \
   -v "${CAS_KEYSTORE}":/etc/cas/thekeystore \
   -e SP_SSL_KEYSTORE_PATH="/etc/cas/thekeystore"\
   --name "fediz" apereo/fediz-client-webapp
@@ -10,7 +10,7 @@ docker ps | grep "fediz"
 retVal=$?
 if [ $retVal == 0 ]; then
     echo "Fediz docker container is running."
-    docker logs -f keycloak &
+    docker logs -f fediz &
 else
     echo "Fediz docker container failed to start."
 fi
