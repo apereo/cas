@@ -34,6 +34,12 @@ configurations {
         exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j2-impl")
         exclude(group: "org.apereo.cas", module: "cas-server-core-logging")
         /*
+         * Micrometer support for Java 21's virtual threads is disabled,
+         * because: java.lang.IllegalArgumentException:
+         *  jdk.management.VirtualThreadSchedulerMXBean is not a platform management interface
+         */
+        exclude(group: "io.micrometer", module: "micrometer-java21")
+        /*
             DevTools and Spring Cloud Bootstrap do not support native images.
          */
         exclude(group: "org.springframework.boot", module: "spring-boot-devtools")
@@ -143,6 +149,7 @@ graalvmNative {
             buildArgs.add('--emit build-report')
             buildArgs.add('--gc=G1')
             buildArgs.add('--enable-monitoring')
+            buildArgs.add('--enable-monitoring=heapdump,jfr')
 
             buildArgs.add('-march=native')
 //            buildArgs.add('--pgo-instrument')
@@ -169,6 +176,17 @@ graalvmNative {
             buildArgs.add('--features=org.apereo.cas.nativex.features.DefaultNativeImageFeature')
 
             buildArgs.add('--enable-url-protocols=jar,file,resource,http,https')
+
+            runtimeArgs.add('--add-opens=java.base/java.util=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.base/java.lang=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.base/java.util.concurrent=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.base/java.time=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.base/java.net=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.base/java.nio=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.base/sun.nio.ch=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.management/sun.management=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED')
         }
     }
 }
