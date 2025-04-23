@@ -148,7 +148,6 @@ graalvmNative {
             buildArgs.add('--enable-sbom')
             buildArgs.add('--emit build-report')
             buildArgs.add('--gc=G1')
-            buildArgs.add('--enable-monitoring')
             buildArgs.add('--enable-monitoring=heapdump,jfr')
 
             buildArgs.add('-march=native')

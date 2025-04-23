@@ -40,9 +40,8 @@ public class HttpServletRequestSimulation implements Callable<Integer> {
     private final Integer threadNum;
     private final boolean useIP1;
 
-    private ConfigurableApplicationContext applicationContext;
-
-
+    private final ConfigurableApplicationContext applicationContext;
+    
     /**
      * Create an instance of the HttpServletRequestSimulation callable object.
      *

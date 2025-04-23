@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -30,7 +29,7 @@ public class DefaultCasWebflowAbstractTicketExceptionHandler implements CasWebfl
     @Override
     public Event handle(final AbstractTicketException exception, final RequestContext requestContext) {
         val id = handleAbstractTicketException(exception, requestContext);
-        return new EventFactorySupport().event(this, id);
+        return EVENT_FACTORY.event(this, id);
     }
 
     @Override

@@ -9,7 +9,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -38,12 +37,10 @@ public class AccountUnlockStatusAction extends BaseCasWebflowAction {
             if (!givenValue.equals(providedValue) || !passwordManagementService.unlockAccount(credential)) {
                 throw new AccountLockedException("Captcha value does not match, or CAS cannot unlock the account for " + credential.getId());
             }
-            val message = new MessageBuilder().info().code("screen.account.unlock.success").build();
-            requestContext.getMessageContext().addMessage(message);
+            WebUtils.addInfoMessageToContext(requestContext, "screen.account.unlock.success");
             return success();
         } catch (final Throwable e) {
-            val message = new MessageBuilder().error().code("screen.account.unlock.fail").build();
-            requestContext.getMessageContext().addMessage(message);
+            WebUtils.addErrorMessageToContext(requestContext, "screen.account.unlock.fail");
             LoggingUtils.error(LOGGER, e);
             return error();
         }

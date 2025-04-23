@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Response;
@@ -1933,5 +1934,20 @@ public class WebUtils {
         mv.setStatus(HttpStatusCode.valueOf(status.value()));
         mv.setViewName(viewName);
         return mv;
+    }
+
+    /**
+     * Add warning message to context.
+     *
+     * @param context the context
+     * @param warning the warning
+     */
+    public static void addWarningMessageToContext(final MessageContext context, final MessageDescriptor warning) {
+        val builder = new MessageBuilder()
+            .warning()
+            .code(warning.getCode())
+            .defaultText(warning.getDefaultMessage())
+            .args((Object[]) warning.getParams());
+        context.addMessage(builder.build());
     }
 }

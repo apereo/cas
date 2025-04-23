@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
+@UtilityClass
 public class CasConfigurationMetadataCatalog {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

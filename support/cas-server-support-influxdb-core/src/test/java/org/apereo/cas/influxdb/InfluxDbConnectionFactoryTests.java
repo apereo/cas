@@ -1,6 +1,7 @@
 package org.apereo.cas.influxdb;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.events.influx-db.url=http://localhost:8181"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ExtendWith(SpringExtension.class)
+@ExtendWith(CasTestExtension.class)
 class InfluxDbConnectionFactoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;

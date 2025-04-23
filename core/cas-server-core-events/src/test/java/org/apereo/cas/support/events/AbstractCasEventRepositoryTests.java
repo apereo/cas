@@ -100,7 +100,7 @@ public abstract class AbstractCasEventRepositoryTests {
 
     public abstract CasEventRepository getEventRepository();
 
-    private CasEvent getCasEvent(final String user) {
+    protected CasEvent getCasEvent(final String user) {
         val ticket = new MockTicketGrantingTicket(user);
         val event = new CasTicketGrantingTicketCreatedEvent(this, ticket, null);
         val dto = new CasEvent();

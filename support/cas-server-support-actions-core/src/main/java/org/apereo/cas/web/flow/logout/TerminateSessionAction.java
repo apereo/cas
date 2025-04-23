@@ -94,13 +94,12 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .toList();
 
-        val tgtId = getTicketGrantingTicket(requestContext);
+        val ticketGrantingTicketId = getTicketGrantingTicket(requestContext);
+        if (StringUtils.isNotBlank(ticketGrantingTicketId)) {
+            LOGGER.trace("Destroying SSO session linked to ticket-granting ticket [{}]", ticketGrantingTicketId);
+            terminationHandlers.forEach(processor -> processor.beforeSingleLogout(ticketGrantingTicketId, requestContext));
 
-        if (StringUtils.isNotBlank(tgtId)) {
-            LOGGER.trace("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
-            terminationHandlers.forEach(processor -> processor.beforeSingleLogout(tgtId, requestContext));
-
-            val logoutRequests = initiateSingleLogout(tgtId, request, response);
+            val logoutRequests = initiateSingleLogout(ticketGrantingTicketId, request, response);
             WebUtils.putLogoutRequests(requestContext, logoutRequests);
         }
         LOGGER.trace("Removing CAS cookies");

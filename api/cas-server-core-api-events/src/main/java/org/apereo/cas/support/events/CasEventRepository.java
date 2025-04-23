@@ -1,7 +1,7 @@
 package org.apereo.cas.support.events;
 
 import org.apereo.cas.support.events.dao.CasEvent;
-
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.stream.Stream;
 
@@ -114,4 +114,34 @@ public interface CasEventRepository {
      * @return the events for principal
      */
     Stream<? extends CasEvent> getEventsForPrincipal(String id, ZonedDateTime dateTime);
+
+    /**
+     * Aggregate stream.
+     *
+     * @return the stream
+     */
+    default Stream<CasEventAggregate> aggregate() {
+        return aggregate(Duration.ofDays(1));
+    }
+
+    /**
+     * Aggregate stream.
+     *
+     * @param start the start
+     * @return the stream
+     */
+    default Stream<CasEventAggregate> aggregate(final Duration start) {
+        return aggregate(null, start);
+    }
+
+    /**
+     * Aggregate stream.
+     *
+     * @param type  the type
+     * @param start the start
+     * @return the stream
+     */
+    default Stream<CasEventAggregate> aggregate(final Class type, final Duration start) {
+        return Stream.empty();
+    }
 }

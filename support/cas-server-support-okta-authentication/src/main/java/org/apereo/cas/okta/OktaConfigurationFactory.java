@@ -11,6 +11,7 @@ import com.okta.sdk.authc.credentials.TokenClientCredentials;
 import com.okta.sdk.client.AuthorizationMode;
 import com.okta.sdk.client.Client;
 import com.okta.sdk.client.Clients;
+import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
+@UtilityClass
 public class OktaConfigurationFactory {
 
     /**
