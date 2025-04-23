@@ -23,13 +23,6 @@ public class CasRequestSingleLogoutEvent extends AbstractCasEvent {
     
     private final TicketGrantingTicket ticketGrantingTicket;
 
-    /**
-     * Instantiates a new CAS request single logout event.
-     *
-     * @param source               the source
-     * @param ticketGrantingTicket the ticket granting ticket
-     * @param clientInfo           the client info
-     */
     public CasRequestSingleLogoutEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket,
                                        final ClientInfo clientInfo) {
         super(source, clientInfo);

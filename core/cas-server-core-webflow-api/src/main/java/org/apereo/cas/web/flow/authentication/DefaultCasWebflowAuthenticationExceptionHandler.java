@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -36,7 +35,7 @@ public class DefaultCasWebflowAuthenticationExceptionHandler implements CasWebfl
     public Event handle(final AuthenticationException exception, final RequestContext requestContext) {
         val id = handleAuthenticationException(exception, requestContext);
         WebUtils.trackFailedAuthenticationAttempt(requestContext);
-        return new EventFactorySupport().event(this, id);
+        return EVENT_FACTORY.event(this, id);
     }
 
     @Override

@@ -16,12 +16,12 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.time.Clock;
@@ -93,8 +93,8 @@ public class RiskAuthenticationCheckTokenAction extends BaseCasWebflowAction {
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        requestContext.getMessageContext().addMessage(
-            new MessageBuilder().error().code("screen.risk.authnconfirmed.message").build());
+
+        WebUtils.addErrorMessageToContext(requestContext, "screen.risk.authnconfirmed.message");
         return error();
     }
 }

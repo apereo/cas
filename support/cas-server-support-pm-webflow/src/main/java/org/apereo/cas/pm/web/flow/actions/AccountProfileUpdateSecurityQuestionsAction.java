@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -44,7 +43,6 @@ public class AccountProfileUpdateSecurityQuestionsAction extends BaseCasWebflowA
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
-        val messages = requestContext.getMessageContext();
         try {
             val requestParameters = requestContext.getRequestParameters();
             val questions = Arrays.stream(requestParameters.getRequiredArray("questions", String.class))
@@ -75,12 +73,12 @@ public class AccountProfileUpdateSecurityQuestionsAction extends BaseCasWebflowA
                     .build();
                 LOGGER.debug("Updating security questions for [{}]", query);
                 passwordManagementService.updateSecurityQuestions(query);
-                messages.addMessage(new MessageBuilder().info().code(CODE_SUCCESS).build());
+                WebUtils.addInfoMessageToContext(requestContext, CODE_SUCCESS);
                 return success();
             }
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
-            messages.addMessage(new MessageBuilder().error().code(CODE_FAILURE).build());
+            WebUtils.addErrorMessageToContext(requestContext, CODE_FAILURE);
         }
         return error();
     }

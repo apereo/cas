@@ -9,7 +9,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -40,11 +39,7 @@ public class DelegatedClientAuthenticationDynamicDiscoveryExecutionAction extend
         
         val client = FunctionUtils.doUnchecked(() -> selector.locate(discoveryRequest, webContext));
         if (client.isEmpty()) {
-            val msg = new MessageBuilder()
-                .error()
-                .code("screen.pac4j.discovery.unknownclient")
-                .build();
-            requestContext.getMessageContext().addMessage(msg);
+            WebUtils.addErrorMessageToContext(requestContext, "screen.pac4j.discovery.unknownclient");
             requestContext.getRequestScope().put("username", userid);
             return error();
         }

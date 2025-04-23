@@ -31,7 +31,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
     private final InfluxDBClient influxDb;
 
     private final ClientConfig clientConfig;
-    
+
     public InfluxDbConnectionFactory(final InfluxDbProperties props) {
         try {
             val definedToken = SpringExpressionLanguageValueResolver.getInstance().resolve(props.getToken());
@@ -90,11 +90,26 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
      */
     public Stream<PointValues> query(final String measurement) {
         val query = "SELECT * FROM \"%s\"".formatted(measurement);
+        return query(measurement, query);
+    }
+
+    /**
+     * Query stream.
+     *
+     * @param measurement the measurement
+     * @param query       the query
+     * @return the stream
+     */
+    public Stream<PointValues> query(final String measurement, final String query) {
         return influxDb.queryPoints(query, new QueryOptions(Objects.requireNonNull(clientConfig.getDatabase())));
     }
 
     @Override
     public void close() {
         FunctionUtils.doAndHandle(__ -> influxDb.close());
+    }
+
+    public String getDatabase() {
+        return clientConfig.getDatabase();
     }
 }

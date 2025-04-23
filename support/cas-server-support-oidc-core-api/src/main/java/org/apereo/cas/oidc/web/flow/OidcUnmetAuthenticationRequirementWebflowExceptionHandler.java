@@ -18,7 +18,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -47,7 +46,7 @@ public class OidcUnmetAuthenticationRequirementWebflowExceptionHandler implement
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             val url = new URIBuilder(redirectUri).addParameter(OAuth20Constants.ERROR, OAuth20Constants.UNMET_AUTHENTICATION_REQUIREMENTS).build();
             requestContext.getRequestScope().put("url", url);
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REDIRECT);
+            return EVENT_FACTORY.event(this, CasWebflowConstants.TRANSITION_ID_REDIRECT);
         });
     }
 

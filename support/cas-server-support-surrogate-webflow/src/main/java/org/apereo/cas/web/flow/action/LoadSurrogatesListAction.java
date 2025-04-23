@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
@@ -81,12 +80,9 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
             }
             return success();
         } catch (final Throwable e) {
-            requestContext.getMessageContext().addMessage(new MessageBuilder()
-                .error()
-                .source("surrogate")
-                .code("screen.surrogates.account.selection.error")
-                .defaultText("Unable to accept or authorize selection")
-                .build());
+            WebUtils.addErrorMessageToContext(requestContext,
+                "screen.surrogates.account.selection.error",
+                "Unable to accept or authorize selection");
             LoggingUtils.error(LOGGER, e);
             return error(new RuntimeException(e));
         }

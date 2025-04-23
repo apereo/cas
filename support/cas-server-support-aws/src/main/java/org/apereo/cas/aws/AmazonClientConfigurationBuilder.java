@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesPrope
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,7 @@ import java.net.URI;
  * @since 6.0.0
  */
 @Slf4j
+@UtilityClass
 public class AmazonClientConfigurationBuilder {
 
     /**

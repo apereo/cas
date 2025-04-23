@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.authentication;
 
 import org.springframework.core.Ordered;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -12,6 +13,10 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.1.0
  */
 public interface CasWebflowExceptionHandler<T extends Exception> extends Ordered {
+    /**
+     * The event factory instance.
+     */
+    EventFactorySupport EVENT_FACTORY = new EventFactorySupport();
 
     /**
      * Handle event.

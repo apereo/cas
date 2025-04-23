@@ -1,14 +1,12 @@
 package org.apereo.cas.web.flow.authentication;
 
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
+import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.binding.message.MessageBuilder;
-import org.springframework.binding.message.MessageResolver;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -29,12 +27,10 @@ public class GenericCasWebflowExceptionHandler implements CasWebflowExceptionHan
 
     @Override
     public Event handle(final Exception exception, final RequestContext requestContext) {
-        val messageContext = requestContext.getMessageContext();
         LOGGER.trace("Unable to translate errors of the authentication exception [{}]. Returning [{}]",
             exception, CasWebflowExceptionCatalog.UNKNOWN);
-        val message = buildErrorMessageResolver(exception, requestContext);
-        messageContext.addMessage(message);
-        return new EventFactorySupport().event(this, CasWebflowExceptionCatalog.UNKNOWN);
+        addErrorMessageToContext(exception, requestContext);
+        return EVENT_FACTORY.event(this, CasWebflowExceptionCatalog.UNKNOWN);
     }
 
     @Override
@@ -42,18 +38,8 @@ public class GenericCasWebflowExceptionHandler implements CasWebflowExceptionHan
         return exception != null;
     }
 
-    /**
-     * Build error message resolver.
-     *
-     * @param exception      the exception
-     * @param requestContext the request context
-     * @return the message resolver
-     */
-    protected MessageResolver buildErrorMessageResolver(final Exception exception, final RequestContext requestContext) {
+    protected void addErrorMessageToContext(final Exception exception, final RequestContext requestContext) {
         val messageCode = MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE + CasWebflowExceptionCatalog.UNKNOWN;
-        return new MessageBuilder()
-            .error()
-            .code(messageCode)
-            .build();
+        WebUtils.addErrorMessageToContext(requestContext, messageCode);
     }
 }

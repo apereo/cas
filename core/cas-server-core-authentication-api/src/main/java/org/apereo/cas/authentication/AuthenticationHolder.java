@@ -1,11 +1,14 @@
 package org.apereo.cas.authentication;
 
+import lombok.experimental.UtilityClass;
+
 /**
  * This is {@link AuthenticationHolder}.
  *
  * @author Misagh Moayyed
  * @since 7.2.0
  */
+@UtilityClass
 public final class AuthenticationHolder {
     private static final ThreadLocal<Authentication> AUTHENTICATION_HOLDER = new InheritableThreadLocal<>();
 
