@@ -82,9 +82,6 @@ class CasEventsReportEndpointTests {
     private CasEventRepository casEventRepository;
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     @Qualifier("mockMvc")
     private MockMvc mockMvc;
 

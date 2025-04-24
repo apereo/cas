@@ -205,4 +205,10 @@ class DefaultServicesManagerTests {
             return registeredService;
         }
     }
+
+    @Nested
+    @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class,
+        properties = "cas.service-registry.cache.cache-size=0")
+    class NoCacheTests extends AbstractServicesManagerTests {
+    }
 }

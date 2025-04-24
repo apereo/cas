@@ -289,7 +289,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
         service = configurationContext.getServiceRegistry().findServiceByExactServiceName(name, clazz);
         if (service != null) {
             cacheRegisteredService(service);
-            LOGGER.trace("The service is found in [{}] and populated to the cache [{}]",
+            LOGGER.trace("The service is found in [{}] and added to the cache [{}]",
                 configurationContext.getServiceRegistry().getName(), service);
         }
         return (T) validateRegisteredService(service);
@@ -360,10 +360,15 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices(), clientInfo));
             evaluateExpiredServiceDefinitions();
 
-            val results = configurationContext.getServicesCache().asMap();
-            LOGGER.info("Loaded [{}] service(s) from [{}].", results.size(),
+            val cachedServices = configurationContext.getServicesCache().asMap();
+            if (cachedServices.isEmpty()) {
+                LOGGER.info("Loaded [{}] service(s) directly from service registry [{}].", servicesMap.size(),
+                    configurationContext.getServiceRegistry().getName());
+                return servicesMap.values();
+            }
+            LOGGER.info("Loaded [{}] service(s) from cache [{}].", cachedServices.size(),
                 configurationContext.getServiceRegistry().getName());
-            return results.values();
+            return cachedServices.values();
         });
     }
 
