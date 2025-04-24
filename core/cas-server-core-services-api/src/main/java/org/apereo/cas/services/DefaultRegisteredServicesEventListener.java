@@ -16,6 +16,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,12 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
     @Override
     public void handleEnvironmentChangeEvent(final EnvironmentChangeEvent event) {
         servicesManager.load();
+    }
+
+    @Override
+    public void handleContextRefreshedEvent(final ContextRefreshedEvent event) {
+        val manager = event.getApplicationContext().getBean(ServicesManager.BEAN_NAME, ServicesManager.class);
+        manager.load();
     }
 
     @Override

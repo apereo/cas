@@ -1,0 +1,10 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "^https://localhost:9859/anything/oidc.*",
+  "name": "OIDC",
+  "id": 2,
+  "jwtAccessToken": "true",
+  "scopes" : [ "java.util.HashSet", ["openid"]]
+}
