@@ -15,6 +15,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -267,8 +268,8 @@ public class CasReportsAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RegisteredServicesEndpoint registeredServicesReportEndpoint(
             final ObjectProvider<ConfigurableApplicationContext> applicationContext,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
+            @Qualifier(ServicesManagerConfigurationContext.BEAN_NAME)
+            final ObjectProvider<ServicesManagerConfigurationContext> configurationContext,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ObjectProvider<ServicesManager> servicesManager,
             final CasConfigurationProperties casProperties) {
@@ -278,7 +279,7 @@ public class CasReportsAutoConfiguration {
                 new RegisteredServiceJsonSerializer(applicationContext.getObject()));
             return new RegisteredServicesEndpoint(casProperties,
                 servicesManager,
-                webApplicationServiceFactory,
+                configurationContext,
                 new DirectObjectProvider<>(serializers),
                 applicationContext);
         }

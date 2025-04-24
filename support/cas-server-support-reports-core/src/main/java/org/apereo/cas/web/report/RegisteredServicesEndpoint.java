@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CompressionUtils;
@@ -13,6 +14,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.io.TemporaryFileSystemResource;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
+import com.github.benmanes.caffeine.cache.Cache;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -45,6 +47,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -61,19 +64,19 @@ import java.util.zip.ZipInputStream;
 public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<ServicesManager> servicesManager;
 
-    private final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
+    private final ObjectProvider<ServicesManagerConfigurationContext> configurationContext;
 
     private final ObjectProvider<List<? extends StringSerializer<RegisteredService>>> registeredServiceSerializers;
 
     public RegisteredServicesEndpoint(
         final CasConfigurationProperties casProperties,
         final ObjectProvider<ServicesManager> servicesManager,
-        final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
+        final ObjectProvider<ServicesManagerConfigurationContext> configurationContext,
         final ObjectProvider<List<? extends StringSerializer<RegisteredService>>> registeredServiceSerializers,
         final ObjectProvider<ConfigurableApplicationContext> applicationContext) {
         super(casProperties, applicationContext.getObject());
         this.servicesManager = servicesManager;
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
+        this.configurationContext = configurationContext;
         this.registeredServiceSerializers = registeredServiceSerializers;
     }
 
@@ -118,7 +121,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     public ResponseEntity<String> fetchService(@PathVariable final String id) throws Exception {
         val service = NumberUtils.isDigits(id)
             ? servicesManager.getObject().findServiceBy(Long.parseLong(id))
-            : servicesManager.getObject().findServiceBy(webApplicationServiceFactory.getObject().createService(id));
+            : servicesManager.getObject().findServiceBy(configurationContext.getObject().getServiceFactory().createService(id));
         if (service == null) {
             return ResponseEntity.notFound().build();
         }
@@ -146,6 +149,21 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         return ResponseEntity.ok(MAPPER.writeValueAsString(services));
     }
 
+    @Operation(summary = "Delete cached services")
+    @DeleteMapping(path = "/cache",
+        consumes = {
+            MediaType.APPLICATION_OCTET_STREAM_VALUE,
+            MediaType.APPLICATION_JSON_VALUE,
+            MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+            MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+            MEDIA_TYPE_CAS_YAML
+        })
+    public ResponseEntity deleteCache() {
+        val size = configurationContext.getObject().getServicesCache().estimatedSize();
+        configurationContext.getObject().getServicesCache().invalidateAll();
+        return ResponseEntity.ok(Map.of("deleted", size));
+    }
+    
     /**
      * Delete registered service.
      *
@@ -170,7 +188,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
             }
         } else {
             val svc = servicesManager.getObject().findServiceBy(
-                webApplicationServiceFactory.getObject().createService(id));
+                configurationContext.getObject().getServiceFactory().createService(id));
             if (svc != null) {
                 return ResponseEntity.ok(MAPPER.writeValueAsString(
                     servicesManager.getObject().delete(svc)));
@@ -340,7 +358,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
                 headers.put("id", CollectionUtils.wrapList(String.valueOf(service.getId())));
                 return new ResponseEntity<>(service, headers, HttpStatus.CREATED);
             })
-            .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+            .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     private ResponseEntity<RegisteredService> importServicesAsStream(final HttpServletRequest request) throws IOException {
