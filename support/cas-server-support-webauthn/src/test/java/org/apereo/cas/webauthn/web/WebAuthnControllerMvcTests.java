@@ -54,8 +54,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "management.endpoints.access.default=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*",
 
-        "--spring.security.user.name=s#kiooritea",
-        "--spring.security.user.password=p@$$W0rd",
+        "spring.security.user.name=s#kiooritea",
+        "spring.security.user.password=p@$$W0rd",
 
         "cas.monitor.endpoints.endpoint.env.access=AUTHENTICATED",
         "cas.monitor.endpoints.endpoint.info.access=ANONYMOUS"

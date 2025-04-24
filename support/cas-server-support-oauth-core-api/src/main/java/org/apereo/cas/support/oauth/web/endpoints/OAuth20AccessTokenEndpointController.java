@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.events.OAuth20AccessTokenRequestEvent;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceTokenException;
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
@@ -18,6 +19,7 @@ import com.google.common.base.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.jee.context.JEEContext;
@@ -112,21 +114,24 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         }
     }
 
-    private static void logProtocolRequest(final AccessTokenRequestContext tokenRequestContext) {
+    private void logProtocolRequest(final AccessTokenRequestContext tokenRequestContext) {
         var authn = tokenRequestContext.getAuthentication();
         if (authn == null && tokenRequestContext.getTicketGrantingTicket() instanceof final AuthenticationAwareTicket aat) {
             authn = aat.getAuthentication();
         }
         Objects.requireNonNull(authn, "No authentication is available to handle this request");
-        LoggingUtils.protocolMessage("OAuth/OpenID Connect Token Request",
-            Map.of("Token", Optional.ofNullable(tokenRequestContext.getToken()).map(OAuth20Token::getId).orElse("none"),
-                "Device Code", StringUtils.defaultString(tokenRequestContext.getDeviceCode()),
-                "Scopes", String.join(",", tokenRequestContext.getScopes()),
-                "Registered Service", tokenRequestContext.getRegisteredService().getName(),
-                "Service", tokenRequestContext.getService().getId(),
-                "Principal", authn.getPrincipal().getId(),
-                "Grant Type", tokenRequestContext.getGrantType().getType(),
-                "Response Type", tokenRequestContext.getResponseType().getType()));
+        val protocolContext = Map.of(
+            "Token", Optional.ofNullable(tokenRequestContext.getToken()).map(OAuth20Token::getId).orElse("none"),
+            "Device Code", StringUtils.defaultString(tokenRequestContext.getDeviceCode()),
+            "Scopes", String.join(",", tokenRequestContext.getScopes()),
+            "Registered Service", tokenRequestContext.getRegisteredService().getName(),
+            "Service", tokenRequestContext.getService().getId(),
+            "Principal", authn.getPrincipal().getId(),
+            "Grant Type", tokenRequestContext.getGrantType().getType(),
+            "Response Type", tokenRequestContext.getResponseType().getType());
+        LoggingUtils.protocolMessage("OAuth/OpenID Connect Token Request", protocolContext);
+        configurationContext.getApplicationContext().publishEvent(
+            new OAuth20AccessTokenRequestEvent(this, ClientInfoHolder.getClientInfo(), protocolContext));
     }
 
     /**
