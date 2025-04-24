@@ -1,0 +1,27 @@
+{
+  "dependencies": "oidc,json-service-registry,reports",
+  "conditions": {
+      "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+
+    "--cas.authn.oidc.discovery.claims=sub,name",
+    "--cas.authn.oidc.discovery.scopes=openid,profile,email",
+    
+    "--cas.service-registry.cache.cache-size=0",
+    "--cas.service-registry.schedule.enabled=false",
+    
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

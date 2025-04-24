@@ -32,7 +32,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.ContextRefreshedEvent;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -72,6 +74,9 @@ class RegisteredServicesEventListenerTests {
     @Autowired
     @Qualifier("registeredServicesEventListener")
     private RegisteredServicesEventListener registeredServicesEventListener;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
     
     private ClientInfo clientInfo;
 
@@ -114,6 +119,7 @@ class RegisteredServicesEventListenerTests {
         registeredService.getContacts().add(contact);
         registeredServicesEventListener.handleRefreshEvent(new CasRegisteredServicesRefreshEvent(this, clientInfo));
         registeredServicesEventListener.handleEnvironmentChangeEvent(new EnvironmentChangeEvent(Set.of()));
+        registeredServicesEventListener.handleContextRefreshedEvent(new ContextRefreshedEvent(applicationContext));
         val event = new CasRegisteredServiceExpiredEvent(this, registeredService, true, clientInfo);
         registeredServicesEventListener.handleRegisteredServiceExpiredEvent(event);
     }
