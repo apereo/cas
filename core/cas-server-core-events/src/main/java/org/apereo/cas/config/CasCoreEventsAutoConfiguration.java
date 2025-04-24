@@ -48,11 +48,15 @@ public class CasCoreEventsAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public CasAuthenticationEventListener defaultCasEventListener(
-            @Qualifier(GeoLocationService.BEAN_NAME) final ObjectProvider<GeoLocationService> geoLocationService,
-            @Qualifier(MessageSanitizer.BEAN_NAME) final MessageSanitizer messageSanitizer,
+            @Qualifier(GeoLocationService.BEAN_NAME)
+            final ObjectProvider<GeoLocationService> geoLocationService,
+            @Qualifier(MessageSanitizer.BEAN_NAME)
+            final MessageSanitizer messageSanitizer,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasEventRepository.BEAN_NAME) final CasEventRepository casEventRepository,
-            @Qualifier(LogoutManager.DEFAULT_BEAN_NAME) final LogoutManager logoutManager) {
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository casEventRepository,
+            @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
+            final LogoutManager logoutManager) {
             return BeanSupplier.of(CasAuthenticationEventListener.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new CasAuthenticationAuthenticationEventListener(casEventRepository,
@@ -70,9 +74,11 @@ public class CasCoreEventsAutoConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasEventsReportEndpoint casEventsReportEndpoint(
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final ObjectProvider<CasEventRepository> casEventRepository,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
-            return new CasEventsReportEndpoint(casProperties, applicationContext);
+            return new CasEventsReportEndpoint(casProperties, applicationContext, casEventRepository);
         }
     }
 

@@ -1,9 +1,7 @@
 package org.apereo.cas.support.events.dao;
 
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
-
 import com.github.benmanes.caffeine.cache.LoadingCache;
-
 import java.util.UUID;
 import java.util.stream.Stream;
 

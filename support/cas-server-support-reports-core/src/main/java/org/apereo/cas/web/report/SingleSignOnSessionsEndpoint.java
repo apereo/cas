@@ -74,14 +74,6 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor;
 
-    /**
-     * Instantiates a new Single sign on sessions endpoint.
-     *
-     * @param ticketRegistry              the ticket registry
-     * @param applicationContext          the application context
-     * @param casProperties               the cas properties
-     * @param singleLogoutRequestExecutor the single logout request executor
-     */
     public SingleSignOnSessionsEndpoint(
         final ObjectProvider<TicketRegistry> ticketRegistry,
         final ConfigurableApplicationContext applicationContext,

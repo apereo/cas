@@ -6,9 +6,9 @@ import org.apereo.cas.support.events.authentication.CasAuthenticationTransaction
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionSuccessfulEvent;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
-import org.apereo.cas.support.events.web.CasEventsReportEndpoint;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,19 +23,21 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.web.servlet.MockMvc;
 import javax.security.auth.login.FailedLoginException;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -44,6 +46,9 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link CasEventsReportEndpointTests}.
@@ -52,10 +57,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTestAutoConfigurations
+@AutoConfigureMockMvc
 @SpringBootTest(classes = {
     CasEventsReportEndpointTests.CasEventsReportEndpointTestConfiguration.class,
     AbstractCasEventRepositoryTests.SharedTestConfiguration.class
-})
+}, properties = {
+    "spring.security.user.name=casuser",
+    "spring.security.user.password=Mellon",
+    "management.endpoint.events.access=UNRESTRICTED",
+    "management.endpoints.web.exposure.include=*"
+}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("ActuatorEndpoint")
 @ExtendWith(CasTestExtension.class)
@@ -73,6 +84,10 @@ class CasEventsReportEndpointTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("mockMvc")
+    private MockMvc mockMvc;
+
     @BeforeEach
     void initialize() {
         val request = new MockHttpServletRequest();
@@ -86,27 +101,29 @@ class CasEventsReportEndpointTests {
     void verifyOperation() throws Throwable {
         publishEvent();
         Awaitility.await().untilAsserted(() -> assertFalse(casEventRepository.load().findAny().isEmpty()));
-        val endpoint = new CasEventsReportEndpoint(casProperties, applicationContext);
-        val result = endpoint.events(100);
-        assertNotNull(result);
-        assertEquals(HttpStatusCode.valueOf(HttpStatus.OK.value()), result.getStatusCode());
-        assertNotNull(result.getBody());
-    }
 
-    private void publishEvent() {
-        val failureEvent = new CasAuthenticationTransactionFailureEvent(this,
-            CollectionUtils.wrap("error", new FailedLoginException()),
-            CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
-        applicationContext.publishEvent(failureEvent);
-        val successEvent = new CasAuthenticationTransactionSuccessfulEvent(this,
-            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);
-        applicationContext.publishEvent(successEvent);
+        mockMvc.perform(get("/actuator/events")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(HttpUtils.createBasicAuthHeaders("casuser", "Mellon"))
+            )
+            .andExpect(status().isOk());
     }
 
     @Test
+    void verifyAggregate() throws Throwable {
+        publishEvent();
+        Awaitility.await().untilAsserted(() -> assertFalse(casEventRepository.load().findAny().isEmpty()));
+        mockMvc.perform(get("/actuator/events/aggregate")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_NDJSON_VALUE)
+                .headers(HttpUtils.createBasicAuthHeaders("casuser", "Mellon")))
+            .andExpect(status().isOk());
+    }
+
+
+    @Test
     void verifyImportOperationAsJson() throws Throwable {
-        val endpoint = new CasEventsReportEndpoint(casProperties, applicationContext);
-        val request = new MockHttpServletRequest();
         val event = new CasEvent()
             .setId(System.currentTimeMillis())
             .setPrincipalId("casuser")
@@ -116,17 +133,29 @@ class CasEventsReportEndpointTests {
             .putAgent("Firefox")
             .putTimestamp(System.currentTimeMillis());
         val content = MAPPER.writeValueAsString(event);
-        request.setContent(content.getBytes(StandardCharsets.UTF_8));
-        assertEquals(HttpStatus.OK, endpoint.uploadEvents(request).getStatusCode());
+
+        mockMvc.perform(post("/actuator/events")
+                .with(csrf())
+                .content(content)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(HttpUtils.createBasicAuthHeaders("casuser", "Mellon"))
+            )
+            .andExpect(status().isOk());
+
     }
+
 
     @Test
     void verifyBulkImportAsZip() throws Throwable {
-        val endpoint = new CasEventsReportEndpoint(casProperties, applicationContext);
-        endpoint.deleteAllEvents();
+        mockMvc.perform(delete("/actuator/events")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(HttpUtils.createBasicAuthHeaders("casuser", "Mellon"))
+            )
+            .andExpect(status().isOk());
 
-        val request = new MockHttpServletRequest();
-        request.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         try (val out = new ByteArrayOutputStream(2048);
              val zipStream = new ZipOutputStream(out)) {
             val event = new CasEvent()
@@ -147,9 +176,27 @@ class CasEventsReportEndpointTests {
             val data = content.getBytes(StandardCharsets.UTF_8);
             zipStream.write(data, 0, data.length);
             zipStream.closeEntry();
-            request.setContent(out.toByteArray());
+
+            mockMvc.perform(post("/actuator/events")
+                    .with(csrf())
+                    .content(out.toByteArray())
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .headers(HttpUtils.createBasicAuthHeaders("casuser", "Mellon"))
+                )
+                .andExpect(status().isOk());
         }
-        assertEquals(HttpStatus.OK, endpoint.uploadEvents(request).getStatusCode());
+    }
+
+
+    private void publishEvent() {
+        val failureEvent = new CasAuthenticationTransactionFailureEvent(this,
+            CollectionUtils.wrap("error", new FailedLoginException()),
+            CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
+        applicationContext.publishEvent(failureEvent);
+        val successEvent = new CasAuthenticationTransactionSuccessfulEvent(this,
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);
+        applicationContext.publishEvent(successEvent);
     }
 
     @TestConfiguration(value = "CasEventsReportEndpointTestConfiguration", proxyBeanMethods = false)
@@ -173,6 +220,16 @@ class CasEventsReportEndpointTests {
                 @Override
                 public Stream<CasEvent> load() {
                     return events.stream();
+                }
+
+                @Override
+                public Stream<CasEventAggregate> aggregate(final Class type, final Duration start) {
+                    val now = LocalDateTime.now(Clock.systemUTC());
+                    return Stream.of(
+                        new CasEventAggregate(now, "type1", 1L, "CAS"),
+                        new CasEventAggregate(now, "type2", 1L, "CAS"),
+                        new CasEventAggregate(now, "type3", 1L, "Shire"),
+                        new CasEventAggregate(now, "type4", 1L, "Shire"));
                 }
             };
         }

@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.events.OAuth20AccessTokenResponseEvent;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
@@ -14,6 +15,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.web.servlet.ModelAndView;
 import java.util.LinkedHashMap;
 import java.util.Optional;
@@ -73,6 +75,8 @@ public class OAuth20AccessTokenResponseEncoder {
         context.put(OAuth20Constants.GRANT_TYPE, tokenRequestContext.getGrantType().getType());
         context.put(OAuth20Constants.RESPONSE_TYPE, tokenRequestContext.getResponseType().getType());
         LoggingUtils.protocolMessage("OAuth/OpenID Connect Token Response", context);
+        configurationContext.getApplicationContext().publishEvent(
+            new OAuth20AccessTokenResponseEvent(this, ClientInfoHolder.getClientInfo(), context));
         return generatedTokenResult;
     }
 
