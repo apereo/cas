@@ -42,7 +42,9 @@ class PrepareMultifactorProviderSelectionActionTests extends BaseCasWebflowMulti
 
     @Test
     void verifyOperation() throws Throwable {
-        val flowSession = new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN));
+        val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        flow.setApplicationContext(applicationContext);
+        val flowSession = new MockFlowSession(flow);
         flowSession.setState(new ViewState(flowSession.getDefinitionInternal(), "viewState", mock(ViewFactory.class)));
         val exec = new MockFlowExecutionContext(flowSession);
 
