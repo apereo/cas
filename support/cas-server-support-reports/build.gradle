@@ -27,6 +27,7 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-authentication-mfa-api")
+    implementation project(":core:cas-server-core-services-registry")
 
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")

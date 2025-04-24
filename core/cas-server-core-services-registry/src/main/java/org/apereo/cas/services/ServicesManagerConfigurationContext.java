@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -53,4 +55,7 @@ public class ServicesManagerConfigurationContext {
 
     @Nonnull
     private final TenantExtractor tenantExtractor;
+
+    @Nonnull
+    private final ServiceFactory<WebApplicationService> serviceFactory;
 }

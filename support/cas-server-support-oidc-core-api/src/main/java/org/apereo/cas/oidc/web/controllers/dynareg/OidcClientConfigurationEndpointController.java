@@ -68,7 +68,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
             val regResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(oidcRegisteredService, prefix);
             return new ResponseEntity<>(regResponse, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().build();
     }
 
     /**
@@ -120,6 +120,6 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
                 getConfigurationContext().getCasProperties().getServer().getPrefix());
             return new ResponseEntity<>(clientResponse, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().build();
     }
 }

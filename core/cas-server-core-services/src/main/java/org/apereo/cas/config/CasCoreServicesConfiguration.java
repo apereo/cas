@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.DefaultWebApplicationResponseBuil
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
@@ -300,6 +301,8 @@ class CasCoreServicesConfiguration {
             final RegisteredServicesTemplatesManager registeredServicesTemplatesManager,
             @Qualifier(ServiceRegistry.BEAN_NAME)
             final ChainingServiceRegistry serviceRegistry,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory serviceFactory,
             @Qualifier("servicesManagerCache")
             final Cache<Long, RegisteredService> servicesManagerCache,
             final List<ServicesManagerRegisteredServiceLocator> servicesManagerRegisteredServiceLocators,
@@ -318,6 +321,7 @@ class CasCoreServicesConfiguration {
                 .registeredServiceLocators(servicesManagerRegisteredServiceLocators)
                 .casProperties(casProperties)
                 .tenantExtractor(tenantExtractor)
+                .serviceFactory(serviceFactory)
                 .build();
         }
 
