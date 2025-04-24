@@ -61,7 +61,7 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
         val activeFlow = requestContext.getActiveFlow();
         try {
             WebUtils.putActiveFlow(requestContext);
-            val applicationContext = requestContext.getActiveFlow().getApplicationContext();
+            val applicationContext = activeFlow.getApplicationContext();
             val clientInfo = ClientInfoHolder.getClientInfo();
             val scope = new HashMap<>(requestContext.getConversationScope().asMap());
             scope.putAll(requestContext.getFlowScope().asMap());

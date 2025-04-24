@@ -79,6 +79,7 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
         val requestContext = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
 
         val flow = new Flow("mockFlow");
+        flow.setApplicationContext(applicationContext);
         flow.addVariable(new FlowVariable("credential",
             new BeanFactoryVariableValueFactory(UsernamePasswordCredential.class, applicationContext.getAutowireCapableBeanFactory())));
         val locale = Locale.ENGLISH.getLanguage();
