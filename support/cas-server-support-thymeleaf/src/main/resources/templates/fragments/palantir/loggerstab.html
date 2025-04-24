@@ -14,6 +14,7 @@
                 <li><a id="loggingConfigurationOps" href="#logconfiguration-tab">Loggers</a></li>
                 <li><a id="loggingDataStreamOps" href="#logdatastream-tab">Log Events</a></li>
                 <li><a id="auditEvents" href="#auditevents-tab">Audit Events</a></li>
+                <li><a id="casEvents" href="#casEvents-tab">Application Events</a></li>
             </ul>
             <div id="logconfiguration-tab">
                 <table id="loggersTable" class="mdc-data-table__table table table-striped noborder">
@@ -75,7 +76,6 @@
                 </div>
                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='scrollLogs', label='screen.checkbox.scrolllogs.title')}"/>
             </div>
-
             <div id="auditevents-tab">
                 <p>The latest audit log statements from CAS application displayed and streamed here.</p>
                 <div class="d-flex">
@@ -127,6 +127,40 @@
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Date</th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">IP Address</th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">User Agent</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+            </div>
+            <div id="casEvents-tab">
+              <p>The CAS application events retrieved from the event repository.</p>
+
+                <div class="d-flex">
+                    <label for="casEventsRefreshFilter" class="pl-2">
+                        Refresh:
+                        <select id="casEventsRefreshFilter" class="jqueryui-selectmenu">
+                            <option value="1000">Every 1 Seconds</option>
+                            <option value="5000" selected>Every 5 Seconds</option>
+                            <option value="15000">Every 15 Seconds</option>
+                            <option value="30000">Every 30 Seconds</option>
+                            <option value="60000">Every 60 Seconds</option>
+                        </select>
+                    </label>
+                </div>
+                <table id="casEventsTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Timestamp</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Type</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Principal</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Client IP</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Server IP</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">User Agent</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Tenant</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Device Fingerprint</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">GeoLocation</th>
                     </tr>
                     </thead>
                     <tbody class="mdc-data-table__content">

@@ -1243,6 +1243,65 @@ async function initializeLoggingOperations() {
 
 }
 
+async function initializeCasEventsOperations() {
+    if (actuatorEndpoints.events) {
+        const casEventsTable = $("#casEventsTable").DataTable({
+            pageLength: 10,
+            drawCallback: settings => {
+                $("#casEventsTable tr").addClass("mdc-data-table__row");
+                $("#casEventsTable td").addClass("mdc-data-table__cell");
+            }
+        });
+
+        function fetchCasEvents() {
+            return setInterval(() => {
+                if (currentActiveTab === Tabs.LOGGING) {
+                    $.ajax({
+                        url: `${actuatorEndpoints.events}`,
+                        type: "GET",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        success: (response, textStatus, xhr) => {
+                            casEventsTable.clear();
+                            for (const entry of Object.values(response[1])) {
+                                const geoLocation = `${entry?.properties?.geoLatitude ?? ""} ${entry?.properties?.geoLongitude ?? ""} ${entry?.properties?.geoAccuracy ?? ""}`.trim();
+                                casEventsTable.row.add({
+                                    0: `<code>${entry?.creationTime ?? "N/A"}</code>`,
+                                    1: `<code>${getLastWord(entry?.type) ?? "N/A"}</code>`,
+                                    2: `<code>${entry?.properties?.eventId ?? "N/A"}</code>`,
+                                    3: `<code>${entry?.principalId ?? "N/A"}</code>`,
+                                    4: `<code>${entry?.properties?.clientip ?? "N/A"}</code>`,
+                                    5: `<code>${entry?.properties?.serverip ?? "N/A"}</code>`,
+                                    6: `<code>${entry?.properties?.agent ?? "N/A"}</code>`,
+                                    7: `<code>${entry?.properties?.tenant ?? "N/A"}</code>`,
+                                    8: `<code>${entry?.properties?.deviceFingerprint ?? "N/A"}</code>`,
+                                    9: `<code>${geoLocation.length == 0 ? "N/A" : geoLocation}</code>`
+                                });
+                            }
+                            casEventsTable.draw();
+                        },
+                        error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown)
+                    });
+                }
+            }, $("#casEventsRefreshFilter").val());
+        }
+        
+        let refreshInterval = undefined;
+        if (actuatorEndpoints.events) {
+            refreshInterval = fetchCasEvents();
+        }
+        $("#casEventsRefreshFilter").selectmenu({
+            change: (event, data) => {
+                if (refreshInterval) {
+                    clearInterval(refreshInterval);
+                    refreshInterval = fetchCasEvents();
+                }
+            }
+        });
+    }
+}
+
 async function initializeAuditEventsOperations() {
     if (actuatorEndpoints.auditlog) {
         const auditEventsTable = $("#auditEventsTable").DataTable({
@@ -3633,6 +3692,9 @@ async function initializePalantir() {
             if (!actuatorEndpoints.auditlog) {
                 $("#auditEvents").parent().addClass("d-none");
             }
+            if (!actuatorEndpoints.events) {
+                $("#casEvents").parent().addClass("d-none");
+            }
             if ((!actuatorEndpoints.loggingconfig || !actuatorEndpoints.loggers) && !actuatorEndpoints.auditlog) {
                 $("#loggingTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.LOGGING}`).addClass("d-none");
@@ -3737,7 +3799,8 @@ async function initializePalantir() {
                         initializeMultifactorOperations(),
                         initializeMultitenancyOperations(),
                         initializeTrustedMultifactorOperations(),
-                        initializeAuditEventsOperations()
+                        initializeAuditEventsOperations(),
+                        initializeCasEventsOperations()
                     ]));
             }
         }, 2);

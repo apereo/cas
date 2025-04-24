@@ -146,6 +146,11 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         return ResponseEntity.ok(MAPPER.writeValueAsString(services));
     }
 
+    /**
+     * Delete registered service cache.
+     *
+     * @return the response entity
+     */
     @Operation(summary = "Delete cached services")
     @DeleteMapping(path = "/cache",
         consumes = {

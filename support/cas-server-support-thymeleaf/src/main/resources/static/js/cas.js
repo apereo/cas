@@ -32,6 +32,11 @@ function getLastTwoWords(str) {
     return parts.slice(-2).join(".");
 }
 
+function getLastWord(str) {
+    const parts = str.split(".");
+    return parts.slice(-1).join(".");
+}
+
 function formatDateYearMonthDayHourMinute(date) {
     const d = new Date(date);
     const year = d.getFullYear();
