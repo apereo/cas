@@ -1,7 +1,5 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -14,7 +12,6 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.io.TemporaryFileSystemResource;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
-import com.github.benmanes.caffeine.cache.Cache;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
