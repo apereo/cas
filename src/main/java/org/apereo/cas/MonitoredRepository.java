@@ -241,9 +241,9 @@ public class MonitoredRepository {
                         }
 
                         if (firstFile.endsWith("libs.versions.toml") || firstFile.endsWith("settings.gradle")) {
-                            if (stagingRepository && (dependencyVersion.isQualifiedForMinorUpgrade() || dependencyVersion.isQualifiedForMajorUpgrade())) {
+                            if (stagingRepository && dependencyVersion.isQualifiedForMinorUpgrade()) {
                                 if (pr.getAssignee() == null) {
-                                    log.info("Assigning major dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                                    log.info("Assigning dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                                     gitHub.assignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
                                 } else if (pr.getAssignee().getLogin().equalsIgnoreCase("apereocas-bot")) {
                                     var checkrun = getLatestCompletedCheckRunsFor(pr, "build-pull-request");
