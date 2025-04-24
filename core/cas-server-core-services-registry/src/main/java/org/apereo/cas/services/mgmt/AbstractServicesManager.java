@@ -20,6 +20,7 @@ import com.googlecode.cqengine.ConcurrentIndexedCollection;
 import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.index.AttributeIndex;
 import com.googlecode.cqengine.query.QueryFactory;
+import com.googlecode.cqengine.query.option.QueryOptions;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -396,9 +397,29 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             .map(RegisteredServiceQueryAttribute::toQuery)
             .toList();
 
-        if (serviceQueries.isEmpty() || !configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()) {
+        if (serviceQueries.isEmpty()) {
+            LOGGER.trace("No queries were provided to search for services");
             return Stream.empty();
         }
+
+        if (!configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()) {
+            val queryOptions = new QueryOptions();
+            return getCacheableServicesStream()
+                .get()
+                .filter(Objects::nonNull)
+                .filter(registeredService -> Arrays.stream(queries)
+                    .filter(query -> query.getType().equals(registeredService.getClass())
+                        || (query.isIncludeAssignableTypes() && query.getType().isAssignableFrom(registeredService.getClass())))
+                    .findFirst()
+                    .stream()
+                    .anyMatch(query -> {
+                        val queryAttribute = new RegisteredServiceQueryAttribute(query);
+                        val propertyValue = queryAttribute.getValue(registeredService, queryOptions);
+                        return query.getValue().equals(propertyValue);
+                    }));
+        }
+
+
         if (serviceQueries.size() == 1) {
             try (val results = indexedRegisteredServices.retrieve(serviceQueries.getFirst())) {
                 return results.stream();

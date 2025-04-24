@@ -35,6 +35,28 @@ class DefaultServicesManagerTests {
     @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class,
         properties = "cas.service-registry.core.index-services=false")
     class NoIndexingTests extends AbstractServicesManagerTests {
+        @Test
+        void verifyQuerying() throws Exception {
+            val registeredService = new CasRegisteredService();
+            registeredService.setId(RandomUtils.nextLong());
+            registeredService.setName(UUID.randomUUID().toString());
+            registeredService.setServiceId(registeredService.getName());
+            servicesManager.save(registeredService);
+
+            val query1 = RegisteredServiceQuery.of(CasRegisteredService.class, "id", registeredService.getId());
+            var foundService = servicesManager.findServicesBy(query1).findFirst().orElseThrow();
+            assertEquals(foundService, registeredService);
+
+            val query2 = RegisteredServiceQuery.of(CasRegisteredService.class, "name", registeredService.getName(), true);
+            foundService = servicesManager.findServicesBy(query2).findFirst().orElseThrow();
+            assertEquals(foundService, registeredService);
+
+            val query3 = RegisteredServiceQuery.of(CasRegisteredService.class, "unknownProp", registeredService.getName(), true);
+            assertTrue(servicesManager.findServicesBy(query3).findFirst().isEmpty());
+
+            val query4 = RegisteredServiceQuery.of(CasRegisteredService.class, "name", "unknown-name", true);
+            assertTrue(servicesManager.findServicesBy(query4).findFirst().isEmpty());
+        }
     }
 
     @Nested
