@@ -60,7 +60,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     }
 
     /**
-     * Do an out of band request using the DuoWeb api (encapsulated in DuoSecurityAuthenticationService)
+     * Do an out of band request using the DuoWeb api (encapsulated in {@link DuoSecurityAuthenticationService})
      * to the hosted duo service. If it is successful
      * it will return a String containing the username of the successfully authenticated user, but if not - will
      * return a blank String or null.
