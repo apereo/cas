@@ -49,7 +49,7 @@ public class AuthenticationPolicyAwareServiceTicketValidationAuthorizer implemen
             throw UnauthorizedServiceException.denied("Unauthorized: %s".formatted(service.getId()));
         }
         val successfulHandlerNames = CollectionUtils.toCollection(attributes.get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
-        val assertedHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
+        val assertedHandlers = authenticationEventExecutionPlan.resolveAuthenticationHandlers()
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .filter(handler -> successfulHandlerNames.contains(handler.getName()))

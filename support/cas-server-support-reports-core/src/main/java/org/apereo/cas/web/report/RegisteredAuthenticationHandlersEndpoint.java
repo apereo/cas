@@ -50,7 +50,7 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
         MEDIA_TYPE_SPRING_BOOT_V2_JSON, MEDIA_TYPE_CAS_YAML, MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Get collection of available authentication handlers")
     public Collection<AuthenticationHandlerDetails> handle() {
-        return authenticationEventExecutionPlan.getObject().getAuthenticationHandlers()
+        return authenticationEventExecutionPlan.getObject().resolveAuthenticationHandlers()
             .stream()
             .map(RegisteredAuthenticationHandlersEndpoint::buildHandlerDetails)
             .sorted(Comparator.comparing(AuthenticationHandlerDetails::getOrder))
@@ -71,7 +71,7 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
     })
     public AuthenticationHandlerDetails fetchAuthnHandler(@Selector final String name) {
         return authenticationEventExecutionPlan.getObject()
-            .getAuthenticationHandlers()
+            .resolveAuthenticationHandlers()
             .stream()
             .filter(authnHandler -> authnHandler.getName().equalsIgnoreCase(name))
             .findFirst()

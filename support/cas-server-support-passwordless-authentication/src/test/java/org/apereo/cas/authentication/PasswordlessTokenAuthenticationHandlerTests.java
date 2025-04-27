@@ -42,7 +42,7 @@ class PasswordlessTokenAuthenticationHandlerTests {
 
         @Test
         void verifyDisable() {
-            val authenticationHandlers = authenticationEventExecutionPlan.getAuthenticationHandlersBy(PasswordlessTokenAuthenticationHandler.class::isInstance);
+            val authenticationHandlers = authenticationEventExecutionPlan.resolveAuthenticationHandlersBy(PasswordlessTokenAuthenticationHandler.class::isInstance);
             assertTrue(authenticationHandlers.isEmpty());
         }
     }

@@ -63,7 +63,7 @@ public class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrat
             .map(AuthenticationAwareTicket::getAuthentication).orElseThrow();
         val successfulHandlerNames = CollectionUtils.toCollection(authentication.getAttributes()
             .get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
-        val assertedHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
+        val assertedHandlers = authenticationEventExecutionPlan.resolveAuthenticationHandlers()
             .stream()
             .filter(handler -> successfulHandlerNames.contains(handler.getName()))
             .collect(Collectors.toSet());

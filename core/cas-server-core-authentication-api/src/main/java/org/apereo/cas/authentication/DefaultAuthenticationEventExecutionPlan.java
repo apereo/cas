@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHan
 import org.apereo.cas.authentication.handler.TenantAuthenticationHandlerBuilder;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.Getter;
@@ -172,7 +173,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     @Override
     @NonNull
     public Set<AuthenticationHandler> resolveAuthenticationHandlers(final AuthenticationTransaction transaction) throws Throwable {
-        val handlers = getAuthenticationHandlers();
+        val handlers = resolveAuthenticationHandlers();
         LOGGER.debug("Candidate/Registered authentication handlers for this transaction [{}] are [{}]", transaction, handlers);
         val handlerResolvers = getAuthenticationHandlerResolvers(transaction);
         LOGGER.debug("Authentication handler resolvers for this transaction are [{}]", handlerResolvers);
@@ -210,7 +211,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
-    public Set<AuthenticationHandler> getAuthenticationHandlers() {
+    public Set<AuthenticationHandler> resolveAuthenticationHandlers() {
         val clientInfo = Objects.requireNonNull(ClientInfoHolder.getClientInfo(), "Client info cannot be null");
         val handlers = authenticationHandlerPrincipalResolverMap
             .keySet()
@@ -240,6 +241,14 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
         return Set.copyOf(handlers);
     }
 
+    @Override
+    public Set<AuthenticationHandler> getAuthenticationHandlers() {
+        val handlers = authenticationHandlerPrincipalResolverMap.keySet().toArray(AuthenticationHandler[]::new);
+        AnnotationAwareOrderComparator.sortIfNecessary(handlers);
+        return new LinkedHashSet<>(CollectionUtils.wrapList(handlers));
+    }
+
+    
     @Override
     public Collection<TenantAuthenticationHandlerBuilder> getTenantAuthenticationHandlerBuilders() {
         val list = new ArrayList<>(this.tenantAuthenticationHandlerBuilders);
