@@ -153,8 +153,15 @@ public interface AuthenticationEventExecutionPlan {
      *
      * @return the authentication handlers
      */
-    Set<AuthenticationHandler> getAuthenticationHandlers();
+    Set<AuthenticationHandler> resolveAuthenticationHandlers();
 
+    /**
+     * Gets authentication handlers.
+     *
+     * @return the authentication handlers
+     */
+    Set<AuthenticationHandler> getAuthenticationHandlers();
+    
     /**
      * Gets tenant authentication handler builders.
      *
@@ -168,8 +175,8 @@ public interface AuthenticationEventExecutionPlan {
      * @param filter the filter
      * @return the authentication handlers by
      */
-    default Set<AuthenticationHandler> getAuthenticationHandlersBy(final Predicate<AuthenticationHandler> filter) {
-        return getAuthenticationHandlers().stream().filter(filter).collect(Collectors.toSet());
+    default Set<AuthenticationHandler> resolveAuthenticationHandlersBy(final Predicate<AuthenticationHandler> filter) {
+        return resolveAuthenticationHandlers().stream().filter(filter).collect(Collectors.toSet());
     }
 
     /**

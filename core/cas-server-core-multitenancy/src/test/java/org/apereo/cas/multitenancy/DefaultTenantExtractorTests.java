@@ -56,7 +56,7 @@ class DefaultTenantExtractorTests {
         assertTrue(definition.isPresent());
         assertFalse(definition.get().getAuthenticationPolicy().getAuthenticationHandlers().isEmpty());
 
-        val handlers = authenticationEventExecutionPlan.getAuthenticationHandlers();
+        val handlers = authenticationEventExecutionPlan.resolveAuthenticationHandlers();
         assertEquals(1, handlers.size());
         assertEquals("SimpleTestUsernamePasswordAuthenticationHandler", handlers.iterator().next().getName());
     }
