@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class OpenFGAAuthorizationPolicyTests {
     @Autowired
-    @Qualifier("authorizableResourceRepository")
+    @Qualifier(AuthorizableResourceRepository.BEAN_NAME)
     private AuthorizableResourceRepository authorizableResourceRepository;
 
     @ParameterizedTest

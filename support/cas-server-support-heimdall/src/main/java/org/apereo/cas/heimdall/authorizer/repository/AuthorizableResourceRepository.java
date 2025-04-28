@@ -16,6 +16,11 @@ import java.util.Optional;
 public interface AuthorizableResourceRepository extends DisposableBean {
 
     /**
+     * The bean name.
+     */
+    String BEAN_NAME = "authorizableResourceRepository";
+    
+    /**
      * Find all resources.
      *
      * @return the map of resources

@@ -75,14 +75,14 @@ public class CasHeimdallAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthorizationEngine heimdallAuthorizationEngine(
         final List<ResourceAuthorizer> resourceAuthorizers,
-        @Qualifier("authorizableResourceRepository")
+        @Qualifier(AuthorizableResourceRepository.BEAN_NAME)
         final AuthorizableResourceRepository authorizableResourceRepository) {
         return new DefaultAuthorizationEngine(authorizableResourceRepository, resourceAuthorizers);
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "authorizableResourceRepository")
+    @ConditionalOnMissingBean(name = AuthorizableResourceRepository.BEAN_NAME)
     public AuthorizableResourceRepository authorizableResourceRepository(
         final CasConfigurationProperties casProperties) throws Exception {
         val location = casProperties.getHeimdall().getJson().getLocation();
@@ -118,7 +118,7 @@ public class CasHeimdallAutoConfiguration {
     public HeimdallAuthorizationEndpoint heimdallAuthorizationEndpoint(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("authorizableResourceRepository")
+        @Qualifier(AuthorizableResourceRepository.BEAN_NAME)
         final AuthorizableResourceRepository authorizableResourceRepository) {
         return new HeimdallAuthorizationEndpoint(casProperties,
             applicationContext, authorizableResourceRepository);
