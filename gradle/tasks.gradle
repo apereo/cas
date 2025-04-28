@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 class Ansi {
     static final String NORMAL = "\u001B[0m"
 
@@ -58,18 +60,20 @@ class Ansi {
 Object.metaClass.ansi = new Ansi()
 project.ext.set("ansi", new Ansi())
 
-tasks.register('pathingJar', Jar) {
-    description = "Produces a 'pathing' JAR whose manifest class-path contains project runtime dependencies"
-    dependsOn configurations.runtimeClasspath
-    archiveAppendix.set("pathing")
+if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    tasks.register('pathingJar', Jar) {
+        description = "Produces a 'pathing' JAR whose manifest class-path contains project runtime dependencies"
+        dependsOn configurations.runtimeClasspath
+        archiveAppendix.set("pathing")
 
-    def files = configurations.runtimeClasspath.files
-    doFirst {
-        manifest {
-            attributes "Class-Path":
-                    files.collect {
-                        it.toURL().toString().replaceFirst("/file:/+/", "/")
-                    }.join(" ")
+        def files = configurations.runtimeClasspath.files
+        doFirst {
+            manifest {
+                attributes "Class-Path":
+                        files.collect {
+                            it.toURI().toString().replaceFirst("/file:/+/", "/")
+                        }.join(" ")
+            }
         }
     }
 }
@@ -96,14 +100,6 @@ tasks.register('javadocJar', Jar) {
     dependsOn javadoc
     archiveClassifier.set("javadoc")
     from javadoc.destinationDir
-}
-
-tasks.register('showProjects') {
-    description "Shows the projects used by the build"
-    def result = rootProject.subprojects.collect { it.name }
-    doLast() {
-        println(groovy.json.JsonOutput.toJson(result))
-    }
 }
 
 tasks.register('downloadDependencies') {
