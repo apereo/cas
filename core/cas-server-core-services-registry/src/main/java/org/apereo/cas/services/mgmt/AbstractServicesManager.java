@@ -360,10 +360,15 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices(), clientInfo));
             evaluateExpiredServiceDefinitions();
 
-            val results = configurationContext.getServicesCache().asMap();
-            LOGGER.info("Loaded [{}] service(s) from [{}].", results.size(),
-                configurationContext.getServiceRegistry().getName());
-            return results.values();
+            val cachedServices = configurationContext.getServicesCache().asMap();
+            if (cachedServices.isEmpty()) {
+                LOGGER.info("Loaded [{}] service(s) directly from service registry [{}].", servicesMap.size(),
+                        configurationContext.getServiceRegistry().getName());
+                return servicesMap.values();
+            }
+            LOGGER.info("Loaded [{}] service(s) from cache [{}].", cachedServices.size(),
+                    configurationContext.getServiceRegistry().getName());
+            return cachedServices.values();
         });
     }
 

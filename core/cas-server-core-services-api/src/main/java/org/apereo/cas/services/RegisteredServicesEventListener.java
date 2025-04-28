@@ -5,6 +5,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.util.spring.CasEventListener;
 
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
@@ -43,4 +44,12 @@ public interface RegisteredServicesEventListener extends CasEventListener {
     @Async
     void handleRegisteredServiceExpiredEvent(CasRegisteredServiceExpiredEvent event);
 
+    /**
+     * Handle context refreshed event.
+     *
+     * @param event the event
+     */
+    @EventListener
+    @Async
+    void handleContextRefreshedEvent(ContextRefreshedEvent event);
 }
