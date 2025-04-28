@@ -40,7 +40,7 @@ public class CasDefaultTwilioMultifactorAuthenticationService implements CasTwil
         return channels
             .stream()
             .anyMatch(channel -> FunctionUtils.doAndHandle(() -> {
-                val verification = Verification.creator(serviceSid, recipient, channel.name()).create();
+                val verification = Verification.creator(serviceSid, recipient, channel.toString()).create();
                 LOGGER.debug("Generated token for [{}] with SID: [{}]", principal.getId(), verification);
                 return StringUtils.isNotBlank(verification.getSid());
             }, e -> false).get());
