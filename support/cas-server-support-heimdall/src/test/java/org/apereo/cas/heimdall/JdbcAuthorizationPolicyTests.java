@@ -28,7 +28,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authorization")
 @ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@SpringBootTest(classes = BaseHeimdallTests.SharedTestConfiguration.class, properties = "cas.heimdall.json.location=classpath:/policies")
+@SpringBootTest(classes = BaseHeimdallTests.SharedTestConfiguration.class, properties = {
+    "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/heimdalloidc.jwks",
+    "cas.heimdall.json.location=classpath:/policies"
+})
 class JdbcAuthorizationPolicyTests {
     @Autowired
     @Qualifier(AuthorizableResourceRepository.BEAN_NAME)

@@ -5,7 +5,9 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.AuthorizationResult;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -22,6 +24,7 @@ import javax.sql.DataSource;
 import java.io.Serial;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Objects;
 
 /**
  * This is {@link JdbcAuthorizationPolicy}.
@@ -51,9 +54,12 @@ public class JdbcAuthorizationPolicy implements ResourceAuthorizationPolicy {
 
     private String query;
 
+    @JsonIgnore
+    private transient NamedParameterJdbcTemplate jdbcTemplate;
+    
     @Override
     public AuthorizationResult evaluate(final AuthorizableResource resource, final AuthorizationRequest request) throws Throwable {
-        val jdbcTemplate = buildJdbcTemplate();
+        this.jdbcTemplate = Objects.requireNonNullElseGet(this.jdbcTemplate, this::buildJdbcTemplate);
         val parameters = buildMapSqlParameterSource(request);
         return jdbcTemplate.query(query, parameters, rs -> {
             val result = rs.next() && rs.getBoolean("authorized");
@@ -61,8 +67,13 @@ public class JdbcAuthorizationPolicy implements ResourceAuthorizationPolicy {
         });
     }
 
-    public NamedParameterJdbcTemplate buildJdbcTemplate() throws SQLException {
-        return new NamedParameterJdbcTemplate(buildDataSource());
+    /**
+     * Build jdbc template.
+     *
+     * @return the named parameter jdbc template
+     */
+    public NamedParameterJdbcTemplate buildJdbcTemplate() {
+        return FunctionUtils.doUnchecked(() -> new NamedParameterJdbcTemplate(buildDataSource()));
     }
 
     private static MapSqlParameterSource buildMapSqlParameterSource(final AuthorizationRequest request) {
