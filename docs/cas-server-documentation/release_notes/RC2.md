@@ -72,3 +72,8 @@ build and run using Java `24`. Once more, remember that the baseline requirement
 and this is just a preparatory step to ensure CAS is ready for the next version of Java.
 
 ## Other Stuff
+        
+- A [Heimdall authorization policy](../authorization/Heimdall-Authorization-Overview.html) for SQL databases.
+- We have laid the groundwork and put together an initial changeset to begin
+  supporting OpenID Connect federations. Support for this topic will gradually 
+  mature as federations begin to operate and remain functional. 

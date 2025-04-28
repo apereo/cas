@@ -36,6 +36,7 @@ dependencies {
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-scripting")
 
+    implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-token-core-api")
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth-core-api")
@@ -46,6 +47,8 @@ dependencies {
     implementation project(":support:cas-server-support-grouper-core")
     implementation project(":support:cas-server-support-person-directory-core")
 
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+    
     testImplementation libraries.grouper
 
     testImplementation project(":support:cas-server-support-person-directory")
