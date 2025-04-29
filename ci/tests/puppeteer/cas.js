@@ -1160,12 +1160,15 @@ exports.unzipFile = async (file, targetDirectory) =>
         .pipe(unzipper.Extract({path: targetDirectory}))
         .on("close", () => this.log(`Files unzipped successfully @ ${targetDirectory}`));
 
-exports.prepareChromium = () => {
-    this.log(`Chromium directory: ${CHROMIUM_USER_DATA_DIR}`);
+exports.prepareChromium = async () => {
+    await this.log(`Chromium directory: ${CHROMIUM_USER_DATA_DIR}`);
     const targetDirectory = `${CHROMIUM_USER_DATA_DIR}/user-data-dir`;
-    this.removeDirectoryOrFile(targetDirectory);
-    this.unzipFile(`${CHROMIUM_USER_DATA_DIR}/user-data-dir.zip`, targetDirectory);
-    this.log(`Chromium user data directory: ${targetDirectory}`);
+    if (!fs.existsSync(targetDirectory) || await this.isNotCiEnvironment()) {
+        await this.log("Creating Chromium user data directory...");
+        await this.removeDirectoryOrFile(targetDirectory);
+        await this.unzipFile(`${CHROMIUM_USER_DATA_DIR}/user-data-dir.zip`, targetDirectory);
+    }
+    await this.log(`Chromium user data directory: ${targetDirectory}`);
 };
 
 this.asciiart("Apereo CAS - Puppeteer");
