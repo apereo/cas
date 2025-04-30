@@ -1,6 +1,7 @@
 package org.apereo.cas.gauth.web.flow;
 
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.gauth.credential.BaseGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
@@ -10,7 +11,6 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -132,8 +132,8 @@ class GoogleAuthenticatorSaveRegistrationActionTests {
     @TestConfiguration(value = "GoogleAuthenticatorSaveRegistrationActionTests", proxyBeanMethods = false)
     static class GoogleAuthenticatorSaveRegistrationActionTestConfiguration {
         @Bean
-        public IGoogleAuthenticator googleAuthenticatorInstance() {
-            val auth = mock(IGoogleAuthenticator.class);
+        public CasGoogleAuthenticator googleAuthenticatorInstance() {
+            val auth = mock(CasGoogleAuthenticator.class);
             when(auth.authorize(anyString(), ArgumentMatchers.eq(123456))).thenReturn(Boolean.TRUE);
             when(auth.authorize(anyString(), ArgumentMatchers.eq(987654))).thenReturn(Boolean.FALSE);
             when(auth.authorize(anyString(), ArgumentMatchers.eq(112233))).thenThrow(new IllegalArgumentException());

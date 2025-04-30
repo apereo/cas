@@ -16,6 +16,7 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-authentication-mfa-api")
+    implementation project(":core:cas-server-core-multitenancy")
 
     implementation project(":support:cas-server-support-otp-mfa-core")
     implementation project(":support:cas-server-support-trusted-mfa-core")

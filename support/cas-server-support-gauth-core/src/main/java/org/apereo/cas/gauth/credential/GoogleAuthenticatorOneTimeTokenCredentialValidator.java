@@ -3,13 +3,13 @@ package org.apereo.cas.gauth.credential;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.PreventedException;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ import java.util.Optional;
 @Getter
 public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
     OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> {
-    private final IGoogleAuthenticator googleAuthenticatorInstance;
+    private final CasGoogleAuthenticator googleAuthenticatorInstance;
 
     private final OneTimeTokenRepository tokenRepository;
 

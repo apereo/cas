@@ -2,6 +2,7 @@ package org.apereo.cas.otp.web.flow;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepositoryTests;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
@@ -94,10 +95,12 @@ class OneTimeTokenAccountSaveRegistrationActionTests extends BaseOneTimeTokenRep
     public static class OneTimeTokenAccountTestConfiguration {
         @Bean
         public Action oneTimeTokenAccountSaveRegistrationAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier("oneTimeTokenAccountRegistry")
             final OneTimeTokenCredentialRepository oneTimeTokenAccountRegistry,
             final CasConfigurationProperties casProperties) {
-            return new OneTimeTokenAccountSaveRegistrationAction(oneTimeTokenAccountRegistry, casProperties);
+            return new OneTimeTokenAccountSaveRegistrationAction(oneTimeTokenAccountRegistry, casProperties, tenantExtractor);
         }
 
         @Bean

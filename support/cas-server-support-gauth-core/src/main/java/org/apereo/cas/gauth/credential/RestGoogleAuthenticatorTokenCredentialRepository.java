@@ -2,6 +2,7 @@ package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -10,7 +11,6 @@ import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -45,7 +45,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
     private final GoogleAuthenticatorMultifactorProperties gauth;
 
-    public RestGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
+    public RestGoogleAuthenticatorTokenCredentialRepository(final CasGoogleAuthenticator googleAuthenticator,
                                                             final GoogleAuthenticatorMultifactorProperties gauth,
                                                             final CipherExecutor<String, String> tokenCredentialCipher,
                                                             final CipherExecutor<Number, Number> scratchCodesCipher) {

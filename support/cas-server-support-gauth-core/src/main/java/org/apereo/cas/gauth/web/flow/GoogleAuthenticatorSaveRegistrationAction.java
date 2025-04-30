@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationAction;
@@ -34,8 +35,9 @@ public class GoogleAuthenticatorSaveRegistrationAction extends OneTimeTokenAccou
     public GoogleAuthenticatorSaveRegistrationAction(
         final OneTimeTokenCredentialRepository repository,
         final CasConfigurationProperties casProperties,
-        final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator) {
-        super(repository, casProperties);
+        final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator,
+        final TenantExtractor tenantExtractor) {
+        super(repository, casProperties, tenantExtractor);
         this.validator = validator;
     }
 

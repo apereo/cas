@@ -114,6 +114,10 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @JsonProperty("source")
     private String source;
 
+    @Column
+    @JsonProperty("tenant")
+    private String tenant;
+
     @Override
     public int compareTo(@Nonnull final OneTimeTokenAccount tokenAccount) {
         return Comparator
@@ -125,6 +129,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
             .thenComparing(OneTimeTokenAccount::getName)
             .thenComparing(acct -> Objects.requireNonNullElse(acct.getLastUsedDateTime(), StringUtils.EMPTY))
             .thenComparing(acct -> StringUtils.defaultString(acct.getSource()))
+            .thenComparing(acct -> StringUtils.defaultString(acct.getTenant()))
             .compare(this, tokenAccount);
     }
 

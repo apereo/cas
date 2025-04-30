@@ -1,10 +1,10 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
 
@@ -27,13 +27,13 @@ public abstract class BaseGoogleAuthenticatorTokenCredentialRepository extends B
     /**
      * Google authenticator token creator.
      */
-    protected final IGoogleAuthenticator googleAuthenticator;
+    protected final CasGoogleAuthenticator googleAuthenticator;
 
     protected BaseGoogleAuthenticatorTokenCredentialRepository(
         final CipherExecutor<String, String> tokenCredentialCipher,
         final CipherExecutor<Number, Number> scratchCodesCipher,
-        final IGoogleAuthenticator googleAuthenticator) {
-        super(tokenCredentialCipher, scratchCodesCipher);
+        final CasGoogleAuthenticator googleAuthenticator) {
+        super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator.getTenantExtractor());
         this.googleAuthenticator = googleAuthenticator;
     }
 

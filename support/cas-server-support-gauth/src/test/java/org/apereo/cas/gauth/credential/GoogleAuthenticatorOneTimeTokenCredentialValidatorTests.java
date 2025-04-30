@@ -5,13 +5,13 @@ import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -154,8 +154,8 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     @TestConfiguration(value = "GoogleAuthenticatorOneTimeTokenCredentialValidatorTestConfiguration", proxyBeanMethods = false)
     static class GoogleAuthenticatorOneTimeTokenCredentialValidatorTestConfiguration {
         @Bean
-        public IGoogleAuthenticator googleAuthenticatorInstance() {
-            val auth = mock(IGoogleAuthenticator.class);
+        public CasGoogleAuthenticator googleAuthenticatorInstance() {
+            val auth = mock(CasGoogleAuthenticator.class);
             when(auth.authorize(anyString(), ArgumentMatchers.eq(123456))).thenReturn(Boolean.TRUE);
             when(auth.authorize(anyString(), ArgumentMatchers.eq(987654))).thenReturn(Boolean.FALSE);
             when(auth.authorize(anyString(), ArgumentMatchers.eq(112233))).thenThrow(new IllegalArgumentException());

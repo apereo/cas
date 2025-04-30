@@ -1,9 +1,9 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
 
 import java.util.Collection;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class DynamoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
     private final DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator facilitator;
 
-    public DynamoDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
+    public DynamoDbGoogleAuthenticatorTokenCredentialRepository(final CasGoogleAuthenticator googleAuthenticator,
                                                                 final CipherExecutor<String, String> tokenCredentialCipher,
                                                                 final CipherExecutor<Number, Number> scratchCodesCipher,
                                                                 final DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator facilitator) {

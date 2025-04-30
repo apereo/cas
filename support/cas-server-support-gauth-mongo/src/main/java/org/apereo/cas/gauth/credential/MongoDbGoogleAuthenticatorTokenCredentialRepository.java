@@ -1,9 +1,9 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.val;
@@ -32,7 +32,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     private final String collectionName;
 
     public MongoDbGoogleAuthenticatorTokenCredentialRepository(
-        final IGoogleAuthenticator googleAuthenticator,
+        final CasGoogleAuthenticator googleAuthenticator,
         final MongoOperations mongoTemplate,
         final String collectionName,
         final CipherExecutor<String, String> tokenCredentialCipher,

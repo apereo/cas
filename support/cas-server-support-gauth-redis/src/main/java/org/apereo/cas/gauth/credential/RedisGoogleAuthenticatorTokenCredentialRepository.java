@@ -1,10 +1,10 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.gauth.RedisCompositeKey;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
@@ -32,7 +32,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     private final CasRedisTemplates casRedisTemplates;
 
     public RedisGoogleAuthenticatorTokenCredentialRepository(
-        final IGoogleAuthenticator googleAuthenticator,
+        final CasGoogleAuthenticator googleAuthenticator,
         final CasRedisTemplates casRedisTemplates,
         final CipherExecutor<String, String> tokenCredentialCipher,
         final CipherExecutor<Number, Number> scratchCodesCipher) {

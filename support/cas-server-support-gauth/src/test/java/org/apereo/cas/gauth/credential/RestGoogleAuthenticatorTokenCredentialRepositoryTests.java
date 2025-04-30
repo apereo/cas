@@ -3,12 +3,12 @@ package org.apereo.cas.gauth.credential;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -39,8 +39,8 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
-    @Qualifier("googleAuthenticatorInstance")
-    private IGoogleAuthenticator googleAuthenticatorInstance;
+    @Qualifier(CasGoogleAuthenticator.BEAN_NAME)
+    private CasGoogleAuthenticator googleAuthenticatorInstance;
 
     @Test
     void verifyFailOps() throws Throwable {

@@ -1,13 +1,15 @@
 package org.apereo.cas.otp.repository.credentials;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.util.cipher.CipherExecutorUtils;
+import org.apereo.cas.util.cipher.JasyptNumberCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
+import org.apache.commons.lang3.StringUtils;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -20,15 +22,11 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTokenCredentialRepository {
-    /**
-     * The Token credential cipher.
-     */
     private final CipherExecutor<String, String> tokenCredentialCipher;
 
-    /**
-     * The scratch codes cipher.
-     */
     private final CipherExecutor<Number, Number> scratchCodesCipher;
+
+    private final TenantExtractor tenantExtractor;
 
     /**
      * Encode.
@@ -37,10 +35,11 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
      * @return the one time token account
      */
     protected OneTimeTokenAccount encode(final OneTimeTokenAccount account) {
-        account.setSecretKey(tokenCredentialCipher.encode(account.getSecretKey()));
+        account.setSecretKey(toTokenCredentialCipherExecutor(account).encode(account.getSecretKey()).toString());
+        val scratchCodesCipherExecutor = toScratchCodesCipherExecutor(account);
         account.setScratchCodes(account.getScratchCodes()
             .stream()
-            .map(scratchCodesCipher::encode)
+            .map(code -> FunctionUtils.doAndHandle(() -> scratchCodesCipherExecutor.encode(code), t -> code).get())
             .collect(Collectors.toList()));
         account.setUsername(account.getUsername().trim().toLowerCase(Locale.ENGLISH));
         return account;
@@ -58,14 +57,43 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
      * @return the one time token account
      */
     protected OneTimeTokenAccount decode(final OneTimeTokenAccount account) {
-        val decodedSecret = tokenCredentialCipher.decode(account.getSecretKey());
+        val decodedSecret = toTokenCredentialCipherExecutor(account).decode(account.getSecretKey()).toString();
+        val scratchCodesCipherExecutor = toScratchCodesCipherExecutor(account);
         val decodedScratchCodes = account.getScratchCodes()
             .stream()
-            .map(code -> FunctionUtils.doAndHandle(() -> scratchCodesCipher.decode(code), t -> code).get())
+            .map(code -> FunctionUtils.doAndHandle(() -> scratchCodesCipherExecutor.decode(code), t -> code).get())
             .collect(Collectors.toList());
         val newAccount = account.clone();
         newAccount.setSecretKey(decodedSecret);
         newAccount.setScratchCodes(decodedScratchCodes);
         return newAccount;
+    }
+
+    private CipherExecutor toTokenCredentialCipherExecutor(final OneTimeTokenAccount account) {
+        if (StringUtils.isNotBlank(account.getTenant())) {
+            val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(account.getTenant()).orElseThrow();
+            if (!tenantDefinition.getProperties().isEmpty()) {
+                val properties = tenantDefinition.bindProperties().orElseThrow();
+                val crypto = properties.getAuthn().getMfa().getGauth().getCrypto();
+                return crypto.isEnabled()
+                    ? CipherExecutorUtils.newStringCipherExecutor(crypto, OneTimeTokenAccountCipherExecutor.class)
+                    : CipherExecutor.noOp();
+            }
+        }
+        return tokenCredentialCipher;
+    }
+
+    private CipherExecutor<Number, Number> toScratchCodesCipherExecutor(final OneTimeTokenAccount account) {
+        if (StringUtils.isNotBlank(account.getTenant())) {
+            val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(account.getTenant()).orElseThrow();
+            if (!tenantDefinition.getProperties().isEmpty()) {
+                val properties = tenantDefinition.bindProperties().orElseThrow();
+                val scratchCodesKey = properties.getAuthn().getMfa().getGauth().getCore().getScratchCodes().getEncryption().getKey();
+                if (StringUtils.isNotBlank(scratchCodesKey)) {
+                    return new JasyptNumberCipherExecutor(scratchCodesKey, "googleAuthenticatorScratchCodesCipherExecutor");
+                }
+            }
+        }
+        return scratchCodesCipher;
     }
 }
