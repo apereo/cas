@@ -5,14 +5,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
-import org.apereo.cas.util.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import java.math.BigDecimal;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.chrono.ChronoZonedDateTime;
 import java.util.List;
 
 /**
@@ -42,8 +40,7 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
         val count = events
             .stream()
             .map(time -> {
-                val dt = DateTimeUtils.convertToZonedDateTime(time.getCreationTime());
-                val instant = ChronoZonedDateTime.from(dt).toInstant();
+                val instant = time.getCreationTime();
                 val zdt = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
                 return zdt.getHour();
             })

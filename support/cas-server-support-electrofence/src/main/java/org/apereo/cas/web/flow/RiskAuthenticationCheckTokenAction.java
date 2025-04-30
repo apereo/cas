@@ -74,7 +74,7 @@ public class RiskAuthenticationCheckTokenAction extends BaseCasWebflowAction {
             val nowInEpoch = Instant.now(Clock.systemUTC()).toEpochMilli();
             event.putTimestamp(nowInEpoch);
             val dt = DateTimeUtils.zonedDateTimeOf(nowInEpoch);
-            event.setCreationTime(dt.toString());
+            event.setCreationTime(dt.toInstant());
             event.put("riskToken", riskToken);
             event.putClientIpAddress(jwtClaims.getStringClaim("clientIpAddress"));
             event.putServerIpAddress(ClientInfoHolder.getClientInfo().getServerIpAddress());
