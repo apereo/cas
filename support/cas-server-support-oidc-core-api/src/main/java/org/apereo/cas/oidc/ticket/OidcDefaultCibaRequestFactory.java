@@ -59,8 +59,10 @@ public class OidcDefaultCibaRequestFactory implements OidcCibaRequestFactory {
             bindingMessage -> authenticationBuilder.addAttribute(OidcConstants.BINDING_MESSAGE, bindingMessage));
         
         val authentication = authenticationBuilder.build();
-        return new OidcDefaultCibaRequest(id, authentication, expirationPolicy,
+        val request = new OidcDefaultCibaRequest(id, authentication, expirationPolicy,
             holder.getScope(), holder.getClientId(), encodeCibaRequestId(id));
+        request.setTenantId(holder.getTenant());
+        return request;
     }
 
     @Override
@@ -74,5 +76,4 @@ public class OidcDefaultCibaRequestFactory implements OidcCibaRequestFactory {
         return Objects.requireNonNull(EncodingUtils.encodeUrlSafeBase64(encodedId));
     }
 
-    
 }
