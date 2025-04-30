@@ -2,6 +2,9 @@ package org.apereo.cas.gauth.web.flow.account;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.gauth.CoreGoogleAuthenticatorMultifactorProperties;
+import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
+import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
@@ -25,7 +28,10 @@ public class GoogleMultifactorAuthenticationAccountProfilePrepareAction extends 
 
             val multipleDeviceRegistrationEnabled = tenantExtractor.extract(requestContext)
                 .filter(tenantDefinition -> !tenantDefinition.getProperties().isEmpty())
-                .map(tenantDefinition -> tenantDefinition.bindProperties().orElseThrow())
+                .map(TenantDefinition::bindProperties)
+                .filter(ConfigurationPropertiesBindingContext::isBound)
+                .filter(bindingContext -> bindingContext.containsBindingFor(CoreGoogleAuthenticatorMultifactorProperties.class))
+                .map(ConfigurationPropertiesBindingContext::value)
                 .map(properties -> properties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled())
                 .orElseGet(() -> casProperties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled());
             

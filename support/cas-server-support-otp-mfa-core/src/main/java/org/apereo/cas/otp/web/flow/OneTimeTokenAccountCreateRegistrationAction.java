@@ -3,6 +3,7 @@ package org.apereo.cas.otp.web.flow;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.gauth.CoreGoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.util.QRUtils;
@@ -63,8 +64,9 @@ public class OneTimeTokenAccountCreateRegistrationAction extends AbstractMultifa
         if (tenantDefinitionResult.isPresent()) {
             val tenantDefinition = tenantDefinitionResult.get();
             keyAccount.setTenant(tenantDefinition.getId());
-            if (!tenantDefinition.getProperties().isEmpty()) {
-                val properties = tenantDefinition.bindProperties().orElseThrow();
+            val bindingContext = tenantDefinition.bindProperties();
+            if (bindingContext.isBound() && bindingContext.containsBindingFor(CoreGoogleAuthenticatorMultifactorProperties.class)) {
+                val properties = bindingContext.value();
                 return buildRegistrationUri(principal, keyAccount, properties);
             }
         }

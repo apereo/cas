@@ -51,6 +51,8 @@ import org.apereo.cas.configuration.model.support.scim.ScimProvisioningPropertie
 import org.apereo.cas.configuration.model.support.slack.SlackMessagingProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProvidersProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
+import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
+import org.apereo.cas.configuration.support.ConfigurationPropertyBindingResult;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -59,17 +61,23 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.boot.context.properties.bind.BindContext;
+import org.springframework.boot.context.properties.bind.BindHandler;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
 import org.springframework.core.env.MapPropertySource;
+import org.springframework.util.ReflectionUtils;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link CasConfigurationProperties}.
@@ -408,7 +416,7 @@ public class CasConfigurationProperties implements Serializable {
      * @param payload the payload
      * @return the optional
      */
-    public static Optional<CasConfigurationProperties> bindFrom(final Map<String, Object> payload) {
+    public static ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindFrom(final Map<String, Object> payload) {
         return bindFrom(payload, CasConfigurationProperties.class);
     }
 
@@ -420,17 +428,29 @@ public class CasConfigurationProperties implements Serializable {
      * @param clazz   the clazz
      * @return the optional
      */
-    public static <T> Optional<T> bindFrom(final Map<String, Object> payload,
-                                           final Class<T> clazz) {
+    public static <T> ConfigurationPropertiesBindingContext<T> bindFrom(final Map<String, Object> payload, final Class<T> clazz) {
+        val bindingResult = new LinkedHashMap<String, ConfigurationPropertyBindingResult>();
         if (!payload.isEmpty()) {
             val annotation = Objects.requireNonNull(clazz.getAnnotation(ConfigurationProperties.class));
             val name = StringUtils.defaultIfBlank(annotation.prefix(), annotation.value());
             val binder = new Binder(ConfigurationPropertySources.from(new MapPropertySource(clazz.getSimpleName(), payload)));
-            val bound = binder.bind(name, Bindable.of(clazz));
+            val bound = binder.bind(name, Bindable.of(clazz), new BindHandler() {
+                @Override
+                public void onFinish(final ConfigurationPropertyName name, final Bindable<?> target,
+                                     final BindContext context, final Object result) {
+                    if (result != null) {
+                        val field = ReflectionUtils.findField(context.getClass(), "dataObjectBindings");
+                        Objects.requireNonNull(field).trySetAccessible();
+                        val dataObjectBindings = Objects.requireNonNull((ArrayDeque) ReflectionUtils.getField(field, context));
+                        bindingResult.put(name.toString(),
+                            new ConfigurationPropertyBindingResult(name.toString(), result, new ArrayList<>(dataObjectBindings)));
+                    }
+                }
+            });
             if (bound.isBound()) {
-                return Optional.of(bound.get());
+                return new ConfigurationPropertiesBindingContext<>(bound.get(), bindingResult);
             }
         }
-        return Optional.empty();
+        return new ConfigurationPropertiesBindingContext(null, Map.of());
     }
 }

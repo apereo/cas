@@ -6,6 +6,12 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.authn.BaseJdbcAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.jdbc.authn.BindJdbcAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.jdbc.authn.ProcedureJdbcAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.jdbc.authn.QueryEncodeJdbcAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.jdbc.authn.SearchJdbcAuthenticationProperties;
+import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.services.ServicesManager;
 import lombok.RequiredArgsConstructor;
@@ -31,18 +37,28 @@ public class TenantJdbcAuthenticationHandlerBuilder implements TenantAuthenticat
 
     @Override
     public List<AuthenticationHandler> buildInternal(final TenantDefinition tenantDefinition,
-                                                     final CasConfigurationProperties casProperties) {
+                                                     final ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext) {
         val handlers = new ArrayList<AuthenticationHandler>();
-        val jdbc = casProperties.getAuthn().getJdbc();
-        createHandler(jdbc.getBind(), handlers);
-        createHandler(jdbc.getQuery(), handlers);
-        createHandler(jdbc.getEncode(), handlers);
-        createHandler(jdbc.getSearch(), handlers);
-        createHandler(jdbc.getProcedure(), handlers);
+        val jdbc = bindingContext.value().getAuthn().getJdbc();
+        if (bindingContext.containsBindingFor(BindJdbcAuthenticationProperties.class)) {
+            createHandler(jdbc.getBind(), handlers);
+        }
+        if (bindingContext.containsBindingFor(QueryJdbcAuthenticationProperties.class)) {
+            createHandler(jdbc.getQuery(), handlers);
+        }
+        if (bindingContext.containsBindingFor(QueryEncodeJdbcAuthenticationProperties.class)) {
+            createHandler(jdbc.getEncode(), handlers);
+        }
+        if (bindingContext.containsBindingFor(SearchJdbcAuthenticationProperties.class)) {
+            createHandler(jdbc.getSearch(), handlers);
+        }
+        if (bindingContext.containsBindingFor(ProcedureJdbcAuthenticationProperties.class)) {
+            createHandler(jdbc.getProcedure(), handlers);
+        }
         return handlers;
     }
 
-    private void createHandler(
+    protected void createHandler(
         final List<? extends BaseJdbcAuthenticationProperties> container,
         final List<AuthenticationHandler> finalHandlers) {
         container.forEach(properties -> {

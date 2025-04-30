@@ -62,8 +62,9 @@ public class DefaultCasGoogleAuthenticator implements CasGoogleAuthenticator {
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (clientInfo != null && StringUtils.isNotBlank(clientInfo.getTenant())) {
             val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(clientInfo.getTenant()).orElseThrow();
-            if (!tenantDefinition.getProperties().isEmpty()) {
-                val properties = tenantDefinition.bindProperties().orElseThrow();
+            val bindingContext = tenantDefinition.bindProperties();
+            if (bindingContext.isBound() && bindingContext.containsBindingFor(CoreGoogleAuthenticatorMultifactorProperties.class)) {
+                val properties = bindingContext.value();
                 val gauth = properties.getAuthn().getMfa().getGauth().getCore();
                 return buildGoogleAuthenticatorFrom(gauth);
             }
