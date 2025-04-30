@@ -1,6 +1,6 @@
 services:
   redis-master:
-    image: redis/redis-stack:7.4.0-v1
+    image: redis/redis-stack:7.4.0-v3
     container_name: redis_server_master
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
@@ -9,7 +9,7 @@ services:
     ports:
       - "6379:6379"
   redis-ssl:
-    image: redis/redis-stack:7.4.0-v1
+    image: redis/redis-stack:7.4.0-v3
     container_name: redis_server_ssl
     environment:
       - REDIS_PASSWORD=pAssw0rd123
@@ -19,7 +19,7 @@ services:
     volumes:
       - ./certs:/etc/ssl/certs
   redis-master2:
-    image: redis/redis-stack:7.4.0-v1
+    image: redis/redis-stack:7.4.0-v3
     container_name: redis_server_master2
     environment:
       - REDIS_PASSWORD=pAssw0rd123

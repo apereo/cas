@@ -47,7 +47,7 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
     @Override
     public Stream<? extends CasEvent> load(final ZonedDateTime dateTime) {
         val query = new Query();
-        query.addCriteria(Criteria.where(CREATION_TIME_PARAM).gte(dateTime.toString()));
+        query.addCriteria(Criteria.where(CREATION_TIME_PARAM).gte(dateTime.toInstant()));
         return this.mongoTemplate.stream(query, CasEvent.class, this.collectionName);
     }
 
@@ -65,7 +65,7 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
         val query = new Query();
         query.addCriteria(Criteria.where(TYPE_PARAM).is(type)
             .and(PRINCIPAL_ID_PARAM).is(principal)
-            .and(CREATION_TIME_PARAM).gte(dateTime.toString()));
+            .and(CREATION_TIME_PARAM).gte(dateTime.toInstant()));
         return this.mongoTemplate.stream(query, CasEvent.class, this.collectionName);
     }
 
@@ -79,7 +79,7 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
     @Override
     public Stream<? extends CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
         val query = new Query();
-        query.addCriteria(Criteria.where(TYPE_PARAM).is(type).and(CREATION_TIME_PARAM).gte(dateTime.toString()));
+        query.addCriteria(Criteria.where(TYPE_PARAM).is(type).and(CREATION_TIME_PARAM).gte(dateTime.toInstant()));
         return this.mongoTemplate.stream(query, CasEvent.class, this.collectionName);
     }
 
@@ -93,7 +93,7 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
     @Override
     public Stream<? extends CasEvent> getEventsForPrincipal(final String principal, final ZonedDateTime dateTime) {
         val query = new Query();
-        query.addCriteria(Criteria.where(PRINCIPAL_ID_PARAM).is(principal).and(CREATION_TIME_PARAM).gte(dateTime.toString()));
+        query.addCriteria(Criteria.where(PRINCIPAL_ID_PARAM).is(principal).and(CREATION_TIME_PARAM).gte(dateTime.toInstant()));
         return this.mongoTemplate.stream(query, CasEvent.class, this.collectionName);
     }
 
