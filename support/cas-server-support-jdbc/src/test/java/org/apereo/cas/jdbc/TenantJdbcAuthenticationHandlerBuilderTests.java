@@ -44,7 +44,9 @@ class TenantJdbcAuthenticationHandlerBuilderTests {
 
     @BeforeEach
     void initialize() throws Exception {
-        val casProperties = tenantsManager.findTenant("shire").orElseThrow().bindProperties().orElse(null);
+        val bindingContext = tenantsManager.findTenant("shire").orElseThrow().bindProperties();
+        assertTrue(bindingContext.isBound());
+        val casProperties = bindingContext.value();
         val props = casProperties.getAuthn().getJdbc().getQuery().getFirst();
         val dataSource = JpaBeans.newDataSource(props.getDriverClass(), props.getUser(),
             props.getPassword(), props.getUrl());

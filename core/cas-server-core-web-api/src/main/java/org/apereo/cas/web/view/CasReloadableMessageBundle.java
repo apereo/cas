@@ -1,6 +1,7 @@
 package org.apereo.cas.web.view;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import lombok.val;
@@ -44,9 +45,9 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (clientInfo != null && StringUtils.isNotBlank(clientInfo.getTenant())) {
             val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(clientInfo.getTenant()).orElseThrow();
-            val boundProperties = tenantDefinition.bindProperties();
-            if (boundProperties.isPresent()) {
-                val properties = boundProperties.get();
+            val bindingContext = tenantDefinition.bindProperties();
+            if (bindingContext.isBound() && bindingContext.containsBindingFor(MessageBundleProperties.class)) {
+                val properties = bindingContext.value();
                 properties.getMessageBundle().getBaseNames().addAll(getBasenameSet());
                 val bean = configure(new ReloadableResourceBundleMessageSource(), properties);
                 return bean.getMessage(code, args, locale);

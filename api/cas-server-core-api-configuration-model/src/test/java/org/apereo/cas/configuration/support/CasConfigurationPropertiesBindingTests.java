@@ -17,17 +17,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("CasConfiguration")
 class CasConfigurationPropertiesBindingTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val payload = Map.<String, Object>of(
             "cas.server.name", "https://sso.test.org",
             "spring.mail.host", "localhost",
             "spring.mail.port", "25000"
         );
-        val properties = CasConfigurationProperties.bindFrom(payload).orElseThrow();
-        assertEquals("https://sso.test.org", properties.getServer().getName());
+        val bindingContext = CasConfigurationProperties.bindFrom(payload);
+        assertEquals("https://sso.test.org", bindingContext.value().getServer().getName());
 
-        val emailProps = CasConfigurationProperties.bindFrom(payload, MailProperties.class).orElseThrow();
-        assertEquals("localhost", emailProps.getHost());
-        assertEquals(25000, emailProps.getPort());
+        val mailProperties = CasConfigurationProperties.bindFrom(payload, MailProperties.class).value();
+        assertEquals("localhost", mailProperties.getHost());
+        assertEquals(25000, mailProperties.getPort());
     }
 }

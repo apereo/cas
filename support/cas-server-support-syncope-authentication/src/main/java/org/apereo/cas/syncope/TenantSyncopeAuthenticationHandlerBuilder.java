@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.handler.TenantAuthenticationHandlerBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationProperties;
+import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.services.ServicesManager;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +31,16 @@ public class TenantSyncopeAuthenticationHandlerBuilder implements TenantAuthenti
 
     @Override
     public List<? extends AuthenticationHandler> buildInternal(final TenantDefinition tenantDefinition,
-                                                               final CasConfigurationProperties casProperties) {
-        val syncope = casProperties.getAuthn().getSyncope();
-        val handlers = SyncopeUtils.newAuthenticationHandlers(syncope, applicationContext,
-            principalFactory, servicesManager, passwordPolicyConfiguration);
-        handlers.forEach(AuthenticationHandler::markDisposable);
-        return handlers;
+                                                               final ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext) {
+        if (!bindingContext.containsBindingFor(SyncopeAuthenticationProperties.class)) {
+            val casProperties = bindingContext.value();
+            val syncope = casProperties.getAuthn().getSyncope();
+            val handlers = SyncopeUtils.newAuthenticationHandlers(syncope, applicationContext,
+                principalFactory, servicesManager, passwordPolicyConfiguration);
+            handlers.forEach(AuthenticationHandler::markDisposable);
+            return handlers;
+        }
+        return List.of();
     }
 
 }

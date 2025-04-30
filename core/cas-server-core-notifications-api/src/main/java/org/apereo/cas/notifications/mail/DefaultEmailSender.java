@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.mail;
 
+import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.multitenancy.TenantCommunicationPolicy;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantEmailCommunicationPolicy;
@@ -140,7 +141,10 @@ public class DefaultEmailSender implements EmailSender {
         final EmailMessageRequest emailMessageRequest) {
         return tenantExtractor.getTenantsManager()
             .findTenant(emailMessageRequest.getTenant())
-            .flatMap(tenantDefinition -> tenantDefinition.bindPropertiesTo(MailProperties.class))
+            .map(tenantDefinition -> tenantDefinition.bindPropertiesTo(MailProperties.class))
+            .filter(ConfigurationPropertiesBindingContext::isBound)
+            .filter(bindingContext -> bindingContext.containsBindingFor(MailProperties.class))
+            .map(ConfigurationPropertiesBindingContext::value)
             .orElse(mailProperties);
     }
 

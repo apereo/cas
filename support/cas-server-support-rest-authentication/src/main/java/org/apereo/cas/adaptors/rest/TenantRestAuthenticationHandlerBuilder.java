@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.handler.TenantAuthenticationHandlerBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
+import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
@@ -29,17 +31,22 @@ public class TenantRestAuthenticationHandlerBuilder implements TenantAuthenticat
 
     @Override
     public List<AuthenticationHandler> buildInternal(final TenantDefinition tenantDefinition,
-                                                     final CasConfigurationProperties casProperties) {
-        return casProperties
-            .getAuthn()
-            .getRest()
-            .stream()
-            .map(prop -> {
-                val handler = new RestAuthenticationHandler(servicesManager,
-                    principalFactory, prop, applicationContext, httpClient);
-                return handler.markDisposable();
-            })
-            .toList();
+                                                     final ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext) {
+
+        if (bindingContext.containsBindingFor(RestAuthenticationProperties.class)) {
+            val casProperties = bindingContext.value();
+            return casProperties
+                .getAuthn()
+                .getRest()
+                .stream()
+                .map(prop -> {
+                    val handler = new RestAuthenticationHandler(servicesManager,
+                        principalFactory, prop, applicationContext, httpClient);
+                    return handler.markDisposable();
+                })
+                .toList();
+        }
+        return List.of();
     }
 }
 

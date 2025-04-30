@@ -77,10 +77,9 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
     protected List<BaseClient> buildClientsBasedCasProperties(final String result) throws Exception {
         val payload = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
         LOGGER.trace("CAS properties received as [{}]", payload);
-        val properties = CasConfigurationProperties.bindFrom(payload);
-        if (properties.isPresent()) {
-            val props = (CasConfigurationProperties) properties.get();
-            return buildFrom(props);
+        val bindingContext = CasConfigurationProperties.bindFrom(payload);
+        if (bindingContext.isBound()) {
+            return buildFrom((CasConfigurationProperties) bindingContext.value());
         }
         return List.of();
     }

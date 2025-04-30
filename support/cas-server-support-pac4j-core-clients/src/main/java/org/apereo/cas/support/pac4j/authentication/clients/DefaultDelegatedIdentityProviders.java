@@ -1,6 +1,8 @@
 package org.apereo.cas.support.pac4j.authentication.clients;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
+import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
@@ -12,6 +14,7 @@ import org.pac4j.core.client.Client;
 import org.pac4j.core.context.WebContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -34,7 +37,9 @@ public class DefaultDelegatedIdentityProviders implements DelegatedIdentityProvi
             val tenantKey = tenantExtractor.getTenantKey(definition);
             var providers = delegatedIdentityProviderFactory.retrieve(tenantKey);
             if (providers.isEmpty()) {
-                providers = definition.bindProperties()
+                providers = Optional.of(definition.bindProperties())
+                    .filter(bindingContext -> bindingContext.containsBindingFor(Pac4jDelegatedAuthenticationProperties.class))
+                    .map(ConfigurationPropertiesBindingContext::value)
                     .map(Unchecked.function(delegatedIdentityProviderFactory::buildFrom))
                     .stream()
                     .flatMap(List::stream)

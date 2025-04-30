@@ -2,6 +2,8 @@ package org.apereo.cas.otp.web.flow;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.gauth.CoreGoogleAuthenticatorMultifactorProperties;
+import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
@@ -96,7 +98,10 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
     private boolean isMultipleDeviceRegistrationEnabled(final RequestContext requestContext) {
         return tenantExtractor.extract(requestContext)
             .filter(tenantDefinition -> !tenantDefinition.getProperties().isEmpty())
-            .map(tenantDefinition -> tenantDefinition.bindProperties().orElseThrow())
+            .map(TenantDefinition::bindProperties)
+            .filter(ConfigurationPropertiesBindingContext::isBound)
+            .filter(bindingContext -> bindingContext.containsBindingFor(CoreGoogleAuthenticatorMultifactorProperties.class))
+            .map(ConfigurationPropertiesBindingContext::value)
             .map(properties -> properties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled())
             .orElseGet(() -> casProperties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled());
     }
