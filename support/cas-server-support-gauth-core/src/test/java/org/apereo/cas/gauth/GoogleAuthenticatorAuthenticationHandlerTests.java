@@ -5,31 +5,38 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.credential.DummyCredentialRepository;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorOneTimeTokenCredentialValidator;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
 import org.apereo.cas.gauth.credential.InMemoryGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.CachingOneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.DirectObjectProvider;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.warrenstrange.googleauth.GoogleAuthenticator;
-import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountNotFoundException;
@@ -46,8 +53,19 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("MFAProvider")
+@SpringBootTest(classes = CasCoreMultitenancyAutoConfiguration.class)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+@SpringBootTestAutoConfigurations
+@ExtendWith(CasTestExtension.class)
 class GoogleAuthenticatorAuthenticationHandlerTests {
-    private IGoogleAuthenticator googleAuthenticator;
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier(TenantExtractor.BEAN_NAME)
+    private TenantExtractor tenantExtractor;
+    
+    private CasGoogleAuthenticator googleAuthenticator;
 
     private GoogleAuthenticatorAuthenticationHandler handler;
 
@@ -60,8 +78,7 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
     @BeforeEach
     void initialize() throws Exception {
         val servicesManager = mock(ServicesManager.class);
-        val builder = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
-        googleAuthenticator = new GoogleAuthenticator(builder.build());
+        googleAuthenticator = new DefaultCasGoogleAuthenticator(casProperties, tenantExtractor);
         tokenRepository = new CachingOneTimeTokenRepository(Caffeine.newBuilder().initialCapacity(10).build(s -> null));
         tokenCredentialRepository = new InMemoryGoogleAuthenticatorTokenCredentialRepository(
             CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber(), googleAuthenticator);
@@ -72,7 +89,7 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
             new GoogleAuthenticatorOneTimeTokenCredentialValidator(googleAuthenticator, tokenRepository, tokenCredentialRepository),
             null, new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create().setClientInfo();
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
     }
 

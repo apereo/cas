@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.gauth.credential.RedisGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorRedisTokenRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
@@ -13,7 +14,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -101,8 +101,8 @@ public class CasGoogleAuthenticatorRedisAutoConfiguration {
     @ConditionalOnMissingBean(name = "redisGoogleAuthenticatorAccountRegistry")
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("googleAuthenticatorInstance")
-        final IGoogleAuthenticator googleAuthenticatorInstance,
+        @Qualifier(CasGoogleAuthenticator.BEAN_NAME)
+        final CasGoogleAuthenticator googleAuthenticatorInstance,
         @Qualifier("googleAuthenticatorAccountCipherExecutor")
         final CipherExecutor googleAuthenticatorAccountCipherExecutor,
         @Qualifier("googleAuthenticatorScratchCodesCipherExecutor")

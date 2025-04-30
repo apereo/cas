@@ -68,6 +68,7 @@ import java.io.Serializable;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -422,7 +423,7 @@ public class CasConfigurationProperties implements Serializable {
     public static <T> Optional<T> bindFrom(final Map<String, Object> payload,
                                            final Class<T> clazz) {
         if (!payload.isEmpty()) {
-            val annotation = clazz.getAnnotation(ConfigurationProperties.class);
+            val annotation = Objects.requireNonNull(clazz.getAnnotation(ConfigurationProperties.class));
             val name = StringUtils.defaultIfBlank(annotation.prefix(), annotation.value());
             val binder = new Binder(ConfigurationPropertySources.from(new MapPropertySource(clazz.getSimpleName(), payload)));
             val bound = binder.bind(name, Bindable.of(clazz));

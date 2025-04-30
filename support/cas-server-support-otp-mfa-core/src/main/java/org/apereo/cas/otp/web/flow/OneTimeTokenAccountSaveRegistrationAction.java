@@ -2,15 +2,17 @@ package org.apereo.cas.otp.web.flow;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -28,7 +30,7 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
      * Parameter name indicating account name.
      */
     public static final String REQUEST_PARAMETER_ACCOUNT_NAME = "accountName";
-    
+
     /**
      * Parameter name indicating a validation request event.
      */
@@ -37,6 +39,8 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
     private final OneTimeTokenCredentialRepository repository;
 
     private final CasConfigurationProperties casProperties;
+
+    private final TenantExtractor tenantExtractor;
 
     protected OneTimeTokenAccount buildOneTimeTokenAccount(final RequestContext requestContext) {
         val currentAcct = getCandidateAccountFrom(requestContext);
@@ -47,6 +51,7 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
             .validationCode(currentAcct.getValidationCode())
             .scratchCodes(currentAcct.getScratchCodes())
             .name(accountName)
+            .tenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
             .build();
     }
 
@@ -65,7 +70,7 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
                 return getErrorEvent(requestContext);
             }
 
-            if (!casProperties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled()
+            if (!isMultipleDeviceRegistrationEnabled(requestContext)
                 && repository.count(currentAcct.getUsername()) > 0) {
                 LOGGER.warn("Unable to register multiple devices for [{}]", currentAcct.getUsername());
                 return getErrorEvent(requestContext);
@@ -86,6 +91,14 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
             LoggingUtils.error(LOGGER, e);
         }
         return getErrorEvent(requestContext);
+    }
+
+    private boolean isMultipleDeviceRegistrationEnabled(final RequestContext requestContext) {
+        return tenantExtractor.extract(requestContext)
+            .filter(tenantDefinition -> !tenantDefinition.getProperties().isEmpty())
+            .map(tenantDefinition -> tenantDefinition.bindProperties().orElseThrow())
+            .map(properties -> properties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled())
+            .orElseGet(() -> casProperties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled());
     }
 
     protected boolean validate(final T account, final RequestContext requestContext) {

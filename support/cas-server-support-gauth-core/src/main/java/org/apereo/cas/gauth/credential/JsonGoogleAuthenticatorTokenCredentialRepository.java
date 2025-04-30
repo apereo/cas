@@ -1,12 +1,12 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,7 +36,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
     public JsonGoogleAuthenticatorTokenCredentialRepository(
         final Resource location,
-        final IGoogleAuthenticator googleAuthenticator,
+        final CasGoogleAuthenticator googleAuthenticator,
         final CipherExecutor<String, String> tokenCredentialCipher,
         final CipherExecutor<Number, Number> scratchCodesCipher,
         final StringSerializer<Map<String, List<OneTimeTokenAccount>>> serializer) {

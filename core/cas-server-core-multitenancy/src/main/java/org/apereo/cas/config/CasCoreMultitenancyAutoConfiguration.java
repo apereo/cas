@@ -35,13 +35,22 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Multitenancy)
 @AutoConfiguration
 public class CasCoreMultitenancyAutoConfiguration {
+    private static final BeanCondition CONDITION = BeanCondition.on("cas.multitenancy.core.enabled").isTrue();
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = TenantsManager.BEAN_NAME)
-    public TenantsManager tenantsManager(final CasConfigurationProperties casProperties) throws Exception {
-        val location = casProperties.getMultitenancy().getJson().getLocation();
-        return new DefaultTenantsManager(location);
+    public TenantsManager tenantsManager(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
+        return BeanSupplier.of(TenantsManager.class)
+            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val location = casProperties.getMultitenancy().getJson().getLocation();
+                return new DefaultTenantsManager(location);
+            })
+            .otherwiseProxy()
+            .get();
     }
 
     @Bean
@@ -80,8 +89,7 @@ public class CasCoreMultitenancyAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(WebflowDecorator.class)
-            .when(BeanCondition.on("cas.multitenancy.core.enabled")
-                .isTrue().given(applicationContext.getEnvironment()))
+            .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> new TenantWebflowDecorator(tenantExtractor))
             .otherwise(WebflowDecorator::noOp)
             .get();

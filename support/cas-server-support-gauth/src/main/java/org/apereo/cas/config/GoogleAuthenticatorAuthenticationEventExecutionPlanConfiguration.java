@@ -14,9 +14,10 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
+import org.apereo.cas.gauth.DefaultCasGoogleAuthenticator;
 import org.apereo.cas.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
-import org.apereo.cas.gauth.GoogleAuthenticatorService;
 import org.apereo.cas.gauth.credential.BaseGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorOneTimeTokenCredentialValidator;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
@@ -36,6 +37,7 @@ import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorValidateTokenAction;
 import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAccountProfilePrepareAction;
 import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAccountProfileRegistrationAction;
 import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAccountProfileWebflowConfigurer;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccountCipherExecutor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccountSerializer;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialDeviceManager;
@@ -58,10 +60,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.DefaultMultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
-import com.warrenstrange.googleauth.GoogleAuthenticator;
-import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import com.warrenstrange.googleauth.KeyRepresentation;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -82,7 +80,6 @@ import org.springframework.core.Ordered;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration}.
@@ -130,14 +127,11 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "googleAuthenticatorInstance")
-        public IGoogleAuthenticator googleAuthenticatorInstance(final CasConfigurationProperties casProperties) {
-            val gauth = casProperties.getAuthn().getMfa().getGauth().getCore();
-            val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
-            bldr.setCodeDigits(gauth.getCodeDigits());
-            bldr.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(gauth.getTimeStepSize()));
-            bldr.setWindowSize(gauth.getWindowSize());
-            bldr.setKeyRepresentation(KeyRepresentation.BASE32);
-            return new GoogleAuthenticatorService(new GoogleAuthenticator(bldr.build()));
+        public CasGoogleAuthenticator googleAuthenticatorInstance(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
+            final CasConfigurationProperties casProperties) {
+            return new DefaultCasGoogleAuthenticator(casProperties, tenantExtractor);
         }
 
         @ConditionalOnMissingBean(name = "googleAuthenticatorAccountCipherExecutor")
@@ -261,8 +255,8 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> googleAuthenticatorOneTimeTokenCredentialValidator(
-            @Qualifier("googleAuthenticatorInstance")
-            final IGoogleAuthenticator googleAuthenticatorInstance,
+            @Qualifier(CasGoogleAuthenticator.BEAN_NAME)
+            final CasGoogleAuthenticator googleAuthenticatorInstance,
             @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
             final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry,
             @Qualifier(OneTimeTokenRepository.BEAN_NAME)
@@ -304,8 +298,8 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier("googleAuthenticatorInstance")
-            final IGoogleAuthenticator googleAuthenticatorInstance,
+            @Qualifier(CasGoogleAuthenticator.BEAN_NAME)
+            final CasGoogleAuthenticator googleAuthenticatorInstance,
             @Qualifier("googleAuthenticatorAccountCipherExecutor")
             final CipherExecutor googleAuthenticatorAccountCipherExecutor,
             @Qualifier("googleAuthenticatorScratchCodesCipherExecutor")
@@ -348,6 +342,8 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_SAVE_ACCOUNT_REGISTRATION)
         public Action googleSaveAccountRegistrationAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
@@ -358,7 +354,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new GoogleAuthenticatorSaveRegistrationAction(
-                    googleAuthenticatorAccountRegistry, casProperties, validator))
+                    googleAuthenticatorAccountRegistry, casProperties, validator, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_GOOGLE_SAVE_ACCOUNT_REGISTRATION)
                 .build()
                 .get();
@@ -388,6 +384,8 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_PREPARE_LOGIN)
         public Action prepareGoogleAuthenticatorLoginAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
             final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry,
@@ -395,7 +393,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new GoogleAuthenticatorPrepareLoginAction(casProperties, googleAuthenticatorAccountRegistry))
+                .withAction(() -> new GoogleAuthenticatorPrepareLoginAction(casProperties, googleAuthenticatorAccountRegistry, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_GOOGLE_PREPARE_LOGIN)
                 .build()
                 .get();
@@ -479,16 +477,18 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_ACCOUNT_CREATE_REGISTRATION)
         public Action googleAccountCreateRegistrationAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
             final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
-            val gauth = casProperties.getAuthn().getMfa().getGauth().getCore();
+            
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new OneTimeTokenAccountCreateRegistrationAction(
-                    googleAuthenticatorAccountRegistry, gauth.getLabel(), gauth.getIssuer()))
+                    googleAuthenticatorAccountRegistry, tenantExtractor, casProperties))
                 .withId(CasWebflowConstants.ACTION_ID_GOOGLE_ACCOUNT_CREATE_REGISTRATION)
                 .build()
                 .get();
@@ -563,6 +563,8 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_PREPARE)
         public Action googleAccountProfilePrepareAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("googleAuthenticatorMultifactorAuthenticationProvider")
             final MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider,
@@ -573,7 +575,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new GoogleMultifactorAuthenticationAccountProfilePrepareAction(googleAuthenticatorAccountRegistry,
-                            googleAuthenticatorMultifactorAuthenticationProvider, casProperties))
+                            googleAuthenticatorMultifactorAuthenticationProvider, casProperties, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_PREPARE)
                 .build()
                 .get();

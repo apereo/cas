@@ -306,4 +306,28 @@ The following tenant definition is allowed to define its [external identity prov
 
 {% endtab %}
 
+{% tab multitenancyexamples Multifactor Authentication %}
+
+The following tenant definition will activate 
+[Multifactor Authentication](../mfa/Configuring-Multifactor-Authentication-Triggers.html)
+based on [Duo Security](../mfa/DuoSecurity-Authentication.html):
+
+```json
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.authn.mfa.triggers.global.global-provider-id": "mfa-duo"
+      }
+    }
+  ]
+]
+```
+
+{% endtab %}
+
 {% endtabs %}

@@ -1,8 +1,8 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleA
 
     public JpaGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
                                                            final CipherExecutor<Number, Number> scratchCodesCipher,
-                                                           final IGoogleAuthenticator googleAuthenticator) {
+                                                           final CasGoogleAuthenticator googleAuthenticator) {
         super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator);
     }
 

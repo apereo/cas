@@ -2,11 +2,11 @@ package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccountSerializer;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -52,8 +52,8 @@ class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeT
     private OneTimeTokenCredentialRepository registry;
 
     @Autowired
-    @Qualifier("googleAuthenticatorInstance")
-    private IGoogleAuthenticator googleAuthenticatorInstance;
+    @Qualifier(CasGoogleAuthenticator.BEAN_NAME)
+    private CasGoogleAuthenticator googleAuthenticatorInstance;
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
