@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
@@ -34,14 +35,16 @@ import java.util.UUID;
 @Slf4j
 public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAuthenticationAction<DuoSecurityMultifactorAuthenticationProvider> {
 
-    private final CasConfigurationProperties casProperties;
+    protected final CasConfigurationProperties casProperties;
 
-    private final ServicesManager servicesManager;
+    protected final ServicesManager servicesManager;
 
-    private final PrincipalResolver principalResolver;
+    protected final PrincipalResolver principalResolver;
 
-    private final ServiceFactory serviceFactory;
+    protected final ServiceFactory serviceFactory;
 
+    protected final TenantExtractor tenantExtractor;
+    
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val authentication = WebUtils.getAuthentication(requestContext);

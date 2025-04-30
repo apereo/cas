@@ -5,7 +5,10 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -49,8 +52,9 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     public DuoSecurityUniversalPromptValidateLoginAction(
         final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
         final BrowserWebStorageSessionStore sessionStore,
-        final TicketRegistry ticketRegistry) {
-        super(duoAuthenticationWebflowEventResolver);
+        final TicketRegistry ticketRegistry,
+        final TenantExtractor tenantExtractor) {
+        super(duoAuthenticationWebflowEventResolver, tenantExtractor);
         this.sessionStore = sessionStore;
         this.ticketRegistry = ticketRegistry;
     }
@@ -179,6 +183,9 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                                                  final String duoSecurityIdentifier) {
         LOGGER.trace("Received Duo Security code [{}] for Duo Security identifier [{}]", duoCode, duoSecurityIdentifier);
         val credential = new DuoSecurityUniversalPromptCredential(duoCode, authentication);
+        val credentialMetadata = new BasicCredentialMetadata(credential);
+        credentialMetadata.setTenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(null));
+        
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(duoSecurityIdentifier, applicationContext)
             .orElseThrow(() -> new IllegalArgumentException("Unable to locate multifactor authentication provider by id " + duoSecurityIdentifier));

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,8 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 public class DuoSecurityAuthenticationWebflowAction extends BaseCasWebflowAction {
 
-    private final CasWebflowEventResolver duoAuthenticationWebflowEventResolver;
+    protected final CasWebflowEventResolver duoAuthenticationWebflowEventResolver;
+    protected final TenantExtractor tenantExtractor;
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {

@@ -9,6 +9,7 @@ import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptPre
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityUniversalPromptValidateLoginAction;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -59,6 +60,8 @@ class DuoSecurityConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action duoNonWebAuthenticationAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return WebflowActionBeanSupplier.builder()
@@ -66,7 +69,7 @@ class DuoSecurityConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                    .supply(DuoSecurityDirectAuthenticationAction::new)
+                    .supply(() -> new DuoSecurityDirectAuthenticationAction(tenantExtractor))
                     .otherwise(() -> ConsumerExecutionAction.NONE)
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_DUO_NON_WEB_AUTHENTICATION)
@@ -78,6 +81,8 @@ class DuoSecurityConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action duoAuthenticationWebflowAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("duoAuthenticationWebflowEventResolver")
@@ -85,7 +90,7 @@ class DuoSecurityConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new DuoSecurityAuthenticationWebflowAction(duoAuthenticationWebflowEventResolver))
+                .withAction(() -> new DuoSecurityAuthenticationWebflowAction(duoAuthenticationWebflowEventResolver, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_DUO_AUTHENTICATION_WEBFLOW)
                 .build()
                 .get();
@@ -99,6 +104,8 @@ class DuoSecurityConfiguration {
             final BrowserWebStorageSessionStore duoUniversalPromptSessionStore,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties,
@@ -108,7 +115,8 @@ class DuoSecurityConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                    .supply(() -> new DuoSecurityUniversalPromptPrepareLoginAction(duoUniversalPromptSessionStore, ticketRegistry, ticketFactory))
+                    .supply(() -> new DuoSecurityUniversalPromptPrepareLoginAction(
+                        duoUniversalPromptSessionStore, ticketRegistry, ticketFactory, tenantExtractor))
                     .otherwise(() -> ConsumerExecutionAction.NONE)
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN)
@@ -126,6 +134,8 @@ class DuoSecurityConfiguration {
             final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
             @Qualifier("duoUniversalPromptSessionStore")
             final BrowserWebStorageSessionStore duoUniversalPromptSessionStore,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry) {
             return WebflowActionBeanSupplier.builder()
@@ -134,7 +144,8 @@ class DuoSecurityConfiguration {
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                     .supply(() -> new DuoSecurityUniversalPromptValidateLoginAction(
-                        duoAuthenticationWebflowEventResolver, duoUniversalPromptSessionStore, ticketRegistry))
+                        duoAuthenticationWebflowEventResolver, duoUniversalPromptSessionStore,
+                        ticketRegistry, tenantExtractor))
                     .otherwise(() -> ConsumerExecutionAction.NONE)
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN)

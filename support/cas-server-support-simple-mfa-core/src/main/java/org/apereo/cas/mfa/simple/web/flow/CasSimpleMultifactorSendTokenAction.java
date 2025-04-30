@@ -64,8 +64,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
 
     private static final String MESSAGE_MFA_CONTACT_FAILED_SMS = "cas.mfa.simple.label.contactfailed.sms";
     private static final String MESSAGE_MFA_CONTACT_FAILED_EMAIL = "cas.mfa.simple.label.contactfailed.email";
-
-
+    
     protected final CommunicationsManager communicationsManager;
 
     protected final CasSimpleMultifactorAuthenticationService multifactorAuthenticationService;

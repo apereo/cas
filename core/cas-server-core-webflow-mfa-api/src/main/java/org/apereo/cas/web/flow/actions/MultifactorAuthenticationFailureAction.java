@@ -1,8 +1,10 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
@@ -15,7 +17,9 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.3.4
  */
 @Slf4j
+@RequiredArgsConstructor
 public class MultifactorAuthenticationFailureAction extends AbstractMultifactorAuthenticationAction {
+    protected final TenantExtractor tenantExtractor;
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {

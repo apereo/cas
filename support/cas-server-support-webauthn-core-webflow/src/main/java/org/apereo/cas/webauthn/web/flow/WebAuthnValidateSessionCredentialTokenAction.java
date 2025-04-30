@@ -2,6 +2,7 @@ package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
@@ -27,12 +28,14 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 @Slf4j
 public class WebAuthnValidateSessionCredentialTokenAction extends AbstractMultifactorAuthenticationAction<WebAuthnMultifactorAuthenticationProvider> {
-    private final RegistrationStorage webAuthnCredentialRepository;
+    protected final RegistrationStorage webAuthnCredentialRepository;
 
-    private final SessionManager sessionManager;
+    protected final SessionManager sessionManager;
 
-    private final PrincipalFactory principalFactory;
+    protected final PrincipalFactory principalFactory;
 
+    protected final TenantExtractor tenantExtractor;
+    
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
