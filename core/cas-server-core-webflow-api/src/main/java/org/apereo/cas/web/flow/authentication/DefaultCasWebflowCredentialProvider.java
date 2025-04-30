@@ -29,11 +29,13 @@ public class DefaultCasWebflowCredentialProvider implements CasWebflowCredential
     @Nonnull
     public List<Credential> extract(final RequestContext requestContext) {
         val credential = WebUtils.getCredential(requestContext);
-        if (credential instanceof final AbstractCredential ac && ac.getCredentialMetadata() == null) {
-            ac.setCredentialMetadata(new BasicCredentialMetadata(credential));
+        if (credential instanceof final AbstractCredential ac) {
+            if (ac.getCredentialMetadata() == null) {
+                ac.setCredentialMetadata(new BasicCredentialMetadata(credential));
+            }
+            val credentialMetadata = Objects.requireNonNull(credential).getCredentialMetadata();
+            credentialMetadata.setTenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(null));
         }
-        val credentialMetadata = Objects.requireNonNull(credential).getCredentialMetadata();
-        credentialMetadata.setTenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(null));
         return CollectionUtils.wrapList(credential);
     }
 }
