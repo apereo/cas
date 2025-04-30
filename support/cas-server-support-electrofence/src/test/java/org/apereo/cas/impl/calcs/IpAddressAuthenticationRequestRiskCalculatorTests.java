@@ -65,7 +65,7 @@ class IpAddressAuthenticationRequestRiskCalculatorTests extends BaseAuthenticati
         val nowInEpoch = Instant.now(Clock.systemUTC()).toEpochMilli();
         event.putTimestamp(nowInEpoch);
         val dt = DateTimeUtils.zonedDateTimeOf(nowInEpoch);
-        event.setCreationTime(dt.toString());
+        event.setCreationTime(dt.toInstant());
         event.putClientIpAddress(clientInfo.getClientIpAddress());
         event.putServerIpAddress(clientInfo.getServerIpAddress());
         event.putAgent(clientInfo.getUserAgent());

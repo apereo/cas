@@ -54,7 +54,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
         val dt = DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(event.getTimestamp()));
-        dto.setCreationTime(dt.toString());
+        dto.setCreationTime(dt.toInstant());
         val clientInfo = event.getClientInfo();
         FunctionUtils.doIfNotNull(clientInfo, __ -> {
             dto.putClientIpAddress(clientInfo.getClientIpAddress());
@@ -82,7 +82,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
     @Override
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) throws Throwable {
         val dto = prepareCasEvent(event);
-        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
+        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toInstant());
         dto.putEventId(messageSanitizer.sanitize(event.getTicketGrantingTicket().getId()));
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
         this.casEventRepository.save(dto);
@@ -91,7 +91,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
     @Override
     public void handleCasTicketGrantingTicketDeletedEvent(final CasTicketGrantingTicketDestroyedEvent event) throws Throwable {
         val dto = prepareCasEvent(event);
-        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
+        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toInstant());
         dto.putEventId(messageSanitizer.sanitize(event.getTicketGrantingTicket().getId()));
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
         this.casEventRepository.save(dto);

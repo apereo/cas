@@ -163,7 +163,7 @@ class CasEventsReportEndpointTests {
                 .putClientIpAddress("127.0.0.1")
                 .putServerIpAddress("127.0.0.2")
                 .putAgent("Firefox")
-                .setCreationTime(ZonedDateTime.now(Clock.systemUTC()).toString())
+                .setCreationTime(ZonedDateTime.now(Clock.systemUTC()).toInstant())
                 .putTimestamp(System.currentTimeMillis());
             val content = MAPPER.writeValueAsString(event);
             val name = event.getEventId() + ".json";

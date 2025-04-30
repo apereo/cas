@@ -1,12 +1,10 @@
 package org.apereo.cas.support.events.jpa;
 
 import org.apereo.cas.support.events.dao.CasEvent;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.GenericGenerator;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

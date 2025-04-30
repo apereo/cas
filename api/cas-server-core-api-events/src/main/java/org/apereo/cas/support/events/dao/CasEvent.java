@@ -22,6 +22,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -110,7 +111,7 @@ public class CasEvent implements Serializable {
 
     @JsonProperty("creationTime")
     @Column(nullable = false)
-    private String creationTime;
+    private Instant creationTime;
 
     @JsonProperty("properties")
     @ElementCollection

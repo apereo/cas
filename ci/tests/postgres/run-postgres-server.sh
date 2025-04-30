@@ -20,5 +20,21 @@ if [ $retVal == 0 ]; then
     printgreen "Postgres docker container is running."
 else
     echo "Postgres docker container failed to start."
+    exit $retVal
 fi
-exit $retVal
+
+printgreen "Running TimescaleDB docker container..."
+docker run -d --rm --name timescaledb \
+  -p 5433:5432 \
+  -e POSTGRES_PASSWORD=password \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_DB=events \
+  timescale/timescaledb:latest-pg17
+docker ps | grep "timescaledb"
+retVal=$?
+if [ $retVal == 0 ]; then
+    printgreen "TimescaleDB docker container is running."
+else
+    echo "TimescaleDB docker container failed to start."
+    exit $retVal
+fi

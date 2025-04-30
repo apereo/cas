@@ -15,6 +15,7 @@ import org.apache.commons.text.StringSubstitutor;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
@@ -51,7 +52,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
                 "clientIpAddress", event.getClientIpAddress(),
                 "principalId", event.getPrincipalId(),
                 "geoLocation", Unchecked.supplier(() -> MAPPER.writeValueAsString(event.getGeoLocation())).get(),
-                "creationTime", event.getCreationTime(),
+                "creationTime", String.valueOf(event.getCreationTime().toEpochMilli()),
                 "tenant", StringUtils.defaultIfBlank(event.getTenant(), "CAS"),
                 "timestamp", String.valueOf(event.getTimestamp()),
                 "type", event.getType()));
@@ -74,7 +75,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
         event.putGeoLocation(geo);
         event.setPrincipalId(pointValues.getTag("principalId"));
         event.setType(pointValues.getTag("type"));
-        event.setCreationTime(pointValues.getTag("creationTime"));
+        event.setCreationTime(Instant.ofEpochMilli(Long.parseLong(pointValues.getTag("creationTime"))));
         event.putClientIpAddress(pointValues.getTag("clientIpAddress"));
         event.putServerIpAddress(pointValues.getTag("serverIpAddress"));
         event.putEventId(pointValues.getStringField("value"));
