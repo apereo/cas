@@ -61,7 +61,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
             .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .orElseThrow(() -> new IllegalArgumentException("Unable to locate multifactor authentication provider by id " + duoSecurityIdentifier));
 
-        val client = getDuoSecurityClient(duoProvider, duoSecurityIdentifier);
+        val client = getDuoSecurityClient(requestContext, duoProvider, duoSecurityIdentifier);
         val state = client.generateState();
         val service = WebUtils.getService(requestContext);
         LOGGER.debug("Generated Duo Security state [{}] for service [{}]", state, service);
@@ -112,7 +112,8 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         return success(urlWithStatePair.getRight());
     }
 
-    protected Client getDuoSecurityClient(final DuoSecurityMultifactorAuthenticationProvider duoProvider,
+    protected Client getDuoSecurityClient(final RequestContext requestContext,
+                                          final DuoSecurityMultifactorAuthenticationProvider duoProvider,
                                           final String duoSecurityIdentifier) {
         return duoProvider.getDuoAuthenticationService()
             .getDuoClient()
@@ -134,7 +135,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         }
 
         val duoSecurityIdentifier = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(requestContext);
-        val client = getDuoSecurityClient(provider, duoSecurityIdentifier);
+        val client = getDuoSecurityClient(requestContext, provider, duoSecurityIdentifier);
         var effectiveState = state;
         if (provider.getDuoAuthenticationService().getProperties().getSessionStorageType().isTicketRegistry()) {
             val service = WebUtils.getService(requestContext);
