@@ -39,7 +39,7 @@ public interface TenantExtractor {
      * @return the tenant id
      */
     default Optional<TenantDefinition> extract(final HttpServletRequest request) {
-        val flowId = new DefaultFlowUrlHandler().getFlowId(request);
+        val flowId = request != null ? new DefaultFlowUrlHandler().getFlowId(request) : StringUtils.EMPTY;
         return extract(flowId);
     }
 
