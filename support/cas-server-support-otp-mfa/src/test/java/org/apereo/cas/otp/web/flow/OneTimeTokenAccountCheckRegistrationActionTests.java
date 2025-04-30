@@ -11,6 +11,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebflowMfaActions")
 @ExtendWith(CasTestExtension.class)
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = CasCoreMultitenancyAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class OneTimeTokenAccountCheckRegistrationActionTests {
