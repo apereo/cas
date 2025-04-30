@@ -4,17 +4,16 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityDirectCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityPasscodeCredential;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.LinkedMultiValueMap;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DuoSecurityRestHttpRequestCredentialFactoryTests}.
@@ -26,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DuoSecurityRestHttpRequestCredentialFactoryTests {
     @Test
     void verifyOperation() throws Throwable {
-        val factory = new DuoSecurityRestHttpRequestCredentialFactory();
+        val factory = new DuoSecurityRestHttpRequestCredentialFactory(mock(TenantExtractor.class));
         val request = new MockHttpServletRequest();
 
         val body = new LinkedMultiValueMap<String, String>();

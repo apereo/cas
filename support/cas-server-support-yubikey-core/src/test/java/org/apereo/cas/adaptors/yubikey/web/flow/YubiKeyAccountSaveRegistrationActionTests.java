@@ -29,7 +29,8 @@ class YubiKeyAccountSaveRegistrationActionTests extends BaseYubiKeyActionTests {
         context.setParameter(YubiKeyAccountSaveRegistrationAction.PARAMETER_NAME_TOKEN, "yubikeyToken");
         context.setParameter(YubiKeyAccountSaveRegistrationAction.PARAMETER_NAME_ACCOUNT, UUID.randomUUID().toString());
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-        val action = new YubiKeyAccountSaveRegistrationAction(new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
+        val action = new YubiKeyAccountSaveRegistrationAction(
+            new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()), tenantExtractor);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 
@@ -38,7 +39,8 @@ class YubiKeyAccountSaveRegistrationActionTests extends BaseYubiKeyActionTests {
         val context = MockRequestContext.create(applicationContext);
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-        val action = new YubiKeyAccountSaveRegistrationAction(new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
+        val action = new YubiKeyAccountSaveRegistrationAction(
+            new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()), tenantExtractor);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, action.execute(context).getId());
     }
 }

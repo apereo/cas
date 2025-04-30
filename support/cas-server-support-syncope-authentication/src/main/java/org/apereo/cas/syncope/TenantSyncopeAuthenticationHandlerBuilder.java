@@ -24,15 +24,15 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class TenantSyncopeAuthenticationHandlerBuilder implements TenantAuthenticationHandlerBuilder {
-    private final PasswordPolicyContext passwordPolicyConfiguration;
-    private final PrincipalFactory principalFactory;
-    private final ConfigurableApplicationContext applicationContext;
-    private final ServicesManager servicesManager;
+    protected final PasswordPolicyContext passwordPolicyConfiguration;
+    protected final PrincipalFactory principalFactory;
+    protected final ConfigurableApplicationContext applicationContext;
+    protected final ServicesManager servicesManager;
 
     @Override
     public List<? extends AuthenticationHandler> buildInternal(final TenantDefinition tenantDefinition,
                                                                final ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext) {
-        if (!bindingContext.containsBindingFor(SyncopeAuthenticationProperties.class)) {
+        if (bindingContext.isBound() && bindingContext.containsBindingFor(SyncopeAuthenticationProperties.class)) {
             val casProperties = bindingContext.value();
             val syncope = casProperties.getAuthn().getSyncope();
             val handlers = SyncopeUtils.newAuthenticationHandlers(syncope, applicationContext,

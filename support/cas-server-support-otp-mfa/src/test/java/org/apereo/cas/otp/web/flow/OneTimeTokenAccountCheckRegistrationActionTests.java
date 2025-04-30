@@ -3,7 +3,9 @@ package org.apereo.cas.otp.web.flow;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
@@ -12,21 +14,18 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -38,7 +37,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebflowMfaActions")
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@SpringBootTest(classes = CasCoreMultitenancyAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class OneTimeTokenAccountCheckRegistrationActionTests {
     @Autowired
@@ -46,6 +45,10 @@ class OneTimeTokenAccountCheckRegistrationActionTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier(TenantExtractor.BEAN_NAME)
+    private TenantExtractor tenantExtractor;
     
     @Test
     void verifyExistingAccount() throws Throwable {
@@ -58,7 +61,7 @@ class OneTimeTokenAccountCheckRegistrationActionTests {
             .build();
         val repository = mock(OneTimeTokenCredentialRepository.class);
         when(repository.get(anyString())).thenReturn((Collection) List.of(account));
-        val action = new OneTimeTokenAccountCheckRegistrationAction(repository, casProperties);
+        val action = new OneTimeTokenAccountCheckRegistrationAction(repository, casProperties, tenantExtractor);
 
         val context = MockRequestContext.create(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(context.getApplicationContext(),
@@ -80,7 +83,7 @@ class OneTimeTokenAccountCheckRegistrationActionTests {
             .build();
         val repository = mock(OneTimeTokenCredentialRepository.class);
         when(repository.create(anyString())).thenReturn(account);
-        val action = new OneTimeTokenAccountCheckRegistrationAction(repository, casProperties);
+        val action = new OneTimeTokenAccountCheckRegistrationAction(repository, casProperties, tenantExtractor);
 
         val context = MockRequestContext.create(applicationContext);
         ApplicationContextProvider.registerBeanIntoApplicationContext(context.getApplicationContext(),

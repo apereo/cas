@@ -509,8 +509,10 @@ class CasCoreWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowCredentialProvider.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasWebflowCredentialProvider casWebflowCredentialProvider() {
-            return new DefaultCasWebflowCredentialProvider();
+        public CasWebflowCredentialProvider casWebflowCredentialProvider(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor) {
+            return new DefaultCasWebflowCredentialProvider(tenantExtractor);
         }
     }
 

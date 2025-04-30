@@ -32,7 +32,8 @@ class YubiKeyAccountCheckRegistrationActionTests extends BaseYubiKeyActionTests 
         val context = MockRequestContext.create(applicationContext);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
-        val action = new YubiKeyAccountCheckRegistrationAction(new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
+        val action = new YubiKeyAccountCheckRegistrationAction(
+            new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()), tenantExtractor);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 
@@ -43,7 +44,7 @@ class YubiKeyAccountCheckRegistrationActionTests extends BaseYubiKeyActionTests 
         WebUtils.putAuthentication(authentication, context);
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
         val registry = new ClosedYubiKeyAccountRegistry(new DenyAllYubiKeyAccountValidator());
-        val action = new YubiKeyAccountCheckRegistrationAction(registry);
+        val action = new YubiKeyAccountCheckRegistrationAction(registry, tenantExtractor);
         assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.execute(context).getId());
 
     }

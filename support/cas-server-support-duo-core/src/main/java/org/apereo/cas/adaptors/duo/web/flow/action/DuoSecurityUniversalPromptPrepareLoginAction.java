@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.TicketFactory;
@@ -45,9 +46,10 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultifactorAuthenticationAction<DuoSecurityMultifactorAuthenticationProvider> {
-    private final BrowserWebStorageSessionStore duoUniversalPromptSessionStore;
-    private final TicketRegistry ticketRegistry;
-    private final TicketFactory ticketFactory;
+    protected final BrowserWebStorageSessionStore duoUniversalPromptSessionStore;
+    protected final TicketRegistry ticketRegistry;
+    protected final TicketFactory ticketFactory;
+    protected final TenantExtractor tenantExtractor;
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {

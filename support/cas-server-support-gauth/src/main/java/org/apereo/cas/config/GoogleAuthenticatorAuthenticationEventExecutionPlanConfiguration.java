@@ -369,12 +369,14 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
             final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new GoogleAuthenticatorValidateTokenAction(casProperties,
-                    googleAuthenticatorAccountRegistry, googleAuthenticatorOneTimeTokenCredentialValidator))
+                    googleAuthenticatorAccountRegistry, googleAuthenticatorOneTimeTokenCredentialValidator, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_GOOGLE_VALIDATE_TOKEN)
                 .build()
                 .get();
@@ -405,12 +407,15 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         public Action googleAccountCheckRegistrationAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
             final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new GoogleAuthenticatorAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry, casProperties))
+                .withAction(() -> new GoogleAuthenticatorAccountCheckRegistrationAction(
+                    googleAuthenticatorAccountRegistry, casProperties, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_GOOGLE_CHECK_ACCOUNT_REGISTRATION)
                 .build()
                 .get();

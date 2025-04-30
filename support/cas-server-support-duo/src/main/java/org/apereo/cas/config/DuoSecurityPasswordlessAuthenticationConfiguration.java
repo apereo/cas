@@ -8,6 +8,7 @@ import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeaturesEnabled;
@@ -57,6 +58,8 @@ class DuoSecurityPasswordlessAuthenticationConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_DUO_PASSWORDLESS_VERIFY)
     public Action duoSecurityVerifyPasswordlessAuthenticationAction(
+        @Qualifier(TenantExtractor.BEAN_NAME)
+        final TenantExtractor tenantExtractor,
         @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
         final AuthenticationSystemSupport authenticationSystemSupport,
         @Qualifier("duoAuthenticationWebflowEventResolver")
@@ -68,7 +71,8 @@ class DuoSecurityPasswordlessAuthenticationConfiguration {
             .withProperties(casProperties)
             .withAction(() -> BeanSupplier.of(Action.class)
                 .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new DuoSecurityVerifyPasswordlessAuthenticationAction(authenticationSystemSupport, duoAuthenticationWebflowEventResolver))
+                .supply(() -> new DuoSecurityVerifyPasswordlessAuthenticationAction(
+                    authenticationSystemSupport, duoAuthenticationWebflowEventResolver, tenantExtractor))
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get())
             .withId(CasWebflowConstants.ACTION_ID_DUO_PASSWORDLESS_VERIFY)
