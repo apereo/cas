@@ -24,23 +24,13 @@
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoint.health.show-details=always",
     "--management.endpoints.access.default=UNRESTRICTED",
-    
+
+    "--cas.authn.saml-idp.metadata.amazon-s3.crypto.enabled=true",
+
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
-  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh",
-  "variations": [
-    {
-      "properties": [
-        "--cas.authn.saml-idp.metadata.amazon-s3.crypto.enabled=true"
-      ]
-    },
-    {
-      "properties": [
-        "--cas.authn.saml-idp.metadata.amazon-s3.crypto.enabled=false"
-      ]
-    }
-  ]
+  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"
 }
 

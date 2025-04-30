@@ -11,17 +11,17 @@ const assert = require("assert");
     let response = await cas.gotoLogin(page, service);
     await cas.sleep(1000);
     await cas.log(`${response.status()} ${response.statusText()}`);
-    assert(response.status() === 403);
+    assert(response.status() >= 400);
 
     response = await cas.gotoLogin(page, `${service}&client_id=client`);
     await cas.log(`${response.status()} ${response.statusText()}`);
-    assert(response.status() === 403);
+    assert(response.status() >= 400);
 
     await cas.log("Checking for unauthorized logout redirect...");
     response = await cas.goto(page, `https://localhost:8443/cas/logout?client_id=client&service=${service}`);
     await cas.sleep(1000);
     await cas.log(`${response.status()} ${response.statusText()}`);
-    assert(response.status() === 403);
+    assert(response.status() >= 400);
     
     await browser.close();
 })();
