@@ -59,6 +59,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
         val consent = new ConsentDecision();
         consent.setPrincipal(principalId);
         consent.setService(service.getId());
+        consent.setTenant(service.getTenant());
         return update(consent, attributes);
     }
 

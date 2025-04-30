@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -32,7 +33,9 @@ public class OAuth20DefaultDeviceUserCodeFactory implements OAuth20DeviceUserCod
     public OAuth20DeviceUserCode createDeviceUserCode(final String id, final Service service) {
         val userCode = StringUtils.defaultIfBlank(id, normalizeUserCode(RandomUtils.randomAlphanumeric(userCodeLength)));
         val expirationPolicyToUse = OAuth20DeviceTokenUtils.determineExpirationPolicyForService(servicesManager, expirationPolicyBuilder, service);
-        return new OAuth20DefaultDeviceUserCode(normalizeUserCode(userCode), service, expirationPolicyToUse);
+        val duc = new OAuth20DefaultDeviceUserCode(normalizeUserCode(userCode), service, expirationPolicyToUse);
+        FunctionUtils.doIfNotNull(service, __ -> duc.setTenantId(service.getTenant()));
+        return duc;
     }
 
     @Override

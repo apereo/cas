@@ -82,6 +82,7 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
         val refreshToken = new OAuth20DefaultRefreshToken(codeId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket,
             scopes, clientId, accessToken, requestClaims, responseType, grantType);
+        FunctionUtils.doIfNotNull(service, __ -> refreshToken.setTenantId(service.getTenant()));
         descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, refreshToken);
         return refreshToken;
     }
