@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.authn.DefaultDuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityClientBuilder;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityDirectCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationDeviceManager;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
@@ -44,7 +45,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.DirectObjectProvider;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -62,7 +62,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
@@ -104,8 +103,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
     private static final int WEBFLOW_CONFIGURER_ORDER = 0;
 
-    @Configuration(value = "DuoSecurityAuthenticationEventExecutionConfiguration",
-        proxyBeanMethods = false)
+    @Configuration(value = "DuoSecurityAuthenticationEventExecutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class DuoSecurityAuthenticationEventExecutionConfiguration {
         private static BeanContainer<AuthenticationMetaDataPopulator> duoAuthenticationMetaDataPopulator(
@@ -188,8 +186,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
     }
 
-    @Configuration(value = "DuoSecurityAuthenticationMonitorConfiguration",
-        proxyBeanMethods = false)
+    @Configuration(value = "DuoSecurityAuthenticationMonitorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class DuoSecurityAuthenticationMonitorConfiguration {
         @Bean
@@ -204,8 +201,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         }
     }
 
-    @Configuration(value = "DuoSecurityAuthenticationEventExecutionPlanCoreConfiguration",
-        proxyBeanMethods = false)
+    @Configuration(value = "DuoSecurityAuthenticationEventExecutionPlanCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @Slf4j
     static class DuoSecurityAuthenticationEventExecutionPlanCoreConfiguration {
@@ -292,22 +288,15 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                     .<String, DuoSecurityUserAccount>build();
 
                 LOGGER.trace("Activating universal prompt authentication service for duo security");
-                val resolver = SpringExpressionLanguageValueResolver.getInstance();
                 val duoClient = applicationContext.getBeanProvider(Client.class)
-                    .getIfAvailable(Unchecked.supplier(() ->
-                        new Client.Builder(
-                            resolver.resolve(properties.getDuoIntegrationKey()),
-                            resolver.resolve(properties.getDuoSecretKey()),
-                            resolver.resolve(properties.getDuoApiHost()),
-                            casProperties.getServer().getLoginUrl()).build()));
+                    .getIfAvailable(() -> DuoSecurityClientBuilder.build(casProperties, properties));
                 return new UniversalPromptDuoSecurityAuthenticationService(properties, httpClient, duoClient,
                     multifactorAuthenticationPrincipalResolvers, cache);
             });
         }
     }
 
-    @Configuration(value = "DuoSecurityAuthenticationWebflowActionsConfiguration",
-        proxyBeanMethods = false)
+    @Configuration(value = "DuoSecurityAuthenticationWebflowActionsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class DuoSecurityAuthenticationWebflowActionsConfiguration {
         @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")
@@ -398,8 +387,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         }
     }
 
-    @Configuration(value = "DuoSecurityAuthenticationEventExecutionPlanWebConfiguration",
-        proxyBeanMethods = false)
+    @Configuration(value = "DuoSecurityAuthenticationEventExecutionPlanWebConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class DuoSecurityAuthenticationEventExecutionPlanWebConfiguration {
         @Bean
@@ -430,8 +418,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         }
     }
 
-    @Configuration(value = "SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration",
-        proxyBeanMethods = false)
+    @Configuration(value = "SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnClass(SurrogateAuthenticationService.class)
     static class SurrogateAuthenticationDuoSecurityWebflowPlanConfiguration {
@@ -513,6 +500,5 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             }
         }
     }
-
 
 }
