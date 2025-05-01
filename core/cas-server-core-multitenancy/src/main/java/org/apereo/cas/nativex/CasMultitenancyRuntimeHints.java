@@ -45,6 +45,8 @@ public class CasMultitenancyRuntimeHints implements CasRuntimeHintsRegistrar {
         registerReflectionHints(hints, classes);
 
         registerReflectionHints(hints, TenantExtractor.class);
+        
+        registerProxyHints(hints, TenantsManager.class);
         registerSpringProxyHints(hints, TenantsManager.class, DisposableBean.class);
     }
 }

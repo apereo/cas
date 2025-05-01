@@ -42,7 +42,8 @@ public class YubiKeyAccountSaveRegistrationAction extends AbstractMultifactorAut
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
-            val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal(), requestContext);
+            val authentication = WebUtils.getAuthentication(requestContext);
+            val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
             val uid = principal.getId();
             val token = WebUtils.getRequestParameterOrAttribute(requestContext, PARAMETER_NAME_TOKEN).orElseThrow();
             val accountName = WebUtils.getRequestParameterOrAttribute(requestContext, PARAMETER_NAME_ACCOUNT).orElseThrow();

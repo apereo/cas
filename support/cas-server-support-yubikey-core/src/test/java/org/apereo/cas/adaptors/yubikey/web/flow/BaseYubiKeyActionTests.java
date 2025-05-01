@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.yubikey.web.flow;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -41,6 +42,11 @@ public abstract class BaseYubiKeyActionTests {
         @Bean
         public MultifactorAuthenticationProvider yubikeyProvider() {
             return new YubiKeyMultifactorAuthenticationProvider();
+        }
+
+        @Bean
+        public MultifactorAuthenticationPrincipalResolver yubikeyMfaPrincipalResolver() {
+            return MultifactorAuthenticationPrincipalResolver.identical();
         }
     }
 }
