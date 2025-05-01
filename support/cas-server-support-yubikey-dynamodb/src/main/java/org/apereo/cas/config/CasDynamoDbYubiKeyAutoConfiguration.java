@@ -37,11 +37,11 @@ public class CasDynamoDbYubiKeyAutoConfiguration {
         @Qualifier("yubikeyDynamoDbClient")
         final DynamoDbClient yubikeyDynamoDbClient) {
         val db = casProperties.getAuthn().getMfa().getYubikey().getDynamoDb();
-        val f = new DynamoDbYubiKeyFacilitator(db, yubikeyDynamoDbClient);
+        val facilitator = new DynamoDbYubiKeyFacilitator(db, yubikeyDynamoDbClient);
         if (!db.isPreventTableCreationOnStartup()) {
-            f.createTable(db.isDropTablesOnStartup());
+            facilitator.createTable(db.isDropTablesOnStartup());
         }
-        return f;
+        return facilitator;
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

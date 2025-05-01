@@ -26,7 +26,6 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -142,7 +141,7 @@ class ReturnMappedAttributeReleasePolicyTests {
             .build();
         val result = policyWritten.getAttributes(releasePolicyContext);
         assertTrue(result.containsKey("attr1"));
-        assertEquals(2, ((Collection) result.get("attr1")).size());
+        assertEquals(2, result.get("attr1").size());
     }
 
     @Test
