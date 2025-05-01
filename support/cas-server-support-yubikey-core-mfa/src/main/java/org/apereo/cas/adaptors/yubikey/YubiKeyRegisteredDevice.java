@@ -64,6 +64,10 @@ public class YubiKeyRegisteredDevice implements Serializable, Cloneable {
     private String name;
 
     @Column
+    @JsonProperty("tenant")
+    private String tenant;
+
+    @Column
     @JsonProperty("registrationDate")
     @Builder.Default
     private ZonedDateTime registrationDate = ZonedDateTime.now(ZoneOffset.UTC);

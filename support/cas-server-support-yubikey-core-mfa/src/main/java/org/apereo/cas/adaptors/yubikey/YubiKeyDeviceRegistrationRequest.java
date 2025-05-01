@@ -43,4 +43,6 @@ public class YubiKeyDeviceRegistrationRequest implements Serializable {
     @JsonProperty("token")
     private String token;
 
+    @JsonProperty("tenant")
+    private String tenant;
 }
