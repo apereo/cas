@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.yubikey.web.flow;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
+import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
@@ -52,6 +53,7 @@ public class YubiKeyAccountSaveRegistrationAction extends AbstractMultifactorAut
                 .username(uid)
                 .name(accountName)
                 .token(token)
+                .tenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(null))
                 .build();
 
             if (StringUtils.isNotBlank(token) && registry.registerAccountFor(regRequest)) {
