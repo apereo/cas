@@ -81,6 +81,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableAsync;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -283,7 +284,10 @@ class CasCoreServicesConfiguration {
                     Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
                 chainingRegistry.addServiceRegistry(inMemoryServiceRegistry);
             }
-            chainingRegistry.addServiceRegistries(serviceRegistryExecutionPlan.getServiceRegistries());
+            val serviceRegistries = serviceRegistryExecutionPlan.getServiceRegistries();
+            AnnotationAwareOrderComparator.sort(serviceRegistries);
+
+            chainingRegistry.addServiceRegistries(serviceRegistries);
             return chainingRegistry;
         }
     }

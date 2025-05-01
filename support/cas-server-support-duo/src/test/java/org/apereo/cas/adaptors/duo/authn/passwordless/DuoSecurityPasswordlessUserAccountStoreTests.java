@@ -12,6 +12,7 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
+import com.duosecurity.Client;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -97,7 +98,13 @@ class DuoSecurityPasswordlessUserAccountStoreTests {
     static class DuoSecurityTestConfiguration {
         @Bean
         public DuoSecurityClient duoUniversalPromptAuthenticationClient(final CasConfigurationProperties casProperties) {
-            return new DuoSecurityClient(casProperties.getServer().getLoginUrl(), casProperties.getAuthn().getMfa().getDuo().getFirst());
+            val client = mock(DuoSecurityClient.class);
+            val duo = casProperties.getAuthn().getMfa().getDuo().getFirst();
+            when(client.getDuoApiHost()).thenReturn(duo.getDuoApiHost());
+            when(client.getDuoIntegrationKey()).thenReturn(duo.getDuoIntegrationKey());
+            when(client.getDuoSecretKey()).thenReturn(duo.getDuoSecretKey());
+            when(client.getInstance()).thenReturn(mock(Client.class));
+            return client;
         }
 
     }
