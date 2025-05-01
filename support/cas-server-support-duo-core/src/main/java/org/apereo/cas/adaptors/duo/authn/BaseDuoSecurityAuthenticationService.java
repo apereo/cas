@@ -13,7 +13,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.duosecurity.client.Http;
-import com.duosecurity.client.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.AccessLevel;
@@ -191,10 +190,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
                 .certificatePinner(CertificatePinner.DEFAULT)
                 .sslSocketFactory(factory.getSslContext().getSocketFactory(), (X509TrustManager) factory.getTrustManagers()[0]);
         } else {
-            val caCertificatesField = ReflectionUtils.findField(Http.class, "DEFAULT_CA_CERTS");
-            ReflectionUtils.makeAccessible(Objects.requireNonNull(caCertificatesField));
-            val certificates = (String[]) ReflectionUtils.getField(caCertificatesField, request);
-            val pinner = Util.createPinner(host.getHost(), certificates);
+            val pinner = getDuoClient().createCertificatePinner(host.getHost(), request);
             clientInstanceBuilder.certificatePinner(pinner);
         }
         val httpClientField = ReflectionUtils.findField(Http.class, "httpClient");
@@ -204,8 +200,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         ReflectionUtils.setField(httpClientField, request, clientInstance);
         return request;
     }
-
-
+    
     protected void configureHttpRequest(final Http request) {
         val factory = httpClient.httpClientFactory();
         if (factory.getProxy() != null) {

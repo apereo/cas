@@ -272,7 +272,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests {
             when(duoClient.createAuthUrl(anyString(), anyString())).thenReturn("https://duo.com");
             when(duoClient.exchangeAuthorizationCodeFor2FAResult(anyString(), anyString())).thenReturn(token);
 
-            when(client.build()).thenReturn(duoClient);
+            when(client.getInstance()).thenReturn(duoClient);
             return client;
         }
     }

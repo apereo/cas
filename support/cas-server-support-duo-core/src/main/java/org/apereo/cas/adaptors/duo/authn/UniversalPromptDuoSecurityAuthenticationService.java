@@ -49,7 +49,7 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
         LOGGER.trace("Exchanging Duo Security authorization code [{}]", credential.getId());
 
         val principalId = getDuoPrincipalId(duoCredential);
-        val client = duoClient.build();
+        val client = duoClient.getInstance();
         val result = client.exchangeAuthorizationCodeFor2FAResult(credential.getId(), principalId);
         LOGGER.debug("Validated Duo Security code [{}] with result [{}]", credential.getId(), result);
 
@@ -158,7 +158,7 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
     @Override
     public boolean ping() {
         try {
-            val response = duoClient.build().healthCheck();
+            val response = duoClient.getInstance().healthCheck();
             LOGGER.debug("Received Duo Security health check response [{}]", response);
             return true;
         } catch (final Exception e) {
