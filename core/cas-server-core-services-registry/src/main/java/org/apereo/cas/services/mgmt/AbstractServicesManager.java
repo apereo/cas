@@ -182,7 +182,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             .map(locator -> locator.locate(candidates, service))
             .filter(registeredService -> validateRegisteredService(registeredService) != null)
             .findFirst();
-
+        
         if (foundService.isEmpty()) {
             val serviceRegistry = configurationContext.getServiceRegistry();
             LOGGER.trace("Service [{}] is not cached; Searching [{}]", service.getId(), serviceRegistry.getName());

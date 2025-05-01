@@ -83,7 +83,6 @@ public class DuoSecurityClient {
                 loginUrl);
             val newCerts = fetchCaCerts(clientBuilder);
             clientBuilder.setCACerts(newCerts);
-
             return clientBuilder.build();
         });
     }

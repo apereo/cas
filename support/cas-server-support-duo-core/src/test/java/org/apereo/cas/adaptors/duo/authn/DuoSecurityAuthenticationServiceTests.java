@@ -14,6 +14,7 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import com.duosecurity.Client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -212,7 +213,12 @@ class DuoSecurityAuthenticationServiceTests {
 
         @Override
         public DuoSecurityClient getDuoClient() {
-            return new DuoSecurityClient("https://localhost:8443/cas/login", properties);
+            val client = mock(DuoSecurityClient.class);
+            when(client.getDuoApiHost()).thenReturn(properties.getDuoApiHost());
+            when(client.getDuoIntegrationKey()).thenReturn(properties.getDuoIntegrationKey());
+            when(client.getDuoSecretKey()).thenReturn(properties.getDuoSecretKey());
+            when(client.getInstance()).thenReturn(mock(Client.class));
+            return client;
         }
 
         @Override

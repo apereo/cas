@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 @Getter
 @Slf4j
 public class DefaultServiceRegistryExecutionPlan implements ServiceRegistryExecutionPlan {
-    private final Collection<ServiceRegistry> serviceRegistries = new ArrayList<>();
+    private final List<ServiceRegistry> serviceRegistries = new ArrayList<>();
 
     @Override
     @CanIgnoreReturnValue
