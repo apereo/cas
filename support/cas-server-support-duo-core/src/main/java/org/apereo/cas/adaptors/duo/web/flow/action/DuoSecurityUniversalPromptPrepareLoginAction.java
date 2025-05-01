@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityClient;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -21,7 +22,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
-import com.duosecurity.Client;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -61,7 +61,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
             .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .orElseThrow(() -> new IllegalArgumentException("Unable to locate multifactor authentication provider by id " + duoSecurityIdentifier));
 
-        val client = getDuoSecurityClient(requestContext, duoProvider, duoSecurityIdentifier);
+        val client = getDuoSecurityClient(requestContext, duoProvider, duoSecurityIdentifier).build();
         val state = client.generateState();
         val service = WebUtils.getService(requestContext);
         LOGGER.debug("Generated Duo Security state [{}] for service [{}]", state, service);
@@ -112,13 +112,10 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         return success(urlWithStatePair.getRight());
     }
 
-    protected Client getDuoSecurityClient(final RequestContext requestContext,
-                                          final DuoSecurityMultifactorAuthenticationProvider duoProvider,
-                                          final String duoSecurityIdentifier) {
-        return duoProvider.getDuoAuthenticationService()
-            .getDuoClient()
-            .map(Client.class::cast)
-            .orElseThrow(() -> new RuntimeException("Unable to locate Duo Security client for provider id " + duoSecurityIdentifier));
+    protected DuoSecurityClient getDuoSecurityClient(final RequestContext requestContext,
+                                                     final DuoSecurityMultifactorAuthenticationProvider duoProvider,
+                                                     final String duoSecurityIdentifier) {
+        return duoProvider.getDuoAuthenticationService().getDuoClient();
     }
 
     protected Pair<String, String> createAuthUrlWithState(final DuoSecurityMultifactorAuthenticationProvider provider,
@@ -135,7 +132,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         }
 
         val duoSecurityIdentifier = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(requestContext);
-        val client = getDuoSecurityClient(requestContext, provider, duoSecurityIdentifier);
+        val client = getDuoSecurityClient(requestContext, provider, duoSecurityIdentifier).build();
         var effectiveState = state;
         if (provider.getDuoAuthenticationService().getProperties().getSessionStorageType().isTicketRegistry()) {
             val service = WebUtils.getService(requestContext);

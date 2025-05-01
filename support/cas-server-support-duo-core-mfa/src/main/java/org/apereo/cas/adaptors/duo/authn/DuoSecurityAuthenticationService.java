@@ -4,8 +4,6 @@ import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.spring.beans.BeanCondition;
-
-import java.io.Serializable;
 import java.util.Optional;
 
 /**
@@ -14,7 +12,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public interface DuoSecurityAuthenticationService extends Serializable {
+public interface DuoSecurityAuthenticationService {
     /**
      * Condition to activate Duo Security.
      */
@@ -98,9 +96,12 @@ public interface DuoSecurityAuthenticationService extends Serializable {
      */
     DuoSecurityUserAccount getUserAccount(String username);
 
-    default Optional<Object> getDuoClient() {
-        return Optional.empty();
-    }
+    /**
+     * Gets duo client.
+     *
+     * @return the duo client
+     */
+    DuoSecurityClient getDuoClient();
 
     /**
      * Gets admin api service.

@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.duo.web;
 
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityClient;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationDeviceManager;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.UniversalPromptDuoSecurityAuthenticationService;
@@ -9,6 +10,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
@@ -16,7 +18,6 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
-import com.duosecurity.Client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
@@ -78,12 +79,14 @@ class DuoSecurityAdminApiEndpointTests {
     static class DuoSecurityMultifactorTestConfiguration {
         @Bean
         public DuoSecurityMultifactorAuthenticationProvider duoProvider(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
             @Qualifier("noRedirectHttpClient")
             final HttpClient httpClient) {
             val duoService = new UniversalPromptDuoSecurityAuthenticationService(
                 casProperties.getAuthn().getMfa().getDuo().getFirst(), httpClient,
-                mock(Client.class), List.of(), Caffeine.newBuilder().build());
+                mock(DuoSecurityClient.class), List.of(), Caffeine.newBuilder().build(), tenantExtractor);
             val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);
             when(bean.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
             when(bean.getDuoAuthenticationService()).thenReturn(duoService);

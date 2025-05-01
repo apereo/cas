@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
@@ -25,11 +26,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DuoSecurityAuthenticationServiceTests}.
@@ -38,7 +39,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = CasCoreWebAutoConfiguration.class, properties = "cas.http-client.host-name-verifier=none")
+@SpringBootTest(classes = CasCoreWebAutoConfiguration.class,
+    properties = "cas.http-client.host-name-verifier=none")
 @EnableConfigurationProperties({
     CasConfigurationProperties.class,
     WebProperties.class
@@ -190,24 +192,27 @@ class DuoSecurityAuthenticationServiceTests {
             .setDuoIntegrationKey("DICLHRWL1KQK5EUAQP46");
         val userCache = Caffeine.newBuilder().<String, DuoSecurityUserAccount>build();
         return new MockDuoSecurityAuthenticationService(properties, httpClient,
-            List.of(MultifactorAuthenticationPrincipalResolver.identical()), userCache);
+            List.of(MultifactorAuthenticationPrincipalResolver.identical()), userCache, mock(TenantExtractor.class));
     }
 
     private static class MockDuoSecurityAuthenticationService extends BaseDuoSecurityAuthenticationService {
 
-        @Serial
-        private static final long serialVersionUID = -8923758114214529510L;
-
         protected MockDuoSecurityAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties properties,
                                                        final HttpClient httpClient,
                                                        final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
-                                                       final Cache<String, DuoSecurityUserAccount> userAccountCache) {
-            super(properties, httpClient, multifactorAuthenticationPrincipalResolver, userAccountCache);
+                                                       final Cache<String, DuoSecurityUserAccount> userAccountCache,
+                                                       final TenantExtractor tenantExtractor) {
+            super(properties, httpClient, tenantExtractor, multifactorAuthenticationPrincipalResolver, userAccountCache);
         }
 
         @Override
         public boolean ping() {
             return true;
+        }
+
+        @Override
+        public DuoSecurityClient getDuoClient() {
+            return new DuoSecurityClient("https://localhost:8443/cas/login", properties);
         }
 
         @Override

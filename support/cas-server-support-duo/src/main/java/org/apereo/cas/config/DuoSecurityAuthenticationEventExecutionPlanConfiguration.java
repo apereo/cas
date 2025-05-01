@@ -5,7 +5,7 @@ import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.authn.DefaultDuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
-import org.apereo.cas.adaptors.duo.authn.DuoSecurityClientBuilder;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityClient;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityDirectCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationDeviceManager;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
@@ -57,7 +57,6 @@ import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
-import com.duosecurity.Client;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -227,6 +226,8 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanContainer<MultifactorAuthenticationProvider> duoMultifactorAuthenticationProviders(
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
             final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolvers,
             @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
@@ -252,7 +253,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                             provider.setRegistration(duoProps.getRegistration());
                             provider.setDeviceManager(new DuoSecurityMultifactorAuthenticationDeviceManager(provider));
                             val duoAuthenticationService = getDuoAuthenticationService(applicationContext,
-                                multifactorAuthenticationPrincipalResolvers, httpClient, casProperties, duoProps);
+                                multifactorAuthenticationPrincipalResolvers, httpClient, tenantExtractor, casProperties, duoProps);
                             var name = provider.getId().concat("-duoAuthenticationService");
                             ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, duoAuthenticationService, name);
                             provider.setDuoAuthenticationService(duoAuthenticationService);
@@ -278,6 +279,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolvers,
             final HttpClient httpClient,
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
             final DuoSecurityMultifactorAuthenticationProperties properties) {
             return FunctionUtils.doUnchecked(() -> {
@@ -288,10 +290,10 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                     .<String, DuoSecurityUserAccount>build();
 
                 LOGGER.trace("Activating universal prompt authentication service for duo security");
-                val duoClient = applicationContext.getBeanProvider(Client.class)
-                    .getIfAvailable(() -> DuoSecurityClientBuilder.build(casProperties, properties));
+                val duoClient = applicationContext.getBeanProvider(DuoSecurityClient.class)
+                    .getIfAvailable(() -> new DuoSecurityClient(casProperties.getServer().getLoginUrl(), properties));
                 return new UniversalPromptDuoSecurityAuthenticationService(properties, httpClient, duoClient,
-                    multifactorAuthenticationPrincipalResolvers, cache);
+                    multifactorAuthenticationPrincipalResolvers, cache, tenantExtractor);
             });
         }
     }

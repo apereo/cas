@@ -5,11 +5,11 @@ import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
-import com.duosecurity.Client;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -78,13 +78,15 @@ class DefaultDuoSecurityAdminApiServiceTests {
     static class DuoSecurityAdminTestConfiguration {
         @Bean
         public DuoSecurityAdminApiService duoSecurityAdminApiService(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier("noRedirectHttpClient") final HttpClient httpClient,
             final CasConfigurationProperties casProperties) {
 
             val duoProps = casProperties.getAuthn().getMfa().getDuo().getFirst();
             val service = new DefaultDuoSecurityAdminApiService(httpClient, duoProps);
             val duoService = new UniversalPromptDuoSecurityAuthenticationService(duoProps, httpClient,
-                mock(Client.class), List.of(), Caffeine.newBuilder().build());
+                mock(DuoSecurityClient.class), List.of(), Caffeine.newBuilder().build(), tenantExtractor);
             val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);
             when(bean.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
             when(bean.getDuoAuthenticationService()).thenReturn(duoService);

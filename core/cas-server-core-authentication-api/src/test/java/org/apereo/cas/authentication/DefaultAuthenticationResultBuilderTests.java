@@ -8,8 +8,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -48,8 +46,8 @@ class DefaultAuthenticationResultBuilderTests {
 
         assertTrue(attributes.containsKey("uid"));
         assertTrue(attributes.containsKey("givenName"));
-        assertEquals(1, ((Collection) attributes.get("uid")).size());
-        assertEquals(1, ((Collection) attributes.get("givenName")).size());
+        assertEquals(1, attributes.get("uid").size());
+        assertEquals(1, attributes.get("givenName").size());
     }
 
     @Test
@@ -75,7 +73,7 @@ class DefaultAuthenticationResultBuilderTests {
         assertNotNull(authentication);
         val authnAttributes = authentication.getAttributes();
         assertTrue(authnAttributes.containsKey("authn"));
-        assertEquals(2, ((Collection) authnAttributes.get("authn")).size());
+        assertEquals(2, authnAttributes.get("authn").size());
 
         val principal = authentication.getPrincipal();
         assertNotNull(principal);
@@ -85,8 +83,8 @@ class DefaultAuthenticationResultBuilderTests {
 
         assertTrue(attributes.containsKey("uid"));
         assertTrue(attributes.containsKey("givenName"));
-        assertEquals(2, ((Collection) attributes.get("uid")).size());
-        assertEquals(2, ((Collection) attributes.get("givenName")).size());
-        assertEquals(1, ((Collection) attributes.get("email")).size());
+        assertEquals(2, attributes.get("uid").size());
+        assertEquals(2, attributes.get("givenName").size());
+        assertEquals(1, attributes.get("email").size());
     }
 }
