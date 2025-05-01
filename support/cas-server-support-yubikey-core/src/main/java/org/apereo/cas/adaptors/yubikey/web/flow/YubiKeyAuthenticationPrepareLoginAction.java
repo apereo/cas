@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey.web.flow;
 
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
@@ -18,8 +19,9 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 public class YubiKeyAuthenticationPrepareLoginAction extends BaseCasWebflowAction {
-    private final CasConfigurationProperties casProperties;
-
+    protected final CasConfigurationProperties casProperties;
+    protected final TenantExtractor tenantExtractor;
+    
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val registrationEnabled = casProperties.getAuthn().getMfa().getYubikey().isMultipleDeviceRegistrationEnabled()

@@ -125,13 +125,15 @@ class YubiKeyAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_YUBIKEY_AUTHENTICATION)
         public Action yubikeyAuthenticationWebflowAction(
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
             @Qualifier("yubikeyAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new YubiKeyAuthenticationWebflowAction(yubikeyAuthenticationWebflowEventResolver))
+                .withAction(() -> new YubiKeyAuthenticationWebflowAction(yubikeyAuthenticationWebflowEventResolver, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_YUBIKEY_AUTHENTICATION)
                 .build()
                 .get();
@@ -142,11 +144,13 @@ class YubiKeyAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_YUBIKEY_PREPARE_LOGIN)
         public Action prepareYubiKeyAuthenticationLoginAction(
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new YubiKeyAuthenticationPrepareLoginAction(casProperties))
+                .withAction(() -> new YubiKeyAuthenticationPrepareLoginAction(casProperties, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_YUBIKEY_PREPARE_LOGIN)
                 .build()
                 .get();
