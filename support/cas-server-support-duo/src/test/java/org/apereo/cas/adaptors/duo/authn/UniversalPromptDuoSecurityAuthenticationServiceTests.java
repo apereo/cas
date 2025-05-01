@@ -51,7 +51,7 @@ class UniversalPromptDuoSecurityAuthenticationServiceTests {
         }
         val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
         val client = mock(DuoSecurityClient.class);
-        when(client.build()).thenReturn(duoClient);
+        when(client.getInstance()).thenReturn(duoClient);
         val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties, mock(HttpClient.class), client,
             List.of(MultifactorAuthenticationPrincipalResolver.identical()), Caffeine.newBuilder().build(),
             mock(TenantExtractor.class));
@@ -84,7 +84,7 @@ class UniversalPromptDuoSecurityAuthenticationServiceTests {
         val duoClient = mock(Client.class);
         when(duoClient.exchangeAuthorizationCodeFor2FAResult(anyString(), anyString())).thenReturn(token);
         val client = mock(DuoSecurityClient.class);
-        when(client.build()).thenReturn(duoClient);
+        when(client.getInstance()).thenReturn(duoClient);
         return new UniversalPromptDuoSecurityAuthenticationService(duoProperties,
             mock(HttpClient.class), client, List.of(MultifactorAuthenticationPrincipalResolver.identical()),
             Caffeine.newBuilder().build(), mock(TenantExtractor.class));
