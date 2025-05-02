@@ -62,7 +62,7 @@ public class PrincipalAttributeRepositoryFetcher {
         val people = attributeRepository.getPeople(query, PrincipalAttributeRepositoryFilter.of(this));
         if (people == null || people.isEmpty()) {
             LOGGER.warn("No person records were fetched from attribute repositories for [{}]", query);
-            return new HashMap<>(0);
+            return new HashMap<>();
         }
 
         if (people.size() > 1) {

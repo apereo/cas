@@ -34,5 +34,5 @@ public class CasCustomProperties implements CasFeatureModule, Serializable {
      * without introducing a new property namespace. This is defined as a map, where
      * the key should be the setting name and the value should be the setting value.
      */
-    private Map<String, String> properties = new HashMap<>(0);
+    private Map<String, String> properties = new HashMap<>();
 }

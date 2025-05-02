@@ -48,7 +48,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
                                                                            final RegisteredService service) {
         if (!service.getAttributeReleasePolicy().isAuthorizedToReleaseAuthenticationAttributes()) {
             LOGGER.debug("Attribute release policy for service [{}] is configured to never release any authentication attributes", service.getServiceId());
-            return new LinkedHashMap<>(0);
+            return new LinkedHashMap<>();
         }
         val attrs = getAuthenticationAttributesForRelease(authentication, service);
 
@@ -94,7 +94,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
                                                                            final RegisteredService service) {
         if (service == null || !service.getAttributeReleasePolicy().isAuthorizedToReleaseAuthenticationAttributes()) {
             LOGGER.debug("Attribute release policy for service [{}] is configured to never release any authentication attributes", service);
-            return new LinkedHashMap<>(0);
+            return new LinkedHashMap<>();
         }
 
         val attrs = new LinkedHashMap<>(authentication.getAttributes());

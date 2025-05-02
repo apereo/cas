@@ -34,8 +34,8 @@ public class JpaConfigurationContext {
     private final PersistenceProvider persistenceProvider;
 
     @Builder.Default
-    private final Map<String, Object> jpaProperties = new LinkedHashMap<>(0);
+    private final Map<String, Object> jpaProperties = new LinkedHashMap<>();
 
     @Builder.Default
-    private final Set<String> packagesToScan = new LinkedHashSet<>(0);
+    private final Set<String> packagesToScan = new LinkedHashSet<>();
 }

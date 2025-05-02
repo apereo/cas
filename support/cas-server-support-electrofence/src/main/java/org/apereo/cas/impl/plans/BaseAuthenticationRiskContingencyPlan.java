@@ -33,7 +33,7 @@ public abstract class BaseAuthenticationRiskContingencyPlan implements Authentic
     protected final ApplicationContext applicationContext;
 
     @Getter
-    protected final Set<AuthenticationRiskNotifier> notifiers = new LinkedHashSet<>(0);
+    protected final Set<AuthenticationRiskNotifier> notifiers = new LinkedHashSet<>();
 
     @Override
     public final AuthenticationRiskContingencyResponse execute(final Authentication authentication,

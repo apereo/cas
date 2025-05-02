@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @NoArgsConstructor
 public class DefaultTicketFactory implements TicketFactory {
-    private final Map<String, Object> factoryMap = new HashMap<>(0);
+    private final Map<String, Object> factoryMap = new HashMap<>();
 
     @Override
     public TicketFactory get(final Class<? extends Ticket> clazz) {

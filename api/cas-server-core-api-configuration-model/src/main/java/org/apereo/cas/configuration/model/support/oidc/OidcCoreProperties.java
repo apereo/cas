@@ -70,7 +70,7 @@ public class OidcCoreProperties implements Serializable {
      * User-defined scopes as well as any and all custom claims that are mapped to the scope
      * must also be defined as scopes and claims supported by CAS in OpenID Connect discovery.
      */
-    private Map<String, String> userDefinedScopes = new HashMap<>(0);
+    private Map<String, String> userDefinedScopes = new HashMap<>();
 
     /**
      * Map fixed claims to CAS attributes.
@@ -84,7 +84,7 @@ public class OidcCoreProperties implements Serializable {
      * resolution configuration and all other CAS-enabled applications.
      * If mapping is not defined, by default CAS attributes are expected to match claim names.
      */
-    private Map<String, String> claimsMap = new HashMap<>(0);
+    private Map<String, String> claimsMap = new HashMap<>();
 
     /**
      * A mapping of authentication context refs (ACR) values.

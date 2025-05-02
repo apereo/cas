@@ -45,7 +45,7 @@ public abstract class AbstractAuthenticationAction extends BaseCasWebflowAction 
             LOGGER.warn(msg);
             val map = CollectionUtils.<String, Throwable>wrap(UnauthorizedAuthenticationException.class.getSimpleName(),
                 new UnauthorizedAuthenticationException(msg));
-            val error = new AuthenticationException(msg, map, new HashMap<>(0));
+            val error = new AuthenticationException(msg, map, new HashMap<>());
             val event = new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
                 new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, error));
             fireEventHooks(event, requestContext);

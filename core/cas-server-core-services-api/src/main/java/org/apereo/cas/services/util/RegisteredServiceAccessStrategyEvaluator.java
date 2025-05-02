@@ -35,7 +35,7 @@ public class RegisteredServiceAccessStrategyEvaluator implements Function<Regist
      * for this service to proceed.
      */
     @Builder.Default
-    private Map<String, Set<String>> requiredAttributes = new HashMap<>(0);
+    private Map<String, Set<String>> requiredAttributes = new HashMap<>();
 
     /**
      * Collection of attributes
@@ -43,7 +43,7 @@ public class RegisteredServiceAccessStrategyEvaluator implements Function<Regist
      * policy to refuse access.
      */
     @Builder.Default
-    private Map<String, Set<String>> rejectedAttributes = new HashMap<>(0);
+    private Map<String, Set<String>> rejectedAttributes = new HashMap<>();
 
     /**
      * Indicates whether matching on required attribute values

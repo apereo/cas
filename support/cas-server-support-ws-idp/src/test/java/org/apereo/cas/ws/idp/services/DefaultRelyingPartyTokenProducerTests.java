@@ -137,7 +137,7 @@ class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIdentityPr
             val builder = mock(SecurityTokenServiceClientBuilder.class);
             when(builder.buildClientForRelyingPartyTokenResponses(any(SecurityToken.class), any(WSFederationRegisteredService.class)))
                 .thenReturn(client);
-            when(client.getProperties()).thenReturn(new HashMap<>(0));
+            when(client.getProperties()).thenReturn(new HashMap<>());
 
             val dbf = DocumentBuilderFactory.newInstance();
             val db = dbf.newDocumentBuilder();

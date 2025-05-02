@@ -95,7 +95,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
             LOGGER.trace("Building ECP SAML response for [{}]", credential.getId());
             val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
             val service = getConfigurationContext().getWebApplicationServiceFactory().createService(issuer);
-            val casAssertion = buildCasAssertion(authentication, service, serviceRequest.getKey(), new LinkedHashMap<>(0));
+            val casAssertion = buildCasAssertion(authentication, service, serviceRequest.getKey(), new LinkedHashMap<>());
 
             LOGGER.trace("CAS assertion to use for building ECP SAML2 response is [{}]", casAssertion);
             buildSamlResponse(context.getHttpResponse(), context.getHttpRequest(),

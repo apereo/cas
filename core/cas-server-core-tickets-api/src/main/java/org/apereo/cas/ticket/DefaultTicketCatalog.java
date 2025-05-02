@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @NoArgsConstructor
 public class DefaultTicketCatalog implements TicketCatalog {
-    private final Map<String, TicketDefinition> ticketMetadataMap = new HashMap<>(0);
+    private final Map<String, TicketDefinition> ticketMetadataMap = new HashMap<>();
 
     @Override
     public void register(final TicketDefinition ticketDefinition) {

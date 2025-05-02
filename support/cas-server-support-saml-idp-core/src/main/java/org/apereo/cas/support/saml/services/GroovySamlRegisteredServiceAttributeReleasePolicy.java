@@ -61,7 +61,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
                     }))
                     .orElseGet(() -> {
                         LOGGER.warn("Groovy script [{}] does not exist or cannot be loaded", groovyScript);
-                        return new HashMap<>(0);
+                        return new HashMap<>();
                     });
             })
             .orElseThrow(() -> new RuntimeException("No groovy script cache manager is available to execute attribute mappings"));

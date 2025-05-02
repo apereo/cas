@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope.authentication;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
@@ -31,6 +32,35 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Syncope")
 @ExtendWith(CasTestExtension.class)
 class SyncopePersonAttributeDaoTests {
+
+    @SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class,
+        properties = {
+            "cas.multitenancy.core.enabled=true",
+            "cas.multitenancy.json.location=classpath:/tenants.json"
+        })
+    @Nested
+    @EnabledIfListeningOnPort(port = 18080)
+    class SyncopeCoreServerWithMultitenancyTests extends BaseSyncopeTests {
+        @Autowired
+        @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+        private PrincipalResolver defaultPrincipalResolver;
+
+        @Test
+        void verifyUserAttributeMappings() throws Throwable {
+            val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("syncopecas");
+            credential.getCredentialMetadata().setTenant("syncope");
+
+            val person = defaultPrincipalResolver.resolve(credential);
+            assertNotNull(person);
+            val attributes = person.getAttributes();
+            assertFalse(attributes.isEmpty());
+            assertNotNull(attributes.get("userId"));
+            assertNotNull(attributes.get("email"));
+            assertNull(attributes.get("syncopeUserAttr_email"));
+            assertNotNull(attributes.get("email_description"));
+            assertNull(attributes.get("syncopeUserAttr_description"));
+        }
+    }
 
     @SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class,
         properties = {
@@ -71,7 +101,6 @@ class SyncopePersonAttributeDaoTests {
             assertNull(attributes.get("syncopeUserAttr_description"));
 
         }
-
     }
 
     @SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class,

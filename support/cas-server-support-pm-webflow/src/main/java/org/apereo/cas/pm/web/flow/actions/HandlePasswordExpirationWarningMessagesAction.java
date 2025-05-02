@@ -32,7 +32,7 @@ public class HandlePasswordExpirationWarningMessagesAction extends BaseCasWebflo
     protected Event doExecuteInternal(final RequestContext context) {
         val attributes = context.getCurrentEvent().getAttributes();
         val warnings = (Collection<MessageDescriptor>)
-            attributes.get(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, Collection.class, new LinkedHashSet<>(0));
+            attributes.get(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, Collection.class, new LinkedHashSet<>());
         val found = warnings
             .stream()
             .filter(PasswordExpiringWarningMessageDescriptor.class::isInstance)

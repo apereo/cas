@@ -134,7 +134,7 @@ class CasCoreAuthenticationHandlersConfiguration {
                     .map(pattern::split)
                     .collect(Collectors.toMap(userAndPassword -> userAndPassword[0], userAndPassword -> userAndPassword[1]));
             }
-            return new HashMap<>(0);
+            return new HashMap<>();
         }
 
 

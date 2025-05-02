@@ -46,7 +46,7 @@ public class AuditableContext {
 
     @Builder.Default
     @Getter
-    private Map<String, Object> properties = new LinkedHashMap<>(0);
+    private Map<String, Object> properties = new LinkedHashMap<>();
 
     public Optional<Service> getService() {
         return Optional.ofNullable(service);

@@ -16,3 +16,7 @@ The following configuration describes how to fetch and retrieve attributes from 
 
 {% include_cached casproperties.html properties="cas.authn.attribute-repository.syncope" %}
 
+## Multitenancy
+
+Configuration settings for Syncope attribute resolution can be specified in a multitenant environment.
+Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.

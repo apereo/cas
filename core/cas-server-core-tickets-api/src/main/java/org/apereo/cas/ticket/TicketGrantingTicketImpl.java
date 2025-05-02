@@ -66,7 +66,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /**
      * The PGTs associated to this ticket.
      */
-    private Map<String, Service> proxyGrantingTickets = new HashMap<>(0);
+    private Map<String, Service> proxyGrantingTickets = new HashMap<>();
 
     /**
      * The ticket ids which are tied to this ticket.

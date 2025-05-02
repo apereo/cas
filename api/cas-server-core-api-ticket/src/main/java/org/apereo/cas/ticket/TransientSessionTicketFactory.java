@@ -82,7 +82,7 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
      * @throws Throwable the throwable
      */
     default T create(final Service service) throws Throwable {
-        return create(service, new LinkedHashMap<>(0));
+        return create(service, new LinkedHashMap<>());
     }
 
     /**

@@ -207,7 +207,7 @@ public class CollectionUtils {
             inner.forEach((k, v) -> map.put(k, wrap(v)));
             return (Map) map;
         }
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 
     /**
@@ -222,7 +222,7 @@ public class CollectionUtils {
         if (source != null && !source.isEmpty()) {
             return new HashMap<>(source);
         }
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 
     /**

@@ -59,7 +59,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
     private PrincipalAttributesCoreProperties.MergingStrategyTypes mergingStrategy =
         PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED;
 
-    private Set<String> attributeRepositoryIds = new LinkedHashSet<>(0);
+    private Set<String> attributeRepositoryIds = new LinkedHashSet<>();
 
     private boolean ignoreResolvedAttributes;
 
@@ -106,7 +106,8 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
     protected Map<String, List<Object>> retrievePersonAttributesFromAttributeRepository(
         final RegisteredServiceAttributeReleasePolicyContext context) {
         val repository = context.getApplicationContext().getBean(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY, PersonAttributeDao.class);
-        return PrincipalAttributeRepositoryFetcher.builder()
+        return PrincipalAttributeRepositoryFetcher
+            .builder()
             .attributeRepository(repository)
             .principalId(context.getPrincipal().getId())
             .activeAttributeRepositoryIdentifiers(this.attributeRepositoryIds)
@@ -118,7 +119,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
     @JsonIgnore
     protected Map<String, List<Object>> getPrincipalAttributes(final Principal principal) {
         if (ignoreResolvedAttributes) {
-            return new HashMap<>(0);
+            return new HashMap<>();
         }
         return convertPrincipalAttributesToPersonAttributes(principal.getAttributes());
     }

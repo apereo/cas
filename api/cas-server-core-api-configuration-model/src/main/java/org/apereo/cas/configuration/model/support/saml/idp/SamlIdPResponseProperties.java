@@ -68,7 +68,7 @@ public class SamlIdPResponseProperties implements Serializable {
      */
     public Map<String, String> configureAttributeNameFormats() {
         if (this.attributeNameFormats.isEmpty()) {
-            return new HashMap<>(0);
+            return new HashMap<>();
         }
         val nameFormats = new HashMap<String, String>();
         this.attributeNameFormats

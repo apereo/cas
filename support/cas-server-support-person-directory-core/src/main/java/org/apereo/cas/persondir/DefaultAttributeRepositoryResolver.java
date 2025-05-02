@@ -1,9 +1,11 @@
 package org.apereo.cas.persondir;
 
+import org.apereo.cas.authentication.attribute.AttributeRepositoryQuery;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
@@ -26,6 +28,7 @@ import java.util.Set;
 @Getter
 public class DefaultAttributeRepositoryResolver implements AttributeRepositoryResolver {
     private final ServicesManager servicesManager;
+    private final TenantExtractor tenantExtractor;
     private final CasConfigurationProperties casProperties;
 
     @Override

@@ -45,7 +45,7 @@ class SimplePrincipalTests {
 
     @Test
     void verifySerializeAPrincipalWithEmptyAttributesToJson() throws Throwable {
-        val principalWritten = new SimplePrincipal("id", new HashMap<>(0));
+        val principalWritten = new SimplePrincipal("id", new HashMap<>());
         MAPPER.writeValue(JSON_FILE, principalWritten);
         val principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
         assertEquals(principalWritten, principalRead);

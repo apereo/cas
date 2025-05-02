@@ -15,6 +15,7 @@ import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationServic
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
@@ -66,7 +67,11 @@ class SurrogatePrincipalResolverTests {
     @Autowired
     @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
     private RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
-    
+
+    @Autowired
+    @Qualifier(TenantExtractor.BEAN_NAME)
+    private TenantExtractor tenantExtractor;
+
     private AttributeDefinitionStore attributeDefinitionStore;
     
     @BeforeEach
@@ -174,8 +179,8 @@ class SurrogatePrincipalResolverTests {
         plan.registerPrincipalResolver(new PersonDirectoryPrincipalResolver(context));
         plan.registerPrincipalResolver(new SurrogatePrincipalResolver(context).setSurrogatePrincipalBuilder(surrogatePrincipalBuilder));
 
-        val resolver = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), casProperties);
-        resolver.setChain(plan.getRegisteredPrincipalResolvers());
+        val resolver = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), tenantExtractor,
+            plan.getRegisteredPrincipalResolvers(), casProperties);
 
         val upcPrincipal = resolver.resolve(upc, Optional.of(CoreAuthenticationTestUtils.getPrincipal("test")),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),

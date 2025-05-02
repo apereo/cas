@@ -33,7 +33,7 @@ class RestResourceUtilsTests {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val response = RestResourceUtils.createResponseEntityForAuthnFailure(
-            new AuthenticationException("test", map, new HashMap<>(0)),
+            new AuthenticationException("test", map, new HashMap<>()),
             request, applicationContext);
 
         assertTrue(response.getStatusCode().isError());

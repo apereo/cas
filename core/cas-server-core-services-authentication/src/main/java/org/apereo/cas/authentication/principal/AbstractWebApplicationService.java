@@ -78,7 +78,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
     @Column(columnDefinition = "json")
     @Convert(converter = MultivaluedMapToJsonAttributeConverter.class)
-    private Map<String, Object> attributes = new HashMap<>(0);
+    private Map<String, Object> attributes = new HashMap<>();
 
     protected AbstractWebApplicationService(final String id, final String originalUrl, final String artifactId) {
         this.id = id;

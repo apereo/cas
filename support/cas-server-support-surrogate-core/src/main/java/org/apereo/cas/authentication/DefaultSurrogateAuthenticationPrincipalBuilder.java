@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.attribute.AttributeRepositoryQuery;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
 import org.apereo.cas.authentication.principal.Principal;
@@ -42,11 +43,15 @@ public class DefaultSurrogateAuthenticationPrincipalBuilder implements Surrogate
                                              final RegisteredService registeredService) throws Throwable {
 
         val activeAttributeRepositoryIdentifiers = PrincipalResolverUtils.buildActiveAttributeRepositoryIds(casProperties.getPersonDirectory());
-        val query = new AttributeRepositoryResolver.AttributeRepositoryQuery(primaryPrincipal, activeAttributeRepositoryIdentifiers)
-                .withRegisteredService(registeredService);
+        val query = AttributeRepositoryQuery.builder()
+            .principal(primaryPrincipal)
+            .activeRepositoryIds(activeAttributeRepositoryIdentifiers)
+            .registeredService(registeredService)
+            .build();
 
         val repositoryIds = attributeRepositoryResolver.resolve(query);
-        val attributes = PrincipalAttributeRepositoryFetcher.builder()
+        val attributes = PrincipalAttributeRepositoryFetcher
+            .builder()
             .attributeRepository(attributeRepository)
             .principalId(surrogate)
             .activeAttributeRepositoryIdentifiers(repositoryIds)
@@ -79,7 +84,7 @@ public class DefaultSurrogateAuthenticationPrincipalBuilder implements Surrogate
             if (!surrogateAuthenticationService.canImpersonate(surrogateUsername, principal, Optional.empty())) {
                 throw new SurrogateAuthenticationException("Unable to authorize surrogate authentication request for " + surrogateUsername);
             }
-            
+
             val surrogatePrincipal = buildSurrogatePrincipal(surrogateUsername, principal, registeredService);
             val authenticationBuilder = DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(surrogatePrincipal);
             surrogateAuthenticationService.collectSurrogateAttributes(authenticationBuilder, surrogateUsername, principal.getId());

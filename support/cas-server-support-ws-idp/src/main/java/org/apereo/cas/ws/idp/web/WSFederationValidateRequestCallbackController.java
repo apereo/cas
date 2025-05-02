@@ -82,7 +82,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
         val ticket = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
         if (StringUtils.isBlank(ticket)) {
             LOGGER.error("Can not validate the request because no [{}] is provided via the request", CasProtocolConstants.PARAMETER_TICKET);
-            return new ModelAndView(CasWebflowConstants.VIEW_ID_ERROR, new HashMap<>(0), HttpStatus.FORBIDDEN);
+            return new ModelAndView(CasWebflowConstants.VIEW_ID_ERROR, new HashMap<>(), HttpStatus.FORBIDDEN);
         }
 
         val assertion = validateRequestAndBuildCasAssertion(response, request, fedRequest);

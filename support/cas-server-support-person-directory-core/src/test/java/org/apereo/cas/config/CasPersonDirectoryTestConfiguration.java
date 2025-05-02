@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.persondir.DefaultAttributeRepositoryResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
@@ -60,14 +59,6 @@ public class CasPersonDirectoryTestConfiguration {
         val store = new DefaultAttributeDefinitionStore(resource);
         store.setScope(casProperties.getServer().getScope());
         return store;
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = AttributeRepositoryResolver.BEAN_NAME)
-    public AttributeRepositoryResolver attributeRepositoryResolver(
-        final CasConfigurationProperties casProperties,
-        @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
-        return new DefaultAttributeRepositoryResolver(servicesManager, casProperties);
     }
 
     @Bean

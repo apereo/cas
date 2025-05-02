@@ -64,5 +64,5 @@ public class CasEmbeddedApacheTomcatHttpProperties implements Serializable {
     /**
      * Additional attributes to be set on the connector.
      */
-    private Map<String, String> attributes = new LinkedHashMap<>(0);
+    private Map<String, String> attributes = new LinkedHashMap<>();
 }

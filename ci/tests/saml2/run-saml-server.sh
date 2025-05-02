@@ -32,7 +32,7 @@ if [[ -z "${SP_ENTITY_ID}" ]]; then
 fi
 
 docker stop simplesamlphp-idp || true && docker rm simplesamlphp-idp || true
-printgreen -e "Running SAML2 IdP with SP entity id ${SP_ENTITY_ID} and SP ACS service ${SP_ACS_SERVICE} on port 9443"
+printgreen "Running SAML2 IdP with SP entity id ${SP_ENTITY_ID} and SP ACS service ${SP_ACS_SERVICE} on port 9443"
 
 echo "Creating private key and certificate for SP metadata"
 openssl req -newkey rsa:3072 -new -x509 -days 365 \

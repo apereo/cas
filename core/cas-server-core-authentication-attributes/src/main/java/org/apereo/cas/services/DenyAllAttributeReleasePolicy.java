@@ -60,7 +60,7 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
     public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
                                                            final Map<String, List<Object>> attributes) {
         LOGGER.trace("Ignoring all attributes given the service is designed to never receive any.");
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 
     @Override
@@ -70,6 +70,6 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
                      + "If there are any default attributes set to be released to all services, "
                      + "those are also skipped for service id: [{}], id: [{}] and description: [{}]",
             service.getServiceId(), service.getId(), service.getDescription());
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 }

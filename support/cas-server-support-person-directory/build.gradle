@@ -7,7 +7,8 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-services-authentication")
-
+    implementation project(":core:cas-server-core-multitenancy")
+    
     implementation project(":support:cas-server-support-person-directory-core")
 
     compileOnly project(":support:cas-server-support-jpa-util")

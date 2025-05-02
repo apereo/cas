@@ -6,7 +6,8 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-services-api")
-
+    implementation project(":core:cas-server-core-multitenancy")
+    
     compileOnly project(":support:cas-server-support-jpa-util")
     
     testImplementation libraries.ldaptive

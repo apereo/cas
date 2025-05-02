@@ -39,7 +39,7 @@ public class ActuatorEndpointsMonitorProperties implements Serializable {
      * and exposes shortcuts so security and capability of endpoints
      * can be globally controlled from one spot and then overridden elsewhere.
      */
-    private Map<String, ActuatorEndpointProperties> endpoint = new HashMap<>(0);
+    private Map<String, ActuatorEndpointProperties> endpoint = new HashMap<>();
 
     /**
      * Enable Spring Security's JAAS authentication provider

@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +28,7 @@ import java.util.Set;
 @Slf4j
 @Getter
 @Setter
-public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends AbstractDefaultAttributePersonAttributeDao {
-    /**
-     * A List of child {@link PersonAttributeDao} instances which we will poll in order.
-     */
+public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends AbstractDefaultAttributePersonAttributeDao implements AggregatingPersonAttributeDao {
     protected List<PersonAttributeDao> personAttributeDaos;
 
     /**
@@ -62,7 +58,7 @@ public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends 
     public String[] getId() {
         val ids = new ArrayList<String>();
         ids.add(getClass().getSimpleName());
-        personAttributeDaos.forEach(dao -> ids.addAll(Arrays.asList(dao.getId())));
+        personAttributeDaos.forEach(dao -> ids.addAll(List.of(dao.getId())));
         return ids.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
     }
 

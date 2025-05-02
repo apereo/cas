@@ -45,13 +45,13 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         val fedRequest = WSFederationRequest.of(request);
         val wa = fedRequest.wa();
         if (StringUtils.isBlank(wa)) {
-            throw new UnauthorizedAuthenticationException("Unable to determine the [WA] parameter", new HashMap<>(0));
+            throw new UnauthorizedAuthenticationException("Unable to determine the [WA] parameter", new HashMap<>());
         }
 
         switch (wa.toLowerCase(Locale.ENGLISH)) {
             case WSFederationConstants.WSIGNOUT10, WSFederationConstants.WSIGNOUT_CLEANUP10 -> handleLogoutRequest(fedRequest, request, response);
             case WSFederationConstants.WSIGNIN10 -> handleInitialAuthenticationRequest(fedRequest, response, request);
-            default -> throw new UnauthorizedAuthenticationException("The authentication request is not recognized", new HashMap<>(0));
+            default -> throw new UnauthorizedAuthenticationException("The authentication request is not recognized", new HashMap<>());
         }
     }
 

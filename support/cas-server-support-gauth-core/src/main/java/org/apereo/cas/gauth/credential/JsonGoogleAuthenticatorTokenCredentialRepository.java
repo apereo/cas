@@ -167,7 +167,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
     @Override
     public void deleteAll() {
-        lock.tryLock(__ -> writeAccountsToJsonRepository(new HashMap<>(0)));
+        lock.tryLock(__ -> writeAccountsToJsonRepository(new HashMap<>()));
     }
 
     @Override
@@ -227,7 +227,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 LOGGER.debug("Read [{}] accounts from JSON repository file at [{}]", accounts.size(), file);
                 return accounts;
             }
-            return new HashMap<>(0);
+            return new HashMap<>();
         });
     }
 }

@@ -6,10 +6,12 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.model.support.syncope.BaseSyncopeSearchProperties;
 import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalAttributesProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -188,6 +190,24 @@ public class SyncopeUtils {
      * @return the optional
      */
     public static List<Map<String, List<Object>>> syncopeUserSearch(final BaseSyncopeSearchProperties properties, final String user) {
+        return Splitter.on(",").splitToList(properties.getDomain())
+            .stream()
+            .map(domain -> syncopeUserSearchForDomain(properties, domain, user))
+            .flatMap(List::stream)
+            .toList();
+    }
+
+    /**
+     * Syncope search.
+     *
+     * @param properties the properties
+     * @param domain     the domain
+     * @param user       the user
+     * @return the optional
+     */
+    public static List<Map<String, List<Object>>> syncopeUserSearchForDomain(final BaseSyncopeSearchProperties properties,
+                                                                             final String domain,
+                                                                             final String user) {
         HttpResponse response = null;
         try {
             val filter = properties.getSearchFilter().replace("{user}", user).replace("{0}", user);
@@ -196,7 +216,7 @@ public class SyncopeUtils {
                 + "rest/users/?page=1&size=1&details=true&fiql=" + fiql;
             LOGGER.debug("Executing Syncope search via [{}]", syncopeRestUrl);
             val requestHeaders = new LinkedHashMap<String, String>();
-            requestHeaders.put("X-Syncope-Domain", properties.getDomain());
+            requestHeaders.put("X-Syncope-Domain", domain);
             requestHeaders.putAll(properties.getHeaders());
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
@@ -367,6 +387,19 @@ public class SyncopeUtils {
             });
         entity.put("plainAttrs", plainAttrs);
         return entity;
+    }
+
+    /**
+     * New person attribute daos list.
+     *
+     * @param properties the properties
+     * @return the list
+     */
+    public static List<? extends PersonAttributeDao> newPersonAttributeDaos(final SyncopePrincipalAttributesProperties properties) {
+        val dao = new SyncopePersonAttributeDao(properties);
+        dao.setOrder(properties.getOrder());
+        FunctionUtils.doIfNotNull(properties.getId(), id -> dao.setId(id));
+        return List.of(dao);
     }
 
     /**

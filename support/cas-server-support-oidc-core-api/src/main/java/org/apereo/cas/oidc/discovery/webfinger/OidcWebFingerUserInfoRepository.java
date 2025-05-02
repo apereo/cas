@@ -23,7 +23,7 @@ public interface OidcWebFingerUserInfoRepository extends NamedObject {
      * @return the map
      */
     default Map<String, Object> findByEmailAddress(final String email) throws Throwable {
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 
     /**
@@ -33,6 +33,6 @@ public interface OidcWebFingerUserInfoRepository extends NamedObject {
      * @return the map
      */
     default Map<String, Object> findByUsername(final String username) throws Throwable {
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 }

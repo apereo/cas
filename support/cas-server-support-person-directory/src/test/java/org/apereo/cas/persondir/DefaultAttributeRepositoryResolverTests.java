@@ -1,6 +1,7 @@
 package org.apereo.cas.persondir;
 
 import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryQuery;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
@@ -60,7 +61,7 @@ class DefaultAttributeRepositoryResolverTests {
             registeredService.setAttributeReleasePolicy(releasePolicy);
             servicesManager.save(registeredService);
             
-            val query = AttributeRepositoryResolver.AttributeRepositoryQuery.builder()
+            val query = AttributeRepositoryQuery.builder()
                 .activeRepositoryIds(Set.of("stub", "ldap"))
                 .authenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("simpleHandler"))
                 .principal(RegisteredServiceTestUtils.getPrincipal())
@@ -73,7 +74,7 @@ class DefaultAttributeRepositoryResolverTests {
 
         @Test
         void verifyRepositoriesRequestedByQuery() {
-            val query = AttributeRepositoryResolver.AttributeRepositoryQuery.builder()
+            val query = AttributeRepositoryQuery.builder()
                 .activeRepositoryIds(Set.of("stub", "ldap"))
                 .authenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("simpleHandler"))
                 .principal(RegisteredServiceTestUtils.getPrincipal())
@@ -86,7 +87,7 @@ class DefaultAttributeRepositoryResolverTests {
 
         @Test
         void verifyRepositoriesUndefinedInQuery() {
-            val query = AttributeRepositoryResolver.AttributeRepositoryQuery.builder()
+            val query = AttributeRepositoryQuery.builder()
                 .authenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("simpleHandler"))
                 .principal(RegisteredServiceTestUtils.getPrincipal())
                 .service(RegisteredServiceTestUtils.getService(UUID.randomUUID().toString()))
@@ -114,7 +115,7 @@ class DefaultAttributeRepositoryResolverTests {
         
         @Test
         void verifyRepositoriesRequestedByHandler() {
-            var query = AttributeRepositoryResolver.AttributeRepositoryQuery.builder()
+            var query = AttributeRepositoryQuery.builder()
                 .activeRepositoryIds(Set.of("stub", "ldap", "other"))
                 .authenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("handler1"))
                 .principal(RegisteredServiceTestUtils.getPrincipal())

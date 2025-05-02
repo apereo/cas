@@ -254,7 +254,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
             () -> StringUtils.EMPTY).get();
 
         if (StringUtils.isBlank(claims)) {
-            return new HashMap<>(0);
+            return new HashMap<>();
         }
         return MAPPER.readValue(JsonValue.readHjson(claims).toString(), Map.class);
     }
@@ -262,7 +262,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     @Override
     public Set<String> resolveUserInfoRequestClaims(final WebContext context) throws Exception {
         val requestedClaims = resolveRequestClaims(context);
-        return requestedClaims.getOrDefault(OAuth20Constants.CLAIMS_USERINFO, new HashMap<>(0)).keySet();
+        return requestedClaims.getOrDefault(OAuth20Constants.CLAIMS_USERINFO, new HashMap<>()).keySet();
     }
 
     @Override

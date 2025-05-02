@@ -39,7 +39,7 @@ public interface Principal extends Serializable {
      * @return the map of configured attributes for this principal
      */
     default Map<String, List<Object>> getAttributes() {
-        return new LinkedHashMap<>(0);
+        return new LinkedHashMap<>();
     }
 
     /**

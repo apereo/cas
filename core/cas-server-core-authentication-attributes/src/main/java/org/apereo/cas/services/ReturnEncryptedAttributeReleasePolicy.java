@@ -75,13 +75,13 @@ public class ReturnEncryptedAttributeReleasePolicy extends AbstractRegisteredSer
         val publicKey = context.getRegisteredService().getPublicKey();
         if (publicKey == null) {
             LOGGER.error("No public key is defined for service [{}]. No attributes will be released", context.getRegisteredService());
-            return new HashMap<>(0);
+            return new HashMap<>();
         }
         LOGGER.debug("Using service [{}] public key [{}] to initialize the cipher", context.getRegisteredService().getServiceId(), publicKey);
         val cipher = publicKey.toCipher();
         if (cipher == null) {
             LOGGER.error("Unable to initialize cipher given the public key algorithm [{}]", publicKey.getAlgorithm());
-            return new HashMap<>(0);
+            return new HashMap<>();
         }
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);

@@ -45,7 +45,7 @@ public interface RegisteredServiceConsentPolicy extends Serializable, Ordered {
      * @return the excluded attributes
      */
     default Set<String> getExcludedAttributes() {
-        return new LinkedHashSet<>(0);
+        return new LinkedHashSet<>();
     }
 
     /**
@@ -57,7 +57,7 @@ public interface RegisteredServiceConsentPolicy extends Serializable, Ordered {
      * attribute release policy is consulted to determine all of included attributes.
      */
     default Set<String> getIncludeOnlyAttributes() {
-        return new LinkedHashSet<>(0);
+        return new LinkedHashSet<>();
     }
 
     @Override

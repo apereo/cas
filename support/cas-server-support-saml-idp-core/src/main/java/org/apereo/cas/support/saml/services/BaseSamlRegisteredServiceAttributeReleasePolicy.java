@@ -140,7 +140,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
 
             if (facade.isEmpty()) {
                 LOGGER.warn("Could not locate metadata for [{}] to process attributes", entityId);
-                return new HashMap<>(0);
+                return new HashMap<>();
             }
 
             val entityDescriptor = facade.get().getEntityDescriptor();

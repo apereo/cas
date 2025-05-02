@@ -36,7 +36,7 @@ public class CustomNamespaceWSFederationClaimsReleasePolicy extends AbstractRegi
     private Map<String, String> allowedAttributes;
 
     public CustomNamespaceWSFederationClaimsReleasePolicy() {
-        this(new HashMap<>(0));
+        this(new HashMap<>());
     }
 
     public CustomNamespaceWSFederationClaimsReleasePolicy(final Map<String, String> allowedAttributes) {

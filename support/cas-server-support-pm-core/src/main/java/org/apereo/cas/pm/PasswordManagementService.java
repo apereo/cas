@@ -124,7 +124,7 @@ public interface PasswordManagementService {
      * @throws Throwable the throwable
      */
     default Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) throws Throwable {
-        return new LinkedHashMap<>(0);
+        return new LinkedHashMap<>();
     }
 
     /**

@@ -14,13 +14,13 @@ test -f $COMPOSE_FILE || COMPOSE_FILE=docker-compose.yml
 docker compose -f $COMPOSE_FILE down >/dev/null 2>/dev/null || true
 docker compose -f $COMPOSE_FILE up -d
 docker logs syncope-syncope-1 -f &
-printgreen -e "Waiting for Apache Syncope server to come online...\n"
+printgreen "Waiting for Apache Syncope server to come online...\n"
 sleep 60
 until $(curl --output /dev/null --silent --head --fail http://localhost:18080/syncope/); do
     printf '.'
     sleep 1
 done
-printgreen -e "\nApache Syncope docker container is running."
+printgreen "\nApache Syncope docker container is running."
 
 echo "Creating CSV Dir conn instance"
 curl -X 'POST' \
@@ -563,4 +563,4 @@ curl -X 'POST' \
   ]
 }'
 
-printgreen -e "\nReady!\n"
+printgreen "\nReady!\n"

@@ -33,11 +33,11 @@ public class UnresolvedPrincipalException extends PrincipalException {
     }
 
     public UnresolvedPrincipalException() {
-        super(UNRESOLVED_PRINCIPAL, new HashMap<>(0), new HashMap<>(0));
+        super(UNRESOLVED_PRINCIPAL, new HashMap<>(), new HashMap<>());
     }
 
     public UnresolvedPrincipalException(final Exception e) {
-        super(e.getMessage(), new HashMap<>(0), new HashMap<>(0));
+        super(e.getMessage(), new HashMap<>(), new HashMap<>());
     }
 
 
@@ -48,7 +48,7 @@ public class UnresolvedPrincipalException extends PrincipalException {
      * @param handlerErrors the handler errors
      */
     public UnresolvedPrincipalException(final Map<String, Throwable> handlerErrors) {
-        super(UNRESOLVED_PRINCIPAL, handlerErrors, new HashMap<>(0));
+        super(UNRESOLVED_PRINCIPAL, handlerErrors, new HashMap<>());
     }
 
     /**

@@ -39,7 +39,7 @@ class CasSimpleMultifactorAuthenticationTicketFactoryTests extends BaseAbstractM
     @Test
     void verifyExpirationPolicy() throws Throwable {
         val factory = (CasSimpleMultifactorAuthenticationTicketFactory) this.ticketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
-        val ticket = factory.create(RegisteredServiceTestUtils.getService("example"), new HashMap<>(0));
+        val ticket = factory.create(RegisteredServiceTestUtils.getService("example"), new HashMap<>());
         assertNotNull(ticket);
         assertEquals(30, ticket.getExpirationPolicy().getTimeToLive());
     }

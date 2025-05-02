@@ -121,7 +121,7 @@ CAS features and modules that are multitenant-aware also have the ability to bui
 handlers dynamically and on the fly without relying on the static list of authentication handlers that are bootstrapped
 during startup, noted via the `authenticationHandlers` field above.
 
-Authentication handlers that are built dynamically for each tenant may be defined using the following strategy:
+Custom authentication handlers that are built dynamically for each tenant may be defined using the following strategy:
 
 ```java
 @Bean
@@ -130,6 +130,25 @@ public AuthenticationEventExecutionPlanConfigurer myTenantAuthentication() {
         var builder = new MyTenantAuthenticationHandlerBuilder(...);
         plan.registerTenantAuthenticationHandlerBuilder(builder);
     };
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+
+Please check the documentation for each feature or module to see if it supports multitenancy.
+
+### Attribute Resolution
+
+CAS features and modules that are multitenant-aware also have the ability to build their own list of attribute
+repositories dynamically and on the fly without relying on repository implementations that are bootstrapped
+during startup.
+
+Custom attribute repositories that are built dynamically for each tenant may be defined using the following strategy:
+
+```java
+@Bean
+public TenantPersonAttributeDaoBuilder myTenantPersonAttributeDaoBuilder() {
+    return new MyTenantPersonAttributeDaoBuilder(..);
 }
 ```
 

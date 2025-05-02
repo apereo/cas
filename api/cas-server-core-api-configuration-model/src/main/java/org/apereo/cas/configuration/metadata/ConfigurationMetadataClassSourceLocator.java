@@ -22,7 +22,7 @@ public class ConfigurationMetadataClassSourceLocator {
 
     private static ConfigurationMetadataClassSourceLocator INSTANCE;
 
-    private final Map<String, Class> cachedPropertiesClasses = new HashMap<>(0);
+    private final Map<String, Class> cachedPropertiesClasses = new HashMap<>();
 
     /**
      * Gets instance.

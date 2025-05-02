@@ -40,7 +40,7 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
         val wsFedCredentials = (WsFederationCredential) credentials;
         val attributes = wsFedCredentials.getAttributes();
         LOGGER.debug("Credential attributes provided are: [{}]", attributes);
-        val idAttribute = this.configuration.getIdentityAttribute();
+        val idAttribute = configuration.getIdentityAttribute();
         if (attributes.containsKey(idAttribute)) {
             LOGGER.debug("Extracting principal id from attribute [{}]", this.configuration.getIdentityAttribute());
             val idAttributeAsList = CollectionUtils.toCollection(attributes.get(this.configuration.getIdentityAttribute()));
