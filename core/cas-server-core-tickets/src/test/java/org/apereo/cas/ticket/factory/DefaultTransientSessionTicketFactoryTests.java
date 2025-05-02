@@ -30,7 +30,7 @@ class DefaultTransientSessionTicketFactoryTests extends BaseTicketFactoryTests {
     @Test
     void verifyExpirationPolicy() throws Throwable {
         val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
-        val ticket = factory.create(RegisteredServiceTestUtils.getService("example"), new HashMap<>(0));
+        val ticket = factory.create(RegisteredServiceTestUtils.getService("example"), new HashMap<>());
         assertNotNull(ticket);
         assertEquals(20, ticket.getExpirationPolicy().getTimeToLive());
     }

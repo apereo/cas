@@ -63,7 +63,7 @@ public class HttpRequestProperties implements Serializable {
     /**
      * Custom response headers to inject into the response as needed.
      */
-    private Map<String, String> customHeaders = new LinkedHashMap<>(0);
+    private Map<String, String> customHeaders = new LinkedHashMap<>();
 
     /**
      * Control http request settings.

@@ -25,7 +25,7 @@ public interface OAuth20ProfileScopeToAttributesFilter {
     String BEAN_NAME = "profileScopeToAttributesFilter";
 
     default Map<String, ? extends RegisteredServiceAttributeReleasePolicy> getAttributeReleasePolicies() {
-        return new LinkedHashMap<>(0);
+        return new LinkedHashMap<>();
     }
 
     /**

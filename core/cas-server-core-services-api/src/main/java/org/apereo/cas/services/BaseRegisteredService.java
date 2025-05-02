@@ -76,7 +76,7 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     private RegisteredServiceLogoutType logoutType = RegisteredServiceLogoutType.BACK_CHANNEL;
 
-    private Set<String> environments = new LinkedHashSet<>(0);
+    private Set<String> environments = new LinkedHashSet<>();
 
     private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
 
@@ -95,7 +95,7 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     private RegisteredServiceAuthenticationPolicy authenticationPolicy = new DefaultRegisteredServiceAuthenticationPolicy();
 
-    private Map<String, RegisteredServiceProperty> properties = new HashMap<>(0);
+    private Map<String, RegisteredServiceProperty> properties = new HashMap<>();
 
     private List<RegisteredServiceContact> contacts = new ArrayList<>();
 

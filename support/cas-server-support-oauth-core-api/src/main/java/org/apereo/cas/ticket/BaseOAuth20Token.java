@@ -33,7 +33,7 @@ public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20
 
     private Set<String> scopes = new HashSet<>(0);
 
-    private Map<String, Map<String, Object>> claims = new HashMap<>(0);
+    private Map<String, Map<String, Object>> claims = new HashMap<>();
 
     private Ticket ticketGrantingTicket;
 

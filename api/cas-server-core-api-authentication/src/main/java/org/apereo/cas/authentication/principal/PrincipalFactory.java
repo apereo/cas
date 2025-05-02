@@ -26,7 +26,7 @@ public interface PrincipalFactory extends Serializable {
      * @throws Throwable the throwable
      */
     default Principal createPrincipal(final String id) throws Throwable {
-        return createPrincipal(id, new HashMap<>(0));
+        return createPrincipal(id, new HashMap<>());
     }
 
     /**

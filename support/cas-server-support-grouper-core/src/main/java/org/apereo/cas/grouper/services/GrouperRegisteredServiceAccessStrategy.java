@@ -54,7 +54,7 @@ public class GrouperRegisteredServiceAccessStrategy extends BaseRegisteredServic
      * Collection of required attributes
      * for this service to proceed.
      */
-    private Map<String, Set<String>> requiredAttributes = new HashMap<>(0);
+    private Map<String, Set<String>> requiredAttributes = new HashMap<>();
 
     private Map<String, String> configProperties = new TreeMap<>();
 

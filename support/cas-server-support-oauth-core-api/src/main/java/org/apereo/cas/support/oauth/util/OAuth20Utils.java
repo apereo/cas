@@ -331,7 +331,7 @@ public class OAuth20Utils {
      * @return the set
      */
     public static Set<String> parseUserInfoRequestClaims(final OAuth20Token token) {
-        return token != null ? token.getClaims().getOrDefault("userinfo", new HashMap<>(0)).keySet() : new HashSet<>();
+        return token != null ? token.getClaims().getOrDefault("userinfo", new HashMap<>()).keySet() : new HashSet<>();
     }
 
 

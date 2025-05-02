@@ -52,6 +52,6 @@ public class MetadataEntityGroupAttributeReleasePolicy extends BaseSamlRegistere
             && RegexUtils.find(this.group, ed.getName())) {
             return authorizeReleaseOfAllowedAttributes(context, attributes);
         }
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 }

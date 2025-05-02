@@ -21,7 +21,6 @@ class ProxyingPrincipalResolverTests {
     void verifyOperation() throws Throwable {
         val resolver = new ProxyingPrincipalResolver(PrincipalFactoryUtils.newPrincipalFactory());
         assertFalse(resolver.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
-        assertNull(resolver.getAttributeRepository());
         val credential = new HttpBasedServiceCredential("https://example.org", CoreAuthenticationTestUtils.getRegisteredService());
         var principal = resolver.resolve(credential);
         assertEquals(credential.getId(), principal.getId());

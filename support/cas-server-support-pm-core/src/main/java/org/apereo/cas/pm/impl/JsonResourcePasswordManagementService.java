@@ -98,7 +98,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         if (account != null) {
             return account.getSecurityQuestions();
         }
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 
     @Override
@@ -134,7 +134,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
 
         private String status;
 
-        private Map<String, String> securityQuestions = new HashMap<>(0);
+        private Map<String, String> securityQuestions = new HashMap<>();
     }
 
     private boolean writeAccountToJsonResource() {

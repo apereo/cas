@@ -40,7 +40,7 @@ public class OktaAuthenticationStateHandlerAdapter extends AuthenticationStateHa
 
     private final PasswordPolicyContext passwordPolicyConfiguration;
 
-    private final Map<String, List<Object>> userAttributes = new HashMap<>(0);
+    private final Map<String, List<Object>> userAttributes = new HashMap<>();
 
     private String username;
 

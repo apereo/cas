@@ -96,7 +96,7 @@ public class ReturnRestfulAttributeReleasePolicy extends BaseMappedAttributeRele
         } finally {
             HttpUtils.close(response);
         }
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 
 }

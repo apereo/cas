@@ -58,9 +58,10 @@ public class CasCoreMultitenancyAutoConfiguration {
     @ConditionalOnMissingBean(name = TenantExtractor.BEAN_NAME)
     public TenantExtractor tenantExtractor(
         final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier(TenantsManager.BEAN_NAME)
         final TenantsManager tenantsManager) {
-        return new DefaultTenantExtractor(tenantsManager, casProperties);
+        return new DefaultTenantExtractor(tenantsManager, applicationContext, casProperties);
     }
 
     @Bean

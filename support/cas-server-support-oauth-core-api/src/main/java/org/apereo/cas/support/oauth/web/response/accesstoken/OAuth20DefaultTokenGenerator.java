@@ -106,7 +106,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                     .registeredService(tokenRequestContext.getRegisteredService())
                     .ticketGrantingTicket(tokenRequestContext.getTicketGrantingTicket())
                     .grantType(tokenRequestContext.getGrantType())
-                    .scopes(new LinkedHashSet<>(0))
+                    .scopes(new LinkedHashSet<>())
                     .responseType(tokenRequestContext.getResponseType())
                     .generateRefreshToken(tokenRequestContext.getRegisteredService() != null && tokenRequestContext.isGenerateRefreshToken())
                     .build();

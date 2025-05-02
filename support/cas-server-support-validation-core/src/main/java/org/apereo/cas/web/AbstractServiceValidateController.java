@@ -250,7 +250,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     }
 
     protected Map<String, ?> augmentSuccessViewModelObjects(final Assertion assertion) {
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 
     private String handleProxyIouDelivery(final Credential serviceCredential, final Ticket proxyGrantingTicket) throws Throwable {

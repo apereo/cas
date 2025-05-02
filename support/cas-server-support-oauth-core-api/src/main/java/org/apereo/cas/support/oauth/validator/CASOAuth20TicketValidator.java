@@ -47,7 +47,7 @@ public class CASOAuth20TicketValidator implements org.apereo.cas.client.validati
         val registeredService = validationResult.getRegisteredService();
 
         val authenticationAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
-            assertion.getPrimaryAuthentication(), assertion, new HashMap<>(0), registeredService);
+            assertion.getPrimaryAuthentication(), assertion, new HashMap<>(), registeredService);
         return new AssertionImpl(attrPrincipal, (Map) authenticationAttributes, assertion.getContext());
     }
 }

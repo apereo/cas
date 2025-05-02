@@ -56,19 +56,7 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
     public void setId(final String... id) {
         this.id = id;
     }
-
-
-    /**
-     * Put tag into this DAO and override/remove existing tags by name.
-     *
-     * @param name  the name
-     * @param value the value
-     * @return the base person attribute dao
-     */
-    public BasePersonAttributeDao putTag(final String name, final Object value) {
-        this.tags.put(name, value);
-        return this;
-    }
+    
 
     protected PersonAttributes getSinglePerson(final Set<PersonAttributes> people) {
         try {
@@ -203,4 +191,5 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
 
         return Pattern.compile(queryBuilder.toString());
     }
+    
 }

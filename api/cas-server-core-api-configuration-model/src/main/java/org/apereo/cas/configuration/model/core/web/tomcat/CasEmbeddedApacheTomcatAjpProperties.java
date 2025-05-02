@@ -145,5 +145,5 @@ public class CasEmbeddedApacheTomcatAjpProperties implements Serializable {
      * <p>
      * See the Apache Tomcat documentation for a full list.
      */
-    private Map<String, String> attributes = new LinkedHashMap<>(0);
+    private Map<String, String> attributes = new LinkedHashMap<>();
 }
