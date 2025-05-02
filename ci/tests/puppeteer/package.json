@@ -29,7 +29,7 @@
     "puppeteer": "24.8.0",
     "puppeteer-loadtest": "2.2.1",
     "request": "2.88.2",
-    "@napi-rs/canvas": "0.1.69",
+    "@napi-rs/canvas": "0.1.70",
     "sockjs-client": "1.6.1",
     "speakeasy": "2.0.0",
     "unzipper": "0.12.3",
