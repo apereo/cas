@@ -29,7 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link CollectionUtils}.
@@ -730,18 +729,5 @@ public class CollectionUtils {
         val result = new LinkedHashMap<String, Object>();
         Arrays.stream(attributes).forEach(result::putAll);
         return result;
-    }
-
-    /**
-     * Combine arrays string [].
-     *
-     * @param array1 the array 1
-     * @param array2 the array 2
-     * @return the string []
-     */
-    public static String[] combineArrays(final String[] array1, final String[] array2) {
-        return Stream.of(array1, array2)
-            .flatMap(Stream::of)
-            .toArray(String[]::new);
     }
 }
