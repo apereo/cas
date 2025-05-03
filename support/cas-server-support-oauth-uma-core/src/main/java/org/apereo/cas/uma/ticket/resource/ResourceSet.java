@@ -51,7 +51,7 @@ public class ResourceSet implements Serializable {
 
     @Column(columnDefinition = "json")
     @Type(JsonType.class)
-    private Set<String> scopes = new HashSet<>(0);
+    private Set<String> scopes = new HashSet<>();
 
     @Column
     private String iconUri;
@@ -64,7 +64,7 @@ public class ResourceSet implements Serializable {
     
     @Column(columnDefinition = "json")
     @Type(JsonType.class)
-    private Set<ResourceSetPolicy> policies = new HashSet<>(0);
+    private Set<ResourceSetPolicy> policies = new HashSet<>();
 
     /**
      * Validate.

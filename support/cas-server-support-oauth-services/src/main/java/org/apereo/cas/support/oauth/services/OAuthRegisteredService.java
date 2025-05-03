@@ -63,13 +63,13 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private RegisteredServiceOAuthTokenExchangePolicy tokenExchangePolicy;
 
-    private Set<String> supportedGrantTypes = new HashSet<>(0);
+    private Set<String> supportedGrantTypes = new HashSet<>();
 
-    private Set<String> supportedResponseTypes = new HashSet<>(0);
+    private Set<String> supportedResponseTypes = new HashSet<>();
 
     private OAuthCoreProperties.UserProfileViewTypes userProfileViewType;
 
-    private Set<String> scopes = new HashSet<>(0);
+    private Set<String> scopes = new HashSet<>();
 
     private String responseMode;
 
@@ -110,7 +110,7 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
      */
     public Set<String> getScopes() {
         if (this.scopes == null) {
-            this.scopes = new HashSet<>(0);
+            this.scopes = new HashSet<>();
         }
         return scopes;
     }
@@ -128,7 +128,7 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
     @Override
     public void initialize() {
         super.initialize();
-        this.scopes = ObjectUtils.defaultIfNull(this.scopes, new HashSet<>(0));
-        this.audience = ObjectUtils.defaultIfNull(this.audience, new HashSet<>(0));
+        this.scopes = ObjectUtils.defaultIfNull(this.scopes, new HashSet<>());
+        this.audience = ObjectUtils.defaultIfNull(this.audience, new HashSet<>());
     }
 }

@@ -117,7 +117,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
             return mapAccountsFromLdapEntries(entries);
         }
         LOGGER.debug("No decision could be found");
-        return new HashSet<>(0);
+        return new HashSet<>();
     }
 
     @Override
@@ -255,7 +255,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
                 return results;
             }
             LOGGER.debug("Unable to read entries from LDAP via filter [{}]", filter);
-            return new HashSet<>(0);
+            return new HashSet<>();
         });
     }
 

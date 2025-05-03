@@ -186,7 +186,7 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
 
     private Map<String, String> attributeValueTypes = new TreeMap<>();
 
-    private Set<String> encryptableAttributes = new HashSet<>(0);
+    private Set<String> encryptableAttributes = new HashSet<>();
 
     private List<String> signingSignatureReferenceDigestMethods = new ArrayList<>();
 

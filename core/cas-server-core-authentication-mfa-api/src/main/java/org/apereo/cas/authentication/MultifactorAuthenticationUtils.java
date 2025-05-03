@@ -265,7 +265,7 @@ public class MultifactorAuthenticationUtils {
             return CollectionUtils.wrapSet(event);
         }
         LOGGER.debug("Provider could not be verified");
-        return new HashSet<>(0);
+        return new HashSet<>();
     }
 
     /**

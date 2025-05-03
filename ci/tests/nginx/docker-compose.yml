@@ -7,6 +7,8 @@ services:
     ports:
       - "8090:80"
       - "4443:443"
+      - "8888:8888"
+      - "8889:8889"
     volumes:
       - "./server/nginx/:/etc/nginx/"
       - "./server/nginx/log/:/var/log/nginx/"

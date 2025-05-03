@@ -103,7 +103,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
         }
-        return new HashSet<>(0);
+        return new HashSet<>();
     }
 
     @Override
@@ -143,7 +143,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
                     .collect(Collectors.toSet());
             }
         }
-        return new HashSet<>(0);
+        return new HashSet<>();
     }
 
     @Override
@@ -163,7 +163,7 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
                 .collect(Collectors.toList());
         }
         LOGGER.debug("No consent decision could be found");
-        return new HashSet<>(0);
+        return new HashSet<>();
     }
 
     @Override
@@ -271,6 +271,6 @@ public class LdapConsentRepository implements ConsentRepository, DisposableBean 
             LoggingUtils.error(LOGGER, e);
         }
         LOGGER.debug("Unable to read consent entries from LDAP for attribute [{}]", att);
-        return new HashSet<>(0);
+        return new HashSet<>();
     }
 }

@@ -33,7 +33,7 @@ public class OAuth20DefaultRefreshToken extends BaseOAuth20Token implements OAut
     /**
      * The ticket ids which are tied to this ticket.
      */
-    private Set<String> accessTokens = new HashSet<>(0);
+    private Set<String> accessTokens = new HashSet<>();
 
     public OAuth20DefaultRefreshToken(final String id, final Service service,
                                       final Authentication authentication,

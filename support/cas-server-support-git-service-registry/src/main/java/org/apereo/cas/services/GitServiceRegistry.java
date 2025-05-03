@@ -167,7 +167,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
                             LOGGER.error("Error reading configuration file [{}]", file.toPath());
                             LoggingUtils.error(LOGGER, ex);
                         }
-                        return new ArrayList<RegisteredService>(0);
+                        return new ArrayList<RegisteredService>();
                     }))
                     .flatMap(List::stream)
                     .sorted()

@@ -50,7 +50,7 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
         val storage = readFromJsonRepository();
         return storage.containsKey(username.trim().toLowerCase(Locale.ENGLISH))
             ? storage.get(username.trim().toLowerCase(Locale.ENGLISH))
-            : new HashSet<>(0);
+            : new HashSet<>();
     }
 
     @Override

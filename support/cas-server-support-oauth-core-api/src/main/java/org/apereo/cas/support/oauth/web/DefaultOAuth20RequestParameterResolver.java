@@ -237,7 +237,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     public Set<String> resolveRequestScopes(final WebContext context) {
         val parameterValues = resolveRequestParameter(context, OAuth20Constants.SCOPE);
         if (parameterValues.isEmpty()) {
-            return new HashSet<>(0);
+            return new HashSet<>();
         }
         val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getScopes();
         val results = CollectionUtils.wrapSet(parameterValues.get().split(" "));

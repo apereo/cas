@@ -74,7 +74,7 @@ class SyncopePersonDirectoryConfiguration {
             return BeanSupplier.of(TenantPersonAttributeDaoBuilder.class)
                 .when(BeanCondition.on("cas.multitenancy.core.enabled").isTrue().given(applicationContext))
                 .supply(TenantSyncopePersonAttributeDaoBuilder::new)
-                .otherwiseProxy()
+                .otherwise(TenantPersonAttributeDaoBuilder::noOp)
                 .get();
         }
     }

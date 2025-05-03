@@ -199,7 +199,7 @@ public class TokenAuthenticationSecurity {
     private static JWSAlgorithm determineSigningAlgorithm(final RegisteredService registeredService) {
         val serviceSigningAlg = getRegisteredServiceJwtProperty(registeredService, RegisteredServiceProperties.TOKEN_SECRET_SIGNING_ALG);
         val signingSecretAlg = StringUtils.defaultIfBlank(serviceSigningAlg, JWSAlgorithm.HS256.getName());
-        val sets = new HashSet<Algorithm>(0);
+        val sets = new HashSet<Algorithm>();
         sets.addAll(JWSAlgorithm.Family.EC);
         sets.addAll(JWSAlgorithm.Family.HMAC_SHA);
         sets.addAll(JWSAlgorithm.Family.RSA);
@@ -208,7 +208,7 @@ public class TokenAuthenticationSecurity {
     }
 
     private static EncryptionMethod determineEncryptionMethod(final RegisteredService registeredService) {
-        val encryptionMethods = new HashSet<Algorithm>(0);
+        val encryptionMethods = new HashSet<Algorithm>();
         encryptionMethods.addAll(EncryptionMethod.Family.AES_CBC_HMAC_SHA);
         encryptionMethods.addAll(EncryptionMethod.Family.AES_GCM);
         val encryptionMethod = getRegisteredServiceJwtProperty(registeredService, RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_METHOD);
@@ -217,7 +217,7 @@ public class TokenAuthenticationSecurity {
     }
 
     private static JWEAlgorithm determineEncryptionAlgorithm(final RegisteredService registeredService) {
-        val sets = new HashSet<Algorithm>(0);
+        val sets = new HashSet<Algorithm>();
         sets.addAll(JWEAlgorithm.Family.AES_GCM_KW);
         sets.addAll(JWEAlgorithm.Family.AES_KW);
         sets.addAll(JWEAlgorithm.Family.ASYMMETRIC);

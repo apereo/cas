@@ -143,7 +143,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
 
     private Principal resolvePrincipalForAttributeQuery(final Authentication authentication,
                                                         final RegisteredService registeredService) throws Throwable {
-        val repositories = new HashSet<String>(0);
+        val repositories = new HashSet<String>();
         if (registeredService != null) {
             repositories.addAll(registeredService.getAttributeReleasePolicy()
                 .getPrincipalAttributesRepository().getAttributeRepositoryIds());
