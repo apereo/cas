@@ -19,4 +19,13 @@ public interface TenantPersonAttributeDaoBuilder {
      * @return the list
      */
     List<? extends PersonAttributeDao> build(TenantDefinition tenantDefinition);
+
+    /**
+     * No op tenant person attribute dao builder.
+     *
+     * @return the tenant person attribute dao builder
+     */
+    static TenantPersonAttributeDaoBuilder noOp() {
+        return tenantDefinition -> List.of();
+    }
 }

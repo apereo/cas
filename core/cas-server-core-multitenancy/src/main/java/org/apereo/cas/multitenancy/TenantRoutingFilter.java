@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import jakarta.servlet.Filter;
@@ -23,6 +24,7 @@ import java.net.URI;
  * @since 7.3.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class TenantRoutingFilter implements Filter {
     private final TenantExtractor tenantExtractor;
 
@@ -30,17 +32,20 @@ public class TenantRoutingFilter implements Filter {
     public void doFilter(final ServletRequest req, final ServletResponse res, final FilterChain chain) throws IOException, ServletException {
         val request = (HttpServletRequest) req;
         val response = (HttpServletResponse) res;
-        val host = request.getServerName();
-        val tenantDefinitions = tenantExtractor.getTenantsManager().findTenants();
-        for (val tenantDefinition : tenantDefinitions) {
-            val bindingContext = tenantDefinition.bindProperties();
-            if (bindingContext.isBound()) {
-                val tenantHostname = extractTenantHost(bindingContext);
-                if (StringUtils.equalsIgnoreCase(host, tenantHostname)) {
-                    val dispatch = "/tenants/%s/%s".formatted(tenantDefinition.getId(), request.getServletPath());
-                    val dispatcher = request.getRequestDispatcher(dispatch);
-                    dispatcher.forward(request, response);
-                    return;
+        val servletPath = StringUtils.prependIfMissing(request.getServletPath(), "/");
+        if (isValidServletPath(servletPath)) {
+            val tenantDefinitions = tenantExtractor.getTenantsManager().findTenants();
+            for (val tenantDefinition : tenantDefinitions) {
+                val bindingContext = tenantDefinition.bindProperties();
+                if (bindingContext.isBound()) {
+                    val tenantHostname = extractTenantHost(bindingContext);
+                    if (StringUtils.equalsIgnoreCase(request.getServerName(), tenantHostname)) {
+                        val dispatch = "/tenants/" + tenantDefinition.getId() + servletPath;
+                        LOGGER.info("Routing request [{}] to tenant [{}] at [{}]", request.getRequestURI(), tenantDefinition.getId(), dispatch);
+                        val dispatcher = request.getRequestDispatcher(dispatch);
+                        dispatcher.forward(request, response);
+                        return;
+                    }
                 }
             }
         }
@@ -58,5 +63,13 @@ public class TenantRoutingFilter implements Filter {
             return bindingContext.value().getHost().getName();
         }
         return null;
+    }
+
+    private static boolean isValidServletPath(final String flowId) {
+        return !StringUtils.startsWithIgnoreCase(flowId, "/webjars/")
+            && !StringUtils.startsWithIgnoreCase(flowId, "/css/")
+            && !StringUtils.startsWithIgnoreCase(flowId, "/favicon")
+            && !StringUtils.startsWithIgnoreCase(flowId, "/images/")
+            && !StringUtils.startsWithIgnoreCase(flowId, "/js/");
     }
 }

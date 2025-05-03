@@ -71,7 +71,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /**
      * The ticket ids which are tied to this ticket.
      */
-    private Set<String> descendantTickets = new HashSet<>(0);
+    private Set<String> descendantTickets = new HashSet<>();
 
     @JsonCreator
     public TicketGrantingTicketImpl(

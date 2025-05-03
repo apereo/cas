@@ -1,0 +1,16 @@
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "description": "This is the Shire tenant definition",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.host.name": "foo.example.com",
+        "cas.authn.attribute-repository.stub.attributes.name": "CAS",
+        "cas.authn.attribute-repository.stub.attributes.department": "SSO"
+      }
+    }
+  ]
+]

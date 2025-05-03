@@ -35,6 +35,6 @@ public interface OAuth20RefreshToken extends OAuth20Token, ServiceAwareTicket {
      * @since 6.2
      */
     default Set<String> getAccessTokens() {
-        return new HashSet<>(0);
+        return new HashSet<>();
     }
 }

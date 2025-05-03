@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.attribute.DefaultAttributeDefinitionStore;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
@@ -31,6 +32,7 @@ public abstract class BasePrincipalAttributeRepositoryTests {
     @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
         CasPersonDirectoryAutoConfiguration.class,
+        CasCoreMultitenancyAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,

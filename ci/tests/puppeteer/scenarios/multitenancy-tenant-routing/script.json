@@ -1,0 +1,31 @@
+{
+  "dependencies": "reports,multitenancy",
+  "conditions": {
+    "docker": "true"
+  },
+  "healthcheck": {
+    "urls": ["https://localhost:8443/cas/actuator/health"]
+  },
+  "properties": [
+    "--cas.authn.accept.name=STATIC",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+    
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--spring.thymeleaf.cache=false",
+    
+    "--cas.multitenancy.core.enabled=true",
+    "--cas.multitenancy.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/tenants.json",
+
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.http-client.host-name-verifier=none"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

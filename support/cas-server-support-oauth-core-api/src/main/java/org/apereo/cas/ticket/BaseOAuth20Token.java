@@ -31,7 +31,7 @@ public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20
     @Serial
     private static final long serialVersionUID = -8072724186202305800L;
 
-    private Set<String> scopes = new HashSet<>(0);
+    private Set<String> scopes = new HashSet<>();
 
     private Map<String, Map<String, Object>> claims = new HashMap<>();
 
@@ -89,6 +89,6 @@ public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20
 
     @Override
     public Set<String> getScopes() {
-        return ObjectUtils.defaultIfNull(this.scopes, new HashSet<>(0));
+        return ObjectUtils.defaultIfNull(this.scopes, new HashSet<>());
     }
 }

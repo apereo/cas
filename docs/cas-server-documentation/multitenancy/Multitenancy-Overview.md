@@ -15,7 +15,7 @@ and you will need to configure CAS to enable the feature, register your tenants 
 {% include_cached casproperties.html properties="cas.multitenancy.core" %}
 
 <div class="alert alert-info">:information_source: <strong>Status</strong><p>
-Multitenancy is somewhat limited and new and is likely to evolve in future releases to support 
+Multitenancy is somewhat limited, new and is likely to evolve and change in future releases to support 
 more use cases and capabilities for each tenant. Not every extension or feature in CAS may be 
 immediately supported in a multitenant deployment.
 </p></div>
@@ -99,15 +99,15 @@ public TenantsManager tenantsManager() {
 
 A registered tenant definition supports the following fields and capabilities:
 
-| Field                           | Description                                                                                      |
-|---------------------------------|--------------------------------------------------------------------------------------------------|
-| `id`                            | Primary identifier for the tenant that forms the dedicated tenant URL.                           |
-| `description`                   | Description of what this tenant is about.                                                        |
-| `properties`                    | Map of CAS configuration properties effective for this tenant.                                   |
-| `authenticationPolicy`          | Describes the criteria for primary authentication, list of allowed authentication handlers, etc. |
-| `delegatedAuthenticationPolicy` | Describes the criteria for external authentication, list of allowed identity providers, etc.     |
-| `communicationPolicy`           | Describes how the tenant should communicate with users to send out email messages, etc.          |
-| `userInterfacePolicy`           | Describes how the tenant should control settings relevant for user interface pages.              |
+| Field                           | Description                                                                                                            |
+|---------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| `id`                            | Primary identifier for the tenant that forms the dedicated tenant URL.                                                 |
+| `description`                   | Description of what this tenant is about.                                                                              |
+| `properties`                    | Map of CAS configuration properties effective for this tenant. Remember that not all properties are multitenant aware. |
+| `authenticationPolicy`          | Describes the criteria for primary authentication, list of allowed authentication handlers, etc.                       |
+| `delegatedAuthenticationPolicy` | Describes the criteria for external authentication, list of allowed identity providers, etc.                           |
+| `communicationPolicy`           | Describes how the tenant should communicate with users to send out email messages, etc.                                |
+| `userInterfacePolicy`           | Describes how the tenant should control settings relevant for user interface pages.                                    |
   
 ### Authentication Policy
       
@@ -221,7 +221,7 @@ construction and more.
 <div class="alert alert-info">:information_source: <strong>Remember</strong><p>
 Not every CAS configuration property is multitenant-aware, and this capability is 
 limited to CAS features and modules that are explicitly designed to support 
-multitenancy. Support for multitenancy is evolving and new features modules may be added in future releases.
+multitenancy. Support for multitenancy is evolving and new features and support for more modules may be added in future releases.
 Please check the documentation for each feature or module to see if it supports multitenancy.
 </p></div>
 
@@ -349,17 +349,17 @@ based on [Duo Security](../mfa/DuoSecurity-Authentication.html):
 
 {% endtab %}
 
-{% tab multitenancyexamples Virtual Hosts %}
+{% tab multitenancyexamples Virtual Hosts & Routing %}
 
 CAS employs a special filter that is able to map an incoming request to a tenant definition based on the `Host`
 header that is ultimately picked up by `HttpServletRequest#getServerName()`. A matching request will be routed
 to the appropriate tenant url.
        
-Assuming the `Host` header is given as `sso.example.org`, the `shire` tenant definition will allow
+- If the `Host` header is given as `sso.example.org`, i.e. via a reverse proxy, the `shire` tenant definition will allow
 CAS to route requests from `https://sso.example.org/cas/login` to `https://${cas.server.domain}/cas/tenants/shire/login`.
 
-And likewise, if the `Host` header is given as `sso.example.com`, the `mordor` tenant definition will allow
-CAS to route requests from `https://sso.example.org/cas/login` to `https://${cas.server.domain}/cas/tenants/mordor/login`.
+- If the `Host` header is given as `sso.example.com`, the `london` tenant definition will allow
+CAS to route requests from `https://sso.example.org/cas/login` to `https://${cas.server.domain}/cas/tenants/london/login`.
 
 ```json
 [
@@ -375,7 +375,7 @@ CAS to route requests from `https://sso.example.org/cas/login` to `https://${cas
     },
     {
       "@class": "org.apereo.cas.multitenancy.TenantDefinition",
-      "id": "morder",
+      "id": "london",
       "properties": {
         "@class": "java.util.LinkedHashMap",
         "cas.host.name": "sso.example.com"
@@ -385,7 +385,28 @@ CAS to route requests from `https://sso.example.org/cas/login` to `https://${cas
 ]
 ```
    
-You can build your own tenant routing and filtering mechanism via:
+This setup is useful in scenarios where there is a reverse proxy that sits in front of CAS
+and is able to route traffic for predefined hosts to CAS tenants. For example, the setup below
+for nginx, combined with the tenant definitions, allows CAS to route traffic for `sso.example.com` to the `london` tenant definition that carries 
+its own host name noted above:
+
+```conf
+location /cas {
+    proxy_pass https://cas.example.org:8443;
+    proxy_set_header Host "sso.example.com";
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_cookie_path /cas/tenants/london /cas;
+}
+```
+
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>Make note of the
+<code>proxy_cookie_path</code> setting which rewrite the cookie path for this tenant. This is
+required because the cookie path is always scoped to the tenant URL by CAS, and subsequently
+may not be made available to the browser since original request is passing through a reverse proxy.
+</p></div>
+
+You can build your own tenant routing and filtering mechanism via the following bean definition:
 
 ```java
 @Bean

@@ -47,7 +47,7 @@ public class ResourceSetPolicy implements Serializable {
 
     @Column(columnDefinition = "json")
     @Type(JsonType.class)
-    private Set<ResourceSetPolicyPermission> permissions = new HashSet<>(0);
+    private Set<ResourceSetPolicyPermission> permissions = new HashSet<>();
 
     /**
      * As json string.

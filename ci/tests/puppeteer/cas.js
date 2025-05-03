@@ -1,6 +1,7 @@
 
 const assert = require("assert");
 const axios = require("axios");
+const http = require("http");
 const https = require("https");
 const {spawn} = require("child_process");
 const waitOn = require("wait-on");
@@ -528,15 +529,17 @@ exports.doRequest = async (url, method = "GET",
     requestBody = undefined,
     callback = undefined) =>
     new Promise((resolve, reject) => {
+
+        const protocol = new URL(url).protocol;
         const options = {
             method: method,
             rejectUnauthorized: false,
             headers: headers,
             timeout: 15000,
-            keepAlive: true
+            keepAlive: true,
+            protocol: protocol
         };
-        options.agent = new https.Agent(options);
-
+        
         const handler = async (res) => {
             await this.logg(`Response status: ${res.statusCode}`);
             if (statusCode > 0) {
@@ -550,13 +553,19 @@ exports.doRequest = async (url, method = "GET",
                 await callback(res);
             }
         };
-
+        
+        let client = https;
+        if (protocol === "http:") {
+            client = http;
+        }
+        options.agent = new client.Agent(options);
+        
         if (requestBody === undefined) {
             this.logg(`Sending ${method} request to ${url} without a body`);
-            https.get(url, options, (res) => handler(res)).on("error", reject);
+            client.get(url, options, (res) => handler(res)).on("error", reject);
         } else {
             this.logg(`Sending ${method} request to ${url} with body ${requestBody}`);
-            const request = https.request(url, options, (res) => handler(res)).on("error", reject);
+            const request = client.request(url, options, (res) => handler(res)).on("error", reject);
             request.write(requestBody);
         }
     });
