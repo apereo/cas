@@ -5,6 +5,10 @@
       "@class": "org.apereo.cas.multitenancy.TenantDefinition",
       "id": "b9584c42",
       "description": "Example tenant",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.server.name": "https://sso.example.org"
+      },
       "authenticationPolicy": {
         "@class": "org.apereo.cas.multitenancy.DefaultTenantAuthenticationPolicy",
         "authenticationHandlers": [
@@ -14,6 +18,15 @@
             "UnknownHandler"
           ]
         ]
+      }
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "hosted",
+      "description": "Hosted tenant",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.host.name": "sso.system.org"
       }
     }
   ]

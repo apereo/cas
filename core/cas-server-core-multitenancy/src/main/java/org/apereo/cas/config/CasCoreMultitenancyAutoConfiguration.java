@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.multitenancy.DefaultTenantExtractor;
 import org.apereo.cas.multitenancy.DefaultTenantsManager;
 import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.multitenancy.TenantRoutingFilter;
 import org.apereo.cas.multitenancy.TenantWebflowDecorator;
 import org.apereo.cas.multitenancy.TenantsManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -18,10 +19,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.Ordered;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
@@ -94,5 +97,22 @@ public class CasCoreMultitenancyAutoConfiguration {
             .supply(() -> new TenantWebflowDecorator(tenantExtractor))
             .otherwise(WebflowDecorator::noOp)
             .get();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "tenantRoutingFilter")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public FilterRegistrationBean<TenantRoutingFilter> tenantRoutingFilter(
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier(TenantExtractor.BEAN_NAME)
+        final TenantExtractor tenantExtractor) {
+        val fr = new FilterRegistrationBean<TenantRoutingFilter>();
+        fr.setFilter(new TenantRoutingFilter(tenantExtractor));
+        fr.addUrlPatterns("/*");
+        fr.setOrder(Ordered.HIGHEST_PRECEDENCE + 2);
+        fr.setAsyncSupported(true);
+        fr.setName("tenantRoutingFilter");
+        fr.setEnabled(CONDITION.given(applicationContext).get());
+        return fr;
     }
 }
