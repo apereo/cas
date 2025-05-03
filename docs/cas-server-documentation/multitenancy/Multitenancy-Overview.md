@@ -243,7 +243,7 @@ The following tenant definition is allowed to define its [email server](../notif
       "properties": {
         "@class": "java.util.LinkedHashMap",
         "spring.mail.host": "localhost",
-        "spring.mail.port": 25000,
+        "spring.mail.port": 25000
       }
     }
   ]
@@ -294,7 +294,7 @@ The following tenant definition is allowed to define its [JDBC authentication](.
         "cas.authn.jdbc.procedure[0].password": "...",
         "cas.authn.jdbc.procedure[0].driver-class": "org.postgresql.Driver",
         "cas.authn.jdbc.procedure[0].url": "jdbc:postgresql://localhost:5432/users",
-        "cas.authn.jdbc.procedure[0].dialect": "org.hibernate.dialect.PostgreSQLDialect",
+        "cas.authn.jdbc.procedure[0].dialect": "org.hibernate.dialect.PostgreSQLDialect"
       }
     }
   ]
@@ -345,6 +345,57 @@ based on [Duo Security](../mfa/DuoSecurity-Authentication.html):
     }
   ]
 ]
+```
+
+{% endtab %}
+
+{% tab multitenancyexamples Virtual Hosts %}
+
+CAS employs a special filter that is able to map an incoming request to a tenant definition based on the `Host`
+header that is ultimately picked up by `HttpServletRequest#getServerName()`. A matching request will be routed
+to the appropriate tenant url.
+       
+Assuming the `Host` header is given as `sso.example.org`, the `shire` tenant definition will allow
+CAS to route requests from `https://sso.example.org/cas/login` to `https://${cas.server.domain}/cas/tenants/shire/login`.
+
+And likewise, if the `Host` header is given as `sso.example.com`, the `mordor` tenant definition will allow
+CAS to route requests from `https://sso.example.org/cas/login` to `https://${cas.server.domain}/cas/tenants/mordor/login`.
+
+```json
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.server.name": "https://sso.example.org"
+      }
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "morder",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.host.name": "sso.example.com"
+      }
+    }
+  ]
+]
+```
+   
+You can build your own tenant routing and filtering mechanism via:
+
+```java
+@Bean
+public FilterRegistrationBean tenantRoutingFilter() {
+    var fr = new FilterRegistrationBean<MyTenantRoutingFilter>();
+    /*
+        fr.setFilter(new MyTenantRoutingFilter());
+    /*
+    return fr;
+}
 ```
 
 {% endtab %}

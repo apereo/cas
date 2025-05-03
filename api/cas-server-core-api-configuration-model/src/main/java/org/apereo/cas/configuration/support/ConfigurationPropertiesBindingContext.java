@@ -20,6 +20,16 @@ public record ConfigurationPropertiesBindingContext<T>(T value, Map<String, Conf
     }
 
     /**
+     * Contains binding for class.
+     *
+     * @param property the property
+     * @return true /false
+     */
+    public boolean containsBindingFor(final String property) {
+        return bindings.containsKey(property);
+    }
+
+    /**
      * Is bound successfully.
      *
      * @return true/false

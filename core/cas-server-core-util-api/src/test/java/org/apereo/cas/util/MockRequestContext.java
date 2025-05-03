@@ -119,6 +119,16 @@ public class MockRequestContext extends MockRequestControlContext {
         return this;
     }
 
+    public MockRequestContext setServerName(final String host) {
+        getHttpServletRequest().setServerName(host);
+        return this;
+    }
+    
+    public MockRequestContext setServletPath(final String path) {
+        getHttpServletRequest().setServletPath(path);
+        return this;
+    }
+
     public MockRequestContext setLocalAddr(final String localAddr) {
         getHttpServletRequest().setLocalAddr(localAddr);
         return this;
