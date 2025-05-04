@@ -51,7 +51,6 @@ public abstract class BaseGoogleAuthenticatorTests {
         CasCoreScriptingAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreMultitenancyAutoConfiguration.class,
-        CasCoreEnvironmentBootstrapAutoConfiguration.class,
         CasMultifactorAuthnTrustAutoConfiguration.class,
         CasGoogleAuthenticatorAutoConfiguration.GoogleAuthenticatorMultifactorTrustConfiguration.class,
         CasGoogleAuthenticatorAutoConfiguration.class
