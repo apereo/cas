@@ -26,7 +26,7 @@
       "description": "Hosted tenant",
       "properties": {
         "@class": "java.util.LinkedHashMap",
-        "cas.host.name": "sso.system.org"
+        "cas.host.name": "{cas-cipher}xoLrkVhqnyAmMHqxWi3t+AcXf/w6Mg3bltpdP1kmG9E="
       }
     }
   ]

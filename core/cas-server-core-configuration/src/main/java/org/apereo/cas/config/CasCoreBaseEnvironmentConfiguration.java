@@ -53,7 +53,7 @@ class CasCoreBaseEnvironmentConfiguration {
             return new CommaSeparatedStringToThrowablesConverter();
         }
 
-        @ConditionalOnMissingBean(name = "casConfigurationCipherExecutor")
+        @ConditionalOnMissingBean(name = CipherExecutor.BEAN_NAME_CAS_CONFIGURATION_CIPHER_EXECUTOR)
         @Bean
         public static CipherExecutor<String, String> casConfigurationCipherExecutor(
             final Environment environment) {
@@ -68,7 +68,7 @@ class CasCoreBaseEnvironmentConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "standaloneConfigurationFilePropertiesSourceLocator")
         public static CasConfigurationPropertiesSourceLocator standaloneConfigurationFilePropertiesSourceLocator(
-            @Qualifier("casConfigurationCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_CAS_CONFIGURATION_CIPHER_EXECUTOR)
             final CipherExecutor<String, String> casConfigurationCipherExecutor) {
             return new StandaloneConfigurationFilePropertiesSourceLocator(casConfigurationCipherExecutor);
         }

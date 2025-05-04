@@ -216,7 +216,7 @@ public class CasReportsAutoConfiguration {
         public CasConfigurationEndpoint casConfigurationEndpoint(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("casConfigurationCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_CAS_CONFIGURATION_CIPHER_EXECUTOR)
             final CipherExecutor<String, String> casConfigurationCipherExecutor) {
             return new CasConfigurationEndpoint(casProperties, applicationContext, casConfigurationCipherExecutor);
         }

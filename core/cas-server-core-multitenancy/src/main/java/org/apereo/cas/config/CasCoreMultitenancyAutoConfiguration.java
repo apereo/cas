@@ -8,6 +8,8 @@ import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.multitenancy.TenantRoutingFilter;
 import org.apereo.cas.multitenancy.TenantWebflowDecorator;
 import org.apereo.cas.multitenancy.TenantsManager;
+import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -44,15 +46,22 @@ public class CasCoreMultitenancyAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = TenantsManager.BEAN_NAME)
     public TenantsManager tenantsManager(
+        @Qualifier("casConfigurationCipherExecutor")
+        final CipherExecutor<String, String> casConfigurationCipherExecutor,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(TenantsManager.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val location = casProperties.getMultitenancy().getJson().getLocation();
-                return new DefaultTenantsManager(location);
+                val objectMapper = JacksonObjectMapperFactory.builder()
+                    .defaultTypingEnabled(true)
+                    .applicationContext(applicationContext)
+                    .build()
+                    .toObjectMapper();
+                return new DefaultTenantsManager(objectMapper, location);
             })
-            .otherwiseProxy()
+            .otherwise(DefaultTenantsManager::new)
             .get();
     }
 
