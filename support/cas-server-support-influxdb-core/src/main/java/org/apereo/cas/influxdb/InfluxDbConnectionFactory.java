@@ -10,6 +10,7 @@ import com.influxdb.v3.client.config.ClientConfig;
 import com.influxdb.v3.client.query.QueryOptions;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.arrow.memory.DefaultAllocationManagerOption;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -31,6 +32,13 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
     private final InfluxDBClient influxDb;
 
     private final ClientConfig clientConfig;
+
+    static {
+        System.setProperty(
+            DefaultAllocationManagerOption.ALLOCATION_MANAGER_TYPE_PROPERTY_NAME,
+            DefaultAllocationManagerOption.AllocationManagerType.Netty.name()
+        );
+    }
 
     public InfluxDbConnectionFactory(final InfluxDbProperties props) {
         try {

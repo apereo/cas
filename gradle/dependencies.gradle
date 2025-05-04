@@ -334,6 +334,8 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.squareup.retrofit2", module: "retrofit")
                     exclude(group: "com.squareup.okio", module: "okio")
+                },
+                dependencies.create(libs.arrow.memory.netty.get()) {
                 }
         ],
         bouncycastle               : [

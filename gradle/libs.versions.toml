@@ -12,6 +12,7 @@ apacheFediz = "1.7.1"
 apacheIgnite = "2.17.0"
 apacheVelocityEngine = "2.4.1"
 apiGuardian = "1.1.2"
+arrow = "18.2.0"
 aspectj = "1.9.24"
 awaitility = "4.3.0"
 awsmemcached = "1.2.2"
@@ -277,6 +278,7 @@ apache-client = { module = "software.amazon.awssdk:apache-client", version.ref =
 apiguardian-api = { module = "org.apiguardian:apiguardian-api", version.ref = "apiGuardian" }
 apm-agent-api = { module = "co.elastic.apm:apm-agent-api", version.ref = "elasticApm" }
 apm-agent-attach = { module = "co.elastic.apm:apm-agent-attach", version.ref = "elasticApm" }
+arrow-memory-netty = { module = "org.apache.arrow:arrow-memory-netty", version.ref = "arrow" }
 aspectjrt = { module = "org.aspectj:aspectjrt", version.ref = "aspectj" }
 aspectjweaver = { module = "org.aspectj:aspectjweaver", version.ref = "aspectj" }
 awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
