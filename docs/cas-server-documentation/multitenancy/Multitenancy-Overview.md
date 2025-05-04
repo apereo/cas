@@ -216,7 +216,9 @@ bundles are still picked up to fill in the gaps for any missing keys.
 The tenant properties field is a map of CAS properties that are effective for this tenant. CAS features
 and modules that do support multitenancy are able to read this map and apply the properties
 to the tenant context. Examples here may include defining email server settings, authentication handler
-construction and more. 
+construction and more.
+
+Tenant definition properties may be defined and secured via [CAS configuration security](../configuration/Configuration-Properties-Security-CAS.html).
 
 <div class="alert alert-info">:information_source: <strong>Remember</strong><p>
 Not every CAS configuration property is multitenant-aware, and this capability is 
@@ -341,6 +343,30 @@ based on [Duo Security](../mfa/DuoSecurity-Authentication.html):
       "properties": {
         "@class": "java.util.LinkedHashMap",
         "cas.authn.mfa.triggers.global.global-provider-id": "mfa-duo"
+      }
+    }
+  ]
+]
+```
+
+{% endtab %}
+
+{% tab multitenancyexamples Configuration Security %}
+      
+Configuration properties assigned to a tenant definition may be secured via
+[CAS configuration security](../configuration/Configuration-Properties-Security-CAS.html):
+
+```json
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "description": "Shire tenant",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.some.property": "{cas-cipher}xoLrkVhqnyAmMHqxWi3t+AcXf/w6Mg3bltpdP1kmG9E="
       }
     }
   ]

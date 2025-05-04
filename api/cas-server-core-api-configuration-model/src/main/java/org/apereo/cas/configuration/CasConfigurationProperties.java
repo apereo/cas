@@ -54,7 +54,9 @@ import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.configuration.support.ConfigurationPropertyBindingResult;
 import org.apereo.cas.configuration.support.RequiresModule;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
@@ -434,23 +436,28 @@ public class CasConfigurationProperties implements Serializable {
             val annotation = Objects.requireNonNull(clazz.getAnnotation(ConfigurationProperties.class));
             val name = StringUtils.defaultIfBlank(annotation.prefix(), annotation.value());
             val binder = new Binder(ConfigurationPropertySources.from(new MapPropertySource(clazz.getSimpleName(), payload)));
-            val bound = binder.bind(name, Bindable.of(clazz), new BindHandler() {
-                @Override
-                public void onFinish(final ConfigurationPropertyName name, final Bindable<?> target,
-                                     final BindContext context, final Object result) {
-                    if (result != null) {
-                        val field = ReflectionUtils.findField(context.getClass(), "dataObjectBindings");
-                        Objects.requireNonNull(field).trySetAccessible();
-                        val dataObjectBindings = Objects.requireNonNull((ArrayDeque) ReflectionUtils.getField(field, context));
-                        bindingResult.put(name.toString(),
-                            new ConfigurationPropertyBindingResult(name.toString(), result, new ArrayList<>(dataObjectBindings)));
-                    }
-                }
-            });
+            val bound = binder.bind(name, Bindable.of(clazz), new ConfigurationPropertyBindHandler(bindingResult));
             if (bound.isBound()) {
                 return new ConfigurationPropertiesBindingContext<>(bound.get(), bindingResult);
             }
         }
         return new ConfigurationPropertiesBindingContext(null, Map.of());
+    }
+
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    private static final class ConfigurationPropertyBindHandler implements BindHandler {
+        private final Map<String, ConfigurationPropertyBindingResult> bindingResults;
+        
+        @Override
+        public void onFinish(final ConfigurationPropertyName name, final Bindable<?> target,
+                             final BindContext context, final Object result) {
+            if (result != null) {
+                val field = ReflectionUtils.findField(context.getClass(), "dataObjectBindings");
+                Objects.requireNonNull(field).trySetAccessible();
+                val dataObjectBindings = Objects.requireNonNull((ArrayDeque) ReflectionUtils.getField(field, context));
+                val bindingResult = new ConfigurationPropertyBindingResult(name.toString(), result, new ArrayList<>(dataObjectBindings));
+                this.bindingResults.put(name.toString(), bindingResult);
+            }
+        }
     }
 }
