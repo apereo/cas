@@ -85,7 +85,7 @@ public class DuoSecurityClient {
 
     private static String[] fetchCaCerts(final Object target) {
         val field = ReflectionUtils.findField(Client.Builder.class, "DEFAULT_CA_CERTS");
-        Objects.requireNonNull(field).trySetAccessible();
+        Objects.requireNonNull(field, "Unable to extract default CA certs for Duo Security").trySetAccessible();
         return (String[]) ReflectionUtils.getField(field, target);
     }
 
