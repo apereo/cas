@@ -57,14 +57,14 @@ public class DecodableCipherExecutorMapModule extends SimpleModule {
     }
 
     @RequiredArgsConstructor
-    private static final class DecryptingMapDeserializer extends JsonDeserializer<Map<String, Object>>
+    private static final class DecryptingMapDeserializer extends JsonDeserializer<Map<?, Object>>
         implements ContextualDeserializer, ResolvableDeserializer {
-        private final JsonDeserializer<Map<String, ?>> delegate;
+        private final JsonDeserializer<Map<?, ?>> defaultDeserializer;
         private final CipherExecutor cipherExecutor;
 
         @Override
         public void resolve(final DeserializationContext deserializationContext) throws JsonMappingException {
-            if (delegate instanceof final ResolvableDeserializer deserializer) {
+            if (defaultDeserializer instanceof final ResolvableDeserializer deserializer) {
                 deserializer.resolve(deserializationContext);
             }
         }
@@ -72,16 +72,20 @@ public class DecodableCipherExecutorMapModule extends SimpleModule {
         @Override
         public JsonDeserializer<?> createContextual(final DeserializationContext deserializationContext,
                                                     final BeanProperty property) throws JsonMappingException {
-            val jsonDeserializer = delegate instanceof final ContextualDeserializer deserializer
+            val jsonDeserializer = defaultDeserializer instanceof final ContextualDeserializer deserializer
                 ? deserializer.createContextual(deserializationContext, property)
-                : delegate;
-            return new DecryptingMapDeserializer((JsonDeserializer<Map<String, ?>>) jsonDeserializer, cipherExecutor);
+                : defaultDeserializer;
+            if (property == null || property.getAnnotation(DecodableCipherMap.class) == null) {
+                return jsonDeserializer;
+            }
+
+            return new DecryptingMapDeserializer((JsonDeserializer<Map<?, ?>>) jsonDeserializer, cipherExecutor);
         }
 
         @Override
         public Map<String, Object> deserialize(final JsonParser jsonParser,
                                                final DeserializationContext deserializationContext) throws IOException {
-            val properties = (Map) delegate.deserialize(jsonParser, deserializationContext);
+            val properties = (Map) defaultDeserializer.deserialize(jsonParser, deserializationContext);
             return cipherExecutor.decode(properties, ArrayUtils.EMPTY_OBJECT_ARRAY);
         }
     }

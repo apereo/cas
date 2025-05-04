@@ -2,6 +2,7 @@ package org.apereo.cas.multitenancy;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
+import org.apereo.cas.util.serialization.DecodableCipherMap;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -38,6 +39,7 @@ public class TenantDefinition implements Serializable {
 
     private String description;
 
+    @DecodableCipherMap
     private Map<String, Object> properties = new LinkedHashMap<>();
 
     private TenantAuthenticationPolicy authenticationPolicy = new DefaultTenantAuthenticationPolicy();
