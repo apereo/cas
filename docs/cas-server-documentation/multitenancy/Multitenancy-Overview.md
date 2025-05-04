@@ -65,13 +65,6 @@ The basic construct for a tenant definition should match the following:
         "@class": "org.apereo.cas.multitenancy.DefaultTenantDelegatedAuthenticationPolicy",
         "allowedProviders": [ "java.util.ArrayList", [ "..." ] ]
       },
-      "communicationPolicy": {
-        "@class": "org.apereo.cas.multitenancy.DefaultTenantCommunicationPolicy",
-        "emailCommunicationPolicy": {
-          "@class": "org.apereo.cas.multitenancy.TenantEmailCommunicationPolicy",
-          "from": "..."
-        }
-      },
       "userInterfacePolicy": {
         "@class": "org.apereo.cas.multitenancy.DefaultTenantUserInterfacePolicy",
         "themeName": "shire"
@@ -106,7 +99,6 @@ A registered tenant definition supports the following fields and capabilities:
 | `properties`                    | Map of CAS configuration properties effective for this tenant. Remember that not all properties are multitenant aware. |
 | `authenticationPolicy`          | Describes the criteria for primary authentication, list of allowed authentication handlers, etc.                       |
 | `delegatedAuthenticationPolicy` | Describes the criteria for external authentication, list of allowed identity providers, etc.                           |
-| `communicationPolicy`           | Describes how the tenant should communicate with users to send out email messages, etc.                                |
 | `userInterfacePolicy`           | Describes how the tenant should control settings relevant for user interface pages.                                    |
   
 ### Authentication Policy
@@ -175,17 +167,6 @@ The tenant delegated authentication policy controls aspects of CAS that support 
 | Field              | Description                                                                 |
 |--------------------|-----------------------------------------------------------------------------|
 | `allowedProviders` | List of identity providers that are allowed and authorized for this tenant. |
-          
-### Communication Policy
-
-The tenant communication policy controls per-tenant settings that describe email servers, SMS gateways, etc.
-This construct allows one to isolate communication strategies per tenant.
-
-- Email: `o.a.c.m.TenantEmailCommunicationPolicy`
-
-| Field      | Description                                             |
-|------------|---------------------------------------------------------|
-| `from`     | The `FROM` address assigned to the email message sent.  |
 
 ### User Interface Policy
 

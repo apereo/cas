@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -43,7 +44,8 @@ class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
     @SpringBootTest(classes = {
         CasCoreUtilAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class,
-        CasCoreMultitenancyAutoConfiguration.class
+        CasCoreMultitenancyAutoConfiguration.class,
+        CasCoreEnvironmentBootstrapAutoConfiguration.class
     })
     @Nested
     class ScratchCodesEncryptionTests extends BaseOneTimeTokenCredentialRepositoryTests {
@@ -75,6 +77,7 @@ class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
     @SpringBootTest(classes = {
         CasCoreUtilAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class,
+        CasCoreEnvironmentBootstrapAutoConfiguration.class,
         CasCoreMultitenancyAutoConfiguration.class
     })
     @Nested

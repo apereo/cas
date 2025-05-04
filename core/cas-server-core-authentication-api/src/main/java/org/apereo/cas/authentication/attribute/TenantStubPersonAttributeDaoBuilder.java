@@ -1,7 +1,9 @@
 package org.apereo.cas.authentication.attribute;
 
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.StubPrincipalAttributesProperties;
+import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import lombok.val;
 import java.util.List;
@@ -14,13 +16,14 @@ import java.util.List;
  */
 public class TenantStubPersonAttributeDaoBuilder implements TenantPersonAttributeDaoBuilder {
     @Override
-    public List<? extends PersonAttributeDao> build(final TenantDefinition tenantDefinition) {
-        val bindingContext = tenantDefinition.bindProperties();
-        if (bindingContext.isBound() && bindingContext.containsBindingFor(StubPrincipalAttributesProperties.class)) {
+    public List<? extends PersonAttributeDao> buildInternal(
+        final TenantDefinition tenantDefinition,
+        final ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext) {
+        if (bindingContext.containsBindingFor(StubPrincipalAttributesProperties.class)) {
             val casProperties = bindingContext.value();
             val stub = casProperties.getAuthn().getAttributeRepository().getStub();
             val repository = PersonAttributeUtils.newStubAttributeRepository(stub);
-            return List.of(repository.markDisposable());
+            return List.of(repository);
         }
         return List.of();
     }

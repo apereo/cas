@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.mongo;
 
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMongoDbEventsAutoConfiguration;
@@ -30,6 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = {
     CasMongoDbEventsAutoConfiguration.class,
     CasCoreMultitenancyAutoConfiguration.class,
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
 },
     properties = {

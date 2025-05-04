@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -60,6 +61,7 @@ import static org.mockito.Mockito.*;
     DefaultAuthenticationManagerTests.AuthenticationPlanTestConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
     CasCoreMultitenancyAutoConfiguration.class
 })
 @ExtendWith(CasTestExtension.class)

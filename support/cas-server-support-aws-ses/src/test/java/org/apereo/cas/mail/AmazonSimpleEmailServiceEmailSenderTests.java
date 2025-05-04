@@ -1,6 +1,7 @@
 package org.apereo.cas.mail;
 
 import org.apereo.cas.config.CasAmazonSimpleEmailServiceAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     CasCoreWebAutoConfiguration.class,
     CasCoreMultitenancyAutoConfiguration.class,
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
     CasAmazonSimpleEmailServiceAutoConfiguration.class
 }, properties = {
     "cas.email-provider.ses.endpoint=http://127.0.0.1:4566",

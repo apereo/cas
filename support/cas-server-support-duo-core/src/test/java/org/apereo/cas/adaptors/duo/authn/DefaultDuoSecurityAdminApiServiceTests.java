@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     DefaultDuoSecurityAdminApiServiceTests.DuoSecurityAdminTestConfiguration.class,
     CasCoreMultitenancyAutoConfiguration.class,
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
 },
     properties = {

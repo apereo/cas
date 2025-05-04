@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications;
 
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
@@ -17,6 +18,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
  */
 public abstract class BaseNotificationTests {
     @ImportAutoConfiguration({
+        CasCoreEnvironmentBootstrapAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class,

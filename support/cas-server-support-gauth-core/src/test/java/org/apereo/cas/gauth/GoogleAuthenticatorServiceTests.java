@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth;
 
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.credential.DummyCredentialRepository;
@@ -29,7 +30,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("MFAProvider")
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = CasCoreMultitenancyAutoConfiguration.class, properties = {
+@SpringBootTest(classes = {
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class
+}, properties = {
     "cas.multitenancy.core.enabled=true",
     "cas.multitenancy.json.location=classpath:/tenants.json"
 })

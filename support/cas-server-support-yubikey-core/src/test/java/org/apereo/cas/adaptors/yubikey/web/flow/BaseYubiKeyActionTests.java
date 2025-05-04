@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.yubikey.web.flow;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
@@ -25,7 +26,10 @@ import org.springframework.context.annotation.Import;
  * @since 7.0.0
  */
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = CasCoreMultitenancyAutoConfiguration.class)
+@SpringBootTest(classes = {
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class
+})
 @Import(BaseYubiKeyActionTests.MultifactorAuthenticationTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTestAutoConfigurations
