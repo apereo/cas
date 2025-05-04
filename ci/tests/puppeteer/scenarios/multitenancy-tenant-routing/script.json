@@ -27,5 +27,5 @@
 
     "--cas.http-client.host-name-verifier=none"
   ],
-  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+  "initScript": "${PWD}/ci/tests/nginx/run-nginx-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
