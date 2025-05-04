@@ -1,6 +1,7 @@
 package org.apereo.cas.support.events.kafka;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasKafkaEventsAutoConfiguration;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     CasKafkaEventsAutoConfiguration.class,
     CasCoreMultitenancyAutoConfiguration.class,
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
 }, properties = "cas.events.kafka.bootstrap-address=localhost:9092")
 @EnabledIfListeningOnPort(port = 9092)

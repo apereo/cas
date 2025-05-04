@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.credential.DummyCredentialRepository;
@@ -53,7 +54,10 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("MFAProvider")
-@SpringBootTest(classes = CasCoreMultitenancyAutoConfiguration.class)
+@SpringBootTest(classes = {
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTestAutoConfigurations
 @ExtendWith(CasTestExtension.class)

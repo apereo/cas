@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
@@ -33,7 +34,10 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @Tag("Attributes")
-@SpringBootTest(classes = CasCoreMultitenancyAutoConfiguration.class)
+@SpringBootTest(classes = {
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class
+})
 @ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTestAutoConfigurations

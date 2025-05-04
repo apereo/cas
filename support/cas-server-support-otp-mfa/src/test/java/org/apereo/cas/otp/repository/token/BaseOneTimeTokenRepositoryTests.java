@@ -3,6 +3,7 @@ package org.apereo.cas.otp.repository.token;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
@@ -47,6 +48,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         CasCoreAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
+        CasCoreEnvironmentBootstrapAutoConfiguration.class,
         CasCoreMultitenancyAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)

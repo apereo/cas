@@ -12,6 +12,7 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-multitenancy")
+    implementation project(":core:cas-server-core-configuration")
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
@@ -28,7 +29,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-scripting")
-    
+
     testRuntimeOnly libraries.webjars
     testRuntimeOnly libraries.webjarsbootstrap
     testRuntimeOnly libraries.webjarspalantir

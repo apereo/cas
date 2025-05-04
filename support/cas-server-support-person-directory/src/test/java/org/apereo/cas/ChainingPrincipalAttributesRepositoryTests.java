@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ChainingPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
@@ -42,6 +43,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
     CasCoreMultitenancyAutoConfiguration.class
 })
 class ChainingPrincipalAttributesRepositoryTests {

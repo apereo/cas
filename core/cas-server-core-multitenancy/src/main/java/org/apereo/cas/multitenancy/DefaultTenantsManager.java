@@ -89,6 +89,4 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean, In
         tenantDefinitionList.addAll(readFromJsonResource());
         initializeWatchService();
     }
-
-
 }

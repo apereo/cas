@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.attribute.TenantPersonAttributeDaoBuilder;
-import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.val;

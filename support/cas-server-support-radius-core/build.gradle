@@ -12,7 +12,8 @@ dependencies {
 
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-util")
-
+    testImplementation project(":core:cas-server-core-configuration")
+    
     testImplementation project(path: ":support:cas-server-support-aup-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-aup-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

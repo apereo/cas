@@ -3,6 +3,7 @@ package org.apereo.cas.otp.web.flow;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
@@ -39,7 +40,10 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowMfaActions")
 @ExtendWith(CasTestExtension.class)
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = CasCoreMultitenancyAutoConfiguration.class)
+@SpringBootTest(classes = {
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class OneTimeTokenAccountCheckRegistrationActionTests {
     @Autowired
