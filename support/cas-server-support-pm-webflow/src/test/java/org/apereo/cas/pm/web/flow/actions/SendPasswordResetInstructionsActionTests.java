@@ -127,6 +127,10 @@ class SendPasswordResetInstructionsActionTests {
         "spring.mail.host=localhost",
         "spring.mail.port=25000",
 
+        "cas.authn.attribute-repository.stub.attributes.mail=cas@example.org",
+        "cas.authn.attribute-repository.stub.attributes.givenName=casuser",
+        "cas.authn.attribute-repository.stub.attributes.groupMembership=adopters",
+        
         "cas.authn.pm.core.enabled=true",
         "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
         "cas.authn.pm.forgot-username.mail.from=cas@example.org",

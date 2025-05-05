@@ -27,7 +27,8 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Person directory {@link org.apereo.cas.authentication.principal.attribute.PersonAttributeDao} implementation that queries an LDAP directory
+ * Person directory {@link org.apereo.cas.authentication.principal.attribute.PersonAttributeDao}
+ * implementation that queries an LDAP directory
  * with ldaptive components to populate person attributes.
  *
  * @author Marvin S. Addison
@@ -36,7 +37,7 @@ import java.util.Objects;
 @Slf4j
 @Setter
 @Getter
-public class LdaptivePersonAttributeDao extends AbstractQueryPersonAttributeDao<FilterTemplate> implements AutoCloseable {
+public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<FilterTemplate> implements AutoCloseable {
 
     private String baseDN;
 
@@ -59,7 +60,8 @@ public class LdaptivePersonAttributeDao extends AbstractQueryPersonAttributeDao<
             val search = new SearchOperation(this.connectionFactory);
             search.setEntryHandlers(entryHandlers);
             search.setSearchResultHandlers(searchResultHandlers);
-            val response = search.execute(createRequest(filter));
+            val request = createRequest(filter);
+            val response = search.execute(request);
 
             val peopleAttributes = new ArrayList<PersonAttributes>(response.entrySize());
             for (val entry : response.getEntries()) {
