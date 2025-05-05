@@ -10,7 +10,7 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
 import org.apereo.cas.services.BaseRegisteredService;
@@ -55,7 +55,7 @@ import static org.mockito.Mockito.*;
     CasCoreServicesAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class
+    CasPersonDirectoryAutoConfiguration.class
 })
 @ExtendWith(CasTestExtension.class)
 public abstract class BaseJwtTokenTicketBuilderTests {

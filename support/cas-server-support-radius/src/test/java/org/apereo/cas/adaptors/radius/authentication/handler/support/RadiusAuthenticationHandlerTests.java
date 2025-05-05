@@ -16,7 +16,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRadiusAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -53,7 +53,7 @@ import static org.mockito.Mockito.*;
     CasCoreCookieAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreScriptingAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasCoreAutoConfiguration.class
 }, properties = {
     "cas.authn.radius.server.protocol=PAP",

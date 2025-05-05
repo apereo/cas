@@ -19,11 +19,10 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasGoogleAuthenticatorAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.config.CasOneTimeTokenAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link BaseGoogleAuthenticatorTests}.
@@ -50,13 +49,13 @@ public abstract class BaseGoogleAuthenticatorTests {
         CasCoreUtilAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasCoreMultitenancyAutoConfiguration.class,
         CasMultifactorAuthnTrustAutoConfiguration.class,
         CasGoogleAuthenticatorAutoConfiguration.GoogleAuthenticatorMultifactorTrustConfiguration.class,
         CasGoogleAuthenticatorAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
-    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

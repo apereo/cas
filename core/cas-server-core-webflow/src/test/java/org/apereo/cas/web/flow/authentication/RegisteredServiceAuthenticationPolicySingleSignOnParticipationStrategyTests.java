@@ -79,7 +79,7 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
 
     @Test
     void verifyNoServiceOrPolicy() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
+        val context = MockRequestContext.create(applicationContext).setClientInfo();
 
         val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();
@@ -103,7 +103,7 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
 
     @Test
     void verifyNoServiceOrSso() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
+        val context = MockRequestContext.create(applicationContext).setClientInfo();
 
         val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         val strategy = getSingleSignOnStrategy(svc);
@@ -120,7 +120,7 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
 
     @Test
     void verifySsoWithMismatchedHandlers() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
+        val context = MockRequestContext.create(applicationContext).setClientInfo();
 
         val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();
@@ -146,7 +146,7 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
 
     @Test
     void verifySsoWithHandlers() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
+        val context = MockRequestContext.create(applicationContext).setClientInfo();
 
         val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();
@@ -172,7 +172,7 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
 
     @Test
     void verifySsoWithExcludedHandlers() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
+        val context = MockRequestContext.create(applicationContext).setClientInfo();
 
         val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();

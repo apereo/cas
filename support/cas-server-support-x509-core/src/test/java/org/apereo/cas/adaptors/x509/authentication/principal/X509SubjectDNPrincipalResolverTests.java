@@ -108,8 +108,8 @@ class X509SubjectDNPrincipalResolverTests {
 
     @Test
     void verifySupport() {
-        val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
-        assertTrue(this.resolver.supports(c));
+        val credential = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        assertTrue(this.resolver.supports(credential));
     }
 
     @Test

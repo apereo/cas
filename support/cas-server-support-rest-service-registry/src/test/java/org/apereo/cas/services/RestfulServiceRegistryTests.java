@@ -3,7 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRestServiceRegistryAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -50,7 +50,7 @@ import java.util.List;
     CasRestServiceRegistryAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasCoreWebflowAutoConfiguration.class,
     CasWebAppAutoConfiguration.class
 },

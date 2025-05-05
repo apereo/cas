@@ -18,7 +18,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -53,7 +53,7 @@ import java.util.Map;
     CasCoreAuthenticationAutoConfiguration.class,
     CasAcceptableUsagePolicyJdbcAutoConfiguration.class,
     CasAcceptableUsagePolicyWebflowAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreScriptingAutoConfiguration.class,
     CasCoreWebflowAutoConfiguration.class,

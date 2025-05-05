@@ -15,7 +15,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
@@ -58,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreScriptingAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class
 })
 @Tag("WebflowAuthenticationActions")

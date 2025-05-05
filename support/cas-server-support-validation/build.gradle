@@ -13,16 +13,14 @@ dependencies {
     implementation project(":core:cas-server-core-validation-api")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-authentication-api")
+    
     implementation project(":support:cas-server-support-person-directory-core")
-
     implementation project(":support:cas-server-support-token-core-api")
     implementation project(":support:cas-server-support-validation-core")
 
     api project(":api:cas-server-core-api-web")
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-authentication")
-
-
     
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-webflow-mfa")
@@ -52,4 +50,5 @@ dependencies {
 
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-person-directory")
 }

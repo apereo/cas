@@ -59,6 +59,7 @@ public abstract class BaseThemeTests {
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class
     })

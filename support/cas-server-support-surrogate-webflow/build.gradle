@@ -37,7 +37,8 @@ dependencies {
     compileOnly project(":support:cas-server-support-passwordless-webflow")
     
     testImplementation project(":support:cas-server-support-themes")
-
+    testImplementation project(":support:cas-server-support-person-directory")
+    
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-notifications")
