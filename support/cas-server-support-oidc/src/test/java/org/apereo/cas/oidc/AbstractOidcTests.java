@@ -557,12 +557,10 @@ public abstract class AbstractOidcTests {
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasOidcAutoConfiguration.class,
         CasOAuth20AutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasWebAppAutoConfiguration.class
     })
-    @Import({
-        CasRegisteredServicesTestConfiguration.class,
-        CasPersonDirectoryAutoConfiguration.class
-    })
+    @Import(CasRegisteredServicesTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

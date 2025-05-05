@@ -18,6 +18,7 @@ dependencies {
     implementation project(":support:cas-server-support-aup-core")
 
     testImplementation project(":support:cas-server-support-aup-webflow")
+    testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")
