@@ -14,11 +14,10 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link BaseSessionStoreTests}.
@@ -41,11 +40,11 @@ public abstract class BaseSessionStoreTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasCoreEnvironmentBootstrapAutoConfiguration.class,
         CasCoreMultitenancyAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
-    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

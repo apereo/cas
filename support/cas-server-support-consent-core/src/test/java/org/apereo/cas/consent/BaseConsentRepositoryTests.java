@@ -17,7 +17,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -35,7 +35,6 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Import;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -127,6 +126,7 @@ public abstract class BaseConsentRepositoryTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
@@ -138,7 +138,6 @@ public abstract class BaseConsentRepositoryTests {
         CasCoreAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
-    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

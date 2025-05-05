@@ -1,6 +1,5 @@
 package org.apereo.cas.web;
 
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
@@ -14,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link LegacyValidateControllerTests}.
@@ -22,7 +20,6 @@ import org.springframework.context.annotation.Import;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Import(CasPersonDirectoryTestConfiguration.class)
 @ImportAutoConfiguration({
     CasThymeleafAutoConfiguration.class,
     CasValidationAutoConfiguration.class

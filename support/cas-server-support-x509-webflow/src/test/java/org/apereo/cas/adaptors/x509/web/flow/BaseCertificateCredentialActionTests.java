@@ -15,7 +15,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreValidationAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasX509AuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasX509AuthenticationWebflowAutoConfiguration;
@@ -51,7 +51,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreCookieAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasCoreValidationAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasX509AuthenticationWebflowAutoConfiguration.class,

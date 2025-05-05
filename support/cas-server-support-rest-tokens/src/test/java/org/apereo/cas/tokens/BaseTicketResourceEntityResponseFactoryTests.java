@@ -16,7 +16,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasRestAutoConfiguration;
 import org.apereo.cas.config.CasRestTokensAutoConfiguration;
@@ -55,7 +55,7 @@ import java.util.List;
     CasCoreLogoutAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,

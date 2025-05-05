@@ -22,7 +22,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.config.CasOidcAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
@@ -561,7 +561,7 @@ public abstract class AbstractOidcTests {
     })
     @Import({
         CasRegisteredServicesTestConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class
+        CasPersonDirectoryAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }
