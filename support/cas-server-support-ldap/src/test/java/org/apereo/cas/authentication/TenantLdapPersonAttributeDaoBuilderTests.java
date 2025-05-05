@@ -49,7 +49,7 @@ class TenantLdapPersonAttributeDaoBuilderTests {
         val principal = defaultPrincipalResolver.resolve(credential);
         assertNotNull(principal);
         assertEquals("mmoayyed", principal.getId());
-        assertEquals("mmoayyed@example.org", principal.getSingleValuedAttribute("email"));
+        assertEquals("mmoayyed@example.org", principal.getSingleValuedAttribute("mail"));
         assertEquals("mmoayyed", principal.getSingleValuedAttribute("cn"));
     }
 
