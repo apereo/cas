@@ -84,7 +84,7 @@ class DefaultEmailSenderTests {
             val emailRequest = EmailMessageRequest
                 .builder()
                 .context(CollectionUtils.wrap("name", "casuser"))
-                .emailProperties(new EmailProperties().setSubject("Hello ${name}"))
+                .emailProperties(new EmailProperties().setSubject("Hello ${name}").setFrom("cas@example.org"))
                 .tenant("shire")
                 .body("This is my body!")
                 .to(List.of("casuser@example.org"))
