@@ -688,6 +688,7 @@ function buildAndRun() {
         runArgs="${runArgs} --add-opens java.base/sun.nio.ch=ALL-UNNAMED"
         runArgs="${runArgs} --add-opens java.management/sun.management=ALL-UNNAMED"
         runArgs="${runArgs} --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED"
+        runArgs="${runArgs} --add-opens java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED"
         [ -n "${runArgs}" ] && echo -e "JVM runtime arguments: [${runArgs}]"
 
         properties=$(jq -j '.properties // empty | join(" ")' "${config}")
