@@ -21,6 +21,7 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasRestAutoConfiguration;
 import org.apereo.cas.config.CasRestTokensAutoConfiguration;
 import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.services.RegisteredService;
@@ -68,6 +69,9 @@ import java.util.List;
 })
 @ExtendWith(CasTestExtension.class)
 public abstract class BaseTicketResourceEntityResponseFactoryTests {
+    @Autowired
+    protected CasConfigurationProperties casProperties;
+    
     @Autowired
     @Qualifier("ticketGrantingTicketResourceEntityResponseFactory")
     protected TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;

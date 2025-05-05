@@ -11,6 +11,17 @@
         "cas.authn.attribute-repository.stub.attributes.name":"CAS",
         "cas.authn.attribute-repository.stub.attributes.department":"SSO"
       }
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "london",
+      "description": "This is the London tenant definition",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.host.name": "london.example.com",
+        "cas.authn.attribute-repository.stub.attributes.city": "London",
+        "cas.authn.attribute-repository.stub.attributes.country": "UK"
+      }
     }
   ]
 ]

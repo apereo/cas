@@ -67,7 +67,7 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
         actionResolverName = AuditActionResolvers.REQUEST_FORGOT_USERNAME_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         communicationsManager.validate();
         if (!communicationsManager.isMailSenderDefined()) {
             return getErrorEvent("email.failed", "Unable to send email as no mail sender is defined", requestContext);
@@ -82,15 +82,12 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
         if (!EmailValidator.getInstance().isValid(email)) {
             return getErrorEvent("email.invalid", "Provided email address is invalid", requestContext);
         }
-        return FunctionUtils.doUnchecked(() -> {
-            var query = PasswordManagementQuery.builder().email(email).build();
-            val username = passwordManagementService.findUsername(query);
-            if (StringUtils.isBlank(username)) {
-                return getErrorEvent("username.missing", "No username could be located for the given email address", requestContext);
-            }
-            query = PasswordManagementQuery.builder().username(username).email(email).build();
-            return locateUserAndProcess(requestContext, query);
-        });
+        val query = PasswordManagementQuery.builder().email(email).build();
+        val username = passwordManagementService.findUsername(query);
+        if (StringUtils.isBlank(username)) {
+            return getErrorEvent("username.missing", "No username could be located for the given email address", requestContext);
+        }
+        return locateUserAndProcess(requestContext, query.withUsername(username));
     }
 
     protected Event locateUserAndProcess(final RequestContext requestContext,
@@ -108,7 +105,7 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
         val credential = new BasicIdentifiableCredential();
         credential.setId(query.getUsername());
         val person = principalResolver.resolve(credential);
-        FunctionUtils.doIf(person != null && !person.getClass().equals(NullPrincipal.class),
+        FunctionUtils.doIf(person != null && !(person instanceof NullPrincipal),
             principal -> {
                 parameters.put("principal", principal);
                 requestContext.getFlashScope().put(Principal.class.getName(), person);
