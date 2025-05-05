@@ -77,7 +77,9 @@ async function introspect(token, scopes, client) {
             assert(res.data.iss === "https://localhost:8443/cas/oidc");
             assert(res.data.client_id === client);
             assert(res.data.token === token);
-            assert(res.data.scope === scopes);
+            
+            const normalize = (s) => s.trim().split(/\s+/).sort().join(" ");
+            assert(normalize(res.data.scope) === normalize(scopes));
         }, (error) => {
             throw `Introspection operation failed: ${error}`;
         }, {
@@ -148,7 +150,7 @@ async function introspect(token, scopes, client) {
         (res) => {
             cas.log({"empty": res.data});
             assert(res.status === 200);
-            introspect(res.data.access_token, "email openid offline_access", "client");
+            introspect(res.data.access_token, "openid offline_access email", "client");
         }, (error) => {
             throw `Operation should not fail but instead produced: ${error}`;
         });
@@ -158,7 +160,7 @@ async function introspect(token, scopes, client) {
         (res) => {
             cas.log({"original": res.data});
             assert(res.status === 200);
-            introspect(res.data.access_token, "email openid offline_access", "client");
+            introspect(res.data.access_token, "openid offline_access email", "client");
         }, (error) => {
             throw `Operation should not fail but instead produced: ${error}`;
         });
