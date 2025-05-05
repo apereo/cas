@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasOktaAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
@@ -32,7 +31,6 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     CasOktaAuthenticationAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
     BaseOktaTests.SharedTestConfiguration.class
 },
     properties = {
