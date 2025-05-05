@@ -19,6 +19,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-services-api")
+    
     implementation project(":support:cas-server-support-ldap-core")
     implementation project(":support:cas-server-support-aup-core")
 
@@ -36,6 +37,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-scripting")
     
     testImplementation project(":support:cas-server-support-aup-webflow")
+    testImplementation project(":support:cas-server-support-person-directory")
     
     testImplementation project(path: ":support:cas-server-support-aup-webflow", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-aup-core", configuration: "tests")

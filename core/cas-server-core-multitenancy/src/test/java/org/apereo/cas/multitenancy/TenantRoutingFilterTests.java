@@ -1,6 +1,7 @@
 package org.apereo.cas.multitenancy;
 
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
+import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
@@ -32,6 +33,11 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @ExtendWith(CasTestExtension.class)
 class TenantRoutingFilterTests {
+    static {
+        System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName(), "P@$$w0rd");
+        System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.INITIALIZATION_VECTOR.getPropertyName(), "true");
+    }
+    
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
