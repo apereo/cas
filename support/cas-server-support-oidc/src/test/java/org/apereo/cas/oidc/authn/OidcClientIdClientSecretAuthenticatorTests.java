@@ -27,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDCAuthentication")
 @TestPropertySource(properties = {
+    "cas.authn.attribute-repository.stub.attributes.uid=casuser",
+    
     "cas.authn.oidc.core.user-defined-scopes.MyScope=uid",
     "cas.authn.oidc.discovery.scopes=openid,profile,email,MyScope",
     "cas.authn.oidc.discovery.claims=sub,name,family_name,given_name,uid"

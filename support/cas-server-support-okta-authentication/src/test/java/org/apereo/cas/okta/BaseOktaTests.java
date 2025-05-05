@@ -36,7 +36,6 @@ public abstract class BaseOktaTests {
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
-        CasPersonDirectoryAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
