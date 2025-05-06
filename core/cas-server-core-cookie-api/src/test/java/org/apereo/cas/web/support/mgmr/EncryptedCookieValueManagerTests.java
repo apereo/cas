@@ -2,6 +2,7 @@ package org.apereo.cas.web.support.mgmr;
 
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutorResolver;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -21,7 +22,7 @@ class EncryptedCookieValueManagerTests {
 
     @Test
     void verifyNoValue() {
-        val mgr = new EncryptedCookieValueManager(mock(CipherExecutor.class),
+        val mgr = new EncryptedCookieValueManager(CipherExecutorResolver.withCipherExecutor(mock(CipherExecutor.class)),
             mock(TenantExtractor.class), DefaultCookieSameSitePolicy.INSTANCE);
         assertNull(mgr.obtainCookieValue("something", new MockHttpServletRequest()));
     }
@@ -30,7 +31,7 @@ class EncryptedCookieValueManagerTests {
     void verifyEmptyValue() {
         val cipher = mock(CipherExecutor.class);
         when(cipher.decode(anyString(), any())).thenReturn(StringUtils.EMPTY);
-        val mgr = new EncryptedCookieValueManager(cipher,
+        val mgr = new EncryptedCookieValueManager(CipherExecutorResolver.withCipherExecutor(cipher),
             mock(TenantExtractor.class), DefaultCookieSameSitePolicy.INSTANCE);
         assertNull(mgr.obtainCookieValue("something", new MockHttpServletRequest()));
     }

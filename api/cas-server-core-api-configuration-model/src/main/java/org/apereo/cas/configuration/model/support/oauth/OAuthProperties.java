@@ -3,12 +3,14 @@ package org.apereo.cas.configuration.model.support.oauth;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
+import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
 import org.apereo.cas.configuration.model.support.replication.SessionReplicationProperties;
 import org.apereo.cas.configuration.model.support.uma.UmaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serial;
 import java.io.Serializable;
@@ -98,5 +100,9 @@ public class OAuthProperties implements Serializable {
     public OAuthProperties() {
         crypto.getEncryption().setKeySize(EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+        if (StringUtils.isBlank(getSessionReplication().getCookie().getName())) {
+            getSessionReplication().getCookie().setName("%s%s".formatted(
+                CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME, "OauthOidcServerSupport"));
+        }
     }
 }

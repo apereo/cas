@@ -14,6 +14,7 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutorResolver;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
@@ -180,7 +181,7 @@ class CookieRetrievingCookieGeneratorTests {
         ctx.setSameSitePolicy("lax");
 
         val gen = CookieUtils.buildCookieRetrievingGenerator(new DefaultCasCookieValueManager(
-            CipherExecutor.noOp(),
+            CipherExecutorResolver.withCipherExecutor(CipherExecutor.noOp()),
             tenantExtractor,
             new DirectObjectProvider<>(mock(GeoLocationService.class)),
             DefaultCookieSameSitePolicy.INSTANCE, new PinnableCookieProperties().setPinToSession(false)), ctx);
