@@ -47,8 +47,7 @@ public class PersonDirectoryUtils {
                 headers.putAll(rest.getHeaders());
                 dao.setHeaders(headers);
                 dao.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider(rest.getUsernameAttribute()));
-                dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
-                    rest.getState() == AttributeRepositoryStates.ACTIVE);
+                dao.putTag("state", rest.getState());
 
                 if (StringUtils.hasText(rest.getBasicAuthPassword()) && StringUtils.hasText(rest.getBasicAuthUsername())) {
                     dao.setBasicAuthPassword(rest.getBasicAuthPassword());

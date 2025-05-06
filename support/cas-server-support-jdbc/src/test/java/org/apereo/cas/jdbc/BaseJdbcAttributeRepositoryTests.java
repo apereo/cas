@@ -56,26 +56,32 @@ public abstract class BaseJdbcAttributeRepositoryTests {
     @BeforeEach
     void setupDatabase() throws Exception {
         MockitoAnnotations.openMocks(this).close();
-        this.dataSource = JpaBeans.newDataSource(casProperties.getAuthn().getAttributeRepository().getJdbc().getFirst());
-        @Cleanup
-        val connection = dataSource.getConnection();
-        @Cleanup
-        val statement = connection.createStatement();
-        connection.setAutoCommit(true);
-        prepareDatabaseTable(statement);
+        val jdbc = casProperties.getAuthn().getAttributeRepository().getJdbc();
+        if (!jdbc.isEmpty()) {
+            this.dataSource = JpaBeans.newDataSource(jdbc.getFirst());
+            @Cleanup
+            val connection = dataSource.getConnection();
+            @Cleanup
+            val statement = connection.createStatement();
+            connection.setAutoCommit(true);
+            prepareDatabaseTable(statement);
+        }
     }
 
-    public abstract void prepareDatabaseTable(Statement statement) throws Exception;
+    public void prepareDatabaseTable(final Statement statement) throws Exception {
+    }
 
     @AfterEach
     public void cleanup() throws Exception {
-        @Cleanup
-        val c = dataSource.getConnection();
-        @Cleanup
-        val s = c.createStatement();
-        c.setAutoCommit(true);
-        s.execute(String.format("delete from %s;", getTableName()));
-        s.execute(String.format("drop table %s;", getTableName()));
+        if (dataSource != null) {
+            @Cleanup
+            val connection = dataSource.getConnection();
+            @Cleanup
+            val statement = connection.createStatement();
+            connection.setAutoCommit(true);
+            statement.execute(String.format("delete from %s;", getTableName()));
+            statement.execute(String.format("drop table %s;", getTableName()));
+        }
     }
 
     protected String getTableName() {

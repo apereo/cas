@@ -24,7 +24,6 @@ import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersPr
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.persondir.ActiveDirectoryLdapEntryHandler;
 import org.apereo.cas.persondir.LdapPersonAttributeDao;
-import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
@@ -1184,8 +1183,7 @@ public class LdapUtils {
                 dao.setConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap));
                 dao.setBaseDN(ldap.getBaseDn());
                 dao.setEnabled(ldap.getState() != AttributeRepositoryStates.DISABLED);
-                dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
-                    ldap.getState() == AttributeRepositoryStates.ACTIVE);
+                dao.putTag("state", ldap.getState());
 
                 LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getSearchFilter());
                 dao.setSearchFilter(ldap.getSearchFilter());

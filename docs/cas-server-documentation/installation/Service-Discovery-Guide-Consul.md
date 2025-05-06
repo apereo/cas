@@ -27,7 +27,7 @@ CAS provides a Consul-enabled service discovery server that is based on [Spring 
 
 When deployed and assuming default settings, the Consul dashboard would be available at: `http://localhost:8500/ui`.
 
-Note that a Consul Agent client must be available to all CAS server nodes. By default, the agent client is expected to be at `localhost:8500`. See the [Agent documentation](https://www.consul.io/docs/agent) for specifics on how to start an Agent client.
+Note that a Consul Agent client must be available to all CAS server nodes. By default, the agent client is expected to be at `localhost:8500`. 
 
 ## CAS Discovery Service Clients
 

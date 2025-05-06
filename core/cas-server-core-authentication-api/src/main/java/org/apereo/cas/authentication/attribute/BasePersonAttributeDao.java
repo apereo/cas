@@ -57,7 +57,6 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
         this.id = id;
     }
     
-
     protected PersonAttributes getSinglePerson(final Set<PersonAttributes> people) {
         try {
             return DataAccessUtils.singleResult(people);

@@ -64,8 +64,7 @@ public class CasScimPersonDirectoryAutoConfiguration {
                             val dao = new ScimPersonAttributeDao(new ScimPersonAttributeService(scim));
                             FunctionUtils.doIfNotNull(scim.getId(), id -> dao.setId(id));
                             dao.setEnabled(scim.getState() != AttributeRepositoryStates.DISABLED);
-                            dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
-                                scim.getState() == AttributeRepositoryStates.ACTIVE);
+                            dao.putTag("state", scim.getState());
                             dao.setOrder(scim.getOrder());
                             LOGGER.debug("Adding SCIM attribute source for [{}]", scim.getTarget());
                             list.add(dao);
