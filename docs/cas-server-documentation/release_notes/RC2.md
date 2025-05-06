@@ -44,7 +44,7 @@ The following items are new improvements and enhancements presented in this rele
 ### Spring Boot 3.5
 
 The migration of the entire codebase to Spring Boot `3.5` is now complete and CAS is now running
-on Spring Boot `3.5`. 
+on Spring Boot `3.5.x`. 
 
 ### OpenRewrite Recipes
 
@@ -70,10 +70,26 @@ are now configured to run with parallelism enabled.
 As described, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. CAS is now able to
 build and run using Java `24`. Once more, remember that the baseline requirement will remain unchanged
 and this is just a preparatory step to ensure CAS is ready for the next version of Java.
+ 
+### Multitenancy
+
+Multitenancy support is improved to support attribute resolution per each tenant. Supported modules include:
+
+- [REST](../integration/Attribute-Resolution-REST.html)
+- [Stub](../integration/Attribute-Resolution-Stub.html)
+- [LDAP](../integration/Attribute-Resolution-LDAP.html)
+- [Apache Syncope](../integration/Attribute-Resolution-Syncope.html)
+      
+Furthermore, tenant properties now support [CAS configuration security](../configuration/Configuration-Properties-Security-CAS.html) 
+and [Spring expression language](../configuration/Configuration-Spring-Expressions.html).
+      
+There is dedicated routing support to allow CAS to route requests to the appropriate tenant
+internally based on the `Host` http header, in scenarios where CAS is deployed behind a reverse proxy.
 
 ## Other Stuff
         
 - A [Heimdall authorization policy](../authorization/Heimdall-Authorization-Overview.html) for SQL databases.
-- We have laid the groundwork and put together an initial changeset to begin
-  supporting OpenID Connect federations. Support for this topic will gradually 
-  mature as federations begin to operate and remain functional. 
+- We have laid the groundwork and put together an initial changeset to begin supporting OpenID Connect federations. Support for this topic will gradually mature as federations begin to operate and remain functional. 
+- Apache Tomcat's `RewriteValve` can now be added as an engine valve.
+- CAS is now publishing events internally when webflow actions are executed. Such events are recorded into the [CAS event repository](../authentication/Configuring-Authentication-Events.html) and are also available in the [Palantir admin console](../installation/Admin-Dashboard.html).
+- Redis integration tests are now switched and upgraded to use the latest Redis `8.0` server.
