@@ -1,15 +1,12 @@
 package org.apereo.cas.adaptors.ldap;
 
 import org.apereo.cas.util.LdapTestUtils;
-import org.apereo.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.ldaptive.BindConnectionInitializer;
 import org.springframework.core.io.ClassPathResource;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Base class for LDAP tests that provision and de-provision DIRECTORY data as part of test setup/tear-down.
@@ -20,8 +17,6 @@ import java.util.Map;
  */
 @UtilityClass
 public final class LdapIntegrationTestsOperations {
-    private static final Map<Integer, InMemoryTestLdapDirectoryServer> DIRECTORY_MAP = new HashMap<>();
-
     /**
      * Populate entries.
      *

@@ -10,7 +10,7 @@
         <Logger name="com.redis.lettucemod" level="error"  />
         <Logger name="org.apereo.cas" level="error"  />
         <Logger name="org.apereo.cas.ticket.registry.RedisServerTicketRegistryTests" level="warn"  />
-        <Logger name="org.springframework" level="warn" />
+        <Logger name="org.springframework" level="error" />
         <Root level="error">
             <AppenderRef ref="console"/>
         </Root>

@@ -18,7 +18,7 @@ import org.apereo.cas.authentication.principal.provision.ChainingDelegatedClient
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
+import org.apereo.cas.configuration.model.support.interrupt.InterruptCookieProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.discovery.CasServerProfileCustomizer;
@@ -40,6 +40,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
+import org.apereo.cas.util.cipher.DefaultCipherExecutorResolver;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
@@ -95,8 +96,6 @@ import java.util.stream.Collectors;
 @Configuration(value = "DelegatedAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
 class DelegatedAuthenticationEventExecutionPlanConfiguration {
 
-    private static final String AUTHENTICATION_DELEGATION_PREFIX = "AuthnDelegation";
-
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanSessionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class DelegatedAuthenticationEventExecutionPlanSessionConfiguration {
@@ -118,7 +117,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
                     ticketFactory, delegatedClientDistributedSessionCookieGenerator);
             }
             val sessionStore = new JEESessionStore();
-            sessionStore.setPrefix(AUTHENTICATION_DELEGATION_PREFIX);
+            sessionStore.setPrefix("AuthnDelegation");
             return sessionStore;
         }
     }
@@ -161,12 +160,17 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
             @Qualifier("delegatedClientDistributedSessionCookieCipherExecutor")
             final CipherExecutor delegatedClientDistributedSessionCookieCipherExecutor,
             final CasConfigurationProperties casProperties) {
+            
+            val cipherExecutorResolver = new DefaultCipherExecutorResolver(delegatedClientDistributedSessionCookieCipherExecutor, tenantExtractor,
+                InterruptCookieProperties.class, bindingContext -> {
+                val properties = bindingContext.value();
+                val crypto = properties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie().getCrypto();
+                return CipherExecutorUtils.newStringCipherExecutor(crypto, DelegatedClientAuthenticationDistributedSessionCookieCipherExecutor.class);
+            });
+
             val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
-            if (StringUtils.isBlank(cookie.getName())) {
-                cookie.setName("%s%s".formatted(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME, AUTHENTICATION_DELEGATION_PREFIX));
-            }
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
-                new DefaultCasCookieValueManager(delegatedClientDistributedSessionCookieCipherExecutor,
+                new DefaultCasCookieValueManager(cipherExecutorResolver,
                     tenantExtractor, geoLocationService, DefaultCookieSameSitePolicy.INSTANCE, cookie));
         }
 

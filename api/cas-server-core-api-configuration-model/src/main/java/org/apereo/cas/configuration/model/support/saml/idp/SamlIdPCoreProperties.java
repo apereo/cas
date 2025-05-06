@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
 import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
+import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
 import org.apereo.cas.configuration.model.support.replication.SessionReplicationProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -9,6 +10,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
@@ -69,4 +71,11 @@ public class SamlIdPCoreProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
+
+    public SamlIdPCoreProperties() {
+        if (StringUtils.isBlank(getSessionReplication().getCookie().getName())) {
+            getSessionReplication().getCookie().setName("%s%s".formatted(
+                CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME, "SamlServerSupport"));
+        }
+    }
 }

@@ -2,18 +2,16 @@ package org.apereo.cas.web.support.mgmr;
 
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutorResolver;
 import org.apereo.cas.web.cookie.CookieSameSitePolicy;
 import org.apereo.cas.web.cookie.CookieValueManager;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -29,10 +27,7 @@ public class EncryptedCookieValueManager implements CookieValueManager {
     @Serial
     private static final long serialVersionUID = 6362136147071376270L;
 
-    /**
-     * The cipher exec that is responsible for encryption and signing of the cookie.
-     */
-    private final CipherExecutor<Serializable, Serializable> cipherExecutor;
+    private final CipherExecutorResolver cipherExecutorResolver;
 
     @Getter
     private final TenantExtractor tenantExtractor;
@@ -42,14 +37,14 @@ public class EncryptedCookieValueManager implements CookieValueManager {
 
     @Override
     public final String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {
-        val res = buildCompoundCookieValue(givenCookieValue, request);
-        LOGGER.trace("Encoding cookie value [{}]", res);
-        return cipherExecutor.encode(res, ArrayUtils.EMPTY_OBJECT_ARRAY).toString();
+        val cookieValue = buildCompoundCookieValue(givenCookieValue, request);
+        LOGGER.trace("Encoding cookie value [{}]", cookieValue);
+        return determineCipherExecutor(request).encode(cookieValue, ArrayUtils.EMPTY_OBJECT_ARRAY).toString();
     }
 
     @Override
     public String obtainCookieValue(final String cookie, final HttpServletRequest request) {
-        val decoded = cipherExecutor.decode(cookie, ArrayUtils.EMPTY_OBJECT_ARRAY);
+        val decoded = determineCipherExecutor(request).decode(cookie, ArrayUtils.EMPTY_OBJECT_ARRAY);
         if (decoded == null) {
             LOGGER.trace("Could not decode cookie value [{}] for cookie", cookie);
             return null;
@@ -64,25 +59,15 @@ public class EncryptedCookieValueManager implements CookieValueManager {
         return obtainValueFromCompoundCookie(cookieValue, request);
     }
 
-    /**
-     * Build the compound cookie value.
-     *
-     * @param cookieValue the raw cookie value that is being stored
-     * @param request     the current web request
-     * @return a compound cookie value that may contain additional data beyond the raw cookieValue
-     */
     protected String buildCompoundCookieValue(final String cookieValue, final HttpServletRequest request) {
         return cookieValue;
     }
 
-    /**
-     * Obtain the cookie value from the compound cookie value.
-     *
-     * @param compoundValue The compound cookie value
-     * @param request       the current web request
-     * @return the original cookie value that was stored in the provided compound value.
-     */
     protected String obtainValueFromCompoundCookie(final String compoundValue, final HttpServletRequest request) {
         return compoundValue;
+    }
+
+    protected CipherExecutor<Serializable, Serializable> determineCipherExecutor(final HttpServletRequest request) {
+        return cipherExecutorResolver.resolve(request);
     }
 }
