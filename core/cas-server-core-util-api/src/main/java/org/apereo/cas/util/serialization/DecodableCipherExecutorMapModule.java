@@ -2,6 +2,7 @@ package org.apereo.cas.util.serialization;
 
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.BeanProperty;
@@ -22,6 +23,7 @@ import org.springframework.context.ApplicationContext;
 import java.io.IOException;
 import java.io.Serial;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DecodableCipherExecutorMapModule}.
@@ -39,7 +41,7 @@ public class DecodableCipherExecutorMapModule extends SimpleModule {
     @Override
     public void setupModule(final Module.SetupContext setupContext) {
         val cipherExecutor = ApplicationContextProvider.getBean(applicationContext,
-            CipherExecutor.BEAN_NAME_CAS_CONFIGURATION_CIPHER_EXECUTOR, CipherExecutor.class)
+                CipherExecutor.BEAN_NAME_CAS_CONFIGURATION_CIPHER_EXECUTOR, CipherExecutor.class)
             .orElseGet(CipherExecutor::noOp);
 
         setupContext.addBeanDeserializerModifier(new BeanDeserializerModifier() {
@@ -85,8 +87,14 @@ public class DecodableCipherExecutorMapModule extends SimpleModule {
         @Override
         public Map<String, Object> deserialize(final JsonParser jsonParser,
                                                final DeserializationContext deserializationContext) throws IOException {
-            val properties = (Map) defaultDeserializer.deserialize(jsonParser, deserializationContext);
-            return cipherExecutor.decode(properties, ArrayUtils.EMPTY_OBJECT_ARRAY);
+            val properties = defaultDeserializer.deserialize(jsonParser, deserializationContext);
+            val resolver = SpringExpressionLanguageValueResolver.getInstance();
+            val effectiveMap = properties.entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                    entry -> resolver.resolve(entry.getKey().toString()),
+                    entry -> resolver.resolve(entry.getValue().toString())));
+            return cipherExecutor.decode(effectiveMap, ArrayUtils.EMPTY_OBJECT_ARRAY);
         }
     }
 }

@@ -23,4 +23,7 @@ to be a JSON map as such:
 }
 ```
 
+## Multitenancy
 
+Configuration settings for REST attribute resolution can be specified in a multitenant environment.
+Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.

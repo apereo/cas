@@ -29,6 +29,9 @@ import java.util.function.Supplier;
  */
 @Slf4j
 public class SpringExpressionLanguageValueResolver implements Function {
+    private static final int STARTING_PORT_RANGE = 3000;
+    private static final int ENDING_PORT_RANGE = 9999;
+    
     private static final int HOUR_23 = 23;
 
     private static final int MINUTE_59 = 59;
@@ -131,6 +134,7 @@ public class SpringExpressionLanguageValueResolver implements Function {
         evaluationContext.setVariable("randomString8", RandomUtils.randomAlphabetic(8));
 
         evaluationContext.setVariable("uuid", UUID.randomUUID().toString());
+        evaluationContext.setVariable("randomPort", RandomUtils.nextInt(STARTING_PORT_RANGE, ENDING_PORT_RANGE));
 
         evaluationContext.setVariable("localDateTime", LocalDateTime.now(ZoneId.systemDefault()).toString());
         evaluationContext.setVariable("localDateTimeUtc", LocalDateTime.now(Clock.systemUTC()).toString());
