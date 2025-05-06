@@ -60,8 +60,7 @@ class CasPersonDirectoryGroovyConfiguration {
                             val dao = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties, groovy));
                             dao.setOrder(groovy.getOrder());
                             dao.setEnabled(groovy.getState() != AttributeRepositoryStates.DISABLED);
-                            dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
-                                groovy.getState() == AttributeRepositoryStates.ACTIVE);
+                            dao.putTag("state", groovy.getState());
                             FunctionUtils.doIfNotNull(groovy.getId(), id -> dao.setId(id));
                             LOGGER.debug("Configured Groovy attribute sources from [{}]", groovy.getLocation());
                             list.add(dao);

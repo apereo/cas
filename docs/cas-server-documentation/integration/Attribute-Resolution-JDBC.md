@@ -66,3 +66,8 @@ If the resolver is configured to use `cn` as the attribute for the principal id,
 construct attributes from attribute repository sources. It then sees `sAMAccoutName` as the attribute and sees the principal id is to be created by `cn`.
 So it would remove the `cn` from the attributes. The final result is is a principal whose id is `John Smith`
 who has a `sAMAccountName` attribute of `johnsmith`.
+
+# Multitenancy
+
+Configuration settings for SQL attribute resolution can be specified in a multitenant environment.
+Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.

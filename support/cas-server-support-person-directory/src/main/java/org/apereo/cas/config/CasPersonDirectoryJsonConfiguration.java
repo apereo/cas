@@ -69,8 +69,7 @@ class CasPersonDirectoryJsonConfiguration {
                             dao.setOrder(json.getOrder());
                             FunctionUtils.doIfNotNull(json.getId(), id -> dao.setId(id));
                             dao.setEnabled(json.getState() != AttributeRepositoryStates.DISABLED);
-                            dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
-                                json.getState() == AttributeRepositoryStates.ACTIVE);
+                            dao.putTag("state", json.getState());
                             dao.init();
                             LOGGER.debug("Configured JSON attribute sources from [{}]", r);
                             list.add(dao);

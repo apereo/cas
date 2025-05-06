@@ -33,6 +33,24 @@
         "cas.authn.jdbc.query[0].table-users": "custom_users_table",
         "cas.authn.jdbc.search[0].order": "1000"
       }
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "attributes",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.authn.attribute-repository.jdbc[0].attributes.email": "email",
+        "cas.authn.attribute-repository.jdbc[0].single-row": "true",
+        "cas.authn.attribute-repository.jdbc[0].require-all-attributes": "true",
+        "cas.authn.attribute-repository.jdbc[0].sql": "SELECT * FROM simple_table1 WHERE {0}",
+        "cas.authn.attribute-repository.jdbc[0].username": "username",
+        "cas.authn.attribute-repository.jdbc[0].user": "postgres",
+        "cas.authn.attribute-repository.jdbc[0].password": "password",
+        "cas.authn.attribute-repository.jdbc[0].driver-class": "org.postgresql.Driver",
+        "cas.authn.attribute-repository.jdbc[0].url": "jdbc:postgresql://localhost:5432/users",
+        "cas.authn.attribute-repository.jdbc[0].dialect": "org.hibernate.dialect.PostgreSQLDialect",
+        "cas.authn.attribute-repository.jdbc[0].ddl-auto": "create-drop"
+      }
     }
   ]
 ]
