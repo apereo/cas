@@ -144,6 +144,8 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
 
     @JacksonInject("skipGeneratingSessionNotOnOrAfter")
     private boolean skipGeneratingSessionNotOnOrAfter;
+
+    private boolean validateMetadataCertificates;
     
     @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
     @JacksonInject("signResponses")
