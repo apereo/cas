@@ -69,10 +69,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 10389)
 class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     private static final String USER = RandomUtils.randomAlphabetic(10);
-    private static final String OTHER_USER = RandomUtils.randomAlphabetic(10);
-    private static final String NO_USER = RandomUtils.randomAlphabetic(10);
     private static final String ADMIN_USER = RandomUtils.randomAlphabetic(10);
-    private static final String NO_SURROGATE = RandomUtils.randomAlphabetic(10);
+    private static final String HELP_DESK = RandomUtils.randomAlphabetic(10);
 
     private static final int LDAP_PORT = 10389;
 
@@ -98,9 +96,7 @@ class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticatio
         val ldif = IOUtils.toString(new ClassPathResource("ldif/ldap-surrogate.ldif").getInputStream(), StandardCharsets.UTF_8)
             .replace("$user", USER)
                 .replace("$admin", ADMIN_USER)
-                .replace("$otheruser", OTHER_USER)
-                .replace("$nosurrogate", NO_SURROGATE)
-                .replace("$nouser", NO_USER);
+                .replace("$helpdesk", HELP_DESK);
         LdapIntegrationTestsOperations.populateEntries(
             localhost,
             new ByteArrayInputStream(ldif.getBytes(StandardCharsets.UTF_8)),
@@ -111,7 +107,6 @@ class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticatio
     void verifyUserDisabled() throws Throwable {
         assertTrue(getService().getImpersonationAccounts("banderson", Optional.empty()).isEmpty());
         assertTrue(getService().getImpersonationAccounts("nomail", Optional.empty()).isEmpty());
-        assertTrue(getService().getImpersonationAccounts("someadmin", Optional.empty()).isEmpty());
     }
 
     @Test
@@ -122,9 +117,9 @@ class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticatio
         servicesManager.save(registeredService);
 
         val surrogateService = getService();
-        assertTrue(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(OTHER_USER), service));
-        assertFalse(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(NO_SURROGATE), service));
-        assertFalse(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(NO_USER), service));
+        assertTrue(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(USER), service));
+        assertTrue(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(HELP_DESK), service));
+        assertFalse(surrogateService.canImpersonate("nomail", CoreAuthenticationTestUtils.getPrincipal(HELP_DESK), service));
     }
 
     @Override

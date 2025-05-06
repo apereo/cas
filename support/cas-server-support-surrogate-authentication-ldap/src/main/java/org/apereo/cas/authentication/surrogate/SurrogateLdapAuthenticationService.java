@@ -71,7 +71,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
                 LOGGER.debug("Using search filter to find eligible accounts: [{}]", filter);
 
                 val response = connectionFactory.executeSearchOperation(ldap.getBaseDn(), filter, ldap.getPageSize());
-                LOGGER.debug("LDAP response: [{}]", response);
+                LOGGER.trace("LDAP response: [{}]", response);
 
                 if (!LdapUtils.containsResultEntry(response)) {
                     LOGGER.warn("LDAP response is not found or does not contain a result entry for [{}]", username);
@@ -121,7 +121,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
                 CollectionUtils.wrapList(id, surrogate));
         LOGGER.debug("Using LDAP search filter [{}] to authorize principal [{}] to impersonate [{}]", searchFilter, id, surrogate);
         var response = connectionFactory.executeSearchOperation(ldap.getBaseDn(), searchFilter, ldap.getPageSize());
-        LOGGER.debug("LDAP search response: [{}]", response);
+        LOGGER.trace("LDAP search response: [{}]", response);
         return LdapUtils.containsResultEntry(response);
     }
 
@@ -149,7 +149,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
             "surrogate", List.of(surrogate));
         LOGGER.debug("Using surrogate validation filter [{}] to verify surrogate account [{}]", validationFilter, surrogate);
         val response = connectionFactory.executeSearchOperation(ldap.getBaseDn(), validationFilter, ldap.getPageSize());
-        LOGGER.debug("LDAP validation response: [{}]", response);
+        LOGGER.trace("LDAP validation response: [{}]", response);
         return LdapUtils.containsResultEntry(response);
     }
 

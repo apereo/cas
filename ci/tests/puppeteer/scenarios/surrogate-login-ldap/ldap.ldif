@@ -12,6 +12,7 @@ telephoneNumber: 123456789
 mail: casuser@apereo.org
 mail: casperson1@example.org
 mail: casperson2@example.org
+mail: affiliate0@example.org
 
 dn: cn=casperson1,ou=people,dc=example,dc=org
 objectClass: organizationalRole
@@ -38,3 +39,40 @@ sn: casperson2
 uid: casperson2
 telephoneNumber: 77889900
 mail: casperson2@example.org
+
+dn: ou=admin,dc=example,dc=org
+objectClass: organizationalUnit
+ou: admin
+
+dn: cn=notcasuser,ou=admin,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: person
+objectClass: account
+objectClass: mailRecipient
+objectClass: top
+cn: notcasuser
+userPassword: Mellon
+sn: notcasuser
+uid: notcasuser
+telephoneNumber: 123456789
+mail: notcasuser@apereo.org
+mail: casperson1@example.org
+mail: casperson2@example.org
+
+dn: ou=affiliate,dc=example,dc=org
+objectClass: organizationalUnit
+ou: affiliate
+
+dn: cn=affiliate0,ou=affiliate,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: person
+objectClass: account
+objectClass: mailRecipient
+objectClass: top
+cn: affiliate0
+userPassword: Mellon
+sn: affiliate0
+uid: affiliate0
+telephoneNumber: 33445566
+mail: affiliate0@example.org
+
