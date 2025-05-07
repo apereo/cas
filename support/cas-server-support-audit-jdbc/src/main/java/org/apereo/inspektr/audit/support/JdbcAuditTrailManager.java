@@ -1,18 +1,18 @@
 package org.apereo.inspektr.audit.support;
 
-import org.apereo.inspektr.audit.AuditActionContext;
-import org.apereo.inspektr.audit.AuditTrailManager;
-import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
+import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
+import org.apereo.cas.jpa.JpaEntityFactory;
+import org.apereo.cas.util.jpa.MapToJsonAttributeConverter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
-import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
-import org.apereo.cas.jpa.JpaEntityFactory;
-import org.apereo.cas.util.jpa.MapToJsonAttributeConverter;
+import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditTrailManager;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.TransactionStatus;
@@ -149,7 +149,8 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
     private final @NotNull JdbcTemplate jdbcTemplate;
     private final @NotNull JpaEntityFactory<AuditTrailEntity> jpaAuditTrailEntityFactory;
 
-    private @NotNull @Size(min = 1) String tableName = "COM_AUDIT_TRAIL";
+    private @NotNull
+    @Size(min = 1) String tableName = "COM_AUDIT_TRAIL";
 
     private int columnLength = DEFAULT_COLUMN_LENGTH;
 
@@ -167,7 +168,9 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
     protected void saveAuditRecord(final AuditActionContext auditActionContext) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
-            protected void doInTransactionWithoutResult(@Nonnull final TransactionStatus __) {
+            protected void doInTransactionWithoutResult(
+                @Nonnull
+                final TransactionStatus __) {
                 val principal = auditActionContext.getPrincipal();
                 val userId = columnLength <= 0 || principal.length() <= columnLength
                     ? principal
@@ -230,7 +233,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus __) {
-                val sql = String.format(DELETE_SQL_TEMPLATE, tableName, "aud");
+                val sql = String.format(DELETE_SQL_TEMPLATE, tableName, StringUtils.EMPTY);
                 val count = jdbcTemplate.update(sql);
                 LOGGER.info("[{}] records deleted.", count);
             }
