@@ -1,18 +1,18 @@
 package org.apereo.inspektr.audit.support;
 
-import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
-import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
-import org.apereo.cas.jpa.JpaEntityFactory;
-import org.apereo.cas.util.jpa.MapToJsonAttributeConverter;
+import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditTrailManager;
+import org.apereo.inspektr.common.web.ClientInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.inspektr.audit.AuditActionContext;
-import org.apereo.inspektr.audit.AuditTrailManager;
-import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
+import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
+import org.apereo.cas.jpa.JpaEntityFactory;
+import org.apereo.cas.util.jpa.MapToJsonAttributeConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.TransactionStatus;
@@ -149,8 +149,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
     private final @NotNull JdbcTemplate jdbcTemplate;
     private final @NotNull JpaEntityFactory<AuditTrailEntity> jpaAuditTrailEntityFactory;
 
-    private @NotNull
-    @Size(min = 1) String tableName = "COM_AUDIT_TRAIL";
+    private @NotNull @Size(min = 1) String tableName = "COM_AUDIT_TRAIL";
 
     private int columnLength = DEFAULT_COLUMN_LENGTH;
 
