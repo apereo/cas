@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.validator;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.client.authentication.AttributePrincipalImpl;
 import org.apereo.cas.client.validation.Assertion;
@@ -42,8 +41,9 @@ public class CASOAuth20TicketValidator implements org.apereo.cas.client.validati
             .map(Authentication::getPrincipal)
             .map(Principal::getAttributes)
             .orElseGet(HashMap::new);
-        val finalAttributes = CoreAuthenticationUtils.mergeAttributes(originalAttributes, principalAttributes);
-        val attrPrincipal = new AttributePrincipalImpl(validationResult.getPrincipal().getId(), finalAttributes);
+
+        principalAttributes.putAll(originalAttributes);
+        val attrPrincipal = new AttributePrincipalImpl(validationResult.getPrincipal().getId(), principalAttributes);
         val registeredService = validationResult.getRegisteredService();
 
         val authenticationAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(

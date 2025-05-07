@@ -8,7 +8,6 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CasSSLContext;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -168,7 +167,6 @@ import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
-import org.pac4j.cas.profile.CasProfile;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
@@ -178,7 +176,6 @@ import org.pac4j.core.http.url.UrlResolver;
 import org.pac4j.core.matching.matcher.Matcher;
 import org.pac4j.core.matching.matcher.csrf.CsrfTokenGeneratorMatcher;
 import org.pac4j.core.matching.matcher.csrf.DefaultCsrfTokenGenerator;
-import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
@@ -490,14 +487,6 @@ class CasOAuth20Configuration {
             oauthCasClient.setUrlResolver(casCallbackUrlResolver);
             oauthCasClient.setCallbackUrl(OAuth20Utils.casOAuthCallbackUrl(server.getPrefix()));
             oauthCasClient.setCheckAuthenticationAttempt(false);
-            oauthCasClient.setProfileCreator((callContext, credentials) -> {
-                val initialUserProfile = (CasProfile) credentials.getUserProfile();
-                val userProfile = new BasicUserProfile();
-                userProfile.build(initialUserProfile.getId(),
-                    CoreAuthenticationUtils.convertAttributeValuesToObjects(initialUserProfile.getAttributes()),
-                    CoreAuthenticationUtils.convertAttributeValuesToObjects(initialUserProfile.getAuthenticationAttributes()));
-                return Optional.of(userProfile);
-            });
             oauthCasClient.init();
             return oauthCasClient;
         }
