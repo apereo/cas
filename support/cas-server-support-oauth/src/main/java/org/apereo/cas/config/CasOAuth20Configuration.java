@@ -348,7 +348,7 @@ class CasOAuth20Configuration {
             final PrincipalResolver defaultPrincipalResolver,
             @Qualifier("taskScheduler")
             final TaskScheduler taskScheduler,
-            @Qualifier("webflowCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
             final CipherExecutor webflowCipherExecutor,
             @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
             final HttpClient httpClient,

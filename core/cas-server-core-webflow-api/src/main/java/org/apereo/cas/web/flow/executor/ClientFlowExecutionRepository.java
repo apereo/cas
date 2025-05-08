@@ -1,10 +1,9 @@
 package org.apereo.cas.web.flow.executor;
 
 import org.apereo.cas.configuration.model.core.web.flow.WebflowProperties;
-import lombok.AllArgsConstructor;
+import org.apereo.cas.util.crypto.CipherExecutorResolver;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -33,10 +32,8 @@ import java.util.Objects;
  * @see Transcoder
  * @since 6.1
  */
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class ClientFlowExecutionRepository implements FlowExecutionRepository, FlowExecutionKeyFactory {
 
     /**
@@ -55,13 +52,15 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
     private static final String WEBFLOW_USER_AGENT = ClientFlowExecutionKey.class.getName() + ".userAgent";
     private static final String WEBFLOW_CLIENT_IP_ADDRESS = ClientFlowExecutionKey.class.getName() + ".clientIpAddress";
 
-    private FlowExecutionFactory flowExecutionFactory;
+    @Getter
+    private final FlowExecutionFactory flowExecutionFactory;
 
-    private FlowDefinitionLocator flowDefinitionLocator;
+    @Getter
+    private final FlowDefinitionLocator flowDefinitionLocator;
 
-    private Transcoder transcoder;
+    private final CipherExecutorResolver cipherExecutorResolver;
 
-    private WebflowProperties webflowProperties;
+    private final WebflowProperties webflowProperties;
 
     @Override
     public FlowExecutionKey parseFlowExecutionKey(final String encodedKey) throws FlowExecutionRepositoryException {
@@ -75,15 +74,10 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
 
     @Override
     public FlowExecution getFlowExecution(final FlowExecutionKey key) throws FlowExecutionRepositoryException {
-        Assert.notNull(flowExecutionFactory, "FlowExecutionFactory cannot be null");
-        Assert.notNull(flowDefinitionLocator, "FlowDefinitionLocator cannot be null");
-        Assert.notNull(transcoder, "Transcoder cannot be null");
-        Assert.notNull(webflowProperties, "Webflow properties cannot be null");
-
         if (key instanceof final ClientFlowExecutionKey clientFlowExecutionKey) {
             try {
                 val encoded = clientFlowExecutionKey.getData();
-                val state = (SerializedFlowExecutionState) transcoder.decode(encoded);
+                val state = (SerializedFlowExecutionState) determineTranscoder().decode(encoded);
 
                 if (webflowProperties.getSession().isPinToSession()) {
                     verifyWebflowSessionIsCorrectlyPinned(state);
@@ -96,6 +90,54 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
             }
         }
         throw new IllegalArgumentException("Expected instance of ClientFlowExecutionKey but got " + key.getClass().getName());
+    }
+
+
+    @Override
+    public void putFlowExecution(final FlowExecution flowExecution) throws FlowExecutionRepositoryException {
+    }
+
+    @Override
+    public void removeFlowExecution(final FlowExecution flowExecution) throws FlowExecutionRepositoryException {
+    }
+
+    @Override
+    public FlowExecutionKey getKey(final FlowExecution execution) {
+        try {
+            if (webflowProperties.getSession().isPinToSession()) {
+                recordWebflowSessionPinningInfo(execution);
+            }
+            val state = new SerializedFlowExecutionState(execution);
+            return new ClientFlowExecutionKey(determineTranscoder().encode(state));
+        } catch (final Exception e) {
+            throw new ClientFlowExecutionRepositoryException("Error encoding flow execution", e);
+        }
+    }
+
+    @Override
+    public void updateFlowExecutionSnapshot(final FlowExecution execution) {
+    }
+
+    @Override
+    public void removeFlowExecutionSnapshot(final FlowExecution execution) {
+    }
+
+    @Override
+    public void removeAllFlowExecutionSnapshots(final FlowExecution execution) {
+    }
+
+    protected Transcoder determineTranscoder() {
+        val clientInfo = Objects.requireNonNull(ClientInfoHolder.getClientInfo(), "Client info cannot be null");
+        val cipherExecutor = cipherExecutorResolver.resolve(clientInfo.getTenant());
+        return new EncryptedTranscoder(cipherExecutor);
+    }
+
+    protected void recordWebflowSessionPinningInfo(final FlowExecution execution) {
+        val clientInfo = Objects.requireNonNull(ClientInfoHolder.getClientInfo(), "Client info cannot be null");
+        Assert.hasText(clientInfo.getUserAgent(), "User-agent cannot be null or empty");
+        Assert.hasText(clientInfo.getClientIpAddress(), "Client IP address cannot be null or empty");
+        execution.getConversationScope().put(WEBFLOW_USER_AGENT, clientInfo.getUserAgent());
+        execution.getConversationScope().put(WEBFLOW_CLIENT_IP_ADDRESS, clientInfo.getClientIpAddress());
     }
 
     protected void verifyWebflowSessionIsCorrectlyPinned(final SerializedFlowExecutionState state) {
@@ -117,46 +159,6 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
         }
     }
 
-    @Override
-    public void putFlowExecution(final FlowExecution flowExecution) throws FlowExecutionRepositoryException {
-    }
-
-    @Override
-    public void removeFlowExecution(final FlowExecution flowExecution) throws FlowExecutionRepositoryException {
-    }
-
-    @Override
-    public FlowExecutionKey getKey(final FlowExecution execution) {
-        try {
-            if (webflowProperties.getSession().isPinToSession()) {
-                recordWebflowSessionPinningInfo(execution);
-            }
-            val state = new SerializedFlowExecutionState(execution);
-            return new ClientFlowExecutionKey(transcoder.encode(state));
-        } catch (final Exception e) {
-            throw new ClientFlowExecutionRepositoryException("Error encoding flow execution", e);
-        }
-    }
-
-    protected void recordWebflowSessionPinningInfo(final FlowExecution execution) {
-        val clientInfo = Objects.requireNonNull(ClientInfoHolder.getClientInfo(), "Client info cannot be null");
-        Assert.hasText(clientInfo.getUserAgent(), "User-agent cannot be null or empty");
-        Assert.hasText(clientInfo.getClientIpAddress(), "Client IP address cannot be null or empty");
-        execution.getConversationScope().put(WEBFLOW_USER_AGENT, clientInfo.getUserAgent());
-        execution.getConversationScope().put(WEBFLOW_CLIENT_IP_ADDRESS, clientInfo.getClientIpAddress());
-    }
-
-    @Override
-    public void updateFlowExecutionSnapshot(final FlowExecution execution) {
-    }
-
-    @Override
-    public void removeFlowExecutionSnapshot(final FlowExecution execution) {
-    }
-
-    @Override
-    public void removeAllFlowExecutionSnapshots(final FlowExecution execution) {
-    }
 
     @Getter
     public static class SerializedFlowExecutionState implements Serializable {

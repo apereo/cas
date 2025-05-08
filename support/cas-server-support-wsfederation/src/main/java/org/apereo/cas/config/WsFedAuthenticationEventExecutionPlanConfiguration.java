@@ -118,7 +118,7 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
             val tenantExtractor = applicationContext.getBean(TenantExtractor.BEAN_NAME, TenantExtractor.class);
 
             val valueManager = new DefaultCasCookieValueManager(
-                CipherExecutorResolver.withCipherExecutor(cipher),
+                CipherExecutorResolver.with(cipher),
                 tenantExtractor, geoLocationService,
                 DefaultCookieSameSitePolicy.INSTANCE, cookie);
             return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(cookie), valueManager);

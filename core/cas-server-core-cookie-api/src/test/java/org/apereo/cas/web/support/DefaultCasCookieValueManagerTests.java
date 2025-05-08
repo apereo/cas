@@ -162,7 +162,7 @@ class DefaultCasCookieValueManagerTests {
         final GeoLocationService geoLocationService,
         final PinnableCookieProperties props) {
         return new DefaultCasCookieValueManager(
-            CipherExecutorResolver.withCipherExecutor(CipherExecutor.noOp()),
+            CipherExecutorResolver.with(CipherExecutor.noOp()),
             mock(TenantExtractor.class),
             new DirectObjectProvider<>(geoLocationService),
             DefaultCookieSameSitePolicy.INSTANCE,

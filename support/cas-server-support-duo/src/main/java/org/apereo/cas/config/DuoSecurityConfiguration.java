@@ -51,7 +51,7 @@ class DuoSecurityConfiguration {
         @ConditionalOnMissingBean(name = "duoUniversalPromptSessionStore")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public BrowserWebStorageSessionStore duoUniversalPromptSessionStore(@Qualifier("webflowCipherExecutor")
+        public BrowserWebStorageSessionStore duoUniversalPromptSessionStore(@Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
                                                                             final CipherExecutor webflowCipherExecutor) {
             return new BrowserWebStorageSessionStore(webflowCipherExecutor, "DuoSecuritySessionContext");
         }

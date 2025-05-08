@@ -1,6 +1,8 @@
 package org.apereo.cas.util.cipher;
 
 
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.NoArgsConstructor;
 
 /**
@@ -12,6 +14,11 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor
 public class WebflowConversationStateCipherExecutor extends BaseBinaryCipherExecutor {
+
+    public WebflowConversationStateCipherExecutor(final String secretKeyAlg, final int signingKeySize,
+                                                  final int encryptionKeySize) {
+        this(null, null, secretKeyAlg, signingKeySize, encryptionKeySize, "webflow");
+    }
 
     public WebflowConversationStateCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                                   final String secretKeyAlg, final int signingKeySize,
@@ -39,5 +46,21 @@ public class WebflowConversationStateCipherExecutor extends BaseBinaryCipherExec
     @Override
     public String getSigningKeySetting() {
         return "cas." + this.cipherName + ".crypto.signing.key";
+    }
+
+    /**
+     * From properties to cipher executor.
+     *
+     * @param crypto the crypto
+     * @return the cipher executor
+     */
+    public static CipherExecutor from(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
+        return new WebflowConversationStateCipherExecutor(
+            crypto.getEncryption().getKey(),
+            crypto.getSigning().getKey(),
+            crypto.getAlg(),
+            crypto.getSigning().getKeySize(),
+            crypto.getEncryption().getKeySize()
+        );
     }
 }

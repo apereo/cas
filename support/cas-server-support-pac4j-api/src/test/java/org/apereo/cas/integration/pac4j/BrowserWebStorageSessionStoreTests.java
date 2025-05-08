@@ -40,7 +40,7 @@ class BrowserWebStorageSessionStoreTests {
 
 
     @Autowired
-    @Qualifier("webflowCipherExecutor")
+    @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
     private CipherExecutor webflowCipherExecutor;
 
     @Test
