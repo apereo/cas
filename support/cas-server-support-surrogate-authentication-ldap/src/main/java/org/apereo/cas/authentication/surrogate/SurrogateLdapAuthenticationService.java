@@ -45,13 +45,13 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
 
     @Override
     public boolean canImpersonateInternal(final String surrogate, final Principal principal, final Optional<? extends Service> service) {
-        boolean canImpersonate = false;
+        var canImpersonate = false;
         try {
             canImpersonate = canImpersonateInLdap(principal, surrogate);
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
-        boolean surrogateExists = false;
+        var surrogateExists = false;
         if (canImpersonate) {
             try {
                 surrogateExists = doesSurrogateAccountExistInLdap(surrogate);

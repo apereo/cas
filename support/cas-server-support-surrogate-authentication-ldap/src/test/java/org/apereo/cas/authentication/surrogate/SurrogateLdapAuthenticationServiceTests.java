@@ -111,15 +111,15 @@ class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticatio
 
     @Test
     void verifyProxyingDifferentOU() throws Throwable {
-        val service = Optional.of(RegisteredServiceTestUtils.getService(UUID.randomUUID().toString()));
-        val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.get().getId());
+        val testService = Optional.of(RegisteredServiceTestUtils.getService(UUID.randomUUID().toString()));
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(testService.get().getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
         servicesManager.save(registeredService);
 
         val surrogateService = getService();
-        assertTrue(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(USER), service));
-        assertTrue(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(HELP_DESK), service));
-        assertFalse(surrogateService.canImpersonate("nomail", CoreAuthenticationTestUtils.getPrincipal(HELP_DESK), service));
+        assertTrue(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(USER), testService));
+        assertTrue(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(HELP_DESK), testService));
+        assertFalse(surrogateService.canImpersonate("nomail", CoreAuthenticationTestUtils.getPrincipal(HELP_DESK), testService));
     }
 
     @Override
