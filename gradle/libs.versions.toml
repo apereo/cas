@@ -2,7 +2,7 @@
 aceEditor = "1.40.0"
 acmeClient = "3.5.1"
 amazonDax = "2.0.5"
-amazonSdk = "2.31.37"
+amazonSdk = "2.31.38"
 azureInsights = "3.7.2"
 azureKustoLog4j = "1.0.0"
 animateCss = "4.1.1"
