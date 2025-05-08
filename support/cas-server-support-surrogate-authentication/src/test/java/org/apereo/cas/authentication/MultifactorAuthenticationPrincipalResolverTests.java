@@ -1,10 +1,12 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationServiceTests;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
@@ -32,7 +34,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(
     classes = BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class,
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
-@Tag("Authentication")
+@Tag("Impersonation")
 @ExtendWith(CasTestExtension.class)
 class MultifactorAuthenticationPrincipalResolverTests {
     @Autowired
@@ -45,7 +47,7 @@ class MultifactorAuthenticationPrincipalResolverTests {
     @Autowired
     @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
     private AttributeRepositoryResolver attributeRepositoryResolver;
-    
+
     @Autowired
     @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
     private RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
@@ -56,12 +58,15 @@ class MultifactorAuthenticationPrincipalResolverTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
+
     @Test
     void verifyOperation() throws Throwable {
         val surrogatePrincipalBuilder = getBuilder();
         val primary = CoreAuthenticationTestUtils.getPrincipal();
-        val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal("surrogate", primary);
+        val surrogate = new BasicIdentifiableCredential();
+        surrogate.getCredentialMetadata()
+            .addTrait(new SurrogateCredentialTrait("surrogate"));
+        val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal(surrogate, primary);
         assertEquals(0, surrogateMultifactorAuthenticationPrincipalResolver.getOrder());
         assertTrue(surrogateMultifactorAuthenticationPrincipalResolver.supports(principal));
         val resolved = surrogateMultifactorAuthenticationPrincipalResolver.resolve(principal);

@@ -56,6 +56,7 @@ The basic construct for a tenant definition should match the following:
       "authenticationPolicy": {
         "@class": "org.apereo.cas.multitenancy.DefaultTenantAuthenticationPolicy",
         "authenticationHandlers": [ "java.util.ArrayList", [ "LdapAuthHandler1" ] ],
+        "attributeRepositories": [ "java.util.ArrayList", [ "AttributeRepository1" ] ],
         "authenticationProtocolPolicy": {
           "@class": "org.apereo.cas.multitenancy.TenantCasAuthenticationProtocolPolicy",
           "supportedProtocols": [ "java.util.HashSet", [ "SAML1", "CAS20", "CAS30" ] ]
@@ -108,6 +109,7 @@ The tenant authentication policy supports the following fields:
 | Field                    | Description                                                                                                   |
 |--------------------------|---------------------------------------------------------------------------------------------------------------|
 | `authenticationHandlers` | List of authentication handlers *pre-built* available to this tenant, invoked during authentication attempts. |
+| `attributeRepositories`  | List of attribute repositories *pre-built* available to this tenant, invoked during authentication attempts.  |
       
 CAS features and modules that are multitenant-aware also have the ability to build their own list of authentication
 handlers dynamically and on the fly without relying on the static list of authentication handlers that are bootstrapped
