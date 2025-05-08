@@ -21,24 +21,24 @@ public interface SurrogateAuthenticationPrincipalBuilder {
     /**
      * Build surrogate principal principal.
      *
-     * @param surrogate         the surrogate
+     * @param credential         the surrogate
      * @param primaryPrincipal  the primary principal
      * @param registeredService the registered service
      * @return the principal
      * @throws Throwable the throwable
      */
-    Principal buildSurrogatePrincipal(String surrogate, Principal primaryPrincipal, RegisteredService registeredService) throws Throwable;
+    Principal buildSurrogatePrincipal(Credential credential, Principal primaryPrincipal, RegisteredService registeredService) throws Throwable;
 
     /**
      * Build surrogate principal principal without a service.
      *
-     * @param surrogate        the surrogate
+     * @param credential        the surrogate
      * @param primaryPrincipal the primary principal
      * @return the principal
      * @throws Throwable the throwable
      */
-    default Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal) throws Throwable {
-        return buildSurrogatePrincipal(surrogate, primaryPrincipal, null);
+    default Principal buildSurrogatePrincipal(final Credential credential, final Principal primaryPrincipal) throws Throwable {
+        return buildSurrogatePrincipal(credential, primaryPrincipal, null);
     }
 
     /**

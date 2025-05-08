@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationServiceTests;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
@@ -40,15 +41,21 @@ class DefaultSurrogateAuthenticationPrincipalBuilderTests {
     
     @Test
     void verifyOperationWithNoService() throws Throwable {
-        val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal("surrogate", CoreAuthenticationTestUtils.getPrincipal());
+        val surrogate = new BasicIdentifiableCredential();
+        surrogate.getCredentialMetadata()
+            .addTrait(new SurrogateCredentialTrait("surrogate"));
+        val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal(surrogate, CoreAuthenticationTestUtils.getPrincipal());
         assertNotNull(principal);
     }
 
     @Test
     void verifyOperationWithService() throws Throwable {
+        val surrogate = new BasicIdentifiableCredential();
+        surrogate.getCredentialMetadata()
+            .addTrait(new SurrogateCredentialTrait("surrogate"));
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(new DenyAllAttributeReleasePolicy());
-        val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal("surrogate",
+        val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal(surrogate,
             CoreAuthenticationTestUtils.getPrincipal(), registeredService);
         assertNotNull(principal);
     }
@@ -66,7 +73,10 @@ class DefaultSurrogateAuthenticationPrincipalBuilderTests {
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(new DenyAllAttributeReleasePolicy());
 
-        val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal("surrogate",
+        val surrogate = new BasicIdentifiableCredential();
+        surrogate.getCredentialMetadata()
+            .addTrait(new SurrogateCredentialTrait("surrogate"));
+        val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal(surrogate,
             CoreAuthenticationTestUtils.getPrincipal("unknown"), registeredService);
 
         val resultBuilder = new DefaultAuthenticationResultBuilder(principalElectionStrategy);
@@ -86,7 +96,10 @@ class DefaultSurrogateAuthenticationPrincipalBuilderTests {
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(new DenyAllAttributeReleasePolicy());
 
-        val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal("surrogate",
+        val surrogate = new BasicIdentifiableCredential();
+        surrogate.getCredentialMetadata()
+            .addTrait(new SurrogateCredentialTrait("surrogate"));
+        val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal(surrogate,
             CoreAuthenticationTestUtils.getPrincipal("test"), registeredService);
 
         val resultBuilder = new DefaultAuthenticationResultBuilder(principalElectionStrategy);

@@ -39,14 +39,16 @@ public class DefaultSurrogateAuthenticationPrincipalBuilder implements Surrogate
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public Principal buildSurrogatePrincipal(final String surrogate, final Principal primaryPrincipal,
+    public Principal buildSurrogatePrincipal(final Credential credential, final Principal primaryPrincipal,
                                              final RegisteredService registeredService) throws Throwable {
 
+        val surrogate = extractSurrogateUser(credential);
         val activeAttributeRepositoryIdentifiers = PrincipalResolverUtils.buildActiveAttributeRepositoryIds(casProperties.getPersonDirectory());
         val query = AttributeRepositoryQuery.builder()
             .principal(primaryPrincipal)
             .activeRepositoryIds(activeAttributeRepositoryIdentifiers)
             .registeredService(registeredService)
+            .tenant(credential.getTenant())
             .build();
 
         val repositoryIds = attributeRepositoryResolver.resolve(query);
@@ -66,30 +68,36 @@ public class DefaultSurrogateAuthenticationPrincipalBuilder implements Surrogate
 
 
     @Override
-    public Optional<AuthenticationResultBuilder> buildSurrogateAuthenticationResult(final AuthenticationResultBuilder authenticationResultBuilder,
-                                                                                    final Credential mutableCredential,
-                                                                                    final RegisteredService registeredService) throws Throwable {
-        val currentAuthn = authenticationResultBuilder.getInitialAuthentication();
-        if (currentAuthn.isPresent()) {
-            val authentication = currentAuthn.get();
-            var principal = authentication.getPrincipal();
-            if (authentication.getPrincipal() instanceof SurrogatePrincipal) {
-                principal = ((SurrogatePrincipal) authentication.getPrincipal()).getPrimary();
-            }
+    public Optional<AuthenticationResultBuilder> buildSurrogateAuthenticationResult(
+        final AuthenticationResultBuilder authenticationResultBuilder,
+        final Credential mutableCredential,
+        final RegisteredService registeredService) throws Throwable {
+        val initialAuthentication = authenticationResultBuilder.getInitialAuthentication();
+        if (initialAuthentication.isPresent()) {
+            val authentication = initialAuthentication.get();
+            val principal = extractPrimaryPrincipal(authentication);
 
-            val surrogateUsername = mutableCredential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class)
-                .map(SurrogateCredentialTrait::getSurrogateUsername)
-                .orElseThrow(() -> new SurrogateAuthenticationException("Unable to locate surrogate credential"));
-
+            val surrogateUsername = extractSurrogateUser(mutableCredential);
             if (!surrogateAuthenticationService.canImpersonate(surrogateUsername, principal, Optional.empty())) {
                 throw new SurrogateAuthenticationException("Unable to authorize surrogate authentication request for " + surrogateUsername);
             }
-
-            val surrogatePrincipal = buildSurrogatePrincipal(surrogateUsername, principal, registeredService);
+            val surrogatePrincipal = buildSurrogatePrincipal(mutableCredential, principal, registeredService);
             val authenticationBuilder = DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(surrogatePrincipal);
             surrogateAuthenticationService.collectSurrogateAttributes(authenticationBuilder, surrogateUsername, principal.getId());
             return Optional.of(authenticationResultBuilder.collect(authenticationBuilder.build()));
         }
         return Optional.empty();
+    }
+
+    protected Principal extractPrimaryPrincipal(final Authentication authentication) {
+        return authentication.getPrincipal() instanceof final SurrogatePrincipal surrogatePrincipal
+            ? surrogatePrincipal.getPrimary()
+            : authentication.getPrincipal();
+    }
+
+    protected String extractSurrogateUser(final Credential mutableCredential) {
+        return mutableCredential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class)
+            .map(SurrogateCredentialTrait::getSurrogateUsername)
+            .orElseThrow(() -> new SurrogateAuthenticationException("Unable to locate surrogate credential"));
     }
 }

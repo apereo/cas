@@ -1,10 +1,12 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationServiceTests;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -56,7 +58,10 @@ class SurrogatePrincipalElectionStrategyTests {
     
     @Test
     void verifyNominate() throws Throwable {
-        val surrogate = buildSurrogatePrincipal("cas-surrogate",
+        val credential = new BasicIdentifiableCredential();
+        credential.getCredentialMetadata()
+            .addTrait(new SurrogateCredentialTrait("cas-surrogate"));
+        val surrogate = buildSurrogatePrincipal(credential,
             CoreAuthenticationTestUtils.getAuthentication("casuser")
         );
 
@@ -81,7 +86,10 @@ class SurrogatePrincipalElectionStrategyTests {
         authentications.add(primaryAuth);
 
         val attributeRepository = CoreAuthenticationTestUtils.getAttributeRepository();
-        val surrogatePrincipal = buildSurrogatePrincipal("cas-surrogate", primaryAuth);
+        val credential = new BasicIdentifiableCredential();
+        credential.getCredentialMetadata()
+            .addTrait(new SurrogateCredentialTrait("cas-surrogate"));
+        val surrogatePrincipal = buildSurrogatePrincipal(credential, primaryAuth);
 
         authentications.add(CoreAuthenticationTestUtils.getAuthentication(surrogatePrincipal));
         val principal = strategy.nominate(authentications, (Map) attributes);
@@ -109,7 +117,10 @@ class SurrogatePrincipalElectionStrategyTests {
         val primaryPrincipal1 = CoreAuthenticationTestUtils.getPrincipal("primary", new HashMap<>());
         principals.add(primaryPrincipal1);
 
-        val surrogatePrincipal = buildSurrogatePrincipal("cas-surrogate",
+        val credential = new BasicIdentifiableCredential();
+        credential.getCredentialMetadata()
+            .addTrait(new SurrogateCredentialTrait("cas-surrogate"));
+        val surrogatePrincipal = buildSurrogatePrincipal(credential,
             CoreAuthenticationTestUtils.getAuthentication(primaryPrincipal1));
         principals.add(surrogatePrincipal);
 
@@ -144,7 +155,7 @@ class SurrogatePrincipalElectionStrategyTests {
         assertEquals(principalAttributes, principal.getAttributes());
     }
 
-    private Principal buildSurrogatePrincipal(final String surrogateId, final Authentication primaryAuth) throws Throwable {
+    private Principal buildSurrogatePrincipal(final Credential surrogateId, final Authentication primaryAuth) throws Throwable {
         val surrogatePrincipalBuilder = getBuilder();
         return surrogatePrincipalBuilder.buildSurrogatePrincipal(surrogateId,
             primaryAuth.getPrincipal(),

@@ -34,6 +34,15 @@ public class DefaultAttributeRepositoryResolver implements AttributeRepositoryRe
     @Override
     public Set<String> resolve(final AttributeRepositoryQuery query) {
         val repositoryIds = new HashSet<String>();
+
+        if (StringUtils.hasText(query.getTenant())) {
+            val tenant = tenantExtractor.getTenantsManager().findTenant(query.getTenant()).orElseThrow();
+            val authenticationPolicy = tenant.getAuthenticationPolicy();
+            if (authenticationPolicy != null && authenticationPolicy.getAttributeRepositories() != null) {
+                repositoryIds.addAll(authenticationPolicy.getAttributeRepositories());
+            }
+        }
+
         determineRegisteredService(query)
             .map(RegisteredService::getAttributeReleasePolicy)
             .map(RegisteredServiceAttributeReleasePolicy::getPrincipalAttributesRepository)

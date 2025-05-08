@@ -33,7 +33,7 @@ public class SurrogateDelegatedAuthenticationPreProcessor implements DelegatedAu
         if (surrogateTrait.isPresent()) {
             val surrogateUsername = surrogateTrait.get().getSurrogateUsername();
             if (surrogateAuthenticationService.canImpersonate(surrogateUsername, principal, Optional.ofNullable(service))) {
-                return surrogatePrincipalBuilder.buildSurrogatePrincipal(surrogateUsername, principal);
+                return surrogatePrincipalBuilder.buildSurrogatePrincipal(credential, principal);
             }
         }
         return principal;

@@ -24,6 +24,20 @@
         "cas.authn.attribute-repository.rest[0].basic-auth-password": "psw",
         "cas.authn.attribute-repository.rest[0].basic-auth-username": "username"
       }
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "attributes",
+      "description": "This is the Attributes tenant definition",
+      "authenticationPolicy": {
+        "@class": "org.apereo.cas.multitenancy.DefaultTenantAuthenticationPolicy",
+        "attributeRepositories": [
+          "java.util.ArrayList",
+          [
+            "STUB"
+          ]
+        ]
+      }
     }
   ]
 ]

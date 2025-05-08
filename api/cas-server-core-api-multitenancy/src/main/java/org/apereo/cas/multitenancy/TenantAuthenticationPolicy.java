@@ -20,6 +20,13 @@ public interface TenantAuthenticationPolicy extends Serializable {
     List<String> getAuthenticationHandlers();
 
     /**
+     * Gets attribute repositories.
+     *
+     * @return the attribute repositories
+     */
+    List<String> getAttributeRepositories();
+
+    /**
      * Gets authentication protocol policy.
      *
      * @return the authentication protocol policy
