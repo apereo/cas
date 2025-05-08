@@ -326,7 +326,7 @@ public abstract class AbstractOidcTests {
     protected ExpirationPolicyBuilder accessTokenExpirationPolicy;
 
     @Autowired
-    @Qualifier("webflowCipherExecutor")
+    @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
     protected CipherExecutor webflowCipherExecutor;
 
     protected static OidcRegisteredService getOidcRegisteredService() {

@@ -195,7 +195,7 @@ class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
             @Qualifier("deviceFingerprintCookieCipherExecutor")
             final CipherExecutor deviceFingerprintCookieCipherExecutor) {
             return new EncryptedCookieValueManager(
-                CipherExecutorResolver.withCipherExecutor(deviceFingerprintCookieCipherExecutor),
+                CipherExecutorResolver.with(deviceFingerprintCookieCipherExecutor),
                 tenantExtractor, DefaultCookieSameSitePolicy.INSTANCE);
         }
 

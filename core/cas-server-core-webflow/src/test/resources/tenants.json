@@ -4,6 +4,15 @@
     {
       "@class": "org.apereo.cas.multitenancy.TenantDefinition",
       "id": "shire"
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "webflow",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.webflow.crypto.signing.key":"v43dwqO_GbGSVsFqgPFpVdwdMSEunMUzc4QSF13x18kInHPeRuvntleljO5Y5cKqDGAFe1vv10mM4tpyoKyBBA",
+        "cas.webflow.crypto.encryption.key":"2PikjfOKY6n8Bbux2cy-Hg"
+      }
     }
   ]
 ]

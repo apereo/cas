@@ -25,6 +25,11 @@ public interface CipherExecutor<I, O> extends EncodableCipher<I, O>, DecodableCi
     String BEAN_NAME_CAS_CONFIGURATION_CIPHER_EXECUTOR = "casConfigurationCipherExecutor";
 
     /**
+     * Default cipher bean name for webflow.
+     */
+    String BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR = "webflowCipherExecutor";
+
+    /**
      * Factory method.
      *
      * @return Strongly -typed Noop {@code CipherExecutor Serializable -> Serializable}

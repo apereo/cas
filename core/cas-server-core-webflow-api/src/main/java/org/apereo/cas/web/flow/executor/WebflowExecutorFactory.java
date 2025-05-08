@@ -2,8 +2,10 @@ package org.apereo.cas.web.flow.executor;
 
 import org.apereo.cas.configuration.model.core.web.flow.WebflowProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.util.cipher.DefaultCipherExecutorResolver;
+import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
@@ -39,16 +41,17 @@ public class WebflowExecutorFactory {
 
     private final FlowUrlHandler flowUrlHandler;
 
+    private final TenantExtractor tenantExtractor;
+
     /**
      * Build flow executor.
      *
      * @return the flow executor
      */
     public FlowExecutor build() {
-        if (webflowProperties.getSession().isStorage()) {
-            return buildFlowExecutorViaServerSessionBindingExecution();
-        }
-        return buildFlowExecutorViaClientFlowExecution();
+        return webflowProperties.getSession().isStorage()
+            ? buildFlowExecutorViaServerSessionBindingExecution()
+            : buildFlowExecutorViaClientFlowExecution();
     }
 
     private FlowExecutor buildFlowExecutorViaServerSessionBindingExecution() {
@@ -69,15 +72,18 @@ public class WebflowExecutorFactory {
     }
 
     private FlowExecutor buildFlowExecutorViaClientFlowExecution() {
-        val repository = new ClientFlowExecutionRepository();
-        repository.setWebflowProperties(webflowProperties);
-        repository.setFlowDefinitionLocator(flowDefinitionRegistry);
-        repository.setTranscoder(getWebflowStateTranscoder());
-
         val executionFactory = new FlowExecutionImplFactory();
-        executionFactory.setExecutionKeyFactory(repository);
-        repository.setFlowExecutionFactory(executionFactory);
         executionFactory.setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListeners));
+
+        val cipherExecutorResolver = new DefaultCipherExecutorResolver(webflowCipherExecutor, tenantExtractor,
+            WebflowProperties.class, bindingContext -> {
+            val properties = bindingContext.value();
+            return WebflowConversationStateCipherExecutor.from(properties.getWebflow().getCrypto());
+        });
+
+        val repository = new ClientFlowExecutionRepository(executionFactory, flowDefinitionRegistry,
+            cipherExecutorResolver, webflowProperties);
+        executionFactory.setExecutionKeyFactory(repository);
         return buildCasFlowExecutor(executionFactory, repository);
     }
 
@@ -85,10 +91,6 @@ public class WebflowExecutorFactory {
         return new CasFlowExecutorImpl(new FlowExecutorImpl(flowDefinitionRegistry, executionFactory, repository), repository, flowUrlHandler);
     }
 
-    private Transcoder getWebflowStateTranscoder() {
-        val cipherBean = new WebflowCipherBean(webflowCipherExecutor);
-        return new EncryptedTranscoder(cipherBean);
-    }
 
     @RequiredArgsConstructor
     @Getter

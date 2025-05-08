@@ -530,7 +530,7 @@ class SamlIdPEndpointsConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPDistributedSessionCookieGenerator")
             final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
-            @Qualifier("webflowCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
             final CipherExecutor webflowCipherExecutor,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,

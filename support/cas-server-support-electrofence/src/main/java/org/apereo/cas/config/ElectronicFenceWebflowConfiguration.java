@@ -164,16 +164,18 @@ class ElectronicFenceWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "riskVerificationFlowExecutor")
         public FlowExecutor riskVerificationFlowExecutor(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier("riskVerificationWebflowUrlHandler")
             final FlowUrlHandler riskVerificationWebflowUrlHandler,
             final CasConfigurationProperties casProperties,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry flowDefinitionRegistry,
-            @Qualifier("webflowCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
             final CipherExecutor webflowCipherExecutor) {
             val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
                 flowDefinitionRegistry, webflowCipherExecutor, FLOW_EXECUTION_LISTENERS,
-                riskVerificationWebflowUrlHandler);
+                riskVerificationWebflowUrlHandler, tenantExtractor);
             return factory.build();
         }
 

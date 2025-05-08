@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeaturesEnabled;
@@ -76,16 +77,18 @@ class CasWebflowAccountProfileConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public FlowExecutor accountProfileFlowExecutor(
+        @Qualifier(TenantExtractor.BEAN_NAME)
+        final TenantExtractor tenantExtractor,
         @Qualifier("accountProfileWebflowUrlHandler")
         final FlowUrlHandler accountProfileWebflowUrlHandler,
         final CasConfigurationProperties casProperties,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry flowDefinitionRegistry,
-        @Qualifier("webflowCipherExecutor")
+        @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
         final CipherExecutor webflowCipherExecutor) {
         val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
             flowDefinitionRegistry, webflowCipherExecutor, FLOW_EXECUTION_LISTENERS,
-            accountProfileWebflowUrlHandler);
+            accountProfileWebflowUrlHandler, tenantExtractor);
         return factory.build();
     }
 
