@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.client.authentication.AttributePrincipalImpl;
 import org.apereo.cas.client.validation.Assertion;
 import org.apereo.cas.client.validation.AssertionImpl;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.TicketValidator;
@@ -35,7 +36,7 @@ public class CASOAuth20TicketValidator implements org.apereo.cas.client.validati
         val assertion = validationResult.getAssertion();
 
         val principalAttributes = new HashMap(validationResult.getPrincipal().getAttributes());
-        principalAttributes.put("stateless", validationResult.getAssertion().isStateless());
+        principalAttributes.put(OAuth20Constants.CAS_OAUTH_STATELESS_PROPERTY, validationResult.getAssertion().isStateless());
         
         principalAttributes.putAll(assertion.getContext());
         val originalAttributes = Optional.ofNullable(assertion.getOriginalAuthentication())
