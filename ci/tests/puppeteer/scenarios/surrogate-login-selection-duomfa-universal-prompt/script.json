@@ -12,13 +12,9 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.ticket.st.time-to-kill-in-seconds=60",
-    
-    "--cas.authn.attribute-repository.stub.attributes.uid=duobypass",
-    "--cas.authn.attribute-repository.stub.attributes.lastname=User",
-    "--cas.authn.attribute-repository.stub.attributes.firstname=CAS",
-    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
-    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
 
+    "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json",
+    
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
@@ -40,6 +36,18 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "variations": [
+    {
+      "properties": [
+        "--cas.authn.mfa.duo[0].session-storage-type=BROWSER_STORAGE"
+      ]
+    },
+    {
+      "properties": [
+        "--cas.authn.mfa.duo[0].session-storage-type=TICKET_REGISTRY"
+      ]
+    }
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

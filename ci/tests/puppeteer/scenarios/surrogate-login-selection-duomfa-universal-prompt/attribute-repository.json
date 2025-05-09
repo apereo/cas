@@ -1,0 +1,39 @@
+{
+  "user3": {
+    "uid": [
+      "user3"
+    ],
+    "lastname": [
+      "Three"
+    ],
+    "firstname": [
+      "User"
+    ],
+    "phone": [
+      "13477464500"
+    ],
+    "mail": [
+      "user3@example.org"
+    ]
+  },
+  "duocode": {
+    "username": [
+      "duocode"
+    ],
+    "uid": [
+      "duocode"
+    ],
+    "lastname": [
+      "User"
+    ],
+    "firstname": [
+      "CAS"
+    ],
+    "phone": [
+      "13477464523"
+    ],
+    "mail": [
+      "casuser@example.org"
+    ]
+  }
+}
