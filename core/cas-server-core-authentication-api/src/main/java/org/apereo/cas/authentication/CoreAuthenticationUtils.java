@@ -77,7 +77,7 @@ public class CoreAuthenticationUtils {
             .map(entry -> Map.entry(entry.getKey(), entry.getValue()))
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
                 val value = CollectionUtils.toCollection(entry.getValue());
-                return value.size() == 1 ? value.iterator().next() : value;
+                return value.size() == 1 && !(value.iterator().next() instanceof Map) ? value.iterator().next() : value;
             }));
     }
 

@@ -19,6 +19,7 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -36,6 +37,8 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Utility")
 class CoreAuthenticationUtilsTests {
+    private static final String PROPERTY = "property";
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -249,5 +252,23 @@ class CoreAuthenticationUtilsTests {
         public boolean test(final Credential credential) {
             return true;
         }
+    }
+
+    @Test
+    void verifyConvertAttributeValues() {
+        var originalMap = CollectionUtils.<String, Object>wrap(PROPERTY, Boolean.FALSE);
+        var newMap = CoreAuthenticationUtils.convertAttributeValuesToObjects(originalMap);
+        assertEquals(Boolean.FALSE, newMap.get(PROPERTY));
+
+        originalMap = CollectionUtils.wrap(PROPERTY, List.of(Boolean.FALSE));
+        newMap = CoreAuthenticationUtils.convertAttributeValuesToObjects(originalMap);
+        assertEquals(Boolean.FALSE, newMap.get(PROPERTY));
+
+        val mapValue = new HashMap<>();
+        mapValue.put("key", "value");
+        originalMap = CollectionUtils.wrap(PROPERTY, List.of(mapValue));
+        newMap = CoreAuthenticationUtils.convertAttributeValuesToObjects(originalMap);
+        assertTrue(newMap.get(PROPERTY) instanceof Collection);
+        assertEquals(mapValue, ((Collection<?>) newMap.get(PROPERTY)).iterator().next());
     }
 }
