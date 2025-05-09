@@ -12,8 +12,11 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Misagh Moayyed
  * @since 6.4.0
+ * @deprecated since 7.3.0
  */
 @Slf4j
+@SuppressWarnings("removal")
+@Deprecated(since = "7.3.0", forRemoval = true)
 public class DefaultAcmeChallengeRepository implements AcmeChallengeRepository {
     private final CasReentrantLock lock = new CasReentrantLock();
 
