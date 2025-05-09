@@ -4,6 +4,7 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -45,7 +46,7 @@ class OAuth20TicketGrantingTicketAwareSecurityLogicTests extends AbstractOAuth20
         when(assertion.getPrimaryAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
         val profile = new BasicUserProfile();
         profile.addAttribute(Principal.class.getName(), RegisteredServiceTestUtils.getPrincipal("casuser"));
-        profile.addAttribute("stateless", Boolean.TRUE);
+        profile.addAttribute(OAuth20Constants.CAS_OAUTH_STATELESS_PROPERTY, Boolean.TRUE);
         val context = new JEEContext(request, response);
         val profileManager = new ProfileManager(context, new JEESessionStore());
         profileManager.save(true, profile, false);

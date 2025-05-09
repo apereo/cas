@@ -417,7 +417,7 @@ public class OAuth20Utils {
      * @return the ticket validation result
      */
     public static Boolean isStatelessAuthentication(final UserProfile profile) {
-        val validationResult = (Boolean) profile.getAttribute("stateless");
+        val validationResult = (Boolean) profile.getAttribute(OAuth20Constants.CAS_OAUTH_STATELESS_PROPERTY);
         val principal = profile.getAttribute(Principal.class.getName());
         return validationResult != null && validationResult && principal != null;
     }
