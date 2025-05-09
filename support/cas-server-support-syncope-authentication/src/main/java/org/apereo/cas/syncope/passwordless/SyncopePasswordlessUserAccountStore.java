@@ -9,7 +9,6 @@ import org.apereo.cas.syncope.SyncopeUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.context.ConfigurableApplicationContext;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,7 +21,6 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 public class SyncopePasswordlessUserAccountStore implements PasswordlessUserAccountStore {
-    private final ConfigurableApplicationContext applicationContext;
     private final List<PasswordlessUserAccountCustomizer> customizerList;
     private final PasswordlessAuthenticationSyncopeAccountsProperties properties;
 

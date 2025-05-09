@@ -38,7 +38,7 @@ class SyncopePasswordlessAuthenticationConfiguration {
         final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(PasswordlessUserAccountStore.class)
             .when(BeanCondition.on("cas.authn.passwordless.accounts.syncope.url").isUrl().given(applicationContext))
-            .supply(() -> new SyncopePasswordlessUserAccountStore(applicationContext, customizerList,
+            .supply(() -> new SyncopePasswordlessUserAccountStore(customizerList,
                 casProperties.getAuthn().getPasswordless().getAccounts().getSyncope()))
             .otherwiseNull();
     }
