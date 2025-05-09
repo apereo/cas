@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Import;
     SyncopeAuthenticationConfiguration.class,
     SyncopeAccountManagementConfiguration.class,
     SyncopePersonDirectoryConfiguration.class,
+    SyncopePasswordlessAuthenticationConfiguration.class,
     SyncopeWebflowConfiguration.class
 })
 public class CasSyncopeAutoConfiguration {

@@ -23,7 +23,10 @@ dependencies {
     implementation project(":support:cas-server-support-actions-core")
     
     compileOnly project(":support:cas-server-support-account-mgmt-api")
+    compileOnly project(":support:cas-server-support-passwordless-api")
+    compileOnly project(":support:cas-server-support-passwordless-webflow")
 
+    
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
@@ -49,6 +52,9 @@ dependencies {
     testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-configuration")
 
+    testImplementation project(":support:cas-server-support-passwordless-api")
+    testImplementation project(":support:cas-server-support-passwordless-authentication")
+    testImplementation project(":support:cas-server-support-passwordless-webflow")
     testImplementation project(":support:cas-server-support-account-mgmt-api")
     testImplementation project(":support:cas-server-support-account-mgmt")
     testImplementation project(":support:cas-server-support-person-directory")

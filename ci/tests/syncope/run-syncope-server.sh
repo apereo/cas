@@ -15,7 +15,7 @@ docker compose -f $COMPOSE_FILE down >/dev/null 2>/dev/null || true
 docker compose -f $COMPOSE_FILE up -d
 docker logs syncope-syncope-1 -f &
 printgreen "Waiting for Apache Syncope server to come online...\n"
-sleep 60
+sleep 30
 until $(curl --output /dev/null --silent --head --fail http://localhost:18080/syncope/); do
     printf '.'
     sleep 1
@@ -495,6 +495,34 @@ curl -X 'POST' \
 
 echo -e "\n-----------------\n"
 
+echo "Creating phoneNumber plain schema..."
+curl -X 'POST' \
+  'http://localhost:18080/syncope/rest/schemas/PLAIN' \
+  -H 'accept: */*' \
+  -H 'X-Syncope-Domain: Master' \
+  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "_class": "org.apache.syncope.common.lib.to.PlainSchemaTO",
+    "key": "phoneNumber",
+    "anyTypeClass": "BaseUser"
+}'
+
+echo "Creating givenName plain schema..."
+curl -X 'POST' \
+  'http://localhost:18080/syncope/rest/schemas/PLAIN' \
+  -H 'accept: */*' \
+  -H 'X-Syncope-Domain: Master' \
+  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "_class": "org.apache.syncope.common.lib.to.PlainSchemaTO",
+    "key": "givenName",
+    "anyTypeClass": "BaseUser"
+}'
+
+echo -e "\n-----------------\n"
+
 echo "Creating sample user: syncopecas..."
 curl -X 'POST' \
   'http://localhost:18080/syncope/rest/users?storePassword=true' \
@@ -513,6 +541,18 @@ curl -X 'POST' \
               "schema": "email",
               "values": [
                 "syncopecas@syncope.org"
+              ]
+            },
+            {
+              "schema": "givenName",
+              "values": [
+                "ApereoCAS"
+              ]
+            },
+            {
+              "schema": "phoneNumber",
+              "values": [
+                "1234567890"
               ]
             }
         ],
