@@ -5,7 +5,9 @@ package org.apereo.cas.acme;
  *
  * @author Misagh Moayyed
  * @since 6.4.0
+ * @deprecated since 7.3.0
  */
+@Deprecated(since = "7.3.0", forRemoval = true)
 public interface AcmeChallengeRepository {
 
     /**
