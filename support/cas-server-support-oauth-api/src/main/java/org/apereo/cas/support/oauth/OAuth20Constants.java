@@ -468,4 +468,9 @@ public interface OAuth20Constants {
      * X509 certificate hash used and collected during TLS authentication.
      */
     String X509_CERTIFICATE_DIGEST = "x509_digest";
+
+    /**
+     * Stateless property.
+     */
+    String CAS_OAUTH_STATELESS_PROPERTY = "org.apereo.cas.oauth.property.stateless";
 }
