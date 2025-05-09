@@ -423,7 +423,7 @@ public FilterRegistrationBean tenantRoutingFilter() {
     var fr = new FilterRegistrationBean<MyTenantRoutingFilter>();
     /*
         fr.setFilter(new MyTenantRoutingFilter());
-    /*
+    */
     return fr;
 }
 ```
