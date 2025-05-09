@@ -205,7 +205,7 @@ class OAuth20UtilsTests extends AbstractOAuth20Tests {
         when(assertion.getPrimaryAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
         val profile = new BasicUserProfile();
         profile.addAttribute(Principal.class.getName(), RegisteredServiceTestUtils.getPrincipal("casuser"));
-        profile.addAttribute("stateless", Boolean.TRUE);
+        profile.addAttribute(OAuth20Constants.CAS_OAUTH_STATELESS_PROPERTY, Boolean.TRUE);
         val profileManager = new ProfileManager(context, new JEESessionStore());
         profileManager.save(true, profile, false);
         val result = OAuth20Utils.isStatelessAuthentication(profileManager);
