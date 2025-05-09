@@ -3,13 +3,11 @@ package org.apereo.cas.web.flow.util;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -17,7 +15,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;

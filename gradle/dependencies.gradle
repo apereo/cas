@@ -567,6 +567,10 @@ ext.libraries = [
                 dependencies.create(libs.commons.collections4.get()) {
                 }
         ],
+        lz4 : [
+                dependencies.create(libs.lz4.get()) {
+                }
+        ],
         groovy                     : [
                 dependencies.create(libs.apachegroovy.jsr223.get()) {
                     exclude(group: "commons-cli", module: "commons-cli")
