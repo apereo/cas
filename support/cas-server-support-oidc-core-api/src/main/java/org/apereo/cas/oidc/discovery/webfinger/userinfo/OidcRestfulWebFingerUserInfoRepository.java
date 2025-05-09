@@ -76,6 +76,6 @@ public class OidcRestfulWebFingerUserInfoRepository implements OidcWebFingerUser
         } finally {
             HttpUtils.close(response);
         }
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 }

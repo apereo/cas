@@ -129,7 +129,7 @@ public abstract class AbstractJpaProperties implements CasFeatureModule, Seriali
     /**
      * Additional settings provided by Hibernate (or the connection provider) in form of key-value pairs.
      */
-    private Map<String, String> properties = new HashMap<>(0);
+    private Map<String, String> properties = new HashMap<>();
 
     /**
      * Database connection pooling settings.

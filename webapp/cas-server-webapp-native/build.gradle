@@ -139,7 +139,9 @@ graalvmNative {
             buildArgs.add('-H:+ReportExceptionStackTraces')
             buildArgs.add('-H:+InlineBeforeAnalysis')
             buildArgs.add('-H:+TraceSecurityServices')
+            buildArgs.add('-H:+PrintAnalysisCallTree')
             buildArgs.add('-H:+AddAllCharsets')
+            buildArgs.add('-H:+ReportUnsupportedElementsAtRuntime')
             buildArgs.add('-H:+UnlockExperimentalVMOptions')
             
             buildArgs.add('-J-Xmx14G')
@@ -147,7 +149,11 @@ graalvmNative {
             buildArgs.add('--native-image-info')
             buildArgs.add('--enable-sbom')
             buildArgs.add('--emit build-report')
-            buildArgs.add('--gc=G1')
+
+            def os = org.gradle.internal.os.OperatingSystem.current()
+            if (!os.isMacOsX()) {
+                buildArgs.add('--gc=G1')
+            }
             buildArgs.add('--enable-monitoring=heapdump,jfr')
 
             buildArgs.add('-march=native')

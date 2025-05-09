@@ -4,9 +4,11 @@ import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
@@ -17,11 +19,10 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasGoogleAuthenticatorAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.config.CasOneTimeTokenAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link BaseGoogleAuthenticatorTests}.
@@ -32,6 +33,7 @@ import org.springframework.context.annotation.Import;
 public abstract class BaseGoogleAuthenticatorTests {
     @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
+        CasCoreEnvironmentBootstrapAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasOneTimeTokenAuthenticationAutoConfiguration.class,
@@ -47,14 +49,13 @@ public abstract class BaseGoogleAuthenticatorTests {
         CasCoreUtilAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-
+        CasPersonDirectoryAutoConfiguration.class,
+        CasCoreMultitenancyAutoConfiguration.class,
         CasMultifactorAuthnTrustAutoConfiguration.class,
-
         CasGoogleAuthenticatorAutoConfiguration.GoogleAuthenticatorMultifactorTrustConfiguration.class,
         CasGoogleAuthenticatorAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
-    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

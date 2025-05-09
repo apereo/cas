@@ -38,7 +38,7 @@ public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegis
      */
     protected boolean caseInsensitive;
     
-    private Map<String, Set<String>> surrogateRequiredAttributes = new HashMap<>(0);
+    private Map<String, Set<String>> surrogateRequiredAttributes = new HashMap<>();
 
     @Override
     public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
@@ -50,7 +50,7 @@ public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegis
             .caseInsensitive(this.caseInsensitive)
             .requireAllAttributes(this.requireAllAttributes)
             .requiredAttributes(this.surrogateRequiredAttributes)
-            .rejectedAttributes(new LinkedHashMap<>(0))
+            .rejectedAttributes(new LinkedHashMap<>())
             .build()
             .apply(request);
     }

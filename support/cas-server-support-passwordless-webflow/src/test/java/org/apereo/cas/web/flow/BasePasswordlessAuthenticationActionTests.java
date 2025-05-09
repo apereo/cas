@@ -19,7 +19,7 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPasswordlessAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -51,7 +51,7 @@ import org.springframework.context.annotation.Bean;
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,

@@ -72,7 +72,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     public Stream<? extends CasEvent> load(final ZonedDateTime dateTime) {
         val sql = SELECT_QUERY.concat("where r.creationTime >= :creationTime");
         val query = entityManager.createQuery(sql, JpaCasEvent.class)
-            .setParameter(CREATION_TIME_PARAM, dateTime.toString());
+            .setParameter(CREATION_TIME_PARAM, dateTime.toInstant());
         query.setLockMode(LockModeType.NONE);
         return jpaBeanFactory
             .streamQuery(query)
@@ -96,7 +96,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
         val sql = SELECT_QUERY.concat("where r.type = :type and r.creationTime >= :creationTime and r.principalId = :principalId");
         val query = entityManager.createQuery(sql, JpaCasEvent.class).setParameter(TYPE_PARAM, type)
             .setParameter(PRINCIPAL_ID_PARAM, principal)
-            .setParameter(CREATION_TIME_PARAM, dateTime.toString());
+            .setParameter(CREATION_TIME_PARAM, dateTime.toInstant());
         return jpaBeanFactory
             .streamQuery(query)
             .map(JpaCasEvent.class::cast);
@@ -118,7 +118,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
         val sql = SELECT_QUERY.concat("where r.type = :type and r.creationTime >= :creationTime");
         val query = entityManager.createQuery(sql, JpaCasEvent.class)
             .setParameter(TYPE_PARAM, type)
-            .setParameter(CREATION_TIME_PARAM, dateTime.toString());
+            .setParameter(CREATION_TIME_PARAM, dateTime.toInstant());
         return jpaBeanFactory
             .streamQuery(query)
             .map(JpaCasEvent.class::cast);
@@ -141,7 +141,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
         val sql = SELECT_QUERY.concat("where r.principalId = :principalId and r.creationTime >= :creationTime");
         var query = entityManager.createQuery(sql, JpaCasEvent.class)
             .setParameter(PRINCIPAL_ID_PARAM, id)
-            .setParameter(CREATION_TIME_PARAM, dateTime.toString());
+            .setParameter(CREATION_TIME_PARAM, dateTime.toInstant());
         return jpaBeanFactory
             .streamQuery(query)
             .map(JpaCasEvent.class::cast);

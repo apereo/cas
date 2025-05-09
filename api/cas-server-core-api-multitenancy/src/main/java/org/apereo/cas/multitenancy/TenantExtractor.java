@@ -2,7 +2,9 @@ package org.apereo.cas.multitenancy;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
+import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -16,9 +18,14 @@ import java.util.regex.Pattern;
  */
 public interface TenantExtractor {
     /**
+     * Flow url handler.
+     */
+    FlowUrlHandler FLOW_URL_HANDLER = new DefaultFlowUrlHandler();
+    
+    /**
      * Tenant pattern definition.
      */
-    Pattern PATTERN_TENANTS = Pattern.compile("tenants/(.+)/(.+)", Pattern.CASE_INSENSITIVE);
+    Pattern PATTERN_TENANTS = Pattern.compile("/?tenants/([^/]+)(?:/.*)?", Pattern.CASE_INSENSITIVE);
 
     /**
      * Tenant extractor bean name.
@@ -33,13 +40,20 @@ public interface TenantExtractor {
     TenantsManager getTenantsManager();
 
     /**
+     * Gets application context.
+     *
+     * @return the application context
+     */
+    ApplicationContext getApplicationContext();
+    
+    /**
      * Extract tenant id from request.
      *
      * @param request the request
      * @return the tenant id
      */
     default Optional<TenantDefinition> extract(final HttpServletRequest request) {
-        val flowId = new DefaultFlowUrlHandler().getFlowId(request);
+        val flowId = request != null ? FLOW_URL_HANDLER.getFlowId(request) : StringUtils.EMPTY;
         return extract(flowId);
     }
 

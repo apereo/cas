@@ -2,7 +2,6 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.multitenancy.TenantAuthenticationPolicy;
 import org.apereo.cas.multitenancy.TenantAuthenticationProtocolPolicy;
-import org.apereo.cas.multitenancy.TenantCommunicationPolicy;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantDelegatedAuthenticationPolicy;
 import org.apereo.cas.multitenancy.TenantExtractor;
@@ -32,10 +31,6 @@ public class CasMultitenancyRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSerializationHints(hints, classLoader, classes);
         registerReflectionHints(hints, classes);
 
-        classes = findSubclassesOf(TenantCommunicationPolicy.class);
-        registerSerializationHints(hints, classLoader, classes);
-        registerReflectionHints(hints, classes);
-
         classes = findSubclassesOf(TenantUserInterfacePolicy.class);
         registerSerializationHints(hints, classLoader, classes);
         registerReflectionHints(hints, classes);
@@ -45,6 +40,8 @@ public class CasMultitenancyRuntimeHints implements CasRuntimeHintsRegistrar {
         registerReflectionHints(hints, classes);
 
         registerReflectionHints(hints, TenantExtractor.class);
+        
+        registerProxyHints(hints, TenantsManager.class);
         registerSpringProxyHints(hints, TenantsManager.class, DisposableBean.class);
     }
 }

@@ -53,7 +53,7 @@ class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests
 
     private static Map<String, List<String>> splitQuery(final String fragment) {
         if (StringUtils.isBlank(fragment)) {
-            return new HashMap<>(0);
+            return new HashMap<>();
         }
         return Arrays
             .stream(fragment.split("&"))

@@ -80,7 +80,7 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
             val results = responseEntity.getBody();
             return Stream.of(Objects.requireNonNull(results)).collect(Collectors.toSet());
         }
-        return new HashSet<>(0);
+        return new HashSet<>();
     }
 
     private HttpEntity<Object> getHttpEntity(final Object body) {

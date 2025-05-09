@@ -2,6 +2,7 @@ package org.apereo.cas.gauth.web.flow;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationAction;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -16,8 +17,9 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class GoogleAuthenticatorAccountCheckRegistrationAction extends OneTimeTokenAccountCheckRegistrationAction {
     public GoogleAuthenticatorAccountCheckRegistrationAction(final OneTimeTokenCredentialRepository repository,
-                                                             final CasConfigurationProperties casProperties) {
-        super(repository, casProperties);
+                                                             final CasConfigurationProperties casProperties,
+                                                             final TenantExtractor tenantExtractor) {
+        super(repository, casProperties, tenantExtractor);
     }
 
     @Override

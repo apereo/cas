@@ -22,7 +22,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.config.CasOidcAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
@@ -326,7 +326,7 @@ public abstract class AbstractOidcTests {
     protected ExpirationPolicyBuilder accessTokenExpirationPolicy;
 
     @Autowired
-    @Qualifier("webflowCipherExecutor")
+    @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
     protected CipherExecutor webflowCipherExecutor;
 
     protected static OidcRegisteredService getOidcRegisteredService() {
@@ -557,12 +557,10 @@ public abstract class AbstractOidcTests {
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasOidcAutoConfiguration.class,
         CasOAuth20AutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasWebAppAutoConfiguration.class
     })
-    @Import({
-        CasRegisteredServicesTestConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class
-    })
+    @Import(CasRegisteredServicesTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

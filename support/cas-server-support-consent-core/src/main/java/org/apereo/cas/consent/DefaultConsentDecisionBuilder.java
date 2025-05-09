@@ -59,6 +59,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
         val consent = new ConsentDecision();
         consent.setPrincipal(principalId);
         consent.setService(service.getId());
+        consent.setTenant(service.getTenant());
         return update(consent, attributes);
     }
 
@@ -92,7 +93,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
             val result = this.consentCipherExecutor.decode(decision.getAttributes());
             if (StringUtils.isBlank(result)) {
                 LOGGER.warn("Unable to decipher attributes from consent decision [{}]", decision.getId());
-                return new HashMap<>(0);
+                return new HashMap<>();
             }
             val names = EncodingUtils.decodeBase64ToString(result);
             return MAPPER.readValue(JsonValue.readHjson(names).toString(), Map.class);

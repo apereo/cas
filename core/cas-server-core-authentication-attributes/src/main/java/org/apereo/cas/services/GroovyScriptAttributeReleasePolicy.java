@@ -75,6 +75,6 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
             LoggingUtils.error(LOGGER, e);
         }
         LOGGER.warn("Groovy script [{}] does not exist or cannot be loaded", groovyScript);
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 }

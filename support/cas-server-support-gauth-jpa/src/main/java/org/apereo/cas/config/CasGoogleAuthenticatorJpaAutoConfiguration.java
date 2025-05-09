@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.gauth.credential.JpaGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorJpaTokenRepository;
@@ -15,7 +16,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -71,8 +71,8 @@ public class CasGoogleAuthenticatorJpaAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jpaGoogleAuthenticatorAccountRegistry")
         public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
-            @Qualifier("googleAuthenticatorInstance")
-            final IGoogleAuthenticator googleAuthenticatorInstance,
+            @Qualifier(CasGoogleAuthenticator.BEAN_NAME)
+            final CasGoogleAuthenticator googleAuthenticatorInstance,
             @Qualifier("googleAuthenticatorAccountCipherExecutor")
             final CipherExecutor googleAuthenticatorAccountCipherExecutor,
             @Qualifier("googleAuthenticatorScratchCodesCipherExecutor")

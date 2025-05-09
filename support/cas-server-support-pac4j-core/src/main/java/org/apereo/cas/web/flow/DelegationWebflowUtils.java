@@ -149,7 +149,7 @@ public class DelegationWebflowUtils {
         if (scope.contains("delegatedAuthenticationProviderConfigurations", Set.class)) {
             return scope.get("delegatedAuthenticationProviderConfigurations", Set.class);
         }
-        return new HashSet<>(0);
+        return new HashSet<>();
     }
 
     /**

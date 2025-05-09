@@ -212,7 +212,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static Principal getPrincipal(final String name) {
-        return getPrincipal(name, new HashMap<>(0));
+        return getPrincipal(name, new HashMap<>());
     }
 
     public static Principal getPrincipal(final String name, final Map<String, List<Object>> attributes) {
@@ -232,7 +232,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static Authentication getAuthentication(final Principal principal) {
-        return getAuthentication(principal, new HashMap<>(0));
+        return getAuthentication(principal, new HashMap<>());
     }
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, List<Object>> attributes) {

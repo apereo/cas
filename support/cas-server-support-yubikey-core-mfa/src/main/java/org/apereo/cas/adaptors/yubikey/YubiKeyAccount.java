@@ -55,6 +55,12 @@ public class YubiKeyAccount implements Serializable, Cloneable {
      */
     public static final String FIELD_DEVICES = "devices";
 
+    /**
+     * Tenant field.
+     */
+    public static final String FIELD_TENANT = "tenant";
+
+    
     @Serial
     private static final long serialVersionUID = 311869140885521905L;
 
@@ -72,6 +78,10 @@ public class YubiKeyAccount implements Serializable, Cloneable {
     @Column(nullable = false)
     @JsonProperty
     private String username;
+
+    @Column
+    @JsonProperty
+    private String tenant;
 
     @Override
     public final YubiKeyAccount clone() {

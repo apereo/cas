@@ -18,7 +18,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
+import org.apereo.cas.configuration.model.support.interrupt.InterruptCookieProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -148,6 +148,7 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
+import org.apereo.cas.util.cipher.DefaultCipherExecutorResolver;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
@@ -215,8 +216,6 @@ import java.util.Optional;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OAuth)
 @Configuration(value = "CasOAuth20Configuration", proxyBeanMethods = false)
 class CasOAuth20Configuration {
-
-    private static final String OAUTH_OIDC_SERVER_SUPPORT_PREFIX = "OauthOidcServerSupport";
 
     @Configuration(value = "CasOAuth20JwtConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -349,7 +348,7 @@ class CasOAuth20Configuration {
             final PrincipalResolver defaultPrincipalResolver,
             @Qualifier("taskScheduler")
             final TaskScheduler taskScheduler,
-            @Qualifier("webflowCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
             final CipherExecutor webflowCipherExecutor,
             @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
             final HttpClient httpClient,
@@ -779,12 +778,17 @@ class CasOAuth20Configuration {
             @Qualifier("oauthDistributedSessionCookieCipherExecutor")
             final CipherExecutor oauthDistributedSessionCookieCipherExecutor,
             final CasConfigurationProperties casProperties) {
+
+            val cipherExecutorResolver = new DefaultCipherExecutorResolver(oauthDistributedSessionCookieCipherExecutor, tenantExtractor,
+                InterruptCookieProperties.class, bindingContext -> {
+                val properties = bindingContext.value();
+                val crypto = properties.getAuthn().getOauth().getSessionReplication().getCookie().getCrypto();
+                return CipherExecutorUtils.newStringCipherExecutor(crypto, OAuth20DistributedSessionCookieCipherExecutor.class);
+            });
+
             val cookie = casProperties.getAuthn().getOauth().getSessionReplication().getCookie();
-            if (StringUtils.isBlank(cookie.getName())) {
-                cookie.setName("%s%s".formatted(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME, OAUTH_OIDC_SERVER_SUPPORT_PREFIX));
-            }
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
-                new DefaultCasCookieValueManager(oauthDistributedSessionCookieCipherExecutor, tenantExtractor,
+                new DefaultCasCookieValueManager(cipherExecutorResolver, tenantExtractor,
                     geoLocationService, DefaultCookieSameSitePolicy.INSTANCE, cookie));
         }
 
@@ -805,7 +809,7 @@ class CasOAuth20Configuration {
                     ticketFactory, oauthDistributedSessionCookieGenerator);
             }
             val sessionStore = new JEESessionStore();
-            sessionStore.setPrefix(OAUTH_OIDC_SERVER_SUPPORT_PREFIX);
+            sessionStore.setPrefix("OauthOidcServerSupport");
             return sessionStore;
         }
     }

@@ -91,7 +91,7 @@ public class PrincipalAttributesCoreProperties implements Serializable {
      * and additionally allow other specific principal attributes for only some applications
      * per their attribute release policy.
      */
-    private Set<String> defaultAttributesToRelease = new HashSet<>(0);
+    private Set<String> defaultAttributesToRelease = new HashSet<>();
 
     /**
      * The aggregation strategy types.

@@ -80,9 +80,8 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
             expirationPolicyToUse, ticketGrantingTicket, scopes,
             codeChallenge, codeChallengeMethod, clientId,
             requestClaims, responseType, grantType);
-
+        FunctionUtils.doIfNotNull(service, __ -> oauthCode.setTenantId(service.getTenant()));
         descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, oauthCode);
-
         return oauthCode;
     }
 

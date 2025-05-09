@@ -2,6 +2,7 @@ package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.model.support.mfa.gauth.LdapGoogleAuthenticatorMultifactorProperties;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
@@ -12,7 +13,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -52,7 +52,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
 
     public LdapGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
                                                             final CipherExecutor<Number, Number> scratchCodesCipher,
-                                                            final IGoogleAuthenticator googleAuthenticator,
+                                                            final CasGoogleAuthenticator googleAuthenticator,
                                                             final ConnectionFactory connectionFactory,
                                                             final LdapGoogleAuthenticatorMultifactorProperties ldapProperties) {
         super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator);
@@ -117,7 +117,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
             return mapAccountsFromLdapEntries(entries);
         }
         LOGGER.debug("No decision could be found");
-        return new HashSet<>(0);
+        return new HashSet<>();
     }
 
     @Override
@@ -255,7 +255,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
                 return results;
             }
             LOGGER.debug("Unable to read entries from LDAP via filter [{}]", filter);
-            return new HashSet<>(0);
+            return new HashSet<>();
         });
     }
 

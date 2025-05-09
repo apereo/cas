@@ -1,6 +1,8 @@
 package org.apereo.cas.multitenancy;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
+import org.apereo.cas.util.serialization.DecodableCipherMap;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -14,7 +16,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link TenantDefinition}.
@@ -38,12 +39,11 @@ public class TenantDefinition implements Serializable {
 
     private String description;
 
+    @DecodableCipherMap
     private Map<String, Object> properties = new LinkedHashMap<>();
 
     private TenantAuthenticationPolicy authenticationPolicy = new DefaultTenantAuthenticationPolicy();
 
-    private TenantCommunicationPolicy communicationPolicy = new DefaultTenantCommunicationPolicy();
-    
     private TenantUserInterfacePolicy userInterfacePolicy = new DefaultTenantUserInterfacePolicy();
 
     private TenantDelegatedAuthenticationPolicy delegatedAuthenticationPolicy = new DefaultTenantDelegatedAuthenticationPolicy();
@@ -56,7 +56,7 @@ public class TenantDefinition implements Serializable {
      * @return the optional
      */
     @JsonIgnore
-    public <T> Optional<T> bindPropertiesTo(final Class<T> clazz) {
+    public <T> ConfigurationPropertiesBindingContext<T> bindPropertiesTo(final Class<T> clazz) {
         return CasConfigurationProperties.bindFrom(properties, clazz);
     }
 
@@ -66,7 +66,7 @@ public class TenantDefinition implements Serializable {
      * @return the optional
      */
     @JsonIgnore
-    public Optional<CasConfigurationProperties> bindProperties() {
+    public ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindProperties() {
         return CasConfigurationProperties.bindFrom(properties);
     }
     

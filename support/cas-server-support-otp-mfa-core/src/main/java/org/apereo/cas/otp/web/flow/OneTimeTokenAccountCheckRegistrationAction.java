@@ -2,6 +2,7 @@ package org.apereo.cas.otp.web.flow;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
@@ -22,7 +23,8 @@ import org.springframework.webflow.execution.RequestContext;
 public class OneTimeTokenAccountCheckRegistrationAction extends AbstractMultifactorAuthenticationAction {
     protected final OneTimeTokenCredentialRepository repository;
     protected final CasConfigurationProperties casProperties;
-
+    protected final TenantExtractor tenantExtractor;
+    
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal(), requestContext);

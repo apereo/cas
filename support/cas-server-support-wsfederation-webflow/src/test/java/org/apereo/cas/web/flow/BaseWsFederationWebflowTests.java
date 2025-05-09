@@ -13,7 +13,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasWsFederationAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasWsFederationAuthenticationWebflowAutoConfiguration;
@@ -45,10 +45,11 @@ class BaseWsFederationWebflowTests {
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasWsFederationAuthenticationAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasWsFederationAuthenticationWebflowAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
-    @Import({CasRegisteredServicesTestConfiguration.class, CasPersonDirectoryTestConfiguration.class})
+    @Import(CasRegisteredServicesTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

@@ -93,7 +93,7 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
     private Boolean stateless = Boolean.FALSE;
 
     @Getter
-    private Map<String, Object> properties = new HashMap<>(0);
+    private Map<String, Object> properties = new HashMap<>();
     
     protected AbstractTicket(final String id, final ExpirationPolicy expirationPolicy) {
         this.id = id;

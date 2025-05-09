@@ -101,7 +101,7 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
     protected void update(final String username, final Collection<CredentialRegistration> givenRecords) {
         if (givenRecords.isEmpty()) {
             LOGGER.debug("No records are provided for [{}] so entry will be removed", username);
-            executeModifyOperation(new HashSet<>(0), Optional.ofNullable(locateLdapEntryFor(username)));
+            executeModifyOperation(new HashSet<>(), Optional.ofNullable(locateLdapEntryFor(username)));
         } else {
             val records = givenRecords.stream()
                 .map(record -> {

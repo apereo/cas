@@ -45,7 +45,8 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
+@SpringBootTest(
+    classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.attribute-repository.stub.attributes.uid=cas-user-id",
         "cas.authn.attribute-repository.stub.attributes.givenName=cas-given-name",

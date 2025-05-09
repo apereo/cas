@@ -4,8 +4,8 @@
 
 # Using variables to turn off msys2 bash on windows behavior of messing with anything resembling a path
 export DOCKER_IMAGE="mcr.microsoft.com/azure-sql-edge:latest"
-export MSYS2_ARG_CONV_EXCL="*"
-export MSYS_NO_PATHCONV=1
+#export MSYS2_ARG_CONV_EXCL="*"
+#export MSYS_NO_PATHCONV=1
 
 echo "Running SQL Server docker container..."
 docker stop mssql-server || true
@@ -13,9 +13,10 @@ docker stop mssql-server || true
 #   --name "mssql-server" --rm -d \
 #   -p 1433:1433 mcr.microsoft.com/mssql/server:2022-latest
 
-docker run -e "ACCEPT_EULA=1" -e "MSSQL_SA_PASSWORD=p@ssw0rd" \
-    -p 1433:1433 --rm -d --name "mssql-server" ${DOCKER_IMAGE}
-sleep 45
+docker run --platform linux/amd64 -d -e "ACCEPT_EULA=1" -e "MSSQL_SA_PASSWORD=p@ssw0rd" \
+    -p 1433:1433 --rm --name "mssql-server" ${DOCKER_IMAGE}
+docker logs -f mssql-server &
+sleep 20
 docker ps | grep "mssql-server"
 retVal=$?
 if [ $retVal == 0 ]; then

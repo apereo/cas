@@ -9,13 +9,6 @@
         "@class": "java.util.LinkedHashMap",
         "spring.mail.host": "localhost",
         "spring.mail.port": 25000
-      },
-      "communicationPolicy": {
-        "@class": "org.apereo.cas.multitenancy.DefaultTenantCommunicationPolicy",
-        "emailCommunicationPolicy": {
-          "@class": "org.apereo.cas.multitenancy.TenantEmailCommunicationPolicy",
-          "from": "apereocas@shire.com"
-        }
       }
     }
   ]

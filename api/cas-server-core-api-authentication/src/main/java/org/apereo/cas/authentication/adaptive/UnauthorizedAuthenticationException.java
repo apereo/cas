@@ -19,11 +19,11 @@ public class UnauthorizedAuthenticationException extends AuthenticationException
     private static final long serialVersionUID = 4386330975702952112L;
 
     public UnauthorizedAuthenticationException(final String message, final Map<String, Throwable> handlerErrors) {
-        super(message, handlerErrors, new HashMap<>(0));
+        super(message, handlerErrors, new HashMap<>());
     }
 
     public UnauthorizedAuthenticationException(final String message) {
-        super(message, new HashMap<>(0), new HashMap<>(0));
+        super(message, new HashMap<>(), new HashMap<>());
     }
 
     public UnauthorizedAuthenticationException(final Map<String, Throwable> handlerErrors) {

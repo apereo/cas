@@ -1,0 +1,43 @@
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "description": "This is the Shire tenant definition",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.host.name": "foo.example.com",
+        "cas.authn.attribute-repository.stub.attributes.name": "CAS",
+        "cas.authn.attribute-repository.stub.attributes.department": "SSO"
+      }
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "resty",
+      "description": "This is the Resty tenant definition",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.authn.attribute-repository.rest[0].method": "GET",
+        "cas.authn.attribute-repository.rest[0].username-attribute": "cn",
+        "cas.authn.attribute-repository.rest[0].url": "http://localhost:${#randomPort}",
+        "cas.authn.attribute-repository.rest[0].basic-auth-password": "psw",
+        "cas.authn.attribute-repository.rest[0].basic-auth-username": "username"
+      }
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "attributes",
+      "description": "This is the Attributes tenant definition",
+      "authenticationPolicy": {
+        "@class": "org.apereo.cas.multitenancy.DefaultTenantAuthenticationPolicy",
+        "attributeRepositories": [
+          "java.util.ArrayList",
+          [
+            "STUB"
+          ]
+        ]
+      }
+    }
+  ]
+]

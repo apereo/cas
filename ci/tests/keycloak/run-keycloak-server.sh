@@ -5,9 +5,17 @@
 #-sql "SELECT CC.\"VALUE\" FROM COMPONENT_CONFIG CC INNER JOIN COMPONENT C INNER JOIN REALM R WHERE CC.COMPONENT_ID = C.ID AND R.ID = C.REALM_ID AND R.NAME='cas' AND C.NAME = 'rsa-generated' AND CC.NAME='privateKey';" \
 #| head -n +2
 
+GREEN="\e[32m"
+ENDCOLOR="\e[0m"
+
+function printgreen() {
+  printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
+}
+
+
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 export DOCKER_IMAGE="quay.io/keycloak/keycloak:latest"
-echo "Running Keycloak docker container..."
+printgreen "Running Keycloak docker container..."
 docker stop keycloak || true && docker rm keycloak || true
 
 rm -f "$PWD"/ci/tests/keycloak/data/server.crt
@@ -35,12 +43,12 @@ docker run -d --rm --name keycloak \
   -v "$PWD"/ci/tests/keycloak/data/import:/opt/keycloak/data/import:ro \
   ${DOCKER_IMAGE} \
   start-dev --import-realm --log-level=INFO
-echo "Waiting for Keycloak docker container to prepare..."
+printgreen "Waiting for Keycloak docker container to prepare..."
 sleep 15
 docker ps | grep "keycloak"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "Keycloak docker container is running."
+    printgreen "Keycloak docker container is running."
     docker logs -f keycloak &
 else
     echo "Keycloak docker container failed to start."

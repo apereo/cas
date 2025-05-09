@@ -102,8 +102,11 @@ public class JacksonObjectMapperFactory {
         return objectMapper;
     }
 
-    private static void configureObjectMapperModules(final ObjectMapper objectMapper) {
+    private void configureObjectMapperModules(final ObjectMapper objectMapper) {
         objectMapper.registerModule(new JavaTimeModule());
+        if (applicationContext != null) {
+            objectMapper.registerModule(new DecodableCipherExecutorMapModule(applicationContext));
+        }
     }
 
     private void configureInjectableValues(final List<JacksonObjectMapperCustomizer> allCustomizers, final ObjectMapper objectMapper) {

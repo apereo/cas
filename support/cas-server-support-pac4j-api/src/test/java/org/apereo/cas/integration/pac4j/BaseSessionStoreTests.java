@@ -3,6 +3,7 @@ package org.apereo.cas.integration.pac4j;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
@@ -13,11 +14,10 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link BaseSessionStoreTests}.
@@ -40,10 +40,11 @@ public abstract class BaseSessionStoreTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
+        CasCoreEnvironmentBootstrapAutoConfiguration.class,
         CasCoreMultitenancyAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
-    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

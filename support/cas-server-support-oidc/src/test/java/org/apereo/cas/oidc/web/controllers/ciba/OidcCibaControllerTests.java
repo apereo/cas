@@ -48,6 +48,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
     "cas.http-client.host-name-verifier=none",
 
+    "cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "cas.authn.attribute-repository.stub.attributes.name=CAS",
+
     "cas.authn.oidc.ciba.verification.delay=PT1S",
     "cas.authn.oidc.ciba.verification.mail.html=false",
     "cas.authn.oidc.ciba.verification.mail.from=cas@apereo.org",

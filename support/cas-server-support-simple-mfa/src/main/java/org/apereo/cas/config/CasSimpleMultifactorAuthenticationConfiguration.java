@@ -112,6 +112,8 @@ class CasSimpleMultifactorAuthenticationConfiguration {
             @Qualifier(CasSimpleMultifactorTokenCommunicationStrategy.BEAN_NAME)
             final CasSimpleMultifactorTokenCommunicationStrategy mfaSimpleMultifactorTokenCommunicationStrategy,
             final CasConfigurationProperties casProperties,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager,
             @Qualifier("mfaSimpleMultifactorBucketConsumer")
@@ -125,7 +127,7 @@ class CasSimpleMultifactorAuthenticationConfiguration {
                         communicationsManager, casSimpleMultifactorAuthenticationService,
                         simple,
                         mfaSimpleMultifactorTokenCommunicationStrategy,
-                        mfaSimpleMultifactorBucketConsumer);
+                        mfaSimpleMultifactorBucketConsumer, tenantExtractor);
                 })
                 .withId(CasWebflowConstants.ACTION_ID_MFA_SIMPLE_UPDATE_EMAIL)
                 .build()

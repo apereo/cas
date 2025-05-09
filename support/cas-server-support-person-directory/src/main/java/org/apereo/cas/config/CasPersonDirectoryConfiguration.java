@@ -12,9 +12,11 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.merger.AttributeMerger;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
+import org.apereo.cas.authentication.principal.resolvers.TenantPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.persondir.CascadingPersonAttributeDao;
 import org.apereo.cas.persondir.DefaultAttributeRepositoryResolver;
 import org.apereo.cas.persondir.DefaultPersonDirectoryAttributeRepositoryPlan;
@@ -93,14 +95,20 @@ class CasPersonDirectoryConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "personDirectoryAttributeRepositoryPrincipalResolver")
         public PrincipalResolver personDirectoryAttributeRepositoryPrincipalResolver(
-            @Qualifier(AttributeRepositoryResolver.BEAN_NAME) final AttributeRepositoryResolver attributeRepositoryResolver,
+            @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+            final AttributeRepositoryResolver attributeRepositoryResolver,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(AttributeDefinitionStore.BEAN_NAME) final AttributeDefinitionStore attributeDefinitionStore,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier("attributeRepositoryAttributeMerger") final AttributeMerger attributeRepositoryAttributeMerger,
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("attributeRepositoryAttributeMerger")
+            final AttributeMerger attributeRepositoryAttributeMerger,
             final CasConfigurationProperties casProperties,
-            @Qualifier("personDirectoryPrincipalFactory") final PrincipalFactory personDirectoryPrincipalFactory,
-            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final PersonAttributeDao attributeRepository) {
+            @Qualifier("personDirectoryPrincipalFactory")
+            final PrincipalFactory personDirectoryPrincipalFactory,
+            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+            final PersonAttributeDao attributeRepository) {
             val personDirectory = casProperties.getPersonDirectory();
             return PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
                 applicationContext, personDirectoryPrincipalFactory,
@@ -112,8 +120,10 @@ class CasPersonDirectoryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalResolutionExecutionPlanConfigurer principalResolutionExecutionPlanConfigurer(
-            @Qualifier(PersonDirectoryAttributeRepositoryPlan.BEAN_NAME) final PersonDirectoryAttributeRepositoryPlan personDirectoryAttributeRepositoryPlan,
-            @Qualifier("personDirectoryAttributeRepositoryPrincipalResolver") final PrincipalResolver personDirectoryAttributeRepositoryPrincipalResolver) {
+            @Qualifier(PersonDirectoryAttributeRepositoryPlan.BEAN_NAME)
+            final PersonDirectoryAttributeRepositoryPlan personDirectoryAttributeRepositoryPlan,
+            @Qualifier("personDirectoryAttributeRepositoryPrincipalResolver")
+            final PrincipalResolver personDirectoryAttributeRepositoryPrincipalResolver) {
             return plan -> {
                 if (personDirectoryAttributeRepositoryPlan.isEmpty()) {
                     LOGGER.debug("Attribute repository sources are not available for person-directory principal resolution");
@@ -162,9 +172,11 @@ class CasPersonDirectoryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = AttributeRepositoryResolver.BEAN_NAME)
         public AttributeRepositoryResolver attributeRepositoryResolver(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
-            return new DefaultAttributeRepositoryResolver(servicesManager, casProperties);
+            return new DefaultAttributeRepositoryResolver(servicesManager, tenantExtractor, casProperties);
         }
 
         @Bean(name = {"cachingAttributeRepository", PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY})
@@ -172,7 +184,8 @@ class CasPersonDirectoryConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PersonAttributeDao cachingAttributeRepository(
             final CasConfigurationProperties casProperties,
-            @Qualifier("aggregatingAttributeRepository") final PersonAttributeDao aggregatingAttributeRepository) {
+            @Qualifier("aggregatingAttributeRepository")
+            final PersonAttributeDao aggregatingAttributeRepository) {
             val props = casProperties.getAuthn().getAttributeRepository().getCore();
             if (props.getExpirationTime() <= 0) {
                 LOGGER.warn("Attribute repository caching is disabled");
@@ -217,7 +230,7 @@ class CasPersonDirectoryConfiguration {
             aggregate.setRequireAll(properties.getCore().isRequireAllRepositorySources());
             if (list.isEmpty()) {
                 LOGGER.debug("No attribute repository sources are available/defined to merge together.");
-            } else {
+            } else if (LOGGER.isDebugEnabled()) {
                 val names = list
                     .stream()
                     .map(p -> Arrays.toString(p.getId()))
@@ -243,5 +256,42 @@ class CasPersonDirectoryConfiguration {
                 }
             }).accept(null);
         }
+    }
+
+
+    @Configuration(value = "CasPersonDirectoryPrincipalResolutionMultitenancyConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class CasPersonDirectoryPrincipalResolutionMultitenancyConfiguration {
+        @ConditionalOnMissingBean(name = "multitenancyPrincipalResolutionExecutionPlanConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public PrincipalResolutionExecutionPlanConfigurer multitenancyPrincipalResolutionExecutionPlanConfigurer(
+            @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+            final AttributeRepositoryResolver attributeRepositoryResolver,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("attributeRepositoryAttributeMerger")
+            final AttributeMerger attributeRepositoryAttributeMerger,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("personDirectoryPrincipalFactory")
+            final PrincipalFactory personDirectoryPrincipalFactory,
+            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+            final PersonAttributeDao attributeRepository) {
+            return plan -> {
+                if (casProperties.getMultitenancy().getCore().isEnabled()) {
+                    val personDirectory = casProperties.getPersonDirectory();
+                    val resolver = PersonDirectoryPrincipalResolver.newPersonDirectoryPrincipalResolver(
+                        applicationContext, personDirectoryPrincipalFactory,
+                        attributeRepository, attributeRepositoryAttributeMerger,
+                        TenantPrincipalResolver.class,
+                        servicesManager, attributeDefinitionStore, attributeRepositoryResolver, personDirectory);
+                    plan.registerPrincipalResolver(resolver);
+                }
+            };
+        }
+        
     }
 }

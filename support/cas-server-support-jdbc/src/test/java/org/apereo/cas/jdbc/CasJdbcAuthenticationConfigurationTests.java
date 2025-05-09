@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
@@ -114,6 +115,7 @@ class CasJdbcAuthenticationConfigurationTests {
         CasCoreServicesAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreMultitenancyAutoConfiguration.class,
+        CasCoreEnvironmentBootstrapAutoConfiguration.class,
         CasJdbcAuthenticationAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)

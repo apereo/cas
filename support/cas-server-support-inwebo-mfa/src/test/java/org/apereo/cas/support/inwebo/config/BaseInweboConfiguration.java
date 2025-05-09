@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
@@ -17,7 +18,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasInweboMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Import;
@@ -35,7 +36,6 @@ public class BaseInweboConfiguration {
     @Import({
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
@@ -49,7 +49,9 @@ public class BaseInweboConfiguration {
         CasCoreScriptingAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasMultifactorAuthnTrustAutoConfiguration.class,
+        CasCoreEnvironmentBootstrapAutoConfiguration.class,
         CasCoreMultitenancyAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasInweboMultifactorAuthenticationAutoConfiguration.class
     })
     public static class SharedTestConfiguration {

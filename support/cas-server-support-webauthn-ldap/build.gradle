@@ -39,6 +39,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-trusted-mfa")
     testImplementation project(":support:cas-server-support-webconfig")
+    testImplementation project(":support:cas-server-support-person-directory")
     
     testImplementation project(path: ":support:cas-server-support-webauthn-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-webauthn", configuration: "tests")

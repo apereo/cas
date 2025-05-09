@@ -292,6 +292,10 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "javax.validation", module: "validation-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
         swaggerannotations         : [
@@ -334,6 +338,8 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.squareup.retrofit2", module: "retrofit")
                     exclude(group: "com.squareup.okio", module: "okio")
+                },
+                dependencies.create(libs.arrow.memory.netty.get()) {
                 }
         ],
         bouncycastle               : [

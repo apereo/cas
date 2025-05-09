@@ -19,6 +19,15 @@ public interface CipherExecutor<I, O> extends EncodableCipher<I, O>, DecodableCi
      * Default cipher bean name for ticket registry ops.
      */
     String BEAN_NAME_TICKET_REGISTRY_CIPHER_EXECUTOR = "defaultTicketRegistryCipherExecutor";
+    /**
+     * Default cipher bean name for CAS configuration.
+     */
+    String BEAN_NAME_CAS_CONFIGURATION_CIPHER_EXECUTOR = "casConfigurationCipherExecutor";
+
+    /**
+     * Default cipher bean name for webflow.
+     */
+    String BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR = "webflowCipherExecutor";
 
     /**
      * Factory method.

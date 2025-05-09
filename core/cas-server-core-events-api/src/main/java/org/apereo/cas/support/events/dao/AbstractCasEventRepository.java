@@ -48,7 +48,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
     private ApplicationEventPublisher applicationEventPublisher;
 
     private static ZonedDateTime convertEventCreationTime(final CasEvent event) {
-        return DateTimeUtils.convertToZonedDateTime(event.getCreationTime());
+        return DateTimeUtils.zonedDateTimeOf(event.getCreationTime());
     }
 
     @Override

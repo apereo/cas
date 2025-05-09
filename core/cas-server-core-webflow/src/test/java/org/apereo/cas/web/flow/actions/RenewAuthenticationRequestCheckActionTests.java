@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockRequestContext;
@@ -28,10 +27,7 @@ class RenewAuthenticationRequestCheckActionTests extends BaseWebflowConfigurerTe
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+    
     @Test
     void verifyProceed() throws Throwable {
         val context = MockRequestContext.create(applicationContext);

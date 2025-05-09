@@ -181,6 +181,5 @@ class CasFiltersConfiguration {
                 @Qualifier("corsHttpWebRequestConfigurationSource") final CorsConfigurationSource corsHttpWebRequestConfigurationSource) {
             return new CorsFilter(corsHttpWebRequestConfigurationSource);
         }
-
     }
 }

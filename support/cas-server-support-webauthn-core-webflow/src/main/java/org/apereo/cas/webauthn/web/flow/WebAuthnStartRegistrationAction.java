@@ -1,6 +1,7 @@
 package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -29,8 +30,10 @@ public class WebAuthnStartRegistrationAction extends AbstractMultifactorAuthenti
      */
     public static final String FLOW_SCOPE_WEB_AUTHN_APPLICATION_ID = "webauthnApplicationId";
 
-    private final CasConfigurationProperties casProperties;
+    protected final CasConfigurationProperties casProperties;
 
+    protected final TenantExtractor tenantExtractor;
+    
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn().getCore();

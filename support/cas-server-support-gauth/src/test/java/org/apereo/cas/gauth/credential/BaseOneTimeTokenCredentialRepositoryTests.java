@@ -20,14 +20,10 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
-import com.warrenstrange.googleauth.GoogleAuthenticator;
-import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.SpringBootConfiguration;
@@ -52,20 +48,13 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
 
     private final Map<Pair<String, String>, OneTimeTokenAccount> accountHashMap = new LinkedHashMap<>();
 
-    private IGoogleAuthenticator google;
-
     @Mock
     private CipherExecutor<String, String> cipherExecutor;
 
     public OneTimeTokenAccount getAccount(final String testName, final String username) {
         return accountHashMap.computeIfAbsent(Pair.of(testName, username), pair -> getRegistry(pair.getLeft()).create(pair.getRight()));
     }
-
-    @BeforeEach
-    void initialize() {
-        val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
-        this.google = new GoogleAuthenticator(bldr.build());
-    }
+    
 
     @AfterEach
     public void afterEach() {

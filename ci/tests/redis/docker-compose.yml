@@ -1,6 +1,6 @@
 services:
   redis-master:
-    image: redis/redis-stack:7.4.0-v1
+    image: redis:8.0.0
     container_name: redis_server_master
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
@@ -9,24 +9,29 @@ services:
     ports:
       - "6379:6379"
   redis-ssl:
-    image: redis/redis-stack:7.4.0-v1
+    image: redis:8.0.0
     container_name: redis_server_ssl
-    environment:
-      - REDIS_PASSWORD=pAssw0rd123
-      - REDIS_ARGS=--tls-port 6669 --tls-cert-file /etc/ssl/certs/redis.crt --tls-ca-cert-file /etc/ssl/certs/redis.crt --tls-key-file /etc/ssl/certs/redis.key
+    command: >
+      redis-server
+        --port 0
+        --tls-port          6669
+        --tls-cert-file     /etc/ssl/certs/redis.crt
+        --tls-key-file      /etc/ssl/certs/redis.key
+        --tls-ca-cert-file  /etc/ssl/certs/redis.crt
+        --requirepass       pAssw0rd123
     ports:
       - "16669:6669"
     volumes:
       - ./certs:/etc/ssl/certs
   redis-master2:
-    image: redis/redis-stack:7.4.0-v1
+    image: redis:8.0.0
     container_name: redis_server_master2
     environment:
       - REDIS_PASSWORD=pAssw0rd123
     ports:
       - "16389:6379"
   sentinel_1:
-    image: bitnami/redis-sentinel:7.4.3
+    image: bitnami/redis-sentinel:8.0.0
     container_name: redis_sentinel_1
     ports:
       - "26379:26379"
@@ -40,7 +45,7 @@ services:
       - redis-master
 
   sentinel_2:
-    image: bitnami/redis-sentinel:7.4.3
+    image: bitnami/redis-sentinel:8.0.0
     container_name: redis_sentinel_2
     ports:
       - "26380:26379"
@@ -54,7 +59,7 @@ services:
       - redis-master
 
   sentinel_3:
-    image: bitnami/redis-sentinel:7.4.3
+    image: bitnami/redis-sentinel:8.0.0
     container_name: redis_sentinel_3
     ports:
       - "26381:26379"

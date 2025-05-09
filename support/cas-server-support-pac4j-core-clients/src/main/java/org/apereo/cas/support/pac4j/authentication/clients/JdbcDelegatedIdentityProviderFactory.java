@@ -2,6 +2,7 @@ package org.apereo.cas.support.pac4j.authentication.clients;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -59,9 +60,10 @@ public class JdbcDelegatedIdentityProviderFactory extends BaseDelegatedIdentityP
         }
 
         if (!properties.isEmpty()) {
-            val bound = CasConfigurationProperties.bindFrom(properties);
-            if (bound.isPresent()) {
-                return buildFrom(bound.get());
+            val bindingContext = CasConfigurationProperties.bindFrom(properties);
+            if (bindingContext.isBound() && bindingContext.containsBindingFor(Pac4jDelegatedAuthenticationProperties.class)) {
+                val boundProperties = bindingContext.value();
+                return buildFrom(boundProperties);
             }
         }
         return List.of();

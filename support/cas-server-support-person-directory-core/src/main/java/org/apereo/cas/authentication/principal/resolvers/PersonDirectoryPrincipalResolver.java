@@ -2,9 +2,13 @@ package org.apereo.cas.authentication.principal.resolvers;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.attribute.AggregatingPersonAttributeDao;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryQuery;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
+import org.apereo.cas.authentication.attribute.MergingPersonAttributeDaoImpl;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
+import org.apereo.cas.authentication.attribute.TenantPersonAttributeDaoBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
@@ -14,8 +18,10 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.merger.AttributeMerger;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.transforms.ChainingPrincipalNameTransformer;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,11 +80,11 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         LOGGER.trace("Creating principal for [{}]", principalId);
         if (context.isResolveAttributes()) {
             val attributes = retrievePersonAttributes(principalId, credential,
-                currentPrincipal, new HashMap<>(0), service, handler);
+                currentPrincipal, new HashMap<>(), service, handler);
             if (attributes == null || attributes.isEmpty()) {
                 LOGGER.debug("Principal id [{}] did not specify any attributes", principalId);
                 if (!context.isReturnNullIfNoAttributes()) {
-                    val principal = buildResolvedPrincipal(principalId, new HashMap<>(0), credential, currentPrincipal, handler);
+                    val principal = buildResolvedPrincipal(principalId, new HashMap<>(), credential, currentPrincipal, handler);
                     LOGGER.debug("Returning the principal with id [{}] without any attributes", principal);
                     return principal;
                 }
@@ -96,7 +103,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             LOGGER.debug("Final resolved principal by [{}] is [{}]", getName(), principal);
             return principal;
         }
-        val principal = buildResolvedPrincipal(principalId, new HashMap<>(0),
+        val principal = buildResolvedPrincipal(principalId, new HashMap<>(),
             credential, currentPrincipal, handler);
         LOGGER.debug("Final resolved principal by [{}] without resolving attributes is [{}]", getName(), principal);
         return principal;
@@ -105,11 +112,6 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     @Override
     public boolean supports(final Credential credential) {
         return credential != null && credential.getId() != null;
-    }
-
-    @Override
-    public PersonAttributeDao getAttributeRepository() {
-        return context.getAttributeRepository();
     }
 
     protected Principal buildResolvedPrincipal(final String id, final Map<String, List<Object>> attributes,
@@ -186,21 +188,63 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         });
         val principal = context.getPrincipalFactory().createPrincipal(principalId, attributes);
         val service = givenService.orElse(null);
-        val query = new AttributeRepositoryResolver.AttributeRepositoryQuery(principal, context.getActiveAttributeRepositoryIdentifiers())
-            .withAuthenticationHandler(handler.orElse(null)).withService(service);
+        val query = AttributeRepositoryQuery.builder()
+            .principal(principal)
+            .activeRepositoryIds(context.getActiveAttributeRepositoryIdentifiers())
+            .authenticationHandler(handler.orElse(null))
+            .service(service)
+            .tenant(credential.getTenant())
+            .build();
 
         val repositoryIds = context.getAttributeRepositoryResolver().resolve(query);
         LOGGER.debug("The following attribute repository IDs are resolved: [{}]", repositoryIds);
 
-        val attributeFetcher = PrincipalAttributeRepositoryFetcher.builder()
-            .attributeRepository(context.getAttributeRepository())
-            .principalId(principalId)
-            .activeAttributeRepositoryIdentifiers(repositoryIds)
-            .currentPrincipal(currentPrincipal.orElse(null))
-            .queryAttributes(queryAttributes)
-            .service(service)
-            .build();
-        return attributeFetcher.retrieve();
+        val attributeRepository = determineAttributeRepository(query);
+        try {
+            val attributeFetcher = PrincipalAttributeRepositoryFetcher
+                .builder()
+                .attributeRepository(attributeRepository)
+                .principalId(principalId)
+                .activeAttributeRepositoryIdentifiers(repositoryIds)
+                .currentPrincipal(currentPrincipal.orElse(null))
+                .queryAttributes(queryAttributes)
+                .service(service)
+                .build();
+            return attributeFetcher.retrieve();
+        } finally {
+            if (attributeRepository instanceof final AggregatingPersonAttributeDao aggregate) {
+                val repositories = aggregate.getPersonAttributeDaos();
+                for (val repository : repositories) {
+                    if (repository.isDisposable() && repository instanceof final DisposableBean db) {
+                        db.destroy();
+                    }
+                }
+            }
+        }
+    }
+
+    private PersonAttributeDao determineAttributeRepository(final AttributeRepositoryQuery query) {
+        if (StringUtils.isNotBlank(query.getTenant())) {
+            val tenantDefinition = context.getTenantExtractor().getTenantsManager().findTenant(query.getTenant()).orElseThrow();
+            if (!tenantDefinition.getProperties().isEmpty()) {
+                val builders = context.getApplicationContext().getBeansOfType(TenantPersonAttributeDaoBuilder.class).values();
+                val tenantAttributeRepositories = builders
+                    .stream()
+                    .map(builder -> builder.build(tenantDefinition))
+                    .filter(BeanSupplier::isNotProxy)
+                    .flatMap(List::stream)
+                    .toList();
+
+                if (!tenantAttributeRepositories.isEmpty()) {
+                    val mergingAttributeRepository = new MergingPersonAttributeDaoImpl();
+                    mergingAttributeRepository.setEnabled(true);
+                    mergingAttributeRepository.setPersonAttributeDaos((List) tenantAttributeRepositories);
+                    mergingAttributeRepository.setAttributeMerger(context.getAttributeMerger());
+                    return mergingAttributeRepository;
+                }
+            }
+        }
+        return context.getAttributeRepository();
     }
 
     /**
@@ -367,6 +411,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 .map(p -> p.getAttributeResolutionEnabled().toBoolean()).findFirst().orElse(Boolean.TRUE))
             .activeAttributeRepositoryIdentifiers(activeAttributeRepositoryIdentifiers)
             .attributeRepositoryResolver(attributeRepositoryResolver)
+            .tenantExtractor(applicationContext.getBean(TenantExtractor.BEAN_NAME, TenantExtractor.class))
             .build();
     }
 }

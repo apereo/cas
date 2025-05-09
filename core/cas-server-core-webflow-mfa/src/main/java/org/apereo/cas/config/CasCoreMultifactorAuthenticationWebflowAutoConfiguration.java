@@ -553,11 +553,13 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_CHECK_AVAILABLE)
         public Action mfaAvailableAction(final ConfigurableApplicationContext applicationContext,
-                                         final CasConfigurationProperties casProperties) {
+                                         final CasConfigurationProperties casProperties,
+                                         @Qualifier(TenantExtractor.BEAN_NAME)
+                                         final TenantExtractor tenantExtractor) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(MultifactorAuthenticationAvailableAction::new)
+                .withAction(() -> new MultifactorAuthenticationAvailableAction(tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_MFA_CHECK_AVAILABLE)
                 .build()
                 .get();
@@ -567,11 +569,13 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_CHECK_BYPASS)
         public Action mfaBypassAction(final ConfigurableApplicationContext applicationContext,
-                                      final CasConfigurationProperties casProperties) {
+                                      final CasConfigurationProperties casProperties,
+                                      @Qualifier(TenantExtractor.BEAN_NAME)
+                                      final TenantExtractor tenantExtractor) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(MultifactorAuthenticationBypassAction::new)
+                .withAction(() -> new MultifactorAuthenticationBypassAction(tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_MFA_CHECK_BYPASS)
                 .build()
                 .get();
@@ -581,11 +585,13 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_CHECK_FAILURE)
         public Action mfaFailureAction(final ConfigurableApplicationContext applicationContext,
-                                       final CasConfigurationProperties casProperties) {
+                                       final CasConfigurationProperties casProperties,
+                                       @Qualifier(TenantExtractor.BEAN_NAME)
+                                       final TenantExtractor tenantExtractor) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(MultifactorAuthenticationFailureAction::new)
+                .withAction(() -> new MultifactorAuthenticationFailureAction(tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_MFA_CHECK_FAILURE)
                 .build()
                 .get();

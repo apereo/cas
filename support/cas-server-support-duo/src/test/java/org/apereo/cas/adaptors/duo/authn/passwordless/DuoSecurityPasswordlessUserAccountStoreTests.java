@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn.passwordless;
 
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityClient;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.config.CasPasswordlessAuthenticationAutoConfiguration;
@@ -96,8 +97,14 @@ class DuoSecurityPasswordlessUserAccountStoreTests {
     @TestConfiguration(value = "DuoSecurityTestConfiguration", proxyBeanMethods = false)
     static class DuoSecurityTestConfiguration {
         @Bean
-        public Client duoUniversalPromptAuthenticationClient() {
-            return mock(Client.class);
+        public DuoSecurityClient duoUniversalPromptAuthenticationClient(final CasConfigurationProperties casProperties) {
+            val client = mock(DuoSecurityClient.class);
+            val duo = casProperties.getAuthn().getMfa().getDuo().getFirst();
+            when(client.getDuoApiHost()).thenReturn(duo.getDuoApiHost());
+            when(client.getDuoIntegrationKey()).thenReturn(duo.getDuoIntegrationKey());
+            when(client.getDuoSecretKey()).thenReturn(duo.getDuoSecretKey());
+            when(client.getInstance()).thenReturn(mock(Client.class));
+            return client;
         }
 
     }

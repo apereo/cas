@@ -92,9 +92,10 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
                 .name(request.getName())
                 .publicId(yubikeyPublicId)
                 .registrationDate(ZonedDateTime.now(Clock.systemUTC()))
+                .tenant(request.getTenant())
                 .build();
 
-            var account = getAccountInternal(request.getUsername());
+            val account = getAccountInternal(request.getUsername());
             if (account == null) {
                 return save(request, device) != null;
             }
@@ -171,18 +172,7 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
         return null;
     }
 
-    /**
-     * Gets account internal.
-     *
-     * @param username the username
-     * @return the account internal
-     */
     protected abstract YubiKeyAccount getAccountInternal(String username);
 
-    /**
-     * Gets accounts internal.
-     *
-     * @return the accounts internal
-     */
     protected abstract Collection<? extends YubiKeyAccount> getAccountsInternal();
 }

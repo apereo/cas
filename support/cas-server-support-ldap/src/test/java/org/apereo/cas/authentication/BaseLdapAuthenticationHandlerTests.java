@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
@@ -101,6 +102,7 @@ public abstract class BaseLdapAuthenticationHandlerTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreMultitenancyAutoConfiguration.class,
+        CasCoreEnvironmentBootstrapAutoConfiguration.class,
         CasLdapAuthenticationAutoConfiguration.class
     })
     public static class SharedTestConfiguration {

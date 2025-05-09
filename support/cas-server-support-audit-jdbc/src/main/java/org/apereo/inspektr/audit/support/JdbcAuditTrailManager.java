@@ -167,7 +167,9 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
     protected void saveAuditRecord(final AuditActionContext auditActionContext) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
-            protected void doInTransactionWithoutResult(@Nonnull final TransactionStatus __) {
+            protected void doInTransactionWithoutResult(
+                @Nonnull
+                final TransactionStatus __) {
                 val principal = auditActionContext.getPrincipal();
                 val userId = columnLength <= 0 || principal.length() <= columnLength
                     ? principal
@@ -230,7 +232,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus __) {
-                val sql = String.format(DELETE_SQL_TEMPLATE, tableName, "aud");
+                val sql = String.format(DELETE_SQL_TEMPLATE, tableName, StringUtils.EMPTY);
                 val count = jdbcTemplate.update(sql);
                 LOGGER.info("[{}] records deleted.", count);
             }

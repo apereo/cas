@@ -20,7 +20,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -131,11 +131,13 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         CasCoreScriptingAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class})
-    @Import({CasRegisteredServicesTestConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class})
+    @Import({
+        CasRegisteredServicesTestConfiguration.class,
+        CasAuthenticationEventExecutionPlanTestConfiguration.class
+    })
     public static class SharedTestConfiguration {
     }
 }

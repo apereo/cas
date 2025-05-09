@@ -821,7 +821,7 @@ class OidcConfiguration {
             final TaskScheduler taskScheduler,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationManager,
-            @Qualifier("webflowCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
             final CipherExecutor webflowCipherExecutor,
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor) {
@@ -1109,7 +1109,7 @@ class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcCibaRequestFactory oidcCibaRequestFactory(
-            @Qualifier("webflowCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
             final CipherExecutor webflowCipherExecutor,
             @Qualifier("cibaRequestExpirationPolicy")
             final ExpirationPolicyBuilder cibaRequestExpirationPolicy,

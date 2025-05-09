@@ -17,7 +17,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasSurrogateAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasSurrogateAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
@@ -55,10 +55,11 @@ public abstract class BaseSurrogateAuthenticationTests {
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreSamlAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasDelegatedAuthenticationAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
-    @Import({AuthenticationTestConfiguration.class, CasPersonDirectoryTestConfiguration.class})
+    @Import(AuthenticationTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 

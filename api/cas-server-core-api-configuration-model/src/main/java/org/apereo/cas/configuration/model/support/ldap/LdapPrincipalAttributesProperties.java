@@ -76,7 +76,7 @@ public class LdapPrincipalAttributesProperties extends AbstractLdapSearchPropert
      * The key is always the name of the query attribute that is defined by CAS and passed internally,
      * and the value is the column/field that should map.
      */
-    private Map<String, String> queryAttributes = new HashMap<>(0);
+    private Map<String, String> queryAttributes = new HashMap<>();
 
 
 }

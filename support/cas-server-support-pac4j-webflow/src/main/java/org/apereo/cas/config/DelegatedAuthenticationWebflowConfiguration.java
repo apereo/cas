@@ -785,16 +785,18 @@ class DelegatedAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public FlowExecutor delegatedClientRedirectFlowExecutor(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier("delegatedClientWebflowUrlHandler")
             final FlowUrlHandler delegatedClientWebflowUrlHandler,
             final CasConfigurationProperties casProperties,
             @Qualifier("delegatedClientRedirectFlowRegistry")
             final FlowDefinitionRegistry delegatedClientRedirectFlowRegistry,
-            @Qualifier("webflowCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
             final CipherExecutor webflowCipherExecutor) {
             val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
                 delegatedClientRedirectFlowRegistry, webflowCipherExecutor, FLOW_EXECUTION_LISTENERS,
-                delegatedClientWebflowUrlHandler);
+                delegatedClientWebflowUrlHandler, tenantExtractor);
             return factory.build();
         }
     }

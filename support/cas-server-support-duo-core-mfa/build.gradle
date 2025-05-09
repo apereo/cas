@@ -1,6 +1,8 @@
 description = "Apereo CAS Duo Security Core MFA"
 dependencies {
     api project(":api:cas-server-core-api-authentication")
+
+    implementation libraries.duojava
     
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-configuration-api")

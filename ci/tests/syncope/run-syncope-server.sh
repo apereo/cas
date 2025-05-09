@@ -1,18 +1,26 @@
 #!/bin/bash
 
-echo "Running Syncope docker container..."
+GREEN="\e[32m"
+ENDCOLOR="\e[0m"
+
+function printgreen() {
+  printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
+}
+
+
+printgreen "Running Syncope docker container..."
 COMPOSE_FILE=./ci/tests/syncope/docker-compose.yml
 test -f $COMPOSE_FILE || COMPOSE_FILE=docker-compose.yml
 docker compose -f $COMPOSE_FILE down >/dev/null 2>/dev/null || true
 docker compose -f $COMPOSE_FILE up -d
 docker logs syncope-syncope-1 -f &
-echo -e "Waiting for Syncope server to come online...\n"
+printgreen "Waiting for Apache Syncope server to come online...\n"
 sleep 60
 until $(curl --output /dev/null --silent --head --fail http://localhost:18080/syncope/); do
     printf '.'
     sleep 1
 done
-echo -e "\nSyncope docker container is running."
+printgreen "\nApache Syncope docker container is running."
 
 echo "Creating CSV Dir conn instance"
 curl -X 'POST' \
@@ -555,4 +563,4 @@ curl -X 'POST' \
   ]
 }'
 
-echo -e "\nReady!\n"
+printgreen "\nReady!\n"

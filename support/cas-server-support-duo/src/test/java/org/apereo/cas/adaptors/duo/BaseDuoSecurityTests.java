@@ -22,7 +22,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasDuoSecurityAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.MockRequestContext;
@@ -33,7 +33,6 @@ import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Import;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
@@ -100,10 +99,10 @@ public abstract class BaseDuoSecurityTests {
         CasCoreUtilAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
-    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

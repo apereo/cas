@@ -6,6 +6,14 @@
 # Check expiration date via:
 # openssl x509 -noout -enddate -in redis.crt
 
+GREEN="\e[32m"
+ENDCOLOR="\e[0m"
+
+function printgreen() {
+  printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
+}
+
+
 COMPOSE_FILE=./ci/tests/redis/docker-compose.yml
 test -f $COMPOSE_FILE || COMPOSE_FILE=docker-compose.yml
 docker compose -f $COMPOSE_FILE down >/dev/null 2>/dev/null || true
@@ -15,7 +23,7 @@ sleep 15
 docker ps
 COUNT_REDIS=$(docker ps | grep "redis_" | wc -l)
 if [ "$COUNT_REDIS" -eq 6 ]; then
-    echo "Redis + sentinel docker containers are running."
+    printgreen "Redis + sentinel docker containers are running."
 else
     echo "Redis + sentinel docker containers failed to start."
     exit 1

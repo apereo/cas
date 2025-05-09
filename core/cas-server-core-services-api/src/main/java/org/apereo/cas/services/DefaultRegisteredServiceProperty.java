@@ -50,7 +50,7 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
     @Lob
     @Column(name = "property_values")
     @ExpressionLanguageCapable
-    private HashSet<String> values = new HashSet<>(0);
+    private HashSet<String> values = new HashSet<>();
 
     public DefaultRegisteredServiceProperty(final String... propertyValues) {
         setValues(Arrays.stream(propertyValues).collect(Collectors.toSet()));
@@ -63,7 +63,7 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
     @Override
     public Set<String> getValues() {
         if (this.values == null) {
-            this.values = new HashSet<>(0);
+            this.values = new HashSet<>();
         }
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
         return this.values

@@ -25,6 +25,7 @@ import org.apereo.cas.support.wsfederation.authentication.principal.WsFederation
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieCipherExecutor;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutorResolver;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -115,7 +116,10 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
             val cipher = getCipherExecutorForWsFederationConfig(cookie);
             val geoLocationService = applicationContext.getBeanProvider(GeoLocationService.class);
             val tenantExtractor = applicationContext.getBean(TenantExtractor.BEAN_NAME, TenantExtractor.class);
-            val valueManager = new DefaultCasCookieValueManager(cipher, tenantExtractor, geoLocationService,
+
+            val valueManager = new DefaultCasCookieValueManager(
+                CipherExecutorResolver.with(cipher),
+                tenantExtractor, geoLocationService,
                 DefaultCookieSameSitePolicy.INSTANCE, cookie);
             return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(cookie), valueManager);
         }
@@ -125,8 +129,8 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
                 () -> CipherExecutorUtils.newStringCipherExecutor(cookie.getCrypto(), WsFederationCookieCipherExecutor.class),
                 () -> {
                     LOGGER.info("WsFederation delegated authentication cookie encryption/signing is turned off and "
-                                + "MAY NOT be safe in a production environment. "
-                                + "Consider using other choices to handle encryption, signing and verification of delegated authentication cookie.");
+                        + "MAY NOT be safe in a production environment. "
+                        + "Consider using other choices to handle encryption, signing and verification of delegated authentication cookie.");
                     return CipherExecutor.noOp();
                 }).get();
         }
@@ -184,7 +188,7 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
                 .getWsfed()
                 .stream()
                 .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
-                                 && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
+                    && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
                 .forEach(wsfed -> {
                     val handler = new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager, wsfedPrincipalFactory, wsfed.getOrder());
                     if (wsfed.isAttributeResolverEnabled()) {

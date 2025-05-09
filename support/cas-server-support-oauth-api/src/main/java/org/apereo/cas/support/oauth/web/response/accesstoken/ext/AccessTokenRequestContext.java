@@ -65,13 +65,13 @@ public class AccessTokenRequestContext implements Serializable {
     private final OAuth20GrantTypes grantType = OAuth20GrantTypes.NONE;
 
     @Builder.Default
-    private final Set<String> scopes = new LinkedHashSet<>(0);
+    private final Set<String> scopes = new LinkedHashSet<>();
 
     @Builder.Default
-    private final Map<String, Map<String, Object>> claims = new HashMap<>(0);
+    private final Map<String, Map<String, Object>> claims = new HashMap<>();
 
     @Builder.Default
-    private final Map<String, Object> parameters = new HashMap<>(0);
+    private final Map<String, Object> parameters = new HashMap<>();
 
     @Builder.Default
     private final OAuth20ResponseModeTypes responseMode = OAuth20ResponseModeTypes.NONE;

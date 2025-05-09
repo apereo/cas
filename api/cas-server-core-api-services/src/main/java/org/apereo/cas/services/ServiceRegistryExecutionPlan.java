@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -23,7 +24,7 @@ public interface ServiceRegistryExecutionPlan {
      *
      * @return the collection
      */
-    Collection<ServiceRegistry> getServiceRegistries();
+    List<ServiceRegistry> getServiceRegistries();
 
     /**
      * Get service registries collection.

@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.model.support.interrupt.InterruptCookieProperties;
 import org.apereo.cas.interrupt.DefaultInterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.GroovyScriptInterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquirer;
@@ -16,6 +17,7 @@ import org.apereo.cas.interrupt.RestEndpointInterruptInquirer;
 import org.apereo.cas.interrupt.SimpleInterruptTrackingEngine;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
+import org.apereo.cas.util.cipher.DefaultCipherExecutorResolver;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -95,7 +97,14 @@ public class CasInterruptAutoConfiguration {
             final CipherExecutor cookieCipherExecutor) {
             val props = casProperties.getInterrupt().getCookie();
             if (props.getCrypto().isEnabled()) {
-                return new DefaultCasCookieValueManager(cookieCipherExecutor, tenantExtractor,
+
+                val cipherExecutorResolver = new DefaultCipherExecutorResolver(cookieCipherExecutor, tenantExtractor,
+                    InterruptCookieProperties.class, bindingContext -> {
+                    val properties = bindingContext.value();
+                    return CipherExecutorUtils.newStringCipherExecutor(properties.getInterrupt().getCookie().getCrypto(), InterruptTrackingCookieCipherExecutor.class);
+                });
+                
+                return new DefaultCasCookieValueManager(cipherExecutorResolver, tenantExtractor,
                     geoLocationService, DefaultCookieSameSitePolicy.INSTANCE, props);
             }
             return new NoOpCookieValueManager(tenantExtractor);

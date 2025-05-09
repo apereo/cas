@@ -181,7 +181,7 @@ public class CasOAuthUmaAutoConfiguration {
             final TaskScheduler taskScheduler,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationManager,
-            @Qualifier("webflowCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
             final CipherExecutor webflowCipherExecutor) {
 
             return UmaConfigurationContext

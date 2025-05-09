@@ -14,7 +14,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasRemoteAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
@@ -46,10 +46,11 @@ public abstract class BaseRemoteAddressTests {
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasRemoteAuthenticationAutoConfiguration.class
+        CasRemoteAuthenticationAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
-    @Import({CasPersonDirectoryTestConfiguration.class,
+    @Import({
         CasRegisteredServicesTestConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class})
     public static class SharedTestConfiguration {

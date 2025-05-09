@@ -36,7 +36,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-notifications")
     
     testImplementation project(":support:cas-server-support-aup-webflow")
-
+    testImplementation project(":support:cas-server-support-person-directory")
+    
     testImplementation project(path: ":support:cas-server-support-aup-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-aup-webflow", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")

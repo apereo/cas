@@ -2,7 +2,7 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.authentication.bypass.PrincipalMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
@@ -122,11 +122,15 @@ class SendPasswordResetInstructionsActionTests {
     @Nested
     @SpringBootTest(classes = {
         BasePasswordManagementActionTests.SharedTestConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class
+        CasPersonDirectoryAutoConfiguration.class
     }, properties = {
         "spring.mail.host=localhost",
         "spring.mail.port=25000",
 
+        "cas.authn.attribute-repository.stub.attributes.mail=cas@example.org",
+        "cas.authn.attribute-repository.stub.attributes.givenName=casuser",
+        "cas.authn.attribute-repository.stub.attributes.groupMembership=adopters",
+        
         "cas.authn.pm.core.enabled=true",
         "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
         "cas.authn.pm.forgot-username.mail.from=cas@example.org",

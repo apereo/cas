@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
@@ -16,7 +17,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasSurrogateAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -29,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.context.annotation.Import;
 import java.util.Optional;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -109,13 +109,14 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
+        CasCoreEnvironmentBootstrapAutoConfiguration.class,
         CasCoreMultitenancyAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
-    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

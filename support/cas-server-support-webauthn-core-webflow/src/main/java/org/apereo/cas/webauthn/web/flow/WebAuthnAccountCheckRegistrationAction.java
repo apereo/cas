@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn.web.flow;
 
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -21,8 +22,9 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 @Slf4j
 public class WebAuthnAccountCheckRegistrationAction extends AbstractMultifactorAuthenticationAction<WebAuthnMultifactorAuthenticationProvider> {
-    private final RegistrationStorage webAuthnCredentialRepository;
-
+    protected final RegistrationStorage webAuthnCredentialRepository;
+    protected final TenantExtractor tenantExtractor;
+    
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);

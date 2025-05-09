@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.duo.web.flow.action;
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityClient;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityUniversalPromptCredential;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
@@ -227,7 +228,9 @@ class DuoSecurityUniversalPromptValidateLoginActionTests {
     @TestConfiguration(value = "DuoSecurityUniversalPromptValidateLoginActionTestConfiguration", proxyBeanMethods = false)
     static class DuoSecurityUniversalPromptValidateLoginActionTestConfiguration {
         @Bean
-        public Client duoUniversalPromptAuthenticationClient() throws Exception {
+        public DuoSecurityClient duoUniversalPromptAuthenticationClient() throws Exception {
+            val client = mock(DuoSecurityClient.class);
+            
             val token = new Token();
             token.setSub("casuser");
 
@@ -268,7 +271,9 @@ class DuoSecurityUniversalPromptValidateLoginActionTests {
             when(duoClient.generateState()).thenReturn(UUID.randomUUID().toString());
             when(duoClient.createAuthUrl(anyString(), anyString())).thenReturn("https://duo.com");
             when(duoClient.exchangeAuthorizationCodeFor2FAResult(anyString(), anyString())).thenReturn(token);
-            return duoClient;
+
+            when(client.getInstance()).thenReturn(duoClient);
+            return client;
         }
     }
 }

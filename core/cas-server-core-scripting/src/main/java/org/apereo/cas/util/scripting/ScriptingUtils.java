@@ -199,7 +199,7 @@ public class ScriptingUtils {
      */
     public static <T> T executeGroovyShellScript(final Script script,
                                                  final Class<T> clazz) {
-        return executeGroovyShellScript(script, new HashMap<>(0), clazz);
+        return executeGroovyShellScript(script, new HashMap<>(), clazz);
     }
 
     /**
