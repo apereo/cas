@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.util;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -205,6 +206,16 @@ public class MultifactorAuthenticationWebflowUtils {
     }
 
     /**
+     * Put multifactor authentication parent credential.
+     *
+     * @param context    the context
+     * @param credential the credential
+     */
+    public static void putMultifactorAuthenticationParentCredential(final RequestContext context, final Credential credential) {
+        context.getFlowScope().put("parentCredential", credential);
+    }
+    
+    /**
      * Put multifactor authentication registered devices.
      *
      * @param requestContext the request context
@@ -267,4 +278,5 @@ public class MultifactorAuthenticationWebflowUtils {
     public static <T extends OneTimeTokenAccount> T getOneTimeTokenAccount(final RequestContext requestContext, final Class<T> clazz) {
         return requestContext.getFlowScope().get("registeredDevice", clazz);
     }
+    
 }

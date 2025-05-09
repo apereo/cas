@@ -74,9 +74,16 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
         val resultingEvent = processStateFromTicketRegistry(requestContext, duoState);
         if (resultingEvent != null) {
-            return StringUtils.equalsIgnoreCase(resultingEvent.getId(), CasWebflowConstants.TRANSITION_ID_SUCCESS)
-                ? super.doExecuteInternal(requestContext)
-                : resultingEvent;
+            if (StringUtils.equalsIgnoreCase(resultingEvent.getId(), CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
+                try {
+                    return super.doExecuteInternal(requestContext);
+                } finally {
+                    val ticket = resultingEvent.getAttributes().getRequired("result", TransientSessionTicket.class);
+                    val credential = ticket.getProperty(Credential.class.getSimpleName(), Credential.class);
+                    WebUtils.putCredential(requestContext, credential);
+                }
+            }
+            return resultingEvent;
         }
         return processStateFromBrowserStorage(requestContext);
     }
@@ -230,7 +237,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                     populateContextWithCredential(requestContext, ticket, authentication);
                     populateContextWithAuthentication(requestContext, ticket);
                     populateContextWithService(requestContext, ticket);
-                    return success();
+                    return success(ticket);
                 }
             } catch (final Throwable e) {
                 LoggingUtils.warn(LOGGER, e);
@@ -239,8 +246,6 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                 if (ticket != null) {
                     val flowScope = ticket.getProperty(FlowScope.class.getSimpleName(), Map.class);
                     requestContext.getFlowScope().putAll(new LocalAttributeMap<>(flowScope));
-                    val credential = ticket.getProperty(Credential.class.getSimpleName(), Credential.class);
-                    WebUtils.putCredential(requestContext, credential);
                 }
                 ticketRegistry.deleteTicket(duoState);
             }
