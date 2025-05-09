@@ -10,6 +10,7 @@ ext {
 }
 dependencies {
     implementation libraries.redis
+    implementation libraries.lz4
 
     api project(":api:cas-server-core-api-util")
     
