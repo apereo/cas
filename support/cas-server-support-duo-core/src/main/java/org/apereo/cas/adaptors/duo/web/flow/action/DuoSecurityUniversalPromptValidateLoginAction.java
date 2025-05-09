@@ -1,5 +1,10 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.PredicateUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityUniversalPromptCredential;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
@@ -14,11 +19,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.PredicateUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -29,6 +29,7 @@ import org.springframework.webflow.scope.ConversationScope;
 import org.springframework.webflow.scope.FlashScope;
 import org.springframework.webflow.scope.FlowScope;
 import org.springframework.webflow.scope.RequestScope;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -48,9 +49,9 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     private final TicketRegistry ticketRegistry;
 
     public DuoSecurityUniversalPromptValidateLoginAction(
-        final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
-        final BrowserWebStorageSessionStore sessionStore,
-        final TicketRegistry ticketRegistry) {
+            final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
+            final BrowserWebStorageSessionStore sessionStore,
+            final TicketRegistry ticketRegistry) {
         super(duoAuthenticationWebflowEventResolver);
         this.sessionStore = sessionStore;
         this.ticketRegistry = ticketRegistry;
@@ -71,9 +72,16 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
         val resultingEvent = processStateFromTicketRegistry(requestContext, duoState);
         if (resultingEvent != null) {
-            return StringUtils.equalsIgnoreCase(resultingEvent.getId(), CasWebflowConstants.TRANSITION_ID_SUCCESS)
-                ? super.doExecuteInternal(requestContext)
-                : resultingEvent;
+            if (StringUtils.equalsIgnoreCase(resultingEvent.getId(), CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
+                try {
+                    return super.doExecuteInternal(requestContext);
+                } finally {
+                    val ticket = resultingEvent.getAttributes().getRequired("result", TransientSessionTicket.class);
+                    val credential = ticket.getProperty(Credential.class.getSimpleName(), Credential.class);
+                    WebUtils.putCredential(requestContext, credential);
+                }
+            }
+            return resultingEvent;
         }
         return processStateFromBrowserStorage(requestContext);
     }
@@ -91,9 +99,9 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         val webContext = toWebContext(requestContext);
         try {
             browserSessionStore = sessionStore
-                .buildFromTrackableSession(webContext, browserStorage.get())
-                .map(BrowserWebStorageSessionStore.class::cast)
-                .orElseThrow(() -> new IllegalArgumentException("Unable to determine Duo authentication context from session store"));
+                    .buildFromTrackableSession(webContext, browserStorage.get())
+                    .map(BrowserWebStorageSessionStore.class::cast)
+                    .orElseThrow(() -> new IllegalArgumentException("Unable to determine Duo authentication context from session store"));
 
             browserSessionStore.getSessionAttributes(webContext).forEach((key, value) -> {
                 if (key.equalsIgnoreCase(FlowScope.class.getSimpleName())) {
@@ -182,7 +190,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         val credential = new DuoSecurityUniversalPromptCredential(duoCode, authentication);
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(duoSecurityIdentifier, applicationContext)
-            .orElseThrow(() -> new IllegalArgumentException("Unable to locate multifactor authentication provider by id " + duoSecurityIdentifier));
+                .orElseThrow(() -> new IllegalArgumentException("Unable to locate multifactor authentication provider by id " + duoSecurityIdentifier));
         credential.setProviderId(provider.getId());
         WebUtils.putCredential(requestContext, credential);
     }
@@ -191,7 +199,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                                                      final BrowserWebStorageSessionStore sessionStorage) throws Throwable {
         val webContext = toWebContext(requestContext);
         val authenticationResultBuilder = (AuthenticationResultBuilder) sessionStorage.getSessionAttributes(webContext)
-            .get(AuthenticationResultBuilder.class.getSimpleName());
+                .get(AuthenticationResultBuilder.class.getSimpleName());
         val service = (Service) sessionStorage.getSessionAttributes(webContext).get(Service.class.getSimpleName());
         populateContextWithAuthentication(requestContext, authenticationResultBuilder, service);
     }
@@ -199,8 +207,8 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     protected void populateContextWithAuthentication(final RequestContext requestContext,
                                                      final TransientSessionTicket ticket) throws Throwable {
         val authenticationResultBuilder = ticket.getProperty(
-            AuthenticationResultBuilder.class.getSimpleName(),
-            AuthenticationResultBuilder.class);
+                AuthenticationResultBuilder.class.getSimpleName(),
+                AuthenticationResultBuilder.class);
         val service = ticket.getProperty(Service.class.getSimpleName(), Service.class);
         populateContextWithAuthentication(requestContext, authenticationResultBuilder, service);
     }
@@ -224,7 +232,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                     populateContextWithCredential(requestContext, ticket, authentication);
                     populateContextWithAuthentication(requestContext, ticket);
                     populateContextWithService(requestContext, ticket);
-                    return success();
+                    return success(ticket);
                 }
             } catch (final Throwable e) {
                 LoggingUtils.warn(LOGGER, e);
@@ -233,8 +241,6 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                 if (ticket != null) {
                     val flowScope = ticket.getProperty(FlowScope.class.getSimpleName(), Map.class);
                     requestContext.getFlowScope().putAll(new LocalAttributeMap<>(flowScope));
-                    val credential = ticket.getProperty(Credential.class.getSimpleName(), Credential.class);
-                    WebUtils.putCredential(requestContext, credential);
                 }
                 ticketRegistry.deleteTicket(duoState);
             }
