@@ -233,6 +233,8 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                 if (ticket != null) {
                     val flowScope = ticket.getProperty(FlowScope.class.getSimpleName(), Map.class);
                     requestContext.getFlowScope().putAll(new LocalAttributeMap<>(flowScope));
+                    val credential = ticket.getProperty(Credential.class.getSimpleName(), Credential.class);
+                    WebUtils.putCredential(requestContext, credential);
                 }
                 ticketRegistry.deleteTicket(duoState);
             }
