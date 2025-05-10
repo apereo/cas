@@ -49,8 +49,10 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     private final MongoOperations mongoTemplate;
 
-    public MongoDbTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
-                                 final TicketCatalog ticketCatalog, final ConfigurableApplicationContext applicationContext,
+    public MongoDbTicketRegistry(final CipherExecutor cipherExecutor,
+                                 final TicketSerializationManager ticketSerializationManager,
+                                 final TicketCatalog ticketCatalog,
+                                 final ConfigurableApplicationContext applicationContext,
                                  final MongoOperations mongoTemplate) {
         super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.mongoTemplate = mongoTemplate;

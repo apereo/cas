@@ -5,10 +5,12 @@ import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountCustomizer;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationSyncopeAccountsProperties;
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.syncope.SyncopeUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,6 +47,10 @@ public class SyncopePasswordlessUserAccountStore implements PasswordlessUserAcco
                 .name(getPasswordlessUserAttribute(syncopeUser, "name"))
                 .email(getPasswordlessUserAttribute(syncopeUser, "email"))
                 .phone(getPasswordlessUserAttribute(syncopeUser, "phoneNumber"))
+                .requestPassword(BooleanUtils.toBoolean(getPasswordlessUserAttribute(syncopeUser, "requestPassword")))
+                .multifactorAuthenticationEligible(TriStateBoolean.fromBoolean(BooleanUtils.toBoolean(getPasswordlessUserAttribute(syncopeUser, "multifactorAuthenticationEligible"))))
+                .delegatedAuthenticationEligible(TriStateBoolean.fromBoolean(BooleanUtils.toBoolean(getPasswordlessUserAttribute(syncopeUser, "delegatedAuthenticationEligible"))))
+                .allowSelectionMenu(BooleanUtils.toBoolean(getPasswordlessUserAttribute(syncopeUser, "allowSelectionMenu")))
                 .build()
             );
         }
