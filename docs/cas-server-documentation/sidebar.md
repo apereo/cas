@@ -195,6 +195,7 @@ layout: null
             *   [REST](/cas/{{ version }}/authentication/Passwordless-Authentication-Storage-Rest.html)
             *   [Simple](/cas/{{ version }}/authentication/Passwordless-Authentication-Storage-Simple.html)
             *   [Duo Security](/cas/{{ version }}/authentication/Passwordless-Authentication-Storage-DuoSecurity.html)
+            *   [Apache Syncope](/cas/{{ version }}/authentication/Passwordless-Authentication-Storage-Syncope.html)
         *   [Tokens](#passwordlessauthntokens)
             *   [JPA](/cas/{{ version }}/authentication/Passwordless-Authentication-Tokens-JPA.html)
             *   [MongoDb](/cas/{{ version }}/authentication/Passwordless-Authentication-Tokens-MongoDb.html)
