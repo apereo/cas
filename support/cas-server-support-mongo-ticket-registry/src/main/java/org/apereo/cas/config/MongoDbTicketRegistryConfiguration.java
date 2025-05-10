@@ -46,10 +46,12 @@ class MongoDbTicketRegistryConfiguration {
         final ConfigurableApplicationContext applicationContext) {
 
         val mongo = casProperties.getTicket().getRegistry().getMongo();
-        new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoDbTicketRegistryTemplate, mongo).createTicketCollections();
+        new MongoDbTicketRegistryFacilitator(ticketCatalog,
+            mongoDbTicketRegistryTemplate, mongo).createTicketCollections();
 
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo");
-        return new MongoDbTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, applicationContext, mongoDbTicketRegistryTemplate);
+        return new MongoDbTicketRegistry(cipher, ticketSerializationManager,
+            ticketCatalog, applicationContext, mongoDbTicketRegistryTemplate);
     }
 
     @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")
