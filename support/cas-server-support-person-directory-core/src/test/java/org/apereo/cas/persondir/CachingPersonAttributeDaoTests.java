@@ -235,20 +235,20 @@ class CachingPersonAttributeDaoTests {
 
         assertEquals(0, cacheMap.size());
 
-        var resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("edalquist")));
+        var resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("edalquist")));
         validateUser1(resultsSet.iterator().next().getAttributes());
         assertEquals(0, cacheMap.size());
 
-        resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("edalquist")));
+        resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("edalquist")));
         assertEquals(1, resultsSet.size());
         validateUser1(resultsSet.iterator().next().getAttributes());
         assertEquals(0, cacheMap.size());
 
-        resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("nobody")));
+        resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("nobody")));
         assertNull(resultsSet);
         assertEquals(0, cacheMap.size());
 
-        resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("edalquist")));
+        resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("edalquist")));
         assertEquals(1, resultsSet.size());
         validateUser1(resultsSet.iterator().next().getAttributes());
         assertEquals(0, cacheMap.size());
@@ -280,21 +280,21 @@ class CachingPersonAttributeDaoTests {
 
         assertEquals(0, cacheMap.size());
 
-        var resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("edalquist")));
+        var resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("edalquist")));
         assertEquals(1, resultsSet.size());
         validateUser1(resultsSet.iterator().next().getAttributes());
         assertEquals(0, cacheMap.size());
 
-        resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("edalquist")));
+        resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("edalquist")));
         assertEquals(1, resultsSet.size());
         validateUser1(resultsSet.iterator().next().getAttributes());
         assertEquals(0, cacheMap.size());
 
-        resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("nobody")));
+        resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("nobody")));
         assertNull(resultsSet);
         assertEquals(0, cacheMap.size());
 
-        resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("edalquist")));
+        resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("edalquist")));
         assertEquals(1, resultsSet.size());
         validateUser1(resultsSet.iterator().next().getAttributes());
         assertEquals(0, cacheMap.size());

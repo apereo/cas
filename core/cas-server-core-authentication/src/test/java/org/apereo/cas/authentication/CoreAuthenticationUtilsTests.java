@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.GroovyAuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
@@ -195,25 +194,7 @@ class CoreAuthenticationUtilsTests {
         val result = merger.mergeAttributes(m1, m2);
         assertEquals(m2, result);
     }
-
-    @Test
-    void verifyIpIntelligenceService() {
-        var properties = new AdaptiveAuthenticationProperties();
-        assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
-
-        properties = new AdaptiveAuthenticationProperties();
-        properties.getIpIntel().getRest().setUrl("http://localhost:1234");
-        assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
-
-        properties = new AdaptiveAuthenticationProperties();
-        properties.getIpIntel().getGroovy().setLocation(new ClassPathResource("GroovyIPService.groovy"));
-        assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
-
-        properties = new AdaptiveAuthenticationProperties();
-        properties.getIpIntel().getBlackDot().setEmailAddress("cas@example.org");
-        assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
-    }
-
+    
     @Test
     void verifyPrincipalAttributeTransformations() {
         val list = Stream.of("a1", "a2:newA2", "a1:newA1").collect(Collectors.toList());

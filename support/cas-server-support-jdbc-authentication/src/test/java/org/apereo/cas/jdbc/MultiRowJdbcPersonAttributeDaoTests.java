@@ -102,7 +102,7 @@ class MultiRowJdbcPersonAttributeDaoTests {
         columnsToAttributes.put("email", emailAttributeNames);
         columnsToAttributes.put("shirt_color", "dressShirtColor");
         impl.setResultAttributeMapping(columnsToAttributes);
-        impl.setNameValueColumnMappings(Collections.singletonMap("attr_name", "attr_val"));
+        impl.setNameValueColumnMappings(Map.of("attr_name", "attr_val"));
 
         val attribs = impl.getPerson("awp9").getAttributes();
         assertEquals(List.of("andrew.petro@yale.edu"), attribs.get("email"));
@@ -115,7 +115,7 @@ class MultiRowJdbcPersonAttributeDaoTests {
     @Test
     void testPossibleUserAttributeNames() {
         val impl = new MultiRowJdbcPersonAttributeDao(testDataSource, "SELECT attr_name, attr_val FROM user_table WHERE {0}");
-        impl.setQueryAttributeMapping(Collections.singletonMap("uid", "netid"));
+        impl.setQueryAttributeMapping(Map.of("uid", "netid"));
 
         val columnsToAttributes = new LinkedHashMap<String, Object>();
         columnsToAttributes.put("name", "firstName");
@@ -140,7 +140,7 @@ class MultiRowJdbcPersonAttributeDaoTests {
     @Test
     void testSingleAttrQuery() {
         val impl = new MultiRowJdbcPersonAttributeDao(testDataSource, "SELECT netid, attr_name, attr_val FROM user_table WHERE {0}");
-        impl.setQueryAttributeMapping(Collections.singletonMap("uid", "netid"));
+        impl.setQueryAttributeMapping(Map.of("uid", "netid"));
 
         impl.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider("uid"));
         impl.setUnmappedUsernameAttribute("netid");
@@ -155,7 +155,7 @@ class MultiRowJdbcPersonAttributeDaoTests {
         columnsToAttributes.put("shirt_color", "dressShirtColor");
         impl.setResultAttributeMapping(columnsToAttributes);
 
-        impl.setNameValueColumnMappings(Collections.singletonMap("attr_name", "attr_val"));
+        impl.setNameValueColumnMappings(Map.of("attr_name", "attr_val"));
 
         val attribs = impl.getPerson("awp9").getAttributes();
         assertEquals(List.of("andrew.petro@yale.edu"), attribs.get("email"));
@@ -168,7 +168,7 @@ class MultiRowJdbcPersonAttributeDaoTests {
     @Test
     void testInvalidColumnName() {
         val impl = new MultiRowJdbcPersonAttributeDao(testDataSource, "SELECT netid, attr_name, attr_val FROM user_table WHERE {0}");
-        impl.setQueryAttributeMapping(Collections.singletonMap("uid", "netid"));
+        impl.setQueryAttributeMapping(Map.of("uid", "netid"));
 
         impl.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider("uid"));
         impl.setUnmappedUsernameAttribute("netid");
@@ -179,17 +179,17 @@ class MultiRowJdbcPersonAttributeDaoTests {
         columnsToAttributes.put("email", "emailAddress");
         impl.setResultAttributeMapping(columnsToAttributes);
 
-        impl.setNameValueColumnMappings(Collections.singletonMap("attr_nam", "attr_val"));
+        impl.setNameValueColumnMappings(Map.of("attr_nam", "attr_val"));
         assertThrows(Exception.class, () -> impl.getPerson("awp9"));
 
-        impl.setNameValueColumnMappings(Collections.singletonMap("attr_name", "attr_va"));
+        impl.setNameValueColumnMappings(Map.of("attr_name", "attr_va"));
         assertThrows(Exception.class, () -> impl.getPerson("awp9"));
     }
 
     @Test
     void testSetNullAttributeMapping() {
         val impl = new MultiRowJdbcPersonAttributeDao(testDataSource, "SELECT netid, attr_name, attr_val FROM user_table WHERE {0}");
-        impl.setQueryAttributeMapping(Collections.singletonMap("uid", "netid"));
+        impl.setQueryAttributeMapping(Map.of("uid", "netid"));
 
         impl.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider("uid"));
         impl.setUnmappedUsernameAttribute("netid");
@@ -204,7 +204,7 @@ class MultiRowJdbcPersonAttributeDaoTests {
         columnsToAttributes.put("shirt_color", null);
         impl.setResultAttributeMapping(columnsToAttributes);
 
-        impl.setNameValueColumnMappings(Collections.singletonMap("attr_name", "attr_val"));
+        impl.setNameValueColumnMappings(Map.of("attr_name", "attr_val"));
 
         val attribs = impl.getPerson("awp9").getAttributes();
         assertEquals(List.of("andrew.petro@yale.edu"), attribs.get("email"));
@@ -229,7 +229,7 @@ class MultiRowJdbcPersonAttributeDaoTests {
         columnsToAttributes.put("shirt_color", "color");
         impl.setResultAttributeMapping(columnsToAttributes);
 
-        impl.setNameValueColumnMappings(Collections.singletonMap("attr_name", "attr_val"));
+        impl.setNameValueColumnMappings(Map.of("attr_name", "attr_val"));
 
         val queryMap = new LinkedHashMap<String, List<Object>>();
         queryMap.put("uid", List.of("awp9"));
@@ -262,7 +262,7 @@ class MultiRowJdbcPersonAttributeDaoTests {
         columnsToAttributes.put("email", emailAttributeNames);
         impl.setResultAttributeMapping(columnsToAttributes);
 
-        impl.setNameValueColumnMappings(Collections.singletonMap("attr_name", "attr_val"));
+        impl.setNameValueColumnMappings(Map.of("attr_name", "attr_val"));
 
         val queryMap = new LinkedHashMap<String, List<Object>>();
         queryMap.put("uid", List.of("awp9"));
@@ -275,7 +275,7 @@ class MultiRowJdbcPersonAttributeDaoTests {
     @Test
     void testProperties() {
         val impl = new MultiRowJdbcPersonAttributeDao(testDataSource, "SELECT netid, name, email FROM user_table WHERE shirt_color = ?");
-        impl.setQueryAttributeMapping(Collections.singletonMap("shirt", "netid"));
+        impl.setQueryAttributeMapping(Map.of("shirt", "netid"));
 
         impl.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider("shirt"));
         impl.setUnmappedUsernameAttribute("netid");
@@ -292,8 +292,8 @@ class MultiRowJdbcPersonAttributeDaoTests {
         impl.setResultAttributeMapping(columnsToAttributes);
         assertEquals(expectedColumnsToAttributes, impl.getResultAttributeMapping());
 
-        impl.setNameValueColumnMappings(Collections.singletonMap("attr_name", "attr_val"));
-        assertEquals(Collections.singletonMap("attr_name", Collections.singleton("attr_val")), impl.getNameValueColumnMappings());
+        impl.setNameValueColumnMappings(Map.of("attr_name", "attr_val"));
+        assertEquals(Map.of("attr_name", Collections.singleton("attr_val")), impl.getNameValueColumnMappings());
 
     }
 

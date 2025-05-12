@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,7 +53,7 @@ class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
         request.addParameter("TARGET", "service");
 
         val description = "Validation failed";
-        this.view.renderMergedOutputModel(Collections.singletonMap("description", description), request, response);
+        this.view.renderMergedOutputModel(Map.of("description", description), request, response);
 
         val responseText = response.getContentAsString();
         assertTrue(responseText.contains("Status"));

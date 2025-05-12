@@ -142,7 +142,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                     flowScope.put("test", TEST);
                     flowScope.put("test0", Collections.singleton(TEST));
                     flowScope.put("test1", List.of(TEST));
-                    flowScope.put("test2", Collections.singletonMap(TEST, TEST));
+                    flowScope.put("test2", Map.of(TEST, TEST));
                     flowScope.put("test3", Arrays.asList(TEST, TEST));
                     flowScope.put("test4", new ConcurrentSkipListSet());
                     flowScope.put("test5", List.of("test1"));

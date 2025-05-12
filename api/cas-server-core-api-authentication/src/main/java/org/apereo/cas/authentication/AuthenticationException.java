@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import lombok.Getter;
 
 import java.io.Serial;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +45,7 @@ public class AuthenticationException extends RootCasException {
     }
 
     public AuthenticationException(final Throwable handlerError) {
-        this(Collections.singletonMap(handlerError.getClass().getSimpleName(), handlerError));
+        this(Map.of(handlerError.getClass().getSimpleName(), handlerError));
         initCause(handlerError);
     }
 
