@@ -204,7 +204,9 @@ public class HttpUtils {
             .create()
             .useSystemProperties()
             .setDefaultRequestConfig(requestConfig.build());
-
+        if (execution.getMaximumRetryAttempts() <= 1) {
+            builder.disableAutomaticRetries();
+        }
         val socketFactory = Optional.ofNullable(execution.getHttpClient())
             .map(HttpClient::httpClientFactory)
             .filter(factory -> Objects.nonNull(factory.getSslSocketFactory()))

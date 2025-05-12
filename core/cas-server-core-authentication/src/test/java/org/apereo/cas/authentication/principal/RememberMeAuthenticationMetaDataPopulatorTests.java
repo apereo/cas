@@ -43,9 +43,9 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
 
     @Test
     void verifyWithTrueRememberMeCredentials() {
-        val c = new RememberMeUsernamePasswordCredential();
-        c.setRememberMe(true);
-        val builder = newBuilder(c, new RememberMeAuthenticationProperties());
+        val credential = new RememberMeUsernamePasswordCredential();
+        credential.setRememberMe(true);
+        val builder = newBuilder(credential, new RememberMeAuthenticationProperties());
         val auth = builder.build();
 
         assertEquals(true, auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME).getFirst());
@@ -74,9 +74,9 @@ class RememberMeAuthenticationMetaDataPopulatorTests {
         request.setLocalAddr("185.88.151.11");
         request.addHeader(HttpHeaders.USER_AGENT, "Chrome");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
-        val c = new RememberMeUsernamePasswordCredential();
-        c.setRememberMe(true);
-        val builder = newBuilder(c, new RememberMeAuthenticationProperties()
+        val credential = new RememberMeUsernamePasswordCredential();
+        credential.setRememberMe(true);
+        val builder = newBuilder(credential, new RememberMeAuthenticationProperties()
             .setSupportedUserAgents("Chrome"));
         val auth = builder.build();
 

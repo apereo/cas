@@ -96,7 +96,7 @@ class SingleRowJdbcPersonAttributeDaoTests {
     @Test
     void testPossibleUserAttributeNames() {
         val impl = new SingleRowJdbcPersonAttributeDao(testDataSource, "SELECT name, email, shirt_color FROM user_table WHERE {0}");
-        impl.setQueryAttributeMapping(Collections.singletonMap("uid", "netid"));
+        impl.setQueryAttributeMapping(Map.of("uid", "netid"));
 
         val columnsToAttributes = new HashMap<String, Object>();
         columnsToAttributes.put("name", "firstName");
@@ -121,7 +121,7 @@ class SingleRowJdbcPersonAttributeDaoTests {
     @Test
     void testSingleAttrQuery() {
         val impl = new SingleRowJdbcPersonAttributeDao(testDataSource, "SELECT name, email, shirt_color FROM user_table WHERE {0}");
-        impl.setQueryAttributeMapping(Collections.singletonMap("uid", "netid"));
+        impl.setQueryAttributeMapping(Map.of("uid", "netid"));
 
         impl.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider("uid"));
 
@@ -146,7 +146,7 @@ class SingleRowJdbcPersonAttributeDaoTests {
     @Test
     void testSetNullAttributeMapping() {
         val impl = new SingleRowJdbcPersonAttributeDao(testDataSource, "SELECT name, email, shirt_color FROM user_table WHERE {0}");
-        impl.setQueryAttributeMapping(Collections.singletonMap("uid", "netid"));
+        impl.setQueryAttributeMapping(Map.of("uid", "netid"));
 
         impl.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider("uid"));
 
@@ -170,7 +170,7 @@ class SingleRowJdbcPersonAttributeDaoTests {
     @Test
     void testNullAttrQuery() {
         val impl = new SingleRowJdbcPersonAttributeDao(testDataSource, "SELECT name, email, shirt_color FROM user_table WHERE {0}");
-        impl.setQueryAttributeMapping(Collections.singletonMap("uid", "netid"));
+        impl.setQueryAttributeMapping(Map.of("uid", "netid"));
         impl.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider("uid"));
         val columnsToAttributes = new HashMap<String, Object>();
         columnsToAttributes.put("name", "firstName");
@@ -243,7 +243,7 @@ class SingleRowJdbcPersonAttributeDaoTests {
     @Test
     void testMultiPersonQuery() {
         val impl = new SingleRowJdbcPersonAttributeDao(testDataSource, "SELECT netid, name, email FROM user_table WHERE {0}");
-        impl.setQueryAttributeMapping(Collections.singletonMap("shirt", "shirt_color"));
+        impl.setQueryAttributeMapping(Map.of("shirt", "shirt_color"));
         impl.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider("uid"));
 
         val columnsToAttributes = new HashMap<String, Object>();
@@ -271,8 +271,8 @@ class SingleRowJdbcPersonAttributeDaoTests {
     void testProperties() {
         val impl = new SingleRowJdbcPersonAttributeDao(testDataSource, "SELECT netid, name, email FROM user_table WHERE {0}");
 
-        impl.setQueryAttributeMapping(Collections.singletonMap("shirt", "shirt_color"));
-        assertEquals(Collections.singletonMap("shirt", Collections.singleton("shirt_color")), impl.getQueryAttributeMapping());
+        impl.setQueryAttributeMapping(Map.of("shirt", "shirt_color"));
+        assertEquals(Map.of("shirt", Collections.singleton("shirt_color")), impl.getQueryAttributeMapping());
 
         val columnsToAttributes = new HashMap<String, Object>();
         columnsToAttributes.put("netid", "uid");

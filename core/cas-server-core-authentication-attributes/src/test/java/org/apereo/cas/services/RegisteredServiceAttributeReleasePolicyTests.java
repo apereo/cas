@@ -35,7 +35,6 @@ import org.springframework.context.annotation.Bean;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -294,7 +293,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
 
             val repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100);
             repository.setAttributeRepositoryIds(Set.of(stub.getId()));
-            val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
+            val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid", Map.of("mail", List.of("final@example.com")));
 
             policy.setPrincipalAttributesRepository(repository);
 
@@ -332,7 +331,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
             assertEquals(0, policy.getOrder());
 
             val principal = PrincipalFactoryUtils.newPrincipalFactory()
-                .createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
+                .createPrincipal("uid", Map.of("mail", List.of("final@example.com")));
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(CoreAttributesTestUtils.getRegisteredService())
                 .service(CoreAttributesTestUtils.getService())
@@ -364,7 +363,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
             val policy = new ReturnAllAttributeReleasePolicy();
             val repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 0);
             val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid",
-                Collections.singletonMap("mail", List.of("final@example.com")));
+                Map.of("mail", List.of("final@example.com")));
 
             repository.setAttributeRepositoryIds(CollectionUtils.wrapSet("SampleStubRepository".toUpperCase(Locale.ENGLISH)));
             policy.setPrincipalAttributesRepository(repository);

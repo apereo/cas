@@ -69,7 +69,7 @@ class CachingPrincipalAttributesRepositoryTests {
 
         PRINCIPAL = FunctionUtils.doUnchecked(() -> PrincipalFactoryUtils.newPrincipalFactory()
             .createPrincipal(UUID.randomUUID().toString(),
-                Collections.singletonMap(MAIL, CollectionUtils.wrapList("final@school.com"))));
+                Map.of(MAIL, CollectionUtils.wrapList("final@school.com"))));
 
     }
 

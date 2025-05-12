@@ -8,6 +8,7 @@
     <Loggers>
         <Logger name="org.apereo.cas" level="warn"/>
         <Logger name="org.apache.http" level="warn"/>
+        <Logger name="org.apache.hc" level="warn"/>
         <Logger name="io.micrometer.observation" level="info"/>
 
         <!-- Required for test coverage on statements that execute conditionally on debug -->
