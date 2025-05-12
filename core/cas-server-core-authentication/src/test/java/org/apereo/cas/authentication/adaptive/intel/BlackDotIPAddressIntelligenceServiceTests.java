@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.adaptive.intel;
 
 import org.apereo.cas.authentication.BaseAuthenticationTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
@@ -10,6 +11,7 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("RestfulApi")
+@ExtendWith(CasTestExtension.class)
 class BlackDotIPAddressIntelligenceServiceTests {
     @SpringBootTest(classes = BaseAuthenticationTests.SharedTestConfiguration.class,
         properties = {

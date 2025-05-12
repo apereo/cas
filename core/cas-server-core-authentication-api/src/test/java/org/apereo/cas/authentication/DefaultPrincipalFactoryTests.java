@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,34 +24,34 @@ class DefaultPrincipalFactoryTests {
 
     @Test
     void checkCreatingSimplePrincipal() throws Throwable {
-        val f = PrincipalFactoryUtils.newPrincipalFactory();
-        val p = f.createPrincipal(UID);
-        assertEquals(UID, p.getId());
-        assertTrue(p.getAttributes().isEmpty());
+        val factory = PrincipalFactoryUtils.newPrincipalFactory();
+        val principal = factory.createPrincipal(UID);
+        assertEquals(UID, principal.getId());
+        assertTrue(principal.getAttributes().isEmpty());
     }
 
     @Test
     void checkCreatingSimplePrincipalWithAttributes() throws Throwable {
-        val f = PrincipalFactoryUtils.newPrincipalFactory();
-        val p = f.createPrincipal(UID, Map.of("mail", List.of("final@example.com")));
-        assertEquals(UID, p.getId());
-        assertEquals(1, p.getAttributes().size());
-        assertTrue(p.getAttributes().containsKey("mail"));
+        val factory = PrincipalFactoryUtils.newPrincipalFactory();
+        val principal = factory.createPrincipal(UID, Map.of("mail", List.of("final@example.com")));
+        assertEquals(UID, principal.getId());
+        assertEquals(1, principal.getAttributes().size());
+        assertTrue(principal.getAttributes().containsKey("mail"));
     }
 
     @Test
     void checkCreatingSimplePrincipalWithDefaultRepository() throws Throwable {
-        val f = PrincipalFactoryUtils.newPrincipalFactory();
-        val p = f.createPrincipal(UID);
-        assertEquals(UID, p.getId());
-        assertTrue(p.getAttributes().isEmpty());
+        val factory = PrincipalFactoryUtils.newPrincipalFactory();
+        val principal = factory.createPrincipal(UID);
+        assertEquals(UID, principal.getId());
+        assertTrue(principal.getAttributes().isEmpty());
     }
 
     @Test
     void verifyAction() throws Throwable {
         val factory = PrincipalFactoryUtils.newPrincipalFactory();
-        val p = factory.createPrincipal("casuser", CollectionUtils.wrap("name", "CAS"));
-        assertEquals("casuser", p.getId());
-        assertEquals(1, p.getAttributes().size());
+        val principal = factory.createPrincipal("casuser", CollectionUtils.wrap("name", "CAS"));
+        assertEquals("casuser", principal.getId());
+        assertEquals(1, principal.getAttributes().size());
     }
 }
