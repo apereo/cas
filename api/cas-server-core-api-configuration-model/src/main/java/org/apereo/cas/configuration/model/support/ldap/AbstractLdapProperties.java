@@ -284,7 +284,7 @@ public abstract class AbstractLdapProperties implements Serializable, CasFeature
      * Trust managers are responsible for managing the trust material that is used when making LDAP trust decisions,
      * and for deciding whether credentials presented by a peer should be accepted.
      * Accepted values are:
-     * * <ul>
+     * <ul>
      * <li>{@code DEFAULT}: Enable and force the default JVM trust managers.</li>
      * <li>{@code ANY}: Trust any client or server.</li>
      * </ul>
