@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.gen;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.util.LoggingUtils;
@@ -82,7 +83,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val value = request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME);
         LOGGER.trace("Locating request parameter [{}] with value [{}]", RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, value);
-        return StringUtils.isNotBlank(value) && WebUtils.isRememberMeAuthenticationEnabled(requestContext);
+        return StringUtils.isNotBlank(value) && BooleanUtils.toBoolean(value) && WebUtils.isRememberMeAuthenticationEnabled(requestContext);
     }
 
     @Override
