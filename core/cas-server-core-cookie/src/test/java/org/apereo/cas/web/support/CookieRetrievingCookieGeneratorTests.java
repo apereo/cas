@@ -221,6 +221,25 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
+    void verifyTgcCookieForNoRememberMeByAuthnRequest() throws Throwable {
+        val ctx = getCookieGenerationContext();
+        // set the max age to -1 (session cookie) as ticketGrantingCookieBuilder
+        ctx.setMaxAge(-1);
+        val cookieValueManager = new NoOpCookieValueManager(tenantExtractor);
+        val gen = CookieUtils.buildCookieRetrievingGenerator(cookieValueManager, ctx);
+        val context = MockRequestContext.create(applicationContext);
+        context.setParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, "false");
+        WebUtils.putRememberMeAuthenticationEnabled(context, Boolean.TRUE);
+
+        gen.addCookie(context.getHttpServletRequest(), context.getHttpServletResponse(),
+                CookieRetrievingCookieGenerator.isRememberMeAuthentication(context), "CAS-Cookie-Value");
+        val cookie = context.getHttpServletResponse().getCookie(ctx.getName());
+        assertNotNull(cookie);
+        Assertions.assertNotEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
+        Assertions.assertEquals(-1, cookie.getMaxAge());
+    }
+
+    @Test
     void verifyCookieForRememberMeByRequestContext() throws Throwable {
         val ctx = getCookieGenerationContext();
         val cookieValueManager = new NoOpCookieValueManager(tenantExtractor);
