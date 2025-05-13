@@ -137,6 +137,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
             membershipService.setRecoveryEnabled(clusteringProperties.isMembershipRecoveryEnabled());
             membershipService.setRecoveryCounter(clusteringProperties.getMembershipRecoveryCounter());
             membershipService.setLocalLoopbackDisabled(clusteringProperties.isMembershipLocalLoopbackDisabled());
+            membershipService.setMcastBindAddress(clusteringProperties.getMembershipBindAddress());
             groupChannel.setMembershipService(membershipService);
 
             val clusterMembers = clusteringProperties.getClusterMembers();
