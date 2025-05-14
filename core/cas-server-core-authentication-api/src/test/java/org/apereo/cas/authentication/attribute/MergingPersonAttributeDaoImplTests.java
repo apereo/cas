@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -266,7 +265,7 @@ class MergingPersonAttributeDaoImplTests {
         var impl = new MergingPersonAttributeDaoImpl();
         impl.setPersonAttributeDaos(attributeSources);
 
-        var layoutOwners = impl.getPeople(Collections.singletonMap("username", "lo-*"));
+        var layoutOwners = impl.getPeople(Map.of("username", "lo-*"));
 
         val expectedLayoutOwners = new HashSet<PersonAttributes>();
         expectedLayoutOwners.add(new SimplePersonAttributes("lo-welcome", loWelcomeAttrs));
@@ -274,7 +273,7 @@ class MergingPersonAttributeDaoImplTests {
 
         assertEquals(expectedLayoutOwners, layoutOwners);
 
-        var homeUsers = impl.getPeople(Collections.singletonMap("username", "*home"));
+        var homeUsers = impl.getPeople(Map.of("username", "*home"));
         val expectedHomeUsers = new HashSet<PersonAttributes>();
         expectedHomeUsers.add(new SimplePersonAttributes("jshome", jshomeAttrs));
         expectedHomeUsers.add(new SimplePersonAttributes("lo-home", loHomeAttrs));

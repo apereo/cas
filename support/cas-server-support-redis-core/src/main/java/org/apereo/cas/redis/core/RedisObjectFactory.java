@@ -64,9 +64,11 @@ public class RedisObjectFactory {
 
         template.setKeySerializer(stringRedisSerializer);
         template.setHashKeySerializer(stringRedisSerializer);
+        
+        val compressedSerializer = new Lz4CompressionRedisSerializer(valueSerializer);
+        template.setValueSerializer(compressedSerializer);
+        template.setHashValueSerializer(compressedSerializer);
 
-        template.setValueSerializer(valueSerializer);
-        template.setHashValueSerializer(valueSerializer);
         template.setConnectionFactory(connectionFactory);
         return template;
     }

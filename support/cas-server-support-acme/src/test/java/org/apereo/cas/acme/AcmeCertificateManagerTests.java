@@ -32,8 +32,11 @@ import static org.mockito.Mockito.*;
  *
  * @author Misagh Moayyed
  * @since 6.4.0
+ * @deprecated since 7.3.0
  */
 @Tag("Web")
+@SuppressWarnings("removal")
+@Deprecated(since = "7.3.0", forRemoval = true)
 @Import(AcmeCertificateManagerTests.AcmeTestConfiguration.class)
 @TestPropertySource(properties = {
     "cas.acme.retry-internal=PT1S",

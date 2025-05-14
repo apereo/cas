@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +50,7 @@ class RegisteredServiceMutantRegexAttributeFilterTests {
 
     @Test
     void verifyPatternFilter() {
-        this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
+        this.filter.setPatterns(Map.of("memberOf", "^m"));
         val attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(attrs.size(), this.givenAttributesMap.size());
         assertEquals(2, CollectionUtils.toCollection(attrs.get("memberOf")).size());
@@ -67,7 +66,7 @@ class RegisteredServiceMutantRegexAttributeFilterTests {
 
     @Test
     void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
-        this.filter.setPatterns(Collections.singletonMap("memberOf", CollectionUtils.wrapList("^mar(.+)", "^mat(.+)", "prefix$1")));
+        this.filter.setPatterns(Map.of("memberOf", CollectionUtils.wrapList("^mar(.+)", "^mat(.+)", "prefix$1")));
         this.filter.setExcludeUnmappedAttributes(true);
         this.filter.setCaseInsensitive(true);
         MAPPER.writeValue(JSON_FILE, this.filter);
@@ -77,7 +76,7 @@ class RegisteredServiceMutantRegexAttributeFilterTests {
 
     @Test
     void verifyMutantPatternValues() {
-        this.filter.setPatterns(Collections.singletonMap("memberOf",
+        this.filter.setPatterns(Map.of("memberOf",
             CollectionUtils.wrapList("^mar(.+)(101) -> prefix$1$2",
                 "^mat(.+)(101) -> postfix$1$2")));
         this.filter.setCaseInsensitive(false);

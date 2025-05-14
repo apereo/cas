@@ -107,7 +107,7 @@ public class SyncopeUtils {
         collectListableAttribute(attributes, user, "dynRealms", "syncopeUserDynRealms", attributeMappings);
 
         if (user.has("memberships")) {
-            val memberships = mapSyncopeGroupMemberhips(user);
+            val memberships = mapSyncopeGroupMemberships(user);
             if (!memberships.isEmpty()) {
                 name = attributeMappings.getOrDefault("memberships", "syncopeUserMemberships");
                 attributes.put(name, new ArrayList<>(memberships));
@@ -140,7 +140,7 @@ public class SyncopeUtils {
         return attributes;
     }
 
-    private List<Map<String, String>> mapSyncopeGroupMemberhips(final JsonNode user) {
+    private List<Map<String, String>> mapSyncopeGroupMemberships(final JsonNode user) {
         val memberships = new ArrayList<Map<String, String>>();
         user.get("memberships").forEach(member -> {
             val membershipInfo = new HashMap<String, String>();

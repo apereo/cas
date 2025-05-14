@@ -211,6 +211,7 @@ public class CasRedisTicketRegistryAutoConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("redisTicketConnectionFactory")
             final RedisConnectionFactory redisTicketConnectionFactory) {
+
             return BeanSupplier.of(CasRedisTemplate.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> RedisObjectFactory.newRedisTemplate(redisTicketConnectionFactory))

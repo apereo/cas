@@ -93,3 +93,4 @@ internally based on the `Host` http header, in scenarios where CAS is deployed b
 - Apache Tomcat's `RewriteValve` can now be added as an engine valve.
 - CAS is now publishing events internally when webflow actions are executed. Such events are recorded into the [CAS event repository](../authentication/Configuring-Authentication-Events.html) and are also available in the [Palantir admin console](../installation/Admin-Dashboard.html).
 - Redis integration tests are now switched and upgraded to use the latest Redis `8.0` server.
+- Support for [ACME Integration](../integration/ACME-Integration.html) is now deprecated.

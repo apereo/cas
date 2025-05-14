@@ -15,10 +15,13 @@ import org.springframework.boot.test.context.SpringBootTest;
  *
  * @author Misagh Moayyed
  * @since 6.4.0
+ * @deprecated since 7.3.0
  */
 @Tag("Web")
+@SuppressWarnings("removal")
 @ExtendWith(CasTestExtension.class)
 @SpringBootTestAutoConfigurations
+@Deprecated(since = "7.3.0", forRemoval = true)
 @SpringBootTest(classes = CasAcmeAutoConfiguration.class, properties = {
     "cas.acme.domains=cas.apereo.org",
     "cas.acme.server-url=acme://letsencrypt.org/staging",

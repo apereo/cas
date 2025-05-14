@@ -32,11 +32,14 @@ import java.security.Security;
  *
  * @author Misagh Moayyed
  * @since 6.4.0
+ * @deprecated since 7.3.0
  */
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ACME)
 @AutoConfiguration
+@SuppressWarnings("removal")
+@Deprecated(since = "7.3.0", forRemoval = true)
 public class CasAcmeAutoConfiguration {
 
     static {

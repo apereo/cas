@@ -19,6 +19,7 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.http.HttpMethod;
@@ -34,13 +35,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = CasEmbeddedContainerTomcatAutoConfiguration.class, properties = {
-    "server.port=8183",
     "server.ssl.enabled=false",
     "cas.server.tomcat.remote-user-valve.remote-user-header=REMOTE_USER",
     "cas.server.tomcat.remote-user-valve.allowed-ip-address-regex=.+",
     "cas.server.tomcat.clustering.enabled=true",
+    "cas.server.tomcat.clustering.membership-bind-address=127.0.0.1",
     "cas.server.tomcat.clustering.clustering-type=DEFAULT"
-}, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
 @Tag("WebApp")
 @ExtendWith(CasTestExtension.class)
@@ -56,6 +57,9 @@ class CasTomcatServletWebServerFactoryClusterTests {
     @Qualifier("casTomcatEmbeddedServletContainerCustomizer")
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
 
+    @LocalServerPort
+    private int port;
+    
     @Test
     void verifyOperation() throws Throwable {
         casTomcatEmbeddedServletContainerCustomizer.customize(casServletWebServerFactory);
@@ -72,7 +76,7 @@ class CasTomcatServletWebServerFactoryClusterTests {
             val response = HttpUtils.execute(HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .headers(Map.of("REMOTE_USER", givenRemoteUser))
-                .url("http://localhost:8183/custom")
+                .url("http://localhost:%s/custom".formatted(port))
                 .build());
             val responseHeader = response.getHeader("X-Remote-User");
             assertNotNull(responseHeader);

@@ -2,9 +2,11 @@ package org.apereo.cas.authentication.adaptive.intel;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -24,8 +26,9 @@ import java.util.HashMap;
  */
 @Slf4j
 public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligenceService {
-    public RestfulIPAddressIntelligenceService(final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties) {
-        super(adaptiveAuthenticationProperties);
+    public RestfulIPAddressIntelligenceService(final TenantExtractor tenantExtractor,
+                                               final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties) {
+        super(tenantExtractor, adaptiveAuthenticationProperties);
     }
 
     @Override
@@ -41,7 +44,7 @@ public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligen
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
                 .method(HttpMethod.GET)
-                .url(rest.getUrl())
+                .url(SpringExpressionLanguageValueResolver.getInstance().resolve(rest.getUrl()))
                 .parameters(parameters)
                 .headers(rest.getHeaders())
                 .build();
@@ -58,9 +61,9 @@ public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligen
                 try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
                     val score = Double.parseDouble(IOUtils.toString(content, StandardCharsets.UTF_8));
                     return IPAddressIntelligenceResponse.builder()
-                            .score(score)
-                            .status(IPAddressIntelligenceResponse.IPAddressIntelligenceStatus.RANKED)
-                            .build();
+                        .score(score)
+                        .status(IPAddressIntelligenceResponse.IPAddressIntelligenceStatus.RANKED)
+                        .build();
                 }
             }
         } catch (final Exception e) {

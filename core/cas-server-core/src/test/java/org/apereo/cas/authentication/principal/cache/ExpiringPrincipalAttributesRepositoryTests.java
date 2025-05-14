@@ -26,7 +26,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +64,7 @@ class ExpiringPrincipalAttributesRepositoryTests {
 
         PRINCIPAL = FunctionUtils.doUnchecked(() -> PrincipalFactoryUtils.newPrincipalFactory()
             .createPrincipal(UUID.randomUUID().toString(),
-                Collections.singletonMap(MAIL, CollectionUtils.wrapList("final@school.com"))));
+                Map.of(MAIL, CollectionUtils.wrapList("final@school.com"))));
     }
 
     protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final String unit, final long duration) {
