@@ -36,7 +36,6 @@ class SyncopePersonDirectoryConfiguration {
     @ConditionalOnMissingBean(name = "syncopePersonAttributeDaos")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @SuppressWarnings("unchecked")
     public BeanContainer<PersonAttributeDao> syncopePersonAttributeDaos(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {

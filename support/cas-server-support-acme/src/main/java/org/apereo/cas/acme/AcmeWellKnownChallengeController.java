@@ -15,10 +15,13 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Misagh Moayyed
  * @since 6.4.0
+ * @deprecated since 7.3.0
  */
 @RestController("acmeWellKnownChallengeController")
 @Slf4j
+@SuppressWarnings("removal")
 @RequiredArgsConstructor
+@Deprecated(since = "7.3.0", forRemoval = true)
 public class AcmeWellKnownChallengeController {
     private final AcmeChallengeRepository acmeChallengeRepository;
 

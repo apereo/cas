@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
+import org.apereo.cas.util.NamedObject;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -9,7 +10,12 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.0.0
  */
 @FunctionalInterface
-public interface IPAddressIntelligenceService {
+public interface IPAddressIntelligenceService extends NamedObject {
+
+    /**
+     * The default bean name.
+     */
+    String BEAN_NAME = "ipAddressIntelligenceService";
 
     /**
      * NoOp ip address intelligence service.

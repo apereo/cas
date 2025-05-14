@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -97,7 +96,7 @@ class ChainingPrincipalResolverTests {
         val resolver2 = mock(PrincipalResolver.class);
         when(resolver2.supports(any(Credential.class))).thenReturn(true);
         when(resolver2.resolve(any(Credential.class), any(Optional.class), any(Optional.class), any(Optional.class)))
-            .thenReturn(principalFactory.createPrincipal("output", Collections.singletonMap("mail", List.of("final@example.com"))));
+            .thenReturn(principalFactory.createPrincipal("output", Map.of("mail", List.of("final@example.com"))));
 
         val resolver = buildResolver(List.of(resolver1, resolver2), casProperties);
         val principal = resolver.resolve(credential,
