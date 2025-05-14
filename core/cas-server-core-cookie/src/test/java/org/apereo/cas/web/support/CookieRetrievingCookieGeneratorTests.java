@@ -24,7 +24,6 @@ import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -164,9 +163,8 @@ class CookieRetrievingCookieGeneratorTests {
 
     @Test
     void verifyCookieValueMissing() {
-        val context = getCookieGenerationContext();
+        val context = getCookieGenerationContext().setName(StringUtils.EMPTY);
         val cookieValueManager = new NoOpCookieValueManager(tenantExtractor);
-        context.setName(StringUtils.EMPTY);
 
         val gen = CookieUtils.buildCookieRetrievingGenerator(cookieValueManager, context);
         val request = new MockHttpServletRequest();
@@ -177,8 +175,7 @@ class CookieRetrievingCookieGeneratorTests {
 
     @Test
     void verifyCookieSameSiteLax() throws Throwable {
-        val ctx = getCookieGenerationContext();
-        ctx.setSameSitePolicy("lax");
+        val ctx = getCookieGenerationContext().setSameSitePolicy("lax");
 
         val gen = CookieUtils.buildCookieRetrievingGenerator(new DefaultCasCookieValueManager(
             CipherExecutorResolver.with(CipherExecutor.noOp()),
@@ -217,14 +214,12 @@ class CookieRetrievingCookieGeneratorTests {
             CookieRetrievingCookieGenerator.isRememberMeAuthentication(context), "CAS-Cookie-Value");
         val cookie = context.getHttpServletResponse().getCookie(ctx.getName());
         assertNotNull(cookie);
-        Assertions.assertEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
+        assertEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
     }
 
     @Test
     void verifyTgcCookieForNoRememberMeByAuthnRequest() throws Throwable {
-        val ctx = getCookieGenerationContext();
-        // set the max age to -1 (session cookie) as ticketGrantingCookieBuilder
-        ctx.setMaxAge(-1);
+        val ctx = getCookieGenerationContext().setMaxAge(-1);
         val cookieValueManager = new NoOpCookieValueManager(tenantExtractor);
         val gen = CookieUtils.buildCookieRetrievingGenerator(cookieValueManager, ctx);
         val context = MockRequestContext.create(applicationContext);
@@ -235,8 +230,8 @@ class CookieRetrievingCookieGeneratorTests {
                 CookieRetrievingCookieGenerator.isRememberMeAuthentication(context), "CAS-Cookie-Value");
         val cookie = context.getHttpServletResponse().getCookie(ctx.getName());
         assertNotNull(cookie);
-        Assertions.assertNotEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
-        Assertions.assertEquals(-1, cookie.getMaxAge());
+        assertNotEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
+        assertEquals(-1, cookie.getMaxAge());
     }
 
     @Test
@@ -255,7 +250,7 @@ class CookieRetrievingCookieGeneratorTests {
             CookieRetrievingCookieGenerator.isRememberMeAuthentication(context), "CAS-Cookie-Value");
         val cookie = context.getHttpServletResponse().getCookie(ctx.getName());
         assertNotNull(cookie);
-        Assertions.assertEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
+        assertEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
     }
 
     @ParameterizedTest

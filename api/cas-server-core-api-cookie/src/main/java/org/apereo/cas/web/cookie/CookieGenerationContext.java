@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.With;
+import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,6 +25,7 @@ import java.io.Serializable;
 @Setter
 @With
 @AllArgsConstructor
+@Accessors(chain = true)
 public class CookieGenerationContext implements Serializable {
     /**
      * Empty cookie generation context.

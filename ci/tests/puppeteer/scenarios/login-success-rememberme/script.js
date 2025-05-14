@@ -77,6 +77,7 @@ async function verifyWithoutRememberMe() {
     await cas.loginWith(page);
     await cas.sleep(1000);
     const tgc = await cas.assertCookie(page);
+    assert(tgc.expires === -1);
     const date = new Date(tgc.expires * 1000);
     await cas.logg(`TGC expiration date: ${date}`);
     const now = new Date();
