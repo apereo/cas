@@ -3,6 +3,7 @@ package org.apereo.cas.tomcat;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatClusteringProperties;
 import org.apereo.cas.monitor.NotMonitorable;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -137,7 +138,8 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
             membershipService.setRecoveryEnabled(clusteringProperties.isMembershipRecoveryEnabled());
             membershipService.setRecoveryCounter(clusteringProperties.getMembershipRecoveryCounter());
             membershipService.setLocalLoopbackDisabled(clusteringProperties.isMembershipLocalLoopbackDisabled());
-            membershipService.setMcastBindAddress(clusteringProperties.getMembershipBindAddress());
+            FunctionUtils.doIfNotBlank(clusteringProperties.getMembershipBindAddress(),
+                membershipService::setMcastBindAddress);
             groupChannel.setMembershipService(membershipService);
 
             val clusterMembers = clusteringProperties.getClusterMembers();
