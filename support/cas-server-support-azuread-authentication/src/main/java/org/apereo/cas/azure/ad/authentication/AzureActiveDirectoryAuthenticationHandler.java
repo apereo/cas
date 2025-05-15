@@ -49,8 +49,8 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
     private final AzureActiveDirectoryAuthenticationProperties properties;
 
     public AzureActiveDirectoryAuthenticationHandler(final ServicesManager servicesManager,
-            final PrincipalFactory principalFactory,
-            final AzureActiveDirectoryAuthenticationProperties properties) {
+                                                     final PrincipalFactory principalFactory,
+                                                     final AzureActiveDirectoryAuthenticationProperties properties) {
         super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
         this.properties = properties;
     }
