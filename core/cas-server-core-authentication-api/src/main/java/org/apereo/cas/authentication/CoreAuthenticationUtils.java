@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.adaptive.intel.BlackDotIPAddressIntelligenceService;
 import org.apereo.cas.authentication.adaptive.intel.DefaultIPAddressIntelligenceService;
 import org.apereo.cas.authentication.adaptive.intel.GroovyIPAddressIntelligenceService;
 import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
@@ -361,7 +362,7 @@ public class CoreAuthenticationUtils {
             return new GroovyIPAddressIntelligenceService(adaptive);
         }
         if (StringUtils.isNotBlank(intel.getBlackDot().getEmailAddress())) {
-            return new RestfulIPAddressIntelligenceService(adaptive);
+            return new BlackDotIPAddressIntelligenceService(adaptive);
         }
         return new DefaultIPAddressIntelligenceService(adaptive);
     }
