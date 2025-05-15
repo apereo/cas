@@ -76,31 +76,20 @@ public class AzureActiveDirectoryAuthenticationProperties implements Serializabl
      * tokens for resources and users
      * This URL allows CAS to establish what is called an 'authority'.
      * You can think of the authority as the
-     * directory issuing the identities/tokens. The login URL here is then composed
-     * of
+     * directory issuing the identities/tokens. The login URL here is then composed of
      * {@code https://<instance>/<tenant>}, where 'instance' is the Azure AD host
-     * (such as {@code https://login.microsoftonline.com}) and 'tenant' is the
-     * domain name
+     * (such as {@code https://login.microsoftonline.com}) and 'tenant' is the domain name
      * (such as {@code contoso.onmicrosoft.com}) or tenant ID of the directory.
      * Examples of authority URL are:
      *
      * <ul>
-     * <li>{@code https://login.microsoftonline.com/f31e6716-26e8-4651-b323-2563936b4163}:
-     * for a single tenant application defined in the tenant</li>
-     * <li>{@code https://login.microsoftonline.com/contoso.onmicrosoft.com}: This
-     * representation is like the previous one, but uses the tenant domain name
-     * instead of the tenant Id.</li>
-     * <li>{@code https://login.microsoftonline.de/contoso.de}: also uses a domain
-     * name, but in this case the Azure AD tenant admins have set a custom domain
-     * for their tenant, and the
-     * instance URL here is for the German national cloud.</li>
-     * <li>{@code https://login.microsoftonline.com/common}: in the case of a
-     * multi-tenant application, that is an application available in several Azure
-     * AD tenants.</li>
-     * <li>It can finally be an Active Directory Federation Services (ADFS) URL,
-     * which is recognized
-     * with the convention that the URL should contain adfs like
-     * {@code https://contoso.com/adfs}.</li>
+     *     <li>{@code https://login.microsoftonline.com/f31e6716-26e8-4651-b323-2563936b4163}: for a single tenant application defined in the tenant</li>
+     *     <li>{@code https://login.microsoftonline.com/contoso.onmicrosoft.com}: This representation is like the previous one, but uses the tenant domain name instead of the tenant Id.</li>
+     *     <li>{@code https://login.microsoftonline.de/contoso.de}: also uses a domain name, but in this case the Azure AD tenant admins have set a custom domain for their tenant, and the
+     *     instance URL here is for the German national cloud.</li>
+     *     <li>{@code https://login.microsoftonline.com/common}: in the case of a multi-tenant application, that is an application available in several Azure AD tenants.</li>
+     *     <li>It can finally be an Active Directory Federation Services (ADFS) URL, which is recognized
+     *     with the convention that the URL should contain adfs like {@code https://contoso.com/adfs}.</li>
      * </ul>
      */
     private String loginUrl = "https://login.microsoftonline.com/common/";
@@ -111,18 +100,12 @@ public class AzureActiveDirectoryAuthenticationProperties implements Serializabl
     private String resource = "https://graph.microsoft.com/";
 
     /**
-     * A number of authentication handlers are allowed to determine whether they can
-     * operate on the provided credential
-     * and as such lend themselves to be tried and tested during the authentication
-     * handler selection phase.
-     * The credential criteria may be one of the following options:
-     * <ul>
-     * <li>1) A regular expression pattern that is tested against the credential
-     * identifier.</li>
-     * <li>2) A fully qualified class name of your own design that implements
-     * {@code Predicate}.</li>
-     * <li>3) Path to an external Groovy script that implements the same
-     * interface.</li>
+     * A number of authentication handlers are allowed to determine whether they can operate on the provided credential
+     * and as such lend themselves to be tried and tested during the authentication handler selection phase.
+     * The credential criteria may be one of the following options:<ul>
+     * <li>1) A regular expression pattern that is tested against the credential identifier.</li>
+     * <li>2) A fully qualified class name of your own design that implements {@code Predicate}.</li>
+     * <li>3) Path to an external Groovy script that implements the same interface.</li>
      * </ul>
      */
     @RegularExpressionCapable
