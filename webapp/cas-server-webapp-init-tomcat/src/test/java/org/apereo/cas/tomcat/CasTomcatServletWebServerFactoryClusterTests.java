@@ -23,6 +23,12 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.http.HttpMethod;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import java.net.Inet4Address;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.server.tomcat.remote-user-valve.remote-user-header=REMOTE_USER",
     "cas.server.tomcat.remote-user-valve.allowed-ip-address-regex=.+",
     "cas.server.tomcat.clustering.enabled=true",
-    "cas.server.tomcat.clustering.membership-bind-address=127.0.0.1",
     "cas.server.tomcat.clustering.clustering-type=DEFAULT"
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
@@ -59,6 +64,15 @@ class CasTomcatServletWebServerFactoryClusterTests {
 
     @LocalServerPort
     private int port;
+
+    @DynamicPropertySource
+    static void registerMulticastProperties(final DynamicPropertyRegistry registry) throws SocketException {
+        val bind = pickMulticastBindAddress();
+        registry.add(
+            "cas.server.tomcat.clustering.membership-bind-address",
+            () -> bind
+        );
+    }
     
     @Test
     void verifyOperation() throws Throwable {
@@ -86,5 +100,19 @@ class CasTomcatServletWebServerFactoryClusterTests {
             server.stop();
         }
     }
+
+    private static String pickMulticastBindAddress() throws SocketException {
+        for (val nif : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+            if (nif.isUp() && !nif.isLoopback() && nif.supportsMulticast()) {
+                for (val addr : Collections.list(nif.getInetAddresses())) {
+                    if (addr instanceof Inet4Address) {
+                        return addr.getHostAddress();
+                    }
+                }
+            }
+        }
+        return "127.0.0.1";
+    }
+
 }
 
