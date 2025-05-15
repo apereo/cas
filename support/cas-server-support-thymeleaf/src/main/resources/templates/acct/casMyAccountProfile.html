@@ -22,13 +22,23 @@
                     console.log(`Fragment ${window.location.hash}`);
                     showPanel(window.location.hash);
                 } else {
-                    showPanel("#divOverview");
+                    let selectedTab = window.localStorage.getItem("AccountProfileSelectedTab");
+                    console.log(`Selected tab: ${selectedTab}`);
+                    showPanel(selectedTab);
                 }
             }
 
             function showPanel(element) {
+                let effectiveElement = element;
+                if (element === null || element === '' && element === undefined) {
+                    effectiveElement = "#divOverview";
+                }
                 $('div.profile-content').hide();
-                $(element).show();
+                $(effectiveElement).show();
+                $("#navigationMenu ul li").removeClass("active");
+                const liElement = effectiveElement.replace("#div", "#link");
+                $(liElement).addClass("active");
+                window.localStorage.setItem("AccountProfileSelectedTab", effectiveElement);
             }
         </script>
 

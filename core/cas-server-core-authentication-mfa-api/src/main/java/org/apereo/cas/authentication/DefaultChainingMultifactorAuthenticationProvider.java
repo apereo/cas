@@ -3,6 +3,8 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.bypass.DefaultChainingMultifactorAuthenticationBypassProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
+import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -64,14 +66,32 @@ public class DefaultChainingMultifactorAuthenticationProvider implements Chainin
 
     @Override
     public MultifactorAuthenticationDeviceManager getDeviceManager() {
-        return principal -> getMultifactorAuthenticationProviders()
-            .stream()
-            .filter(BeanSupplier::isNotProxy)
-            .sorted(OrderComparator.INSTANCE)
-            .map(MultifactorAuthenticationProvider::getDeviceManager)
-            .filter(Objects::nonNull)
-            .map(deviceManager -> deviceManager.findRegisteredDevices(principal))
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
+        return new MultifactorAuthenticationDeviceManager() {
+            @Override
+            public List<String> getSource() {
+                return getMultifactorAuthenticationProviders()
+                    .stream()
+                    .filter(BeanSupplier::isNotProxy)
+                    .sorted(OrderComparator.INSTANCE)
+                    .map(MultifactorAuthenticationProvider::getDeviceManager)
+                    .filter(Objects::nonNull)
+                    .map(MultifactorAuthenticationDeviceManager::getSource)
+                    .flatMap(List::stream)
+                    .toList();
+            }
+
+            @Override
+            public List<MultifactorAuthenticationRegisteredDevice> findRegisteredDevices(final Principal principal) {
+                return getMultifactorAuthenticationProviders()
+                    .stream()
+                    .filter(BeanSupplier::isNotProxy)
+                    .sorted(OrderComparator.INSTANCE)
+                    .map(MultifactorAuthenticationProvider::getDeviceManager)
+                    .filter(Objects::nonNull)
+                    .map(deviceManager -> deviceManager.findRegisteredDevices(principal))
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+            }
+        };
     }
 }

@@ -10,9 +10,15 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@FunctionalInterface
 public interface MultifactorAuthenticationDeviceManager {
 
+    /**
+     * Gets source for accounts and devices.
+     *
+     * @return the source
+     */
+    List<String> getSource();
+    
     /**
      * Has registered devices for a given provider.
      *

@@ -65,6 +65,10 @@ public class MultifactorAuthenticationAccountProfileWebflowConfigurer extends Ab
                 .collect(Collectors.toList());
             AnnotationAwareOrderComparator.sort(trustedActions);
             accountView.getRenderActionList().addAll(trustedActions.toArray(CasWebflowConfigurer.EMPTY_ACTIONS_ARRAY));
+
+            val deleteState = createActionState(accountFlow, "deleteMfaDevice", CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_DELETE_MFA_DEVICE);
+            createStateDefaultTransition(deleteState, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
+            createTransitionForState(accountView, "delete", deleteState.getId());
         }
     }
 }

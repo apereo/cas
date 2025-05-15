@@ -50,6 +50,7 @@ class DefaultChainingMultifactorAuthenticationProviderTests {
         assertEquals(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.NONE, chain.getFailureMode());
 
         assertFalse(chain.getMultifactorAuthenticationProviders().isEmpty());
+        assertEquals("TestMfaProvider", chain.getDeviceManager().getSource().getFirst());
         val service = MultifactorAuthenticationTestUtils.getRegisteredService();
         assertTrue(chain.isAvailable(service));
         assertTrue(chain.matches(provider.getId()));

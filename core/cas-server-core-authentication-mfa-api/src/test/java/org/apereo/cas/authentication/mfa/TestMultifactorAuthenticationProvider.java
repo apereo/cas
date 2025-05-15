@@ -15,6 +15,7 @@ import lombok.experimental.Accessors;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.io.Serial;
+import java.util.List;
 import java.util.UUID;
 import static org.mockito.Mockito.*;
 
@@ -88,7 +89,7 @@ public class TestMultifactorAuthenticationProvider extends AbstractMultifactorAu
             listOfDevices.removeIf(device -> device.getId().equals(deviceId));
             return null;
         }).when(manager).removeRegisteredDevice(any(Principal.class), anyString());
-
+        when(manager.getSource()).thenReturn(List.of("TestMfaProvider"));
         return manager;
     }
 }

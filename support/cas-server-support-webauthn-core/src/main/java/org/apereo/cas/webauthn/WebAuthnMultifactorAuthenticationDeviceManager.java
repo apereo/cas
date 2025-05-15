@@ -52,6 +52,11 @@ public class WebAuthnMultifactorAuthenticationDeviceManager implements Multifact
         });
     }
 
+    @Override
+    public List<String> getSource() {
+        return List.of("Web Authn");
+    }
+
     protected MultifactorAuthenticationRegisteredDevice mapWebAuthnAccount(final CredentialRegistration acct) {
         val attestation = Optional.ofNullable(acct.getAttestationMetadata()).orElseGet(Attestation::empty);
         val vendor = attestation.getVendorProperties().orElseGet(Map::of);
@@ -64,7 +69,7 @@ public class WebAuthnMultifactorAuthenticationDeviceManager implements Multifact
             .model(device.get("displayName"))
             .lastUsedDateTime(acct.getRegistrationTime().toString())
             .payload(OBJECT_WRITER.writeValueAsString(acct))
-            .source("Web Authn")
+            .source(getSource().getFirst())
             .details(Map.of("providerId", multifactorAuthenticationProvider.getObject().getId()))
             .build());
     }

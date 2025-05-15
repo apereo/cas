@@ -21,7 +21,12 @@ import java.util.stream.Collectors;
 public class YubiKeyMultifactorAuthenticatorDeviceManager implements MultifactorAuthenticationDeviceManager {
     private final YubiKeyAccountRegistry yubiKeyAccountRegistry;
     private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
-    
+
+    @Override
+    public List<String> getSource() {
+        return List.of("YubiKey");
+    }
+
     @Override
     public List<MultifactorAuthenticationRegisteredDevice> findRegisteredDevices(final Principal principal) {
         val registrations = yubiKeyAccountRegistry.getAccount(principal.getId());
@@ -47,7 +52,7 @@ public class YubiKeyMultifactorAuthenticatorDeviceManager implements Multifactor
                 .payload(device.toJson())
                 .lastUsedDateTime(device.getRegistrationDate().toString())
                 .model(device.getPublicId())
-                .source("YubiKey")
+                .source(getSource().getFirst())
                 .details(Map.of("providerId", multifactorAuthenticationProvider.getObject().getId()))
                 .build())
             .collect(Collectors.toList());

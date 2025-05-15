@@ -22,7 +22,12 @@ import java.util.stream.Collectors;
 public class OneTimeTokenCredentialDeviceManager implements MultifactorAuthenticationDeviceManager {
     private final OneTimeTokenCredentialRepository repository;
     private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
-    
+
+    @Override
+    public List<String> getSource() {
+        return List.of("Google Authenticator");
+    }
+
     @Override
     public List<MultifactorAuthenticationRegisteredDevice> findRegisteredDevices(final Principal principal) {
         return repository.get(principal.getId())
