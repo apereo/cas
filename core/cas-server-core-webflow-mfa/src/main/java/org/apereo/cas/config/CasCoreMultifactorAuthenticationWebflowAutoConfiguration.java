@@ -36,6 +36,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.actions.AccountProfileDeleteMultifactorAuthenticationDeviceAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationAvailableAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationBypassAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationFailureAction;
@@ -740,6 +741,22 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
                 .otherwiseProxy()
                 .get();
         }
+
+        @Bean
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_DELETE_MFA_DEVICE)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action accountProfileDeleteMultifactorAuthenticationDeviceAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(AccountProfileDeleteMultifactorAuthenticationDeviceAction::new)
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_DELETE_MFA_DEVICE)
+                .build()
+                .get();
+        }
+
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

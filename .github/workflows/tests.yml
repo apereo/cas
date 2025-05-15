@@ -132,6 +132,9 @@ jobs:
           timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
           command: |
+            sudo ip link set lo multicast on
+            sudo ip route add 224.0.0.0/4 dev lo
+  
             if [[ "${{ github.event_name }}" == "schedule" ]] && [[ "${{ github.event.schedule == '0 10 * * *'}}" ]]; then
               echo "Running tests without PTS mode"
               ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --no-pts

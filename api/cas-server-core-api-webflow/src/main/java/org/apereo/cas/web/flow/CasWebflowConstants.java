@@ -1593,6 +1593,11 @@ public interface CasWebflowConstants {
     String ACTION_ID_ACCOUNT_PROFILE_PASSWORD_CHANGE_REQUEST = "accountProfilePasswordChangeRequestAction";
 
     /**
+     * Action id 'accountProfileDeleteMultifactorAuthenticationDeviceAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_DELETE_MFA_DEVICE = "accountProfileDeleteMultifactorAuthenticationDeviceAction";
+
+    /**
      * Action id 'accountProfileActivateMfaAction'.
      */
     String ACTION_ID_ACCOUNT_PROFILE_ACTIVATE_MFA = "accountProfileActivateMfaAction";
