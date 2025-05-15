@@ -14,7 +14,7 @@ env:
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
   DOCS_BRANCH: master
-  RUBY_VERSION: '3.4.3'
+  RUBY_VERSION: '3.4.4'
 
 ##########################################################################
 
