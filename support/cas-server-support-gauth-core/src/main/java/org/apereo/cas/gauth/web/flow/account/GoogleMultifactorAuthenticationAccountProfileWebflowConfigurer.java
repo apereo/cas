@@ -48,6 +48,6 @@ public class GoogleMultifactorAuthenticationAccountProfileWebflowConfigurer exte
         createStateDefaultTransition(acctRegFinalize, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
 
         val accountProfileView = (ViewState) accountFlow.getState(CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
-        createTransitionForState(accountProfileView, CasWebflowConstants.TRANSITION_ID_REGISTER, regViewState.getId());
+        createTransitionForState(accountProfileView, "registerGauth", regViewState.getId());
     }
 }

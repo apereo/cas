@@ -189,7 +189,7 @@
                             </ul>
                         </div>
                         <input type="hidden" name="type" value=""/>
-                        <input type="hidden" name="_eventId_register" value="Register"/>
+                        <input type="hidden" name="_eventId"/>
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                     </form>
 
@@ -199,6 +199,14 @@
                         }
 
                         function submitRegistrationRequest(type) {
+                            switch (type) {
+                                case 'gauth':
+                                    document.forms.fm2["_eventId"].value = "registerGauth";
+                                    break;
+                                case 'webauthn':
+                                    document.forms.fm2["_eventId"].value = "registerWebAuthn";
+                                    break;
+                            }
                             document.forms.fm2.type.value = type;
                             document.forms.fm2.submit();
                         }
