@@ -44,19 +44,25 @@ import java.util.Set;
 @Slf4j
 public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .singleValueAsArray(true).build().toObjectMapper();
+            .singleValueAsArray(true).build().toObjectMapper();
 
     private final AzureActiveDirectoryAuthenticationProperties properties;
 
     public AzureActiveDirectoryAuthenticationHandler(final ServicesManager servicesManager,
-                                                     final PrincipalFactory principalFactory,
-                                                     final AzureActiveDirectoryAuthenticationProperties properties) {
+            final PrincipalFactory principalFactory,
+            final AzureActiveDirectoryAuthenticationProperties properties) {
         super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
         this.properties = properties;
     }
 
     private String getUserInfoFromGraph(final IAuthenticationResult authenticationResult, final String username) throws Exception {
-        val url = new URI(StringUtils.appendIfMissing(properties.getResource(), "/") + "v1.0/users/" + username).toURL();
+        String select = "";
+        if (StringUtils.isNotBlank(properties.getAttributes())) {
+            select = "?$select=" + properties.getAttributes();
+        }
+
+        val url = new URI(
+                StringUtils.appendIfMissing(properties.getResource(), "/") + "v1.0/users/" + username + select).toURL();
         val conn = (HttpURLConnection) url.openConnection();
 
         conn.setRequestMethod("GET");
@@ -79,24 +85,24 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
             val clientSecret = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getClientSecret());
             val clientCredential = ClientCredentialFactory.createFromSecret(clientSecret);
             val context = ConfidentialClientApplication.builder(clientId, clientCredential)
-                .authority(properties.getLoginUrl())
-                .validateAuthority(true)
-                .build();
+                    .authority(properties.getLoginUrl())
+                    .validateAuthority(true)
+                    .build();
             val resource = StringUtils.appendIfMissing(properties.getResource(), "/").concat(".default");
             val parameters = ClientCredentialParameters.builder(Set.of(resource))
-                .tenant(properties.getTenant())
-                .build();
+                    .tenant(properties.getTenant())
+                    .build();
             LOGGER.debug("Acquiring token for [{}] with tenant [{}] for resource [{}]", username, properties.getTenant(), resource);
             val future = context.acquireToken(parameters);
             return future.get();
         }
         val context = PublicClientApplication.builder(clientId)
-            .authority(properties.getLoginUrl())
-            .validateAuthority(true)
-            .build();
+                .authority(properties.getLoginUrl())
+                .validateAuthority(true)
+                .build();
         val parameters = UserNamePasswordParameters.builder(scopes, username, password.toCharArray())
-            .tenant(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getTenant()))
-            .build();
+                .tenant(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getTenant()))
+                .build();
         LOGGER.debug("Acquiring token for [{}] with tenant [{}] scopes [{}]", username, properties.getTenant(), scopes);
         val future = context.acquireToken(parameters);
         return future.get();
@@ -104,7 +110,7 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws Throwable {
+            final String originalPassword) throws Throwable {
 
         try {
             val username = credential.getUsername();

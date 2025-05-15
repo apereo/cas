@@ -129,4 +129,13 @@ public class AzureActiveDirectoryAuthenticationProperties implements Serializabl
      * and the lifecycle in which it can be invoked or activated.
      */
     private AuthenticationHandlerStates state = AuthenticationHandlerStates.ACTIVE;
+
+    /**
+     * Comma-separated attributes and user properties to fetch from microsoft graph.
+     * If attributes are specified here, they would be the only ones requested and
+     * fetched.
+     * If this field is left blank, a default set of attributes are fetched and
+     * returned.
+     */
+    private String attributes;
 }
