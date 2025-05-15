@@ -1,6 +1,5 @@
 package org.apereo.cas.web.support.gen;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.util.LoggingUtils;
@@ -14,6 +13,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
