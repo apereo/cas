@@ -48,9 +48,7 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
 
     private final AzureActiveDirectoryAuthenticationProperties properties;
 
-    public AzureActiveDirectoryAuthenticationHandler(final ServicesManager servicesManager,
-            final PrincipalFactory principalFactory,
-            final AzureActiveDirectoryAuthenticationProperties properties) {
+    public AzureActiveDirectoryAuthenticationHandler(final ServicesManager servicesManager, final PrincipalFactory principalFactory, final AzureActiveDirectoryAuthenticationProperties properties) {
         super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
         this.properties = properties;
     }
@@ -61,15 +59,15 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
             select = "?$select=" + properties.getAttributes();
         }
 
-        val url = new URI(
-                StringUtils.appendIfMissing(properties.getResource(), "/") + "v1.0/users/" + username + select).toURL();
+        val url = new URI(StringUtils.appendIfMissing(properties.getResource(), "/") + "v1.0/users/" + username + select).toURL();
         val conn = (HttpURLConnection) url.openConnection();
 
         conn.setRequestMethod("GET");
         conn.setRequestProperty(HttpHeaders.AUTHORIZATION, "Bearer " + authenticationResult.accessToken());
         conn.setRequestProperty(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
 
-        LOGGER.debug("Fetching user info from [{}] using access token [{}]", url.toExternalForm(), authenticationResult.accessToken());
+        LOGGER.debug("Fetching user info from [{}] using access token [{}]", url.toExternalForm(),
+                authenticationResult.accessToken());
         val httpResponseCode = conn.getResponseCode();
         if (HttpStatus.valueOf(httpResponseCode).is2xxSuccessful()) {
             return IOUtils.toString(conn.getInputStream(), StandardCharsets.UTF_8);
@@ -78,11 +76,13 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
         throw new FailedLoginException(msg);
     }
 
-    protected IAuthenticationResult getAccessTokenFromUserCredentials(final String username, final String password) throws Exception {
+    protected IAuthenticationResult getAccessTokenFromUserCredentials(final String username, final String password)
+            throws Exception {
         val clientId = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getClientId());
         val scopes = org.springframework.util.StringUtils.commaDelimitedListToSet(properties.getScope());
         if (StringUtils.isNotBlank(properties.getClientSecret())) {
-            val clientSecret = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getClientSecret());
+            val clientSecret = SpringExpressionLanguageValueResolver.getInstance()
+                    .resolve(properties.getClientSecret());
             val clientCredential = ClientCredentialFactory.createFromSecret(clientSecret);
             val context = ConfidentialClientApplication.builder(clientId, clientCredential)
                     .authority(properties.getLoginUrl())
