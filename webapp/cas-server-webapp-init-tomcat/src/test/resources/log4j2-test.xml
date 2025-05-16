@@ -6,7 +6,7 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo.cas" level="info"  />
+        <Logger name="org.apereo.cas" level="warn"  />
         <Logger name="org.springframework.boot" level="warn" />
         <Logger name="org.apache.tomcat" level="warn" />
         <Logger name="org.apache.tomcat.util.scan" level="error" />
