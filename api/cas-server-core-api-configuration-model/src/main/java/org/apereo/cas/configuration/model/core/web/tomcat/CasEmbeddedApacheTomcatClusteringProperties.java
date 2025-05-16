@@ -185,4 +185,9 @@ public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable
      */
     @RequiredProperty
     private boolean enabled;
+
+    /**
+     * Indicates whether a failure should be treated as fatal during cluster startup operations.
+     */
+    private boolean failureFatal = true;
 }

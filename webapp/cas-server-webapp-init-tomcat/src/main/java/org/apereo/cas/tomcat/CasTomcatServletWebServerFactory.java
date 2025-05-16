@@ -3,13 +3,15 @@ package org.apereo.cas.tomcat;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatClusteringProperties;
 import org.apereo.cas.monitor.NotMonitorable;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.catalina.Context;
+import org.apache.catalina.LifecycleException;
+import org.apache.catalina.LifecycleState;
 import org.apache.catalina.ha.session.BackupManager;
 import org.apache.catalina.ha.session.ClusterManagerBase;
 import org.apache.catalina.ha.session.ClusterSessionListener;
@@ -36,7 +38,6 @@ import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
-
 import java.util.Locale;
 
 /**
@@ -89,14 +90,28 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         return super.getTomcatWebServer(tomcat);
     }
 
-    private void configureSessionClustering(final Tomcat tomcat) {
+    private boolean configureSessionClustering(final Tomcat tomcat) {
         val clusteringProperties = casProperties.getServer().getTomcat().getClustering();
         if (!clusteringProperties.isEnabled()) {
             LOGGER.trace("Tomcat session clustering/replication is turned off");
-            return;
+            return false;
         }
 
-        val cluster = new SimpleTcpCluster();
+        val cluster = new SimpleTcpCluster() {
+            @Override
+            protected void startInternal() throws LifecycleException {
+                try {
+                    super.startInternal();
+                } catch (final Exception e) {
+                    if (clusteringProperties.isFailureFatal()) {
+                        throw e;
+                    }
+                    setState(LifecycleState.STARTING);
+                    LoggingUtils.error(LOGGER, "Failed to start TCP Cluster; Continuing...", e);
+                }
+            }
+        };
+
         val groupChannel = new GroupChannel();
         val receiver = new NioReceiver();
         receiver.setPort(clusteringProperties.getReceiverPort());
@@ -138,9 +153,6 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
             membershipService.setRecoveryEnabled(clusteringProperties.isMembershipRecoveryEnabled());
             membershipService.setRecoveryCounter(clusteringProperties.getMembershipRecoveryCounter());
             membershipService.setLocalLoopbackDisabled(clusteringProperties.isMembershipLocalLoopbackDisabled());
-
-            LOGGER.info("Membership bind address: [{}]", clusteringProperties.getMembershipBindAddress());
-
             FunctionUtils.doIfNotBlank(clusteringProperties.getMembershipBindAddress(),
                 membershipService::setMcastBindAddress);
             groupChannel.setMembershipService(membershipService);
@@ -163,6 +175,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         }
         cluster.setChannel(groupChannel);
         tomcat.getEngine().setCluster(cluster);
+        return groupChannel.hasMembers();
     }
 
     private void configureContextForSessionClustering() {
