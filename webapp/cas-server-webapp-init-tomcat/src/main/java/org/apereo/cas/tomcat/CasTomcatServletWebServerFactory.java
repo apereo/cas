@@ -138,6 +138,9 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
             membershipService.setRecoveryEnabled(clusteringProperties.isMembershipRecoveryEnabled());
             membershipService.setRecoveryCounter(clusteringProperties.getMembershipRecoveryCounter());
             membershipService.setLocalLoopbackDisabled(clusteringProperties.isMembershipLocalLoopbackDisabled());
+
+            LOGGER.info("Membership bind address: [{}]", clusteringProperties.getMembershipBindAddress());
+
             FunctionUtils.doIfNotBlank(clusteringProperties.getMembershipBindAddress(),
                 membershipService::setMcastBindAddress);
             groupChannel.setMembershipService(membershipService);
