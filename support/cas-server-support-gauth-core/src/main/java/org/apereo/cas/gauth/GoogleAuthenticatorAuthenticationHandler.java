@@ -65,10 +65,11 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         val validatedToken = validator.validate(authentication, tokenCredential);
         if (validatedToken != null) {
             val principal = authentication.getPrincipal().getId();
+            val attributes = authentication.getPrincipal().getAttributes();
             LOGGER.debug("Validated OTP token [{}] successfully for [{}]", validatedToken, principal);
             validator.store(validatedToken);
             LOGGER.debug("Creating authentication result and building principal for [{}]", principal);
-            return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(principal));
+            return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(principal, attributes));
         }
         LOGGER.warn("Authorization of OTP token [{}] has failed", credential);
         throw new FailedLoginException("Failed to authenticate code " + credential);
