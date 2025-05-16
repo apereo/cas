@@ -14,6 +14,7 @@ import java.util.function.Function;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@FunctionalInterface
 public interface ExecutableObserver {
     /**
      * Logger instance.
