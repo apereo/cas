@@ -54,7 +54,7 @@ It is designed to be fast and lightweight, making it ideal for client-side appli
 <script>
     (async () => {
         const ignoreCacheEl = document.getElementById('ignore-cache-checkbox');
-        const url = "/assets/data/development/index.json?v={{ site.time | date: '%Y%m%d%H%M%S' }}";
+        const url = "{{ basePath }}/assets/data/{{ version }}/index.json?v={{ site.time | date: '%Y%m%d%H%M%S' }}";
         console.log("Loading data from", url);
         const resp = ignoreCacheEl.checked 
             ? await fetch(url, { cache: 'reload' })
