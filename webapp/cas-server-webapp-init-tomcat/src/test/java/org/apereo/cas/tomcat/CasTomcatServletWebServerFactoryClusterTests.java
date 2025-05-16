@@ -6,6 +6,7 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.catalina.tribes.group.GroupChannel;
@@ -49,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
 @Tag("WebApp")
+@Slf4j
 @ExtendWith(CasTestExtension.class)
 class CasTomcatServletWebServerFactoryClusterTests {
     @Autowired
@@ -68,6 +70,7 @@ class CasTomcatServletWebServerFactoryClusterTests {
     @DynamicPropertySource
     static void registerMulticastProperties(final DynamicPropertyRegistry registry) throws SocketException {
         val bind = pickMulticastBindAddress();
+        LOGGER.info("Bind address: [{}]", bind);
         registry.add(
             "cas.server.tomcat.clustering.membership-bind-address",
             () -> bind
