@@ -112,6 +112,7 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
                 ticketRegistry.deleteTicket(accessTokenTicket.getId());
             } else {
                 ticketRegistry.updateTicket(accessTokenTicket);
+                ticketRegistry.updateTicket(accessTokenTicket.getTicketGrantingTicket());
             }
         }
     }
