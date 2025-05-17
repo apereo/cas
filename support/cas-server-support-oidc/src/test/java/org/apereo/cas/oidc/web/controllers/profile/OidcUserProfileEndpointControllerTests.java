@@ -63,6 +63,7 @@ class OidcUserProfileEndpointControllerTests extends AbstractOidcTests {
             new MockTicketGrantingTicket(principal.getId()), new ArrayList<>(),
             code.getId(), code.getClientId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+        ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
         ticketRegistry.addTicket(accessToken);
 
         val mockRequest = getHttpRequestForEndpoint(OidcConstants.PROFILE_URL);
