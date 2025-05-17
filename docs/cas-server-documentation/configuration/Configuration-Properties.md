@@ -86,6 +86,22 @@ It is designed to be fast and lightweight, making it ideal for client-side appli
 
         input.focus();
 
+        function prepareQuery(q) {
+          // split on any non-alphanumeric (dots, hyphens, etc.)
+          const parts = q.split(/[^A-Za-z0-9]+/).filter(Boolean);
+          if (!parts.length) return '';
+          
+          // for prefix matching on the *last* part only:
+          return parts
+            .map((term, i) =>
+              i === parts.length - 1
+                ? `${term}*`   // wildcard on the last segment
+                : term         // exact match on all earlier segments
+            )
+            .join(' ');
+        }
+
+
         input.addEventListener('input', e => {
             clearTimeout(timer);
             timer = setTimeout(() => {
@@ -93,9 +109,9 @@ It is designed to be fast and lightweight, making it ideal for client-side appli
                 resultsList.innerHTML = '';
                 if (!q) return;
 
-                let results = q.includes(' ') || q.includes('.')
-                    ? idx.search(`*${q}*`)
-                    : idx.search(q);
+                const query = prepareQuery(q);
+                const results = query ? idx.search(query) : [];
+
                 const max = maxResultsEl.value;
                 if (max !== 'all') {
                     results = results.slice(0, Number(max));

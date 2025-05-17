@@ -111,10 +111,6 @@ public class MockServiceTicket implements ServiceTicket, RenewableServiceTicket,
     }
 
     @Override
-    public void update() {
-    }
-
-    @Override
     public int compareTo(final Ticket o) {
         return this.id.compareTo(o.getId());
     }
