@@ -199,8 +199,9 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     @Override
-    public void update() {
+    public Ticket update() {
         usageCount++;
+        return this;
     }
 
     @Override

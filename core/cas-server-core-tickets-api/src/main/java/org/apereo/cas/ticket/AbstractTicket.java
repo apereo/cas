@@ -123,9 +123,10 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
     }
 
     @Override
-    public void update() {
+    public Ticket update() {
         updateTicketState();
         updateTicketGrantingTicketState();
+        return this;
     }
 
     @Override

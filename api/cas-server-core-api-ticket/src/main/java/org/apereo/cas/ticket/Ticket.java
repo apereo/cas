@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 /**
  * Interface for the generic concept of a ticket.
@@ -47,9 +48,12 @@ public interface Ticket extends ExpirableTicket, StatelessTicket, Comparable<Tic
      * determination of ticket usage is left up to the implementation and
      * the specific ticket type.
      *
+     * @return the ticket
      * @see ExpirationPolicy
      * @since 5.0.0
      */
-    default void update() {
+    @CanIgnoreReturnValue
+    default Ticket update() {
+        return this;
     }
 }
