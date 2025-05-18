@@ -1036,7 +1036,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
 
     for p in "${processIds[@]}"; do
       printgreen "Killing CAS process ${p}..."
-      kill -9 "$p"
+      kill -9 "$p" >/dev/null 2>&1 || true
     done
 
     if [[ "${serverType:-external}" == "external" ]]; then
