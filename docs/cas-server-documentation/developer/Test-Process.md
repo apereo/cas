@@ -260,7 +260,7 @@ A basic modest outline of the test configuration may be:
     "urls": ["https://localhost:8443/cas/actuator/health"]
   },
   "jvmArgs": "...",
-  "server": "tomcat|jetty|undertow|...",
+  "server": "tomcat|jetty|undertow|external|starter...",
   "SPRING_APPLICATION_JSON": {},
   "bootstrapScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/bootstrap.sh",
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",

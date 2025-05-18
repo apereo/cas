@@ -78,6 +78,93 @@ function progressbar() {
   fi
 }
 
+
+function downloadAndRunExternalTomcat() {
+  local casWebApp="$1"
+  shift
+  createCasKeystore
+
+  TOMCAT_VERSION=$(cat gradle/libs.versions.toml | grep "^tomcat = " | awk -F"=" '{printf $2}' | tr -d ' "')
+  TOMCAT_URL="https://archive.apache.org/dist/tomcat/tomcat-11/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.zip"
+  INSTALL_DIR="${TMPDIR}/apache-tomcat"
+  HTTPS_PORT="8443"
+
+  export CATALINA_HOME="${INSTALL_DIR}/apache-tomcat-${TOMCAT_VERSION}"
+
+  printcyan "Installing Apache Tomcat ${TOMCAT_VERSION} from ${TOMCAT_URL} into ${INSTALL_DIR}"
+
+  rm -rf "${INSTALL_DIR}"
+  mkdir -p "${INSTALL_DIR}"
+  rm -rf "${TMPDIR}/apache-tomcat"
+  mkdir -p "${TMPDIR}/apache-tomcat"
+
+  printcyan "Downloading Apache Tomcat ${TOMCAT_VERSION}..."
+  curl -sSL "${TOMCAT_URL}" -o "${TMPDIR}"/apache-tomcat/tomcat.zip
+  if [[ $? -ne 0 ]]; then
+    printred "Failed to download Apache Tomcat from ${TOMCAT_URL}"
+    exit 1
+  fi
+  printcyan "Unzipping Apache Tomcat found in ${TMPDIR}/apache-tomcat/tomcat.zip"
+  rm -rf "${TMPDIR}"/apache-tomcat-${TOMCAT_VERSION}
+  unzip -d "$INSTALL_DIR" -o "${TMPDIR}"/apache-tomcat/tomcat.zip >/dev/null 2>&1
+  if [[ $? -ne 0 ]]; then
+      printred "Failed to unzip Apache Tomcat"
+      exit 1
+  fi
+  rm "${TMPDIR}"/apache-tomcat/tomcat.zip
+
+  SERVER_XML="${CATALINA_HOME}/conf/server.xml"
+  printcyan "Using $SERVER_XML"
+  printcyan "Using $CAS_KEYSTORE"
+  httpsConnector="<Connector port='8443' protocol=\"org.apache.coyote.http11.Http11NioProtocol\" maxThreads=\"150\" SSLEnabled=\"true\">
+  <SSLHostConfig><Certificate certificateKeystoreFile=\"${CAS_KEYSTORE}\" certificateKeystorePassword=\"changeit\" type=\"RSA\" /></SSLHostConfig>
+  </Connector>";
+  printcyan "Adding HTTPS connector to $httpsConnector"
+  sed -i '' "/<Service name=\"Catalina\">/a\\
+    <Connector port='${HTTPS_PORT}'\\
+      protocol='org.apache.coyote.http11.Http11NioProtocol' \\
+      maxThreads='150' SSLEnabled='true'> \\
+        <SSLHostConfig> \\
+          <Certificate certificateKeystoreFile='${CAS_KEYSTORE}' certificateKeystorePassword='changeit' type='RSA'/> \\
+        </SSLHostConfig> \\
+    </Connector>" "$SERVER_XML"
+
+  printcyan "Copying $casWebApp to ${CATALINA_HOME}/webapps"
+  cp "$casWebApp" "${CATALINA_HOME}/webapps/"
+  if [[ $? -ne 0 ]]; then
+    printred "Failed to copy CAS web application to Apache Tomcat webapps directory"
+    exit 1
+  fi
+  printcyan "Starting Apache Tomcat ${TOMCAT_VERSION}..."
+  rm -Rf "${CATALINA_HOME}/logs/*"
+  rm -Rf "${CATALINA_HOME}/temp/*"
+  rm -Rf "${CATALINA_HOME}/work/*"
+  rm -Rf "${CATALINA_HOME}/webapps/ROOT"
+  rm -Rf "${CATALINA_HOME}/webapps/manager"
+  rm -Rf "${CATALINA_HOME}/webapps/examples"
+  rm -Rf "${CATALINA_HOME}/webapps/docs"
+  rm -Rf "${CATALINA_HOME}/webapps/host-manager"
+  
+  chmod +x "${CATALINA_HOME}/bin/startup.sh"
+  chmod +x "${CATALINA_HOME}/bin/catalina.sh"
+  chmod +x "${CATALINA_HOME}/bin/shutdown.sh"
+  
+  local arg properties=()
+  for arg; do
+    if [[ $arg == -D* ]]; then
+      properties+=("$arg")
+    elif [[ $arg == --* ]]; then
+      properties+=("-D${arg#--}")
+    fi
+  done
+  export CATALINA_OPTS="${CATALINA_OPTS} ${properties[*]}"
+  printcyan "Starting Apache Tomcat with properties:\n${CATALINA_OPTS}"
+
+  "${CATALINA_HOME}/bin/startup.sh"
+  sleepfor 15
+  cat "${CATALINA_HOME}/logs/catalina.out"
+}
+
 function sleepfor() {
   tasks_in_total="$1"
   for current_task in $(seq "$tasks_in_total"); do
@@ -438,21 +525,24 @@ function buildAndRun() {
   createCasKeystore
   
   if [[ "${NATIVE_BUILD}" == "false" && "${NATIVE_RUN}" == "false" ]]; then
-    project=$(jq -j '.server // "tomcat"' "${config}")
+    serverType=$(jq -j '.server // "tomcat"' "${config}")
     projectType=war
-    if [[ $project == starter* ]]; then
+    if [[ $serverType == starter* ]]; then
       projectType=jar
+    elif [[ $serverType == external* ]]; then
+      serverType=""
     fi
   else
-    project="native"
-    printgreen "Project type is chosen to be ${project}"
+    serverType="native"
   fi
+  printgreen "Project type is chosen to be ${serverType:-external}"
 
   if [[ "${NATIVE_BUILD}" == "false" && "${NATIVE_RUN}" == "false" ]]; then
-    casWebApplicationFile="${PWD}/webapp/cas-server-webapp-${project}/build/libs/cas-server-webapp-${project}-${casVersion}.${projectType}"
+    casWebApplicationFile="${PWD}/webapp/cas-server-webapp${serverType:+-$serverType}/build/libs/cas-server-webapp${serverType:+-$serverType}-${casVersion}.${projectType}"
   else
-    casWebApplicationFile="${PWD}/webapp/cas-server-webapp-${project}/build/native/nativeCompile/cas"
+    casWebApplicationFile="${PWD}/webapp/cas-server-webapp${serverType:+-$serverType}/build/native/nativeCompile/cas"
   fi
+  
   if [[ ! -f "$casWebApplicationFile" ]]; then
     printyellow "CAS web application at ${casWebApplicationFile} cannot be found. Rebuilding..."
     REBUILD="true"
@@ -471,9 +561,9 @@ function buildAndRun() {
   fi
 
   if [[ "${NATIVE_BUILD}" == "false" && "${NATIVE_RUN}" == "false" ]]; then
-    targetArtifact=./webapp/cas-server-webapp-${project}/build/libs/cas-server-webapp-${project}-${casVersion}.${projectType}
+    targetArtifact="./webapp/cas-server-webapp${serverType:+-$serverType}/build/libs/cas-server-webapp${serverType:+-$serverType}-${casVersion}.${projectType}"
   else
-    targetArtifact=./webapp/cas-server-webapp-${project}/build/${project}/nativeCompile/cas
+    targetArtifact="./webapp/cas-server-webapp${serverType:+-$serverType}/build/${serverType}/nativeCompile/cas"
     if [[ ! -f "$targetArtifact" ]]; then
       NATIVE_BUILD="true"
     fi
@@ -493,21 +583,23 @@ function buildAndRun() {
     FLAGS=$(echo $BUILDFLAGS | sed 's/ //')
     printgreen "Building CAS found in $PWD for dependencies [${dependencies}] with flags [${FLAGS}]"
 
-    if [[ -d ./webapp/cas-server-webapp-${project}/build/libs ]]; then
-      rm -rf ./webapp/cas-server-webapp-${project}/build/libs
+    if [[ -d ./webapp/cas-server-webapp${serverType:+-$serverType}/build/libs ]]; then
+      rm -rf ./webapp/cas-server-webapp${serverType:+-$serverType}/build/libs
     fi
 
-    BUILD_TASKS=":webapp:cas-server-webapp-${project}:build"
+    BUILD_TASKS=":webapp:cas-server-webapp${serverType:+-$serverType}:build"
     if [[ "${NATIVE_BUILD}" == "true" ]]; then
-      BUILD_TASKS="${BUILD_TASKS} :webapp:cas-server-webapp-${project}:nativeCompile -DaotSpringActiveProfiles=none"
+      BUILD_TASKS="${BUILD_TASKS} :webapp:cas-server-webapp${serverType:+-$serverType}:nativeCompile -DaotSpringActiveProfiles=none"
     fi
 
     rm -rf ${targetArtifact}
     BUILD_COMMAND=$(printf '%s' \
-      "./gradlew ${BUILD_TASKS} -DskipSpringBootDevTools=true -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
-         ${BUILD_SCRIPT} ${DAEMON} -DskipBootifulLaunchScript=true -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
-    printcyan "Executing build command in the ${BUILD_SPAWN}:\n\n${BUILD_COMMAND}"
-
+     "./gradlew ${BUILD_TASKS} -DskipSpringBootDevTools=true -DskipNestedConfigMetadataGen=true \
+-x check -x test -x javadoc --build-cache --configure-on-demand --parallel\
+${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=true \
+-DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS:+ $BUILDFLAGS}")
+    printcyan "Executing build command in the ${BUILD_SPAWN}:\n➡️ ${BUILD_COMMAND}"
+   
     if [[ "${BUILD_SPAWN}" == "background" ]]; then
       printcyan "Launching build in background to make observing slow builds easier..."
       $BUILD_COMMAND >build.log 2>&1 &
@@ -517,7 +609,7 @@ function buildAndRun() {
       ps -ef | grep $pid | grep java
       if [[ $? -ne 0 ]]; then
         # This check is mainly for running on windows in CI
-        printcyan "Java not running after starting gradle ... trying again"
+        printcyan "Java not running after starting Gradle ... trying again"
         cat build.log
         kill $pid
         $BUILD_COMMAND >build.log 2>&1 &
@@ -650,6 +742,10 @@ function buildAndRun() {
     serverPort=8443
     processIds=()
     instances=$(jq -j '.instances // 1' "${config}")
+    if [[ ${instances} -gt 1 && "${serverType:-external}" == "external" ]]; then
+        printred "External server environment can only support 1 instance"
+        exit 1
+    fi
     if [[ ! -z "$instances" ]]; then
       printcyan "Found instances: ${instances}"
     fi
@@ -723,7 +819,8 @@ function buildAndRun() {
 
         if [[ "${NATIVE_RUN}" == "true" ]]; then
           printcyan "Launching CAS instance #${c} under port ${serverPort} from ${targetArtifact}"
-          ${targetArtifact} -Dcom.sun.net.ssl.checkRevocation=false \
+          ${targetArtifact} \
+            -Dcom.sun.net.ssl.checkRevocation=false \
             -Dlog.console.stacktraces=true \
             -DaotSpringActiveProfiles=none \
             "$systemProperties" \
@@ -748,7 +845,7 @@ function buildAndRun() {
           docker logs -f cas-${scenarioName} 2>/dev/null &
         else
           casArtifactToRun="$PWD/cas.${projectType}"
-          if [[ "${cdsEnabled}" == "true" ]]; then
+          if [[ "${cdsEnabled}" == "true" && "${serverType:-external}" != "external" ]]; then
             printgreen "The scenario ${scenarioName} will run with CDS"
             rm -rf ${PWD}/cas 2>/dev/null
             printcyan "Extracting CAS to ${PWD}/cas"
@@ -762,24 +859,44 @@ function buildAndRun() {
             printcyan "The scenario ${scenarioName} will run without CDS"
           fi
 
-          printcyan "Launching CAS instance #${c} under port ${serverPort} from ${casArtifactToRun}"
-          java ${runArgs} \
-            -Dlog.console.stacktraces=true \
-            "$systemProperties" \
-            -jar "${casArtifactToRun}" \
-            -Dcom.sun.net.ssl.checkRevocation=false \
-            --server.port=${serverPort} \
-            --spring.main.lazy-initialization=false \
-            --spring.profiles.active=none \
-            --spring.devtools.restart.enabled=false \
-            --management.endpoints.web.discovery.enabled=true \
-            --server.ssl.key-store="$keystore" \
-            --cas.audit.engine.enabled=true \
-            --cas.audit.slf4j.use-single-line=true \
-            ${properties} &
+          if [[ "${serverType:-external}" == "external" ]]; then
+            downloadAndRunExternalTomcat "$casArtifactToRun" \
+              "${runArgs}" \
+              -Dlog.console.stacktraces=true \
+              "$systemProperties" \
+              -Dcom.sun.net.ssl.checkRevocation=false \
+              --spring.main.lazy-initialization=false \
+              --spring.profiles.active=none \
+              --spring.devtools.restart.enabled=false \
+              --management.endpoints.web.discovery.enabled=true \
+              --cas.audit.engine.enabled=true \
+              --cas.audit.slf4j.use-single-line=true \
+              ${properties}
+          else
+            printcyan "Launching CAS instance #${c} under port ${serverPort} from ${casArtifactToRun}"
+            java "${runArgs}" \
+              -Dlog.console.stacktraces=true \
+              "$systemProperties" \
+              -jar "${casArtifactToRun}" \
+              -Dcom.sun.net.ssl.checkRevocation=false \
+              --server.port=${serverPort} \
+              --spring.main.lazy-initialization=false \
+              --spring.profiles.active=none \
+              --spring.devtools.restart.enabled=false \
+              --management.endpoints.web.discovery.enabled=true \
+              --server.ssl.key-store="$keystore" \
+              --cas.audit.engine.enabled=true \
+              --cas.audit.slf4j.use-single-line=true \
+              ${properties} &
+          fi
         fi
-        pid=$!
-        printcyan "Waiting for CAS instance #${c} under process id ${pid}"
+
+
+        if [[ "${serverType:-external}" != "external" ]]; then
+          pid=$!
+          printcyan "Waiting for CAS instance #${c} under process id ${pid}"
+        fi
+
         casLogin="https://localhost:${serverPort}/cas/login"
 
         healthCheckUrls=$(jq -r '.healthcheck?.urls[]?' "${config}" 2>/dev/null)
@@ -805,10 +922,12 @@ function buildAndRun() {
         fi
         printcyan "CAS server ${casLogin} is up and running under process id ${pid}"
 
-        processIds+=($pid)
-        serverPort=$((serverPort + 1))
-        if [[ "$DEBUG" == "true" ]]; then
-          DEBUG_PORT=$((DEBUG_PORT + 1))
+        if [[ "${serverType:-external}" != "external" ]]; then
+          processIds+=($pid)
+          serverPort=$((serverPort + 1))
+          if [[ "$DEBUG" == "true" ]]; then
+            DEBUG_PORT=$((DEBUG_PORT + 1))
+          fi
         fi
       fi
     done
@@ -875,9 +994,9 @@ function buildAndRun() {
       eval "${exitScript}"
 
     if [[ $RC -ne 0 ]]; then
-      printred "Test scenario [${scenarioName}] has failed with exit code ${RC}.\n"
+      printred "Test scenario [${scenarioName}] has failed with exit code ${RC}."
     else
-      printgreen "Test scenario [${scenarioName}] has passed successfully.\n"
+      printgreen "Test scenario [${scenarioName}] has passed successfully."
     fi
   fi
 
@@ -888,7 +1007,7 @@ function buildAndRun() {
     fi
 
     if [[ "${CI}" != "true" && "${QUIT_QUIETLY}" == "false" ]]; then
-      printgreen "Hit Enter to clean up scenario ${scenario}\n"
+      printgreen "Hit Enter to clean up scenario ${scenario}"
       read -r
     fi
 
@@ -896,6 +1015,12 @@ function buildAndRun() {
       printgreen "Killing CAS process ${p}..."
       kill -9 "$p"
     done
+
+    if [[ "${serverType:-external}" == "external" ]]; then
+      printgreen "Stopping Apache Tomcat server..."
+      "${CATALINA_HOME}/bin/shutdown.sh" >/dev/null 2>&1 || true
+      rm -Rf "${CATALINA_HOME}" >/dev/null 2>&1 || true
+    fi
 
     printgreen "Removing previous build artifacts..."
     rm -Rf "${PWD}"/cas >/dev/null 2>&1
