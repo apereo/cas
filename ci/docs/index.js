@@ -11,10 +11,15 @@ console.log(`JSON path: ${jsonPath}`);
 console.log(`YAML path: ${yamlPath}`);
 console.log(`Output path: ${outputPath}`);
 
-const rawYaml = fs.readFileSync(yamlPath, 'utf8');
-const parsed = yaml.load(rawYaml);
-const yamlProps = Array.isArray(parsed) ? parsed : [];
-console.log(`Found ${yamlProps.length} YAML properties`);
+let yamlProps = [];
+if (fs.existsSync(yamlPath)) {
+    const rawYaml = fs.readFileSync(yamlPath, 'utf8');
+    const parsed = yaml.load(rawYaml);
+    yamlProps = Array.isArray(parsed) ? parsed : [];
+    console.log(`Found ${yamlProps.length} YAML properties`);
+} else {
+    console.log(`YAML path does not exist: ${yamlPath}`);
+}
 
 const raw = fs.readFileSync(jsonPath, 'utf8');
 const data = JSON.parse(raw);

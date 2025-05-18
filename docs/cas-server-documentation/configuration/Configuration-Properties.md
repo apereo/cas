@@ -7,9 +7,9 @@ category: Configuration
 {% include variables.html %}
 
 # Configuration Properties
-       
-You may search the CAS configuration catalog to find properties and their descriptions. 
-The search is powered by [Lunr.js](https://lunrjs.com/), a small, full-text search library for JavaScript. 
+
+You may search the CAS configuration catalog to find properties and their descriptions.
+The search is powered by [Lunr.js](https://lunrjs.com/), a small, full-text search library for JavaScript.
 It is designed to be fast and lightweight, making it ideal for client-side applications.
 
 <div class="container py-2">
@@ -28,15 +28,22 @@ It is designed to be fast and lightweight, making it ideal for client-side appli
             </div>
 
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="ignore-cache-checkbox">
-                <label class="form-check-label" for="ignore-cache-checkbox">Ignore Cache</label>
+              <div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="ignore-cache-checkbox">
+                  <label class="form-check-label" for="ignore-cache-checkbox">Ignore Cache</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" checked id="exact-match-checkbox">
+                  <label class="form-check-label" for="exact-match-checkbox">Exact Match</label>
+                </div>
               </div>
               <div class="input-group" style="width: auto;">
                 <label class="input-group-text" for="max-results-select">Max Results</label>
                 <select class="form-select" id="max-results-select">
-                  <option value="10">10</option>
-                  <option value="25" selected>25</option>
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
                   <option value="50">50</option>
                   <option value="100">100</option>
                   <option value="all">All</option>
@@ -54,6 +61,7 @@ It is designed to be fast and lightweight, making it ideal for client-side appli
 <script>
     (async () => {
         const ignoreCacheEl = document.getElementById('ignore-cache-checkbox');
+        
         const url = "{{ basePath }}/assets/data/{{ version }}/index.json?v={{ site.time | date: '%Y%m%d%H%M%S' }}";
         console.log("Loading data from", url);
         const resp = ignoreCacheEl.checked 
@@ -64,6 +72,7 @@ It is designed to be fast and lightweight, making it ideal for client-side appli
         const idx = lunr.Index.load(indexJson);
 
         const input = document.getElementById('search-input');
+        const exactMatchEl = document.getElementById('exact-match-checkbox');
         const maxResultsEl = document.getElementById('max-results-select');
         const resultsList = document.getElementById('search-results');
         let timer;
@@ -83,57 +92,63 @@ It is designed to be fast and lightweight, making it ideal for client-side appli
                 .replace(/\s+/g, ' ')
                 .trim();
         }
-
-        input.focus();
-
-        function prepareQuery(q) {
-          // split on any non-alphanumeric (dots, hyphens, etc.)
-          const parts = q.split(/[^A-Za-z0-9]+/).filter(Boolean);
+        
+        function prepareQuery(input, exact) {
+          input = input.replace("[0]", "[]");
+          const parts = input.split(/[^A-Za-z0-9]+/).filter(Boolean);
           if (!parts.length) return '';
-          
-          // for prefix matching on the *last* part only:
-          return parts
-            .map((term, i) =>
-              i === parts.length - 1
-                ? `${term}*`   // wildcard on the last segment
-                : term         // exact match on all earlier segments
-            )
-            .join(' ');
+          if (exact) {
+            // exact: match whole tokens
+            return input;
+          }
+          // prefix only on last segment
+          return parts.map((term, i) =>
+            i === parts.length - 1 ? `*${term}*` : term
+          ).join(' ');
         }
 
+        async function performSearch() {
+          const raw = input.value.trim();
+          resultsList.innerHTML = '';
+          if (!raw) return;
 
-        input.addEventListener('input', e => {
-            clearTimeout(timer);
-            timer = setTimeout(() => {
-                const q = e.target.value.trim();
-                resultsList.innerHTML = '';
-                if (!q) return;
+          const exact = exactMatchEl.checked;
 
-                const query = prepareQuery(q);
-                const results = query ? idx.search(query) : [];
+          const query = prepareQuery(raw, exact);
+          if (!query) return;
 
-                const max = maxResultsEl.value;
-                if (max !== 'all') {
-                    results = results.slice(0, Number(max));
-                }
+          let results = query ? idx.search(query) : [];
 
-                if (!results.length) {
-                    resultsList.innerHTML = '<li class="list-group-item text-center text-muted">No results found</li>';
-                    return;
-                }
+          const max = maxResultsEl.value;
+          if (max !== 'all') {
+              results = results.slice(0, Number(max));
+          }
 
-                results.forEach(({ ref, score }) => {
-                    const doc = docs[ref];
-                    const li = document.createElement('li');
-                    li.className = 'list-group-item';
-                    li.innerHTML = `
-                        <h5 class="mb-1"><code>${doc.name.replace(/\[\]/g, '[0]')} = ${doc.defaultValue}</code></h5>
-                        <small class="text-muted">Score: ${score.toFixed(2)}</small>
-                        <p class="mb-0 text-justify">${convertJavadoc(doc.description) || '<em>No description</em>'}</p>
-                    `;
-                    resultsList.appendChild(li);
-                });
-            }, 50);
-        });
+          if (!results.length) {
+              resultsList.innerHTML = '<li class="list-group-item text-center text-muted">No results found</li>';
+              return;
+          }
+
+          results.forEach(({ ref, score }) => {
+              const doc = docs[ref];
+              const li = document.createElement('li');
+              li.className = 'list-group-item';
+              li.innerHTML = `
+                  <h5 class="mb-1"><code>${doc.name.replace(/\[\]/g, '[0]')} = ${doc.defaultValue}</code></h5>
+                  <small class="text-muted">Score: ${score.toFixed(2)}</small>
+                  <p class="mb-0 text-justify">${convertJavadoc(doc.description) || '<em>No description</em>'}</p>
+              `;
+              resultsList.appendChild(li);
+          });
+        }
+
+        window.addEventListener('load', () => inputEl.focus());
+        input.addEventListener('input', () => performSearch());
+        ignoreCacheEl.addEventListener('change', () => performSearch());
+        exactMatchEl.addEventListener('change', () => performSearch());
+        maxResultsEl.addEventListener('change', () => performSearch());
+        
+
+
     })();
 </script>
