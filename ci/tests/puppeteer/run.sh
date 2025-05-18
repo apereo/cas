@@ -120,7 +120,12 @@ function downloadAndRunExternalTomcat() {
   <SSLHostConfig><Certificate certificateKeystoreFile=\"${CAS_KEYSTORE}\" certificateKeystorePassword=\"changeit\" type=\"RSA\" /></SSLHostConfig>
   </Connector>"
   printcyan "Adding HTTPS connector to $httpsConnector"
-  sed -i '' "/<Service name=\"Catalina\">/a\\
+  if [[ "$(uname)" == "Darwin" ]]; then
+    SED_I=(-i '')
+  else
+    SED_I=(-i)
+  fi
+  sed "${SED_I[@]}" "/<Service name=\"Catalina\">/a\\
     <Connector port='${HTTPS_PORT}'\\
       protocol='org.apache.coyote.http11.Http11NioProtocol' \\
       maxThreads='150' SSLEnabled='true'> \\
@@ -128,7 +133,10 @@ function downloadAndRunExternalTomcat() {
           <Certificate certificateKeystoreFile='${CAS_KEYSTORE}' certificateKeystorePassword='changeit' type='RSA'/> \\
         </SSLHostConfig> \\
     </Connector>" "$SERVER_XML"
-
+  if [[ $? -ne 0 ]]; then
+    printred "Failed to add HTTPS connector to $SERVER_XML"
+    exit 1
+  fi
   printcyan "Copying $casWebApp to ${CATALINA_HOME}/webapps"
   cp "$casWebApp" "${CATALINA_HOME}/webapps/"
   if [[ $? -ne 0 ]]; then
@@ -175,7 +183,7 @@ function downloadAndRunExternalTomcat() {
   done
   export CATALINA_OPTS="${CATALINA_OPTS} ${opts}"
   "${CATALINA_HOME}/bin/startup.sh"
-  sleepfor 15
+  sleepfor 25
   cat "${CATALINA_HOME}/logs/catalina.out"
 }
 
@@ -558,7 +566,7 @@ function buildAndRun() {
   fi
 
   if [[ ! -f "$casWebApplicationFile" ]]; then
-    printyellow "CAS web application at ${casWebApplicationFile} cannot be found. Rebuilding..."
+    printcyan "CAS web application at ${casWebApplicationFile} cannot be found. Rebuilding..."
     REBUILD="true"
   fi
 
