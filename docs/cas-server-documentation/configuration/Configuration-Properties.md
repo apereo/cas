@@ -9,8 +9,8 @@ category: Configuration
 # Configuration Properties
 
 You may search the CAS configuration catalog to find properties and their descriptions.
-The search is powered by [Lunr.js](https://lunrjs.com/), a small, full-text search library for JavaScript.
-It is designed to be fast and lightweight, making it ideal for client-side applications.
+The collection of properties available for search includes CAS properties as well as those
+offered by third party libraries and frameworks such as Spring, Spring Boot, etc.
 
 <div class="container py-2">
     <div class="row justify-content-center">
