@@ -14,13 +14,11 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
-
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -58,7 +56,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val scopes = extractRequestedScopesByToken(requestedScopes, token, context);
         val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(redirectUri);
         val generateRefreshToken = isAllowedToGenerateRefreshToken() && registeredService.isGenerateRefreshToken();
-        
+
         val builder = AccessTokenRequestContext
             .builder()
             .scopes(scopes)
@@ -163,7 +161,15 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     protected Ticket fetchTicketGrantingTicket(final OAuth20Token token) {
         try {
             if (token.getTicketGrantingTicket() != null) {
-                return getConfigurationContext().getTicketRegistry().getTicket(token.getTicketGrantingTicket().getId(), TicketGrantingTicket.class);
+                val id = token.getTicketGrantingTicket().getId();
+                val ticketGrantingTicket = getConfigurationContext().getTicketRegistry().getTicket(id, TicketGrantingTicket.class);
+
+                FunctionUtils.doUnchecked(__ -> {
+                    token.setTicketGrantingTicket(ticketGrantingTicket);
+                    getConfigurationContext().getTicketRegistry().updateTicket(token);
+                });
+
+                return ticketGrantingTicket;
             }
         } catch (final InvalidTicketException e) {
             LoggingUtils.error(LOGGER, e);
