@@ -78,7 +78,6 @@ function progressbar() {
   fi
 }
 
-
 function downloadAndRunExternalTomcat() {
   local casWebApp="$1"
   shift
@@ -90,6 +89,7 @@ function downloadAndRunExternalTomcat() {
   HTTPS_PORT="8443"
 
   export CATALINA_HOME="${INSTALL_DIR}/apache-tomcat-${TOMCAT_VERSION}"
+  rm -Rf "${CATALINA_HOME}"
 
   printcyan "Installing Apache Tomcat ${TOMCAT_VERSION} from ${TOMCAT_URL} into ${INSTALL_DIR}"
 
@@ -108,8 +108,8 @@ function downloadAndRunExternalTomcat() {
   rm -rf "${TMPDIR}"/apache-tomcat-${TOMCAT_VERSION}
   unzip -d "$INSTALL_DIR" -o "${TMPDIR}"/apache-tomcat/tomcat.zip >/dev/null 2>&1
   if [[ $? -ne 0 ]]; then
-      printred "Failed to unzip Apache Tomcat"
-      exit 1
+    printred "Failed to unzip Apache Tomcat"
+    exit 1
   fi
   rm "${TMPDIR}"/apache-tomcat/tomcat.zip
 
@@ -118,7 +118,7 @@ function downloadAndRunExternalTomcat() {
   printcyan "Using $CAS_KEYSTORE"
   httpsConnector="<Connector port='8443' protocol=\"org.apache.coyote.http11.Http11NioProtocol\" maxThreads=\"150\" SSLEnabled=\"true\">
   <SSLHostConfig><Certificate certificateKeystoreFile=\"${CAS_KEYSTORE}\" certificateKeystorePassword=\"changeit\" type=\"RSA\" /></SSLHostConfig>
-  </Connector>";
+  </Connector>"
   printcyan "Adding HTTPS connector to $httpsConnector"
   sed -i '' "/<Service name=\"Catalina\">/a\\
     <Connector port='${HTTPS_PORT}'\\
@@ -144,22 +144,36 @@ function downloadAndRunExternalTomcat() {
   rm -Rf "${CATALINA_HOME}/webapps/examples"
   rm -Rf "${CATALINA_HOME}/webapps/docs"
   rm -Rf "${CATALINA_HOME}/webapps/host-manager"
-  
+
   chmod +x "${CATALINA_HOME}/bin/startup.sh"
   chmod +x "${CATALINA_HOME}/bin/catalina.sh"
   chmod +x "${CATALINA_HOME}/bin/shutdown.sh"
-  
-  local arg properties=()
-  for arg; do
-    if [[ $arg == -D* ]]; then
-      properties+=("$arg")
-    elif [[ $arg == --* ]]; then
-      properties+=("-D${arg#--}")
-    fi
-  done
-  export CATALINA_OPTS="${CATALINA_OPTS} ${properties[*]}"
-  printcyan "Starting Apache Tomcat with properties:\n${CATALINA_OPTS}"
 
+  local opts
+  
+  for arg in "$@"; do
+    case $arg in
+    --*=*) kv=${arg#--} ;;
+    -D*=*)
+      opts="${opts} $arg"
+      continue
+      ;;
+    *) continue ;;
+    esac
+
+    key=${kv%%=*}
+    val=${kv#*=}
+    if [[ $val =~ \$\{([^}]+)\} ]]; then
+      varKey=${BASH_REMATCH[1]}
+      envKey=$(printf '%s' "$varKey" | tr '[:lower:].-' '[:upper:]_')
+      val="${val//${varKey}/${envKey}}"
+    fi
+    
+    envvar=$(printf '%s' "$key" | tr '[:lower:].-' '[:upper:]_')
+    envvar=${envvar//./_}
+    export "$envvar"="$val"
+  done
+  export CATALINA_OPTS="${CATALINA_OPTS} ${opts}"
   "${CATALINA_HOME}/bin/startup.sh"
   sleepfor 15
   cat "${CATALINA_HOME}/logs/catalina.out"
@@ -495,35 +509,35 @@ function prepareScenario() {
 }
 
 function createCasKeystore() {
-    overlayDirectory="${PUPPETEER_DIR}/overlay"
-    mkdir -p "${overlayDirectory}"
-    keystore="${overlayDirectory}/thekeystore"
-    public_cert="${overlayDirectory}/server.crt"
+  overlayDirectory="${PUPPETEER_DIR}/overlay"
+  mkdir -p "${overlayDirectory}"
+  keystore="${overlayDirectory}/thekeystore"
+  public_cert="${overlayDirectory}/server.crt"
 
-    export CAS_KEYSTORE="${keystore}"
-    export CAS_CERT="${public_cert}"
+  export CAS_KEYSTORE="${keystore}"
+  export CAS_CERT="${public_cert}"
 
-    if [[ "${RERUN}" != "true" && "${INITONLY}" != "true" ]]; then
-      if [[ -f "${keystore}" ]]; then
-        printcyan "Keystore ${keystore} already exists and will not be created again"
-      else
-        dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
-        subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,dns:host.k3d.internal,dns:host.docker.internal,ip:127.0.0.1}"
-        printgreen "Generating keystore ${keystore} for CAS with\nDN=${dname}, SAN=${subjectAltName} ..."
-        [ -f "${public_cert}" ] && rm "${public_cert}"
-        keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
-          -keystore "${keystore}" -dname "${dname}" -ext "SAN=$subjectAltName"
-        [ -f "${keystore}" ] && echo "Created ${keystore}"
-        printgreen "Exporting cert for adding to trust bundles if needed by test"
-        keytool -export -noprompt -alias cas -keypass changeit -storepass changeit \
-          -keystore "${keystore}" -file "${public_cert}" -rfc
-      fi
+  if [[ "${RERUN}" != "true" && "${INITONLY}" != "true" ]]; then
+    if [[ -f "${keystore}" ]]; then
+      printcyan "Keystore ${keystore} already exists and will not be created again"
+    else
+      dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
+      subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,dns:host.k3d.internal,dns:host.docker.internal,ip:127.0.0.1}"
+      printgreen "Generating keystore ${keystore} for CAS with\nDN=${dname}, SAN=${subjectAltName} ..."
+      [ -f "${public_cert}" ] && rm "${public_cert}"
+      keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
+        -keystore "${keystore}" -dname "${dname}" -ext "SAN=$subjectAltName"
+      [ -f "${keystore}" ] && echo "Created ${keystore}"
+      printgreen "Exporting cert for adding to trust bundles if needed by test"
+      keytool -export -noprompt -alias cas -keypass changeit -storepass changeit \
+        -keystore "${keystore}" -file "${public_cert}" -rfc
     fi
+  fi
 }
 
 function buildAndRun() {
   createCasKeystore
-  
+
   if [[ "${NATIVE_BUILD}" == "false" && "${NATIVE_RUN}" == "false" ]]; then
     serverType=$(jq -j '.server // "tomcat"' "${config}")
     projectType=war
@@ -542,7 +556,7 @@ function buildAndRun() {
   else
     casWebApplicationFile="${PWD}/webapp/cas-server-webapp${serverType:+-$serverType}/build/native/nativeCompile/cas"
   fi
-  
+
   if [[ ! -f "$casWebApplicationFile" ]]; then
     printyellow "CAS web application at ${casWebApplicationFile} cannot be found. Rebuilding..."
     REBUILD="true"
@@ -594,12 +608,12 @@ function buildAndRun() {
 
     rm -rf ${targetArtifact}
     BUILD_COMMAND=$(printf '%s' \
-     "./gradlew ${BUILD_TASKS} -DskipSpringBootDevTools=true -DskipNestedConfigMetadataGen=true \
+      "./gradlew ${BUILD_TASKS} -DskipSpringBootDevTools=true -DskipNestedConfigMetadataGen=true \
 -x check -x test -x javadoc --build-cache --configure-on-demand --parallel\
 ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=true \
 -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS:+ $BUILDFLAGS}")
     printcyan "Executing build command in the ${BUILD_SPAWN}:\n➡️ ${BUILD_COMMAND}"
-   
+
     if [[ "${BUILD_SPAWN}" == "background" ]]; then
       printcyan "Launching build in background to make observing slow builds easier..."
       $BUILD_COMMAND >build.log 2>&1 &
@@ -715,7 +729,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
     done
 
     systemProperties=$(jq -r 'if (.systemProperties // []) | length == 0 then "-DTEST_TYPE=PUPPETEER" else .systemProperties[] | "-D" + . end' "${config}" | paste -sd' ' -)
-    
+
     bootstrapScript=$(jq -j '.bootstrapScript // empty' "${config}")
     bootstrapScript="${bootstrapScript//\$\{PWD\}/${PWD}}"
     bootstrapScript="${bootstrapScript//\$\{SCENARIO\}/${scenarioName}}"
@@ -743,8 +757,8 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
     processIds=()
     instances=$(jq -j '.instances // 1' "${config}")
     if [[ ${instances} -gt 1 && "${serverType:-external}" == "external" ]]; then
-        printred "External server environment can only support 1 instance"
-        exit 1
+      printred "External server environment can only support 1 instance"
+      exit 1
     fi
     if [[ ! -z "$instances" ]]; then
       printcyan "Found instances: ${instances}"
@@ -802,7 +816,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
           properties="${properties} ${currentVariationProperties}"
           printcyan "Variation properties to include: ${currentVariationProperties}"
         fi
-        
+
         if [[ "$DEBUG" == "true" ]]; then
           printgreen "Remote debugging is enabled on port $DEBUG_PORT"
           runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
@@ -891,7 +905,6 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
           fi
         fi
 
-
         if [[ "${serverType:-external}" != "external" ]]; then
           pid=$!
           printcyan "Waiting for CAS instance #${c} under process id ${pid}"
@@ -904,8 +917,8 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
           url_array=()
           while IFS= read -r url; do
             url_array+=("$url")
-          done <<< "$healthCheckUrls"
-          
+          done <<<"$healthCheckUrls"
+
           for url in "${url_array[@]}"; do
             printcyan "Checking healthcheck url: $url"
             until curl -I -k --connect-timeout 10 --output /dev/null --silent --fail "$url"; do
@@ -928,6 +941,10 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
           if [[ "$DEBUG" == "true" ]]; then
             DEBUG_PORT=$((DEBUG_PORT + 1))
           fi
+        else
+          echo "**********************************"
+          cat "${CATALINA_HOME}/logs/catalina.out"
+          echo "**********************************"
         fi
       fi
     done
@@ -995,6 +1012,12 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
 
     if [[ $RC -ne 0 ]]; then
       printred "Test scenario [${scenarioName}] has failed with exit code ${RC}."
+
+      if [[ "${serverType:-external}" == "external" ]]; then
+        echo "**********************************"
+        cat "${CATALINA_HOME}/logs/catalina.out"
+        echo "**********************************"
+      fi
     else
       printgreen "Test scenario [${scenarioName}] has passed successfully."
     fi
@@ -1053,20 +1076,20 @@ prepareScenario
 
 variationPropsArray=$(jq -c -r '.variations // [] | .[].properties // empty' "${config}")
 if [[ -z "$variationPropsArray" ]]; then
-    printcyan "No variations are defined for test scenario ${scenarioName} in ${config}"
-    buildAndRun
+  printcyan "No variations are defined for test scenario ${scenarioName} in ${config}"
+  buildAndRun
 else
   variationsArray=()
   while IFS= read -r line; do
-      variationsArray+=("$line")
-  done <<< "$variationPropsArray"
+    variationsArray+=("$line")
+  done <<<"$variationPropsArray"
 
   for index in "${!variationsArray[@]}"; do
-      element=${variationsArray[index]}
-      currentVariationProperties=$(echo "${element}" | jq -j -r -c '. // empty | join(" ")')
-      printcyan "Running test scenario ${scenarioName}, variation: ${index}"
-      buildAndRun
-      echo "================================================================"
+    element=${variationsArray[index]}
+    currentVariationProperties=$(echo "${element}" | jq -j -r -c '. // empty | join(" ")')
+    printcyan "Running test scenario ${scenarioName}, variation: ${index}"
+    buildAndRun
+    echo "================================================================"
   done
 fi
 
