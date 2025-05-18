@@ -888,7 +888,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
               ${properties}
           else
             printcyan "Launching CAS instance #${c} under port ${serverPort} from ${casArtifactToRun}"
-            java "${runArgs}" \
+            java ${runArgs} \
               -Dlog.console.stacktraces=true \
               "$systemProperties" \
               -jar "${casArtifactToRun}" \
