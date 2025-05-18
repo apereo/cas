@@ -148,11 +148,6 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
             .orElse(null);
     }
 
-    @Override
-    public Ticket getTicketGrantingTicket() {
-        return null;
-    }
-
     /**
      * Update ticket granting ticket state.
      */
