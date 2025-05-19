@@ -16,6 +16,14 @@ import java.util.List;
 public class GitServiceRegistryRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        registerReflectionHints(hints, List.of(JGitText.class, CoreConfig.TrustLooseRefStat.class));
+        registerReflectionHints(hints, List.of(JGitText.class,
+            CoreConfig.CheckStat.class,
+            CoreConfig.SymLinks.class,
+            CoreConfig.HideDotFiles.class,
+            CoreConfig.LogRefUpdates.class,
+            CoreConfig.EolStreamType.class,
+            CoreConfig.EOL.class,
+            CoreConfig.TrustLooseRefStat.class,
+            CoreConfig.TrustStat.class));
     }
 }

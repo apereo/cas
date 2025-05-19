@@ -3,8 +3,10 @@
   "conditions": {
     "docker": "true"
   },
-
-  "jvmArgs": "-Daws.accessKeyId=AKIAIPPIGGUNIO74C63Z -Daws.secretAccessKey=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",
+  "environmentVariables": [
+    "AWS_ACCESS_KEY_ID=AKIAIPPIGGUNIO74C63Z",
+    "AWS_SECRET_KEY=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"
+  ],
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
