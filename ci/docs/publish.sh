@@ -198,6 +198,11 @@ else
   cloneRepository=false
 fi
 
+rm -Rf "$PWD/docs-latest"
+rm -Rf "$PWD/docs-includes"
+rm -Rf "$PWD/docs-layouts"
+rm -Rf "$PWD/docs-includes-site"
+
 if [[ $cloneRepository == "true" ]]; then
   rm -Rf "$PWD/gh-pages"
   [[ -d $PWD/docs-latest ]] && rm -Rf "$PWD"/docs-latest
@@ -221,7 +226,8 @@ if [[ $cloneRepository == "true" ]]; then
   rm -Rf "$PWD/gh-pages/_includes/$branchVersion" >/dev/null
   rm -Rf "$PWD/gh-pages/_layouts/$branchVersion" >/dev/null
   rm -Rf "$PWD/gh-pages/_data/$branchVersion" >/dev/null
-
+  rm -Rf "$PWD/gh-pages/_sass" >/dev/null
+  
   printgreen "Creating $branchVersion directory..."
   mkdir -p "$PWD/gh-pages/$branchVersion"
   mkdir -p "$PWD/gh-pages/_includes/$branchVersion"
@@ -246,7 +252,12 @@ if [[ $cloneRepository == "true" ]]; then
   rm -Rf "$PWD/gh-pages/$branchVersion/developer"
   mv "$PWD"/docs-latest/javascripts/* "$PWD/gh-pages/javascripts/"
   mv "$PWD"/docs-latest/stylesheets/* "$PWD/gh-pages/stylesheets/"
-  mv "$PWD"/docs-latest/_sass/* "$PWD/gh-pages/_sass/"
+  echo "Removing..."
+  rm "$PWD"/gh-pages/stylesheets/*.scss
+
+  rm -Rf "$PWD"/docs-latest/_sass
+  rm -Rf "$PWD/gh-pages/_sass"
+
   cp -Rf "$PWD"/docs-includes/* "$PWD/gh-pages/_includes/$branchVersion"
   cp -Rf "$PWD"/docs-layouts/* "$PWD/gh-pages/_layouts"
   cp -Rf "$PWD"/docs-includes-site/* "$PWD/gh-pages/_includes"
@@ -298,7 +309,6 @@ if [[ $generateData == "true" ]]; then
   rm -rf "$PWD/gh-pages/spring-configuration-metadata.json" >/dev/null 2>&1
   if [[ ! -e "$PWD/gh-pages/assets/data/$branchVersion"/index.json ]]; then
     printred "$PWD/gh-pages/assets/data/$branchVersion/index.json does not exist."
-    exit 1
   fi
 
 else
@@ -366,7 +376,7 @@ if [[ ${buildDocs} == "true" ]]; then
   printgreen "Building documentation site for $branchVersion with data at $PWD/gh-pages/_data"
   echo -n "Starting at " && date
   jekyll --version
-
+  
   if [[ ${serve} == "true" ]]; then
     bundle exec jekyll serve --profile --incremental --trace
   else
@@ -434,6 +444,7 @@ fi
 if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" ]; then
   printyellow "No GitHub token is defined to publish documentation. Skipping..."
   if [[ $clone == "true" ]]; then
+    popd
     rm -Rf "$PWD/gh-pages"
     exit 0
   fi
