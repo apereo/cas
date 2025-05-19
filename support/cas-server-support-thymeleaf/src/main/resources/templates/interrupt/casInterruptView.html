@@ -46,7 +46,7 @@
                         <input type="hidden" id="linkToRedirect" name="link"/>
                     </form>
 
-                    <span th:with="linkid=${#strings.toLowerCase(#strings.replace(link.key, ' ', ''))}"
+                    <span th:with="linkid=${#strings.toLowerCase(link.key.replaceAll('[^A-Za-z0-9]', ''))}"
                           th:each="link : ${interrupt.links}">
                         <a class="mdc-button mdc-button--outline btn btn-primary me-2"
                            th:text="${link.key}"
