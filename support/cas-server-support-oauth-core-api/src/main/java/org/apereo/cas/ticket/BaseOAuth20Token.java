@@ -91,4 +91,9 @@ public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20
     public Set<String> getScopes() {
         return ObjectUtils.defaultIfNull(this.scopes, new HashSet<>());
     }
+
+    @Override
+    public void assignTicketGrantingTicket(final Ticket ticketGrantingTicket) {
+        this.ticketGrantingTicket = ticketGrantingTicket;
+    }
 }

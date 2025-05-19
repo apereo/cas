@@ -70,4 +70,12 @@ public interface OAuth20Token extends TicketGrantingTicketAwareTicket {
     default boolean isCode() {
         return this instanceof OAuth20Code;
     }
+
+
+    /**
+     * Assign ticket granting ticket.
+     *
+     * @param ticketGrantingTicket the ticket granting ticket
+     */
+    default void assignTicketGrantingTicket(final Ticket ticketGrantingTicket) {}
 }

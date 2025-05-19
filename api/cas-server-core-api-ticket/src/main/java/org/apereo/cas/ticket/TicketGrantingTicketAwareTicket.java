@@ -18,12 +18,4 @@ public interface TicketGrantingTicketAwareTicket extends AuthenticationAwareTick
     default Ticket getTicketGrantingTicket() {
         return null;
     }
-
-    /**
-     * Sets ticket granting ticket.
-     *
-     * @param ticketGrantingTicket the ticket granting ticket
-     */
-    default void setTicketGrantingTicket(final Ticket ticketGrantingTicket) {
-    }
 }
