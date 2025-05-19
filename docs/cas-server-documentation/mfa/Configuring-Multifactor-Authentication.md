@@ -38,10 +38,16 @@ The following multifactor providers are supported by CAS.
 | Custom               | Custom         | [See this guide](Custom-MFA-Authentication.html).          |
 
 <div class="alert alert-info">:information_source: <strong>Azure Multifactor</strong>
-<p>Microsoft has removed the ability for external SSO servers to use Azure MFA. To use Azure MFA, 
-you must also have all your users authenticate using Azure AD SSO.
-You may want to route authentication requests to Azure AD SSO using the 
-delegated authentication features of CAS.</p></div>
+<p>Microsoft has removed the ability for external SSO servers and identity providers to use Azure MFA
+as a standalone MFA solution. To use Azure MFA, you must also have all your users authenticate using Azure AD SSO.
+You may want to route authentication requests to Azure AD SSO using the delegated authentication features of CAS.</p></div>
+
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>
+Support for Google Authenticator is not about supporting the mobile application itself. 
+This is about supporting the TOTP algorithm that is used by the application to generate
+time-based one-time passwords. Any compliant mobile application that can generate TOTP codes
+can be used with CAS including LastPass, Microsoft Authenticator, Authy, etc.
+</p></div>
 
 ## Configuration
 
