@@ -13,6 +13,12 @@
 <body>
 <div th:fragment="header">
 
+    <style th:inline="css">
+        .bgimage {
+            background-image: url([[ @{/images/background.jpg} ]]);
+        }
+    </style>
+    
     <header id="app-bar" class="mdc-top-app-bar mdc-top-app-bar--fixed mdc-elevation--z4 shadow-sm">
         <nav class="mdc-top-app-bar__row navbar navbar-dark bg-dark">
             <div class="container-fluid container-fluid d-flex align-items-center justify-content-between">
