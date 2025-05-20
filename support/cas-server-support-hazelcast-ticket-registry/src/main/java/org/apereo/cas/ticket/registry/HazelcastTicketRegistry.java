@@ -71,7 +71,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     public Ticket addSingleTicket(final Ticket ticket) throws Exception {
         var ttl = ticket.getExpirationPolicy().getTimeToLive();
         /*
-         * Valid values are integers between 0 and Integer.MAX VALUE. Its default value is 0,
+         * Valid values are integers between 0 and Integer.MAX_VALUE. Its default value is 0,
          * which means infinite (no expiration and eviction).
          * If it is not 0, entries are evicted regardless of the set eviction policy described below.
          */
