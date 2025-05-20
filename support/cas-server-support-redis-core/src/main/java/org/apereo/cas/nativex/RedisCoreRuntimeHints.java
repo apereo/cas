@@ -20,7 +20,7 @@ public class RedisCoreRuntimeHints implements CasRuntimeHintsRegistrar {
         registerReflectionHints(hints, List.of(
             RedisClusterCommands.class,
             RedisConnectionFactory.class));
-        registerReflectionHints(hints, findSubclassesOf(LZ4Compressor.class));
+        registerReflectionHints(hints, findSubclassesInPackage(LZ4Compressor.class, LZ4Compressor.class.getPackageName()));
     }
 }
 
