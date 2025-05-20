@@ -8,7 +8,7 @@ package org.apereo.cas.util.gen;
  * @since 3.0.0
  */
 public class DefaultRandomNumberGenerator extends DefaultRandomStringGenerator {
-    private static final char[] PRINTABLE_CHARACTERS = "012345679".toCharArray();
+    private static final char[] PRINTABLE_CHARACTERS = "0123456789".toCharArray();
 
     public DefaultRandomNumberGenerator(final int defaultLength) {
         super(defaultLength);
