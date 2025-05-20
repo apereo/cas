@@ -12,7 +12,7 @@
 <body>
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" class="banner mdc-card card p-4 m-auto w-lg-66">
-        <h2 th:utext="#{cas.inwebo.error.heading}">An Inwebo error has occured.</h2>
+        <h2 th:utext="#{cas.inwebo.error.heading}">An Inwebo error has occurred.</h2>
         <div id="errorPanel" class="banner banner-danger alert-dismissible mb-4"
              th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
             <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
