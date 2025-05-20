@@ -26,7 +26,7 @@
     "pino-pretty": "13.0.0",
     "properties-reader": "2.3.0",
     "ps-node": "0.1.6",
-    "puppeteer": "24.8.2",
+    "puppeteer": "24.9.0",
     "puppeteer-loadtest": "2.2.1",
     "request": "2.88.2",
     "@napi-rs/canvas": "0.1.70",
