@@ -189,7 +189,6 @@ while (( "$#" )); do
                 ;;
             consent)
                 task+="testConsent "
-                task+="testConsent "
                 ;;
             duo|duosecurity)
                 task+="testDuoSecurity "
