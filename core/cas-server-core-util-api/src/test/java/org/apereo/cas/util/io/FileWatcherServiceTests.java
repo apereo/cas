@@ -6,10 +6,12 @@ import org.apache.commons.io.FileUtils;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import java.time.Duration;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicBoolean;
+import static org.awaitility.Awaitility.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -55,7 +57,6 @@ class FileWatcherServiceTests {
         val changeThread = new Thread(Unchecked.runnable(() -> {
             FileUtils.writeStringToFile(file1, "1", StandardCharsets.UTF_8);
             FileUtils.writeStringToFile(file2, "2", StandardCharsets.UTF_8);
-            Thread.sleep(10_000);
         }));
 
         watcher1.start(file1.getName());
@@ -64,7 +65,7 @@ class FileWatcherServiceTests {
         changeThread.start();
         changeThread.join();
 
-        assertTrue(watch1.get());
-        assertTrue(watch2.get());
+        await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> assertTrue(watch1.get()));
+        await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> assertTrue(watch2.get()));
     }
 }
