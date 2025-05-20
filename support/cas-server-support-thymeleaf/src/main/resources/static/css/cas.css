@@ -70,6 +70,7 @@ aside, section, main {
     flex: auto;
     overflow: auto;
     position: relative;
+    background-size: cover;
 }
 
 .main-content {
