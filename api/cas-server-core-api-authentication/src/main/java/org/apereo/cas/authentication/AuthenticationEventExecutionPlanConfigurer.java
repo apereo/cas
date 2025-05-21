@@ -5,10 +5,10 @@ import org.springframework.core.Ordered;
 
 /**
  * This is {@link AuthenticationEventExecutionPlanConfigurer}.
- * Passes on an authentication execution plan to implementors
+ * Passes on an authentication execution plan to implementers
  * to register authentication handlers, etc.
  * <p>
- * Since this interface conforms to a functional interface requirement, typical implementors
+ * Since this interface conforms to a functional interface requirement, typical implementers
  * are {@code @Conditional} beans expressed as compact lambda expressions inside of various CAS modules that
  * contribute to the overall CAS authentication subsystem.
  * <p>

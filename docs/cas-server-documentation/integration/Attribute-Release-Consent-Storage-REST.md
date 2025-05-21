@@ -20,7 +20,7 @@ Endpoints must be designed to accept/process `application/json`.
 | Locate consent decision for user | `GET`    | `principal` as query parameter.                 | `200`. The consent decisions object in the body. |
 | Locate all consent decisions     | `GET`    | N/A                                             | `200`. The consent decisions object in the body. |
 | Store consent decision           | `POST`   | Consent decision object in the body.            | `200`.                                           |
-| Delete consent decision          | `DELETE` | `decisionId` and `principal` as uery parameters | `200`.                                           |
+| Delete consent decision          | `DELETE` | `decisionId` and `principal` as query parameters | `200`.                                           |
 | Delete consent decisions         | `DELETE` | `principal` as query parameter.                 | `200`.                                           |
 
 The consent decision object in transit will and must match the JSON structure above.

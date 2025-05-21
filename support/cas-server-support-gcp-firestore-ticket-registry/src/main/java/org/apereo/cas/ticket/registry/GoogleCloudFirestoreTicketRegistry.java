@@ -229,7 +229,7 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
             .stream()
             .flatMap(Unchecked.function(definition -> {
                 val collection = getTicketCollectionInstanceByMetadata(definition);
-                val criterias = queryAttributes.entrySet()
+                val criteria = queryAttributes.entrySet()
                     .stream()
                     .map(entry -> entry.getValue()
                         .stream()
@@ -242,7 +242,7 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
                     .toList();
                 val spliterator = firestore.collection(collection)
                     .whereEqualTo("prefix", digestIdentifier(definition.getPrefix()))
-                    .where(Filter.or(criterias.toArray(Filter[]::new)))
+                    .where(Filter.or(criteria.toArray(Filter[]::new)))
                     .get()
                     .get()
                     .spliterator();

@@ -50,7 +50,7 @@ public class DelegatedClientsEndpoint extends BaseCasActuatorEndpoint {
     }
 
     /**
-     * Gets loaded delegated identity provider clients from the configuraton.
+     * Gets loaded delegated identity provider clients from the configuration.
      *
      * @return the loaded clients
      */

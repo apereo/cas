@@ -205,7 +205,7 @@ public class RandomUtils {
      * <p>Creates a random string whose length is the number of characters
      * specified.</p>
      *
-     * <p>Characters will be chosen from the set of alpha-numeric
+     * <p>Characters will be chosen from the set of alphanumeric
      * characters as indicated by the arguments.</p>
      *
      * @param count   the length of random string to create
@@ -223,7 +223,7 @@ public class RandomUtils {
      * <p>Creates a random string whose length is the number of characters
      * specified.</p>
      *
-     * <p>Characters will be chosen from the set of alpha-numeric
+     * <p>Characters will be chosen from the set of alphanumeric
      * characters as indicated by the arguments.</p>
      *
      * @param count   the length of random string to create

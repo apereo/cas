@@ -23,7 +23,7 @@ public class ReflectionUtils {
     /**
      * Finds all {@link Class classes} extending or implementing the given superclass below the given package.
      *
-     * @param superclass  The superclass to look for subclasses or implementors.
+     * @param superclass  The superclass to look for subclasses or implementers.
      * @param packageName The base package to look in.
      * @param <T>         The type of the superclass/interface.
      * @return The - possibly empty - collection of subclasses.

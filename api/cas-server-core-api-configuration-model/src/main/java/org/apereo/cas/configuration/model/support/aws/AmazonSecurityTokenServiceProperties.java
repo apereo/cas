@@ -42,7 +42,7 @@ public class AmazonSecurityTokenServiceProperties extends BaseAmazonWebServicesP
     /**
      * When set to {@code true}, credentials will be obtained based on
      * roles as attributes resolved for the user. Typically, you could use roles
-     * wthin your account or for cross-account access.
+     * within your account or for cross-account access.
      * <p>
      * When set to {@code true}, the {@link #getPrincipalAttributeName()}
      * must contain {@code roleArn}s as values.

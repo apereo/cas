@@ -66,7 +66,7 @@ The following features are supported by the CAS project:
 * SAML v1 and v2 Protocol
 * OAuth v2 Protocol
 * OpenID Connect Protocol
-* WS-Federation Passive Requestor Protocol
+* WS-Federation Passive Requester Protocol
 * Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Remote, Apache Cassandra, Trusted, BASIC, MongoDB and more.
 * Delegated (social) authentication to external identity providers such as WS-FED, SAML2, OpenID Connect, OAuth CAS and more.
 * Authorization via Heimdall, OpenFGA, OPA, ABAC, Time/Date, REST, Internet2's Grouper and more.

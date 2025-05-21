@@ -51,9 +51,9 @@ With the above module, you may then declare a specific appender to communicate w
               jvmHeapBufferMode="true"
               fileBackupDir="true">
               <!-- 
-              all Servers are optional, locahost:24224 will be used if none are specified
+              all Servers are optional, localhost:24224 will be used if none are specified
               If multiple servers are specified,
-                message will be sent to only one of them dependeing on availability
+                message will be sent to only one of them depending on availability
               --> 
               <Server host="localhost" port="24224" />
               <Server host="127.0.0.1" port="24224" />    

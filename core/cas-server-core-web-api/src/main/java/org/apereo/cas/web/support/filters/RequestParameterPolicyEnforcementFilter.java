@@ -226,7 +226,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
      * If the String is "none" parse to empty set meaning block no characters.
      * If the String is empty throw, to avoid configurer accidentally configuring not to block any characters.
      * <p>
-     * Note that only the space charater should be used as a delimiter, not tabs or newlines.
+     * Note that only the space character should be used as a delimiter, not tabs or newlines.
      *
      * @param value value of the init param to parse
      * @return non-null Set of zero or more Characters to block
