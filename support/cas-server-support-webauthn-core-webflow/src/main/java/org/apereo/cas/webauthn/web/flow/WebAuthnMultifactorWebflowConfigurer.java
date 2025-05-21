@@ -54,6 +54,7 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
 
             val acctRegCheckState = createActionState(flow, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION,
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_WEBAUTHN_CHECK_ACCOUNT_REGISTRATION));
+            acctRegCheckState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_POPULATE_SECURITY_CONTEXT));
             createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_REGISTER,
                 CasWebflowConstants.STATE_ID_WEBAUTHN_VIEW_REGISTRATION);
             createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
