@@ -1,7 +1,7 @@
 FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:523.0.0-alpine
 ARG GCLOUD_COMPONENT
 
-RUN apk add --update --no-cache openjdk11
+RUN apk add --update --no-cache openjdk21
 RUN gcloud components install cloud-firestore-emulator beta
 RUN gcloud components install pubsub-emulator beta
 RUN gcloud components update
