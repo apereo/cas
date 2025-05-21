@@ -6,6 +6,8 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +27,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 5.0.0
  */
 @Slf4j
+@Tag(name = "OpenID Connect")
 public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointController<OidcConfigurationContext> {
     public OidcAuthorizeEndpointController(final OidcConfigurationContext configurationContext) {
         super(configurationContext);
@@ -34,6 +37,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL,
         "/**/" + OidcConstants.AUTHORIZE_URL
     })
+    @Operation(summary = "Handle OIDC authorization request")
     @Override
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val webContext = new JEEContext(request, response);
@@ -63,6 +67,7 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         "/**/" + OidcConstants.AUTHORIZE_URL
     })
     @Override
+    @Operation(summary = "Handle OIDC authorization request")
     public ModelAndView handleRequestPost(final HttpServletRequest request,
                                           final HttpServletResponse response) throws Throwable {
         return handleRequest(request, response);

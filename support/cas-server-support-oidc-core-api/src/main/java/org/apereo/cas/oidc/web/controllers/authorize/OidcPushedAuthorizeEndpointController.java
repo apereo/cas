@@ -5,6 +5,8 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.val;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Tag(name = "OpenID Connect")
 public class OidcPushedAuthorizeEndpointController extends OidcAuthorizeEndpointController {
     public OidcPushedAuthorizeEndpointController(final OidcConfigurationContext configurationContext) {
         super(configurationContext);
@@ -28,6 +31,7 @@ public class OidcPushedAuthorizeEndpointController extends OidcAuthorizeEndpoint
 
     @Override
     @GetMapping("/**/" + OidcConstants.PUSHED_AUTHORIZE_URL)
+    @Operation(summary = "Handle OIDC Pushed authorization request")
     public ModelAndView handleRequest(final HttpServletRequest request,
                                       final HttpServletResponse response) {
         return OAuth20Utils.produceUnauthorizedErrorView(HttpStatus.METHOD_NOT_ALLOWED);
@@ -35,6 +39,7 @@ public class OidcPushedAuthorizeEndpointController extends OidcAuthorizeEndpoint
 
     @Override
     @PostMapping("/**/" + OidcConstants.PUSHED_AUTHORIZE_URL)
+    @Operation(summary = "Handle OIDC Pushed authorization request")
     public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.PUSHED_AUTHORIZE_URL)) {

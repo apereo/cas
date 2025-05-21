@@ -12,6 +12,8 @@ import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +40,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Tag(name = "OAuth")
 @Slf4j
 public class OAuth20IntrospectionEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
 
@@ -71,6 +74,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
      */
     @GetMapping(value = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL,
         produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Handle OAuth introspection request")
     public ResponseEntity<? extends BaseOAuth20IntrospectionAccessTokenResponse> handleRequest(
         final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         return handlePostRequest(request, response);
@@ -86,6 +90,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
      */
     @PostMapping(value = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.INTROSPECTION_URL,
         produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Handle OAuth introspection request")
     public ResponseEntity handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         try {
             val context = new JEEContext(request, response);

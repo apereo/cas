@@ -5,6 +5,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,6 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller("WSFederationMetadataController")
 @Slf4j
 @RequiredArgsConstructor
+@Tag(name = "WS Federation")
 public class WSFederationMetadataController {
     private final CasConfigurationProperties casProperties;
 

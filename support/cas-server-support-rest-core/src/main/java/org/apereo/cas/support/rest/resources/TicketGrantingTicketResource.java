@@ -12,6 +12,7 @@ import org.apereo.cas.util.LoggingUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -44,6 +45,7 @@ import java.util.List;
  */
 @RestController("ticketGrantingTicketResource")
 @Slf4j
+@Tag(name = "CAS REST")
 @RequiredArgsConstructor
 public class TicketGrantingTicketResource {
     private final RestAuthenticationService authenticationService;

@@ -4,6 +4,10 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 4.2
  */
 @Slf4j
+@Tag(name = "CAS")
 public class LegacyValidateController extends AbstractServiceValidateController {
     public LegacyValidateController(final ServiceValidateConfigurationContext serviceValidateConfigurationContext) {
         super(serviceValidateConfigurationContext);
@@ -31,6 +36,12 @@ public class LegacyValidateController extends AbstractServiceValidateController 
      * @throws Exception the exception
      */
     @GetMapping(path = { CasProtocolConstants.ENDPOINT_VALIDATE, "/tenants/{tenant}/" + CasProtocolConstants.ENDPOINT_VALIDATE })
+    @Operation(summary = "Validate a service ticket",
+        parameters = {
+            @Parameter(name = "tenant", description = "The tenant definition", in = ParameterIn.PATH),
+            @Parameter(name = "service", description = "The service identifier"),
+            @Parameter(name = "ticket", description = "The service ticket identifier")
+        })
     protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return handleRequestInternal(request, response);
     }

@@ -14,6 +14,7 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -45,6 +46,7 @@ import java.util.Objects;
 @RestController("serviceTicketResourceRestController")
 @Slf4j
 @RequiredArgsConstructor
+@Tag(name = "CAS REST")
 public class ServiceTicketResource {
     private final AuthenticationSystemSupport authenticationSystemSupport;
 

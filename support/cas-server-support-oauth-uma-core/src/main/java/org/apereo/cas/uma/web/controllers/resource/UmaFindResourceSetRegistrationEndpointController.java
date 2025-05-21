@@ -8,6 +8,10 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -29,6 +33,7 @@ import java.util.stream.Collectors;
  */
 @Controller("umaFindResourceSetRegistrationEndpointController")
 @Slf4j
+@Tag(name = "User Managed Access")
 public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEndpointController {
     public UmaFindResourceSetRegistrationEndpointController(final UmaConfigurationContext umaConfigurationContext) {
         super(umaConfigurationContext);
@@ -44,6 +49,10 @@ public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEnd
     @GetMapping(value = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL,
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+        summary = "Find resource sets",
+        description = "Finds all resource sets registered by the client"
+    )
     public ResponseEntity findResourceSets(final HttpServletRequest request, final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
@@ -68,6 +77,11 @@ public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEnd
     @GetMapping(value = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/{id}",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+        summary = "Find resource set",
+        description = "Finds a resource set registered by the client",
+        parameters = @Parameter(name = "id", required = true, in = ParameterIn.PATH, description = "Resource ID")
+    )
     public ResponseEntity findResourceSet(
         @PathVariable("id")
         final long id, final HttpServletRequest request, final HttpServletResponse response) {

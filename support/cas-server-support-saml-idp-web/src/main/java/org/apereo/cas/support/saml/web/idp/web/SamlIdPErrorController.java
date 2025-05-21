@@ -2,6 +2,8 @@ package org.apereo.cas.support.saml.web.idp.web;
 
 import org.apereo.cas.support.saml.SamlIdPConstants;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -14,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @since 5.0.0
  */
 @Controller("samlIdPErrorController")
+@Tag(name = "SAML2")
 public class SamlIdPErrorController {
     /**
      * Handle request model and view.
@@ -21,6 +24,7 @@ public class SamlIdPErrorController {
      * @return the model and view
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_ERROR)
+    @Operation(summary = "Handle request model and view")
     public ModelAndView handleRequest() {
         return new ModelAndView(SamlIdPConstants.VIEW_ID_SAML_IDP_ERROR);
     }

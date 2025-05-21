@@ -20,6 +20,8 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -42,6 +44,7 @@ import java.util.Optional;
  * @since 5.2.0
  */
 @Slf4j
+@Tag(name = "SAML2")
 public class SamlIdPSaml2AttributeQueryProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
     public SamlIdPSaml2AttributeQueryProfileHandlerController(final SamlProfileHandlerConfigurationContext context) {
         super(context);
@@ -55,6 +58,7 @@ public class SamlIdPSaml2AttributeQueryProfileHandlerController extends Abstract
      * @throws Exception the exception
      */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SOAP_ATTRIBUTE_QUERY)
+    @Operation(summary = "Handle SAML2 SOAP Attribute Query Request")
     protected void handlePostRequest(final HttpServletResponse response,
                                      final HttpServletRequest request) throws Exception {
         val enabled = configurationContext.getCasProperties().getAuthn().getSamlIdp().getCore().isAttributeQueryProfileEnabled();

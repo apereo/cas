@@ -15,6 +15,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.support.WebUtils;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
@@ -43,6 +44,7 @@ import java.util.Objects;
  * @since 5.1.0
  */
 @Slf4j
+@Tag(name = "SAML2")
 public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
 
     protected AbstractSamlSLOProfileHandlerController(final SamlProfileHandlerConfigurationContext context) {

@@ -2,6 +2,10 @@ package org.apereo.cas.web.flow.controller;
 
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +32,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
+@Tag(name = "Delegated Authentication")
 public class DefaultDelegatedAuthenticationNavigationController {
     /**
      * Endpoint path controlled by this controller that receives the response to PAC4J.
@@ -47,6 +52,8 @@ public class DefaultDelegatedAuthenticationNavigationController {
      * @throws Exception the exception
      */
     @GetMapping(ENDPOINT_RESPONSE)
+    @Operation(summary = "Redirect response to flow",
+        parameters = @Parameter(name = "clientName", in = ParameterIn.PATH, required = true, description = "The client name"))
     public View redirectResponseToFlow(
         @PathVariable("clientName")
         final String clientName,
@@ -66,6 +73,8 @@ public class DefaultDelegatedAuthenticationNavigationController {
      * @throws Exception the exception
      */
     @PostMapping(ENDPOINT_RESPONSE)
+    @Operation(summary = "Redirect response to flow",
+        parameters = @Parameter(name = "clientName", in = ParameterIn.PATH, required = true, description = "The client name"))
     public View postResponseToFlow(
         @PathVariable("clientName")
         final String clientName,
@@ -74,14 +83,6 @@ public class DefaultDelegatedAuthenticationNavigationController {
         return buildRedirectViewBackToFlow(clientName, request);
     }
 
-    /**
-     * Build redirect view back to flow view.
-     *
-     * @param clientName the client name
-     * @param request    the request
-     * @return the view
-     * @throws Exception the exception
-     */
     protected View buildRedirectViewBackToFlow(final String clientName, final HttpServletRequest request) throws Exception {
         val urlBuilder = new URIBuilder(configurationContext.getCasProperties().getServer().getLoginUrl());
         request.getParameterMap().forEach((name, v) -> {

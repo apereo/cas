@@ -27,6 +27,10 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections.CollectionUtils;
@@ -63,6 +67,7 @@ import java.util.Optional;
  * @since 7.1.0
  */
 @Slf4j
+@Tag(name = "OpenID Connect")
 public class OidcCibaController extends BaseOidcController {
     protected final List<CibaTokenDeliveryHandler> tokenDeliveryHandlers;
 
@@ -83,9 +88,16 @@ public class OidcCibaController extends BaseOidcController {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL + "/{clientId}/{requestId}",
         "/**/" + OidcConstants.CIBA_URL + "/{clientId}/{requestId}"
     })
+    @Operation(summary = "Initialize backchannel verification request",
+        parameters = {
+            @Parameter(name = "clientId", in = ParameterIn.PATH, description = "Client ID"),
+            @Parameter(name = "requestId", in = ParameterIn.PATH, description = "Request ID")
+        })
     public Object initializeBackchannelVerificationRequest(
-        @PathVariable("clientId") final String clientId,
-        @PathVariable("requestId") final String requestId) {
+        @PathVariable("clientId")
+        final String clientId,
+        @PathVariable("requestId")
+        final String requestId) {
         try {
             val registeredService = findRegisteredService(clientId);
             val cibaRequest = fetchOidcCibaRequest(requestId);
@@ -117,10 +129,19 @@ public class OidcCibaController extends BaseOidcController {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL + "/{clientId}/{requestId}",
         "/**/" + OidcConstants.CIBA_URL + "/{clientId}/{requestId}"
     }, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Verify backchannel verification request",
+        parameters = {
+            @Parameter(name = "clientId", in = ParameterIn.PATH, description = "Client ID"),
+            @Parameter(name = "requestId", in = ParameterIn.PATH, description = "Request ID"),
+            @Parameter(name = "userCode", in = ParameterIn.QUERY, required = false, description = "Request ID")
+        })
     public ResponseEntity verifyBackchannelVerificationRequest(
-        @RequestParam(value = "userCode", required = false) final String userCode,
-        @PathVariable("clientId") final String clientId,
-        @PathVariable("requestId") final String requestId) throws Throwable {
+        @RequestParam(value = "userCode", required = false)
+        final String userCode,
+        @PathVariable("clientId")
+        final String clientId,
+        @PathVariable("requestId")
+        final String requestId) throws Throwable {
         try {
             val registeredService = findRegisteredService(clientId);
             val cibaRequest = fetchOidcCibaRequest(requestId);
@@ -161,6 +182,7 @@ public class OidcCibaController extends BaseOidcController {
     @Audit(action = AuditableActions.OIDC_CIBA_RESPONSE,
         actionResolverName = AuditActionResolvers.OIDC_CIBA_RESPONSE_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.OIDC_CIBA_RESPONSE_RESOURCE_RESOLVER)
+    @Operation(summary = "Handle back-channel authn request")
     public ResponseEntity handleBackchannelAuthnRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val webContext = new JEEContext(request, response);
         val cibaRequestContext = buildCibaRequestContext(webContext);
@@ -303,7 +325,7 @@ public class OidcCibaController extends BaseOidcController {
         val cibaResponse = new OidcCibaResponse(cibaRequest.getEncodedId(), cibaRequest.getExpirationPolicy().getTimeToLive());
         return ResponseEntity.ok(cibaResponse);
     }
-    
+
 
     protected OidcCibaRequest recordCibaRequest(final CibaRequestContext cibaRequestContext) throws Throwable {
         LoggingUtils.protocolMessage("OpenID Connect Backchannel Authentication Request",

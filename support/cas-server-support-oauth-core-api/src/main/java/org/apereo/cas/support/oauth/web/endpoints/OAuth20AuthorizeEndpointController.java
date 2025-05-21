@@ -17,6 +17,8 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import org.apereo.cas.util.JsonUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -46,6 +48,7 @@ import java.util.Optional;
  * @since 3.5.0
  */
 @Slf4j
+@Tag(name = "OAuth")
 public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
     public OAuth20AuthorizeEndpointController(final T oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
@@ -68,6 +71,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
      * @throws Throwable the throwable
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
+    @Operation(summary = "Handle OAuth authorization request")
     public ModelAndView handleRequest(final HttpServletRequest request,
                                       final HttpServletResponse response) throws Throwable {
         val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
@@ -130,10 +134,10 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
      * @throws Throwable the throwable
      */
     @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
+    @Operation(summary = "Handle OAuth authorization request")
     public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         return handleRequest(request, response);
     }
-
 
     protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
                                                          final OAuthRegisteredService registeredService,

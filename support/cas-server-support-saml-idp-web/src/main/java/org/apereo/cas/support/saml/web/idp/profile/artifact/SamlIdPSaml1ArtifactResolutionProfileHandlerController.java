@@ -12,6 +12,8 @@ import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +33,7 @@ import java.util.Optional;
  * @since 5.2.0
  */
 @Slf4j
+@Tag(name = "SAML2")
 public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
     public SamlIdPSaml1ArtifactResolutionProfileHandlerController(final SamlProfileHandlerConfigurationContext ctx) {
         super(ctx);
@@ -44,6 +47,7 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerController extends Abst
      * @throws Throwable the throwable
      */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML1_SOAP_ARTIFACT_RESOLUTION)
+    @Operation(summary = "Handle SAML1 SOAP Artifact Resolution Request")
     protected void handlePostRequest(final HttpServletResponse response,
                                      final HttpServletRequest request) throws Throwable {
         val ctx = decodeSoapRequest(request);

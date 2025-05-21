@@ -6,6 +6,10 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +33,7 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @Controller("umaUpdateResourceSetRegistrationEndpointController")
 @Slf4j
+@Tag(name = "User Managed Access")
 public class UmaUpdateResourceSetRegistrationEndpointController extends BaseUmaEndpointController {
     public UmaUpdateResourceSetRegistrationEndpointController(final UmaConfigurationContext umaConfigurationContext) {
         super(umaConfigurationContext);
@@ -46,6 +51,8 @@ public class UmaUpdateResourceSetRegistrationEndpointController extends BaseUmaE
     @PutMapping(value = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/{id}",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Update resource set", description = "Updates a resource set registered by the client",
+        parameters = @Parameter(name = "id", required = true, in = ParameterIn.PATH, description = "Resource ID"))
     public ResponseEntity updateResourceSet(@PathVariable("id") final long id, @RequestBody final String body,
         final HttpServletRequest request, final HttpServletResponse response) {
         try {

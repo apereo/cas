@@ -13,6 +13,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -38,6 +39,7 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
+@Tag(name = "OpenID Connect")
 public class OidcJwksEndpointController extends BaseOidcController {
     private final OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService;
 

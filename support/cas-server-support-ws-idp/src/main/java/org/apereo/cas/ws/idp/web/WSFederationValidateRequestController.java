@@ -8,13 +8,13 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -27,6 +27,7 @@ import java.util.Locale;
  * @since 5.1.0
  */
 @Slf4j
+@Tag(name = "WS Federation")
 public class WSFederationValidateRequestController extends BaseWSFederationRequestController {
     public WSFederationValidateRequestController(final WSFederationRequestConfigurationContext ctx) {
         super(ctx);
@@ -40,8 +41,9 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
      * @throws Exception the exception
      */
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST)
+    @Operation(summary = "Handle federation request")
     public void handleFederationRequest(final HttpServletResponse response,
-                                              final HttpServletRequest request) throws Exception {
+                                        final HttpServletRequest request) throws Exception {
         val fedRequest = WSFederationRequest.of(request);
         val wa = fedRequest.wa();
         if (StringUtils.isBlank(wa)) {
@@ -114,7 +116,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
     private static String constructRedirectUrl(final String casServerLoginUrl,
                                                final String serviceUrl, final boolean renew) {
         return casServerLoginUrl + '?' + CasProtocolConstants.PARAMETER_SERVICE + '='
-               + EncodingUtils.urlEncode(serviceUrl)
-               + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY);
+            + EncodingUtils.urlEncode(serviceUrl)
+            + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY);
     }
 }

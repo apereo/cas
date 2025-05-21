@@ -16,6 +16,8 @@ import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import com.google.common.base.Supplier;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +46,7 @@ import java.util.Optional;
  * @since 3.5.0
  */
 @Slf4j
+@Tag(name = "OAuth")
 public class OAuth20AccessTokenEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
     private static final Map<String, AccessTokenExceptionResponses> ACCESS_TOKEN_RESPONSE_EXCEPTIONS = Map.of(
         InvalidOAuth20DeviceTokenException.class.getName(),
@@ -90,6 +93,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
         OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.TOKEN_URL},
         produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Handle OAuth access token request")
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val context = new JEEContext(request, response);
         try {
@@ -144,6 +148,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
      */
     @GetMapping(path = {OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
         OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.TOKEN_URL})
+    @Operation(summary = "Handle OAuth access token request")
     public ModelAndView handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return handleRequest(request, response);
     }

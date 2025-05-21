@@ -49,7 +49,8 @@ class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
         context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         val id = config.getId();
         context.setParameter(WsFederationNavigationController.PARAMETER_NAME, id);
-        val view = wsFederationNavigationController.redirectToProvider(context.getHttpServletRequest(), context.getHttpServletResponse());
+        val view = wsFederationNavigationController.redirectToProvider(id,
+            context.getHttpServletRequest(), context.getHttpServletResponse());
         assertInstanceOf(RedirectView.class, view);
     }
 
@@ -57,8 +58,10 @@ class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
     void verifyMissingId() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
 
-        context.setParameter(WsFederationNavigationController.PARAMETER_NAME, UUID.randomUUID().toString());
+        val id = UUID.randomUUID().toString();
+        context.setParameter(WsFederationNavigationController.PARAMETER_NAME, id);
         assertThrows(UnauthorizedServiceException.class,
-            () -> wsFederationNavigationController.redirectToProvider(context.getHttpServletRequest(), context.getHttpServletResponse()));
+            () -> wsFederationNavigationController.redirectToProvider(id,
+                context.getHttpServletRequest(), context.getHttpServletResponse()));
     }
 }
