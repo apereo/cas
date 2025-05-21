@@ -37,7 +37,7 @@ public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends 
     protected AttributeMerger attributeMerger = new MultivaluedAttributeMerger();
 
     /**
-     * True if we should catch, logger, and ignore Throwables propogated by
+     * True if we should catch, logger, and ignore Throwables propagated by
      * individual DAOs.
      */
     protected boolean recoverExceptions = true;

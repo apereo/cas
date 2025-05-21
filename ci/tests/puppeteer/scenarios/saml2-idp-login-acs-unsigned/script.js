@@ -15,7 +15,7 @@ async function cleanUp() {
     assert(response.ok());
     
     await cas.waitFor("https://localhost:9876/sp/saml/status", async () => {
-        await cas.log("Trying without an exising SSO session...");
+        await cas.log("Trying without an existing SSO session...");
         await cas.goto(page, "https://localhost:9876/sp");
         await cas.sleep(3000);
         await page.waitForSelector("#idpForm", {visible: true});
@@ -23,7 +23,7 @@ async function cleanUp() {
         await cas.sleep(9000);
         await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
 
-        await cas.log("Trying with an exising SSO session...");
+        await cas.log("Trying with an existing SSO session...");
         await cas.gotoLogout(page);
         await cas.gotoLogin(page);
         await cas.loginWith(page);

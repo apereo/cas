@@ -455,7 +455,7 @@ public class WebUtils {
      * Gets credential from the context.
      *
      * @param context the context
-     * @return the credential, or null if it cant be found in the context or if it has no id.
+     * @return the credential, or null if it can't be found in the context or if it has no id.
      */
     public static Credential getCredential(final RequestContext context) {
         val cFromRequest = (Credential) context.getRequestScope().get(PARAMETER_CREDENTIAL);
