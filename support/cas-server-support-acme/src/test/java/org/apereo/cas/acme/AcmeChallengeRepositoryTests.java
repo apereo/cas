@@ -2,7 +2,6 @@ package org.apereo.cas.acme;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,7 +20,8 @@ class AcmeChallengeRepositoryTests extends BaseAcmeTests {
     void verifyOperation() throws Throwable {
         acmeChallengeRepository.add("token", "challenge");
         assertNotNull(acmeChallengeRepository.get("token"));
-        await().untilAsserted(() -> assertNull(acmeChallengeRepository.get("token")));
+        Thread.sleep(3000);
+        assertNull(acmeChallengeRepository.get("token"));
     }
 
 }
