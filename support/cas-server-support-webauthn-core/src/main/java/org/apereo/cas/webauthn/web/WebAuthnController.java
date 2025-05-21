@@ -54,15 +54,18 @@ public class WebAuthnController extends BaseWebAuthnController {
     private final WebAuthnServer server;
 
     private static ResponseEntity<Object> startResponse(final Object request) throws Exception {
-        LOGGER.trace("Response: [{}]", request);
-        return ResponseEntity.ok(writeJson(request));
+        val json = writeJson(request);
+        LOGGER.trace("Start: [{}]", json);
+        return ResponseEntity.ok(json);
     }
 
     private static ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result,
                                                          final String responseJson) throws Exception {
         if (result.isRight()) {
-            LOGGER.trace("Response: [{}]", responseJson);
-            return ResponseEntity.ok(writeJson(result.right().orElseThrow()));
+            LOGGER.trace("Received: [{}]", responseJson);
+            val json = writeJson(result.right().orElseThrow());
+            LOGGER.trace("Returned: [{}]", json);
+            return ResponseEntity.ok(json);
         }
         return messagesJson(ResponseEntity.badRequest(), result.left().orElseThrow());
     }
