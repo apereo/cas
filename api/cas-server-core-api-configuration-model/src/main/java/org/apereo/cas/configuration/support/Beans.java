@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 
 
 /**
- * A re-usable collection of utility methods for object instantiations and configurations used cross various
+ * A reusable collection of utility methods for object instantiations and configurations used cross various
  * {@code @Bean} creation methods throughout CAS server.
  *
  * @author Dmitriy Kopylenko

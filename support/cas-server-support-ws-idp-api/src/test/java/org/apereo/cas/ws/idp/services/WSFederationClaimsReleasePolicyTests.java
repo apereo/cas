@@ -113,7 +113,7 @@ class WSFederationClaimsReleasePolicyTests {
         val policy = new WSFederationClaimsReleasePolicy(
             CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.name(), "cn",
                 WSFederationClaims.EMAIL_ADDRESS.name(), "email",
-                WSFederationClaims.GROUP.name(), "unkown",
+                WSFederationClaims.GROUP.name(), "unknown",
                 WSFederationClaims.EMAIL_ADDRESS_2005.name(), "unknown"));
         assertFalse(policy.getAllowedAttributes().isEmpty());
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",

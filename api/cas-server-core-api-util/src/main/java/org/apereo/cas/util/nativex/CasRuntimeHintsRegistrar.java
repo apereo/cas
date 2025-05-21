@@ -148,7 +148,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     }
 
     /**
-     * Register declared method as invokable.
+     * Register declared method as invocable.
      *
      * @param hints the hints
      * @param clazz the clazz

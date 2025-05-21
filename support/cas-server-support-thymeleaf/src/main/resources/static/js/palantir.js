@@ -451,7 +451,7 @@ function displayBanner(error) {
             message = "You are not authorized to access this resource. Are you sure you are authenticated?";
             break;
         case 403:
-            message = "You are forbidden from accessing this resource. Are you sure you have the necessary permissions and the entry is correctly regstered with CAS?";
+            message = "You are forbidden from accessing this resource. Are you sure you have the necessary permissions and the entry is correctly registered with CAS?";
             break;
         case 400:
         case 500:

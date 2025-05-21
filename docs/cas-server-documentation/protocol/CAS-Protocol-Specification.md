@@ -92,7 +92,7 @@ each of the URIs:
 
 | URI                   | Description                               |
 |-----------------------|-------------------------------------------|
-| `/login`              | credential requestor / acceptor           |
+| `/login`              | credential requester / acceptor           |
 | `/logout`             | destroy CAS session (logout)              |
 | `/validate`           | service ticket validation                 |
 | `/serviceValidate`    | service ticket validation [CAS 2.0]       |
@@ -103,12 +103,12 @@ each of the URIs:
 
 <a name="head2.1"/>
 
-**2.1. /login as credential requestor**
+**2.1. /login as credential requester**
 ---------------------------------------
 
-The `/login` URI operates with two behaviors: as a credential requestor, and as
+The `/login` URI operates with two behaviors: as a credential requester, and as
 a credential acceptor. It responds to credentials by acting as a credential
-acceptor and otherwise acts as a credential requestor.
+acceptor and otherwise acts as a credential requester.
 
 If the client has already established a single sign-on session with CAS, the
 web browser presents to CAS a secure cookie containing a string identifying
@@ -123,7 +123,7 @@ See Section [3.6](<#head3.6>) for more information on ticket-granting cookies.
 ### **2.1.1. parameters**
 
 The following HTTP request parameters may be passed to `/login` while it is
-acting as a credential requestor. They are all case-sensitive, and they all
+acting as a credential requester. They are all case-sensitive, and they all
 MUST be handled by `/login`.
 
 -   `service` [OPTIONAL] - the identifier of the application the client is
@@ -204,7 +204,7 @@ Use POST responses instead of redirects:
 
 ### **2.1.3. response for username/password authentication**
 
-When `/login` behaves as a credential requestor, the response will vary depending
+When `/login` behaves as a credential requester, the response will vary depending
 on the type of credentials it is requesting. In most cases, CAS will respond by
 displaying a login screen requesting a username and password. This page MUST
 include a form with the parameters, "username" and "password". The form
@@ -226,7 +226,7 @@ request as a basis for authentication. The appropriate user experience for trust
 authentication will be highly deployer-specific in consideration of local policy
 and of the logistics of the particular authentication mechanism implemented.
 
-When `/login` behaves as a credential requestor for trust authentication, its
+When `/login` behaves as a credential requester for trust authentication, its
 behavior will be determined by the type of credentials it will be receiving. If
 the credentials are valid, CAS MAY transparently redirect the user to the
 service. Alternately, CAS MAY display a warning that credentials were presented
@@ -337,7 +337,7 @@ as a credential acceptor.
     CAS MUST display a message notifying the client that it has successfully
     initiated a single sign-on session.
 
--   failed login: return to `/login` as a credential requestor. It is RECOMMENDED
+-   failed login: return to `/login` as a credential requester. It is RECOMMENDED
     in this case that the CAS server display an error message to the user
     describing why login failed (e.g. bad password, locked account, etc.),
     and if appropriate, provide an opportunity for the user to attempt to

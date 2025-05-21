@@ -63,7 +63,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private String principalIdAttribute;
 
     /**
-     * Flag indicating whether multiple values are allowed fo principalIdAttribute.
+     * Flag indicating whether multiple values are allowed for principalIdAttribute.
      */
     private boolean allowMultiplePrincipalAttributeValues;
 

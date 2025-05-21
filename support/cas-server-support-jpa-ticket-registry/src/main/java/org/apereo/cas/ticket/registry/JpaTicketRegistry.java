@@ -234,7 +234,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
         val factory = getJpaTicketEntityFactory();
-        val criterias = queryAttributes.entrySet()
+        val criteria = queryAttributes.entrySet()
             .stream()
             .map(entry -> {
                 val criteriaValues = entry.getValue()
@@ -277,7 +277,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         }
 
         val sql = String.format("%s WHERE t.type='%s' AND %s", selectClause,
-            getTicketTypeName(TicketGrantingTicket.class), criterias);
+            getTicketTypeName(TicketGrantingTicket.class), criteria);
         LOGGER.debug("Executing SQL query [{}]", sql);
         entityManager.flush();
         val query = entityManager.createNativeQuery(sql, factory.getType());

@@ -61,7 +61,7 @@ const assert = require("assert");
         throw `Operation failed: ${error}`;
     });
 
-    await cas.log(`Trying to re-use OAuth code ${accessTokenUrl}`);
+    await cas.log(`Trying to reuse OAuth code ${accessTokenUrl}`);
     await cas.doPost(accessTokenUrl, "", {
         "Content-Type": "application/json"
     }, () => {

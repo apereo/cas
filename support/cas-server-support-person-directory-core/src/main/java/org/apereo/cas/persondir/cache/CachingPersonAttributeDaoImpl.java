@@ -57,7 +57,7 @@ public class CachingPersonAttributeDaoImpl extends AbstractDefaultAttributePerso
     private Map<Serializable, Set<PersonAttributes>> userInfoCache;
 
     /*
-     * If null resutls should be cached
+     * If null results should be cached.
      */
     @Getter
     @Setter

@@ -62,7 +62,7 @@ public class SubjectDnPrincipalResolverProperties implements Serializable {
         /**
          * Canonical String format of Distinguished Names.
          * Calls X500Principal.getName("CANONICAL" which emits a subject DN that starts with RFC 2253 and applies
-         * additional canonicalizations described in the javadoc.
+         * additional canonicalization described in the javadoc.
          *
          * @see <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/javax/security/auth/x500/X500Principal.html#getName()">CANONICAL</a>
          */

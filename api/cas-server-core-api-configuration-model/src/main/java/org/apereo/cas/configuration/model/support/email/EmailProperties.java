@@ -50,7 +50,7 @@ public class EmailProperties implements Serializable {
      * GString style expressions. The variable {@code out} is bound to
      * the writer that the template is being written to.
      * <p>
-     * If using plain text, the contents are processed for string subtitution candidates using named variables.
+     * If using plain text, the contents are processed for string substitution candidates using named variables.
      * For example, you may refer to an expected url variable in the email text via {@code ${url}},
      * or use {@code ${token}} to locate the token variable. In certain cases, additional parameters
      * are passed to the email body processor that might include authentication and/or principal attributes,
@@ -67,7 +67,7 @@ public class EmailProperties implements Serializable {
     /**
      * Email subject line.
      * <p>
-     * The subject can either be defined verbaitm, or it
+     * The subject can either be defined verbatim, or it
      * may point to a message key in the language bundle
      * using the syntax {@code #{subject-language-key}}.
      * This key should point to a valid message

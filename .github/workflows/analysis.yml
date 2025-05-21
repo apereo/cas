@@ -162,3 +162,15 @@ jobs:
         run: java ./ci/checks/${{ matrix.check }}.java .
         
 ##########################################################################
+
+  code-spell:
+    name: "Code Spell"
+    needs: [initialize]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run Code Spell
+        uses: codespell-project/actions-codespell@v2
+        with:
+          only_warn: 1

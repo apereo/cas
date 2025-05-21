@@ -66,7 +66,7 @@ log4j2.contextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSel
 ```
 
 in order to keep using asynchronous logging which CAS sets by default. 
-To turn off asynchronous logging, include the following in `log4j2.component.properites` or as a system property:
+To turn off asynchronous logging, include the following in `log4j2.component.properties` or as a system property:
 
 ```properties
 log4j2.contextSelector=org.apache.logging.log4j.core.selector.BasicContextSelector

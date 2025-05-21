@@ -39,7 +39,7 @@ public class MonitorProperties implements Serializable {
     private TicketGrantingTicketMonitorProperties tgt = new TicketGrantingTicketMonitorProperties();
 
     /**
-     * Options for monitoring the status a nd production of STs.
+     * Options for monitoring the status a and production of STs.
      */
     @NestedConfigurationProperty
     private ServiceTicketMonitorProperties st = new ServiceTicketMonitorProperties();
