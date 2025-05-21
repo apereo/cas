@@ -100,5 +100,5 @@ internally based on the `Host` http header, in scenarios where CAS is deployed b
 - [Puppeteer tests](../../developer/Test-Process.html) now have the ability to verify CAS functionality using an external Apache Tomcat server.
 - The entire CAS configuration catalog is indexed and published online to offer [search functionality](../configuration/Configuration-Properties.html).
 - The [BlackDot IP Intelligence](../mfa/Adaptive-Authentication-IP-Intelligence.html) functionality is corrected to create the correct component instance.
-- Webflow transitions for multifactor device registration requests are re-organized to allow for this functionality is the [user account profile](../registration/Account-Management-Overview.html).
+- Webflow transitions for multifactor device registration requests are re-organized to allow for this functionality in the [user account profile](../registration/Account-Management-Overview.html).
 - [User account profile](../registration/Account-Management-Overview.html) gains the ability to delete registered multifactor authentication devices.
