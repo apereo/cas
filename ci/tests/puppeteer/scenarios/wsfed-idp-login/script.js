@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
         const browser = await cas.newBrowser(cas.browserOptions());
         const page = await cas.newPage(browser);
 
-        await cas.log("Trying without an exising SSO session...");
+        await cas.log("Trying without an existing SSO session...");
         await cas.goto(page, "https://localhost:9876/fediz");
         await cas.sleep(6000);
         await cas.click(page, "#logincas");
@@ -21,7 +21,7 @@ const cas = require("../../cas.js");
         await cas.assertInnerText(page, "#claim0", "http://schemas.xmlsoap.org/claims/EmailAddress:casuser@example.org");
         await cas.assertInnerText(page, "#claim1", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname:casuser");
         await cas.assertInnerText(page, "#claim2", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress:CAS@example.org");
-        await cas.log("Trying with an exising SSO session...");
+        await cas.log("Trying with an existing SSO session...");
         await cas.gotoLogout(page);
         await cas.gotoLogin(page);
         await cas.loginWith(page);
