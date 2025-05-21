@@ -16,6 +16,8 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +45,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Controller("umaAuthorizationRequestEndpointController")
+@Tag(name = "User Managed Access")
 public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointController {
 
     public UmaAuthorizationRequestEndpointController(final UmaConfigurationContext umaConfigurationContext) {
@@ -58,6 +61,10 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
      * @return the response entity
      */
     @PostMapping(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL)
+    @Operation(
+        summary = "Handle UMA authorization request",
+        description = "Handles the UMA authorization request and returns a response"
+    )
     public ResponseEntity handleAuthorizationRequest(
         @RequestBody
         final String body,

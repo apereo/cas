@@ -7,6 +7,8 @@ import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +32,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 6.2.0
  */
 @Slf4j
+@Tag(name = "OAuth")
 public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
     public OAuth20RevocationEndpointController(final T oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
@@ -45,6 +48,7 @@ public class OAuth20RevocationEndpointController<T extends OAuth20ConfigurationC
      */
     @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.REVOCATION_URL,
         produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Handle OAuth token revocation request")
     public ModelAndView handleRequest(final HttpServletRequest request,
                                       final HttpServletResponse response) throws Throwable {
         val context = new JEEContext(request, response);

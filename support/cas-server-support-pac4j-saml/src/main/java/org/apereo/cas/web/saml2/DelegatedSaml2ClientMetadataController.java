@@ -4,6 +4,10 @@ import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.jee.context.JEEContext;
@@ -28,6 +32,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller("delegatedSaml2ClientMetadataController")
 @RequestMapping
 @RequiredArgsConstructor
+@Tag(name = "Delegated Authentication")
 public class DelegatedSaml2ClientMetadataController {
 
     /**
@@ -59,6 +64,7 @@ public class DelegatedSaml2ClientMetadataController {
     @GetMapping(value = BASE_ENDPOINT_SERVICE_PROVIDER + "/metadata",
         consumes = MediaType.ALL_VALUE,
         produces = MediaType.APPLICATION_XML_VALUE)
+    @Operation(summary = "Get service provider metadata")
     public ResponseEntity<String> getFirstServiceProviderMetadata(final HttpServletRequest request,
                                                                   final HttpServletResponse response) {
         val webContext = new JEEContext(request, response);
@@ -79,6 +85,7 @@ public class DelegatedSaml2ClientMetadataController {
      */
     @GetMapping(path = BASE_ENDPOINT_SERVICE_PROVIDER + "/idp/metadata", consumes = MediaType.ALL_VALUE,
         produces = MediaType.APPLICATION_XML_VALUE)
+    @Operation(summary = "Get identity provider metadata")
     public ResponseEntity<String> getFirstIdentityProviderMetadata(final HttpServletRequest request,
                                                                    final HttpServletResponse response) {
         val webContext = new JEEContext(request, response);
@@ -98,6 +105,8 @@ public class DelegatedSaml2ClientMetadataController {
      */
     @GetMapping(path = BASE_ENDPOINT_SERVICE_PROVIDER + "/{client}/metadata", consumes = MediaType.ALL_VALUE,
         produces = MediaType.APPLICATION_XML_VALUE)
+    @Operation(summary = "Get service provider metadata by name",
+        parameters = @Parameter(name = "client", in = ParameterIn.PATH, required = true, description = "The client name"))
     public ResponseEntity<String> getServiceProviderMetadataByName(
         @PathVariable("client") final String client,
         final HttpServletRequest request, final HttpServletResponse response) {
@@ -115,6 +124,8 @@ public class DelegatedSaml2ClientMetadataController {
      */
     @GetMapping(path = BASE_ENDPOINT_SERVICE_PROVIDER + "/{client}/idp/metadata", consumes = MediaType.ALL_VALUE,
         produces = MediaType.APPLICATION_XML_VALUE)
+    @Operation(summary = "Get identity provider metadata by name",
+        parameters = @Parameter(name = "client", in = ParameterIn.PATH, required = true, description = "The client name"))
     public ResponseEntity<String> getIdentityProviderMetadataByName(
         @PathVariable("client")
         final String client,

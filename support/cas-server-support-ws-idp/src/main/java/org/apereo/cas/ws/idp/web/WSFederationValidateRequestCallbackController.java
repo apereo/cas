@@ -11,6 +11,8 @@ import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.SerializationUtils;
@@ -32,6 +34,7 @@ import java.util.HashMap;
  * @since 5.1.0
  */
 @Slf4j
+@Tag(name = "WS Federation")
 public class WSFederationValidateRequestCallbackController extends BaseWSFederationRequestController {
 
     public WSFederationValidateRequestCallbackController(final WSFederationRequestConfigurationContext configurationContext) {
@@ -65,6 +68,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
      * @throws Throwable the throwable
      */
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK)
+    @Operation(summary = "Handle WS-Federation request callback")
     protected ModelAndView handleFederationRequest(final HttpServletResponse response,
                                                    final HttpServletRequest request) throws Throwable {
         val fedRequest = WSFederationRequest.of(request);

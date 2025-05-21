@@ -10,6 +10,10 @@ import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.AbstractDelegateController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -43,6 +47,7 @@ import java.util.Map;
 @Setter
 @Getter
 @RequiredArgsConstructor
+@Tag(name = "CAS")
 public class ProxyController extends AbstractDelegateController {
 
     /**
@@ -72,6 +77,11 @@ public class ProxyController extends AbstractDelegateController {
 
     @Override
     @GetMapping(path = CasProtocolConstants.ENDPOINT_PROXY)
+    @Operation(summary = "Proxy authentication endpoint",
+        parameters = {
+            @Parameter(name = "ticket", in = ParameterIn.QUERY, required = true, description = "Proxy granting ticket"),
+            @Parameter(name = "service", in = ParameterIn.QUERY, required = true, description = "Target service")
+        })
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
         val targetService = getTargetService(request);

@@ -8,6 +8,7 @@ import org.apereo.cas.util.http.HttpRequestUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -35,6 +36,7 @@ import java.util.HashMap;
 @RestController("identityProviderDiscoveryFeedController")
 @Slf4j
 @RequiredArgsConstructor
+@Tag(name = "SAML2")
 @RequestMapping(path = SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY)
 public class SamlIdentityProviderDiscoveryFeedController {
     /**
@@ -45,8 +47,7 @@ public class SamlIdentityProviderDiscoveryFeedController {
     private final CasConfigurationProperties casProperties;
 
     private final SamlIdentityProviderDiscoveryFeedService samlIdentityProviderDiscoveryFeedService;
-
-
+    
     /**
      * Gets discovery feed.
      *

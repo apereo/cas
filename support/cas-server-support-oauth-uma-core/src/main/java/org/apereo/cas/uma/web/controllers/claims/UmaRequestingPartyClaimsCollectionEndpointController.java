@@ -9,6 +9,9 @@ import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -28,6 +31,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 6.0.0
  */
 @Controller("umaRequestingPartyClaimsCollectionEndpointController")
+@Tag(name = "User Managed Access")
 public class UmaRequestingPartyClaimsCollectionEndpointController extends BaseUmaEndpointController {
     public UmaRequestingPartyClaimsCollectionEndpointController(final UmaConfigurationContext umaConfigurationContext) {
         super(umaConfigurationContext);
@@ -46,6 +50,16 @@ public class UmaRequestingPartyClaimsCollectionEndpointController extends BaseUm
      * @throws Exception the exception
      */
     @GetMapping(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_CLAIMS_COLLECTION_URL)
+    @Operation(
+        summary = "Collect claims",
+        description = "Collects claims and redirects to the client application",
+        parameters = {
+            @Parameter(name = "client_id", required = true, description = "Client ID"),
+            @Parameter(name = "redirect_uri", required = true, description = "Redirect URI"),
+            @Parameter(name = "ticket", required = true, description = "Ticket ID"),
+            @Parameter(name = "state", required = false, description = "State")
+        }
+    )
     public View getClaims(@RequestParam("client_id") final String clientId,
                           @RequestParam("redirect_uri") final String redirectUri,
                           @RequestParam("ticket") final String ticketId,

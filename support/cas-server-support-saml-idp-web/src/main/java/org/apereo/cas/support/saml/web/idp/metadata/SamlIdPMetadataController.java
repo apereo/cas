@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,6 +34,7 @@ import java.util.Optional;
  */
 @RestController("samlIdPMetadataController")
 @Slf4j
+@Tag(name = "SAML2")
 @RequiredArgsConstructor
 public class SamlIdPMetadataController {
     private static final String CONTENT_TYPE = "text/xml;charset=UTF-8";

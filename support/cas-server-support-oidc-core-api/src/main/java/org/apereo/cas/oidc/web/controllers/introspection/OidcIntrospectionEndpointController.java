@@ -14,6 +14,8 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +41,7 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag(name = "OpenID Connect")
 @Slf4j
 public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEndpointController<OidcConfigurationContext> {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -60,6 +63,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
             '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL,
             "/**/" + OidcConstants.INTROSPECTION_URL
         })
+    @Operation(summary = "Handle OIDC introspection request")
     @Override
     public ResponseEntity handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val webContext = new JEEContext(request, response);
@@ -82,6 +86,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
             '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL,
             "/**/" + OidcConstants.INTROSPECTION_URL
         })
+    @Operation(summary = "Handle OIDC introspection request")
     @Override
     public ResponseEntity handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         return super.handlePostRequest(request, response);

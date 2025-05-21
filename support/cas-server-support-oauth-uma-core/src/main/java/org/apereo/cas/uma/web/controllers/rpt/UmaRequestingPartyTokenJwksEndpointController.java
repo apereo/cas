@@ -6,6 +6,8 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -30,6 +32,7 @@ import java.nio.charset.StandardCharsets;
  */
 @Controller("umaRequestingPartyTokenJwksEndpointController")
 @Slf4j
+@Tag(name = "User Managed Access")
 public class UmaRequestingPartyTokenJwksEndpointController extends BaseUmaEndpointController {
     public UmaRequestingPartyTokenJwksEndpointController(final UmaConfigurationContext umaConfigurationContext) {
         super(umaConfigurationContext);
@@ -43,6 +46,9 @@ public class UmaRequestingPartyTokenJwksEndpointController extends BaseUmaEndpoi
      * @return redirect view
      */
     @GetMapping(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_JWKS_URL)
+    @Operation(
+        summary = "Get JWKS used to sign RPTs",
+        description = "Returns the JWKS used to sign RPTs")
     public ResponseEntity<String> getKeys(final HttpServletRequest request, final HttpServletResponse response) {
         try {
             val jwks = getUmaConfigurationContext().getCasProperties().getAuthn()

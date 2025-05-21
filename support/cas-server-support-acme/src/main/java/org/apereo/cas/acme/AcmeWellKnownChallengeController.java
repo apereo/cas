@@ -3,6 +3,7 @@ package org.apereo.cas.acme;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -25,6 +26,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @SuppressWarnings("removal")
 @RequiredArgsConstructor
 @Deprecated(since = "7.3.0", forRemoval = true)
+@Tag(name = "ACME")
 public class AcmeWellKnownChallengeController {
     private final AcmeChallengeRepository acmeChallengeRepository;
 

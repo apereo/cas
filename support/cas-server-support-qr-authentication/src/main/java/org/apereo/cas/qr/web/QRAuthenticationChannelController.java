@@ -9,6 +9,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,6 +32,7 @@ import java.util.Optional;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@Tag(name = "QR Authentication")
 public class QRAuthenticationChannelController {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();

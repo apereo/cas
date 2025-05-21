@@ -17,6 +17,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -43,6 +44,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @RestController("registeredServiceResourceRestController")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@Tag(name = "CAS REST")
 @RequiredArgsConstructor
 public class RegisteredServiceResource {
     private final AuthenticationSystemSupport authenticationSystemSupport;

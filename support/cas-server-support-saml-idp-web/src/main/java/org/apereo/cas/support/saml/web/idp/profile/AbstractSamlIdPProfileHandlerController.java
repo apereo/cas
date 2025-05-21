@@ -34,6 +34,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -81,6 +82,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Tag(name = "SAML2")
 public abstract class AbstractSamlIdPProfileHandlerController {
 
     /**

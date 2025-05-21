@@ -5,6 +5,8 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.val;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.CacheControl;
@@ -21,6 +23,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 7.3.0
  */
+@Tag(name = "OpenID Connect")
 public class OidcWellKnownFederationEndpointController extends BaseOidcController {
     private final OidcFederationEntityStatementService federationEntityStatementService;
 
@@ -41,6 +44,8 @@ public class OidcWellKnownFederationEndpointController extends BaseOidcControlle
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL,
         "/**/" + OidcConstants.WELL_KNOWN_OPENID_FEDERATION_URL
     })
+    @Operation(summary = "Handle OIDC discovery federation request",
+        description = "Handles requests for well-known OIDC discovery federation configuration")
     public ResponseEntity getWellKnownDiscoveryConfiguration(
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
@@ -52,7 +57,7 @@ public class OidcWellKnownFederationEndpointController extends BaseOidcControlle
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(body);
         }
-        
+
         val entityStatement = federationEntityStatementService.createAndSign();
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noStore().mustRevalidate())

@@ -15,6 +15,8 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -46,6 +48,7 @@ import java.util.UUID;
  * @since 6.6.0
  */
 @Slf4j
+@Tag(name = "OpenID Connect")
 public class OidcInitialAccessTokenController extends BaseOidcController {
     private final BaseClient accessTokenClient = new HeaderClient();
 
@@ -83,6 +86,7 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_INITIAL_TOKEN_URL,
         "/**/" + OidcConstants.REGISTRATION_INITIAL_TOKEN_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Handle OIDC initial access token request")
     public ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response) {
         val webContext = new JEEContext(request, response);

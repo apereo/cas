@@ -6,6 +6,8 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +29,7 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @Controller("umaCreateResourceSetRegistrationEndpointController")
 @Slf4j
+@Tag(name = "User Managed Access")
 public class UmaCreateResourceSetRegistrationEndpointController extends BaseUmaEndpointController {
 
     public UmaCreateResourceSetRegistrationEndpointController(final UmaConfigurationContext umaConfigurationContext) {
@@ -42,6 +45,10 @@ public class UmaCreateResourceSetRegistrationEndpointController extends BaseUmaE
      * @return the permission ticket
      */
     @PostMapping(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL)
+    @Operation(
+        summary = "Register resource set",
+        description = "Registers a resource set and returns the resource set ID"
+    )
     public ResponseEntity registerResourceSet(
         @RequestBody
         final String body,

@@ -12,6 +12,10 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.WebUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +38,7 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @Slf4j
+@Tag(name = "OpenID Connect")
 public class OidcLogoutEndpointController extends BaseOidcController {
 
     private final UrlValidator urlValidator;
@@ -64,12 +69,24 @@ public class OidcLogoutEndpointController extends BaseOidcController {
         '/' + OidcConstants.BASE_OIDC_URL + "/logout",
         "/**/" + OidcConstants.LOGOUT_URL
     })
+    @Operation(summary = "Handle OIDC logout request",
+        parameters = {
+            @Parameter(name = OidcConstants.POST_LOGOUT_REDIRECT_URI,
+                description = "Post logout redirect URL", in = ParameterIn.QUERY, required = false),
+            @Parameter(name = OAuth20Constants.STATE,
+                description = "State", in = ParameterIn.QUERY, required = false),
+            @Parameter(name = OidcConstants.ID_TOKEN_HINT,
+                description = "ID Token hint", in = ParameterIn.QUERY, required = false)
+        })
     public ResponseEntity handleRequestInternal(
-        @RequestParam(value = OidcConstants.POST_LOGOUT_REDIRECT_URI, required = false) final String postLogoutRedirectUrl,
-        @RequestParam(value = OAuth20Constants.STATE, required = false) final String state,
-        @RequestParam(value = OidcConstants.ID_TOKEN_HINT, required = false) final String idToken,
+        @RequestParam(value = OidcConstants.POST_LOGOUT_REDIRECT_URI, required = false)
+        final String postLogoutRedirectUrl,
+        @RequestParam(value = OAuth20Constants.STATE, required = false)
+        final String state,
+        @RequestParam(value = OidcConstants.ID_TOKEN_HINT, required = false)
+        final String idToken,
         final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
-        
+
         String clientId = null;
 
         if (StringUtils.isNotBlank(idToken)) {
@@ -94,7 +111,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
             WebUtils.putRegisteredService(request, Objects.requireNonNull(registeredService));
             val urls = getConfigurationContext().getSingleLogoutServiceLogoutUrlBuilder()
                 .determineLogoutUrl(registeredService, service, Optional.of(request))
-                    .stream().map(SingleLogoutUrl::getUrl).collect(Collectors.toList());
+                .stream().map(SingleLogoutUrl::getUrl).collect(Collectors.toList());
             LOGGER.debug("Logout urls assigned to registered service are [{}]", urls);
             if (StringUtils.isNotBlank(postLogoutRedirectUrl) && registeredService.getMatchingStrategy() != null) {
                 val postLogoutService = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(postLogoutRedirectUrl);
@@ -111,7 +128,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
             val validURL = urls.stream().filter(urlValidator::isValid).findFirst();
             if (validURL.isPresent()) {
                 return executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
-                        validURL, Optional.of(clientId), request, response);
+                    validURL, Optional.of(clientId), request, response);
             }
             LOGGER.debug("No logout urls could be determined for registered service [{}]", registeredService.getName());
         }
@@ -131,10 +148,10 @@ public class OidcLogoutEndpointController extends BaseOidcController {
     }
 
     protected ResponseEntity executeLogoutRedirect(final Optional<String> state,
-                                               final Optional<String> redirectUrl,
-                                               final Optional<String> clientId,
-                                               final HttpServletRequest request,
-                                               final HttpServletResponse response) throws Exception {
+                                                   final Optional<String> redirectUrl,
+                                                   final Optional<String> clientId,
+                                                   final HttpServletRequest request,
+                                                   final HttpServletResponse response) throws Exception {
         redirectUrl.ifPresent(url -> {
             val builder = UriComponentsBuilder.fromUriString(url);
             state.ifPresent(st -> builder.queryParam(OAuth20Constants.STATE, st));

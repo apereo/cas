@@ -10,6 +10,8 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +37,7 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
+@Tag(name = "SAML2")
 public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPProfileHandlerController {
 
     public SSOSamlIdPProfileCallbackHandlerController(final SamlProfileHandlerConfigurationContext config) {
@@ -51,6 +54,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
      * @throws Exception the exception
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
+    @Operation(summary = "Handle SAML2 SSO Callback Profile Request")
     protected ModelAndView handleCallbackProfileRequestGet(final HttpServletResponse response,
                                                            final HttpServletRequest request) throws Throwable {
         autoConfigureCookiePath(request);
@@ -69,6 +73,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
     }
 
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
+    @Operation(summary = "Handle SAML2 SSO Callback Profile Request")
     protected ModelAndView handleCallbackProfileRequestPost(final HttpServletResponse response,
                                                             final HttpServletRequest request) throws Throwable {
         autoConfigureCookiePath(request);

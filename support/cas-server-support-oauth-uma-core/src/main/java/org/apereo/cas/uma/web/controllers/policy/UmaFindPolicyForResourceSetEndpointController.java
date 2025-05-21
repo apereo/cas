@@ -6,6 +6,10 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -24,6 +28,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 6.0.0
  */
 @Slf4j
+@Tag(name = "User Managed Access")
 @Controller("umaFindPolicyForResourceSetEndpointController")
 public class UmaFindPolicyForResourceSetEndpointController extends BaseUmaEndpointController {
     public UmaFindPolicyForResourceSetEndpointController(final UmaConfigurationContext umaConfigurationContext) {
@@ -39,6 +44,8 @@ public class UmaFindPolicyForResourceSetEndpointController extends BaseUmaEndpoi
      * @return the policy for resource set
      */
     @GetMapping(OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL)
+    @Operation(summary = "Get policies for resource set", description = "Gets policies for the specified resource set",
+        parameters = @Parameter(name = "resourceId", required = true, in = ParameterIn.PATH, description = "Resource ID"))
     public ResponseEntity getPoliciesForResourceSet(
         @PathVariable("resourceId")
         final long resourceId,
@@ -72,6 +79,14 @@ public class UmaFindPolicyForResourceSetEndpointController extends BaseUmaEndpoi
      * @return the policy for resource set
      */
     @GetMapping('/' + OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}")
+    @Operation(
+        summary = "Get policy for resource set",
+        description = "Gets a policy for the specified resource set",
+        parameters = {
+            @Parameter(name = "resourceId", required = true, in = ParameterIn.PATH, description = "Resource ID"),
+            @Parameter(name = "policyId", required = true, in = ParameterIn.PATH, description = "Policy ID")
+        }
+    )
     public ResponseEntity getPolicyForResourceSet(
         @PathVariable("resourceId")
         final long resourceId,
