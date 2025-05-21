@@ -274,7 +274,7 @@ commit_failure_policy: stop
 #
 # Valid values are either "auto" (omitting the value) or a value greater 0.
 #
-# Note that specifying a too large value will result in long running GCs and possbily
+# Note that specifying a too large value will result in long running GCs and possibly
 # out-of-memory errors. Keep the value at a small fraction of the heap.
 #
 # If you constantly see "prepared statements discarded in the last minute because
@@ -324,7 +324,7 @@ key_cache_save_period: 14400
 #   Fully off-heap row cache implementation (default).
 #
 # org.apache.cassandra.cache.SerializingCacheProvider
-#   This is the row cache implementation availabile
+#   This is the row cache implementation available
 #   in previous releases of Cassandra.
 # row_cache_class_name: org.apache.cassandra.cache.OHCProvider
 
@@ -815,7 +815,7 @@ snapshot_links_per_second: 0
 # number of rows per partition.  The competing goals are these:
 #
 # - a smaller granularity means more index entries are generated
-#   and looking up rows withing the partition by collation column
+#   and looking up rows with the partition by collation column
 #   is faster
 # - but, Cassandra will keep the collation index in memory for hot
 #   rows (as part of the key cache), so a larger granularity means
@@ -1228,7 +1228,7 @@ windows_timer_interval: 1
 
 # Enables encrypting data at-rest (on disk). Different key providers can be plugged in, but the default reads from
 # a JCE-style keystore. A single keystore can hold multiple keys, but the one referenced by
-# the "key_alias" is the only key that will be used for encrypt opertaions; previously used keys
+# the "key_alias" is the only key that will be used for encrypt operations; previously used keys
 # can still (and should!) be in the keystore and will be used on decrypt operations
 # (to handle the case of key rotation).
 #
@@ -1258,7 +1258,7 @@ transparent_data_encryption_options:
 # tombstones seen in memory so we can return them to the coordinator, which
 # will use them to make sure other replicas also know about the deleted rows.
 # With workloads that generate a lot of tombstones, this can cause performance
-# problems and even exaust the server heap.
+# problems and even exhaust the server heap.
 # (http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets)
 # Adjust the thresholds here if you understand the dangers and want to
 # scan more tombstones anyway.  These thresholds may also be adjusted at runtime
