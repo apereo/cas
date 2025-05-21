@@ -2,9 +2,8 @@ package org.apereo.cas.acme;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 import static org.awaitility.Awaitility.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link AcmeChallengeRepositoryTests}.
