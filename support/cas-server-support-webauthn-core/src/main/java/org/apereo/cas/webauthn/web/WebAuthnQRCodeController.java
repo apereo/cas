@@ -12,6 +12,9 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.webauthn.WebAuthnCredential;
 import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -62,10 +65,13 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
      * @throws Throwable the throwable
      */
     @GetMapping(ENDPOINT_QR_VERIFY + "/{ticketId}")
+    @Operation(summary = "Start WebAuthn QR code authentication",
+        parameters = @Parameter(name = "ticketId", in = ParameterIn.PATH, required = true, description = "Ticket id"))
     public ModelAndView startAuthentication(
         final HttpServletRequest request,
         final HttpServletResponse response,
-        @PathVariable("ticketId") final String ticketId) throws Throwable {
+        @PathVariable("ticketId")
+        final String ticketId) throws Throwable {
         try {
             verifyQRCodeAuthenticationIsEnabled();
             val transientTicket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
@@ -90,11 +96,14 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
      * @return the response entity
      * @throws Throwable the throwable
      */
+    @Operation(summary = "Check QR ticket status",
+        parameters = @Parameter(name = "ticketId", in = ParameterIn.PATH, required = true, description = "Ticket id"))
     @GetMapping(ENDPOINT_QR_VERIFY + "/{ticketId}/status")
     @ResponseBody
     public ResponseEntity checkQRTicketStatus(
         final HttpServletRequest request,
-        @PathVariable("ticketId") final String ticketId) throws Throwable {
+        @PathVariable("ticketId")
+        final String ticketId) throws Throwable {
         try {
             verifyQRCodeAuthenticationIsEnabled();
             val transientTicket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
@@ -129,9 +138,19 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
      */
     @PostMapping(ENDPOINT_QR_VERIFY)
     @ResponseBody
-    public ModelAndView verifyCode(@RequestParam("token") final String sessionToken,
-                                   @RequestParam("ticket") final String ticketId,
-                                   @RequestParam("principal") final String principalId) throws Throwable {
+    @Operation(summary = "Verify QR code token",
+        parameters = {
+            @Parameter(name = "token", required = true, in = ParameterIn.QUERY, description = "Session token"),
+            @Parameter(name = "ticket", required = true, in = ParameterIn.QUERY, description = "Ticket id"),
+            @Parameter(name = "principal", required = true, in = ParameterIn.QUERY, description = "Principal id")
+        })
+    public ModelAndView verifyCode(
+        @RequestParam("token")
+        final String sessionToken,
+        @RequestParam("ticket")
+        final String ticketId,
+        @RequestParam("principal")
+        final String principalId) throws Throwable {
         try {
             verifyQRCodeAuthenticationIsEnabled();
             val transientTicket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);

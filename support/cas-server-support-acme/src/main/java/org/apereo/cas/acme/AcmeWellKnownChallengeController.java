@@ -1,5 +1,8 @@
 package org.apereo.cas.acme;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -34,6 +37,8 @@ public class AcmeWellKnownChallengeController {
      * @return the string
      */
     @GetMapping(value = "/.well-known/acme-challenge/{token}", produces = MediaType.TEXT_PLAIN_VALUE)
+    @Operation(summary = "Handle ACME well-known challenge",
+        parameters = @Parameter(name = "token", required = true, in = ParameterIn.PATH, description = "Challenge token"))
     public String handleRequest(
         @PathVariable("token")
         final String token,

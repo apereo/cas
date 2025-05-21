@@ -4,6 +4,9 @@ import org.apereo.cas.heimdall.engine.AuthorizationEngine;
 import org.apereo.cas.heimdall.engine.AuthorizationPrincipalParser;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -50,6 +53,15 @@ public class HeimdallAuthorizationController {
      * @return the response entity
      */
     @PostMapping("/authorize")
+    @Operation(summary = "Authorize request via Heimdall",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true,
+            description = "AuthorizationRequest JSON payload",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = AuthorizationRequest.class)
+            )
+        ))
     public ResponseEntity authorize(
         @RequestBody final @Valid AuthorizationRequest authorizationRequest,
         final HttpServletRequest request) {

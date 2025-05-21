@@ -7,6 +7,9 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -50,6 +53,8 @@ public class SamlIdPMetadataController {
      * @param response servlet response
      * @throws Exception the exception
      */
+    @Operation(summary = "Generate IdP metadata",
+        parameters = @Parameter(name = "service", in = ParameterIn.QUERY, required = false, description = "Service identifier"))
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA, produces = CONTENT_TYPE)
     public void generateMetadataForIdp(
         @RequestParam(value = "service", required = false) final String service,
@@ -75,6 +80,8 @@ public class SamlIdPMetadataController {
      * @throws Throwable the throwable
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA + "/signingCertificate", produces = MediaType.TEXT_PLAIN_VALUE)
+    @Operation(summary = "Get IdP signing certificate",
+        parameters = @Parameter(name = "service", in = ParameterIn.QUERY, required = false, description = "Service identifier"))
     public String idpSigningCertificate(
         @RequestParam(value = "service", required = false) final String service) throws Throwable {
         val registeredService = getRegisteredServiceIfAny(service);
@@ -89,6 +96,8 @@ public class SamlIdPMetadataController {
      * @param service  the service
      * @throws Throwable the throwable
      */
+    @Operation(summary = "Get IdP encryption certificate",
+        parameters = @Parameter(name = "service", in = ParameterIn.QUERY, required = false, description = "Service identifier"))
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA + "/encryptionCertificate", produces = MediaType.TEXT_PLAIN_VALUE)
     public String idpEncryptionCertificate(
         @RequestParam(value = "service", required = false) final String service) throws Throwable {
