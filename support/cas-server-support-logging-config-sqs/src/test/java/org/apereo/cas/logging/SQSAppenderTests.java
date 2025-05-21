@@ -1,17 +1,12 @@
 package org.apereo.cas.logging;
 
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.time.Duration;
 import java.util.stream.IntStream;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.awaitility.Awaitility.*;
 
 /**
  * This is {@link SQSAppenderTests}.
@@ -30,7 +25,7 @@ class SQSAppenderTests {
         assertNotNull(appender);
         assertDoesNotThrow(() -> IntStream.range(1, 20)
             .forEach(idx -> logger.info("Testing [{}]...", idx)));
-        await().atMost(Duration.ofSeconds(5)).until(appender::isStopped);
+        Thread.sleep(5_000);
         appender.stop();
     }
 }
