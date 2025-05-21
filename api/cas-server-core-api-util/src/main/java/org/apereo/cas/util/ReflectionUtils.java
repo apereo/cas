@@ -45,7 +45,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * Finds all classes in the given package, wich are annotated with at least one of the given annotations.
+     * Finds all classes in the given package, which are annotated with at least one of the given annotations.
      *
      * @param annotations The annotations to look for.
      * @param packageName The base package to look in.
