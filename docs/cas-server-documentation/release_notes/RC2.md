@@ -90,18 +90,19 @@ internally based on the `Host` http header, in scenarios where CAS is deployed b
         
 - A new [Heimdall authorization policy](../authorization/Heimdall-Authorization-Overview.html) for SQL databases.
 - We have laid the groundwork to begin supporting OpenID Connect federations. Support for this topic will gradually mature as federations begin to operate and remain functional. 
-- Apache Tomcat's `RewriteValve` can now be added as an engine valve.
-- CAS is now publishing events internally when webflow actions are executed. Such events are recorded into the [CAS event repository](../authentication/Configuring-Authentication-Events.html) and are also available in the [Palantir admin console](../installation/Admin-Dashboard.html).
+- Apache Tomcat's `RewriteValve` can be added as an engine valve.
+- CAS is publishing events internally when webflow actions are executed. Such events are recorded into the [CAS event repository](../authentication/Configuring-Authentication-Events.html) and are also available in the [Palantir admin console](../installation/Admin-Dashboard.html).
 - Redis integration tests are upgraded to use the latest Redis `8.0` server.
-- Support for [ACME Integration](../integration/ACME-Integration.html) is now deprecated.
+- Support for [ACME Integration](../integration/ACME-Integration.html) is deprecated.
 - CAS CI workflows via GitHub Actions now check for code spelling mistakes and typos.
 - [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html) is to tuned to apply an LZ4 compression routine to stored documents.
-- The CAS server host name can now be accessed via the user interface and is displayed in the footer.
-- The usage criteria of a ticket-granting ticket is now updated when OpenID Connect access tokens are exchanged for a user profile.
+- The CAS server host name can be accessed via the user interface and is displayed in the footer.
+- The usage criteria of a ticket-granting ticket is updated when OpenID Connect access tokens are exchanged for a user profile.
 - Activation of [Remember-Me functionality](../authentication/Configuring-SSO-Cookie.html) now explicitly looks for the `rememberMe` parameter in the request with a truthy value.
-- [Puppeteer tests](../../developer/Test-Process.html) now have the ability to verify CAS functionality using an external Apache Tomcat server.
+- [Puppeteer tests](../../developer/Test-Process.html) have the ability to verify CAS functionality using an external Apache Tomcat server.
 - The entire CAS configuration catalog is indexed and published online to offer [search functionality](../configuration/Configuration-Properties.html).
 - The [BlackDot IP Intelligence](../mfa/Adaptive-Authentication-IP-Intelligence.html) functionality is corrected to create the correct component instance.
 - Webflow transitions for multifactor device registration requests are re-organized to allow for this functionality in the [user account profile](../registration/Account-Management-Overview.html).
 - [User account profile](../registration/Account-Management-Overview.html) gains the ability to delete registered multifactor authentication devices.
-- CAS endpoints are now grouped and tagged for better visibility in the [Swagger UI](../integration/Swagger-Integration.html).
+- CAS endpoints are grouped and tagged for better visibility in the [Swagger UI](../integration/Swagger-Integration.html).
+- A large collection of documentation improvements and fixes to remove typos and grammatical errors.
