@@ -94,6 +94,8 @@ internally based on the `Host` http header, in scenarios where CAS is deployed b
 - CAS is now publishing events internally when webflow actions are executed. Such events are recorded into the [CAS event repository](../authentication/Configuring-Authentication-Events.html) and are also available in the [Palantir admin console](../installation/Admin-Dashboard.html).
 - Redis integration tests are upgraded to use the latest Redis `8.0` server.
 - Support for [ACME Integration](../integration/ACME-Integration.html) is now deprecated.
+- CAS CI workflows via GitHub Actions now check for code spelling mistakes and typos.
+- [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html) is to tuned to apply an LZ4 compression routine to stored documents.
 - The CAS server host name can now be accessed via the user interface and is displayed in the footer.
 - The usage criteria of a ticket-granting ticket is now updated when OpenID Connect access tokens are exchanged for a user profile.
 - Activation of [Remember-Me functionality](../authentication/Configuring-SSO-Cookie.html) now explicitly looks for the `rememberMe` parameter in the request with a truthy value.
@@ -102,3 +104,4 @@ internally based on the `Host` http header, in scenarios where CAS is deployed b
 - The [BlackDot IP Intelligence](../mfa/Adaptive-Authentication-IP-Intelligence.html) functionality is corrected to create the correct component instance.
 - Webflow transitions for multifactor device registration requests are re-organized to allow for this functionality in the [user account profile](../registration/Account-Management-Overview.html).
 - [User account profile](../registration/Account-Management-Overview.html) gains the ability to delete registered multifactor authentication devices.
+- CAS endpoints are now grouped and tagged for better visibility in the [Swagger UI](../integration/Swagger-Integration.html).
