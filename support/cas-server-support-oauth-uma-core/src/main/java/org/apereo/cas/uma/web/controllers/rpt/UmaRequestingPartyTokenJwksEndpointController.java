@@ -54,11 +54,13 @@ public class UmaRequestingPartyTokenJwksEndpointController extends BaseUmaEndpoi
             val jwks = getUmaConfigurationContext().getCasProperties().getAuthn()
                 .getOauth().getUma().getRequestingPartyToken().getJwksFile().getLocation();
             if (ResourceUtils.doesResourceExist(jwks)) {
-                val jsonJwks = IOUtils.toString(jwks.getInputStream(), StandardCharsets.UTF_8);
-                val jsonWebKeySet = new JsonWebKeySet(jsonJwks);
-                val body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                return new ResponseEntity<>(body, HttpStatus.OK);
+                try (val is = jwks.getInputStream()) {
+                    val jsonJwks = IOUtils.toString(is, StandardCharsets.UTF_8);
+                    val jsonWebKeySet = new JsonWebKeySet(jsonJwks);
+                    val body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    return new ResponseEntity<>(body, HttpStatus.OK);
+                }
             }
             return new ResponseEntity<>("UMA RPT JWKS resource is undefined or cannot be located", HttpStatus.NOT_IMPLEMENTED);
         } catch (final Exception e) {

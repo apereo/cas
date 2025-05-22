@@ -94,7 +94,7 @@ internally based on the `Host` http header, in scenarios where CAS is deployed b
 - CAS is publishing events internally when webflow actions are executed. Such events are recorded into the [CAS event repository](../authentication/Configuring-Authentication-Events.html) and are also available in the [Palantir admin console](../installation/Admin-Dashboard.html).
 - Redis integration tests are upgraded to use the latest Redis `8.0` server.
 - Support for [ACME Integration](../integration/ACME-Integration.html) is deprecated.
-- CAS CI workflows via GitHub Actions now check for code spelling mistakes and typos.
+- [GitHub Actions CI workflows](https://github.com/apereo/cas/actions) check for code spelling mistakes and typos.
 - [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html) is to tuned to apply an LZ4 compression routine to stored documents.
 - The CAS server host name can be accessed via the user interface and is displayed in the footer.
 - The usage criteria of a ticket-granting ticket is updated when OpenID Connect access tokens are exchanged for a user profile.
@@ -106,3 +106,4 @@ internally based on the `Host` http header, in scenarios where CAS is deployed b
 - [User account profile](../registration/Account-Management-Overview.html) gains the ability to delete registered multifactor authentication devices.
 - CAS endpoints are grouped and tagged for better visibility in the [Swagger UI](../integration/Swagger-Integration.html).
 - A large collection of documentation improvements and fixes to remove typos and grammatical errors.
+- Using advanced static analysis tools, a large number of leaking IO streams are closed properly.
