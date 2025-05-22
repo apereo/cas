@@ -256,7 +256,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         } finally {
             HttpUtils.close(response);
         }
-        LOGGER.warn("Failed to save google authenticator account successfully");
+        LOGGER.warn("Failed to save google authenticator account");
         return null;
     }
 

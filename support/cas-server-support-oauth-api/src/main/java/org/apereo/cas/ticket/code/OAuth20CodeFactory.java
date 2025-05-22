@@ -55,7 +55,7 @@ public interface OAuth20CodeFactory extends TicketFactory {
      * @param clientId             the client id
      * @param responseType         the response type
      * @param grantType            the grant type
-     * @return the o auth 20 code
+     * @return the oauth code
      * @throws Throwable the throwable
      */
     default OAuth20Code create(final Service service,

@@ -92,7 +92,7 @@ public interface OAuth20ResponseModeFactory {
      * Register builder for mode factory.
      *
      * @param builder the builder
-     * @return the o auth 20 response mode factory
+     * @return the oauth response mode factory
      */
     OAuth20ResponseModeFactory registerBuilder(OAuth20ResponseModeBuilder builder);
 

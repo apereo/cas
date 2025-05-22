@@ -104,10 +104,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                     return super.doExecuteInternal(context);
                 }
                 val resolvedService = ssoEvaluator.resolveServiceFromRequestContext(context);
-                LOGGER.debug("Single sign-on session in unauthorized for service [{}]", resolvedService);
+                LOGGER.debug("Single sign-on session is unauthorized for service [{}]", resolvedService);
                 removeTicketGrantingTicketIfAny(context, clientName, resolvedService);
             } else if (StringUtils.isNotBlank(clientName) && !isLogoutRequest(clientCredential)) {
-                LOGGER.debug("Single sign-on session in inactive for service [{}]", service);
+                LOGGER.debug("Single sign-on session is inactive for service [{}]", service);
                 removeTicketGrantingTicketIfAny(context, clientName, service);
             }
 
