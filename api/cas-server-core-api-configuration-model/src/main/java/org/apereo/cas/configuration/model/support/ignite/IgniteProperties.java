@@ -223,7 +223,7 @@ public class IgniteProperties implements Serializable {
          * Specifies the atomicity mode.
          * <ul>
          * <li>{@code ATOMIC}: Specifies atomic-only cache behaviour. In this mode distributed transactions and distributed locking
-         * are not supported. Disabling transactions and locking allows to achieve much higher performance and throughput ratios.
+         * are not supported. Disabling transactions and locking allows CAS to achieve much higher performance and throughput ratios.
          * In addition to transactions and locking, one of the main differences in ATOMIC mode is that bulk writes, such as putAll(...),
          * removeAll(...), and transformAll(...) methods, become simple batch operations which can partially fail. In case of
          * partial failure CachePartialUpdateCheckedException will be thrown which will contain a list of keys for which the update

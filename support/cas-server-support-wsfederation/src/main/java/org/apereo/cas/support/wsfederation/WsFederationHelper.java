@@ -114,11 +114,13 @@ public class WsFederationHelper {
 
             val certParser = new X509CertParser();
             LOGGER.debug("Locating encryption certificate [{}]", config.getEncryptionCertificate());
-            certParser.engineInit(config.getEncryptionCertificate().getInputStream());
-            LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
-            val cert = (X509Certificate) certParser.engineRead();
-            LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
-            return new BasicX509Credential(cert, kp.getPrivate());
+            try (val is = config.getEncryptionCertificate().getInputStream()) {
+                certParser.engineInit(is);
+                LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
+                val cert = (X509Certificate) certParser.engineRead();
+                LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
+                return new BasicX509Credential(cert, kp.getPrivate());
+            }
         }
 
     }

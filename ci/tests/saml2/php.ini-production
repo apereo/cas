@@ -365,12 +365,12 @@ zend.enable_gc = On
 ; encodings.  To use this feature, mbstring extension must be enabled.
 ;zend.multibyte = Off
 
-; Allows to set the default encoding for the scripts.  This value will be used
+; Allows the system to set the default encoding for the scripts.  This value will be used
 ; unless "declare(encoding=...)" directive appears at the top of the script.
 ; Only affects if zend.multibyte is set.
 ;zend.script_encoding =
 
-; Allows to include or exclude arguments from stack traces generated for exceptions.
+; Allows the system to include or exclude arguments from stack traces generated for exceptions.
 ; In production, it is recommended to turn this setting on to prohibit the output
 ; of sensitive information in stack traces
 ; Default Value: Off
@@ -1868,7 +1868,7 @@ ldap.max_links = -1
 
 ; Mapping base of shared memory segments (for Windows only). All the PHP
 ; processes have to map shared memory into the same address space. This
-; directive allows to manually fix the "Unable to reattach to base address"
+; directive allows one to manually fix the "Unable to reattach to base address"
 ; errors.
 ;opcache.mmap_base=
 

@@ -107,7 +107,7 @@ Logout requests may be optionally routed to an external URL bypassing the CAS lo
 Registered applications with CAS have the option to control single logout behavior individually via
 the [Service Management](../services/Service-Management.html) component. Each registered service in the service registry will include configuration
 that describes how to the logout request should be submitted. This behavior is controlled via the `logoutType` property
-which allows to specify whether the logout request should be submitted via back/front channel or turned off for this application.
+which allows one to specify whether the logout request should be submitted via back/front channel or turned off for this application.
 
 Sample configuration follows:
 
