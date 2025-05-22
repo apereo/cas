@@ -44,13 +44,14 @@ public class CasAPNMessagingAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ApnsClient apnsClient(final CasConfigurationProperties casProperties) throws Exception {
         val apnMessaging = casProperties.getApnMessaging();
-        val p8File = apnMessaging.getAuthenticationKey().getLocation().getInputStream();
-        return new ApnsClientBuilder()
-            .setApnsServer(StringUtils.equalsIgnoreCase(apnMessaging.getServer(), "production")
-                ? ApnsClientBuilder.PRODUCTION_APNS_HOST
-                : ApnsClientBuilder.DEVELOPMENT_APNS_HOST)
-            .setSigningKey(ApnsSigningKey.loadFromInputStream(p8File, apnMessaging.getTeamId(), apnMessaging.getKeyId()))
-            .build();
+        try (val p8File = apnMessaging.getAuthenticationKey().getLocation().getInputStream()) {
+            return new ApnsClientBuilder()
+                .setApnsServer(StringUtils.equalsIgnoreCase(apnMessaging.getServer(), "production")
+                    ? ApnsClientBuilder.PRODUCTION_APNS_HOST
+                    : ApnsClientBuilder.DEVELOPMENT_APNS_HOST)
+                .setSigningKey(ApnsSigningKey.loadFromInputStream(p8File, apnMessaging.getTeamId(), apnMessaging.getKeyId()))
+                .build();
+        }
     }
 
     @Bean

@@ -53,7 +53,7 @@ public class TokenAuthenticationSecurity {
     private RegisteredServiceSecurityConfiguration securityConfiguration;
 
     /**
-     * Generate token for authentication.
+     * Generate a token for authentication.
      *
      * @param authentication the authentication
      * @return the string

@@ -138,7 +138,7 @@ export REPOSITORY_USER="..."
 export REPOSITORY_PWD="..."
 ```
 
-Do not use your actual password and instead create a a user token. This is a form of credential for the user 
+Do not use your actual password and instead create a user token. This is a form of credential for the user 
 it belongs to and is  completely different and separate from the original password. User tokens can be easily 
 created and deleted, which is useful should security policies require credential updates, or 
 if credentials are lost accidentally or otherwise.
