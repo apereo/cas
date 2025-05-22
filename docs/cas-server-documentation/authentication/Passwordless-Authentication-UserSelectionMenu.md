@@ -40,7 +40,7 @@ allow the flow to present available forms of authentication to the user:
 }
 ```
   
-The above account is allows to choose between the following options:
+The above account is allows CAS to choose between the following options:
 
 - Authentication via password.
 - [Delegated authentication](../integration/Delegate-Authentication.html) via the `ExternalIdP` identity provider.

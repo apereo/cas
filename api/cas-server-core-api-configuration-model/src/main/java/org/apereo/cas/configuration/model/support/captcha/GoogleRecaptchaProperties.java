@@ -76,7 +76,7 @@ public class GoogleRecaptchaProperties implements CasFeatureModule, Serializable
      * <ul>
      * <li>{@code bottomright}: bottom right corner, default value.</li>
      * <li>{@code bottomleft}: bottom left corner</li>
-     * <li>{@code inline}: allows to control the CSS.</li>
+     * <li>{@code inline}: allows one to control the CSS.</li>
      * </ul>
      */
     private String position = "bottomright";
