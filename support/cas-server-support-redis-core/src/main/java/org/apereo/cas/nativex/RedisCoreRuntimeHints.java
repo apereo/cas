@@ -3,7 +3,6 @@ package org.apereo.cas.nativex;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import io.lettuce.core.cluster.api.sync.RedisClusterCommands;
 import net.jpountz.lz4.LZ4Compressor;
-import net.jpountz.lz4.LZ4Decompressor;
 import net.jpountz.lz4.LZ4FastDecompressor;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
