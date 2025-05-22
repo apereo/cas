@@ -38,8 +38,10 @@ public class PhoneCallBodyBuilder implements Supplier<String> {
                 return StringUtils.EMPTY;
             }
             val templateFile = ResourceUtils.getResourceFrom(properties.getText());
-            val contents = IOUtils.toString(templateFile.getInputStream(), StandardCharsets.UTF_8);
-            return formatBody(contents);
+            try (val is = templateFile.getInputStream()) {
+                val contents = IOUtils.toString(is, StandardCharsets.UTF_8);
+                return formatBody(contents);
+            }
         } catch (final Throwable e) {
             LOGGER.trace(e.getMessage(), e);
         }
