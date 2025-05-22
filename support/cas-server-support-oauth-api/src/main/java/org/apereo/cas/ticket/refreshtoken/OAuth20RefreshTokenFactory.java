@@ -52,7 +52,7 @@ public interface OAuth20RefreshTokenFactory extends TicketFactory {
      * @param clientId             the client id
      * @param responseType         the response type
      * @param grantType            the grant type
-     * @return the o auth 20 refresh token
+     * @return the oauth refresh token
      * @throws Throwable the throwable
      */
     default OAuth20RefreshToken create(final Service service,

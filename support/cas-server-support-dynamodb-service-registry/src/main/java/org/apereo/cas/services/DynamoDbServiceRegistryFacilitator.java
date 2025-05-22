@@ -125,7 +125,7 @@ public class DynamoDbServiceRegistryFacilitator {
      *
      * @param service the service
      */
-    public void put(final RegisteredService service) {
+    public void put(final RegisteredService service) throws Exception {
         val values = buildTableAttributeValuesMapFromService(service);
         val putItemRequest = PutItemRequest.builder().tableName(dynamoDbProperties.getTableName()).item(values).build();
         LOGGER.debug("Submitting put request [{}] for service id [{}]", putItemRequest, service.getServiceId());
@@ -156,16 +156,18 @@ public class DynamoDbServiceRegistryFacilitator {
      *
      * @param service the service
      * @return the map
+     * @throws Exception the exception
      */
-    public Map<String, AttributeValue> buildTableAttributeValuesMapFromService(final RegisteredService service) {
+    public Map<String, AttributeValue> buildTableAttributeValuesMapFromService(final RegisteredService service) throws Exception {
         val values = new HashMap<String, AttributeValue>();
         values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().s(String.valueOf(service.getId())).build());
         values.put(ColumnNames.NAME.getColumnName(), AttributeValue.builder().s(String.valueOf(service.getName())).build());
         values.put(ColumnNames.DESCRIPTION.getColumnName(), AttributeValue.builder().s(String.valueOf(service.getDescription())).build());
         values.put(ColumnNames.SERVICE_ID.getColumnName(), AttributeValue.builder().s(String.valueOf(service.getServiceId())).build());
-        val out = new ByteArrayOutputStream();
-        jsonSerializer.to(out, service);
-        values.put(ColumnNames.ENCODED.getColumnName(), AttributeValue.builder().b(SdkBytes.fromByteArray(out.toByteArray())).build());
+        try (val out = new ByteArrayOutputStream()) {
+            jsonSerializer.to(out, service);
+            values.put(ColumnNames.ENCODED.getColumnName(), AttributeValue.builder().b(SdkBytes.fromByteArray(out.toByteArray())).build());
+        }
         LOGGER.debug("Created attribute values [{}] based on provided service [{}]", values, service);
         return values;
     }

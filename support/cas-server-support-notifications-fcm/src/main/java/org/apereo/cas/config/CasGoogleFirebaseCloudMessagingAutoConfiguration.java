@@ -49,7 +49,9 @@ public class CasGoogleFirebaseCloudMessagingAutoConfiguration {
             val firebase = casProperties.getGoogleFirebaseMessaging();
             if (firebase.getServiceAccountKey().getLocation() != null) {
                 val keyPath = firebase.getServiceAccountKey().getLocation().getFile().getCanonicalPath();
-                return GoogleCredentials.fromStream(new FileInputStream(keyPath)).createScoped(firebase.getScopes());
+                try (val credentialsStream = new FileInputStream(keyPath)) {
+                    return GoogleCredentials.fromStream(credentialsStream).createScoped(firebase.getScopes());
+                }
             }
             return GoogleCredentials.getApplicationDefault();
         }

@@ -70,7 +70,7 @@ public interface OAuth20AuthorizationResponseBuilder extends Ordered {
      * @param authentication    the authentication
      * @param service           the service
      * @param registeredService the registered service
-     * @return the o auth 20 authorization request
+     * @return the oauth authorization request
      */
     Optional<OAuth20AuthorizationRequest.OAuth20AuthorizationRequestBuilder> toAuthorizationRequest(
         WebContext context, Authentication authentication,

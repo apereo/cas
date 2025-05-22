@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -28,10 +29,12 @@ public class DynamoDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        registeredService.assignIdIfNecessary();
-        invokeServiceRegistryListenerPreSave(registeredService);
-        dbTableService.put(registeredService);
-        return registeredService;
+        return FunctionUtils.doUnchecked(() -> {
+            registeredService.assignIdIfNecessary();
+            invokeServiceRegistryListenerPreSave(registeredService);
+            dbTableService.put(registeredService);
+            return registeredService;
+        });
     }
 
     @Override
