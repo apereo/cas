@@ -38,7 +38,7 @@ When a browser connects to CAS over an https: URL, the server identifies itself 
 browser must already have installed a certificate identifying and trusting the CA that issued the CAS Server certificate. 
 If the browser is not already prepared to trust the CAS server, then an error message pops up saying the server is not trusted.
 
-After the Server sends the certificate that identifies itself, it then can then send a list of names of Certificate 
+After the Server sends the certificate that identifies itself, it can then send a list of names of Certificate 
 Authorities from which it is willing to accept certificates. Ideally, this list will include only one name; the name 
 of the internal institutional CA that issues internal intranet-only 
 certificates that internally contain a field with the CAS Principal name.
