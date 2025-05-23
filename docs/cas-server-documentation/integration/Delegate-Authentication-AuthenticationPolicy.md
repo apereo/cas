@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Delegate Authentication Authentication Policy
+title: CAS - Delegate Authentication Policy
 category: Authentication
 ---
 
