@@ -133,8 +133,8 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
     }
 
     private Map<String, CasUserAccount> readAccountsFromResource() throws PreventedException {
-        try {
-            return MAPPER.readValue(resource.getInputStream(),
+        try (var in = resource.getInputStream()) {
+            return MAPPER.readValue(in,
                 new TypeReference<>() {
                 });
         } catch (final Exception e) {
