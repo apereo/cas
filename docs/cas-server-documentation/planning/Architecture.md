@@ -17,7 +17,7 @@ by means of various protocols.
 
 ### CAS Server
 
-The CAS server is Java servlet built on the Spring Framework whose primary responsibility is to authenticate users
+The CAS server is a Java servlet built on the Spring Framework whose primary responsibility is to authenticate users
 and grant access to CAS-enabled services, commonly called CAS clients, by issuing and validating tickets.
 An SSO session is created when the server issues a ticket-granting ticket (TGT) to the user upon successful login.
 A service ticket (ST) is issued to a service at the user's request via browser redirects using the TGT as a token.

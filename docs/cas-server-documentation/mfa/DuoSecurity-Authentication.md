@@ -72,10 +72,10 @@ response from Duo Security is passed to CAS as a browser redirect
 and CAS will begin to negotiate and exchange that response in favor of
 a JWT that contains the multifactor authentication user profile details.
 
-Universal Prompt no longer requires you to generate and use a application
+Universal Prompt no longer requires you to generate and use an application
 key value. Instead, it requires a *client id* and *client secret*, which
 are known and taught CAS using the integration key and secret key
-configuration settings. You will need get your integration key, secret key, and API
+configuration settings. You will need to get your integration key, secret key, and API
 hostname from Duo Security when you register CAS as a protected application.
  
 ## Non-Browser MFA
