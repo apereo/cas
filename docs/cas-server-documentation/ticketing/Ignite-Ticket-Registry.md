@@ -32,5 +32,5 @@ composed of two or more nodes. To learn more about TLS replication with Ignite,
 
 * You will need to ensure that network communication across CAS nodes is allowed and no firewall or other component is blocking traffic.
 * If nodes external to CAS instances are utilized, ensure that each cache manager specifies a name that matches the Apache Ignite configuration itself.
-* You may also need to adjust your expiration policy to allow for a larger time span, specially for service tickets depending on network
+* You may also need to adjust your expiration policy to allow for a larger time span, especially for service tickets depending on network
   traffic and communication delay across CAS nodes particularly in the event that a node is trying to join the cluster.

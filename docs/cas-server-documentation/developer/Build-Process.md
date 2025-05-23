@@ -168,7 +168,7 @@ need to restart IDEA in order for changes to take full effect.
 ![image](https://user-images.githubusercontent.com/1205228/35231112-287f625a-ffad-11e7-8c1a-af23ff33918d.png)
 
 Note that the CAS-provided Checkstyle rules can be imported into idea to automate a number of 
-formatting rules specially related to package imports and layouts. Once imported, the rules
+formatting rules specifically related to package imports and layouts. Once imported, the rules
 should look something like the below screenshot:
 
 ![image](https://user-images.githubusercontent.com/1205228/42846621-b99539fc-8a2e-11e8-8128-9344bda7224d.png)
