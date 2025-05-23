@@ -106,7 +106,7 @@ public interface CasWebflowConfigurer extends Ordered, NamedObject {
     TransitionableState getStartState(Flow flow);
 
     /**
-     * Create transition transition.
+     * Create transition.
      *
      * @param criteriaOutcome the criteria outcome
      * @param targetState     the target state
@@ -115,7 +115,7 @@ public interface CasWebflowConfigurer extends Ordered, NamedObject {
     Transition createTransition(String criteriaOutcome, String targetState);
 
     /**
-     * Create transition transition.
+     * Create transition.
      *
      * @param criteriaOutcome the criteria outcome
      * @param targetState     the target state
@@ -125,7 +125,7 @@ public interface CasWebflowConfigurer extends Ordered, NamedObject {
     Transition createTransition(String criteriaOutcome, String targetState, Action... actions);
 
     /**
-     * Create transition transition.
+     * Create transition.
      *
      * @param criteriaOutcome the criteria outcome
      * @param targetState     the target state
@@ -134,7 +134,7 @@ public interface CasWebflowConfigurer extends Ordered, NamedObject {
     Transition createTransition(String criteriaOutcome, TransitionableState targetState);
 
     /**
-     * Create transition transition.
+     * Create transition.
      *
      * @param criteriaOutcomeExpression the criteria outcome expression
      * @param targetState               the target state
@@ -176,7 +176,7 @@ public interface CasWebflowConfigurer extends Ordered, NamedObject {
                                 Action... actions);
 
     /**
-     * Create transition transition.
+     * Create transition.
      *
      * @param targetState the target state
      * @return the transition
@@ -248,7 +248,7 @@ public interface CasWebflowConfigurer extends Ordered, NamedObject {
     ActionState createActionState(Flow flow, String name, Action action);
 
     /**
-     * Create decision state decision state.
+     * Create decision state.
      *
      * @param flow           the flow
      * @param id             the id
@@ -609,7 +609,7 @@ public interface CasWebflowConfigurer extends Ordered, NamedObject {
                                         String targetState);
 
     /**
-     * Create expression expression.
+     * Create expression.
      *
      * @param expression   the expression
      * @param expectedType the expected type
@@ -618,7 +618,7 @@ public interface CasWebflowConfigurer extends Ordered, NamedObject {
     Expression createExpression(String expression, Class expectedType);
 
     /**
-     * Create expression expression.
+     * Create expression.
      *
      * @param expression the expression
      * @return the expression
