@@ -8,8 +8,8 @@ category: User Interface
 
 # Groovy Themes - User Interface Customization
 
-If you have multiple themes defined, it may be desirable to dynamically determine a theme for a given service definition. In 
-order to do, you may calculate the final theme name via a Groovy script of your own design. The theme assigned to 
+If you have multiple themes defined, it may be desirable to dynamically determine a theme for a given service definition. In
+order to do so, you may calculate the final theme name via a Groovy script of your own design. The theme assigned to
 the service definition needs to point to the location of the script:
 
 ```json
