@@ -33,9 +33,9 @@ same `cas.css` file. They follow the Twitter Bootstrap breakpoints and grid.
 
 # JavaScript
 
-If you need to add some JavaScript, feel free to append `src/main/resources/static/js/cas.js`.
+If you need to add some JavaScript, feel free to append to `src/main/resources/static/js/cas.js`.
 
-You can also create your own custom javascript file, for example, and call it from within `scripts.html` like so:
+You can also create your own custom JavaScript file and include it in `scripts.html` like so:
 
 ```html
 <script type="text/javascript" src="/js/my.js"></script>

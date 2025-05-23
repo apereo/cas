@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -50,9 +51,13 @@ public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator imple
     @Override
     public Optional<IndirectClient> locate(final DynamicDiscoveryProviderRequest request, final WebContext webContext) throws Throwable {
         val resource = properties.getAuthn().getPac4j().getCore().getDiscoverySelection().getJson().getLocation();
-        val mappings = MAPPER.readValue(resource.getInputStream(),
-            new TypeReference<Map<String, DelegatedAuthenticationDynamicDiscoveryProvider>>() {
-            });
+        val mappings = FunctionUtils.doAndReturn(() -> {
+            try (var in = resource.getInputStream()) {
+                return MAPPER.readValue(in,
+                    new TypeReference<Map<String, DelegatedAuthenticationDynamicDiscoveryProvider>>() {
+                    });
+            }
+        });
         val principal = resolvePrincipal(request);
         LOGGER.debug("Resolved principal to be [{}]", principal);
         return mappings

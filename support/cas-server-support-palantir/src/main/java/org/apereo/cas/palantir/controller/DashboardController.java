@@ -83,10 +83,12 @@ public class DashboardController {
         val resources = resolver.getResources("classpath:service-definitions/**/*.json");
 
         for (val resource : resources) {
-            val contents = new String(FileCopyUtils.copyToByteArray(resource.getInputStream()), StandardCharsets.UTF_8);
-            val definition = serializer.from(contents);
-            if (definition != null) {
-                jsonFilesMap.computeIfAbsent(definition.getFriendlyName(), __ -> new ArrayList<>()).add(contents);
+            try (val inputStream = resource.getInputStream()) {
+                val contents = new String(FileCopyUtils.copyToByteArray(inputStream), StandardCharsets.UTF_8);
+                val definition = serializer.from(contents);
+                if (definition != null) {
+                    jsonFilesMap.computeIfAbsent(definition.getFriendlyName(), __ -> new ArrayList<>()).add(contents);
+                }
             }
         }
         return jsonFilesMap;

@@ -27,7 +27,7 @@ The following considerations apply to the agent:
 
 - JRE distributions are not supported.
 - The temporary directory of the operating system should be writable.
-- Spring's `application.properties` or `application.yaml` files are not supported as as sources for Application Insights configuration.
+- Spring’s `application.properties` or `application.yaml` files are not supported as sources for Application Insights configuration.
 
 By default the configuration file `applicationinsights.json` is read from the 
 classpath from `src/main/resources`. You can configure the name of the JSON file in the classpath with the

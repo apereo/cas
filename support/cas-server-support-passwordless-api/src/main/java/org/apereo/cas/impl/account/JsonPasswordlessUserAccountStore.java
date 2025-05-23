@@ -51,7 +51,11 @@ public class JsonPasswordlessUserAccountStore extends SimplePasswordlessUserAcco
     }
 
     private static Map<String, PasswordlessUserAccount> readFromResource(final Resource resource) {
-        return FunctionUtils.doUnchecked(() -> MAPPER.readValue(resource.getInputStream(), new TypeReference<>() {
-        }));
+        return FunctionUtils.doUnchecked(() -> {
+            try (var in = resource.getInputStream()) {
+                return MAPPER.readValue(in, new TypeReference<>() {
+                });
+            }
+        });
     }
 }

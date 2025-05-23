@@ -487,8 +487,9 @@ public class ScriptingUtils {
                 LOGGER.debug("No groovy script is defined");
                 return null;
             }
-            val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-            try (val classLoader = ScriptingUtils.newGroovyClassLoader()) {
+            try (val inputStream = resource.getInputStream();
+                 val classLoader = ScriptingUtils.newGroovyClassLoader()) {
+                val script = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
                 val clazz = classLoader.parseClass(script);
                 LOGGER.trace("Preparing constructor arguments [{}] for resource [{}]", args, resource);
                 val ctor = clazz.getDeclaredConstructor(constructorArgs);
