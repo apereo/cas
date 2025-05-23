@@ -1016,12 +1016,12 @@ public interface CasWebflowConstants {
     String STATE_ID_EVALUATE_SPNEGO_CLIENT = "evaluateClientRequest";
 
     /**
-     * The state state 'sendPasswordResetInstructions'.
+     * The state 'sendPasswordResetInstructions'.
      */
     String STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS = "sendPasswordResetInstructions";
 
     /**
-     * The state state 'sendForgotUsernameInstructions'.
+     * The state 'sendForgotUsernameInstructions'.
      */
     String STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS = "sendForgotUsernameInstructions";
 

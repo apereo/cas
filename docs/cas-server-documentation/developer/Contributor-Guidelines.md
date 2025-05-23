@@ -218,7 +218,7 @@ No. There are no plans.
 CAS project development activity is largely based on **volunteer time and contributions**. Officially,
 there are no contracts, commitments, timelines, schedules, or funding to plan for changes. Planning for
 future changes and roadmap discussions in the absence of a time commitment, solid funding or sponsorship
-seems unnecessary and can only feel like ceremonial, premature busywork specially as due dates for such
+seems unnecessary and can only feel like ceremonial, premature busywork especially as due dates for such
 plans inevitably and almost always get pushed back and continue to eat dust given the absence of tooling
 and resources. CAS open-source development is never done in vacuums. Generally speaking, work items are
 done when contributors propose, discuss and **show up with pull requests** or when **funding and sponsorship**

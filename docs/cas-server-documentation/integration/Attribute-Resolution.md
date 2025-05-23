@@ -45,7 +45,7 @@ such as [releasing attributes](Attribute-Release-Caching.html).
 
 <div class="alert alert-info">:information_source: <strong>Principal Resolution</strong><p>Note that in most if not all cases,
 CAS authentication is able to retrieve and resolve attributes from the authentication source, which would
-eliminate the need for configuring a separate resolver specially if 
+eliminate the need for configuring a separate resolver especially if
 both the authentication and the attribute source are the same.
 Using separate resolvers should only be required when sources are 
 different, or when there is a need to tackle more advanced attribute
@@ -95,7 +95,7 @@ The following options may be used to fetch attributes in CAS.
 <div class="alert alert-info">:information_source: <strong>Remember This</strong><p>Note that in certain cases,
 CAS authentication is able to retrieve and resolve attributes from the authentication 
 source in the same authentication request, which would
-eliminate the need for configuring a separate attribute repository specially 
+eliminate the need for configuring a separate attribute repository especially
 if both the authentication and the attribute source are the same.
 Using separate repositories should be required when sources are different, 
 or when there is a need to tackle more advanced attribute
