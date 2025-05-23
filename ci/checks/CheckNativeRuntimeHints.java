@@ -72,7 +72,7 @@ public class CheckNativeRuntimeHints {
                     if (factoriesFile.exists()) {
                         var properties = new Properties();
 
-                        try (var reader = new FileReader(springFactoriesFile)) {
+                        try (var reader = new FileReader(factoriesFile)) {
                             properties.load(reader);
                         }
 
