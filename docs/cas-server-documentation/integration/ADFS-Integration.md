@@ -36,7 +36,7 @@ repositories {
 ```
 
 <div class="alert alert-info">:information_source: <strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle 
-installed in your Java environment that is used by CAS, specially if you need to consume encrypted payloads issued by ADFS. 
+installed in your Java environment that is used by CAS, especially if you need to consume encrypted payloads issued by ADFS.
 Be sure to pick the right version of the JCE for your Java version. Java 
 versions can be detected via the <code>java -version</code> command.</p></div>
 
