@@ -66,7 +66,7 @@ public class TokenAuthenticationSecurity {
     }
 
     /**
-     * Validate token and build user profile.
+     * Validate the token and build the user profile.
      *
      * @param token the token
      * @return the user profile
@@ -76,7 +76,7 @@ public class TokenAuthenticationSecurity {
     }
 
     /**
-     * For registered service.
+     * Create a token security instance for a registered service.
      *
      * @param registeredService the service
      * @return the token authentication security
@@ -91,7 +91,7 @@ public class TokenAuthenticationSecurity {
     }
 
     /**
-     * To generator.
+     * Create a JWT generator.
      *
      * @return the jwt generator
      */
@@ -103,7 +103,7 @@ public class TokenAuthenticationSecurity {
     }
 
     /**
-     * To authenticator.
+     * Create a JWT authenticator.
      *
      * @return the jwt authenticator
      */
@@ -138,10 +138,10 @@ public class TokenAuthenticationSecurity {
             }
             if (JWSAlgorithm.Family.RSA.contains(signingAlg)) {
                 val privateKey = getRsaPrivateKey(signingSecret);
-                
+
                 val encryptionSecret = getRegisteredServiceJwtEncryptionSecret(registeredService);
                 val publicKey = StringUtils.isNotBlank(encryptionSecret) ? getRsaPublicKey(encryptionSecret) : null;
-                
+
                 val config = new RSASignatureConfiguration();
                 config.setAlgorithm(signingAlg);
                 config.setPrivateKey(privateKey);
@@ -195,7 +195,7 @@ public class TokenAuthenticationSecurity {
             return (RSAPrivateKey) factory.getObject();
         });
     }
-    
+
     private static JWSAlgorithm determineSigningAlgorithm(final RegisteredService registeredService) {
         val serviceSigningAlg = getRegisteredServiceJwtProperty(registeredService, RegisteredServiceProperties.TOKEN_SECRET_SIGNING_ALG);
         val signingSecretAlg = StringUtils.defaultIfBlank(serviceSigningAlg, JWSAlgorithm.HS256.getName());
