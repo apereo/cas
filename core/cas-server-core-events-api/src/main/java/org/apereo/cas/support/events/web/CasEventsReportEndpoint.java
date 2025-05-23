@@ -133,10 +133,12 @@ public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
     }
 
     private ResponseEntity<CasEvent> importSingleEvent(final HttpServletRequest request) throws Throwable {
-        val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
-        val casEvent = MAPPER.readValue(requestBody, CasEvent.class);
-        eventRepository.getObject().save(casEvent);
-        return ResponseEntity.ok().build();
+        try (val in = request.getInputStream()) {
+            val requestBody = IOUtils.toString(in, StandardCharsets.UTF_8);
+            val casEvent = MAPPER.readValue(requestBody, CasEvent.class);
+            eventRepository.getObject().save(casEvent);
+            return ResponseEntity.ok().build();
+        }
     }
 
     private ResponseEntity<CasEvent> importEventsAsStream(final HttpServletRequest request) throws Throwable {

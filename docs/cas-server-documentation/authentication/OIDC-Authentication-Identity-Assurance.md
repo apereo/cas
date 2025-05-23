@@ -117,7 +117,7 @@ payload might be:
 
 If you wish to design your own source of identity assurance verifications, you
 may plug in a custom implementation of the `AssuranceVerificationSource` that
-allows you to handle this on on your own:
+allows you to handle this on your own:
 
 ```java
 @Bean
