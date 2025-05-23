@@ -43,7 +43,9 @@ public class MessageQueueMessageSerializationHandler implements Serializer<Objec
     @Nonnull
     @Override
     public BaseMessageQueueCommand deserialize(final InputStream inputStream) throws IOException {
-        return deserializeFromByteArray(inputStream.readAllBytes());
+        try (inputStream) {
+            return deserializeFromByteArray(inputStream.readAllBytes());
+        }
     }
 
     @Nonnull
