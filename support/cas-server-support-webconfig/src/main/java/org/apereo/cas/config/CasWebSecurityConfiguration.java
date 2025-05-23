@@ -8,6 +8,7 @@ import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -246,7 +247,11 @@ class CasWebSecurityConfiguration {
         @ConditionalOnMissingBean(name = "jsonUserDetailsService")
         public UserDetailsService userDetailsService(final CasConfigurationProperties casProperties) throws Exception {
             val resource = casProperties.getMonitor().getEndpoints().getJson().getLocation();
-            val listOfUsers = MAPPER.readValue(resource.getInputStream(), new TypeReference<List<CasUserDetails>>() {
+            val listOfUsers = FunctionUtils.doAndReturn(() -> {
+                try (var in = resource.getInputStream()) {
+                    return MAPPER.readValue(in, new TypeReference<List<CasUserDetails>>() {
+                    });
+                }
             });
             val userDetails = listOfUsers
                 .stream()
