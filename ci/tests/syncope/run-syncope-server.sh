@@ -1,14 +1,19 @@
 #!/bin/bash
 
+RED="\e[31m"
 GREEN="\e[32m"
 ENDCOLOR="\e[0m"
+
+function printred() {
+  printf "🔥 ${RED}$1${ENDCOLOR}\n"
+}
 
 function printgreen() {
   printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
 }
 
 
-printgreen "Running Syncope docker container..."
+printgreen "Running Apache Syncope docker container..."
 COMPOSE_FILE=./ci/tests/syncope/docker-compose.yml
 test -f $COMPOSE_FILE || COMPOSE_FILE=docker-compose.yml
 docker compose -f $COMPOSE_FILE down >/dev/null 2>/dev/null || true
@@ -387,10 +392,8 @@ curl -X 'POST' \
   "passwordPolicy": null,
   "accountPolicy": null,
   "propagationPolicy": null,
-  "pullPolicy": null,
   "pushPolicy": null,
   "provisionSorter": null,
-  "overrideCapabilities": false,
   "provisions": [
     {
       "anyType": "USER",
@@ -424,58 +427,19 @@ curl -X 'POST' \
             "pullJEXLTransformer": null,
             "transformers": []
           }
-        ],
-        "linkingItems": []
+        ]
       },
-      "auxClasses": [],
-      "virSchemas": []
+      "auxClasses": []
     }
   ],
   "confOverride": [],
   "capabilitiesOverride": [],
   "propagationActions": []
 }' | jq
-
-echo "-----------------"
-
-echo "Creating virtual schema"
-curl -X 'POST' \
-  'http://localhost:18080/syncope/rest/schemas/VIRTUAL' \
-  -H 'accept: */*' \
-  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
-  -H 'Content-Type: application/json' \
-  -d '  {
-    "_class": "org.apache.syncope.common.lib.to.VirSchemaTO",
-    "key": "toBeVirtualized",
-    "labels": {},
-    "readonly": false,
-    "resource": "import",
-    "anyType": "USER",
-    "extAttrName": "virtual"
-}' | jq
-
-echo "Assigning virtual schema to BaseUser"
-curl -X 'PUT' \
-  'http://localhost:18080/syncope/rest/anyTypeClasses/BaseUser' \
-  -H 'accept: */*' \
-  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "key": "BaseUser",
-  "plainSchemas": [
-    "email"
-  ],
-  "derSchemas": [
-    "description"
-  ],
-  "virSchemas": [
-    "toBeVirtualized"
-  ],
-  "inUseByTypes": [
-    "USER"
-  ]
-}' | jq
-
+if [ $? -ne 0 ]; then
+  printred "Failed to create resource"
+  exit 1
+fi
 echo "-----------------"
 
 echo "Creating derived attribute"
@@ -492,7 +456,10 @@ curl -X 'POST' \
     "expression": "'\''email: '\'' + email"
   }
 ' | jq
-
+if [ $? -ne 0 ]; then
+  printred "Failed to create derived attribute"
+  exit 1
+fi
 echo -e "\n-----------------\n"
 
 echo "Creating phoneNumber plain schema..."
@@ -520,7 +487,10 @@ curl -X 'POST' \
     "key": "givenName",
     "anyTypeClass": "BaseUser"
 }'
-
+if [ $? -ne 0 ]; then
+  printred "Failed to create plain schema"
+  exit 1
+fi
 echo -e "\n-----------------\n"
 
 echo "Creating sample user: syncopecas..."
@@ -560,14 +530,12 @@ curl -X 'POST' \
           {
             "schema": "description"
           }
-        ],
-        "virAttrs": [
-          {
-            "schema": "toBeVirtualized"
-          }
         ]
   }'
-
+if [ $? -ne 0 ]; then
+  printred "Failed to create sample user"
+  exit 1
+fi
 echo -e "\n-----------------\n"
 
 echo "Creating sample user: casuser..."
@@ -595,12 +563,10 @@ curl -X 'POST' \
     {
       "schema": "description"
     }
-  ],
-  "virAttrs": [
-    {
-      "schema": "toBeVirtualized"
-    }
   ]
 }'
-
+if [ $? -ne 0 ]; then
+  printred "Failed to create sample user"
+  exit 1
+fi
 printgreen "\nReady!\n"
