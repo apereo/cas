@@ -237,9 +237,11 @@ public class CoreAuthenticationUtils {
             if (scriptFactoryInstance.isPresent() && scriptFactoryInstance.get().isExternalScript(selectionCriteria) && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 val loader = new DefaultResourceLoader();
                 val resource = loader.getResource(selectionCriteria);
-                val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-                val scriptFactory = scriptFactoryInstance.get();
-                return scriptFactory.newObjectInstance(script, Predicate.class);
+                try (val is = resource.getInputStream()) {
+                    val script = IOUtils.toString(is, StandardCharsets.UTF_8);
+                    val scriptFactory = scriptFactoryInstance.get();
+                    return scriptFactory.newObjectInstance(script, Predicate.class);
+                }
             }
             val predicateClazz = ClassUtils.getClass(selectionCriteria);
             return (Predicate<Credential>) predicateClazz.getDeclaredConstructor().newInstance();

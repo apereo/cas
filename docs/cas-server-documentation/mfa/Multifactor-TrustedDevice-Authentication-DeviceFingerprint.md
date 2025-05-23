@@ -23,7 +23,7 @@ Device fingerprint can be calculated using the following ways:
 - [GeoLocation address](../authentication/GeoTracking-Authentication-Requests.html). You do need to ensure CAS is 
 allowed to [ask and process geodata](../authentication/Configuring-Authentication-Events.html) provided by the browser.
 - User-agent header
-- Browser fingerprint calculated via client-side Javascript and collected during authentication attempts.
+- Browser fingerprint calculated via client-side JavaScript and collected during authentication attempts.
 
 {% tabs devicefingerprint %}
 

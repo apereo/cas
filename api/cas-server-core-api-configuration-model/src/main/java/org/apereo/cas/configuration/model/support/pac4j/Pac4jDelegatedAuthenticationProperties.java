@@ -99,7 +99,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     private Pac4jDelegatedAuthenticationDropboxProperties dropbox = new Pac4jDelegatedAuthenticationDropboxProperties();
 
     /**
-     * Settings that deal with having Github as an external delegated-to authentication provider.
+     * Settings that deal with having GitHub as an external delegated-to authentication provider.
      */
     @NestedConfigurationProperty
     private Pac4jDelegatedAuthenticationGitHubProperties github = new Pac4jDelegatedAuthenticationGitHubProperties();

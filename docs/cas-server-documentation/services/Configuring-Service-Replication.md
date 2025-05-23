@@ -16,7 +16,7 @@ the following mechanisms may be used to copy files from one host to another.
 
 ## Native
 
-A background task can be scheduled with the likes of `rsync` to copy files from from host to another. 
+A background task can be scheduled with the likes of `rsync` to copy files from host to another. 
 The job needs to of course run periodically to ensure configuration is kept in sync. 
 This is the simplest option as CAS is completely ignorant of extra process in the background.
 

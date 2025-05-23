@@ -75,7 +75,7 @@ This request is submitted by the client browser and is sent to the client's redi
 ```
 
 <div class="alert alert-info">:information_source: <strong>Browser Support</strong><p>
-Needless to say, this response mode requires the client browser to support and enable Javascript
+Needless to say, this response mode requires the client browser to support and enable JavaScript
 so the HTML form can be automatically and invisibly submitted.
 </p></div>
 

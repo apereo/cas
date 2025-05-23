@@ -261,16 +261,16 @@ function generateToolbarIcons() {
 
   editLink += editablePage;
 
-  $('#toolbarIcons').append(`<a target='_blank' href='${editLink}'><i class='fa fa-pencil-alt' title='Edit with Github'></i></a>`);
+  $('#toolbarIcons').append(`<a target='_blank' href='${editLink}'><i class='fa fa-pencil-alt' title='Edit with GitHub'></i></a>`);
 
   historyLink += editablePage;
 
 
-  $('#toolbarIcons').append(`<a target='_blank' href='${historyLink}'><i class='fa fa-history' title='View commit history on Github'></i></a>`);
+  $('#toolbarIcons').append(`<a target='_blank' href='${historyLink}'><i class='fa fa-history' title='View commit history on GitHub'></i></a>`);
 
   deleteLink += editablePage;
 
-  $('#toolbarIcons').append(`<a target='_blank' href='${deleteLink}'><i class='fa fa-times' title='Delete with Github'></i></a>`);
+  $('#toolbarIcons').append(`<a target='_blank' href='${deleteLink}'><i class='fa fa-times' title='Delete with GitHub'></i></a>`);
 }
 
 function generatePageTOC() {

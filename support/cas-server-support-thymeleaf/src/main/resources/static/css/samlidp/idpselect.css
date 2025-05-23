@@ -88,7 +88,7 @@ div.IdPSelectPreferredIdPButton div.IdPSelectTextDiv
     font-weight: normal;
     max-width: 95%;
     height: 30px;       /* Specify max height to allow two lines.  The 
-                         * Javascript controls the max length of the
+                         * JavaScript controls the max length of the
                          * strings 
                          */
 }
