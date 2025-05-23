@@ -87,11 +87,21 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
     protected SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) throws Exception {
         return FunctionUtils.doUnchecked(() -> {
             val doc = new SamlIdPMetadataDocument();
-            doc.setMetadata(IOUtils.toString(resolveMetadata(registeredService).getInputStream(), StandardCharsets.UTF_8));
-            doc.setEncryptionCertificate(IOUtils.toString(resolveEncryptionCertificate(registeredService).getInputStream(), StandardCharsets.UTF_8));
-            doc.setEncryptionKey(IOUtils.toString(resolveEncryptionKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
-            doc.setSigningCertificate(IOUtils.toString(resolveSigningCertificate(registeredService).getInputStream(), StandardCharsets.UTF_8));
-            doc.setSigningKey(IOUtils.toString(resolveSigningKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
+            try (val in = resolveMetadata(registeredService).getInputStream()) {
+                doc.setMetadata(IOUtils.toString(in, StandardCharsets.UTF_8));
+            }
+            try (val in = resolveEncryptionCertificate(registeredService).getInputStream()) {
+                doc.setEncryptionCertificate(IOUtils.toString(in, StandardCharsets.UTF_8));
+            }
+            try (val in = resolveEncryptionKey(registeredService).getInputStream()) {
+                doc.setEncryptionKey(IOUtils.toString(in, StandardCharsets.UTF_8));
+            }
+            try (val in = resolveSigningCertificate(registeredService).getInputStream()) {
+                doc.setSigningCertificate(IOUtils.toString(in, StandardCharsets.UTF_8));
+            }
+            try (val in = resolveSigningKey(registeredService).getInputStream()) {
+                doc.setSigningKey(IOUtils.toString(in, StandardCharsets.UTF_8));
+            }
             doc.setAppliesTo(getAppliesToFor(registeredService));
             return doc;
         });
