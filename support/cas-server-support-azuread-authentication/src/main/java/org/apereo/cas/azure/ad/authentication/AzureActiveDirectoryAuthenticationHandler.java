@@ -58,18 +58,23 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
     private String getUserInfoFromGraph(final IAuthenticationResult authenticationResult, final String username) throws Exception {
         val url = new URI(StringUtils.appendIfMissing(properties.getResource(), "/") + "v1.0/users/" + username).toURL();
         val conn = (HttpURLConnection) url.openConnection();
+        try {
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty(HttpHeaders.AUTHORIZATION, "Bearer " + authenticationResult.accessToken());
+            conn.setRequestProperty(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
 
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty(HttpHeaders.AUTHORIZATION, "Bearer " + authenticationResult.accessToken());
-        conn.setRequestProperty(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-
-        LOGGER.debug("Fetching user info from [{}] using access token [{}]", url.toExternalForm(), authenticationResult.accessToken());
-        val httpResponseCode = conn.getResponseCode();
-        if (HttpStatus.valueOf(httpResponseCode).is2xxSuccessful()) {
-            return IOUtils.toString(conn.getInputStream(), StandardCharsets.UTF_8);
+            LOGGER.debug("Fetching user info from [{}] using access token [{}]", url.toExternalForm(), authenticationResult.accessToken());
+            val httpResponseCode = conn.getResponseCode();
+            if (HttpStatus.valueOf(httpResponseCode).is2xxSuccessful()) {
+                try (val in = conn.getInputStream()) {
+                    return IOUtils.toString(in, StandardCharsets.UTF_8);
+                }
+            }
+            val msg = String.format("Failed: status %s with message: %s", httpResponseCode, conn.getResponseMessage());
+            throw new FailedLoginException(msg);
+        } finally {
+            conn.disconnect();
         }
-        val msg = String.format("Failed: status %s with message: %s", httpResponseCode, conn.getResponseMessage());
-        throw new FailedLoginException(msg);
     }
 
     protected IAuthenticationResult getAccessTokenFromUserCredentials(final String username, final String password) throws Exception {
