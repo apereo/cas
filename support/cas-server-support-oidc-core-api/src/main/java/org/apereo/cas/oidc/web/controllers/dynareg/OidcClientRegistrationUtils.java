@@ -84,7 +84,10 @@ public class OidcClientRegistrationUtils {
                 clientResponse.setJwksUri(keystore);
             } else if (ResourceUtils.doesResourceExist(keystore)) {
                 val res = ResourceUtils.getResourceFrom(keystore);
-                val json = IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8);
+                String json;
+                try (var in = res.getInputStream()) {
+                    json = IOUtils.toString(in, StandardCharsets.UTF_8);
+                }
                 clientResponse.setJwks(new JsonWebKeySet(json).toJson());
             } else if (StringUtils.isNotBlank(keystore)) {
                 val jwks = new JsonWebKeySet(keystore);
