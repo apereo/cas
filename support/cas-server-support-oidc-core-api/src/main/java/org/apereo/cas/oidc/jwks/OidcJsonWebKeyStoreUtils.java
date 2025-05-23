@@ -150,9 +150,11 @@ public class OidcJsonWebKeyStoreUtils {
                                                               final Optional<String> keyId,
                                                               final Optional<OidcJsonWebKeyUsage> usage) throws Exception {
         LOGGER.debug("Loading JSON web key from [{}]", resource);
-        val json = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-        LOGGER.debug("Retrieved JSON web key from [{}] as [{}]", resource, json);
-        return buildJsonWebKeySet(json, keyId, usage);
+        try (val is = resource.getInputStream()) {
+            val json = IOUtils.toString(is, StandardCharsets.UTF_8);
+            LOGGER.debug("Retrieved JSON web key from [{}] as [{}]", resource, json);
+            return buildJsonWebKeySet(json, keyId, usage);
+        }
     }
 
     private Optional<JsonWebKeySet> buildJsonWebKeySet(

@@ -29,7 +29,7 @@ overall size of the cookie accepted by the browser or the server container of ch
  
 If you wish to design your own interrupt tracking mechanism, you
 may plug in a custom implementation of the `InterruptTrackingEngine` that
-allows you to handle this on on your own:
+allows you to handle this on your own:
                 
 ```java
 @Bean
