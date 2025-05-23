@@ -76,11 +76,10 @@ public class CompressionUtils {
      */
     public static byte[] deflateToByteArray(final String data) {
         val bais = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
-        val baos = new ByteArrayOutputStream();
         var bytesRead = -1;
         val buf = new byte[BUFFER_LENGTH];
 
-        try (val iis = new DeflaterInputStream(bais)) {
+        try (val iis = new DeflaterInputStream(bais); val baos = new ByteArrayOutputStream()) {
             while ((bytesRead = iis.read(buf)) != -1) {
                 baos.write(buf, 0, bytesRead);
             }
@@ -148,11 +147,10 @@ public class CompressionUtils {
      */
     public static byte[] inflateToByteArray(final byte[] bytes) {
         val bais = new ByteArrayInputStream(bytes);
-        val baos = new ByteArrayOutputStream();
         var bytesRead = -1;
         val buf = new byte[BUFFER_LENGTH];
 
-        try (val iis = new InflaterInputStream(bais)) {
+        try (val iis = new InflaterInputStream(bais); val baos = new ByteArrayOutputStream()) {
             while ((bytesRead = iis.read(buf)) != -1) {
                 baos.write(buf, 0, bytesRead);
             }

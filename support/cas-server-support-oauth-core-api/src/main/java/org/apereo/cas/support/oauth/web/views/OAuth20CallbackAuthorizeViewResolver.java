@@ -25,9 +25,9 @@ public interface OAuth20CallbackAuthorizeViewResolver {
     ModelAndView resolve(WebContext ctx, ProfileManager manager, String url);
 
     /**
-     * Default oauth callback authorize view resolver.
+     * Default OAuth 2.0 callback authorize view resolver.
      *
-     * @return the oauth callback authorize view resolver
+     * @return the OAuth callback authorize view resolver
      */
     static OAuth20CallbackAuthorizeViewResolver asDefault() {
         return (ctx, manager, url) -> new ModelAndView(new RedirectView(url));

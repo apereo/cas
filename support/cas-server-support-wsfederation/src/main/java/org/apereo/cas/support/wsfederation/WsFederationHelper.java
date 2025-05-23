@@ -92,9 +92,10 @@ public class WsFederationHelper {
 
     private static Credential getEncryptionCredential(final WsFederationConfiguration config) throws Exception {
         LOGGER.debug("Locating encryption credential private key [{}]", config.getEncryptionPrivateKey());
-        val br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
         LOGGER.debug("Parsing credential private key");
-        try (val pemParser = new PEMParser(br)) {
+        try (val keyStream = config.getEncryptionPrivateKey().getInputStream();
+             val br = new BufferedReader(new InputStreamReader(keyStream, StandardCharsets.UTF_8));
+             val pemParser = new PEMParser(br)) {
             val privateKeyPemObject = pemParser.readObject();
             val converter = new JcaPEMKeyConverter().setProvider(new BouncyCastleProvider());
 
