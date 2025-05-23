@@ -9,7 +9,7 @@ category: Integration
 # Overview
 
 A CAS client is also a software package that can be integrated with various software platforms and applications in order to 
-communicate with the CAS server using or or more supported protocols. CAS clients 
+communicate with the CAS server using one or more supported protocols. CAS clients
 supporting a number of software platforms and products have been developed.
 
 
