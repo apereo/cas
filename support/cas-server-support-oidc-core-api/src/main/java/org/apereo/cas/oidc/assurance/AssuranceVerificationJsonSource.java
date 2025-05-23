@@ -70,11 +70,13 @@ public class AssuranceVerificationJsonSource implements AssuranceVerificationSou
 
     private void loadFromInputStream(final Resource resource) {
         FunctionUtils.doAndHandle(__ -> {
-            val json = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            val results = MAPPER.readValue(JsonValue.readHjson(json).toString(), new TypeReference<List<Verification>>() {
-            });
-            verifications.clear();
-            verifications.addAll(results);
+            try (val is = resource.getInputStream()) {
+                val json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                val results = MAPPER.readValue(JsonValue.readHjson(json).toString(), new TypeReference<List<Verification>>() {
+                });
+                verifications.clear();
+                verifications.addAll(results);
+            }
         });
     }
 }

@@ -100,7 +100,7 @@ session identifier maps to a servlet session that can subsequently be destroyed 
 
 ### Redirecting Logout to Service
 
-Logout requests may be optionally routed to an external URL bypassing the CAS logout screen. In order to to do you will need to specify the target destination typically in form of a `service` parameter to the CAS logout endpoint per the [CAS protocol specification](../protocol/CAS-Protocol-Specification.html).
+Logout requests may be optionally routed to an external URL bypassing the CAS logout screen. To do so, you will need to specify the target destination typically in form of a `service` parameter to the CAS logout endpoint per the [CAS protocol specification](../protocol/CAS-Protocol-Specification.html).
 
 ### Single Logout Per Service
 

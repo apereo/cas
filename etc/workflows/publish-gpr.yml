@@ -1,10 +1,10 @@
-name: Publish Fork Release to Github Package Repository
+name: Publish Fork Release to GitHub Package Repository
 # As of July 2021 this workflow fails with 409 Conflict error on seemingly random packages or associated files (e.g. *.md5).
 # With as many packages as CAS publishes your odds of successfully publishing a release
-# to Github Packages are low, possibly zero.
+# to GitHub Packages are low, possibly zero.
 # The CAS shell jar is skipped because it fails with 400 error, presumably because it is too big for GPR. (~120MB)
 # GitHub automatically creates a GITHUB_TOKEN secret to use in your workflow and by default it has read/write to
-# packages when triggered to run on a a fork (but not when triggered by a fork to run on main repo).
+# packages when triggered to run on a fork (but not when triggered by a fork to run on main repo).
 
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
