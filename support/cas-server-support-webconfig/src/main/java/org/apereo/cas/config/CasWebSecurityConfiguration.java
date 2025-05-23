@@ -8,7 +8,6 @@ import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -106,7 +105,9 @@ class CasWebSecurityConfiguration {
         public WebMvcConfigurer casWebAppSecurityWebMvcConfigurer(final CasConfigurationProperties casProperties) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addViewControllers(@Nonnull final ViewControllerRegistry registry) {
+                public void addViewControllers(
+                    @Nonnull
+                    final ViewControllerRegistry registry) {
                     if (casProperties.getMonitor().getEndpoints().isFormLoginEnabled()) {
                         registry.addViewController(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN)
                             .setViewName(CasWebflowConstants.VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW);
@@ -126,8 +127,10 @@ class CasWebSecurityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SecurityContextRepository securityContextRepository(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("loginFlowUrlHandler") final FlowUrlHandler loginFlowUrlHandler,
-            @Qualifier("loginFlowExecutor") final FlowExecutor loginFlowExecutor) {
+            @Qualifier("loginFlowUrlHandler")
+            final FlowUrlHandler loginFlowUrlHandler,
+            @Qualifier("loginFlowExecutor")
+            final FlowExecutor loginFlowExecutor) {
             return new DelegatingSecurityContextRepository(
                 new RequestAttributeSecurityContextRepository(),
                 new HttpSessionSecurityContextRepository(),
@@ -159,7 +162,8 @@ class CasWebSecurityConfiguration {
 
         @Bean
         public FilterRegistrationBean<SecurityContextHolderFilter> securityContextHolderFilter(
-            @Qualifier("securityContextRepository") final SecurityContextRepository securityContextRepository) {
+            @Qualifier("securityContextRepository")
+            final SecurityContextRepository securityContextRepository) {
             val bean = new FilterRegistrationBean<SecurityContextHolderFilter>();
             bean.setFilter(new SecurityContextHolderFilter(securityContextRepository));
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
@@ -172,7 +176,8 @@ class CasWebSecurityConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casWebSecurityCustomizer")
         public WebSecurityCustomizer casWebSecurityCustomizer(
-            @Qualifier("securityContextRepository") final SecurityContextRepository securityContextRepository,
+            @Qualifier("securityContextRepository")
+            final SecurityContextRepository securityContextRepository,
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
             final List<CasWebSecurityConfigurer> configurersList,
             final WebEndpointProperties webEndpointProperties,
@@ -240,39 +245,37 @@ class CasWebSecurityConfiguration {
     static class CasWebAppSecurityJsonUsersConfiguration {
         private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(false).build().toObjectMapper();
-        
+
         private static final Pattern PATTERN_PASSWORD_ALG = Pattern.compile("^\\{.+\\}.*");
 
         @Bean
         @ConditionalOnMissingBean(name = "jsonUserDetailsService")
         public UserDetailsService userDetailsService(final CasConfigurationProperties casProperties) throws Exception {
             val resource = casProperties.getMonitor().getEndpoints().getJson().getLocation();
-            val listOfUsers = FunctionUtils.doAndReturn(() -> {
-                try (var in = resource.getInputStream()) {
-                    return MAPPER.readValue(in, new TypeReference<List<CasUserDetails>>() {
-                    });
-                }
-            });
-            val userDetails = listOfUsers
-                .stream()
-                .map(user -> {
-                    val authorities = user.getAuthorities()
-                        .stream()
-                        .map(authority -> StringUtils.prependIfMissing(authority, "ROLE_"))
-                        .map(SimpleGrantedAuthority::new)
-                        .toList();
-                    var password = user.getPassword();
-                    if (!PATTERN_PASSWORD_ALG.matcher(password).matches()) {
-                        password = "{noop}" + password;
-                    }
-                    return User.builder()
-                        .username(user.getUsername())
-                        .password(password)
-                        .authorities(authorities)
-                        .build();
-                })
-                .toList();
-            return new InMemoryUserDetailsManager(userDetails);
+            try (val in = resource.getInputStream()) {
+                val listOfUsers = MAPPER.readValue(in, new TypeReference<List<CasUserDetails>>() {
+                });
+                val userDetails = listOfUsers
+                    .stream()
+                    .map(user -> {
+                        val authorities = user.getAuthorities()
+                            .stream()
+                            .map(authority -> StringUtils.prependIfMissing(authority, "ROLE_"))
+                            .map(SimpleGrantedAuthority::new)
+                            .toList();
+                        var password = user.getPassword();
+                        if (!PATTERN_PASSWORD_ALG.matcher(password).matches()) {
+                            password = "{noop}" + password;
+                        }
+                        return User.builder()
+                            .username(user.getUsername())
+                            .password(password)
+                            .authorities(authorities)
+                            .build();
+                    })
+                    .toList();
+                return new InMemoryUserDetailsManager(userDetails);
+            }
         }
 
         @Bean

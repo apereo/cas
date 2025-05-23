@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -51,25 +50,23 @@ public class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator imple
     @Override
     public Optional<IndirectClient> locate(final DynamicDiscoveryProviderRequest request, final WebContext webContext) throws Throwable {
         val resource = properties.getAuthn().getPac4j().getCore().getDiscoverySelection().getJson().getLocation();
-        val mappings = FunctionUtils.doAndReturn(() -> {
-            try (var in = resource.getInputStream()) {
-                return MAPPER.readValue(in,
-                    new TypeReference<Map<String, DelegatedAuthenticationDynamicDiscoveryProvider>>() {
-                    });
-            }
-        });
-        val principal = resolvePrincipal(request);
-        LOGGER.debug("Resolved principal to be [{}]", principal);
-        return mappings
-            .entrySet()
-            .stream()
-            .sorted(Comparator.comparingInt(o -> o.getValue().getOrder()))
-            .map(entry -> getMatchingProvider(principal, entry.getKey(), entry.getValue()))
-            .filter(Objects::nonNull)
-            .map(provider -> identityProviders.findClient(provider.getClientName(), webContext))
-            .flatMap(Optional::stream)
-            .map(IndirectClient.class::cast)
-            .findFirst();
+        try (val in = resource.getInputStream()) {
+            val mappings = MAPPER.readValue(in,
+                new TypeReference<Map<String, DelegatedAuthenticationDynamicDiscoveryProvider>>() {
+                });
+            val principal = resolvePrincipal(request);
+            LOGGER.debug("Resolved principal to be [{}]", principal);
+            return mappings
+                .entrySet()
+                .stream()
+                .sorted(Comparator.comparingInt(o -> o.getValue().getOrder()))
+                .map(entry -> getMatchingProvider(principal, entry.getKey(), entry.getValue()))
+                .filter(Objects::nonNull)
+                .map(provider -> identityProviders.findClient(provider.getClientName(), webContext))
+                .flatMap(Optional::stream)
+                .map(IndirectClient.class::cast)
+                .findFirst();
+        }
     }
 
     protected Principal resolvePrincipal(final DynamicDiscoveryProviderRequest request) throws Throwable {
