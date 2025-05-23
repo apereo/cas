@@ -39,12 +39,14 @@ public class OktaConfigurationFactory {
 
         FunctionUtils.doIfNotNull(properties.getApiToken(), token -> clientBuilder.setClientCredentials(new TokenClientCredentials(token)));
         FunctionUtils.doIfNotNull(properties.getPrivateKey().getLocation(), path -> {
-            val resource = IOUtils.toString(path.getInputStream(), StandardCharsets.UTF_8);
-            clientBuilder
-                .setAuthorizationMode(AuthorizationMode.PRIVATE_KEY)
-                .setPrivateKey(resource)
-                .setClientId(properties.getClientId())
-                .setScopes(CollectionUtils.wrapHashSet(properties.getScopes()));
+            try (val in = path.getInputStream()) {
+                val resource = IOUtils.toString(in, StandardCharsets.UTF_8);
+                clientBuilder
+                    .setAuthorizationMode(AuthorizationMode.PRIVATE_KEY)
+                    .setPrivateKey(resource)
+                    .setClientId(properties.getClientId())
+                    .setScopes(CollectionUtils.wrapHashSet(properties.getScopes()));
+            }
         });
 
         if (StringUtils.isNotBlank(properties.getProxyHost()) && properties.getProxyPort() > 0) {
