@@ -8,7 +8,7 @@ category: Multifactor Authentication
 
 # Duo Security Authentication
 
-[Duo Security](https://www.duo.com) is a two-step verification service the provides 
+[Duo Security](https://www.duo.com) is a two-step verification service that provides
 additional security for access to institutional and personal data.  
 
 Duo offers several options for authenticating users:
@@ -104,7 +104,7 @@ curl --location --header "Content-Type: application/cas" https://apps.example.or
 In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, a 
 special credential extractor is injected into the REST authentication engine in order 
 to recognize credentials and authenticate them as part of the REST request.
-The expected parameter name in the request body is `passcode` that can be found from
+The expected parameter name in the request body is `passcode`, which can be found from
 Duo Security's mobile application or received via SMS.
  
 ## Passwordless Authentication
