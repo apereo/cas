@@ -95,7 +95,7 @@ public class SomethingWebflowConfigurer extends AbstractCasWebflowConfigurer {
 }
 ```
 
-The parent class, `AbstractCasWebflowConfigurer`, providers a lot of helper methods and utilities in a *DSL-like*
+The parent class, `AbstractCasWebflowConfigurer`, provides a lot of helper methods and utilities in a *DSL-like*
 fashion to hide the
 complexity of Spring Webflow APIs to make customization easier.
 
@@ -145,7 +145,7 @@ piece of Java code that is put into the CAS Overlay may require additional CAS m
 to study the CAS codebase and find the correct modules that contain the components you need, such 
 as <code>CasWebflowConfigurer</code> and others.</p></div>
 
-See [this guide](ttps://docs.spring.io/spring-boot/docs/current/reference/html/) for more info.
+See [this guide](https://docs.spring.io/spring-boot/docs/current/reference/html/) for more info.
 
 ### Groovy
 
