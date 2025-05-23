@@ -67,7 +67,6 @@ public class RestfulPersonAttributeDao extends BasePersonAttributeDao {
                 provider.setCredentials(new AuthScope(new HttpHost(uriBuilder.getHost())), credentials);
                 builder.setDefaultCredentialsProvider(provider);
             }
-            val client = builder.build();
             uriBuilder.addParameter(principalId, Objects.requireNonNull(uid, () -> principalId + " cannot be null"));
             this.parameters.forEach(uriBuilder::addParameter);
 
@@ -75,7 +74,7 @@ public class RestfulPersonAttributeDao extends BasePersonAttributeDao {
             val request = method.equalsIgnoreCase(HttpMethod.GET.name()) ? new HttpGet(uri) : new HttpPost(uri);
             this.headers.forEach(request::addHeader);
 
-            try (val response = client.execute(request)) {
+            try (val client = builder.build(); val response = client.execute(request)) {
                 val attributes = MAPPER.readValue(response.getEntity().getContent(), Map.class);
                 return new SimplePersonAttributes(uid, PersonAttributeDao.stuffAttributesIntoList(attributes));
             }
