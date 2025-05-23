@@ -13,7 +13,7 @@ authentication flow into the CAS webflow engine under a unique identifier. Later
 your custom multifactor authentication provider [can be triggered](Configuring-Multifactor-Authentication-Triggers.html).
 
 <div class="alert alert-warning">:warning: <strong>Remember</strong><p>Designing a custom multifactor authentication provider
-can be a challenging task, specially if you're not familiar with the CAS programming model, APIs and the underlying frameworks
+can be a challenging task, especially if you're not familiar with the CAS programming model, APIs and the underlying frameworks
 and technologies that make this possible, such as Spring Webflow.</p></div>
 
 ## Provider ID
