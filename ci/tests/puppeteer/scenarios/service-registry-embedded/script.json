@@ -1,18 +1,18 @@
 {
   "dependencies": "reports",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-
     "--cas.audit.engine.audit-format=JSON",
-    
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=registeredServices",
     "--management.endpoints.access.default=UNRESTRICTED",
-
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=classpath:/services/apereocas/development"
   ],
-  "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle"
+  "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle",
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
