@@ -15,7 +15,7 @@ async function loginWithToken(page, service, token) {
 }
 
 (async () => {
-    const service = "https://apereo.github.io";
+    const service = "https://localhost:9859/anything/cas";
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogout(page);

@@ -1,7 +1,13 @@
 {
   "dependencies": "scripting",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.access-strategy.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/Strategy.groovy",
-    "--cas.service-registry.core.init-from-json=true"
-  ]
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

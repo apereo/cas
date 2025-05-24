@@ -30,4 +30,7 @@ docker run --rm -d \
   apereo/cas-config-server:6.4.4.2
 echo "Waiting for Spring Cloud Config Server..."
 sleep 5
+
+"${PWD}"/ci/tests/httpbin/run-httpbin-server.sh
+
 echo -e "\n\nReady!"

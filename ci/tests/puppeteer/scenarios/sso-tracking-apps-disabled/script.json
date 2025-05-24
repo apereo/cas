@@ -1,6 +1,8 @@
 {
   "dependencies": "reports",
-
+    "conditions": {
+        "docker": "true"
+    },
   "properties": [
 
     "--cas.server.name=https://localhost:8443",
@@ -11,5 +13,6 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.access.default=UNRESTRICTED"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

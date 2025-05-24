@@ -20,5 +20,6 @@
     "--spring.mail.port=25000",
     
     "--cas.service-registry.core.init-from-json=true"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh",
 }

@@ -5,7 +5,7 @@ const cas = require("../../cas.js");
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
-    const service = "https://apereo.github.io";
+    const service = "https://localhost:9859/anything/cas";
 
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);

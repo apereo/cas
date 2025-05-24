@@ -1,23 +1,21 @@
 {
   "dependencies": "session-hazelcast,reports",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
-
     "--logging.level.com.hazelcast=info",
-    
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.access.default=UNRESTRICTED",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-
     "--spring.session.store-type=HAZELCAST",
-
     "--cas.webflow.session.server.hazelcast.cluster.network.port-auto-increment=false",
     "--cas.webflow.session.server.hazelcast.cluster.network.port=5703",
-
     "--cas.webflow.session.storage=true"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

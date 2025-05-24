@@ -21,5 +21,5 @@
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.access.default=UNRESTRICTED"
   ],
-  "initScript": "${PWD}/ci/tests/mysql/run-mysql-server.sh"
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/mysql/run-mysql-server.sh"
 }
