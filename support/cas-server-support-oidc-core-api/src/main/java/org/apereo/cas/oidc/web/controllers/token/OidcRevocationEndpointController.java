@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * This is {@link OidcRevocationEndpointController}.
@@ -40,7 +41,7 @@ public class OidcRevocationEndpointController extends OAuth20RevocationEndpointC
     public ModelAndView handleRequest(final HttpServletRequest request,
                                       final HttpServletResponse response) throws Throwable {
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.REVOCATION_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OAuth20Constants.REVOCATION_URL, OidcConstants.REVOCATION_URL))) {
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
         }
         return super.handleRequest(request, response);

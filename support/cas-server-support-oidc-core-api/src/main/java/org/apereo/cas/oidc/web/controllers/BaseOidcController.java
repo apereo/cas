@@ -8,6 +8,7 @@ import org.pac4j.jee.context.JEEContext;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * This is {@link BaseOidcController}.
@@ -20,16 +21,8 @@ public abstract class BaseOidcController extends BaseOAuth20Controller<OidcConfi
         super(configurationContext);
     }
 
-    /**
-     * Is issuer valid for endpoint?
-     *
-     * @param request  the request
-     * @param response the response
-     * @param endpoint the endpoint
-     * @return true /false
-     */
-    protected boolean isIssuerValidForEndpoint(final HttpServletRequest request, final HttpServletResponse response, final String endpoint) {
+    protected boolean isIssuerValidForEndpoint(final HttpServletRequest request, final HttpServletResponse response, final List<String> endpoints) {
         val webContext = new JEEContext(request, response);
-        return getConfigurationContext().getIssuerService().validateIssuer(webContext, endpoint);
+        return getConfigurationContext().getIssuerService().validateIssuer(webContext, endpoints);
     }
 }

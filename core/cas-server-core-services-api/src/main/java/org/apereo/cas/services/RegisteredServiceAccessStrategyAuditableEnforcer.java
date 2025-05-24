@@ -210,8 +210,10 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                     .authentication(context.getAuthentication().orElse(null))
                     .build();
                 result.setException(UnauthorizedServiceException.denied("Unauthorized"));
-                LOGGER.warn("Service is not registered in the service registry."
-                    + "Service is [{}] and registered service is [{}]", result.getService(), result.getRegisteredService());
+                LOGGER.warn("Service is not registered in the service registry. "
+                        + "Service is [{}] and registered service is [{}]",
+                    result.getService().orElse(null),
+                    result.getRegisteredService().orElse(null));
                 return result;
             });
     }

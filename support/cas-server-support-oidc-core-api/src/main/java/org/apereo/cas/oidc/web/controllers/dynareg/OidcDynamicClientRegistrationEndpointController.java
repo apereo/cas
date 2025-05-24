@@ -73,7 +73,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
         final HttpServletResponse response) {
 
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.REGISTRATION_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.REGISTRATION_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return new ResponseEntity(body, HttpStatus.BAD_REQUEST);
         }
