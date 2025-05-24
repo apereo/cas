@@ -11,7 +11,7 @@
     <h1 th:text="#{screen.oauth.confirm.header}"/>
 
     <div class="d-flex flex-column align-items-center mb-2">
-        <img th:src="${service.logo}" th:if="${service.logo}"/>
+        <img th:src="${service.logo}" th:if="${service.logo}" alt="Service logo"/>
         <p th:text="${service.description}"/>
     </div>
 
