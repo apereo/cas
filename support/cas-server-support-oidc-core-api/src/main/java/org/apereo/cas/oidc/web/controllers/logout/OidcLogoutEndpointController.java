@@ -79,6 +79,8 @@ public class OidcLogoutEndpointController extends BaseOidcController {
                 description = "Post logout redirect URL", in = ParameterIn.QUERY, required = false),
             @Parameter(name = OAuth20Constants.STATE,
                 description = "State", in = ParameterIn.QUERY, required = false),
+            @Parameter(name = OAuth20Constants.CLIENT_ID,
+                description = "Client ID", in = ParameterIn.QUERY, required = false),
             @Parameter(name = OidcConstants.ID_TOKEN_HINT,
                 description = "ID Token hint", in = ParameterIn.QUERY, required = false)
         })

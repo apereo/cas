@@ -15,10 +15,14 @@ import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -41,6 +45,16 @@ class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests
     @Autowired
     @Qualifier("oidcServicesManagerRegisteredServiceLocator")
     private ServicesManagerRegisteredServiceLocator oidcServicesManagerRegisteredServiceLocator;
+
+    @BeforeEach
+    void before() {
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("223.456.789.000");
+        request.setLocalAddr("223.456.789.100");
+        request.addHeader(HttpHeaders.USER_AGENT, "Firefox");
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(new MockHttpServletRequest()));
+    }
     
     @Test
     void verifyFindByQuery() {
@@ -123,7 +137,7 @@ class OidcServicesManagerRegisteredServiceLocatorTests extends AbstractOidcTests
         servicesManager.save(service1, service2, service3);
 
         var svc = webApplicationServiceFactory.createService(
-            String.format("https://app.example.org/whatever?%s=%s", OAuth20Constants.CLIENT_ID, oidcClientId));
+            "https://app.example.org/whatever?%s=%s".formatted(OAuth20Constants.CLIENT_ID, oidcClientId));
         var result = servicesManager.findServiceBy(svc);
         assertInstanceOf(OidcRegisteredService.class, result);
 
