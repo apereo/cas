@@ -195,6 +195,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -353,10 +354,13 @@ class CasOAuth20Configuration {
             @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
             final HttpClient httpClient,
             @Qualifier(TenantExtractor.BEAN_NAME)
-            final TenantExtractor tenantExtractor) {
+            final TenantExtractor tenantExtractor,
+            @Qualifier("messageSource")
+            final MessageSource messageSource) {
             return OAuth20ConfigurationContext.builder()
                 .argumentExtractor(argumentExtractor)
                 .httpClient(httpClient)
+                .messageSource(messageSource)
                 .requestParameterResolver(oauthRequestParameterResolver)
                 .applicationContext(applicationContext)
                 .registeredServiceCipherExecutor(oauthRegisteredServiceCipherExecutor)

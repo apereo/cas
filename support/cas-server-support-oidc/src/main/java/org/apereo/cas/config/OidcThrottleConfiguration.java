@@ -77,8 +77,8 @@ class OidcThrottleConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class OidcThrottleFilterConfiguration {
         private static final List<String> THROTTLED_ENDPOINTS = List.of(
-            OidcConstants.ACCESS_TOKEN_URL,
             OidcConstants.AUTHORIZE_URL,
+            OidcConstants.ACCESS_TOKEN_URL,
             OidcConstants.TOKEN_URL,
             OidcConstants.PROFILE_URL,
             OidcConstants.JWKS_URL,
@@ -94,7 +94,7 @@ class OidcThrottleConfiguration {
             final OidcIssuerService oidcIssuerService) {
             return (request, response) -> {
                 val webContext = new JEEContext(request, response);
-                return THROTTLED_ENDPOINTS.stream().anyMatch(endpoint -> oidcIssuerService.validateIssuer(webContext, endpoint));
+                return oidcIssuerService.validateIssuer(webContext, THROTTLED_ENDPOINTS);
             };
         }
     }

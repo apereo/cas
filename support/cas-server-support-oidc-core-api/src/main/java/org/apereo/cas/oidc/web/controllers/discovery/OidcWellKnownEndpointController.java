@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,7 +55,7 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
         description = "Handles requests for well-known OIDC discovery configuration")
     public ResponseEntity<OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration(final HttpServletRequest request,
                                                                                           final HttpServletResponse response) {
-        return getOidcServerDiscoveryResponse(request, response, OidcConstants.WELL_KNOWN_URL);
+        return getOidcServerDiscoveryResponse(request, response, List.of(OidcConstants.WELL_KNOWN_URL));
     }
 
     /**
@@ -72,7 +73,7 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
         description = "Handles requests for well-known OIDC discovery configuration")
     public ResponseEntity<OidcServerDiscoverySettings> getWellKnownOpenIdDiscoveryConfiguration(final HttpServletRequest request,
                                                                                                 final HttpServletResponse response) {
-        return getOidcServerDiscoveryResponse(request, response, OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL);
+        return getOidcServerDiscoveryResponse(request, response, List.of(OidcConstants.WELL_KNOWN_OPENID_CONFIGURATION_URL));
     }
 
     /**
@@ -98,12 +99,12 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
 
     private ResponseEntity<OidcServerDiscoverySettings> getOidcServerDiscoveryResponse(final HttpServletRequest request,
                                                                                        final HttpServletResponse response,
-                                                                                       final String endpoint) {
-        if (isIssuerValidForEndpoint(request, response, endpoint) && BeanSupplier.isNotProxy(webFingerDiscoveryService)) {
+                                                                                       final List<String> endpoints) {
+        if (isIssuerValidForEndpoint(request, response, endpoints) && BeanSupplier.isNotProxy(webFingerDiscoveryService)) {
             val discovery = webFingerDiscoveryService.getDiscovery();
             return new ResponseEntity<>(discovery, HttpStatus.OK);
         }
-        LOGGER.warn("Unable to accept request; issuer for endpoint [{}] is invalid", endpoint);
+        LOGGER.warn("Unable to accept request; issuer for endpoint(s) [{}] is invalid", endpoints);
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

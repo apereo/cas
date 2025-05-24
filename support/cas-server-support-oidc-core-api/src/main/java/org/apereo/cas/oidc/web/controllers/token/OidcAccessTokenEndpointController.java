@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * This is {@link OidcAccessTokenEndpointController}.
@@ -43,8 +44,8 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
         val issuerService = getConfigurationContext().getIssuerService();
-        if (!issuerService.validateIssuer(webContext, OidcConstants.ACCESS_TOKEN_URL)
-            && !issuerService.validateIssuer(webContext, OidcConstants.TOKEN_URL)) {
+        if (!issuerService.validateIssuer(webContext, List.of(OAuth20Constants.ACCESS_TOKEN_URL, OAuth20Constants.TOKEN_URL,
+            OidcConstants.ACCESS_TOKEN_URL, OidcConstants.TOKEN_URL))) {
             return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
         }
         return super.handleRequest(request, response);

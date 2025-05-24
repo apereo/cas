@@ -1,0 +1,11 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "customclient",
+  "clientSecret": "secret",
+  "idTokenIssuer": "https://localhost:8443",
+  "serviceId" : "^https://localhost:9859/anything/customissuer.*",
+  "name": "OIDC",
+  "id": 3,
+  "jwtAccessToken": "true",
+  "scopes" : [ "java.util.HashSet", ["openid"]]
+}

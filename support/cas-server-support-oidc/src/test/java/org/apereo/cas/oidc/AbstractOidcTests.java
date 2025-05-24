@@ -100,10 +100,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.webflow.execution.Action;
@@ -124,6 +127,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @ExtendWith(CasTestExtension.class)
+@AutoConfigureMockMvc
 @SpringBootTest(classes = AbstractOidcTests.SharedTestConfiguration.class,
     properties = {
         "spring.threads.virtual.enabled=true",
@@ -134,11 +138,15 @@ import static org.mockito.Mockito.*;
 
         "cas.authn.oidc.core.issuer=https://sso.example.org/cas/oidc",
         "cas.authn.oidc.jwks.file-system.jwks-file=classpath:keystore.jwks"
-    })
+    }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOidcTests {
     protected static final String TGT_ID = "TGT-0";
 
+    @Autowired
+    @Qualifier("mockMvc")
+    protected MockMvc mockMvc;
+    
     @Autowired
     @Qualifier("oauthTokenGenerator")
     protected OAuth20TokenGenerator oauthTokenGenerator;
@@ -419,6 +427,10 @@ public abstract class AbstractOidcTests {
         return getClaims(getOidcRegisteredService().getClientId());
     }
 
+    protected JwtClaims getClaims(final String clientId, final String issuer) {
+        return getClaims("casuser", issuer, clientId, UUID.randomUUID().toString());
+    }
+    
     protected JwtClaims getClaims(final String clientId) {
         return getClaims("casuser", casProperties.getAuthn().getOidc().getCore().getIssuer(), clientId, clientId);
     }
@@ -535,6 +547,17 @@ public abstract class AbstractOidcTests {
         return cibaRequestId;
     }
 
+    protected static RequestPostProcessor withHttpRequestProcessor() {
+        return request -> {
+            request.setScheme("https");
+            request.setServerName("sso.example.org");
+            request.setContextPath("/cas");
+            request.setServletPath("/cas");
+            request.setServerPort(443);
+            return request;
+        };
+    }
+    
     @SpringBootConfiguration(proxyBeanMethods = false)
     @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({

@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -66,7 +67,7 @@ public class OidcJwksEndpointController extends BaseOidcController {
                                                 final HttpServletResponse response,
                                                 @RequestParam(value = "state", required = false) final String state) {
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.JWKS_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.JWKS_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }

@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.web.controllers.logout;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditableContext;
-import org.apereo.cas.authentication.RootCasException;
 import org.apereo.cas.logout.slo.SingleLogoutUrl;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
@@ -10,6 +9,7 @@ import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.WebUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,15 +18,19 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -83,22 +87,33 @@ public class OidcLogoutEndpointController extends BaseOidcController {
         final String postLogoutRedirectUrl,
         @RequestParam(value = OAuth20Constants.STATE, required = false)
         final String state,
+        @RequestParam(value = OAuth20Constants.CLIENT_ID, required = false)
+        final String givenClientId,
         @RequestParam(value = OidcConstants.ID_TOKEN_HINT, required = false)
         final String idToken,
         final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
 
-        String clientId = null;
-
         if (StringUtils.isNotBlank(idToken)) {
             LOGGER.trace("Decoding logout id token [{}]", idToken);
-            val claims = getConfigurationContext().getIdTokenSigningAndEncryptionService().decode(idToken, Optional.empty());
-            clientId = claims.getStringClaimValue(OAuth20Constants.CLIENT_ID);
-            LOGGER.debug("Client id retrieved from id token is [{}]", clientId);
 
+            val clientIdInIdToken = JwtBuilder.parse(idToken).getClaimAsString(OAuth20Constants.CLIENT_ID);
+            LOGGER.debug("Client id retrieved from id token is [{}]", clientIdInIdToken);
+
+            if (StringUtils.isNotBlank(givenClientId) && !StringUtils.equalsIgnoreCase(givenClientId, clientIdInIdToken)) {
+                LOGGER.warn("Client id [{}] in logout request does not match client id [{}] in id token", givenClientId, clientIdInIdToken);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    configurationContext.getMessageSource().getMessage("screen.oidc.issuer.invalid", ArrayUtils.EMPTY_OBJECT_ARRAY, request.getLocale()));
+            }
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-                getConfigurationContext().getServicesManager(), clientId, OidcRegisteredService.class);
+                getConfigurationContext().getServicesManager(), clientIdInIdToken, OidcRegisteredService.class);
+            val idTokenClaims = getConfigurationContext().getIdTokenSigningAndEncryptionService().decode(idToken, Optional.of(registeredService));
+            Assert.isTrue(idTokenClaims.getClaimValueAsString(OAuth20Constants.CLIENT_ID).equalsIgnoreCase(registeredService.getClientId()),
+                "Client id in id token does not match client id in registered service");
+            Assert.isTrue(idTokenClaims.hasClaim(OidcConstants.AUD), "Audience claim is not present");
+            Assert.isTrue(idTokenClaims.hasClaim(OAuth20Constants.CLAIM_SUB), "Subject claim is not present");
+
             LOGGER.debug("Located registered service [{}]", registeredService);
-            val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientId);
+            val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientIdInIdToken);
             val audit = AuditableContext.builder()
                 .service(service)
                 .registeredService(registeredService)
@@ -106,7 +121,10 @@ public class OidcLogoutEndpointController extends BaseOidcController {
             val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
 
-            enforceIssuer(request, response, registeredService);
+            if (!enforceIssuer(request, response, registeredService)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    configurationContext.getMessageSource().getMessage("screen.oidc.issuer.invalid", ArrayUtils.EMPTY_OBJECT_ARRAY, request.getLocale()));
+            }
 
             WebUtils.putRegisteredService(request, Objects.requireNonNull(registeredService));
             val urls = getConfigurationContext().getSingleLogoutServiceLogoutUrlBuilder()
@@ -122,29 +140,38 @@ public class OidcLogoutEndpointController extends BaseOidcController {
                 if (matchResult) {
                     LOGGER.debug("Requested logout URL [{}] is authorized for redirects", postLogoutRedirectUrl);
                     return executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
-                        Optional.of(postLogoutRedirectUrl), Optional.of(clientId), request, response);
+                        Optional.of(postLogoutRedirectUrl), Optional.of(clientIdInIdToken), request, response);
                 }
             }
             val validURL = urls.stream().filter(urlValidator::isValid).findFirst();
             if (validURL.isPresent()) {
                 return executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
-                    validURL, Optional.of(clientId), request, response);
+                    validURL, Optional.of(clientIdInIdToken), request, response);
             }
             LOGGER.debug("No logout urls could be determined for registered service [{}]", registeredService.getName());
         }
-        enforceIssuer(request, response, null);
+
+        val registeredService = StringUtils.isNotBlank(givenClientId)
+            ? OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), givenClientId, OidcRegisteredService.class)
+            : null;
+
+        if (!enforceIssuer(request, response, registeredService)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                configurationContext.getMessageSource().getMessage("screen.oidc.issuer.invalid", ArrayUtils.EMPTY_OBJECT_ARRAY, request.getLocale()));
+        }
         return executeLogoutRedirect(Optional.ofNullable(StringUtils.trimToNull(state)),
-            Optional.empty(), Optional.ofNullable(clientId), request, response);
+            Optional.empty(), Optional.ofNullable(givenClientId), request, response);
     }
 
-    private void enforceIssuer(final HttpServletRequest request, final HttpServletResponse response,
-                               final OidcRegisteredService registeredService) {
+    private boolean enforceIssuer(final HttpServletRequest request, final HttpServletResponse response,
+                                  final OidcRegisteredService registeredService) {
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.LOGOUT_URL)) {
-            LOGGER.warn("Logout request is not issued by a trusted issuer: [{}]",
-                getConfigurationContext().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
-            throw RootCasException.withCode("screen.oidc.issuer.invalid");
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.LOGOUT_URL, "logout"), registeredService)) {
+            val issuer = getConfigurationContext().getIssuerService().determineIssuer(Optional.ofNullable(registeredService));
+            LOGGER.warn("Logout request is not issued by a trusted issuer: [{}]", issuer);
+            return false;
         }
+        return true;
     }
 
     protected ResponseEntity executeLogoutRedirect(final Optional<String> state,
@@ -160,6 +187,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
             LOGGER.debug("Final logout redirect URL is [{}]", logoutUrl);
             WebUtils.putLogoutRedirectUrl(request, logoutUrl);
         });
+        request.setAttribute("status", HttpStatus.PERMANENT_REDIRECT);
         request.getServletContext()
             .getRequestDispatcher(CasProtocolConstants.ENDPOINT_LOGOUT)
             .forward(request, response);
