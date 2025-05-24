@@ -58,8 +58,8 @@
                             /*]]>*/
                         </script>
                         <p>
-                            <a target="_blank" th:if="${service.informationUrl}" th:href="${service.informationUrl}">Information URL</a>
-                            <a target="_blank" th:if="${service.privacyUrl}" th:href="${service.privacyUrl}">Privacy URL</a>
+                            <a target="_blank" rel="noopener noreferrer" th:if="${service.informationUrl}" th:href="${service.informationUrl}">Information URL</a>
+                            <a target="_blank" rel="noopener noreferrer" th:if="${service.privacyUrl}" th:href="${service.privacyUrl}">Privacy URL</a>
                         </p>
                     </td>
                     <td class="mdc-data-table__cell">

@@ -22,6 +22,7 @@
                 <p>
                     <img id="heroimg"
                          th:title="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
+                         th:alt="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
                          th:src="@{${#themes.code('cas.hero-banner.file')}}"/>
                 </p>
             </div>

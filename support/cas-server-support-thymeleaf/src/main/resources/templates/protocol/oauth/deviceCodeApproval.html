@@ -10,7 +10,7 @@
     <h2 th:text="#{cas.oauth.device.confirm.header}"/>
     <p class="my-2" th:text="#{cas.oauth.device.confirm.message}"/>
     <div class="banner banner-danger alert alert-danger my-2" th:if="${error}">
-        <a href="#" class="close" data-dismiss="alert" th:aria-label="#{screen.pm.button.close}">&times;</a>
+        <button type="button" class="close" data-dismiss="alert" th:aria-label="#{screen.pm.button.close}">&times;</button>
         <span th:utext="#{${'cas.oauth.device.error.' + error}}"/>
     </div>
     <form method="post" id="fm1">

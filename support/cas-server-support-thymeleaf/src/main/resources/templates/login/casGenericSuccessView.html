@@ -138,7 +138,7 @@
                                 <tr th:each="service : ${authorizedServices}" class="mdc-data-table__row">
                                     <td class="mdc-data-table__cell">
                                         <i class="mdi mdi-web fas fa-globe" th:unless="${service.logo}" aria-hidden="true"></i>
-                                        <img th:src="${service.logo}" width="26px" height="26px" th:if="${service.logo}" alt=""/>
+                                        <img th:src="${service.logo}" width="26px" height="26px" th:if="${service.logo}" th:alt="${service.name}"/>
                                     </td>
                                     <td class="mdc-data-table__cell">
                                         <a th:id="${'service' + service.id}" th:title="${service.name}" th:utext="${service.name}"/>

@@ -73,10 +73,10 @@ function fetchServices(callback) {
                 let serviceDetails = `<span serviceId="${service.id}" title='${service.name}'>${service.name}</span>`;
                 serviceDetails += "<p>";
                 if (service.informationUrl) {
-                    serviceDetails += `<a target="_blank" href='${service.informationUrl}'>Information URL</a>`;
+                    serviceDetails += `<a target="_blank" rel="noopener" href='${service.informationUrl}'>Information URL</a>`;
                 }
                 if (service.privacyUrl) {
-                    serviceDetails += `&nbsp;<a target="_blank" href='${service.privacyUrl}'>Privacy URL</a>`;
+                    serviceDetails += `&nbsp;<a target="_blank" rel="noopener" href='${service.privacyUrl}'>Privacy URL</a>`;
                 }
 
                 let serviceIdDetails = `<span serviceId='${service.id}' class="text-wrap">${service.serviceId}</span>`;
