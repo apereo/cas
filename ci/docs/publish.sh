@@ -376,7 +376,8 @@ if [[ ${buildDocs} == "true" ]]; then
   printgreen "Building documentation site for $branchVersion with data at $PWD/gh-pages/_data"
   echo -n "Starting at " && date
   jekyll --version
-  
+
+  export RUBY_YJIT_ENABLE=1
   if [[ ${serve} == "true" ]]; then
     bundle exec jekyll serve --profile --incremental --trace
   else
