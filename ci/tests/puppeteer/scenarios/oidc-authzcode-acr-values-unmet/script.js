@@ -16,6 +16,6 @@ const assert = require("assert");
     await cas.loginWith(page);
     await cas.sleep(2000);
     await cas.logPage(page);
-    assert(await page.url() === `${redirectUrl}/?error=unmet_authentication_requirements`);
+    assert(await page.url() === `${redirectUrl}?error=unmet_authentication_requirements`);
     await browser.close();
 })();

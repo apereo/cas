@@ -46,6 +46,7 @@ public class OidcUnmetAuthenticationRequirementWebflowExceptionHandler implement
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             val url = new URIBuilder(redirectUri).addParameter(OAuth20Constants.ERROR, OAuth20Constants.UNMET_AUTHENTICATION_REQUIREMENTS).build();
             requestContext.getRequestScope().put("url", url);
+            LOGGER.debug("Redirecting to [{}]", url);
             return EVENT_FACTORY.event(this, CasWebflowConstants.TRANSITION_ID_REDIRECT);
         });
     }
