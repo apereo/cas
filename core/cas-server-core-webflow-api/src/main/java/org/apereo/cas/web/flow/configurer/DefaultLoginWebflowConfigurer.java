@@ -25,7 +25,6 @@ import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.History;
 import org.springframework.webflow.engine.NoMatchingTransitionException;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
@@ -98,9 +97,8 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
 
         val transition = createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         val attributes = transition.getAttributes();
-        attributes.put("bind", Boolean.TRUE);
-        attributes.put("validate", Boolean.TRUE);
-        attributes.put("history", History.INVALIDATE);
+        val createdAttributes = createTransitionAttributes(true, true);
+        createdAttributes.forEach(attributes::put);
     }
 
     protected void createAuthenticationWarningMessagesView(final Flow flow) {

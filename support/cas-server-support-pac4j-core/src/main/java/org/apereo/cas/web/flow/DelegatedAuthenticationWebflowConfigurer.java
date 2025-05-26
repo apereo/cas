@@ -12,10 +12,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.History;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import java.util.HashMap;
 import java.util.Optional;
 
 /**
@@ -139,10 +137,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
     }
 
     private void createDynamicDiscoveryViewState(final Flow flow) {
-        val attributes = new HashMap<String, Object>();
-        attributes.put("bind", Boolean.FALSE);
-        attributes.put("validate", Boolean.FALSE);
-        attributes.put("history", History.INVALIDATE);
+        val attributes = createTransitionAttributes(false, false);
 
         val discoveryViewState = createViewState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHN_DYNAMIC_DISCOVERY_VIEW, "delegated-authn/casDynamicDiscoveryView");
         createTransitionForState(discoveryViewState, CasWebflowConstants.TRANSITION_ID_EXECUTE, CasWebflowConstants.STATE_ID_DELEGATED_AUTHN_DYNAMIC_DISCOVERY_EXECUTION);
