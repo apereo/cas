@@ -36,7 +36,7 @@ public class DefaultMultifactorAuthenticationDeviceProviderAction extends BaseCa
 
     @Override
     public String getName() {
-        val sources = StringUtils.remove(String.join("", multifactorAuthenticationDeviceManager.getSource()), " ");
+        val sources = StringUtils.remove(String.join(StringUtils.EMPTY, multifactorAuthenticationDeviceManager.getSource()), " ");
         return MultifactorAuthenticationDeviceProviderAction.super.getName() + sources;
     }
 }
