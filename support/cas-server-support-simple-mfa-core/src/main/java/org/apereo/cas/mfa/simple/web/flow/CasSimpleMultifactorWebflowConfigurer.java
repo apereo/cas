@@ -13,7 +13,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -75,11 +74,11 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
             viewLoginFormState.getEntryActionList().add(setPrincipalAction);
 
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
-                CasWebflowConstants.STATE_ID_REAL_SUBMIT, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
+                CasWebflowConstants.STATE_ID_REAL_SUBMIT, createTransitionAttributes(true, true));
 
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_RESEND,
                 CasWebflowConstants.STATE_ID_SIMPLE_MFA_SEND_TOKEN,
-                Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
+                createTransitionAttributes(false, false));
 
             val realSubmitState = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT,
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_OTP_AUTHENTICATION_ACTION));

@@ -11,7 +11,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -74,10 +73,10 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
                 viewLoginFormState.getEntryActionList().addAll(setPrincipalAction);
                 if (yubiProps.isMultipleDeviceRegistrationEnabled()) {
                     createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION,
-                        Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
+                        createTransitionAttributes(false, false));
                 }
                 createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
-                    CasWebflowConstants.STATE_ID_REAL_SUBMIT, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
+                    CasWebflowConstants.STATE_ID_REAL_SUBMIT, createTransitionAttributes(true, true));
             });
 
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_YUBIKEY_EVENT_ID, yubiProps.getId());

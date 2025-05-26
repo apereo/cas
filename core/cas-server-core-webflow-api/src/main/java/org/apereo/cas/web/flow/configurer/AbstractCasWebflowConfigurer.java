@@ -41,7 +41,6 @@ import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.StateDefinition;
-import org.springframework.webflow.definition.TransitionDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionList;
 import org.springframework.webflow.engine.ActionState;
@@ -50,6 +49,7 @@ import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowExecutionExceptionHandler;
 import org.springframework.webflow.engine.FlowVariable;
+import org.springframework.webflow.engine.History;
 import org.springframework.webflow.engine.SubflowAttributeMapper;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.TargetStateResolver;
@@ -978,6 +978,10 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         return new ActionExecutingViewFactory(new ExternalRedirectAction(expression));
     }
 
+    protected Map<String, Object> createTransitionAttributes(final boolean bind, final boolean validate) {
+        return Map.of("bind", bind, "validate", validate, "history", History.INVALIDATE);
+    }
+    
     protected void doInitialize() {
     }
 

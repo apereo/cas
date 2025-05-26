@@ -91,6 +91,7 @@ internally based on the `Host` http header, in scenarios where CAS is deployed b
 - A new [Heimdall authorization policy](../authorization/Heimdall-Authorization-Overview.html) for SQL databases.
 - We have laid the groundwork to begin supporting OpenID Connect federations. Support for this topic will gradually mature as federations begin to operate and remain functional. 
 - Apache Tomcat's `RewriteValve` can be added as an engine valve.
+- A visual representation of the CAS authentication flows, as a state diagram, is now available in the [Palantir admin console](../installation/Admin-Dashboard.html).
 - CAS is publishing events internally when webflow actions are executed. Such events are recorded into the [CAS event repository](../authentication/Configuring-Authentication-Events.html) and are also available in the [Palantir admin console](../installation/Admin-Dashboard.html).
 - Redis integration tests are upgraded to use the latest Redis `8.0` server.
 - Apache Syncope integration tests are upgraded to use the latest Syncope `4.0` server.
