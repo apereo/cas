@@ -93,6 +93,7 @@ internally based on the `Host` http header, in scenarios where CAS is deployed b
 - Apache Tomcat's `RewriteValve` can be added as an engine valve.
 - CAS is publishing events internally when webflow actions are executed. Such events are recorded into the [CAS event repository](../authentication/Configuring-Authentication-Events.html) and are also available in the [Palantir admin console](../installation/Admin-Dashboard.html).
 - Redis integration tests are upgraded to use the latest Redis `8.0` server.
+- Apache Syncope integration tests are upgraded to use the latest Syncope `4.0` server.
 - Support for [ACME Integration](../integration/ACME-Integration.html) is deprecated.
 - [GitHub Actions CI workflows](https://github.com/apereo/cas/actions) check for code spelling mistakes and typos.
 - [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html) is to tuned to apply an LZ4 compression routine to stored documents.
@@ -107,3 +108,6 @@ internally based on the `Host` http header, in scenarios where CAS is deployed b
 - CAS endpoints are grouped and tagged for better visibility in the [Swagger UI](../integration/Swagger-Integration.html).
 - A large collection of documentation improvements and fixes to remove typos and grammatical errors.
 - Using advanced static analysis tools, a large number of leaking IO streams are closed properly.
+- CAS documentation is built with YJIT enabled, and the build time is cut down by approximately 6 minutes.
+- When processing logout requests for OpenID Connect, the `iss` claim of the ID token hint is now cross-checked against the `idTokenIssuer` property of the registered client application.
+- A series of small user interface improvements to assist with accessibility and usability.

@@ -660,9 +660,9 @@ public interface CasWebflowConstants {
     String STATE_ID_UNAVAILABLE = "unavailable";
 
     /**
-     * The state 'serviceAuthorizationCheck'.
+     * The state 'serviceAuthorization'.
      */
-    String STATE_ID_SERVICE_AUTHZ_CHECK = "serviceAuthorizationCheck";
+    String STATE_ID_SERVICE_AUTHZ = "serviceAuthorization";
 
     /**
      * The state 'terminateSession'.
@@ -680,9 +680,9 @@ public interface CasWebflowConstants {
     String STATE_ID_GENERATE_SERVICE_TICKET = "generateServiceTicket";
 
     /**
-     * The state 'gatewayServicesManagementCheck'.
+     * The state 'gatewayServicesManagement'.
      */
-    String STATE_ID_GATEWAY_SERVICES_MGMT_CHECK = "gatewayServicesManagementCheck";
+    String STATE_ID_GATEWAY_SERVICES_MGMT = "gatewayServicesManagement";
 
     /**
      * The state 'postView'.
@@ -1026,9 +1026,9 @@ public interface CasWebflowConstants {
     String STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS = "sendForgotUsernameInstructions";
 
     /**
-     * The view state 'passwordChangeAction'.
+     * The view state 'passwordChange'.
      */
-    String STATE_ID_PASSWORD_CHANGE_ACTION = "passwordChangeAction";
+    String STATE_ID_PASSWORD_CHANGE = "passwordChange";
 
     /**
      * The state 'passwordResetErrorView'.

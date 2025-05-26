@@ -160,6 +160,7 @@ mariaDb = "3.5.3"
 material = "14.0.0"
 maxmind = "4.3.0"
 mdiFont = "7.4.47"
+mermaid = "11.6.0"
 micrometer = "1.15.0"
 micrometerOtel = "1.5.0"
 mockito = "5.18.0"
@@ -276,6 +277,15 @@ amazon-dax-client = { module = "software.amazon.dax:amazon-dax-client", version.
 angus-mail = { module = "org.eclipse.angus:angus-mail", version.ref = "eclipseAngusMail" }
 animate-css = { module = "org.webjars.npm:animate.css", version.ref = "animateCss" }
 apache-client = { module = "software.amazon.awssdk:apache-client", version.ref = "amazonSdk" }
+apachegroovy-core = { module = "org.apache.groovy:groovy", version.ref = "groovy" }
+apachegroovy-datetime = { module = "org.apache.groovy:groovy-datetime", version.ref = "groovy" }
+apachegroovy-groovysh = { module = "org.apache.groovy:groovy-groovysh", version.ref = "groovy" }
+apachegroovy-json = { module = "org.apache.groovy:groovy-json", version.ref = "groovy" }
+apachegroovy-jsr223 = { module = "org.apache.groovy:groovy-jsr223", version.ref = "groovy" }
+apachegroovy-sql = { module = "org.apache.groovy:groovy-sql", version.ref = "groovy" }
+apachegroovy-templates = { module = "org.apache.groovy:groovy-templates", version.ref = "groovy" }
+apachegroovy-xml = { module = "org.apache.groovy:groovy-xml", version.ref = "groovy" }
+apachegroovy-yaml = { module = "org.apache.groovy:groovy-yaml", version.ref = "groovy" }
 apiguardian-api = { module = "org.apiguardian:apiguardian-api", version.ref = "apiGuardian" }
 apm-agent-api = { module = "co.elastic.apm:apm-agent-api", version.ref = "elasticApm" }
 apm-agent-attach = { module = "co.elastic.apm:apm-agent-attach", version.ref = "elasticApm" }
@@ -367,15 +377,6 @@ google-compute-engine = { module = "org.apache.jclouds.labs:google-compute-engin
 google-maps-services = { module = "com.google.maps:google-maps-services", version.ref = "googleMapsGeoCoding" }
 googleauth = { module = "com.warrenstrange:googleauth", version.ref = "googleAuth" }
 graal-sdk = { module = "org.graalvm.sdk:graal-sdk", version.ref = "graalVm" }
-apachegroovy-core = { module = "org.apache.groovy:groovy", version.ref = "groovy" }
-apachegroovy-datetime = { module = "org.apache.groovy:groovy-datetime", version.ref = "groovy" }
-apachegroovy-groovysh = { module = "org.apache.groovy:groovy-groovysh", version.ref = "groovy" }
-apachegroovy-json = { module = "org.apache.groovy:groovy-json", version.ref = "groovy" }
-apachegroovy-jsr223 = { module = "org.apache.groovy:groovy-jsr223", version.ref = "groovy" }
-apachegroovy-sql = { module = "org.apache.groovy:groovy-sql", version.ref = "groovy" }
-apachegroovy-templates = { module = "org.apache.groovy:groovy-templates", version.ref = "groovy" }
-apachegroovy-xml = { module = "org.apache.groovy:groovy-xml", version.ref = "groovy" }
-apachegroovy-yaml = { module = "org.apache.groovy:groovy-yaml", version.ref = "groovy" }
 geode-core = { module = "org.apache.geode:geode-core", version.ref = "geode" }
 grouperclient = { module = "edu.internet2.middleware.grouper:grouperClient", version.ref = "grouper" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
@@ -508,6 +509,7 @@ mailjet-client = { module = "com.mailjet:mailjet-client", version.ref = "mailjet
 mariadb-java-client = { module = "org.mariadb.jdbc:mariadb-java-client", version.ref = "mariaDb" }
 material-components-web = { module = "org.webjars.npm:material-components-web", version.ref = "material" }
 mdi-font = { module = "org.webjars.npm:mdi__font", version.ref = "mdiFont" }
+mermaid = { module = "org.webjars.npm:mermaid", version.ref = "mermaid" }
 metrics-core = { module = "io.dropwizard.metrics:metrics-core", version.ref = "dropwizard" }
 micrometer-commons = { module = "io.micrometer:micrometer-commons", version.ref = "micrometer" }
 micrometer-core = { module = "io.micrometer:micrometer-core", version.ref = "micrometer" }

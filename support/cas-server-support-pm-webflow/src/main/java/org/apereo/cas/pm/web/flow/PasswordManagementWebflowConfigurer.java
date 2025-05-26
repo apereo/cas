@@ -351,10 +351,10 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
 
         viewState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_PASSWORD_CHANGE));
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
-            CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_ACTION, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
+            CasWebflowConstants.STATE_ID_PASSWORD_CHANGE, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
         createStateDefaultTransition(viewState, id);
 
-        val pswChangeAction = createActionState(flow, CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_ACTION,
+        val pswChangeAction = createActionState(flow, CasWebflowConstants.STATE_ID_PASSWORD_CHANGE,
             createEvaluateAction(CasWebflowConstants.ACTION_ID_PASSWORD_CHANGE));
         val transitionSet = pswChangeAction.getTransitionSet();
         transitionSet.add(
