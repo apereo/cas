@@ -24,9 +24,9 @@
                             <div class="mdc-typography--body1">
                                 <div class="banner banner-danger alert alert-danger banner-dismissible"
                                      role="alert" style="display: none" th:id="${'errorPanel-' + dialogId}">
-                                    <a href="#" class="close" onclick="$(this).parent().hide();" th:aria-label="#{screen.pm.button.close}">
+                                    <button type="button" class="close" onclick="$(this).parent().hide();" th:aria-label="#{screen.pm.button.close}">
                                         <span class="mdi mdi-close-box" aria-hidden="true"></span>
-                                    </a>
+                                    </button>
                                     <h3>Failure</h3>
                                     <p th:utext="#{screen.authentication.gauth.invalidtoken}">
                                 </div>
