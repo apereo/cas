@@ -72,7 +72,7 @@ public class ConsumerExecutionAction extends BaseCasWebflowAction {
 
     @Override
     public String toString() {
-        return "Inline Action, returning " + this.eventId;
+        return "InlineActionReturns%s".formatted(StringUtils.defaultIfBlank(this.eventId, "None"));
     }
 
     /**

@@ -3737,6 +3737,9 @@ ext.libraries = [
                 },
                 dependencies.create(libs.notyf.get()) {
                     exclude(group: "org.webjars", module: "jquery")
+                },
+                dependencies.create(libs.mermaid.get()) {
+                    exclude(group: "org.webjars", module: "jquery")
                 }
         ],
         webjars                    : [

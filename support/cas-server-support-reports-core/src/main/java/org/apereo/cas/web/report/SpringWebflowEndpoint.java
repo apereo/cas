@@ -2,6 +2,7 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.NamedObject;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
@@ -23,6 +24,7 @@ import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
+import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowVariable;
@@ -61,12 +63,12 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
     }
 
     private static String convertActionToString(final Action action) {
-        if (action instanceof EvaluateAction) {
-            return convertEvaluateActionToString(action);
+        if (action instanceof final EvaluateAction evaluateAction) {
+            return convertEvaluateActionToString(evaluateAction);
         }
         if (action instanceof final AnnotatedAction eval) {
-            if (eval.getTargetAction() instanceof EvaluateAction) {
-                return convertEvaluateActionToString(eval.getTargetAction());
+            if (eval.getTargetAction() instanceof final EvaluateAction evaluateAction) {
+                return convertEvaluateActionToString(evaluateAction);
             }
             return eval.getTargetAction().toString();
         }
@@ -75,21 +77,23 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
             val resultExpF = ReflectionUtils.findField(action.getClass(), "valueExpression");
             return "set " + stringifyActionField(action, expF) + " = " + stringifyActionField(action, resultExpF);
         }
+        if (action instanceof final NamedObject namedObject) {
+            return namedObject.getName();
+        }
         return action.toString();
     }
 
-    private static String convertEvaluateActionToString(final Action action) {
-        val eval = (EvaluateAction) action;
+    private static String convertEvaluateActionToString(final EvaluateAction eval) {
         val expF = ReflectionUtils.findField(eval.getClass(), "expression");
         val resultExpF = ReflectionUtils.findField(eval.getClass(), "resultExpression");
-        return stringifyActionField(action, expF, resultExpF);
+        return stringifyActionField(eval, expF, resultExpF);
     }
 
     private static String stringifyActionField(final Action eval, final Field... fields) {
         return Arrays.stream(fields)
-            .map(f -> {
-                ReflectionUtils.makeAccessible(f);
-                val exp = ReflectionUtils.getField(f, eval);
+            .map(field -> {
+                ReflectionUtils.makeAccessible(field);
+                val exp = ReflectionUtils.getField(field, eval);
                 if (exp != null) {
                     return StringUtils.defaultString(exp.toString());
                 }
@@ -129,6 +133,9 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
 
         if (state instanceof EndState) {
             stateMap.put("isEndState", Boolean.TRUE);
+        }
+        if (state instanceof DecisionState) {
+            stateMap.put("isDecisionState", Boolean.TRUE);
         }
 
         if (state instanceof final SubflowState subflowState) {

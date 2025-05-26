@@ -41,6 +41,7 @@ import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.StateDefinition;
+import org.springframework.webflow.definition.TransitionDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionList;
 import org.springframework.webflow.engine.ActionState;
@@ -213,10 +214,10 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public RenderAction createRenderAction(final String... fragmentExpression) {
-        val ctx = new FluentParserContext();
-        val expressionParser = this.flowBuilderServices.getExpressionParser();
+        val parserContext = new FluentParserContext();
+        val expressionParser = flowBuilderServices.getExpressionParser();
         val expressions = Arrays.stream(fragmentExpression)
-            .map(fg -> expressionParser.parseExpression(fg, ctx))
+            .map(fg -> expressionParser.parseExpression(fg, parserContext))
             .toArray(Expression[]::new);
 
         val newAction = new RenderAction(expressions);
@@ -231,7 +232,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public EvaluateAction createEvaluateAction(final String expression) {
-        if (this.flowBuilderServices == null) {
+        if (flowBuilderServices == null) {
             LOGGER.warn("Flow builder services is not configured correctly.");
             return null;
         }
@@ -438,8 +439,13 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         if (state == null) {
             LOGGER.trace("Cannot add default transition of [{}] to the given state is null and cannot be found in the flow.", targetState);
         } else {
-            val transition = createTransition(targetState);
-            state.getTransitionSet().add(transition);
+            val currentTransition = state.getTransition("*");
+            if (currentTransition instanceof Transition) {
+                LOGGER.trace("State [{}] already has a default transition [{}] and will not add another", state.getId(), currentTransition);
+            } else {
+                val transition = createTransition(targetState);
+                state.getTransitionSet().add(transition);
+            }
         }
     }
 
@@ -506,9 +512,12 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
-    public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome,
-                                               final String targetState, final boolean removeExisting,
-                                               final Map<String, Object> attributes, final Action... actions) {
+    public Transition createTransitionForState(final TransitionableState state,
+                                               final String criteriaOutcome,
+                                               final String targetState,
+                                               final boolean removeExisting,
+                                               final Map<String, Object> attributes,
+                                               final Action... actions) {
         return FunctionUtils.doIfNotNull(state, () -> {
             try {
                 if (removeExisting) {
@@ -520,6 +529,13 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                         }
                     } while (transition != null);
                 }
+                val currentTransition = state.getTransition(criteriaOutcome);
+                if (currentTransition instanceof final Transition transition) {
+                    LOGGER.trace("State [{}] already has a transition for criteria [{}] and will not add another",
+                        state.getId(), criteriaOutcome);
+                    return transition;
+                }
+                
                 val transition = createTransition(criteriaOutcome, targetState, actions);
                 attributes.forEach((key, value) -> transition.getAttributes().put(key, value));
                 state.getTransitionSet().add(transition);
@@ -533,8 +549,10 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     @Override
-    public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome,
-                                               final String targetState, final boolean removeExisting,
+    public Transition createTransitionForState(final TransitionableState state,
+                                               final String criteriaOutcome,
+                                               final String targetState,
+                                               final boolean removeExisting,
                                                final Map<String, Object> attributes) {
         return createTransitionForState(state, criteriaOutcome, targetState,
             removeExisting, attributes, EMPTY_ACTIONS_ARRAY);
@@ -551,6 +569,12 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public Transition createTransitionForState(final TransitionableState state,
                                                final String criteriaOutcome,
                                                final TargetStateResolver targetStateResolver) {
+        val currentTransition = state.getTransition(criteriaOutcome);
+        if (currentTransition instanceof final Transition transition) {
+            LOGGER.trace("State [{}] already has a transition for criteria [{}] and will not add another",
+                state.getId(), criteriaOutcome);
+            return transition;
+        }
         val transition = createTransition(criteriaOutcome, targetStateResolver);
         state.getTransitionSet().add(transition);
         return transition;
