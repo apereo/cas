@@ -65,7 +65,7 @@ public interface CasWebflowConstants {
 
     /**
      * Attribute that indicates the transition one must activate
-     * specially as a signal in subflows to indicate the parent calling state.
+     * especially as a signal in subflows to indicate the parent calling state.
      */
     String ATTRIBUTE_TARGET_TRANSITION = "targetTransitionToActivate";
 
