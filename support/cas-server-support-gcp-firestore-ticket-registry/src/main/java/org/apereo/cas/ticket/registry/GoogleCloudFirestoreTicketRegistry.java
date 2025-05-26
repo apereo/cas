@@ -56,7 +56,7 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         return FunctionUtils.doUnchecked(() -> {
-            LOGGER.debug("Locating ticket ticketId [{}]", ticketId);
+            LOGGER.debug("Locating ticket [{}]", ticketId);
             val encTicketId = digestIdentifier(ticketId);
             if (encTicketId == null) {
                 LOGGER.debug("Ticket id [{}] could not be found", ticketId);

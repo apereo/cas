@@ -338,9 +338,9 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         if (viewFactory != null) {
             val finalResponseAction = new ViewFactoryActionAdapter(viewFactory);
             endState.setFinalResponseAction(finalResponseAction);
-            LOGGER.trace("Created end state state [{}] on flow id [{}], backed by view factory [{}]", id, flow.getId(), viewFactory);
+            LOGGER.trace("Created end state [{}] on flow id [{}], backed by view factory [{}]", id, flow.getId(), viewFactory);
         } else {
-            LOGGER.trace("Created end state state [{}] on flow id [{}]", id, flow.getId());
+            LOGGER.trace("Created end state [{}] on flow id [{}]", id, flow.getId());
         }
         return endState;
     }

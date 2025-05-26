@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * as a distributed session store for short-lived non-specific objects. The intention
  * of this ticket is to encapsulate objects that would otherwise be tracked by the application
  * container's session. By using the ticket registry as a generic session store, all operations
- * that may require session awareness specially in a clustered environment can be freed from
+ * that may require session awareness especially in a clustered environment can be freed from
  * that requirement.
  * <p>
  * Note that objects/values put into the session ticket are required to be serializable,
