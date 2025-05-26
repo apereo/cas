@@ -266,7 +266,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * e.g. verification of retrieved responses. The default factory is an always empty store.
      * You may choose {@code org.pac4j.saml.store.HttpSessionStore} instead which allows
      * SAML messages to be stored in a distributed session store
-     * specially required for high availability deployments and validation operations.
+     * especially required for high availability deployments and validation operations.
      * <p>
      * Available options are:
      *

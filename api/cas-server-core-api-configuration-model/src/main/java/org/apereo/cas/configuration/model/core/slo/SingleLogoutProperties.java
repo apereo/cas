@@ -37,7 +37,7 @@ public class SingleLogoutProperties implements Serializable {
 
     /**
      * Logout propagation type determines how SLO requests will be sent to applications.
-     * This is specially applicable when SLO requests are processed using a front-channel mechanism.
+     * This is especially applicable when SLO requests are processed using a front-channel mechanism.
      */
     private LogoutPropagationTypes logoutPropagationType = LogoutPropagationTypes.AJAX;
 
@@ -54,7 +54,7 @@ public class SingleLogoutProperties implements Serializable {
          * The propagation mechanism will submit the logout request
          * to the logout URL that is loaded inside an iframe. This is typically
          * useful if the application receiving the logout request needs to generate HTML
-         * to process the logout request notification, specially if the application is a SPA.
+         * to process the logout request notification, especially if the application is a SPA.
          */
         IFRAME
     }

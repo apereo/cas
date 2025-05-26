@@ -8,7 +8,7 @@ category: Authentication
 
 # Delegated Authentication Request Customization
 
-Authentication (HTTP) requests that are sent from CAS to configured identity providers can be 
+Authentication (HTTP) requests that are sent from CAS to configured identity providers can be
 customized at runtime. This customization phase of the authentication request happens right before the request 
 is constructed and passed onto the client browser. Before the customizer proceeds, it also must declare its support 
 for the given identity provider and/or request, and it also is given the chance to determine if the identity provider 
