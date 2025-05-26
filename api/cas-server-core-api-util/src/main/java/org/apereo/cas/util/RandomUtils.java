@@ -39,18 +39,28 @@ public class RandomUtils {
     private static final String NATIVE_NON_BLOCKING_ALGORITHM = "NativePRNGNonBlocking";
 
     /**
-     * Get strong enough SecureRandom instance and of the checked exception.
-     *
-     * @return the strong instance
+     * Cached secure random instance.
      */
-    public static SecureRandom getNativeInstance() {
+    private static final SecureRandom SECURE_RANDOM = createSecureRandom();
+
+    private static SecureRandom createSecureRandom() {
         try {
-            val alg = StringUtils.defaultIfBlank(System.getProperty(SYSTEM_PROPERTY_SECURE_RANDOM_ALG), NATIVE_NON_BLOCKING_ALGORITHM);
+            val alg = StringUtils.defaultIfBlank(System.getProperty(SYSTEM_PROPERTY_SECURE_RANDOM_ALG),
+                NATIVE_NON_BLOCKING_ALGORITHM);
             return SecureRandom.getInstance(alg);
         } catch (final NoSuchAlgorithmException e) {
             LOGGER.trace(e.getMessage(), e);
             return new SecureRandom();
         }
+    }
+
+    /**
+     * Get strong enough SecureRandom instance and of the checked exception.
+     *
+     * @return the strong instance
+     */
+    public static SecureRandom getNativeInstance() {
+        return SECURE_RANDOM;
     }
 
     /**
