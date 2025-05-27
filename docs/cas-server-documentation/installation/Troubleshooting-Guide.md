@@ -29,8 +29,8 @@ Note that the above configuration block only addresses logging behavior of CAS c
 upon which CAS depends. Consult the log4j configuration and turn on appropriate `DEBUG` logs for each relevant component.
 Those are usually your best data source for diagnostics and troubleshooting.
 
-If your container of choice is [Apache Tomcat](https://tomcat.apache.org/tomcat-11.0-doc/logging.html), 
-you may also want to look into your `catalina.out` and `localhost-X-Y-Z.log` log files to learn more about source of issues. 
+If your container of choice is [Apache Tomcat](https://tomcat.apache.org/tomcat-11.0-doc/logging.html),
+you may also want to look into your `catalina.out` and `localhost-X-Y-Z.log` files to learn more about the source of issues.
 
 ## Deployment Problem; Configuration Issue X. Can You Help?
 
@@ -81,7 +81,7 @@ For [Apache Tomcat](https://tomcat.apache.org/tomcat-11.0-doc/config/http.html),
 
 ## Application X "redirected you too many times" 
 
-"Too many redirect" errors are usually caused by service ticket validation failure events, generally 
+"Too many redirect" errors are usually caused by service ticket validation failure events, generally
 caused by application misconfiguration. 
 Ticket validation failure may be caused by expired or unrecognized tickets, SSL-related 
 issues and such. Examine your CAS logs and you will find the cause.
@@ -110,7 +110,7 @@ Please [review this guide](../services/Service-Management.html) to better unders
 
 ## Invalid/Expired CAS Tickets
 
-You may experience `INVALID_TICKET` related errors when attempting to use a CAS ticket whose expiration policy dictates that the ticket 
+You may experience `INVALID_TICKET` related errors when attempting to use a CAS ticket whose expiration policy dictates that the ticket
 has expired. The CAS log should further explain in more detail if the ticket is considered expired, but for diagnostic purposes, 
 you may want to adjust the [ticket expiration policy configuration](../ticketing/Configuring-Ticket-Expiration-Policy.html) to remove and troubleshoot this error.
 
