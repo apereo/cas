@@ -150,13 +150,15 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
     @Operation(summary = "Import a device registration as a JSON document")
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
-        val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
-        LOGGER.trace("Submitted account: [{}]", requestBody);
-        val account = WebAuthnUtils.getObjectMapper()
-            .readValue(requestBody, new TypeReference<CredentialRegistration>() {
-            });
-        LOGGER.trace("Storing account: [{}]", account);
-        registrationStorage.getObject().addRegistrationByUsername(account.getUsername(), account);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        try (val is = request.getInputStream()) {
+            val requestBody = IOUtils.toString(is, StandardCharsets.UTF_8);
+            LOGGER.trace("Submitted account: [{}]", requestBody);
+            val account = WebAuthnUtils.getObjectMapper()
+                .readValue(requestBody, new TypeReference<CredentialRegistration>() {
+                });
+            LOGGER.trace("Storing account: [{}]", account);
+            registrationStorage.getObject().addRegistrationByUsername(account.getUsername(), account);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
     }
 }
