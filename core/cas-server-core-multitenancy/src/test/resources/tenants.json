@@ -5,6 +5,10 @@
       "@class": "org.apereo.cas.multitenancy.TenantDefinition",
       "id": "b9584c42",
       "description": "Example tenant",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.server.name": "https://sso.example.org"
+      },
       "authenticationPolicy": {
         "@class": "org.apereo.cas.multitenancy.DefaultTenantAuthenticationPolicy",
         "authenticationHandlers": [
@@ -14,6 +18,26 @@
             "UnknownHandler"
           ]
         ]
+      }
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "hosted",
+      "description": "Hosted tenant",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.host.name": "{cas-cipher}xoLrkVhqnyAmMHqxWi3t+AcXf/w6Mg3bltpdP1kmG9E="
+      }
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "cookie",
+      "description": "Cookie tenant",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.tgc.crypto.alg": "A128CBC-HS256",
+        "cas.tgc.crypto.encryption.key": "u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
+        "cas.tgc.crypto.signing.key": "zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w"
       }
     }
   ]

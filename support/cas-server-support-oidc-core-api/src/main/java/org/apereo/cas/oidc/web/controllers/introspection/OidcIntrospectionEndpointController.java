@@ -14,6 +14,8 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,6 +42,7 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Tag(name = "OpenID Connect")
 @Slf4j
 public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEndpointController<OidcConfigurationContext> {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -60,10 +64,11 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
             '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL,
             "/**/" + OidcConstants.INTROSPECTION_URL
         })
+    @Operation(summary = "Handle OIDC introspection request")
     @Override
     public ResponseEntity handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.INTROSPECTION_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.INTROSPECTION_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return new ResponseEntity(body, HttpStatus.BAD_REQUEST);
         }
@@ -82,6 +87,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
             '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL,
             "/**/" + OidcConstants.INTROSPECTION_URL
         })
+    @Operation(summary = "Handle OIDC introspection request")
     @Override
     public ResponseEntity handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         return super.handlePostRequest(request, response);

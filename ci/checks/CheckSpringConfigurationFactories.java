@@ -238,7 +238,9 @@ public class CheckSpringConfigurationFactories {
                     if (springFactoriesFile.exists()) {
                         var properties = new Properties();
 
-                        properties.load(new FileReader(springFactoriesFile));
+                        try (var reader = new FileReader(springFactoriesFile)) {
+                            properties.load(reader);
+                        }
 
                         if (properties.isEmpty()) {
                             error("spring.factories file %s is empty", springFactoriesFile);

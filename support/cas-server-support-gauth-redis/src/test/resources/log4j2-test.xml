@@ -7,7 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="error"  />
-        <Logger name="org.apereo.cas.gauth" level="info"  />
+        <Logger name="org.apereo.cas.gauth" level="warn"  />
         <Logger name="org.springframework.data" level="error" />
         <Root level="off">
             <AppenderRef ref="console"/>

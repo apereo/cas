@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.UsernameAttributeProvider;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,7 +40,9 @@ import java.util.Set;
 @Getter
 @Setter
 public class RestfulPersonAttributeDao extends BasePersonAttributeDao {
-    private final ObjectMapper jacksonObjectMapper = new ObjectMapper().findAndRegisterModules();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
+    
     private UsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider();
 
     private String url;
@@ -64,7 +67,7 @@ public class RestfulPersonAttributeDao extends BasePersonAttributeDao {
                 provider.setCredentials(new AuthScope(new HttpHost(uriBuilder.getHost())), credentials);
                 builder.setDefaultCredentialsProvider(provider);
             }
-            val client = builder.build();
+            
             uriBuilder.addParameter(principalId, Objects.requireNonNull(uid, () -> principalId + " cannot be null"));
             this.parameters.forEach(uriBuilder::addParameter);
 
@@ -72,9 +75,10 @@ public class RestfulPersonAttributeDao extends BasePersonAttributeDao {
             val request = method.equalsIgnoreCase(HttpMethod.GET.name()) ? new HttpGet(uri) : new HttpPost(uri);
             this.headers.forEach(request::addHeader);
 
-            val response = client.execute(request);
-            val attributes = jacksonObjectMapper.readValue(response.getEntity().getContent(), Map.class);
-            return new SimplePersonAttributes(uid, PersonAttributeDao.stuffAttributesIntoList(attributes));
+            try (val client = builder.build(); val response = client.execute(request)) {
+                val attributes = MAPPER.readValue(response.getEntity().getContent(), Map.class);
+                return new SimplePersonAttributes(uid, PersonAttributeDao.stuffAttributesIntoList(attributes));
+            }
         } catch (final Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }

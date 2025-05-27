@@ -53,7 +53,7 @@ class OidcUserProfileViewRendererDefaultTests extends AbstractOidcTests {
         val clientId = UUID.randomUUID().toString();
         val response = new MockHttpServletResponse();
         val accessToken = getAccessToken(clientId);
-        val service = getOAuthRegisteredService(clientId, "https://somthing.com");
+        val service = getOAuthRegisteredService(clientId, "https://something.com");
 
         servicesManager.save(service);
 

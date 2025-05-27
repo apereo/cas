@@ -38,9 +38,9 @@ referred to as the "target service."
 CAS is an HTTP[2,3]-based protocol that requires each of its components to be accessible through specific URIs.
 This section will discuss each of the URIs.
 
-## 2.1. */login* as credential requestor
-The */login* URI operates with two behaviors: as a credential requestor, and as a credential acceptor. It responds
-to credentials by acting as a credential acceptor and otherwise acts as a credential requestor.
+## 2.1. */login* as credential requester
+The */login* URI operates with two behaviors: as a credential requester, and as a credential acceptor. It responds
+to credentials by acting as a credential acceptor and otherwise acts as a credential requester.
 
 If the client has already established a single sign-on session with CAS, the web browser presents to CAS a secure
 cookie containing a string identifying a ticket-granting ticket. This cookie is called the ticket-granting cookie.
@@ -48,7 +48,7 @@ If the ticket-granting cookie keys to a valid ticket-granting ticket, CAS may is
 other conditions in this specification are met. See Section 3.6 for more information on ticket-granting cookies.
 
 ### 2.1.1. parameters
-The following HTTP request parameters may be passed to */login* while it is acting as a credential requestor.
+The following HTTP request parameters may be passed to */login* while it is acting as a credential requester.
 They are all case-sensitive, and they all MUST be handled by */login*.
 
 1. `service [OPTIONAL]` - the identifier of the application the client is trying to access. In almost all cases, this will
@@ -86,7 +86,7 @@ Always prompt for username/password:
     https://server/cas/login?service=http%3A%2F%2Fwww.service.com&renew=true
 
 ### 2.1.3. response for username/password authentication
-When */login* behaves as a credential requestor, the response will vary depending on the type of credentials it is requesting.
+When */login* behaves as a credential requester, the response will vary depending on the type of credentials it is requesting.
 In most cases, CAS will respond by displaying a login screen requesting a username and password. This page MUST include a form
 with the parameters, "username", "password", and "lt". The form MAY also include the parameter, "warn". If `service` was
 specified to */login*, `service` MUST also be a parameter of the form, containing the value originally passed to */login*. These
@@ -98,7 +98,7 @@ Trust authentication accommodates consideration of arbitrary aspects of the requ
 The appropriate user experience for trust authentication will be highly deployer-specific in consideration of local policy
 and of the logistics of the particular authentication mechanism implemented.
 
-When */login* behaves as a credential requestor for trust authentication, its behavior will be determined by the type of
+When */login* behaves as a credential requester for trust authentication, its behavior will be determined by the type of
 credentials it will be receiving. If the credentials are valid, CAS MAY transparently redirect the user to the service.
 Alternately, CAS MAY display a warning that credentials were presented and allow the client to confirm that it wants to use
 those credentials. It is RECOMMENDED that CAS implementations allow the deployer to choose the preferred behavior. If the
@@ -144,7 +144,7 @@ the client's credentials to be forwarded to the service. This redirection MUST r
 to the service. The request MUST include a valid service ticket, passed as the HTTP request parameter, `ticket`.
 See Appendix B for more information. If `service` was not specified, CAS MUST display a message notifying the client that
 it has successfully initiated a single sign-on session.
-2. failed login: return to /login as a credential requestor. It is RECOMMENDED in this case that the CAS server display
+2. failed login: return to /login as a credential requester. It is RECOMMENDED in this case that the CAS server display
 an error message be displayed to the user describing why login failed (e.g. bad password, locked account, etc.), and if
 appropriate, provide an opportunity for the user to attempt to login again.
 
@@ -458,7 +458,7 @@ reasonable period of time through brute-force attacks.
 It is RECOMMENDED that services support PGTIOUs of up to 256 characters in length.
 
 ## 3.5. login ticket
-A login ticket is a string that is provided by */login* as a credential requestor and passed to */login* as a
+A login ticket is a string that is provided by */login* as a credential requester and passed to */login* as a
 credential acceptor for username/password authentication. Its purpose is to prevent the replaying of credentials
 due to bugs in web browsers.
 

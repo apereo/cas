@@ -93,7 +93,7 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
     private Boolean stateless = Boolean.FALSE;
 
     @Getter
-    private Map<String, Object> properties = new HashMap<>(0);
+    private Map<String, Object> properties = new HashMap<>();
     
     protected AbstractTicket(final String id, final ExpirationPolicy expirationPolicy) {
         this.id = id;
@@ -123,9 +123,10 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
     }
 
     @Override
-    public void update() {
+    public Ticket update() {
         updateTicketState();
         updateTicketGrantingTicketState();
+        return this;
     }
 
     @Override
@@ -145,11 +146,6 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
             .map(AuthenticationAwareTicket.class::cast)
             .map(AuthenticationAwareTicket::getAuthentication)
             .orElse(null);
-    }
-
-    @Override
-    public Ticket getTicketGrantingTicket() {
-        return null;
     }
 
     /**

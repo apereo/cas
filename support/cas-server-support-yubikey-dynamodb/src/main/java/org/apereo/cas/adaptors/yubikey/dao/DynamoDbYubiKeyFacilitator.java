@@ -8,11 +8,11 @@ import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeAction;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
@@ -25,7 +25,6 @@ import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -54,15 +53,20 @@ public class DynamoDbYubiKeyFacilitator {
     }
 
     private static AttributeValue toAttributeValue(final YubiKeyAccount account) {
-        val devices = account.getDevices().stream()
-            .map(device -> AttributeValue.builder()
-                .m(Map.of(
+        val devices = account.getDevices()
+            .stream()
+            .map(device -> {
+                val attributes = CollectionUtils.<String, AttributeValue>wrap(
                     "id", AttributeValue.builder().n(String.valueOf(device.getId())).build(),
                     "name", AttributeValue.builder().s(device.getName()).build(),
                     "publicId", AttributeValue.builder().s(device.getPublicId()).build(),
                     "registrationDate", AttributeValue.builder().s(device.getRegistrationDate().toString()).build()
-                ))
-                .build())
+                );
+                if (StringUtils.isNotBlank(device.getTenant())) {
+                    attributes.put("tenant", AttributeValue.builder().s(device.getTenant()).build());
+                }
+                return AttributeValue.builder().m(attributes).build();
+            })
             .collect(Collectors.toList());
         return AttributeValue.builder().l(devices).build();
     }
@@ -73,6 +77,7 @@ public class DynamoDbYubiKeyFacilitator {
             .name(map.get("name").s())
             .publicId(map.get("publicId").s())
             .registrationDate(DateTimeUtils.zonedDateTimeOf(map.get("registrationDate").s()))
+            .tenant(map.containsKey("tenant") ? map.get("tenant").s() : null)
             .build();
     }
 
@@ -87,6 +92,9 @@ public class DynamoDbYubiKeyFacilitator {
         values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
         values.put(ColumnNames.USERNAME.getColumnName(), AttributeValue.builder().s(String.valueOf(record.getUsername())).build());
         values.put(ColumnNames.DEVICE_IDENTIFIERS.getColumnName(), toAttributeValue(record));
+        if (StringUtils.isNotBlank(record.getTenant())) {
+            values.put(ColumnNames.TENANT.getColumnName(), AttributeValue.builder().s(record.getTenant()).build());
+        }
         LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
         return values;
     }
@@ -207,15 +215,19 @@ public class DynamoDbYubiKeyFacilitator {
     @RequiredArgsConstructor
     private enum ColumnNames {
         /**
-         * Id column names.
+         * Id column name.
          */
         ID("id"),
         /**
-         * Username column names.
+         * Username column name.
          */
         USERNAME("username"),
         /**
-         * Device identifiers column names.
+         * Tenant column name.
+         */
+        TENANT("tenant"),
+        /**
+         * Device identifiers column name.
          */
         DEVICE_IDENTIFIERS("deviceIdentifiers");
 
@@ -229,11 +241,15 @@ public class DynamoDbYubiKeyFacilitator {
                     val id = Long.parseLong(item.get(ColumnNames.ID.getColumnName()).n());
                     val username = item.get(ColumnNames.USERNAME.getColumnName()).s();
                     val details = item.get(ColumnNames.DEVICE_IDENTIFIERS.getColumnName()).l();
+                    val tenant = item.containsKey(ColumnNames.TENANT.getColumnName())
+                        ? item.get(ColumnNames.TENANT.getColumnName()).s()
+                        : null;
                     val records = details.stream().map(value -> toYubiKeyRegisteredDevice(value.m())).collect(Collectors.toList());
                     return YubiKeyAccount.builder()
                         .id(id)
                         .username(username)
                         .devices(records)
+                        .tenant(tenant)
                         .build();
                 })
             .collect(Collectors.toList());

@@ -77,7 +77,7 @@ public class CasConfigurationPropertiesValidator {
             new PropertySourcesPlaceholdersResolver(propertySources),
             conversionService, null, null, null);
 
-        val validationResults = new ArrayList<String>(0);
+        val validationResults = new ArrayList<String>();
         beans.values().forEach(bean -> {
             try {
                 val configBean = ConfigurationPropertiesBean.get(applicationContext, bean, UUID.randomUUID().toString());

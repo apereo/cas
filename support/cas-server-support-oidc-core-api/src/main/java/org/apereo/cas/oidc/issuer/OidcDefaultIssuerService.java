@@ -5,14 +5,12 @@ import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
-
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -39,16 +37,22 @@ public class OidcDefaultIssuerService implements OidcIssuerService {
     }
 
     @Override
-    public boolean validateIssuer(final WebContext webContext, final String endpoint) {
+    public boolean validateIssuer(final WebContext webContext, final List<String> endpoints, final OidcRegisteredService registeredService) {
         val requestUrl = webContext.getRequestURL();
-        val issuerFromRequestUrl = StringUtils.removeEnd(StringUtils.remove(requestUrl, '/' + endpoint), "/");
-        val definedIssuer = determineIssuer(Optional.empty());
+        val definedIssuer = determineIssuer(Optional.ofNullable(registeredService));
         val definedIssuerWithSlash = StringUtils.appendIfMissing(definedIssuer, "/");
-        val result = definedIssuer.equalsIgnoreCase(issuerFromRequestUrl)
-                     || issuerFromRequestUrl.startsWith(definedIssuerWithSlash)
-                     || RegexUtils.find(properties.getCore().getAcceptedIssuersPattern(), issuerFromRequestUrl);
-        FunctionUtils.doIf(!result, o -> LOGGER.trace("Configured issuer [{}] defined does not match the request issuer [{}]",
-            o, issuerFromRequestUrl)).accept(definedIssuer);
-        return result;
+        
+        val foundMatch = endpoints.stream().anyMatch(endpoint -> {
+            val issuerFromRequestUrl = StringUtils.removeEnd(StringUtils.remove(requestUrl, '/' + endpoint), "/");
+            return definedIssuer.equalsIgnoreCase(issuerFromRequestUrl)
+                || issuerFromRequestUrl.startsWith(definedIssuerWithSlash)
+                || definedIssuer.startsWith(issuerFromRequestUrl)
+                || RegexUtils.find(properties.getCore().getAcceptedIssuersPattern(), issuerFromRequestUrl);
+        });
+        if (!foundMatch) {
+            LOGGER.debug("Cannot accept issuer [{}] at [{}] for any of the endpoints [{}]",
+                webContext.getRequestURL(), endpoints, definedIssuer);
+        }
+        return foundMatch;
     }
 }

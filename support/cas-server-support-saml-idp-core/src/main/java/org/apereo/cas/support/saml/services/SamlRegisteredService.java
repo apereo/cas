@@ -144,6 +144,8 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
 
     @JacksonInject("skipGeneratingSessionNotOnOrAfter")
     private boolean skipGeneratingSessionNotOnOrAfter;
+
+    private boolean validateMetadataCertificates;
     
     @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
     @JacksonInject("signResponses")
@@ -186,7 +188,7 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
 
     private Map<String, String> attributeValueTypes = new TreeMap<>();
 
-    private Set<String> encryptableAttributes = new HashSet<>(0);
+    private Set<String> encryptableAttributes = new HashSet<>();
 
     private List<String> signingSignatureReferenceDigestMethods = new ArrayList<>();
 

@@ -44,11 +44,13 @@ class RestfulPersonAttributeDaoTests {
 
     @BeforeEach
     void initialize() {
-        val data = '{'
-            + "   \"name\" :\"casuser\","
-            + "\"age\" : 29,"
-            + "\"messages\": [\"msg 1\", \"msg 2\", \"msg 3\"]      "
-            + '}';
+        val data = """
+            {
+               "name": "casuser",
+               "age": 29,
+               "messages": ["msg 1", "msg 2", "msg 3"]
+            }
+            """.stripIndent();
         this.webServer = new MockWebServer(8085,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);

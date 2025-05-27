@@ -24,7 +24,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 - ...as a result, you do not need to worry about storage schema upgrades, migrations, etc.
 - ...as a result, you do not need to worry about cleaning up expired tickets or garbage-collecting ticket entities.
 - ...as a result, you do not need to worry about sharing tickets across CAS nodes in a clustered deployment and synchronizing state.
-- ...as a result, you do not need to pay for storage or possible caching technology licenses specially if your CAS deployment is cloud-native.
+- ...as a result, you do not need to pay for storage or possible caching technology licenses especially if your CAS deployment is cloud-native.
         
 The above features do come with a number of caveats and limitations. See below.
 
@@ -50,7 +50,7 @@ might be missing or acts dysfunctional, please investigate, isolate, verify and 
 
 - Increase the expiration policy of service tickets to be around `30` seconds to allow for decryption operations to decode tickets in time.
 - Assign names to all authentication handlers, and preferably short, concise names.
-- Use shorter URLs for applications, specially those that use the CAS protocol. This will help minimize the size of the generated service tickets.
+- Use shorter URLs for applications, especially those that use the CAS protocol. This will help minimize the size of the generated service tickets.
 
 ## Caveats
 

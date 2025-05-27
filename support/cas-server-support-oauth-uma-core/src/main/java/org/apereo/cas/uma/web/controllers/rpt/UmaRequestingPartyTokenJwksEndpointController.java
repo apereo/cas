@@ -6,6 +6,8 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -30,6 +32,7 @@ import java.nio.charset.StandardCharsets;
  */
 @Controller("umaRequestingPartyTokenJwksEndpointController")
 @Slf4j
+@Tag(name = "User Managed Access")
 public class UmaRequestingPartyTokenJwksEndpointController extends BaseUmaEndpointController {
     public UmaRequestingPartyTokenJwksEndpointController(final UmaConfigurationContext umaConfigurationContext) {
         super(umaConfigurationContext);
@@ -43,16 +46,21 @@ public class UmaRequestingPartyTokenJwksEndpointController extends BaseUmaEndpoi
      * @return redirect view
      */
     @GetMapping(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_JWKS_URL)
+    @Operation(
+        summary = "Get JWKS used to sign RPTs",
+        description = "Returns the JWKS used to sign RPTs")
     public ResponseEntity<String> getKeys(final HttpServletRequest request, final HttpServletResponse response) {
         try {
             val jwks = getUmaConfigurationContext().getCasProperties().getAuthn()
                 .getOauth().getUma().getRequestingPartyToken().getJwksFile().getLocation();
             if (ResourceUtils.doesResourceExist(jwks)) {
-                val jsonJwks = IOUtils.toString(jwks.getInputStream(), StandardCharsets.UTF_8);
-                val jsonWebKeySet = new JsonWebKeySet(jsonJwks);
-                val body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                return new ResponseEntity<>(body, HttpStatus.OK);
+                try (val is = jwks.getInputStream()) {
+                    val jsonJwks = IOUtils.toString(is, StandardCharsets.UTF_8);
+                    val jsonWebKeySet = new JsonWebKeySet(jsonJwks);
+                    val body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    return new ResponseEntity<>(body, HttpStatus.OK);
+                }
             }
             return new ResponseEntity<>("UMA RPT JWKS resource is undefined or cannot be located", HttpStatus.NOT_IMPLEMENTED);
         } catch (final Exception e) {

@@ -1,6 +1,7 @@
 description = "Apereo CAS Redis Core Support"
 dependencies {
     implementation libraries.redis
+    implementation libraries.lz4
     
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")

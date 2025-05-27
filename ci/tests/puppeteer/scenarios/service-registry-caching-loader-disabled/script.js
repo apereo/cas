@@ -5,11 +5,12 @@ const assert = require("assert");
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.gotoLogin(page, "https://apereo.github.io&renew=true");
+    const service = "https://apereo.github.io";
+    await cas.gotoLogin(page, `${service}&renew=true`);
     await cas.assertVisibility(page, "#username");
     await cas.logg("Waiting for the service registry cache to expire...");
     await cas.sleep(3000);
-    await cas.gotoLogin(page, "https://apereo.github.io&renew=true");
+    await cas.gotoLogin(page, `${service}&renew=true`);
     await cas.assertVisibility(page, "#username");
 
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices/type";

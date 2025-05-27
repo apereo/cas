@@ -9,6 +9,12 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +31,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -34,6 +41,7 @@ import java.util.Optional;
  * @since 6.1.0
  */
 @Slf4j
+@Tag(name = "OpenID Connect")
 public class OidcClientConfigurationEndpointController extends BaseOidcController {
     public OidcClientConfigurationEndpointController(final OidcConfigurationContext configurationContext) {
         super(configurationContext);
@@ -51,13 +59,14 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CLIENT_CONFIGURATION_URL,
         "/**/" + OidcConstants.CLIENT_CONFIGURATION_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Handle client configuration request", parameters = @Parameter(name = OAuth20Constants.CLIENT_ID, description = "Client ID", required = true))
     public ResponseEntity handleRequestInternal(
         @RequestParam(name = OAuth20Constants.CLIENT_ID)
         final String clientId,
         final HttpServletRequest request, final HttpServletResponse response) {
 
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.CLIENT_CONFIGURATION_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.CLIENT_CONFIGURATION_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
@@ -85,6 +94,16 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CLIENT_CONFIGURATION_URL,
         "/**/" + OidcConstants.CLIENT_CONFIGURATION_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Handle client configuration updates",
+        parameters = @Parameter(name = OAuth20Constants.CLIENT_ID, in = ParameterIn.QUERY, description = "Client ID", required = true),
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Client registration request",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = OidcClientRegistrationRequest.class)
+            )
+        )
+    )
     public ResponseEntity handleUpdates(
         @RequestParam(name = OAuth20Constants.CLIENT_ID)
         final String clientId,
@@ -92,7 +111,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         final String jsonInput,
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.CLIENT_CONFIGURATION_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.CLIENT_CONFIGURATION_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }

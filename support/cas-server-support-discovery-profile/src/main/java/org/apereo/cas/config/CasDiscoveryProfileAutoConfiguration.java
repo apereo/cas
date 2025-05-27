@@ -86,7 +86,7 @@ public class CasDiscoveryProfileAutoConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final ObjectProvider<PersonAttributeDao> attributeRepository) {
 
-            val attributes = new LinkedHashSet<String>(0);
+            val attributes = new LinkedHashSet<String>();
             attributeRepository.ifAvailable(repository -> {
                 val possibleUserAttributeNames = repository.getPossibleUserAttributeNames(PersonAttributeDaoFilter.alwaysChoose());
                 if (possibleUserAttributeNames != null) {

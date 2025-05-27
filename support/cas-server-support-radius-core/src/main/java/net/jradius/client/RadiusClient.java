@@ -113,7 +113,7 @@ public class RadiusClient {
             try {
                 props = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
             } catch (final Exception e) {
-                RadiusLog.error("Could not instanciate authenticator " + protocolName, e);
+                RadiusLog.error("Could not instantiate authenticator " + protocolName, e);
                 return auth;
             }
             for (var pd : props) {

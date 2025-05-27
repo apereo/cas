@@ -1,8 +1,8 @@
 package org.apereo.cas.gauth.config;
 
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.test.CasTestExtension;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,8 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 class GoogleAuthenticatorConfigurationTests {
     @Autowired
-    @Qualifier("googleAuthenticatorInstance")
-    private IGoogleAuthenticator googleAuthenticatorInstance;
+    @Qualifier(CasGoogleAuthenticator.BEAN_NAME)
+    private CasGoogleAuthenticator googleAuthenticatorInstance;
 
     @Test
     void verifyOperation() {

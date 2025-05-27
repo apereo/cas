@@ -8,7 +8,7 @@ def run(Object[] args) {
     if (context.service.isPresent()) {
         def service = context.service.get()
         logger.info("Service request is ${service.id}")
-        if (service.id.startsWith("https://apereo.github.io")) {
+        if (service.id.startsWith("https://localhost:9859")) {
             def result = AuditableExecutionResult.builder().build()
             result.setException(UnauthorizedServiceException.denied("Service unauthorized"))
             return result

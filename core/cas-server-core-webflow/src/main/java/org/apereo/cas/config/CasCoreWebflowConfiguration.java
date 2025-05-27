@@ -119,7 +119,7 @@ class CasCoreWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "webflowCipherExecutor")
+        @ConditionalOnMissingBean(name = CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
         public CipherExecutor webflowCipherExecutor(final CasConfigurationProperties casProperties) {
             val webflow = casProperties.getWebflow();
             val crypto = webflow.getCrypto();
@@ -131,12 +131,7 @@ class CasCoreWebflowConfiguration {
                 enabled = true;
             }
             if (enabled) {
-                return new WebflowConversationStateCipherExecutor(
-                    crypto.getEncryption().getKey(),
-                    crypto.getSigning().getKey(),
-                    crypto.getAlg(),
-                    crypto.getSigning().getKeySize(),
-                    crypto.getEncryption().getKeySize());
+                return WebflowConversationStateCipherExecutor.from(crypto);
             }
             LOGGER.warn("Webflow encryption/signing is turned off. This "
                         + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
@@ -509,8 +504,10 @@ class CasCoreWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowCredentialProvider.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasWebflowCredentialProvider casWebflowCredentialProvider() {
-            return new DefaultCasWebflowCredentialProvider();
+        public CasWebflowCredentialProvider casWebflowCredentialProvider(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor) {
+            return new DefaultCasWebflowCredentialProvider(tenantExtractor);
         }
     }
 

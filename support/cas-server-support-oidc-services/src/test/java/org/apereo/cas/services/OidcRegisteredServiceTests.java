@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
@@ -44,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreWebAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
     CasCoreMultitenancyAutoConfiguration.class,
     CasJsonServiceRegistryAutoConfiguration.class
 }, properties = "cas.service-registry.json.location=classpath:/services")

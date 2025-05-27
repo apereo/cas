@@ -53,7 +53,7 @@ public class TokenAuthenticationSecurity {
     private RegisteredServiceSecurityConfiguration securityConfiguration;
 
     /**
-     * Generate token for authentication.
+     * Generate a token for authentication.
      *
      * @param authentication the authentication
      * @return the string
@@ -66,7 +66,7 @@ public class TokenAuthenticationSecurity {
     }
 
     /**
-     * Validate token and build user profile.
+     * Validate the token and build the user profile.
      *
      * @param token the token
      * @return the user profile
@@ -76,7 +76,7 @@ public class TokenAuthenticationSecurity {
     }
 
     /**
-     * For registered service.
+     * Create a token security instance for a registered service.
      *
      * @param registeredService the service
      * @return the token authentication security
@@ -91,7 +91,7 @@ public class TokenAuthenticationSecurity {
     }
 
     /**
-     * To generator.
+     * Create a JWT generator.
      *
      * @return the jwt generator
      */
@@ -103,7 +103,7 @@ public class TokenAuthenticationSecurity {
     }
 
     /**
-     * To authenticator.
+     * Create a JWT authenticator.
      *
      * @return the jwt authenticator
      */
@@ -138,10 +138,10 @@ public class TokenAuthenticationSecurity {
             }
             if (JWSAlgorithm.Family.RSA.contains(signingAlg)) {
                 val privateKey = getRsaPrivateKey(signingSecret);
-                
+
                 val encryptionSecret = getRegisteredServiceJwtEncryptionSecret(registeredService);
                 val publicKey = StringUtils.isNotBlank(encryptionSecret) ? getRsaPublicKey(encryptionSecret) : null;
-                
+
                 val config = new RSASignatureConfiguration();
                 config.setAlgorithm(signingAlg);
                 config.setPrivateKey(privateKey);
@@ -195,11 +195,11 @@ public class TokenAuthenticationSecurity {
             return (RSAPrivateKey) factory.getObject();
         });
     }
-    
+
     private static JWSAlgorithm determineSigningAlgorithm(final RegisteredService registeredService) {
         val serviceSigningAlg = getRegisteredServiceJwtProperty(registeredService, RegisteredServiceProperties.TOKEN_SECRET_SIGNING_ALG);
         val signingSecretAlg = StringUtils.defaultIfBlank(serviceSigningAlg, JWSAlgorithm.HS256.getName());
-        val sets = new HashSet<Algorithm>(0);
+        val sets = new HashSet<Algorithm>();
         sets.addAll(JWSAlgorithm.Family.EC);
         sets.addAll(JWSAlgorithm.Family.HMAC_SHA);
         sets.addAll(JWSAlgorithm.Family.RSA);
@@ -208,7 +208,7 @@ public class TokenAuthenticationSecurity {
     }
 
     private static EncryptionMethod determineEncryptionMethod(final RegisteredService registeredService) {
-        val encryptionMethods = new HashSet<Algorithm>(0);
+        val encryptionMethods = new HashSet<Algorithm>();
         encryptionMethods.addAll(EncryptionMethod.Family.AES_CBC_HMAC_SHA);
         encryptionMethods.addAll(EncryptionMethod.Family.AES_GCM);
         val encryptionMethod = getRegisteredServiceJwtProperty(registeredService, RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_METHOD);
@@ -217,7 +217,7 @@ public class TokenAuthenticationSecurity {
     }
 
     private static JWEAlgorithm determineEncryptionAlgorithm(final RegisteredService registeredService) {
-        val sets = new HashSet<Algorithm>(0);
+        val sets = new HashSet<Algorithm>();
         sets.addAll(JWEAlgorithm.Family.AES_GCM_KW);
         sets.addAll(JWEAlgorithm.Family.AES_KW);
         sets.addAll(JWEAlgorithm.Family.ASYMMETRIC);

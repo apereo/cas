@@ -5,6 +5,8 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.util.Saml20HexRandomIdGenerator;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +45,7 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
+@Tag(name = "SAML2")
 public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
 
     private static final List<String> PARAMETERS_TO_IGNORE = List.of(
@@ -61,6 +64,7 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
     }
 
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_INIT_PROFILE_SSO)
+    @Operation(summary = "Handle SAML IdP initiated SSO request")
     protected ModelAndView handleIdPInitiatedSsoRequest(final HttpServletResponse response,
                                                         final HttpServletRequest request) throws Throwable {
         val providerId = extractProviderId(request);

@@ -53,6 +53,11 @@ public class DuoSecurityMultifactorAuthenticationDeviceManager implements Multif
             .forEach(Unchecked.consumer(service -> service.deleteDuoSecurityUserDevice(principal.getId(), deviceId)));
     }
 
+    @Override
+    public List<String> getSource() {
+        return List.of("Duo Security");
+    }
+
     protected List<MultifactorAuthenticationRegisteredDevice> mapDuoSecurityDevice(final DuoSecurityUserAccount acct) {
         return acct
             .getDevices()
@@ -68,7 +73,7 @@ public class DuoSecurityMultifactorAuthenticationDeviceManager implements Multif
                     .name(StringUtils.defaultIfBlank(device.getName(), model))
                     .payload(device.toJson())
                     .lastUsedDateTime(device.getLastSeen())
-                    .source("Duo Security")
+                    .source(getSource().getFirst())
                     .details(Map.of("providerId", Objects.requireNonNull(acct.getProviderId(), "Provider ID cannot be null")))
                     .build();
             })

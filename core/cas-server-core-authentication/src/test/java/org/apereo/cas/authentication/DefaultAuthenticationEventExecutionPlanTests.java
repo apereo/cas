@@ -113,7 +113,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
         
         @Test
         void verifyDuplicateHandlers() {
-            assertEquals(2, authenticationEventExecutionPlan.getAuthenticationHandlers().size());
+            assertEquals(2, authenticationEventExecutionPlan.resolveAuthenticationHandlers().size());
         }
     }
 
@@ -122,9 +122,9 @@ class DefaultAuthenticationEventExecutionPlanTests {
         @Test
         void verifyDefaults() {
             val input = mock(AuthenticationEventExecutionPlan.class);
-            when(input.getAuthenticationHandlers()).thenReturn(Set.of());
-            when(input.getAuthenticationHandlersBy(any())).thenCallRealMethod();
-            assertNotNull(input.getAuthenticationHandlersBy(handler -> false));
+            when(input.resolveAuthenticationHandlers()).thenReturn(Set.of());
+            when(input.resolveAuthenticationHandlersBy(any())).thenCallRealMethod();
+            assertNotNull(input.resolveAuthenticationHandlersBy(handler -> false));
         }
         
         @Test
@@ -172,7 +172,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
         
         @Test
         void verifyMismatchedCount() {
-            assertTrue(authenticationEventExecutionPlan.getAuthenticationHandlers().isEmpty());
+            assertTrue(authenticationEventExecutionPlan.resolveAuthenticationHandlers().isEmpty());
         }
     }
 

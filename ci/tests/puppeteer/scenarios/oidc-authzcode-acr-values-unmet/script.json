@@ -1,20 +1,19 @@
 {
   "dependencies": "oidc",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
-    
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    
     "--cas.authn.oidc.discovery.acr-values-supported=mfa-gauth,https://refeds.org/profile/mfa",
     "--cas.authn.oidc.core.authentication-context-reference-mappings=https://refeds.org/profile/mfa->mfa-gauth",
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
-
     "--logging.level.org.springframework.webflow=info",
-    
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
 

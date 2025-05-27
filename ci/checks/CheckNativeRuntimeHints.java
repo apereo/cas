@@ -72,7 +72,9 @@ public class CheckNativeRuntimeHints {
                     if (factoriesFile.exists()) {
                         var properties = new Properties();
 
-                        properties.load(new FileReader(factoriesFile));
+                        try (var reader = new FileReader(factoriesFile)) {
+                            properties.load(reader);
+                        }
 
                         if (properties.isEmpty()) {
                             print("aot.factories file %s is empty", factoriesFile);

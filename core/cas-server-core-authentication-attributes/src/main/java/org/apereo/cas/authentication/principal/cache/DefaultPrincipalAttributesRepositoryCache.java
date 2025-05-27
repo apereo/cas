@@ -32,7 +32,7 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
 
     private final CasReentrantLock lock = new CasReentrantLock();
 
-    private final Map<String, Cache<String, Map<String, List<Object>>>> registeredServicesCache = new HashMap<>(0);
+    private final Map<String, Cache<String, Map<String, List<Object>>>> registeredServicesCache = new HashMap<>();
 
     private static String buildRegisteredServiceCacheKey(final RegisteredService registeredService) {
         val key = registeredService.getId() + "@" + registeredService.getName();

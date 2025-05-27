@@ -4,20 +4,22 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,30 +33,37 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @Tag("Attributes")
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@SpringBootTest(classes = {
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class
+})
 @ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@SpringBootTestAutoConfigurations
 class ChainingPrincipalResolverTests {
 
     private final PrincipalFactory principalFactory = PrincipalFactoryUtils.newPrincipalFactory();
 
     @Autowired
+    @Qualifier(TenantExtractor.BEAN_NAME)
+    private TenantExtractor tenantExtractor;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
-    private static Principal mergeAndResolve(final Principal p1, final Credential credential,
-                                             final PrincipalResolver resolver1, final PrincipalResolver resolver2,
-                                             final PrincipalAttributesCoreProperties.MergingStrategyTypes mergerType) throws Throwable {
+    private Principal mergeAndResolve(final Principal principal, final Credential credential,
+                                      final PrincipalResolver resolver1, final PrincipalResolver resolver2,
+                                      final PrincipalAttributesCoreProperties.MergingStrategyTypes mergerType) throws Throwable {
         val props = new CasConfigurationProperties();
         props
             .getAuthn()
             .getAttributeRepository()
             .getCore()
             .setMerger(mergerType);
-        val resolver = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), props);
-        resolver.setChain(Arrays.asList(resolver1, resolver2));
+        val resolver = buildResolver(List.of(resolver1, resolver2), props);
 
         return resolver.resolve(credential,
-            Optional.of(p1),
+            Optional.of(principal),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
             Optional.of(CoreAuthenticationTestUtils.getService()));
     }
@@ -70,8 +79,7 @@ class ChainingPrincipalResolverTests {
         val resolver2 = mock(PrincipalResolver.class);
         when(resolver2.supports(eq(credential))).thenReturn(false);
 
-        val resolver = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), casProperties);
-        resolver.setChain(Arrays.asList(resolver1, resolver2));
+        val resolver = buildResolver(List.of(resolver1, resolver2), casProperties);
         assertTrue(resolver.supports(credential));
     }
 
@@ -88,16 +96,14 @@ class ChainingPrincipalResolverTests {
         val resolver2 = mock(PrincipalResolver.class);
         when(resolver2.supports(any(Credential.class))).thenReturn(true);
         when(resolver2.resolve(any(Credential.class), any(Optional.class), any(Optional.class), any(Optional.class)))
-            .thenReturn(principalFactory.createPrincipal("output", Collections.singletonMap("mail", List.of("final@example.com"))));
+            .thenReturn(principalFactory.createPrincipal("output", Map.of("mail", List.of("final@example.com"))));
 
-        val resolver = new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(), casProperties);
-        resolver.setChain(Arrays.asList(resolver1, resolver2));
+        val resolver = buildResolver(List.of(resolver1, resolver2), casProperties);
         val principal = resolver.resolve(credential,
             Optional.of(principalOut),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
             Optional.of(CoreAuthenticationTestUtils.getService()));
         assertEquals("output", principal.getId());
-        assertNotNull(resolver.getAttributeRepository());
         val mail = CollectionUtils.firstElement(principal.getAttributes().get("mail"));
         assertTrue(mail.isPresent());
         assertEquals("final@example.com", mail.get());
@@ -133,4 +139,8 @@ class ChainingPrincipalResolverTests {
         assertTrue(finalResult.getAttributes().containsValue(List.of("Smith")));
     }
 
+    private PrincipalResolver buildResolver(final List<PrincipalResolver> resolvers, final CasConfigurationProperties casProperties) {
+        return new ChainingPrincipalResolver(new DefaultPrincipalElectionStrategy(),
+            tenantExtractor, resolvers, casProperties);
+    }
 }

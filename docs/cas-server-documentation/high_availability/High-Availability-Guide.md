@@ -235,7 +235,7 @@ leverage connection pooling where possible. It makes the best use of computation
 
 CAS adopters typically implement monitoring of the availability of the CAS service using the tools already 
 in use in operational practice for monitoring other enterprise web applications. CAS introduces a new 
-modest monitoring page with authentication by default by the remote_address of the requestor.
+modest monitoring page with authentication by default by the remote_address of the requester.
 
 
 ## Channel Confidentiality

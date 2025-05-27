@@ -97,7 +97,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected List<Credential> getCredentialFromContext(final RequestContext context) {
         val applicationContext = context.getActiveFlow().getApplicationContext();
         val credentialProvider = ApplicationContextProvider.getBean(applicationContext, CasWebflowCredentialProvider.BEAN_NAME, CasWebflowCredentialProvider.class)
-            .orElseGet(DefaultCasWebflowCredentialProvider::new);
+            .orElseGet(() -> new DefaultCasWebflowCredentialProvider(configurationContext.getTenantExtractor()));
         return credentialProvider.extract(context);
     }
 

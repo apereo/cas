@@ -37,9 +37,12 @@ public class SerializationUtils {
      * @since 5.0.0
      */
     public static byte[] serialize(final Serializable object) {
-        val outBytes = new ByteArrayOutputStream();
-        serialize(object, outBytes);
-        return outBytes.toByteArray();
+        return FunctionUtils.doUnchecked(() -> {
+            try (val outBytes = new ByteArrayOutputStream()) {
+                serialize(object, outBytes);
+                return outBytes.toByteArray();
+            }
+        });
     }
 
     /**

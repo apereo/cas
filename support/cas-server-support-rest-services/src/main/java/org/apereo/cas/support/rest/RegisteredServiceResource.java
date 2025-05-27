@@ -14,6 +14,10 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,6 +44,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @RestController("registeredServiceResourceRestController")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@Tag(name = "CAS REST")
 @RequiredArgsConstructor
 public class RegisteredServiceResource {
     private final AuthenticationSystemSupport authenticationSystemSupport;
@@ -62,8 +67,18 @@ public class RegisteredServiceResource {
      * @throws Throwable the throwable
      */
     @PostMapping(value = "/v1/services", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Create registered service",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true,
+            description = "Registered service JSON payload",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = RegisteredService.class)
+            )
+        ))
     public ResponseEntity<String> createService(@RequestBody final RegisteredService service,
-                                                final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+                                                final HttpServletRequest request,
+                                                final HttpServletResponse response) throws Throwable {
         try {
             val auth = authenticateRequest(request);
             if (isAuthenticatedPrincipalAuthorized(auth)) {

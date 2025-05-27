@@ -3,9 +3,11 @@ package org.apereo.cas.otp.repository.token;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
@@ -26,8 +28,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
  * @since 6.0.0
  */
 public abstract class BaseOneTimeTokenRepositoryTests {
-
-
+    
     public abstract OneTimeTokenRepository getRepository();
 
     @SpringBootTestAutoConfigurations
@@ -46,7 +47,9 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
-        CasCoreWebAutoConfiguration.class
+        CasCoreWebAutoConfiguration.class,
+        CasCoreEnvironmentBootstrapAutoConfiguration.class,
+        CasCoreMultitenancyAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {

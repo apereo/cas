@@ -39,9 +39,11 @@ public class JsonPersonAttributeDao extends MappablePersonAttributeDao implement
      */
     public void init() throws IOException {
         LOGGER.info("Un-marshaling person attributes from the config file [{}]", this.personAttributesConfigFile);
-        val backingMap = jacksonObjectMapper.readValue(personAttributesConfigFile.getInputStream(), Map.class);
-        LOGGER.debug("Person attributes have been successfully read into the map ");
-        setBackingMap(backingMap);
+        try (val in = personAttributesConfigFile.getInputStream()) {
+            val backingMap = jacksonObjectMapper.readValue(in, Map.class);
+            LOGGER.debug("Person attributes have been successfully read into the map ");
+            setBackingMap(backingMap);
+        }
     }
 
     @Override

@@ -1,6 +1,6 @@
 function IdPSelectUIParms(){
     this.alwaysShow = true;          // If true, this will show results as soon as you start typing
-    this.defaultLanguage = 'en';     // Language to use if the browser local doesnt have a bundle
+    this.defaultLanguage = 'en';     // Language to use if the browser local doesn't have a bundle
 
     this.defaultLogoWidth = 64;
     this.defaultLogoHeight = 64 ;

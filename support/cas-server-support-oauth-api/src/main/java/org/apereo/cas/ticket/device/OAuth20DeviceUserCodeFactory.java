@@ -12,7 +12,7 @@ import org.apereo.cas.ticket.TicketFactory;
 public interface OAuth20DeviceUserCodeFactory extends TicketFactory {
 
     /**
-     * Create device user code device user code.
+     * Create OAuth 2.0 device user code.
      *
      * @param service the service
      * @return the device user code
@@ -22,11 +22,11 @@ public interface OAuth20DeviceUserCodeFactory extends TicketFactory {
     }
 
     /**
-     * Create device user code o auth 20 device user code.
+     * Create OAuth 2.0 device user code.
      *
      * @param id      the id
      * @param service the service
-     * @return the o auth 20 device user code
+     * @return the OAuth device user code
      */
     OAuth20DeviceUserCode createDeviceUserCode(String id, Service service);
 

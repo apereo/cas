@@ -20,7 +20,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
@@ -192,6 +192,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
@@ -200,7 +201,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
-    @Import({CasPersonDirectoryTestConfiguration.class, CasAuthenticationEventExecutionPlanTestConfiguration.class})
+    @Import(CasAuthenticationEventExecutionPlanTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 

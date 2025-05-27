@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web.controllers.dynareg;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponse;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
@@ -14,16 +15,12 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
 import org.jose4j.jwk.JsonWebKeySet;
-
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Locale;
@@ -84,8 +81,8 @@ public class OidcClientRegistrationUtils {
                 clientResponse.setJwksUri(keystore);
             } else if (ResourceUtils.doesResourceExist(keystore)) {
                 val res = ResourceUtils.getResourceFrom(keystore);
-                val json = IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8);
-                clientResponse.setJwks(new JsonWebKeySet(json).toJson());
+                val jsonWebKeys = OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(res);
+                clientResponse.setJwks(jsonWebKeys.toJson());
             } else if (StringUtils.isNotBlank(keystore)) {
                 val jwks = new JsonWebKeySet(keystore);
                 clientResponse.setJwks(jwks.toJson());

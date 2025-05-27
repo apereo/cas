@@ -92,9 +92,10 @@ public class WsFederationHelper {
 
     private static Credential getEncryptionCredential(final WsFederationConfiguration config) throws Exception {
         LOGGER.debug("Locating encryption credential private key [{}]", config.getEncryptionPrivateKey());
-        val br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
         LOGGER.debug("Parsing credential private key");
-        try (val pemParser = new PEMParser(br)) {
+        try (val keyStream = config.getEncryptionPrivateKey().getInputStream();
+             val br = new BufferedReader(new InputStreamReader(keyStream, StandardCharsets.UTF_8));
+             val pemParser = new PEMParser(br)) {
             val privateKeyPemObject = pemParser.readObject();
             val converter = new JcaPEMKeyConverter().setProvider(new BouncyCastleProvider());
 
@@ -114,11 +115,13 @@ public class WsFederationHelper {
 
             val certParser = new X509CertParser();
             LOGGER.debug("Locating encryption certificate [{}]", config.getEncryptionCertificate());
-            certParser.engineInit(config.getEncryptionCertificate().getInputStream());
-            LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
-            val cert = (X509Certificate) certParser.engineRead();
-            LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
-            return new BasicX509Credential(cert, kp.getPrivate());
+            try (val is = config.getEncryptionCertificate().getInputStream()) {
+                certParser.engineInit(is);
+                LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
+                val cert = (X509Certificate) certParser.engineRead();
+                LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
+                return new BasicX509Credential(cert, kp.getPrivate());
+            }
         }
 
     }

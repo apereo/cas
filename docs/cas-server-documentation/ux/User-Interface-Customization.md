@@ -8,7 +8,7 @@ category: User Interface
 
 # Overview
 
-Branding the CAS User Interface (UI) involves editing the CSS stylesheet and also a small collection of relatively simple HTML include files, also known as views. Optionally, you may also wish to modify the text displayed and/or add additional Javascript effects on these views.
+Branding the CAS User Interface (UI) involves editing the CSS stylesheet and also a small collection of relatively simple HTML include files, also known as views. Optionally, you may also wish to modify the text displayed and/or add additional JavaScript effects on these views.
 
 # Browser Support
 
@@ -50,7 +50,7 @@ To instruct CAS to render UI in compatibility mode, the following is added autom
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 ```
 
-# CSS & Javascript
+# CSS & JavaScript
 
 See [this guide](User-Interface-Customization-CSSJS.html) for more info.
 

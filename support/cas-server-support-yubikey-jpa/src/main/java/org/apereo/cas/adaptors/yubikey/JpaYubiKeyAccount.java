@@ -7,15 +7,12 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.GenericGenerator;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
 import java.io.Serial;
-import java.util.List;
 
 /**
  * This is {@link JpaYubiKeyAccount}.
@@ -39,11 +36,4 @@ public class JpaYubiKeyAccount extends YubiKeyAccount {
     @GenericGenerator(name = "native", strategy = "native")
     @Builder.Default
     private long id = -1;
-
-    public JpaYubiKeyAccount(final long id,
-                             final List<YubiKeyRegisteredDevice> deviceIdentifiers,
-                             final String username) {
-        super(id, deviceIdentifiers, username);
-        this.id = id;
-    }
 }

@@ -3,10 +3,11 @@ package org.apereo.cas.adaptors.duo.web.flow.action;
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
-import org.apereo.cas.adaptors.duo.authn.DuoSecurityUniversalPromptCredential;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityClient;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
@@ -182,6 +183,9 @@ class DuoSecurityUniversalPromptValidateLoginActionTests {
         @Test
         public void verifyPass() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
+            val credential = RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
+            MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationParentCredential(context, credential);
+            
             val authentication = RegisteredServiceTestUtils.getAuthentication();
             WebUtils.putAuthentication(authentication, context);
             WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
@@ -214,7 +218,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests {
             assertNotNull(WebUtils.getAuthentication(context));
             assertNotNull(WebUtils.getRegisteredService(context));
             assertNotNull(WebUtils.getAuthenticationResult(context));
-            assertInstanceOf(DuoSecurityUniversalPromptCredential.class, WebUtils.getCredential(context));
+            assertInstanceOf(UsernamePasswordCredential.class, WebUtils.getCredential(context));
 
             val builder = WebUtils.getAuthenticationResultBuilder(context);
             val finalAuth = builder.build();
@@ -227,7 +231,9 @@ class DuoSecurityUniversalPromptValidateLoginActionTests {
     @TestConfiguration(value = "DuoSecurityUniversalPromptValidateLoginActionTestConfiguration", proxyBeanMethods = false)
     static class DuoSecurityUniversalPromptValidateLoginActionTestConfiguration {
         @Bean
-        public Client duoUniversalPromptAuthenticationClient() throws Exception {
+        public DuoSecurityClient duoUniversalPromptAuthenticationClient() throws Exception {
+            val client = mock(DuoSecurityClient.class);
+            
             val token = new Token();
             token.setSub("casuser");
 
@@ -268,7 +274,9 @@ class DuoSecurityUniversalPromptValidateLoginActionTests {
             when(duoClient.generateState()).thenReturn(UUID.randomUUID().toString());
             when(duoClient.createAuthUrl(anyString(), anyString())).thenReturn("https://duo.com");
             when(duoClient.exchangeAuthorizationCodeFor2FAResult(anyString(), anyString())).thenReturn(token);
-            return duoClient;
+
+            when(client.getInstance()).thenReturn(duoClient);
+            return client;
         }
     }
 }

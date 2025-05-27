@@ -1,13 +1,14 @@
 package org.apereo.cas.pm;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 import org.springframework.util.LinkedMultiValueMap;
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -21,6 +22,8 @@ import java.io.Serializable;
 @Getter
 @ToString(exclude = {"record", "securityQuestions"})
 @EqualsAndHashCode(of = "username")
+@AllArgsConstructor
+@With
 public class PasswordManagementQuery implements Serializable {
     @Serial
     private static final long serialVersionUID = -769463174930246283L;

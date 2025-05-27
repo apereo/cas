@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
 import org.apereo.cas.configuration.model.support.replication.SessionReplicationProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -8,6 +9,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
@@ -109,4 +111,10 @@ public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable 
     @NestedConfigurationProperty
     private Pac4jDelegatedAuthenticationDiscoverySelectionProperties discoverySelection = new Pac4jDelegatedAuthenticationDiscoverySelectionProperties();
 
+    public Pac4jDelegatedAuthenticationCoreProperties() {
+        if (StringUtils.isBlank(getSessionReplication().getCookie().getName())) {
+            getSessionReplication().getCookie()
+                .setName("%s%s".formatted(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME, "AuthnDelegation"));
+        }
+    }
 }

@@ -10,7 +10,7 @@ const assert = require("assert");
         });
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.loginWith(page, "configserver", "p@SSword");
     await cas.assertTicketParameter(page);
     await cas.gotoLogin(page);

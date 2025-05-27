@@ -29,6 +29,17 @@ const assert = require("assert");
     const url = await page.url();
     assert(url.includes("https://localhost:9859/anything/cas"));
     await cas.gotoLogout(page);
+
+    await cas.gotoLogin(page);
+    await cas.loginWith(page, "blockuser", "blockuser");
+    await cas.sleep(1000);
+    await cas.assertInvisibility(page, "#proceed");
+    await page.locator("div ::-p-text(Test link with special symbols: é & @)").click();
+    await cas.sleep(2000);
+    await cas.logPage(page);
+    const url2 = await page.url();
+    assert(url2.includes("https://localhost:9859/anything/cas"));
+    await cas.gotoLogout(page);
     
     await browser.close();
 })();

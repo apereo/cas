@@ -45,7 +45,7 @@ public class SpnegoProperties implements Serializable {
     private final List<SpnegoAuthenticationProperties> properties = new ArrayList<>();
 
     /**
-     * If specified, will create the principal by ths name on successful authentication.
+     * If specified, will create the principal by this name on successful authentication.
      */
     private boolean principalWithDomainName;
 

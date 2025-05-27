@@ -26,7 +26,7 @@ public class FlowBuilderConversionService extends DefaultConversionService {
     /**
      * This is necessary here, because the default executor
      * will wrap our converter inside a {@link org.springframework.binding.convert.converters.ObjectToArray}
-     * component that inteferes with the conversion. This conversion is mainly applicable when
+     * component that interferes with the conversion. This conversion is mainly applicable when
      * passwords in form of {@link String} need to bind over to character arrays.
      *
      * @param id          identifier of the converter.

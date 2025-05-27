@@ -14,7 +14,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasGraphicalUserAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -67,10 +67,11 @@ public abstract class AbstractGraphicalAuthenticationTests {
         CasCoreWebflowAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
-    @Import({CasRegisteredServicesTestConfiguration.class, CasPersonDirectoryTestConfiguration.class})
+    @Import(CasRegisteredServicesTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

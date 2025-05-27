@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.MetadataEntityAttributeQuery;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
+import org.apereo.cas.support.saml.services.idp.metadata.filter.EntityDescriptorCertificatesExpirationFilter;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -129,6 +130,16 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
         }
     }
 
+    protected static void buildEntityDescriptorCertificatesExpirationFilterIfNeeded(
+        final SamlRegisteredService service,
+        final List<MetadataFilter> metadataFilterList) throws Exception {
+        if (service.isValidateMetadataCertificates()) {
+            val filter = new EntityDescriptorCertificatesExpirationFilter();
+            filter.initialize();
+            metadataFilterList.add(filter);
+            LOGGER.debug("Added EntityDescriptorCertificatesExpirationFilter for [{}]", service.getServiceId());
+        }
+    }
 
     protected static void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
                                                                  final List<MetadataFilter> metadataFilterList)
@@ -201,6 +212,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
     protected void buildMetadataFilters(final SamlRegisteredService service, final AbstractMetadataResolver metadataProvider,
                                         final List<MetadataFilter> metadataFilterList) throws Exception {
         buildRequiredValidUntilFilterIfNeeded(service, metadataFilterList);
+        buildEntityDescriptorCertificatesExpirationFilterIfNeeded(service, metadataFilterList);
         buildSignatureValidationFilterIfNeeded(service, metadataFilterList);
         buildEntityRoleFilterIfNeeded(service, metadataFilterList);
         buildPredicateFilterIfNeeded(service, metadataFilterList);

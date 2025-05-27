@@ -80,7 +80,7 @@ class CasCoreBaseStandaloneConfiguration {
         @ConditionalOnMissingBean(name = "casConfigurationPropertiesSourceLocator")
         @Bean
         public static CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator(
-            @Qualifier("casConfigurationCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_CAS_CONFIGURATION_CIPHER_EXECUTOR)
             final CipherExecutor<String, String> casConfigurationCipherExecutor) {
             return new DefaultCasConfigurationPropertiesSourceLocator(casConfigurationCipherExecutor);
         }

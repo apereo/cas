@@ -1,10 +1,12 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -32,8 +34,10 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    public BlackDotIPAddressIntelligenceService(final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties) {
-        super(adaptiveAuthenticationProperties);
+    public BlackDotIPAddressIntelligenceService(
+        final TenantExtractor tenantExtractor,
+        final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties) {
+        super(tenantExtractor, adaptiveAuthenticationProperties);
     }
 
     @Override
@@ -43,7 +47,7 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
         HttpResponse response = null;
         try {
             val properties = adaptiveAuthenticationProperties.getIpIntel().getBlackDot();
-            val builder = new StringBuilder(String.format(properties.getUrl(), clientIpAddress));
+            val builder = new StringBuilder(String.format(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), clientIpAddress));
             builder.append("&format=json");
 
             if (StringUtils.isNotBlank(properties.getEmailAddress())) {
@@ -63,6 +67,7 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .url(url)
+                .maximumRetryAttempts(1)
                 .build();
             response = HttpUtils.execute(exec);
             if (response.getCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
@@ -84,9 +89,9 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
                         return IPAddressIntelligenceResponse.allowed();
                     }
                     return IPAddressIntelligenceResponse.builder()
-                            .score(rank)
-                            .status(IPAddressIntelligenceResponse.IPAddressIntelligenceStatus.RANKED)
-                            .build();
+                        .score(rank)
+                        .status(IPAddressIntelligenceResponse.IPAddressIntelligenceStatus.RANKED)
+                        .build();
                 }
                 val message = json.getOrDefault("message", "Invalid IP address").toString();
                 LOGGER.error(message);

@@ -4,6 +4,8 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -27,6 +29,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 3.5.0
  */
 @Slf4j
+@Tag(name = "OAuth")
 public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Controller<OAuth20ConfigurationContext> {
 
     public OAuth20CallbackAuthorizeEndpointController(final OAuth20ConfigurationContext oAuthConfigurationContext) {
@@ -41,6 +44,7 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
      * @return the model and view
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL)
+    @Operation(summary = "Handle OAuth callback authorize request", hidden = true)
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) {
         ensureSessionReplicationIsAutoconfiguredIfNeedBe(request);
 

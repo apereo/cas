@@ -2,6 +2,7 @@ package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.otp.util.QRUtils;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -32,11 +33,12 @@ import java.util.Map;
 @Getter
 @Slf4j
 public class WebAuthnStartAuthenticationAction extends AbstractMultifactorAuthenticationAction<WebAuthnMultifactorAuthenticationProvider> {
-    private final CasConfigurationProperties casProperties;
-    private final TicketRegistry ticketRegistry;
-    private final TicketFactory ticketFactory;
-    private final RegistrationStorage webAuthnCredentialRepository;
-
+    protected final CasConfigurationProperties casProperties;
+    protected final TicketRegistry ticketRegistry;
+    protected final TicketFactory ticketFactory;
+    protected final RegistrationStorage webAuthnCredentialRepository;
+    protected final TenantExtractor tenantExtractor;
+    
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val authentication = WebUtils.getAuthentication(requestContext);

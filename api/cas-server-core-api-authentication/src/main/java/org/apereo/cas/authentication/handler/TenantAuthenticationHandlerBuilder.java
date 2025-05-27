@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.handler;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import lombok.val;
 import java.util.List;
@@ -22,8 +23,8 @@ public interface TenantAuthenticationHandlerBuilder {
      */
     default List<? extends AuthenticationHandler> build(final TenantDefinition tenantDefinition) {
         if (!tenantDefinition.getProperties().isEmpty()) {
-            val casProperties = tenantDefinition.bindProperties().orElseThrow();
-            return buildInternal(tenantDefinition, casProperties);
+            val bindingContext = tenantDefinition.bindProperties();
+            return buildInternal(tenantDefinition, bindingContext);
         }
         return List.of();
     }
@@ -32,9 +33,9 @@ public interface TenantAuthenticationHandlerBuilder {
      * Build internal list of handlers.
      *
      * @param tenantDefinition the tenant definition
-     * @param casProperties    the cas properties
+     * @param bindingContext   the cas properties
      * @return the list
      */
     List<? extends AuthenticationHandler> buildInternal(TenantDefinition tenantDefinition,
-                                                        CasConfigurationProperties casProperties);
+                                                        ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext);
 }

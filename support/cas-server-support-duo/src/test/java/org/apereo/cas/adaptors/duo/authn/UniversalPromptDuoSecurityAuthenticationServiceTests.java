@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.duo.authn;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.http.HttpClient;
 import com.duosecurity.Client;
@@ -49,9 +50,12 @@ class UniversalPromptDuoSecurityAuthenticationServiceTests {
             when(duoClient.healthCheck()).thenThrow(new RuntimeException());
         }
         val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
-        val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties, mock(HttpClient.class), duoClient,
-            List.of(MultifactorAuthenticationPrincipalResolver.identical()), Caffeine.newBuilder().build());
-        assertTrue(service.getDuoClient().isPresent());
+        val client = mock(DuoSecurityClient.class);
+        when(client.getInstance()).thenReturn(duoClient);
+        val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties, mock(HttpClient.class), client,
+            List.of(MultifactorAuthenticationPrincipalResolver.identical()), Caffeine.newBuilder().build(),
+            mock(TenantExtractor.class));
+        assertNotNull(service.getDuoClient());
         assertEquals(pass, service.ping());
     }
 
@@ -79,9 +83,11 @@ class UniversalPromptDuoSecurityAuthenticationServiceTests {
         final Token token, final DuoSecurityMultifactorAuthenticationProperties duoProperties) throws DuoException {
         val duoClient = mock(Client.class);
         when(duoClient.exchangeAuthorizationCodeFor2FAResult(anyString(), anyString())).thenReturn(token);
+        val client = mock(DuoSecurityClient.class);
+        when(client.getInstance()).thenReturn(duoClient);
         return new UniversalPromptDuoSecurityAuthenticationService(duoProperties,
-            mock(HttpClient.class), duoClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()),
-            Caffeine.newBuilder().build());
+            mock(HttpClient.class), client, List.of(MultifactorAuthenticationPrincipalResolver.identical()),
+            Caffeine.newBuilder().build(), mock(TenantExtractor.class));
     }
 
     private static Token buildDuoAuthenticationToken() {

@@ -67,5 +67,5 @@ public class DefaultSingleLogoutRequestContext implements SingleLogoutRequestCon
      * Additional settings relevant for the logout url.
      */
     @Builder.Default
-    private Map<String, String> properties = new LinkedHashMap<>(0);
+    private Map<String, String> properties = new LinkedHashMap<>();
 }

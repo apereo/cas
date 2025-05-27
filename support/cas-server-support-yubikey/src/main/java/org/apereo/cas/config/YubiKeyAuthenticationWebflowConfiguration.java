@@ -9,6 +9,7 @@ import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigu
 import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.trusted.web.flow.BasicMultifactorTrustedWebflowConfigurer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -124,13 +125,15 @@ class YubiKeyAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_YUBIKEY_AUTHENTICATION)
         public Action yubikeyAuthenticationWebflowAction(
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
             @Qualifier("yubikeyAuthenticationWebflowEventResolver")
             final CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new YubiKeyAuthenticationWebflowAction(yubikeyAuthenticationWebflowEventResolver))
+                .withAction(() -> new YubiKeyAuthenticationWebflowAction(yubikeyAuthenticationWebflowEventResolver, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_YUBIKEY_AUTHENTICATION)
                 .build()
                 .get();
@@ -141,11 +144,13 @@ class YubiKeyAuthenticationWebflowConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_YUBIKEY_PREPARE_LOGIN)
         public Action prepareYubiKeyAuthenticationLoginAction(
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new YubiKeyAuthenticationPrepareLoginAction(casProperties))
+                .withAction(() -> new YubiKeyAuthenticationPrepareLoginAction(casProperties, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_YUBIKEY_PREPARE_LOGIN)
                 .build()
                 .get();
@@ -157,12 +162,14 @@ class YubiKeyAuthenticationWebflowConfiguration {
         public Action yubiKeyAccountRegistrationAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier("yubiKeyAccountRegistry")
             final YubiKeyAccountRegistry yubiKeyAccountRegistry) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new YubiKeyAccountCheckRegistrationAction(yubiKeyAccountRegistry))
+                .withAction(() -> new YubiKeyAccountCheckRegistrationAction(yubiKeyAccountRegistry, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_YUBIKEY_ACCOUNT_REGISTRATION)
                 .build()
                 .get();
@@ -174,12 +181,14 @@ class YubiKeyAuthenticationWebflowConfiguration {
         public Action yubiKeySaveAccountRegistrationAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier("yubiKeyAccountRegistry")
             final YubiKeyAccountRegistry yubiKeyAccountRegistry) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new YubiKeyAccountSaveRegistrationAction(yubiKeyAccountRegistry))
+                .withAction(() -> new YubiKeyAccountSaveRegistrationAction(yubiKeyAccountRegistry, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_YUBIKEY_SAVE_ACCOUNT_REGISTRATION)
                 .build()
                 .get();

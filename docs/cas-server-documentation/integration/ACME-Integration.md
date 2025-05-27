@@ -13,6 +13,10 @@ as specified in [RFC 8555](https://tools.ietf.org/html/rfc8555). ACME is a proto
 certificate authority (CA) such as Let's Encrypt and an applicant can use to automate the process 
 of verification and certificate issuance.
 
+<div class="alert alert-warning">:warning: <strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
+</div>
+
 Support is enabled by including the following dependency in the overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-acme" %}

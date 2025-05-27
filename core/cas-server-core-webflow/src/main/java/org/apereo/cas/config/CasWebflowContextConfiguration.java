@@ -194,16 +194,18 @@ class CasWebflowContextConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "logoutFlowExecutor")
         public FlowExecutor logoutFlowExecutor(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier("logoutFlowUrlHandler")
             final FlowUrlHandler logoutFlowUrlHandler,
             final CasConfigurationProperties casProperties,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry flowDefinitionRegistry,
-            @Qualifier("webflowCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
             final CipherExecutor webflowCipherExecutor) {
             val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
                 flowDefinitionRegistry, webflowCipherExecutor, FLOW_EXECUTION_LISTENERS,
-                logoutFlowUrlHandler);
+                logoutFlowUrlHandler, tenantExtractor);
             return factory.build();
         }
 
@@ -211,16 +213,18 @@ class CasWebflowContextConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "loginFlowExecutor")
         public FlowExecutor loginFlowExecutor(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier("loginFlowUrlHandler")
             final FlowUrlHandler loginFlowUrlHandler,
             final CasConfigurationProperties casProperties,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry flowDefinitionRegistry,
-            @Qualifier("webflowCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
             final CipherExecutor webflowCipherExecutor) {
             val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
                 flowDefinitionRegistry, webflowCipherExecutor,
-                FLOW_EXECUTION_LISTENERS, loginFlowUrlHandler);
+                FLOW_EXECUTION_LISTENERS, loginFlowUrlHandler, tenantExtractor);
 
             return factory.build();
         }

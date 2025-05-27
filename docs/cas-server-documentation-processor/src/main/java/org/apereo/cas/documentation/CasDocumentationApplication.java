@@ -704,7 +704,9 @@ public class CasDocumentationApplication {
                                                               final Map<Object, Object> map,
                                                               final String endpointId) throws Exception {
         var actuatorProperties = new Properties();
-        actuatorProperties.load(new ClassPathResource("actuators.properties").getInputStream());
+        try (var input = new ClassPathResource("actuators.properties").getInputStream()) {
+            actuatorProperties.load(input);
+        }
 
         var clazz = method.getDeclaringClass();
 

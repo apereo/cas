@@ -300,11 +300,13 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     public static Map<String, AttributeDefinition> from(final Resource resource) {
         return FunctionUtils.doIfNotNull(resource,
             () -> {
-                LOGGER.trace("Loading attribute definitions from [{}]", resource);
-                val json = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-                LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
-                return MAPPER.readValue(JsonValue.readHjson(json).toString(), new TypeReference<>() {
-                });
+                try (val is = resource.getInputStream()) {
+                    LOGGER.trace("Loading attribute definitions from [{}]", resource);
+                    val json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                    LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
+                    return MAPPER.readValue(JsonValue.readHjson(json).toString(), new TypeReference<>() {
+                    });
+                }
             }, Map::<String, AttributeDefinition>of).get();
     }
 }

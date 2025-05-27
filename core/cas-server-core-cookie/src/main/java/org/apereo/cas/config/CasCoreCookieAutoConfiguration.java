@@ -3,8 +3,10 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
+import org.apereo.cas.util.cipher.DefaultCipherExecutorResolver;
 import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -52,9 +54,15 @@ public class CasCoreCookieAutoConfiguration {
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
-            @Qualifier("cookieCipherExecutor") final CipherExecutor cookieCipherExecutor) {
+            @Qualifier("cookieCipherExecutor")
+            final CipherExecutor cookieCipherExecutor) {
             if (casProperties.getTgc().getCrypto().isEnabled()) {
-                return new DefaultCasCookieValueManager(cookieCipherExecutor,
+                val cipherExecutorResolver = new DefaultCipherExecutorResolver(cookieCipherExecutor, tenantExtractor,
+                    TicketGrantingCookieProperties.class, bindingContext -> {
+                    val properties = bindingContext.value();
+                    return CipherExecutorUtils.newStringCipherExecutor(properties.getTgc().getCrypto(), TicketGrantingCookieCipherExecutor.class);
+                });
+                return new DefaultCasCookieValueManager(cipherExecutorResolver,
                     tenantExtractor, geoLocationService,
                     DefaultCookieSameSitePolicy.INSTANCE, casProperties.getTgc());
             }
@@ -70,7 +78,7 @@ public class CasCoreCookieAutoConfiguration {
             if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey())
                 && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
                 LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration for cookie [{}], yet signing/encryption keys "
-                            + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.", casProperties.getTgc().getName());
+                    + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.", casProperties.getTgc().getName());
                 enabled = true;
             }
 
@@ -79,8 +87,8 @@ public class CasCoreCookieAutoConfiguration {
             }
 
             LOGGER.warn("Ticket-granting cookie encryption/signing is turned off. This "
-                        + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
-                        + "signing and verification of ticket-granting cookies.");
+                + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
+                + "signing and verification of ticket-granting cookies.");
             return CipherExecutor.noOp();
         }
     }
@@ -106,7 +114,8 @@ public class CasCoreCookieAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasCookieBuilder ticketGrantingTicketCookieGenerator(
             final CasConfigurationProperties casProperties,
-            @Qualifier(CookieValueManager.BEAN_NAME) final CookieValueManager cookieValueManager) {
+            @Qualifier(CookieValueManager.BEAN_NAME)
+            final CookieValueManager cookieValueManager) {
             val context = CookieUtils.buildCookieGenerationContext(casProperties.getTgc());
             return new CookieRetrievingCookieGenerator(context, cookieValueManager);
         }

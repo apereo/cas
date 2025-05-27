@@ -3,6 +3,8 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.handler.TenantAuthenticationHandlerBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
+import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
@@ -27,20 +29,25 @@ public class TenantLdapAuthenticationHandlerBuilder implements TenantAuthenticat
 
     @Override
     public List<AuthenticationHandler> buildInternal(final TenantDefinition tenantDefinition,
-                                                     final CasConfigurationProperties casProperties) {
-        return casProperties
-            .getAuthn()
-            .getLdap()
-            .stream()
-            .filter(LdapUtils::isLdapAuthenticationConfigured)
-            .map(prop -> {
-                val handler = LdapUtils.createLdapAuthenticationHandler(prop,
-                    applicationContext, servicesManager, ldapPrincipalFactory);
-                handler.setState(prop.getState());
-                LOGGER.info("Created LDAP authentication handler [{}] with state [{}]",
-                    handler.getName(), handler.getState());
-                return handler.markDisposable();
-            })
-            .toList();
+                                                     final ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext) {
+
+        if (bindingContext.containsBindingFor(LdapAuthenticationProperties.class)) {
+            val casProperties = bindingContext.value();
+            return casProperties
+                .getAuthn()
+                .getLdap()
+                .stream()
+                .filter(LdapUtils::isLdapAuthenticationConfigured)
+                .map(prop -> {
+                    val handler = LdapUtils.createLdapAuthenticationHandler(prop,
+                        applicationContext, servicesManager, ldapPrincipalFactory);
+                    handler.setState(prop.getState());
+                    LOGGER.info("Created LDAP authentication handler [{}] with state [{}]",
+                        handler.getName(), handler.getState());
+                    return handler.markDisposable();
+                })
+                .toList();
+        }
+        return List.of();
     }
 }

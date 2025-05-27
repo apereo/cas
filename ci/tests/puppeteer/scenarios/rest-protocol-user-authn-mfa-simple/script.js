@@ -3,7 +3,7 @@ const cas = require("../../cas.js");
 const querystring = require("querystring");
 
 (async () => {
-    const service = "https://apereo.github.io";
+    const service = "https://localhost:9859/anything/cas";
     const value = "casuser:Mellon";
     const buff = Buffer.alloc(value.length, value);
     const authzHeader = buff.toString("base64");

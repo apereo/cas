@@ -50,7 +50,9 @@ apache-jmeter-*
 *.asc
 /.nb-gradle/
 docs-latest/
+docs-layouts/
 docs-includes/
+docs-includes-site/
 **/.sts4-cache/**
 **/work/**
 **/conformance-suite/**
@@ -80,3 +82,4 @@ support/cas-server-support-palantir/src/main/resources/static/assets
 cas/lib
 *.jsa
 ci/tests/keycloak/data/server.*
+ci/docs/package-lock.json

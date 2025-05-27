@@ -142,8 +142,10 @@ public class SamlUtils {
      */
     public static Element getRootElementFrom(final InputStream metadataResource, final OpenSamlConfigBean configBean) {
         return FunctionUtils.doUnchecked(() -> {
-            val document = configBean.getParserPool().parse(metadataResource);
-            return document.getDocumentElement();
+            try (metadataResource) {
+                val document = configBean.getParserPool().parse(metadataResource);
+                return document.getDocumentElement();
+            }
         });
     }
 

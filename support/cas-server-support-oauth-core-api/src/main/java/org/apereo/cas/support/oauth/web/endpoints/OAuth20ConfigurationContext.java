@@ -53,6 +53,7 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.scheduling.TaskScheduler;
 import java.io.Serializable;
 import java.util.List;
@@ -164,6 +165,8 @@ public class OAuth20ConfigurationContext {
 
     private final TenantExtractor tenantExtractor;
 
+    private final MessageSource messageSource;
+    
     /**
      * Gets ticket granting ticket.
      *

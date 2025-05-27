@@ -4,6 +4,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +39,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping(PalantirConstants.URL_PATH_PALANTIR)
 @RequiredArgsConstructor
+@Tag(name = "Palantir")
 public class DashboardController {
     private final CasConfigurationProperties casProperties;
     private final EndpointLinksResolver endpointLinksResolver;
@@ -49,6 +52,7 @@ public class DashboardController {
      * @return the model and view
      */
     @GetMapping(path = {StringUtils.EMPTY, "/dashboard", "/", "/dashboard/**"}, produces = MediaType.TEXT_HTML_VALUE)
+    @Operation(summary = "Dashboard home page", description = "Dashboard home page")
     public ModelAndView dashboardRoot(final Authentication authentication, final HttpServletRequest request) throws Exception {
         return buildModelAndView(authentication, request);
     }
@@ -79,10 +83,12 @@ public class DashboardController {
         val resources = resolver.getResources("classpath:service-definitions/**/*.json");
 
         for (val resource : resources) {
-            val contents = new String(FileCopyUtils.copyToByteArray(resource.getInputStream()), StandardCharsets.UTF_8);
-            val definition = serializer.from(contents);
-            if (definition != null) {
-                jsonFilesMap.computeIfAbsent(definition.getFriendlyName(), __ -> new ArrayList<>()).add(contents);
+            try (val input = resource.getInputStream()) {
+                val contents = new String(FileCopyUtils.copyToByteArray(input), StandardCharsets.UTF_8);
+                val definition = serializer.from(contents);
+                if (definition != null) {
+                    jsonFilesMap.computeIfAbsent(definition.getFriendlyName(), __ -> new ArrayList<>()).add(contents);
+                }
             }
         }
         return jsonFilesMap;

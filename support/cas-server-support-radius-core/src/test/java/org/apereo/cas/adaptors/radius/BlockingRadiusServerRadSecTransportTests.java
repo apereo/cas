@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.radius;
 
 import org.apereo.cas.authentication.CasSSLContext;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledOnOs(OS.LINUX)
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
     CasCoreMultitenancyAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
 },

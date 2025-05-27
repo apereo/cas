@@ -4,21 +4,20 @@ import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
-import com.duosecurity.Client;
 import com.duosecurity.model.Token;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * An abstraction that encapsulates interaction with
@@ -30,24 +29,18 @@ import java.util.Optional;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecurityAuthenticationService {
-    @Serial
-    private static final long serialVersionUID = -1690808348975271382L;
-
-    private final Client duoClient;
+    @Getter
+    private final DuoSecurityClient duoClient;
 
     public UniversalPromptDuoSecurityAuthenticationService(
         final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final HttpClient httpClient,
-        final Client duoClient,
+        final DuoSecurityClient duoClient,
         final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
-        final Cache<String, DuoSecurityUserAccount> userAccountCache) {
-        super(duoProperties, httpClient, multifactorAuthenticationPrincipalResolver, userAccountCache);
+        final Cache<String, DuoSecurityUserAccount> userAccountCache,
+        final TenantExtractor tenantExtractor) {
+        super(duoProperties, httpClient, tenantExtractor, multifactorAuthenticationPrincipalResolver, userAccountCache);
         this.duoClient = duoClient;
-    }
-
-    @Override
-    public Optional<Object> getDuoClient() {
-        return Optional.of(this.duoClient);
     }
 
     @Override
@@ -56,12 +49,13 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
         LOGGER.trace("Exchanging Duo Security authorization code [{}]", credential.getId());
 
         val principalId = getDuoPrincipalId(duoCredential);
-        val result = duoClient.exchangeAuthorizationCodeFor2FAResult(credential.getId(), principalId);
+        val client = duoClient.getInstance();
+        val result = client.exchangeAuthorizationCodeFor2FAResult(credential.getId(), principalId);
         LOGGER.debug("Validated Duo Security code [{}] with result [{}]", credential.getId(), result);
 
         val username = StringUtils.defaultIfBlank(result.getPreferred_username(), result.getSub());
         val attributes = new LinkedHashMap<String, List<Object>>();
-        if (getProperties().isCollectDuoAttributes()) {
+        if (properties.isCollectDuoAttributes()) {
             attributes.putAll(collectDuoAuthenticationAttributes(result));
             attributes.putAll(collectDuoAuthenticationContextAttributes(result));
             attributes.putAll(collectDuoAuthenticationResultAttributes(result));
@@ -154,7 +148,7 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
 
     protected String getDuoPrincipalId(final DuoSecurityUniversalPromptCredential duoCredential) {
         val principal = resolvePrincipal(duoCredential.getAuthentication().getPrincipal());
-        val principalAttribute = getProperties().getPrincipalAttribute();
+        val principalAttribute = properties.getPrincipalAttribute();
         if (principal.getAttributes().containsKey(principalAttribute)) {
             return principal.getAttributes().get(principalAttribute).getFirst().toString();
         }
@@ -164,7 +158,7 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
     @Override
     public boolean ping() {
         try {
-            val response = duoClient.healthCheck();
+            val response = duoClient.getInstance().healthCheck();
             LOGGER.debug("Received Duo Security health check response [{}]", response);
             return true;
         } catch (final Exception e) {

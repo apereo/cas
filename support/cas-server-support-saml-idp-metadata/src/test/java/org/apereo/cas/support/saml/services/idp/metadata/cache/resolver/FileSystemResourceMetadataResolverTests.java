@@ -90,6 +90,17 @@ class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
         assertNotNull(resolver.resolve(criteria));
     }
 
+
+    @Test
+    void verifyResolverWithExpiredMetadataCertificates() throws Throwable {
+        val service = new SamlRegisteredService();
+        service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
+        service.setMetadataLocation(METADATA_FILE.getCanonicalPath());
+        service.setValidateMetadataCertificates(true);
+        val resolvers = metadataResolver.resolve(service);
+        assertTrue(resolvers.isEmpty());
+    }
+
     @Test
     void verifyResolverWithDirectory() throws Throwable {
         val service = new SamlRegisteredService();

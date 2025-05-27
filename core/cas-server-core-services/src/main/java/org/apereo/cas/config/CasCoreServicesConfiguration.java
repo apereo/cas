@@ -283,7 +283,10 @@ class CasCoreServicesConfiguration {
                     Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
                 chainingRegistry.addServiceRegistry(inMemoryServiceRegistry);
             }
-            chainingRegistry.addServiceRegistries(serviceRegistryExecutionPlan.getServiceRegistries());
+            val serviceRegistries = serviceRegistryExecutionPlan.getServiceRegistries();
+            AnnotationAwareOrderComparator.sort(serviceRegistries);
+
+            chainingRegistry.addServiceRegistries(serviceRegistries);
             return chainingRegistry;
         }
     }

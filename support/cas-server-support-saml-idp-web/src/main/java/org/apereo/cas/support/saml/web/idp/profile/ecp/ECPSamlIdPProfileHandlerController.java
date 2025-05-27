@@ -13,6 +13,8 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderCo
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
@@ -37,6 +39,7 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @Slf4j
+@Tag(name = "SAML2")
 public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHandlerController {
     public ECPSamlIdPProfileHandlerController(final SamlProfileHandlerConfigurationContext configurationContext) {
         super(configurationContext);
@@ -52,6 +55,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_ECP_PROFILE_SSO,
         consumes = {MediaType.TEXT_XML_VALUE, SamlIdPConstants.ECP_SOAP_PAOS_CONTENT_TYPE},
         produces = {MediaType.TEXT_XML_VALUE, SamlIdPConstants.ECP_SOAP_PAOS_CONTENT_TYPE})
+    @Operation(summary = "Handle SAML ECP request")
     public void handleEcpRequest(final HttpServletResponse response,
                                  final HttpServletRequest request) throws Exception {
         val soapContext = decodeSoapRequest(request);
@@ -95,7 +99,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
             LOGGER.trace("Building ECP SAML response for [{}]", credential.getId());
             val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
             val service = getConfigurationContext().getWebApplicationServiceFactory().createService(issuer);
-            val casAssertion = buildCasAssertion(authentication, service, serviceRequest.getKey(), new LinkedHashMap<>(0));
+            val casAssertion = buildCasAssertion(authentication, service, serviceRequest.getKey(), new LinkedHashMap<>());
 
             LOGGER.trace("CAS assertion to use for building ECP SAML2 response is [{}]", casAssertion);
             buildSamlResponse(context.getHttpResponse(), context.getHttpRequest(),

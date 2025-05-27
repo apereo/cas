@@ -9,7 +9,7 @@
 </head>
 <body>
 <span th:fragment="mfadevices">
-        <script type="text/javascript">
+        <script type="text/javascript" th:inline="javascript">
             ((material, bootstrap) =>
                 document.addEventListener("DOMContentLoaded", () => {
                     $("#mfaDevicesTable").DataTable();
@@ -26,6 +26,43 @@
                             dialog[material ? "open" : "show"]();
                             event.preventDefault();
                         }, false));
+
+                    document.getElementsByName("deleteMfaDevice").forEach(btn =>
+                        btn.addEventListener("click", event => {
+                            const id = $(btn).data("id");
+                            const source = $(btn).data("source");
+                            const name = $(btn).data("name");
+                            const body = $.param({ id: id, source: source, _eventId: "delete", execution: /*[[${flowExecutionKey}]]*/ });
+                            $.ajax({
+                                url: location.href,
+                                method: 'POST',
+                                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                                data: body,
+                                success: () => {
+                                    Swal.fire({
+                                        title: `Multifactor Device Removed`,
+                                        text: `Multifactor authentication device ${name} has been removed.`,
+                                        icon: "info",
+                                        showConfirmButton: false
+                                    });
+                                    setTimeout(() => window.location.assign(window.location.href), 1000);
+                                },
+                                error: (xhr, status, error) => {
+                                    const errorResponse = JSON.parse(xhr.responseText);
+                                    Swal.fire({
+                                        title: `Request Failed: ${xhr.status}`,
+                                        text: errorResponse.message,
+                                        icon: "warning",
+                                        showConfirmButton: false
+                                    });
+                                }
+                            });
+                            event.preventDefault();
+                        }, false));
+
+                    
+
+
                 }))(window.mdc ? mdc : null, window.bootstrap ? bootstrap : null);
         </script>
         <div class="mdc-dialog modal" id="mfaDevice-dialog" role="alertdialog"
@@ -93,8 +130,14 @@
                         <td class="mdc-data-table__cell">
                             <button type="button" name="viewMfaDeviceDetails" href="#" th:if="${entry.payload}"
                                     class="mdc-button mdc-button--raised me-2 btn btn-link min-width-48x">
-                            <i class="mdi mdi-account-details fas fa-eye min-width-48x" aria-hidden="true"></i>
-                            <span style="display: none" th:utext="${entry.payload}"/>
+                                <i class="mdi mdi-account-details fas fa-eye min-width-48x" aria-hidden="true"></i>
+                                <span style="display: none" th:utext="${entry.payload}"/>
+                            </button>
+                            <button type="button" name="deleteMfaDevice" href="#"
+                                    th:attr="data-name=${entry.name},data-id=${entry.id},data-source=${entry.source},data-number=${entry.number},data-type=${entry.type}"
+                                    class="mdc-button mdc-button--raised me-2 btn btn-link min-width-48x">
+                                <i class="mdi mdi-delete fas fa-trash min-width-48x" aria-hidden="true"></i>
+                                <span style="display: none" th:utext="${entry.payload}"/>
                             </button>
                         </td>
                     </tr>
@@ -146,7 +189,7 @@
                             </ul>
                         </div>
                         <input type="hidden" name="type" value=""/>
-                        <input type="hidden" name="_eventId_register" value="Register"/>
+                        <input type="hidden" name="_eventId"/>
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                     </form>
 
@@ -156,6 +199,14 @@
                         }
 
                         function submitRegistrationRequest(type) {
+                            switch (type) {
+                                case 'gauth':
+                                    document.forms.fm2["_eventId"].value = "registerGauth";
+                                    break;
+                                case 'webauthn':
+                                    document.forms.fm2["_eventId"].value = "registerWebAuthn";
+                                    break;
+                            }
                             document.forms.fm2.type.value = type;
                             document.forms.fm2.submit();
                         }

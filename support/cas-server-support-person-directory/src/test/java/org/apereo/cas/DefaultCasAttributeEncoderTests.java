@@ -1,28 +1,25 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
-
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -33,7 +30,7 @@ import static org.mockito.Mockito.*;
  * @since 4.1
  */
 @Tag("Attributes")
-@Import(CasPersonDirectoryTestConfiguration.class)
+@ImportAutoConfiguration(CasPersonDirectoryAutoConfiguration.class)
 class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
     private Map<String, Object> attributes;
 

@@ -1,15 +1,13 @@
 package org.apereo.cas.web.flow.executor;
 
 import org.apereo.cas.util.LoggingUtils;
-
+import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.cryptacular.bean.CipherBean;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,7 +20,7 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * Encodes an object by encrypting its serialized byte stream. Details of encryption are handled by an instance of
- * {@link CipherBean}.
+ * {@link CipherExecutor}.
  * <p>
  * Optional gzip compression of the serialized byte stream before encryption is supported and enabled by default.
  *
@@ -36,14 +34,14 @@ public class EncryptedTranscoder implements Transcoder {
     /**
      * Handles encryption/decryption details.
      */
-    private final CipherBean cipherBean;
+    private final CipherExecutor cipherExecutor;
 
     /**
      * Flag to indicate whether to Gzip compression before encryption.
      */
     private final boolean compression;
 
-    public EncryptedTranscoder(final CipherBean cipherBean) {
+    public EncryptedTranscoder(final CipherExecutor cipherBean) {
         this(cipherBean, true);
     }
 
@@ -52,17 +50,19 @@ public class EncryptedTranscoder implements Transcoder {
         if (o == null) {
             return ArrayUtils.EMPTY_BYTE_ARRAY;
         }
-        val outBuffer = new ByteArrayOutputStream();
-        try (val out = this.compression
-            ? new ObjectOutputStream(new GZIPOutputStream(outBuffer))
-            : new ObjectOutputStream(outBuffer)) {
+        try (val outBuffer = new ByteArrayOutputStream()) {
+            try (val out = this.compression
+                ? new ObjectOutputStream(new GZIPOutputStream(outBuffer))
+                : new ObjectOutputStream(outBuffer)) {
 
-            writeObjectToOutputStream(o, out);
-        } catch (final NotSerializableException e) {
-            LoggingUtils.warn(LOGGER, e);
+                writeObjectToOutputStream(o, out);
+            } catch (final NotSerializableException e) {
+                LoggingUtils.warn(LOGGER, e);
+            }
+            return encrypt(outBuffer);
         }
-        return encrypt(outBuffer);
     }
+
 
     @Override
     @SuppressWarnings("BanSerializableRead")
@@ -79,13 +79,6 @@ public class EncryptedTranscoder implements Transcoder {
         }
     }
 
-    /**
-     * Write object to output stream.
-     *
-     * @param o   the o
-     * @param out the out
-     * @throws IOException the io exception
-     */
     @SuppressWarnings("BanSerializableRead")
     protected void writeObjectToOutputStream(final Object o, final ObjectOutputStream out) throws IOException {
         var object = o;
@@ -107,28 +100,11 @@ public class EncryptedTranscoder implements Transcoder {
         }
     }
 
-    /**
-     * Encrypt.
-     *
-     * @param outBuffer the out buffer
-     * @return the byte [ ]
-     * @throws IOException the io exception
-     */
-    protected byte[] encrypt(final ByteArrayOutputStream outBuffer) throws IOException {
-        try {
-            return cipherBean.encrypt(outBuffer.toByteArray());
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            throw new IOException("Encryption error", e);
-        }
+    protected byte[] encrypt(final ByteArrayOutputStream outBuffer) {
+        return (byte[]) cipherExecutor.encode(outBuffer.toByteArray());
     }
 
-    private byte[] decrypt(final byte[] encoded) throws IOException {
-        try {
-            return cipherBean.decrypt(encoded);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            throw new IOException("Decryption error", e);
-        }
+    private byte[] decrypt(final byte[] encoded) {
+        return (byte[]) cipherExecutor.decode(encoded);
     }
 }

@@ -89,7 +89,7 @@ public interface SurrogateAuthenticationService {
     }
 
     /**
-     * Is wildcarded account acepted and found in the given accounts?.
+     * Is wildcarded account accepted and found in the given accounts?.
      *
      * @param accounts the accounts
      * @param service  the service

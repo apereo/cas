@@ -81,7 +81,7 @@ keytool -import -v -trustcacerts -alias "${CLUSTER_NAME}_cluster" -file "$CLUSTE
 #-storepass "$PASSWORD" -keypass "$PASSWORD" -noprompt
 
 
-# Creeate a pks12 keystore file
+# Create a pks12 keystore file
 keytool -importkeystore -srckeystore "$KEY_STORE" -destkeystore "$PKS_KEY_STORE" -deststoretype PKCS12 \
 -srcstorepass "$PASSWORD" -deststorepass "$PASSWORD"
 

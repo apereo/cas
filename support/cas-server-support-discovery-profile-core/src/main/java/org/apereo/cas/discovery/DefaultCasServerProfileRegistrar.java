@@ -100,7 +100,7 @@ public class DefaultCasServerProfileRegistrar implements CasServerProfileRegistr
     }
 
     private Set<String> locateAvailableAuthenticationHandlers() {
-        return authenticationEventExecutionPlan.getAuthenticationHandlers()
+        return authenticationEventExecutionPlan.resolveAuthenticationHandlers()
             .stream()
             .map(AuthenticationHandler::getName)
             .collect(Collectors.toSet());

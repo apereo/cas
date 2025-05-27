@@ -15,6 +15,7 @@ import org.apereo.cas.trusted.web.flow.fingerprint.GeoLocationDeviceFingerprintE
 import org.apereo.cas.trusted.web.flow.fingerprint.UserAgentDeviceFingerprintExtractor;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutorResolver;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -193,7 +194,8 @@ class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
             final TenantExtractor tenantExtractor,
             @Qualifier("deviceFingerprintCookieCipherExecutor")
             final CipherExecutor deviceFingerprintCookieCipherExecutor) {
-            return new EncryptedCookieValueManager(deviceFingerprintCookieCipherExecutor,
+            return new EncryptedCookieValueManager(
+                CipherExecutorResolver.with(deviceFingerprintCookieCipherExecutor),
                 tenantExtractor, DefaultCookieSameSitePolicy.INSTANCE);
         }
 

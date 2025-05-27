@@ -11,6 +11,10 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -42,6 +46,7 @@ import java.util.Objects;
 @RestController("serviceTicketResourceRestController")
 @Slf4j
 @RequiredArgsConstructor
+@Tag(name = "CAS REST")
 public class ServiceTicketResource {
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
@@ -75,6 +80,11 @@ public class ServiceTicketResource {
             MediaType.APPLICATION_JSON_VALUE,
             MediaType.TEXT_HTML_VALUE,
             MediaType.TEXT_PLAIN_VALUE
+        })
+    @Operation(summary = "Create service ticket",
+        parameters = {
+            @Parameter(name = "tgtId", required = true, in = ParameterIn.PATH, description = "Ticket-granting ticket id"),
+            @Parameter(name = "requestBody", required = false, description = "Request body containing credentials")
         })
     public ResponseEntity<String> createServiceTicket(
         final HttpServletRequest httpServletRequest,

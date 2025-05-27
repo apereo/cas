@@ -2,24 +2,16 @@ package org.apereo.cas.authentication.handler.support;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.BaseAuthenticationTests;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.attribute.StubPersonAttributeDao;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
-import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
-import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -50,17 +42,9 @@ import static org.mockito.Mockito.*;
  */
 @Tag("AuthenticationHandler")
 @ExtendWith(CasTestExtension.class)
-@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     JaasAuthenticationHandlersConfigurationTests.JaasAuthenticationTestConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    CasCoreScriptingAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    CasCoreLogoutAutoConfiguration.class,
-    CasCoreAuthenticationAutoConfiguration.class
+    BaseAuthenticationTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.accept.users=casuser::Mellon,casuser2::Mellon",
     "cas.authn.jaas[0].realm=CAS",

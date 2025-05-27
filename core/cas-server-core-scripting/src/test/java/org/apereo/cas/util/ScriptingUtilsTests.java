@@ -9,7 +9,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -58,7 +57,7 @@ class ScriptingUtilsTests {
 
     @Test
     void verifyGroovyExecutionFails() {
-        var result = ScriptingUtils.executeGroovyShellScript(Mockito.mock(Script.class), CollectionUtils.wrap("name", "casuser"), String.class);
+        var result = ScriptingUtils.executeGroovyShellScript(mock(Script.class), CollectionUtils.wrap("name", "casuser"), String.class);
         assertNull(result);
 
         result = ScriptingUtils.executeGroovyScript(mock(Resource.class), "someMethod", String.class);

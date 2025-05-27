@@ -68,7 +68,7 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
             } else {
                 LOGGER.warn("JSON resource @ [{}] does not exist", jsonResource);
             }
-            return new HashMap<>(0);
+            return new HashMap<>();
         });
     }
 

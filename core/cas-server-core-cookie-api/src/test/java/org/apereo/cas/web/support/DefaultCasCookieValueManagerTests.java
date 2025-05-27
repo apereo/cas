@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.cookie.PinnableCookiePropertie
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutorResolver;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
@@ -160,7 +161,8 @@ class DefaultCasCookieValueManagerTests {
     private static CookieValueManager getCookieValueManager(
         final GeoLocationService geoLocationService,
         final PinnableCookieProperties props) {
-        return new DefaultCasCookieValueManager(CipherExecutor.noOp(),
+        return new DefaultCasCookieValueManager(
+            CipherExecutorResolver.with(CipherExecutor.noOp()),
             mock(TenantExtractor.class),
             new DirectObjectProvider<>(geoLocationService),
             DefaultCookieSameSitePolicy.INSTANCE,

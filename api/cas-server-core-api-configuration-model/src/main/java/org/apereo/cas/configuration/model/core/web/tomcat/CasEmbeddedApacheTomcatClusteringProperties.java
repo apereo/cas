@@ -2,11 +2,9 @@ package org.apereo.cas.configuration.model.core.web.tomcat;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -111,11 +109,24 @@ public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable
     /**
      * Multicast address for membership.
      * The multicast address that the membership will broadcast its presence and listen for other heartbeats on.
-     * The default value is 228.0.0.4 Make sure your network is enabled for multicast traffic.
+     * Make sure your network is enabled for multicast traffic.
      * The multicast address, in conjunction with the port is what creates a cluster group. To divide up your farm into several
      * different group, or to split up QA from production, change the port or the address
      */
     private String membershipAddress = "228.0.0.4";
+
+    /**
+     * This tells the underlying multicast socket exactly which local network interface (IP address) to bind to when it:
+     * <ul>
+     * <li>Joins the multicast group</li>
+     * <li>Sends and receives the UDP datagrams for group membership</li>
+     * </ul>
+     * By specifying this address, you force Java to use exactly that interface for all joins and sends.
+     * This would also be useful if your environment has more than one network interface
+     * and the OS might by default bind the multicast socket to the “wrong” one (or none),
+     * leading to No route to host or “not a member” errors.
+     */
+    private String membershipBindAddress;
 
     /**
      * The frequency in milliseconds in which heartbeats are sent out. The default value is 500 ms.
@@ -174,4 +185,9 @@ public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable
      */
     @RequiredProperty
     private boolean enabled;
+
+    /**
+     * Indicates whether a failure should be treated as fatal during cluster startup operations.
+     */
+    private boolean failureFatal = true;
 }

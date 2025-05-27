@@ -7,9 +7,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.cryptacular.io.ClassPathResource;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -50,7 +50,7 @@ public class MockWebServer implements Closeable {
     private static final int STARTING_PORT_RANGE = 4000;
     private static final int ENDING_PORT_RANGE = 9999;
 
-    private static final ConcurrentSkipListSet ALL_PORTS = new ConcurrentSkipListSet<>();
+    private static final ConcurrentSkipListSet<Integer> ALL_PORTS = new ConcurrentSkipListSet<>();
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

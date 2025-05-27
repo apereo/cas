@@ -24,7 +24,7 @@ public class RestfulSmsProperties extends RestEndpointProperties {
     private static final long serialVersionUID = -8102345678378393382L;
 
     /**
-     * Indicate the style and formatting of the SMS request paramerters
+     * Indicate the style and formatting of the SMS request parameters
      * and how they should be included and sent via REST.
      */
     private RestfulSmsRequestStyles style = RestfulSmsRequestStyles.QUERY_PARAMETERS;

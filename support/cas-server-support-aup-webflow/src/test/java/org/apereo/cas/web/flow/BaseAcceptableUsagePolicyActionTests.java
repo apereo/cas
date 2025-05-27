@@ -16,7 +16,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,7 +48,7 @@ import org.springframework.context.ConfigurableApplicationContext;
     CasCoreLogoutAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class
+    CasPersonDirectoryAutoConfiguration.class
 })
 @ExtendWith(CasTestExtension.class)
 public abstract class BaseAcceptableUsagePolicyActionTests {

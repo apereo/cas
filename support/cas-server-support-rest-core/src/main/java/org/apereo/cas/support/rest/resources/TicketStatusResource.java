@@ -5,6 +5,10 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.LoggingUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController("ticketStatusResourceRestController")
 @Slf4j
+@Tag(name = "CAS REST")
 @RequiredArgsConstructor
 public class TicketStatusResource {
     private final TicketRegistry ticketRegistry;
@@ -37,6 +42,8 @@ public class TicketStatusResource {
      * @return {@link ResponseEntity} representing RESTful response
      */
     @GetMapping(RestProtocolConstants.ENDPOINT_TICKETS + "/{id:.+}")
+    @Operation(summary = "Get the status of a ticket",
+        parameters = @Parameter(name = "id", required = true, in = ParameterIn.PATH, description = "Ticket id"))
     public ResponseEntity<String> getTicketStatus(@PathVariable("id") final String id) {
         try {
             val ticket = ticketRegistry.getTicket(id, Ticket.class);

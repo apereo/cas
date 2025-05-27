@@ -105,7 +105,7 @@ class WsFederationResponseValidatorTests {
         val wsConfig = wsFederationConfigurations.toList().getFirst();
         val id = wsConfig.getId();
         context.setParameter(WsFederationNavigationController.PARAMETER_NAME, id);
-        wsFederationNavigationController.redirectToProvider(context.getHttpServletRequest(), context.getHttpServletResponse());
+        wsFederationNavigationController.redirectToProvider(id, context.getHttpServletRequest(), context.getHttpServletResponse());
         context.setRequestCookiesFromResponse();
 
         val wresult = IOUtils.toString(new ClassPathResource("goodTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);

@@ -6,7 +6,7 @@ const assert = require("assert");
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    const redirectUrl = "https://apereo.github.io";
+    const redirectUrl = "https://localhost:9859/anything/cas";
     let url = "https://localhost:8443/cas/oidc/authorize?response_type=code&";
     url += `client_id=client&scope=${encodeURIComponent("openid email profile address phone")}&redirect_uri=${redirectUrl}`;
     url += "&nonce=3d3a7457f9ad3&state=1735fd6c43c14&acr_values=mfa-gauth";
@@ -16,6 +16,6 @@ const assert = require("assert");
     await cas.loginWith(page);
     await cas.sleep(2000);
     await cas.logPage(page);
-    assert(await page.url() === "https://apereo.github.io/?error=unmet_authentication_requirements");
+    assert(await page.url() === `${redirectUrl}?error=unmet_authentication_requirements`);
     await browser.close();
 })();

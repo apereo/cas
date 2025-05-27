@@ -200,7 +200,7 @@ attribute `role` whose value matches the pattern `deny.+`.
 
 <div class="alert alert-info">:information_source: <strong>Supported Syntax</strong><p>Rejected values for a given attribute support regular 
 expression patterns. For example, a <code>role</code> attribute could
-be designed with a value value pattern of <code>admin-.*</code>.</p></div>
+be designed with a value pattern of <code>admin-.*</code>.</p></div>
 {% endtab %}
 
 {% endtabs %}

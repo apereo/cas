@@ -47,7 +47,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     }
 
     public AcceptUsersAuthenticationHandler(final String name) {
-        this(name, null, PrincipalFactoryUtils.newPrincipalFactory(), Integer.MAX_VALUE, new HashMap<>(0));
+        this(name, null, PrincipalFactoryUtils.newPrincipalFactory(), Integer.MAX_VALUE, new HashMap<>());
     }
 
     public AcceptUsersAuthenticationHandler(final String name, final ServicesManager servicesManager,

@@ -4,16 +4,12 @@ import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.core.io.Resource;
-
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 /**
@@ -34,8 +30,7 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
         return whenKeystoreResourceExists()
             .map(Unchecked.function(resource -> {
                 LOGGER.trace("Rotating keys found in [{}]", resource);
-                val jwksJson = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-                val jsonWebKeySet = new JsonWebKeySet(jwksJson);
+                val jsonWebKeySet = OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(resource);
 
                 jsonWebKeySet.getJsonWebKeys().forEach(key -> {
                     LOGGER.debug("Processing key [{}] to determine rotation eligibility", key.getKeyId());
@@ -91,8 +86,7 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
         return whenKeystoreResourceExists()
             .map(Unchecked.function(resource -> {
                 LOGGER.trace("Revoking previous keys found in [{}]", resource);
-                val jwksJson = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-                val jsonWebKeySet = new JsonWebKeySet(jwksJson);
+                val jsonWebKeySet = OidcJsonWebKeystoreGeneratorService.toJsonWebKeyStore(resource);
                 jsonWebKeySet.getJsonWebKeys().removeIf(key -> {
                     LOGGER.debug("Processing key [{}] to determine revocation eligibility", key.getKeyId());
                     val state = JsonWebKeyLifecycleStates.getJsonWebKeyState(key);

@@ -1,18 +1,31 @@
 #!/bin/bash
 
-echo "Running Syncope docker container..."
+RED="\e[31m"
+GREEN="\e[32m"
+ENDCOLOR="\e[0m"
+
+function printred() {
+  printf "🔥 ${RED}$1${ENDCOLOR}\n"
+}
+
+function printgreen() {
+  printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
+}
+
+
+printgreen "Running Apache Syncope docker container..."
 COMPOSE_FILE=./ci/tests/syncope/docker-compose.yml
 test -f $COMPOSE_FILE || COMPOSE_FILE=docker-compose.yml
 docker compose -f $COMPOSE_FILE down >/dev/null 2>/dev/null || true
 docker compose -f $COMPOSE_FILE up -d
 docker logs syncope-syncope-1 -f &
-echo -e "Waiting for Syncope server to come online...\n"
-sleep 60
+printgreen "Waiting for Apache Syncope server to come online...\n"
+sleep 30
 until $(curl --output /dev/null --silent --head --fail http://localhost:18080/syncope/); do
     printf '.'
     sleep 1
 done
-echo -e "\nSyncope docker container is running."
+printgreen "\nApache Syncope docker container is running."
 
 echo "Creating CSV Dir conn instance"
 curl -X 'POST' \
@@ -379,10 +392,8 @@ curl -X 'POST' \
   "passwordPolicy": null,
   "accountPolicy": null,
   "propagationPolicy": null,
-  "pullPolicy": null,
   "pushPolicy": null,
   "provisionSorter": null,
-  "overrideCapabilities": false,
   "provisions": [
     {
       "anyType": "USER",
@@ -416,58 +427,19 @@ curl -X 'POST' \
             "pullJEXLTransformer": null,
             "transformers": []
           }
-        ],
-        "linkingItems": []
+        ]
       },
-      "auxClasses": [],
-      "virSchemas": []
+      "auxClasses": []
     }
   ],
   "confOverride": [],
   "capabilitiesOverride": [],
   "propagationActions": []
 }' | jq
-
-echo "-----------------"
-
-echo "Creating virtual schema"
-curl -X 'POST' \
-  'http://localhost:18080/syncope/rest/schemas/VIRTUAL' \
-  -H 'accept: */*' \
-  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
-  -H 'Content-Type: application/json' \
-  -d '  {
-    "_class": "org.apache.syncope.common.lib.to.VirSchemaTO",
-    "key": "toBeVirtualized",
-    "labels": {},
-    "readonly": false,
-    "resource": "import",
-    "anyType": "USER",
-    "extAttrName": "virtual"
-}' | jq
-
-echo "Assigning virtual schema to BaseUser"
-curl -X 'PUT' \
-  'http://localhost:18080/syncope/rest/anyTypeClasses/BaseUser' \
-  -H 'accept: */*' \
-  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "key": "BaseUser",
-  "plainSchemas": [
-    "email"
-  ],
-  "derSchemas": [
-    "description"
-  ],
-  "virSchemas": [
-    "toBeVirtualized"
-  ],
-  "inUseByTypes": [
-    "USER"
-  ]
-}' | jq
-
+if [ $? -ne 0 ]; then
+  printred "Failed to create resource"
+  exit 1
+fi
 echo "-----------------"
 
 echo "Creating derived attribute"
@@ -484,7 +456,41 @@ curl -X 'POST' \
     "expression": "'\''email: '\'' + email"
   }
 ' | jq
+if [ $? -ne 0 ]; then
+  printred "Failed to create derived attribute"
+  exit 1
+fi
+echo -e "\n-----------------\n"
 
+echo "Creating phoneNumber plain schema..."
+curl -X 'POST' \
+  'http://localhost:18080/syncope/rest/schemas/PLAIN' \
+  -H 'accept: */*' \
+  -H 'X-Syncope-Domain: Master' \
+  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "_class": "org.apache.syncope.common.lib.to.PlainSchemaTO",
+    "key": "phoneNumber",
+    "anyTypeClass": "BaseUser"
+}'
+
+echo "Creating givenName plain schema..."
+curl -X 'POST' \
+  'http://localhost:18080/syncope/rest/schemas/PLAIN' \
+  -H 'accept: */*' \
+  -H 'X-Syncope-Domain: Master' \
+  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "_class": "org.apache.syncope.common.lib.to.PlainSchemaTO",
+    "key": "givenName",
+    "anyTypeClass": "BaseUser"
+}'
+if [ $? -ne 0 ]; then
+  printred "Failed to create plain schema"
+  exit 1
+fi
 echo -e "\n-----------------\n"
 
 echo "Creating sample user: syncopecas..."
@@ -506,20 +512,30 @@ curl -X 'POST' \
               "values": [
                 "syncopecas@syncope.org"
               ]
+            },
+            {
+              "schema": "givenName",
+              "values": [
+                "ApereoCAS"
+              ]
+            },
+            {
+              "schema": "phoneNumber",
+              "values": [
+                "1234567890"
+              ]
             }
         ],
         "derAttrs": [
           {
             "schema": "description"
           }
-        ],
-        "virAttrs": [
-          {
-            "schema": "toBeVirtualized"
-          }
         ]
   }'
-
+if [ $? -ne 0 ]; then
+  printred "Failed to create sample user"
+  exit 1
+fi
 echo -e "\n-----------------\n"
 
 echo "Creating sample user: casuser..."
@@ -547,12 +563,10 @@ curl -X 'POST' \
     {
       "schema": "description"
     }
-  ],
-  "virAttrs": [
-    {
-      "schema": "toBeVirtualized"
-    }
   ]
 }'
-
-echo -e "\nReady!\n"
+if [ $? -ne 0 ]; then
+  printred "Failed to create sample user"
+  exit 1
+fi
+printgreen "\nReady!\n"

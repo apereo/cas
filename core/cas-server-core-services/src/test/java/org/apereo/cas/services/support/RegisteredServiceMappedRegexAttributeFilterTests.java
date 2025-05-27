@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +65,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
 
     @Test
     void verifyPatternFilter() {
-        this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
+        this.filter.setPatterns(Map.of("memberOf", "^m"));
         val attrs = this.filter.filter(givenAttributesMap);
         assertEquals(attrs.size(), givenAttributesMap.size());
         assertEquals(2, CollectionUtils.toCollection(attrs.get("memberOf")).size());
@@ -74,7 +73,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
 
     @Test
     void verifyPattern() {
-        this.filter = new RegisteredServiceMappedRegexAttributeFilter(Collections.singletonMap("memberOf", "^m"));
+        this.filter = new RegisteredServiceMappedRegexAttributeFilter(Map.of("memberOf", "^m"));
         val attrs = this.filter.filter(givenAttributesMap);
         assertEquals(attrs.size(), givenAttributesMap.size());
         assertEquals(2, CollectionUtils.toCollection(attrs.get("memberOf")).size());
@@ -82,7 +81,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
 
     @Test
     void verifyPatternFilterExcludeUnmatched() {
-        this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
+        this.filter.setPatterns(Map.of("memberOf", "^m"));
         this.filter.setExcludeUnmappedAttributes(true);
         val attrs = this.filter.filter(givenAttributesMap);
         assertEquals(1, attrs.size());
@@ -91,7 +90,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
 
     @Test
     void verifyPatternFilterFullMatch() {
-        this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
+        this.filter.setPatterns(Map.of("memberOf", "^m"));
         this.filter.setCompleteMatch(true);
         val attrs = this.filter.filter(givenAttributesMap);
         assertEquals(attrs.size(), givenAttributesMap.size() - 1);
@@ -107,7 +106,7 @@ class RegisteredServiceMappedRegexAttributeFilterTests {
 
     @Test
     void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
-        this.filter.setPatterns(Collections.singletonMap("memberOf", "^\\w{3}$"));
+        this.filter.setPatterns(Map.of("memberOf", "^\\w{3}$"));
         MAPPER.writeValue(JSON_FILE, this.filter);
         val filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceMappedRegexAttributeFilter.class);
         assertEquals(filter, filterRead);

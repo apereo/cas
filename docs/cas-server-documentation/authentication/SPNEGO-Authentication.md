@@ -79,10 +79,10 @@ Example:
 ```bash
 C:\Users\administrator.DOMAIN>ktpass /out myspnaccount.keytab /princ HTTP/cas.example.com@REALM /pass * /mapuser domain-account@YOUR.REALM /ptype KRB5_NT_PRINCIPAL /crypto RC4-HMAC-NT
 Targeting domain controller: DC.YOUR.REALM
-Successfully mapped HTTP/cas.example.com to domaine-account.
+Successfully mapped HTTP/cas.example.com to domain-account.
 Type the password for HTTP/cas.example.com:
 Type the password again to confirm:
-Password succesfully set!
+Password successfully set!
 Key created.
 Output keytab to myspnaccount.keytab:
 Keytab version: 0x502

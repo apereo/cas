@@ -32,7 +32,7 @@ public class LdapPasswordManagementProperties extends AbstractLdapSearchProperti
      * This is done via a key-value structure where the key is the attribute name
      * for the security question and the value is the attribute name for the answer linked to the question.
      */
-    private Map<String, String> securityQuestionsAttributes = new LinkedHashMap<>(0);
+    private Map<String, String> securityQuestionsAttributes = new LinkedHashMap<>();
 
     /**
      * Name of LDAP attribute that represents the account locked status.

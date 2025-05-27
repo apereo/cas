@@ -136,7 +136,7 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
     private CookieStore cookieStore;
 
     /**
-     * Interface for deciding whether a connection can be re-used for subsequent requests and should be kept alive.
+     * Interface for deciding whether a connection can be reused for subsequent requests and should be kept alive.
      **/
     private ConnectionReuseStrategy connectionReuseStrategy = new DefaultConnectionReuseStrategy();
 

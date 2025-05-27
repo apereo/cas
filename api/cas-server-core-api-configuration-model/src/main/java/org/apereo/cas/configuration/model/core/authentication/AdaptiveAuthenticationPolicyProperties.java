@@ -60,7 +60,7 @@ public class AdaptiveAuthenticationPolicyProperties implements Serializable {
      * </p>
      */
     @RegularExpressionCapable
-    private Map<String, String> requireMultifactor = new HashMap<>(0);
+    private Map<String, String> requireMultifactor = new HashMap<>();
 
     /**
      * This property binds a valid mfa provider to a collection of rules that deal with triggering mfa

@@ -1,16 +1,20 @@
 {
   "dependencies": "reports",
-
+    "conditions": {
+        "docker": "true"
+    },
   "properties": [
 
-    "--cas.service-registry.core.init-from-json=true",
-
-    "--cas.service-registry.schedule.enabled=false",
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
     
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.schedule.enabled=false",
     "--cas.service-registry.cache.duration=PT2S",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=registeredServices",
     "--management.endpoints.access.default=UNRESTRICTED"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

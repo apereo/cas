@@ -5,6 +5,8 @@ import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.util.LoggingUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +27,7 @@ import java.util.Map;
  * @since 6.0.0
  */
 @Slf4j
+@Tag(name = "OAuth")
 public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20Controller<OAuth20ConfigurationContext> {
     /**
      * User code parameter name.
@@ -43,6 +46,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
      * @return the model and view
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.DEVICE_AUTHZ_URL)
+    @Operation(summary = "Handle device code approval request")
     public ModelAndView handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val model = getApprovalModel(StringUtils.EMPTY);
         return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVAL_VIEW, model);
@@ -56,6 +60,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
      * @return the model and view
      */
     @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.DEVICE_AUTHZ_URL)
+    @Operation(summary = "Handle device code approval request")
     public ModelAndView handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) {
         val userCode = request.getParameter(PARAMETER_USER_CODE);
         val codeNotfound = getModelAndViewForFailure("codenotfound");

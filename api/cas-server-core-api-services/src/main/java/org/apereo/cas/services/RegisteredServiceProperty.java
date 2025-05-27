@@ -250,18 +250,18 @@ public interface RegisteredServiceProperty extends Serializable {
             "Indicate the cipher strategy for JWTs for OIDC responses, to determine order of signing/encryption operations."),
 
         /**
-         * Enable signing JWTs as a response when generating resonse mode JWTs using the provided signing key.
+         * Enable signing JWTs as a response when generating response mode JWTs using the provided signing key.
          **/
         OIDC_RESPONSE_MODE_JWT_CIPHER_SIGNING_ENABLED("oidcResponseModeAsJwtCipherSigningEnabled", "true",
             RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS, RegisteredServicePropertyTypes.BOOLEAN,
-            "Enable signing JWTs as a response when generating resonse mode JWTs using the provided signing key."),
+            "Enable signing JWTs as a response when generating response mode JWTs using the provided signing key."),
 
         /**
-         * Enable encrypted JWTs as a response when generating resonse mode JWTs using the provided signing key.
+         * Enable encrypted JWTs as a response when generating response mode JWTs using the provided signing key.
          **/
         OIDC_RESPONSE_MODE_JWT_CIPHER_ENCRYPTION_ENABLED("oidcResponseModeAsJwtCipherEncryptionEnabled", "true",
             RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS, RegisteredServicePropertyTypes.BOOLEAN,
-            "Enable encrypted JWTs as a response when generating resonse mode JWTs using the provided encryption key."),
+            "Enable encrypted JWTs as a response when generating response mode JWTs using the provided encryption key."),
 
         /**
          * Produce a signed JWT as a response when generating access tokens using the provided signing key.

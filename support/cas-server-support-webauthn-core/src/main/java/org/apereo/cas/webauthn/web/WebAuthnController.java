@@ -6,6 +6,12 @@ import com.yubico.data.RegistrationRequest;
 import com.yubico.util.Either;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.ResidentKeyRequirement;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +43,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN)
 @ResponseBody
+@Tag(name = "WebAuthN")
 public class WebAuthnController extends BaseWebAuthnController {
     /**
      * webauthn registration endpoint.
@@ -54,15 +61,18 @@ public class WebAuthnController extends BaseWebAuthnController {
     private final WebAuthnServer server;
 
     private static ResponseEntity<Object> startResponse(final Object request) throws Exception {
-        LOGGER.trace("Response: [{}]", request);
-        return ResponseEntity.ok(writeJson(request));
+        val json = writeJson(request);
+        LOGGER.trace("Start: [{}]", json);
+        return ResponseEntity.ok(json);
     }
 
     private static ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result,
                                                          final String responseJson) throws Exception {
         if (result.isRight()) {
-            LOGGER.trace("Response: [{}]", responseJson);
-            return ResponseEntity.ok(writeJson(result.right().orElseThrow()));
+            LOGGER.trace("Received: [{}]", responseJson);
+            val json = writeJson(result.right().orElseThrow());
+            LOGGER.trace("Returned: [{}]", json);
+            return ResponseEntity.ok(json);
         }
         return messagesJson(ResponseEntity.badRequest(), result.left().orElseThrow());
     }
@@ -89,6 +99,21 @@ public class WebAuthnController extends BaseWebAuthnController {
      * @throws Exception the exception
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_REGISTER, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Start registration",
+        parameters = {
+            @Parameter(name = "displayName", in = ParameterIn.QUERY, required = true, description = "Display name"),
+            @Parameter(name = "credentialNickname", in = ParameterIn.QUERY, required = false, description = "Credential nickname"),
+            @Parameter(name = "requireResidentKey", in = ParameterIn.QUERY, required = false, description = "Require resident key"),
+            @Parameter(name = "sessionToken", in = ParameterIn.QUERY, required = false, description = "Session token")
+        },
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true,
+            description = "RegistrationRequest JSON payload",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = RegistrationRequest.class)
+            )
+        ))
     public ResponseEntity<Object> startRegistration(
         @NonNull
         @RequestParam("displayName")
@@ -127,6 +152,7 @@ public class WebAuthnController extends BaseWebAuthnController {
      * @throws Exception the exception
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Finish registration")
     public ResponseEntity<Object> finishRegistration(
         @RequestBody
         final String responseJson) throws Exception {
@@ -141,6 +167,7 @@ public class WebAuthnController extends BaseWebAuthnController {
      * @throws Exception the exception
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_AUTHENTICATE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Start authentication")
     public ResponseEntity<Object> startAuthentication(
         final Principal authenticatedPrincipal) throws Exception {
 
@@ -159,6 +186,7 @@ public class WebAuthnController extends BaseWebAuthnController {
      * @throws Exception the exception
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_AUTHENTICATE + WEBAUTHN_ENDPOINT_FINISH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Finish authentication")
     public ResponseEntity<Object> finishAuthentication(
         @RequestBody
         final String responseJson) throws Exception {

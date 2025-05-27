@@ -106,7 +106,7 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
 
             if (existingAuthn != null && !existingAuthn.getPrincipal().equals(principal)) {
                 LOGGER.trace("Existing authentication context linked to ticket-granting ticket [{}] is issued for principal [{}] "
-                        + " which does not match [{}], established by the requested authentication transaction. CAS will NOT re-use the existing "
+                        + " which does not match [{}], established by the requested authentication transaction. CAS will NOT reuse the existing "
                         + "authentication context to issue service tickets",
                     ticketGrantingTicketId, existingAuthn.getPrincipal(), principal);
                 return null;

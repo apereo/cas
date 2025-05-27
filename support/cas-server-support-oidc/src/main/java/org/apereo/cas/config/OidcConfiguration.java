@@ -157,6 +157,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -819,9 +820,11 @@ class OidcConfiguration {
             final PrincipalResolver principalResolver,
             @Qualifier("taskScheduler")
             final TaskScheduler taskScheduler,
+            @Qualifier("messageSource")
+            final MessageSource messageSource,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationManager,
-            @Qualifier("webflowCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
             final CipherExecutor webflowCipherExecutor,
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor) {
@@ -831,6 +834,7 @@ class OidcConfiguration {
 
             return (OidcConfigurationContext) OidcConfigurationContext
                 .builder()
+                .messageSource(messageSource)
                 .introspectionSigningAndEncryptionService(oidcTokenIntrospectionSigningAndEncryptionService)
                 .introspectionResponseGenerator(oauthIntrospectionResponseGenerator)
                 .argumentExtractor(argumentExtractor)
@@ -1109,7 +1113,7 @@ class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcCibaRequestFactory oidcCibaRequestFactory(
-            @Qualifier("webflowCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
             final CipherExecutor webflowCipherExecutor,
             @Qualifier("cibaRequestExpirationPolicy")
             final ExpirationPolicyBuilder cibaRequestExpirationPolicy,

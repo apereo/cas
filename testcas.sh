@@ -165,6 +165,7 @@ while (( "$#" )); do
                 task+="testAuthenticationPolicy "
                 ;;
             authz|heimdall|authorization)
+                isDockerOnLinux && ./ci/tests/mysql/run-mysql-server.sh
                 task+="testAuthorization "
                 ;;
             auth|authn|authentication)
@@ -187,7 +188,6 @@ while (( "$#" )); do
                 task+="testCookie "
                 ;;
             consent)
-                task+="testConsent "
                 task+="testConsent "
                 ;;
             duo|duosecurity)

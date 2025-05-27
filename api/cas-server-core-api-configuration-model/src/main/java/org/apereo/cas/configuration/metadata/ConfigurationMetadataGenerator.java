@@ -139,7 +139,7 @@ public class ConfigurationMetadataGenerator {
     protected static Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
                                                                  final Collection<ConfigurationMetadataProperty> groups) {
 
-        var hints = new LinkedHashSet<ConfigurationMetadataHint>(0);
+        var hints = new LinkedHashSet<ConfigurationMetadataHint>();
         val allValidProps = props.stream()
             .filter(p -> p.getDeprecation() == null
                 || Deprecation.Level.ERROR != p.getDeprecation().getLevel()).toList();
@@ -265,8 +265,8 @@ public class ConfigurationMetadataGenerator {
 
     protected void processMappableProperties(final List<ConfigurationMetadataProperty> properties,
                                              final List<ConfigurationMetadataProperty> groups) {
-        val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
-        val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
+        val collectedProps = new HashSet<ConfigurationMetadataProperty>();
+        val collectedGroups = new HashSet<ConfigurationMetadataProperty>();
 
         properties.forEach(property -> {
             try {
@@ -430,8 +430,8 @@ public class ConfigurationMetadataGenerator {
     }
 
     protected void processNestedTypes(final List<ConfigurationMetadataProperty> properties, final List<ConfigurationMetadataProperty> groups) {
-        val collectedProps = new HashSet<ConfigurationMetadataProperty>(0);
-        val collectedGroups = new HashSet<ConfigurationMetadataProperty>(0);
+        val collectedProps = new HashSet<ConfigurationMetadataProperty>();
+        val collectedGroups = new HashSet<ConfigurationMetadataProperty>();
         LOGGER.trace("Processing nested configuration types...");
         properties
             .forEach(Unchecked.consumer(p -> {

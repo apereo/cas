@@ -23,8 +23,8 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,7 +65,7 @@ class RememberMeDelegatingExpirationPolicyTests extends BaseTicketFactoryTests {
     void verifyTicketExpirationWithRememberMe() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(
             this.principalFactory.createPrincipal("test"),
-            Collections.singletonMap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, List.of(true)));
+            Map.of(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, List.of(true)));
         val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(),
@@ -77,7 +77,7 @@ class RememberMeDelegatingExpirationPolicyTests extends BaseTicketFactoryTests {
     void verifyNoRememberMe() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(
             principalFactory.createPrincipal("test"),
-            Collections.singletonMap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, List.of(false)));
+            Map.of(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, List.of(false)));
         val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertFalse(t.isExpired());
     }
@@ -114,7 +114,7 @@ class RememberMeDelegatingExpirationPolicyTests extends BaseTicketFactoryTests {
     void verifyTicketTTLWithRememberMe() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(
             this.principalFactory.createPrincipal("test"),
-            Collections.singletonMap(
+            Map.of(
                 RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, List.of(true)));
         val t = new TicketGrantingTicketImpl("111", authentication, this.expirationPolicy);
         assertEquals(REMEMBER_ME_TTL, expirationPolicy.getTimeToLive(t));

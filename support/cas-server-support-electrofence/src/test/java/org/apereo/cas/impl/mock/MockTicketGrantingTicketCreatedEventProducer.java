@@ -80,7 +80,7 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         val dto = new CasEvent();
         dto.setType(CasTicketGrantingTicketCreatedEvent.class.getName());
         dto.putTimestamp(new Date().getTime());
-        dto.setCreationTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(5).toString());
+        dto.setCreationTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(5).toInstant());
         dto.putEventId("TGT-" + i + '-' + RandomUtils.randomAlphanumeric(16));
         dto.setPrincipalId(user);
         dto.putClientIpAddress(getMockClientIpAddress());

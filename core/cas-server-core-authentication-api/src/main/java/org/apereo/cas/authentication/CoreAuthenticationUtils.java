@@ -1,9 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.adaptive.intel.DefaultIPAddressIntelligenceService;
-import org.apereo.cas.authentication.adaptive.intel.GroovyIPAddressIntelligenceService;
-import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
-import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligenceService;
 import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
@@ -22,7 +18,6 @@ import org.apereo.cas.authentication.principal.merger.ReturnOriginalAttributeMer
 import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategy;
-import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
@@ -77,7 +72,7 @@ public class CoreAuthenticationUtils {
             .map(entry -> Map.entry(entry.getKey(), entry.getValue()))
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
                 val value = CollectionUtils.toCollection(entry.getValue());
-                return value.size() == 1 ? value.iterator().next() : value;
+                return value.size() == 1 && !(value.iterator().next() instanceof Map) ? value.iterator().next() : value;
             }));
     }
 
@@ -242,9 +237,11 @@ public class CoreAuthenticationUtils {
             if (scriptFactoryInstance.isPresent() && scriptFactoryInstance.get().isExternalScript(selectionCriteria) && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 val loader = new DefaultResourceLoader();
                 val resource = loader.getResource(selectionCriteria);
-                val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-                val scriptFactory = scriptFactoryInstance.get();
-                return scriptFactory.newObjectInstance(script, Predicate.class);
+                try (val is = resource.getInputStream()) {
+                    val script = IOUtils.toString(is, StandardCharsets.UTF_8);
+                    val scriptFactory = scriptFactoryInstance.get();
+                    return scriptFactory.newObjectInstance(script, Predicate.class);
+                }
             }
             val predicateClazz = ClassUtils.getClass(selectionCriteria);
             return (Predicate<Credential>) predicateClazz.getDeclaredConstructor().newInstance();
@@ -345,26 +342,6 @@ public class CoreAuthenticationUtils {
             .setOrder(properties.getOrder());
     }
     
-    /**
-     * New ip address intelligence service.
-     *
-     * @param adaptive the adaptive
-     * @return the ip address intelligence service
-     */
-    public static IPAddressIntelligenceService newIpAddressIntelligenceService(final AdaptiveAuthenticationProperties adaptive) {
-        val intel = adaptive.getIpIntel();
-
-        if (StringUtils.isNotBlank(intel.getRest().getUrl())) {
-            return new RestfulIPAddressIntelligenceService(adaptive);
-        }
-        if (intel.getGroovy().getLocation() != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
-            return new GroovyIPAddressIntelligenceService(adaptive);
-        }
-        if (StringUtils.isNotBlank(intel.getBlackDot().getEmailAddress())) {
-            return new RestfulIPAddressIntelligenceService(adaptive);
-        }
-        return new DefaultIPAddressIntelligenceService(adaptive);
-    }
 
     /**
      * New principal election strategy conflict resolver.

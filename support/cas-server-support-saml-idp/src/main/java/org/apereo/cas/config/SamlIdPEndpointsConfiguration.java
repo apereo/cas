@@ -11,7 +11,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
+import org.apereo.cas.configuration.model.support.interrupt.InterruptCookieProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
@@ -61,6 +61,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
+import org.apereo.cas.util.cipher.DefaultCipherExecutorResolver;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
@@ -113,8 +114,6 @@ import java.util.List;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
 @Configuration(value = "SamlIdPEndpointsConfiguration", proxyBeanMethods = false)
 class SamlIdPEndpointsConfiguration {
-
-    private static final String SAML_SERVER_SUPPORT_PREFIX = "SamlServerSupport";
 
     @Configuration(value = "SamlIdPEndpointCryptoConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -510,12 +509,17 @@ class SamlIdPEndpointsConfiguration {
             @Qualifier("samlIdPDistributedSessionCookieCipherExecutor")
             final CipherExecutor samlIdPDistributedSessionCookieCipherExecutor,
             final CasConfigurationProperties casProperties) {
+
+            val cipherExecutorResolver = new DefaultCipherExecutorResolver(samlIdPDistributedSessionCookieCipherExecutor, tenantExtractor,
+                InterruptCookieProperties.class, bindingContext -> {
+                val properties = bindingContext.value();
+                val crypto = properties.getAuthn().getSamlIdp().getCore().getSessionReplication().getCookie().getCrypto();
+                return CipherExecutorUtils.newStringCipherExecutor(crypto, SamlIdPDistributedSessionCookieCipherExecutor.class);
+            });
+            
             val cookie = casProperties.getAuthn().getSamlIdp().getCore().getSessionReplication().getCookie();
-            if (StringUtils.isBlank(cookie.getName())) {
-                cookie.setName("%s%s".formatted(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME, SAML_SERVER_SUPPORT_PREFIX));
-            }
             return CookieUtils.buildCookieRetrievingGenerator(cookie,
-                new DefaultCasCookieValueManager(samlIdPDistributedSessionCookieCipherExecutor, tenantExtractor,
+                new DefaultCasCookieValueManager(cipherExecutorResolver, tenantExtractor,
                     geoLocationService, DefaultCookieSameSitePolicy.INSTANCE, cookie));
         }
 
@@ -526,7 +530,7 @@ class SamlIdPEndpointsConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("samlIdPDistributedSessionCookieGenerator")
             final CasCookieBuilder samlIdPDistributedSessionCookieGenerator,
-            @Qualifier("webflowCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
             final CipherExecutor webflowCipherExecutor,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
@@ -538,7 +542,7 @@ class SamlIdPEndpointsConfiguration {
                 case BROWSER_STORAGE -> new BrowserWebStorageSessionStore(webflowCipherExecutor, "SamlIdPSessionStore");
                 default -> {
                     val jeeSessionStore = new JEESessionStore();
-                    jeeSessionStore.setPrefix(SAML_SERVER_SUPPORT_PREFIX);
+                    jeeSessionStore.setPrefix("SamlServerSupport");
                     yield jeeSessionStore;
                 }
             };

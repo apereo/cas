@@ -217,7 +217,7 @@ public class MongoDbConnectionFactory {
             if (serverAddresses.length == 0) {
                 throw new BeanCreationException("Unable to build a MongoDb client without any hosts/servers defined");
             }
-            val servers = new ArrayList<ServerAddress>(0);
+            val servers = new ArrayList<ServerAddress>();
             if (serverAddresses.length > 1) {
                 LOGGER.debug("Multiple MongoDb server addresses are defined. Ignoring port [{}], "
                              + "assuming ports are defined as part of the address", mongo.getPort());
@@ -328,7 +328,7 @@ public class MongoDbConnectionFactory {
 
     private Set<Class<?>> scanForEntities(final String basePackage) {
         if (StringUtils.isBlank(basePackage)) {
-            return new HashSet<>(0);
+            return new HashSet<>();
         }
 
         val initialEntitySet = new HashSet<Class<?>>();

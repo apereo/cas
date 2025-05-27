@@ -10,6 +10,7 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
+import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,30 +42,39 @@ class OidcDefaultIssuerServiceTests {
 
         @Test
         void verifyEchoingOperation() {
-            val svc = getOidcRegisteredService();
+            val registeredService = getOidcRegisteredService();
             val oidcService = OidcIssuerService.echoing("https://custom.issuer/");
             assertEquals("https://custom.issuer/", oidcService.determineIssuer(Optional.empty()));
-            assertEquals("https://custom.issuer/", oidcService.determineIssuer(Optional.of(svc)));
+            assertEquals("https://custom.issuer/", oidcService.determineIssuer(Optional.of(registeredService)));
 
             val request = new MockHttpServletRequest();
             val response = new MockHttpServletResponse();
             val context = new JEEContext(request, response);
-            assertTrue(oidcService.validateIssuer(context, OidcConstants.CLIENT_CONFIGURATION_URL));
+            assertTrue(oidcService.validateIssuer(context, List.of(OidcConstants.CLIENT_CONFIGURATION_URL)));
         }
 
         @Test
         void verifyServiceIssuer() {
-            val svc = getOidcRegisteredService();
-            var issuer = oidcIssuerService.determineIssuer(Optional.of(svc));
+            val registeredService = getOidcRegisteredService();
+            var issuer = oidcIssuerService.determineIssuer(Optional.of(registeredService));
             assertEquals(issuer, casProperties.getAuthn().getOidc().getCore().getIssuer());
-            svc.setIdTokenIssuer("https://custom.issuer/");
-            issuer = oidcIssuerService.determineIssuer(Optional.of(svc));
+            registeredService.setIdTokenIssuer("https://custom.issuer/");
+            issuer = oidcIssuerService.determineIssuer(Optional.of(registeredService));
             assertEquals("https://custom.issuer", issuer);
         }
 
         @Test
         void verifyIssuerPatterns() {
-            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("profile"), "profile"));
+            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("profile"), List.of("profile")));
+        }
+
+        @Test
+        void validateServiceIssuer() {
+            val registeredService = getOidcRegisteredService();
+            registeredService.setIdTokenIssuer("https://custom.issuer/");
+            var issuer = oidcIssuerService.determineIssuer(Optional.of(registeredService));
+            assertEquals("https://custom.issuer", issuer);
+            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("authorize"), List.of("authorize"), registeredService));
         }
     }
 
@@ -73,11 +83,11 @@ class OidcDefaultIssuerServiceTests {
     class StaticIssuer extends AbstractOidcTests {
         @Test
         void validateStaticIssuer() {
-            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("authorize"), "authorize"));
-            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("profile"), "profile"));
-            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("logout"), "logout"));
-            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("realms/authorize"), "authorize"));
-            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("logout"), "oidcLogout"));
+            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("authorize"), List.of("authorize")));
+            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("profile"), List.of("profile")));
+            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("logout"), List.of("logout")));
+            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("realms/authorize"), List.of("authorize")));
+            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("logout"), List.of("oidcLogout")));
         }
     }
 
@@ -86,10 +96,10 @@ class OidcDefaultIssuerServiceTests {
     class DynamicIssuer extends AbstractOidcTests {
         @Test
         void validateDynamicIssuer() {
-            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("custom/fawnoos/issuer/authorize"), "authorize"));
-            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("custom/fawnoos/issuer/profile"), "profile"));
-            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("custom/fawnoos/issuer/oidcAuthorize"), "oidcAuthorize"));
-            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("custom/fawnoos/issuer"), "unknown"));
+            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("custom/fawnoos/issuer/authorize"), List.of("authorize")));
+            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("custom/fawnoos/issuer/profile"), List.of("profile")));
+            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("custom/fawnoos/issuer/oidcAuthorize"), List.of("oidcAuthorize")));
+            assertTrue(oidcIssuerService.validateIssuer(getContextForEndpoint("custom/fawnoos/issuer"), List.of("unknown")));
         }
     }
 
@@ -98,7 +108,7 @@ class OidcDefaultIssuerServiceTests {
     class MismatchedIssuer extends AbstractOidcTests {
         @Test
         void validateIssuerMismatch() {
-            assertFalse(oidcIssuerService.validateIssuer(getContextForEndpoint("logout"), "oidcLogout"));
+            assertFalse(oidcIssuerService.validateIssuer(getContextForEndpoint("logout"), List.of("oidcLogout")));
         }
     }
 }

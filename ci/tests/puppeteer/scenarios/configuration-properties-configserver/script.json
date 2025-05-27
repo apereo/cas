@@ -1,6 +1,5 @@
 {
   "dependencies": "core",
-
   "conditions": {
     "docker": "true"
   },

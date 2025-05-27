@@ -73,7 +73,7 @@ What if you needed to override the definition of a CAS-provided bean and replace
 This is where `@Conditional` components come to aid. Most component/bean definitions in CAS are registered 
 with some form of `@Conditional` tag that indicates to the bootstrapping process to ignore their 
 creation, if *a bean definition with the same id* is already defined. This means you can create 
-your own configuration class, register it and the design a `@Bean` definition only to have the 
+your own configuration class, register it and then design a `@Bean` definition only to have the
 context utilize yours rather than what ships with CAS by default.
 
 <div class="alert alert-info">:information_source: <strong>Bean Names</strong><p>To correctly define a conditional <code>Bean</code>, 

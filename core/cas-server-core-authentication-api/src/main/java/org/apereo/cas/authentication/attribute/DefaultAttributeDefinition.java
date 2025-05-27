@@ -206,13 +206,13 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         return currentValues
             .stream()
             .map(value -> switch (getHashingStrategy().toLowerCase(Locale.ENGLISH)) {
-                case "hex" -> EncodingUtils.hexEncode(value.toString());
-                case "base64" -> EncodingUtils.encodeBase64(value.toString());
-                case "sha", "sha1" -> DigestUtils.sha(value.toString());
-                case "sha256" -> DigestUtils.sha256(value.toString());
-                case "sha512" -> DigestUtils.sha512(value.toString());
-                default -> value;
-            })
+                    case "hex" -> EncodingUtils.hexEncode(value.toString());
+                    case "base64" -> EncodingUtils.encodeBase64(value.toString());
+                    case "sha", "sha1" -> DigestUtils.sha(value.toString());
+                    case "sha256" -> DigestUtils.sha256(value.toString());
+                    case "sha512" -> DigestUtils.sha512(value.toString());
+                    default -> value;
+                })
             .collect(Collectors.toList());
     }
 

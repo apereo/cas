@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.merger.AttributeMerger;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import lombok.Builder;
 import lombok.Getter;
@@ -74,4 +75,6 @@ public class PrincipalResolutionContext {
     private final ApplicationContext applicationContext;
 
     private final AttributeRepositoryResolver attributeRepositoryResolver;
+
+    private final TenantExtractor tenantExtractor;
 }

@@ -8,7 +8,7 @@ category: Multifactor Authentication
 
 # Duo Security Authentication
 
-[Duo Security](https://www.duo.com) is a two-step verification service the provides 
+[Duo Security](https://www.duo.com) is a two-step verification service that provides
 additional security for access to institutional and personal data.  
 
 Duo offers several options for authenticating users:
@@ -72,10 +72,10 @@ response from Duo Security is passed to CAS as a browser redirect
 and CAS will begin to negotiate and exchange that response in favor of
 a JWT that contains the multifactor authentication user profile details.
 
-Universal Prompt no longer requires you to generate and use a application
+Universal Prompt no longer requires you to generate and use an application
 key value. Instead, it requires a *client id* and *client secret*, which
 are known and taught CAS using the integration key and secret key
-configuration settings. You will need get your integration key, secret key, and API
+configuration settings. You will need to get your integration key, secret key, and API
 hostname from Duo Security when you register CAS as a protected application.
  
 ## Non-Browser MFA
@@ -104,7 +104,7 @@ curl --location --header "Content-Type: application/cas" https://apps.example.or
 In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, a 
 special credential extractor is injected into the REST authentication engine in order 
 to recognize credentials and authenticate them as part of the REST request.
-The expected parameter name in the request body is `passcode` that can be found from
+The expected parameter name in the request body is `passcode`, which can be found from
 Duo Security's mobile application or received via SMS.
  
 ## Passwordless Authentication

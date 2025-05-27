@@ -5,7 +5,6 @@ const querystring = require("querystring");
 
 async function loginAndVerify(browser) {
     const page = await cas.newPage(browser);
-    await cas.gotoLogout(page);
     await cas.gotoLogin(page);
     await cas.click(page, "#rememberMeButton");
     await cas.loginWith(page);
@@ -70,6 +69,31 @@ async function fetchSsoSessions() {
     });
 }
 
+async function verifyWithoutRememberMe() {
+    let browser = await cas.newBrowser(cas.browserOptions());
+    let page = await cas.newPage(browser);
+    await cas.gotoLogin(page);
+    await cas.sleep(1000);
+    await cas.loginWith(page);
+    await cas.sleep(1000);
+    const tgc = await cas.assertCookie(page);
+    assert(tgc.expires === -1);
+    const date = new Date(tgc.expires * 1000);
+    await cas.logg(`TGC expiration date: ${date}`);
+    const now = new Date();
+    await cas.logg(`Current date: ${now}`);
+    now.setDate(now.getDate() + 1);
+    assert(now.getDate() !== date.getDate());
+
+    await browser.close();
+    browser = await cas.newBrowser(cas.browserOptions());
+    page = await cas.newPage(browser);
+    await cas.gotoLogin(page);
+    await cas.sleep(1000);
+    await cas.assertCookie(page, false);
+    await browser.close();
+}
+
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     await loginAndVerify(browser);
@@ -77,4 +101,5 @@ async function fetchSsoSessions() {
     await loginAndVerify(browser);
     await browser.close();
     await fetchSsoSessions();
+    await verifyWithoutRememberMe();
 })();

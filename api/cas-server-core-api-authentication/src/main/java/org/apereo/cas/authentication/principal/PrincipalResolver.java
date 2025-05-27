@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.util.NamedObject;
 import org.springframework.core.Ordered;
 import java.util.Optional;
@@ -86,19 +85,9 @@ public interface PrincipalResolver extends Ordered, NamedObject {
      */
     boolean supports(Credential credential);
 
-    /**
-     * Gets attribute repository, if any.
-     *
-     * @return the attribute repository or null.
-     * @since 5.1
-     */
-    default PersonAttributeDao getAttributeRepository() {
-        return null;
-    }
-    
-
     @Override
     default int getOrder() {
         return 0;
     }
+    
 }

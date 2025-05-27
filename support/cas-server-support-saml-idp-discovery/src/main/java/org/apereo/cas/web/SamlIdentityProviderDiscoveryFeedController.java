@@ -5,6 +5,10 @@ import org.apereo.cas.entity.SamlIdentityProviderEntity;
 import org.apereo.cas.services.SamlIdentityProviderDiscoveryFeedService;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -32,6 +36,7 @@ import java.util.HashMap;
 @RestController("identityProviderDiscoveryFeedController")
 @Slf4j
 @RequiredArgsConstructor
+@Tag(name = "SAML2")
 @RequestMapping(path = SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY)
 public class SamlIdentityProviderDiscoveryFeedController {
     /**
@@ -42,8 +47,7 @@ public class SamlIdentityProviderDiscoveryFeedController {
     private final CasConfigurationProperties casProperties;
 
     private final SamlIdentityProviderDiscoveryFeedService samlIdentityProviderDiscoveryFeedService;
-
-
+    
     /**
      * Gets discovery feed.
      *
@@ -53,6 +57,8 @@ public class SamlIdentityProviderDiscoveryFeedController {
      * @return the discovery feed
      */
     @GetMapping(path = "/feed", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get identity provider discovery feed",
+        parameters = @Parameter(name = "entityID", in = ParameterIn.QUERY, required = false, description = "Filter by entity id"))
     public Collection<SamlIdentityProviderEntity> getDiscoveryFeed(
         final HttpServletRequest request,
         final HttpServletResponse response,
@@ -76,6 +82,7 @@ public class SamlIdentityProviderDiscoveryFeedController {
      * @return the model and view
      */
     @GetMapping
+    @Operation(summary = "View identity provider discovery home")
     public ModelAndView home(final HttpServletRequest request, final HttpServletResponse response) {
         val model = new HashMap<String, Object>();
 
@@ -102,6 +109,8 @@ public class SamlIdentityProviderDiscoveryFeedController {
      * @return the view
      */
     @GetMapping(path = "/redirect")
+    @Operation(summary = "Redirect to identity provider", parameters =
+        @Parameter(name = "entityID", in = ParameterIn.QUERY, required = true, description = "The entity id"))
     public View redirect(
         @RequestParam("entityID")
         final String entityID,

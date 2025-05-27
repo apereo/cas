@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasCoreMultitenancyAutoConfiguration.class,
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

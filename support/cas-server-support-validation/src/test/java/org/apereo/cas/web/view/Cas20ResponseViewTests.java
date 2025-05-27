@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -55,11 +55,9 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@Import({
-    CasPersonDirectoryTestConfiguration.class,
-    Cas20ResponseViewTests.Cas20ResponseViewTestConfiguration.class
-})
+@Import(Cas20ResponseViewTests.Cas20ResponseViewTestConfiguration.class)
 @ImportAutoConfiguration({
+    CasPersonDirectoryAutoConfiguration.class,
     CasThymeleafAutoConfiguration.class,
     CasValidationAutoConfiguration.class
 })

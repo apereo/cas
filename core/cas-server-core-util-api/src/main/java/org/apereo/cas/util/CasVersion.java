@@ -61,9 +61,11 @@ public class CasVersion {
                 val className = CasVersion.class.getSimpleName() + ".class";
                 val classPath = CasVersion.class.getResource(className).toString();
                 val manifestPath = classPath.substring(0, classPath.lastIndexOf('!') + 1) + "/META-INF/MANIFEST.MF";
-                val manifest = new Manifest(new URL(manifestPath).openStream());
-                val attributes = manifest.getMainAttributes();
-                return StringUtils.defaultIfBlank(attributes.getValue("Implementation-Date"), ZonedDateTime.now(Clock.systemUTC()).toString());
+                try (val url = new URL(manifestPath).openStream()) {
+                    val manifest = new Manifest(url);
+                    val attributes = manifest.getMainAttributes();
+                    return StringUtils.defaultIfBlank(attributes.getValue("Implementation-Date"), ZonedDateTime.now(Clock.systemUTC()).toString());
+                }
             });
     }
 }

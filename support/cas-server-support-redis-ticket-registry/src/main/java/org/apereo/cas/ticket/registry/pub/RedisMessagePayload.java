@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @With
 @RequiredArgsConstructor
 @ToString
+@Jacksonized
 public class RedisMessagePayload<T extends Serializable> implements Serializable {
     @Serial
     private static final long serialVersionUID = -2448524640612359787L;

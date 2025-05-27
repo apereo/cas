@@ -64,8 +64,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
 
     private static final String MESSAGE_MFA_CONTACT_FAILED_SMS = "cas.mfa.simple.label.contactfailed.sms";
     private static final String MESSAGE_MFA_CONTACT_FAILED_EMAIL = "cas.mfa.simple.label.contactfailed.email";
-
-
+    
     protected final CommunicationsManager communicationsManager;
 
     protected final CasSimpleMultifactorAuthenticationService multifactorAuthenticationService;
@@ -220,14 +219,14 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
                 val selectedSmsRecipients = findSelectedSmsRecipients(requestContext, principal);
                 LOGGER.debug("Selected SMS recipients are [{}]", selectedSmsRecipients);
                 if (!selectedSmsRecipients.isEmpty()) {
-                    var smsSent = cmd.send(principal, token, requestContext, selectedSmsRecipients);
+                    val smsSent = cmd.send(principal, token, requestContext, selectedSmsRecipients);
                     if (!smsSent) {
                         WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_SMS);
                     }
                     return smsSent;
                 }
             } else {
-                var smsSent = cmd.send(principal, token, requestContext);
+                val smsSent = cmd.send(principal, token, requestContext);
                 if (!smsSent) {
                     WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_SMS);
                 }

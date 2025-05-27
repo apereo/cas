@@ -188,7 +188,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
     }
 
     protected List<String> determineAuthenticationHandlersForSourceSelection(final RequestContext context) {
-        val availableHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
+        val availableHandlers = authenticationEventExecutionPlan.resolveAuthenticationHandlers()
             .stream()
             .filter(handler -> handler.supports(UsernamePasswordCredential.class))
             .map(handler -> StringUtils.capitalize(handler.getName().trim()))

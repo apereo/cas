@@ -10,6 +10,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
@@ -51,7 +52,11 @@ public class JsonPasswordlessUserAccountStore extends SimplePasswordlessUserAcco
     }
 
     private static Map<String, PasswordlessUserAccount> readFromResource(final Resource resource) {
-        return FunctionUtils.doUnchecked(() -> MAPPER.readValue(resource.getInputStream(), new TypeReference<>() {
-        }));
+        return FunctionUtils.doUnchecked(() -> {
+            try (val in = resource.getInputStream()) {
+                return MAPPER.readValue(in, new TypeReference<>() {
+                });
+            }
+        });
     }
 }

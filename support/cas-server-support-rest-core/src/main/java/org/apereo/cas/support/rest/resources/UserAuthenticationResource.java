@@ -6,6 +6,9 @@ import org.apereo.cas.rest.authentication.RestAuthenticationService;
 import org.apereo.cas.rest.factory.UserAuthenticationResourceEntityResponseFactory;
 import org.apereo.cas.util.LoggingUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -34,6 +37,7 @@ import javax.security.auth.login.FailedLoginException;
  */
 @RestController("userAuthenticationResource")
 @Slf4j
+@Tag(name = "CAS REST")
 @RequiredArgsConstructor
 public class UserAuthenticationResource {
     private final RestAuthenticationService authenticationService;
@@ -59,6 +63,8 @@ public class UserAuthenticationResource {
             MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             MediaType.APPLICATION_JSON_VALUE
         })
+    @Operation(summary = "Authenticate user credentials",
+        parameters = @Parameter(name = "requestBody", required = true, description = "Username and password values"))
     public ResponseEntity<String> authenticateRequest(@RequestBody final MultiValueMap<String, String> requestBody,
                                                       final HttpServletRequest request,
                                                       final HttpServletResponse response) throws Throwable {

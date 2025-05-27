@@ -15,6 +15,21 @@
         "cas.authn.ldap[0].collect-dn-attribute": "true",
         "cas.authn.ldap[0].principal-attribute-list": "description,cn"
       }
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "london",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.authn.attribute-repository.ldap[0].ldap-url": "ldap://localhost:10389",
+        "cas.authn.attribute-repository.ldap[0].base-dn": "ou=people,dc=example,dc=org",
+        "cas.authn.attribute-repository.ldap[0].search-filter": "cn={user}",
+        "cas.authn.attribute-repository.ldap[0].bind-dn": "cn=Directory Manager",
+        "cas.authn.attribute-repository.ldap[0].bind-credential": "password",
+        "cas.authn.attribute-repository.ldap[0].attributes.mail": "mail",
+        "cas.authn.attribute-repository.ldap[0].attributes.sn": "sn",
+        "cas.authn.attribute-repository.ldap[0].attributes.cn": "cn"
+      }
     }
   ]
 ]

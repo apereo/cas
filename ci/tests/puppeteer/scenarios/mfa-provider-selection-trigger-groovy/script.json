@@ -1,13 +1,15 @@
 {
   "dependencies": "gauth,webauthn,scripting",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.mfa.groovy-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/GroovyMfa.groovy",
     "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
 

@@ -7,12 +7,17 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.web.support.ArgumentExtractor;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +32,7 @@ import java.util.Collection;
  */
 @Controller("wsFederationNavigationController")
 @RequestMapping
+@Tag(name = "WS Federation")
 @RequiredArgsConstructor
 public class WsFederationNavigationController {
     /**
@@ -61,9 +67,12 @@ public class WsFederationNavigationController {
      * @return the view
      */
     @GetMapping(ENDPOINT_REDIRECT)
-    public View redirectToProvider(final HttpServletRequest request,
-                                   final HttpServletResponse response) {
-        val wsfedId = request.getParameter(PARAMETER_NAME);
+    @Operation(summary = "Redirect to WS-Federation provider",
+        parameters = @Parameter(name = PARAMETER_NAME, in = ParameterIn.QUERY, required = true, description = "WS-Federation client id"))
+    public View redirectToProvider(
+        @RequestParam(value = PARAMETER_NAME, required = true) final String wsfedId,
+        final HttpServletRequest request,
+        final HttpServletResponse response) {
         val cfg = configurations.stream().filter(configuration -> configuration.getId().equals(wsfedId)).findFirst()
             .orElseThrow(() -> UnauthorizedServiceException.denied("Could not locate WsFederation configuration for %s".formatted(wsfedId)));
         val service = determineService(request);

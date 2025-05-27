@@ -1016,12 +1016,12 @@ public interface CasWebflowConstants {
     String STATE_ID_EVALUATE_SPNEGO_CLIENT = "evaluateClientRequest";
 
     /**
-     * The state state 'sendPasswordResetInstructions'.
+     * The state 'sendPasswordResetInstructions'.
      */
     String STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS = "sendPasswordResetInstructions";
 
     /**
-     * The state state 'sendForgotUsernameInstructions'.
+     * The state 'sendForgotUsernameInstructions'.
      */
     String STATE_ID_SEND_FORGOT_USERNAME_INSTRUCTIONS = "sendForgotUsernameInstructions";
 
@@ -1591,6 +1591,11 @@ public interface CasWebflowConstants {
      * Action id 'accountProfilePasswordChangeRequestAction'.
      */
     String ACTION_ID_ACCOUNT_PROFILE_PASSWORD_CHANGE_REQUEST = "accountProfilePasswordChangeRequestAction";
+
+    /**
+     * Action id 'accountProfileDeleteMultifactorAuthenticationDeviceAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_DELETE_MFA_DEVICE = "accountProfileDeleteMultifactorAuthenticationDeviceAction";
 
     /**
      * Action id 'accountProfileActivateMfaAction'.
