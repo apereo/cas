@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,7 +55,7 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
             val authentication = CoreAuthenticationTestUtils.getAuthentication();
             authentication.getPrincipal().getAttributes().put(
                 properties.getCore().getAupAttributeName(),
-                Collections.singletonList("true"));
+                List.of("true"));
             WebUtils.putAuthentication(authentication, context);
             WebUtils.putTicketGrantingTicketInScopes(context, "TGT-12345");
             assertTrue(repo.verify(context).isAccepted());

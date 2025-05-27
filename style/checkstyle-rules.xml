@@ -767,7 +767,7 @@
         <metadata name="net.sf.eclipsecs.core.comment" value="Arrays.asList() method call"/>
         <property name="severity" value="error"/>
         <property name="format" value="Lists\.newArrayList\(.+"/>
-        <property name="message" value="Use Arrays.asList() or Collections.singletonList() instead."/>
+        <property name="message" value="Use List.of() instead."/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Test class is named incorrectly"/>
@@ -776,10 +776,10 @@
         <property name="message" value="Name of the test class MUST end in 'Tests'"/>
     </module>
     <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Use Collections.singleton instead"/>
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use List.of() instead"/>
         <property name="severity" value="info"/>
         <property name="format" value="new.*Set&lt;&gt;\((Arrays\.asList\([^,]+\)|Collections\.singletonList\(.*\))\)"/>
-        <property name="message" value="Consider using Collections.singleton instead"/>
+        <property name="message" value="Consider using List.of() instead"/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use org.apereo.cas.util.RandomUtils for random-number generation"/>

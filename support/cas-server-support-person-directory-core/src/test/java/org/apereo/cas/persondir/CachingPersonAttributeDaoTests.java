@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -272,7 +271,7 @@ class CachingPersonAttributeDaoTests {
         dao.setCachedPersonAttributesDao(stubDao);
         dao.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider("UNUSED_ATTR_NAME"));
         var cacheKeyGenerator = new AttributeBasedCacheKeyGenerator();
-        cacheKeyGenerator.setCacheKeyAttributes(Collections.singleton("UNUSED_ATTR_NAME"));
+        cacheKeyGenerator.setCacheKeyAttributes(Set.of("UNUSED_ATTR_NAME"));
         dao.setCacheKeyGenerator(cacheKeyGenerator);
         dao.setUserInfoCache(cacheMap);
         dao.afterPropertiesSet();

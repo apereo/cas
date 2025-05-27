@@ -27,7 +27,6 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -102,7 +101,7 @@ class GrouperRegisteredServiceAccessStrategyTests {
             }
         };
         val requiredAttributes = new HashMap<String, Set<String>>();
-        requiredAttributes.put(GrouperRegisteredServiceAccessStrategy.GROUPER_GROUPS_ATTRIBUTE_NAME, Collections.singleton("SampleGroup"));
+        requiredAttributes.put(GrouperRegisteredServiceAccessStrategy.GROUPER_GROUPS_ATTRIBUTE_NAME, Set.of("SampleGroup"));
         strategy.setRequiredAttributes(requiredAttributes);
         assertTrue(executeStrategy(strategy));
     }

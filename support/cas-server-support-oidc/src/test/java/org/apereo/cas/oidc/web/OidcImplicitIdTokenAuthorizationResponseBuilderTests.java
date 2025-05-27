@@ -21,7 +21,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,8 +49,8 @@ class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends AbstractOidcT
     @MethodSource("getResponseModes")
     void verifyBuild(final OAuth20ResponseModeTypes responseMode) throws Throwable {
         val attributes = new HashMap<String, List<Object>>();
-        attributes.put(OAuth20Constants.STATE, Collections.singletonList("state"));
-        attributes.put(OAuth20Constants.NONCE, Collections.singletonList("nonce"));
+        attributes.put(OAuth20Constants.STATE, List.of("state"));
+        attributes.put(OAuth20Constants.NONCE, List.of("nonce"));
 
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");

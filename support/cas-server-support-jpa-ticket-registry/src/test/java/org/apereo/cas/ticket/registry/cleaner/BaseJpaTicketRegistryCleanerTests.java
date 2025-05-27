@@ -48,6 +48,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -160,7 +161,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         val code = createOAuthCode();
         val at = accessTokenFactory.create(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getAuthentication(), tgt,
-            Collections.singleton("scope1"), code.getId(), "client1", Collections.emptyMap(),
+            Set.of("scope1"), code.getId(), "client1", Collections.emptyMap(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
 
         ticketRegistry.addTicket(at);

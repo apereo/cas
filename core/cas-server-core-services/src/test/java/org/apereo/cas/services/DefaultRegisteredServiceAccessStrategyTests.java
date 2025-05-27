@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.Serial;
 import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,14 +61,14 @@ class DefaultRegisteredServiceAccessStrategyTests {
         val map = new HashMap<String, Set<String>>();
         map.put(CN, Stream.of(CAS, "SSO").collect(Collectors.toSet()));
         map.put(GIVEN_NAME, Stream.of("CAS", KAZ).collect(Collectors.toSet()));
-        map.put(PHONE, Collections.singleton("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d"));
+        map.put(PHONE, Set.of("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d"));
         return map;
     }
 
     private static Map<String, Set<String>> getRejectedAttributes() {
         val map = new HashMap<String, Set<String>>();
-        map.put("address", Collections.singleton(".+"));
-        map.put("role", Collections.singleton("staff"));
+        map.put("address", Set.of(".+"));
+        map.put("role", Set.of("staff"));
         return map;
     }
 
@@ -219,7 +218,7 @@ class DefaultRegisteredServiceAccessStrategyTests {
     @Test
     void checkAuthzPrincipalWithAttrRequirementsWrongValue() throws Throwable {
         val reqAttrs = getRequiredAttributes();
-        reqAttrs.put(GIVEN_NAME, Collections.singleton("not present"));
+        reqAttrs.put(GIVEN_NAME, Set.of("not present"));
 
         val authz = new DefaultRegisteredServiceAccessStrategy();
         authz.setRequireAllAttributes(true);

@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -46,8 +45,8 @@ class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilderTests extends Abstr
     @Test
     void verifyBuild() throws Throwable {
         val attributes = new HashMap<String, List<Object>>();
-        attributes.put(OAuth20Constants.STATE, Collections.singletonList("state"));
-        attributes.put(OAuth20Constants.NONCE, Collections.singletonList("nonce"));
+        attributes.put(OAuth20Constants.STATE, List.of("state"));
+        attributes.put(OAuth20Constants.NONCE, List.of("nonce"));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());

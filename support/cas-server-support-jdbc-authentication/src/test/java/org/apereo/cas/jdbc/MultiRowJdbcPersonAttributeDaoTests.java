@@ -10,11 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -286,15 +286,15 @@ class MultiRowJdbcPersonAttributeDaoTests {
         columnsToAttributes.put("name", "firstName");
 
         val expectedColumnsToAttributes = new LinkedHashMap<String, Object>();
-        expectedColumnsToAttributes.put("netid", Collections.singleton("uid"));
-        expectedColumnsToAttributes.put("name", Collections.singleton("firstName"));
+        expectedColumnsToAttributes.put("netid", Set.of("uid"));
+        expectedColumnsToAttributes.put("name", Set.of("firstName"));
 
         assertNull(impl.getResultAttributeMapping());
         impl.setResultAttributeMapping(columnsToAttributes);
         assertEquals(expectedColumnsToAttributes, impl.getResultAttributeMapping());
 
         impl.setNameValueColumnMappings(Map.of("attr_name", "attr_val"));
-        assertEquals(Map.of("attr_name", Collections.singleton("attr_val")), impl.getNameValueColumnMappings());
+        assertEquals(Map.of("attr_name", Set.of("attr_val")), impl.getNameValueColumnMappings());
 
     }
 
