@@ -55,6 +55,7 @@ import com.hazelcast.shaded.org.apache.calcite.runtime.FlatLists;
 import com.hazelcast.shaded.org.apache.calcite.runtime.FunctionContexts;
 import com.hazelcast.shaded.org.apache.calcite.runtime.JsonFunctions;
 import com.hazelcast.shaded.org.apache.calcite.runtime.Matcher;
+import com.hazelcast.shaded.org.apache.calcite.runtime.PairList;
 import com.hazelcast.shaded.org.apache.calcite.runtime.Pattern;
 import com.hazelcast.shaded.org.apache.calcite.runtime.RandomFunction;
 import com.hazelcast.shaded.org.apache.calcite.runtime.Resources;
@@ -123,6 +124,7 @@ public class HazelcastTicketRegistryRuntimeHints implements CasRuntimeHintsRegis
                 EnumerableDefaults.class,
                 Member.class,
                 Linq4j.class,
+                PairList.class,
                 Statistic.class,
                 FlatLists.class,
                 Scalar.class,

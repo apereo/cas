@@ -54,7 +54,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * System property set to true during spring AOT processing phase.
      */
     String SYSTEM_PROPERTY_SPRING_AOT_PROCESSING = "spring.aot.processing";
-    
+
     /**
      * Register spring proxies.
      *
@@ -203,7 +203,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
             }
         });
     }
-    
+
     /**
      * Register reflection hints.
      *
@@ -353,7 +353,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     default Collection<Class> findSubclassesOf(final Class superClass) {
         return findSubclassesInPackage(superClass, "org.apereo.cas");
     }
-    
+
     /**
      * Find subclasses in packages and exclude tests.
      *
@@ -380,7 +380,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
         filteredResults.add(superClass);
         return filteredResults;
     }
-    
+
     /**
      * Is type present?
      *
@@ -401,7 +401,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     default boolean isGroovyPresent(final ClassLoader classLoader) {
         return isTypePresent(classLoader, "groovy.lang.GroovyObject");
     }
-    
+
     /**
      * Determine if code is executing or being aot-processed in a GraalVM native image.
      *
@@ -447,4 +447,14 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
         proxies.add(DecoratingProxy.class);
     }
 
+    /**
+     * Log messages via System output stream.
+     *
+     * @param message the message
+     */
+    default void log(final String message) {
+        //CHECKSTYLE:OFF
+        System.out.println(message);
+        //CHECKSTYLE:ON
+    }
 }

@@ -378,6 +378,7 @@ google-maps-services = { module = "com.google.maps:google-maps-services", versio
 googleauth = { module = "com.warrenstrange:googleauth", version.ref = "googleAuth" }
 graal-sdk = { module = "org.graalvm.sdk:graal-sdk", version.ref = "graalVm" }
 geode-core = { module = "org.apache.geode:geode-core", version.ref = "geode" }
+geode-logging = { module = "org.apache.geode:geode-logging", version.ref = "geode" }
 grouperclient = { module = "edu.internet2.middleware.grouper:grouperClient", version.ref = "grouper" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
