@@ -68,7 +68,6 @@ import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Clock;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -140,7 +139,7 @@ public class WebAuthnServer {
             response = OBJECT_MAPPER.readValue(responseJson, RegistrationResponse.class);
         } catch (final IOException e) {
             LOGGER.error("Registration failed; response: [{}]", responseJson, e);
-            return Either.left(Arrays.asList("Registration failed", "Failed to decode response object.", e.getMessage()));
+            return Either.left(List.of("Registration failed", "Failed to decode response object.", e.getMessage()));
         }
 
         val request = registerRequestStorage.getIfPresent(response.requestId());

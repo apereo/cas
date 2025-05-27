@@ -17,7 +17,6 @@ import java.io.Serializable;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -144,7 +143,7 @@ public class CachingPersonAttributeDaoImpl extends AbstractDefaultAttributePerso
     public String[] getId() {
         val ids = new ArrayList<String>();
         ids.add(getClass().getSimpleName());
-        ids.addAll(Arrays.asList(cachedPersonAttributesDao.getId()));
+        ids.addAll(List.of(cachedPersonAttributesDao.getId()));
         return ids.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
     }
 

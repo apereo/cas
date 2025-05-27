@@ -36,9 +36,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfigurationPropertiesSourceLocator {
-    private static final List<String> EXTENSIONS = Arrays.asList("yml", "yaml", "properties");
+    private static final List<String> EXTENSIONS = List.of("yml", "yaml", "properties");
 
-    private static final List<String> PROFILE_PATTERNS = Arrays.asList("application-%s.%s", "%s.%s");
+    private static final List<String> PROFILE_PATTERNS = List.of("application-%s.%s", "%s.%s");
 
     private final CipherExecutor<String, String> casConfigurationCipherExecutor;
 

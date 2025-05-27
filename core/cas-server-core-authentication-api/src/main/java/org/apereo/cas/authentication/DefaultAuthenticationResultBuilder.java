@@ -14,7 +14,6 @@ import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -91,7 +90,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     @Override
     @CanIgnoreReturnValue
     public AuthenticationResultBuilder collect(final Credential... credential) {
-        providedCredentials.addAll(Arrays.asList(credential));
+        providedCredentials.addAll(List.of(credential));
         return this;
     }
     

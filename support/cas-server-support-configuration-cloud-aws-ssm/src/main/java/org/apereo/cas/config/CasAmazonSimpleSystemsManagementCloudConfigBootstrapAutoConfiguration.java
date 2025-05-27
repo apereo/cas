@@ -16,7 +16,7 @@ import org.springframework.core.env.PropertySource;
 import software.amazon.awssdk.services.ssm.SsmClient;
 import software.amazon.awssdk.services.ssm.model.GetParametersByPathRequest;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -43,7 +43,7 @@ public class CasAmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurati
             try (val client = builder.build(SsmClient.builder(), SsmClient.class)) {
                 val profiles = new ArrayList<String>();
                 profiles.add(StringUtils.EMPTY);
-                profiles.addAll(Arrays.asList(environment.getActiveProfiles()));
+                profiles.addAll(List.of(environment.getActiveProfiles()));
 
                 profiles.forEach(profile -> {
                     var nextToken = (String) null;

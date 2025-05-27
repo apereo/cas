@@ -38,7 +38,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.util.StringUtils;
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +79,7 @@ public class CasIgniteTicketRegistryAutoConfiguration {
                     .addQueryField("principal", String.class.getName(), null)
                     .addQueryField("attributes", Map.class.getName(), null)
                     .addQueryField("prefix", String.class.getName(), null);
-                queryEntity.setIndexes(Arrays.asList(new QueryIndex("id"), new QueryIndex("type", false),
+                queryEntity.setIndexes(List.of(new QueryIndex("id"), new QueryIndex("type", false),
                     new QueryIndex("principal", false), new QueryIndex("prefix", false),
                     new QueryIndex("attributes", false)));
                 ticketsCache.setQueryEntities(List.of(queryEntity));
