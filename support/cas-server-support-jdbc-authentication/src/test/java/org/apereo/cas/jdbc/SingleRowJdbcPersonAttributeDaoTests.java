@@ -178,7 +178,7 @@ class SingleRowJdbcPersonAttributeDaoTests {
         impl.setResultAttributeMapping(columnsToAttributes);
 
         val attribs = impl.getPerson("susan").getAttributes();
-        assertTrue(attribs.get("dressShirtColor").isEmpty());
+        assertNull(attribs.get("dressShirtColor"));
         assertEquals(List.of("Susan"), attribs.get("firstName"));
     }
 

@@ -71,9 +71,9 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
         for (val seedEntry : seed.entrySet()) {
             val seedName = seedEntry.getKey();
             val seedValue = seedEntry.getValue();
-            if (seedValue instanceof List) {
-                multiSeed.put(seedName, (List<Object>) seedValue);
-            } else {
+            if (seedValue instanceof final List list) {
+                multiSeed.put(seedName, list);
+            } else if (seedValue != null) {
                 multiSeed.put(seedName, List.of(seedValue));
             }
         }
