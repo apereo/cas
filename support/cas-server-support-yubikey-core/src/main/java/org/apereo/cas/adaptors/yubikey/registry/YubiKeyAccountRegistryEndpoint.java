@@ -132,12 +132,14 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint 
     @Operation(summary = "Import a Yubikey account as a JSON document")
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
-        val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
-        LOGGER.trace("Submitted account: [{}]", requestBody);
-        val account = MAPPER.readValue(requestBody, new TypeReference<YubiKeyDeviceRegistrationRequest>() {
-        });
-        LOGGER.trace("Storing account: [{}]", account);
-        registry.getObject().registerAccountFor(account);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        try (val is = request.getInputStream()) {
+            val requestBody = IOUtils.toString(is, StandardCharsets.UTF_8);
+            LOGGER.trace("Submitted account: [{}]", requestBody);
+            val account = MAPPER.readValue(requestBody, new TypeReference<YubiKeyDeviceRegistrationRequest>() {
+            });
+            LOGGER.trace("Storing account: [{}]", account);
+            registry.getObject().registerAccountFor(account);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
     }
 }
