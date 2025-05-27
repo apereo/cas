@@ -30,6 +30,6 @@ Return environment info and application profiles to the service.
 }
 ```
       
-The above definition will fetch then environment variable `HOME` and release it as `MY_HOME`. Likewise,
+The above definition will fetch the environment variable `HOME` and release it as `MY_HOME`. Likewise,
 it would fetch the system property `KEY` and release it as `MY_KEY`. Active application profiles 
 are always released under an `applicationProfile` attribute.
