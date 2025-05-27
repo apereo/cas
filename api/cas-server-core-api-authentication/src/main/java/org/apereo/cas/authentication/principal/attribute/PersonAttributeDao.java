@@ -258,8 +258,8 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
         for (val stringObjectEntry : personAttributesMap.entrySet()) {
             val value = stringObjectEntry.getValue();
             if (value instanceof final List list && !list.isEmpty()) {
-                personAttributes.put(stringObjectEntry.getKey(), (List<Object>) value);
-            } else {
+                personAttributes.put(stringObjectEntry.getKey(), list);
+            } else if (value != null) {
                 personAttributes.put(stringObjectEntry.getKey(), new ArrayList<>(List.of(value)));
             }
         }
