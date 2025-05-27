@@ -51,6 +51,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -175,7 +176,7 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         val singletonList = Collections.singletonList("key");
         kryo.register(singletonList.getClass());
 
-        val list = List.of("key");
+        val list = Arrays.asList("key");
         kryo.register(list.getClass(), new ArraysAsListSerializer());
 
         kryo.register(String.CASE_INSENSITIVE_ORDER.getClass());
