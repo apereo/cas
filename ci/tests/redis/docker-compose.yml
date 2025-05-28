@@ -31,7 +31,7 @@ services:
     ports:
       - "16389:6379"
   sentinel_1:
-    image: bitnami/redis-sentinel:8.0.1
+    image: bitnami/redis-sentinel:8.0.2
     container_name: redis_sentinel_1
     ports:
       - "26379:26379"
@@ -45,7 +45,7 @@ services:
       - redis-master
 
   sentinel_2:
-    image: bitnami/redis-sentinel:8.0.1
+    image: bitnami/redis-sentinel:8.0.2
     container_name: redis_sentinel_2
     ports:
       - "26380:26379"
@@ -59,7 +59,7 @@ services:
       - redis-master
 
   sentinel_3:
-    image: bitnami/redis-sentinel:8.0.1
+    image: bitnami/redis-sentinel:8.0.2
     container_name: redis_sentinel_3
     ports:
       - "26381:26379"
