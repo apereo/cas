@@ -16,6 +16,7 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.springframework.http.MediaType;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -94,6 +95,7 @@ public class OidcTokenIntrospectionSigningAndEncryptionService extends BaseOidcJ
             .encryptionMethod(registeredService.getIntrospectionEncryptedResponseEncoding())
             .allowedAlgorithms(discoverySettings.getIntrospectionEncryptedResponseAlgValuesSupported())
             .allowedContentEncryptionAlgorithms(discoverySettings.getIntrospectionEncryptedResponseEncodingValuesSupported())
+            .headers(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()))
             .build()
             .encrypt(innerJwt);
     }

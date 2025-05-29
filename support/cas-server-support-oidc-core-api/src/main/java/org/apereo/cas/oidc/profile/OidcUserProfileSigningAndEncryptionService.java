@@ -6,6 +6,7 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.token.BaseOidcJsonWebKeyTokenSigningAndEncryptionService;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.jwt.JsonWebTokenEncryptor;
 
@@ -17,6 +18,7 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jws.AlgorithmIdentifiers;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -106,6 +108,7 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
                 .encryptionMethod(svc.getIdTokenEncryptionEncoding())
                 .allowedAlgorithms(discoverySettings.getUserInfoEncryptionAlgValuesSupported())
                 .allowedContentEncryptionAlgorithms(discoverySettings.getUserInfoEncryptionEncodingValuesSupported())
+                .headers(Map.of(OAuth20Constants.CLIENT_ID, svc.getClientId()))
                 .build()
                 .encrypt(innerJwt);
         }
