@@ -615,6 +615,7 @@ layout: null
             *   [JARM](/cas/{{ version }}/authentication/OIDC-Authentication-JARM.html)
             *   [WebFinger Discovery](/cas/{{ version }}/authentication/OIDC-Authentication-WebFinger.html)
             *   [Identity Assurance](/cas/{{ version }}/authentication/OIDC-Authentication-Identity-Assurance.html)
+            *   [Native SSO](/cas/{{ version }}/authentication/OIDC-Authentication-NativeSSO-MobileApps.html)
         *   [Delegation](/cas/{{ version }}/integration/Delegate-Authentication.html)
     *   [WS-Federation](#wsfedprotocol)
         *   [Identity Provider](#wsfedidp)
