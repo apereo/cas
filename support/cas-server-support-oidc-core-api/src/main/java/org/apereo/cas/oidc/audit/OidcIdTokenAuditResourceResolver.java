@@ -29,7 +29,7 @@ public class OidcIdTokenAuditResourceResolver extends ReturnValueAsStringResourc
 
         val idTokenContext = (IdTokenGenerationContext) auditableTarget.getArgs()[0];
         val accessToken = idTokenContext.getAccessToken();
-        if (returnValue instanceof OidcIdToken(var token, var claims)) {
+        if (returnValue instanceof OidcIdToken(var token, var claims, var deviceSecret)) {
             if (claims.hasClaim(OidcConstants.TXN)) {
                 val txn = FunctionUtils.doUnchecked(() -> claims.getStringClaimValue(OidcConstants.TXN));
                 FunctionUtils.doIfNotNull(txn, __ -> values.put(OidcConstants.TXN, txn));

@@ -17,7 +17,11 @@ public enum OAuth20TokenExchangeTypes {
      * The token type identifier for an access token in OAuth token exchange.
      */
     ACCESS_TOKEN("urn:ietf:params:oauth:token-type:access_token"),
-
+    /**
+     * In native sso flows, allows the exchange of a device secret for an access token
+     * based on the actor token.
+     */
+    DEVICE_SECRET("urn:openid:params:token-type:device-secret"),
     /**
      * The token type identifier for an id token in OAuth token exchange.
      */

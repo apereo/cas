@@ -58,12 +58,16 @@ public class OidcDiscoveryProperties implements Serializable {
      * data only via the pushed authorization request method.
      */
     private boolean requirePushedAuthorizationRequests;
+    /**
+     * Value indicating whether native SSO flows are supported.
+     */
+    private boolean nativeSsoSupported;
 
     /**
      * List of supported scopes.
      */
     private List<String> scopes = Stream.of("openid", "profile", "email",
-        "address", "phone", "offline_access", "client_configuration_scope",
+        "address", "phone", "offline_access", "device_sso", "client_configuration_scope",
         "uma_authorization", "uma_protection", "client_registration_scope").toList();
 
     /**

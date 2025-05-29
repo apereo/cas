@@ -16,6 +16,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.Ordered;
 import java.util.Locale;
 
@@ -27,26 +28,27 @@ import java.util.Locale;
  */
 @Slf4j
 @Getter
-public class OidcAccessTokenCibaGrantRequestValidator extends BaseOAuth20TokenRequestValidator {
+public class OidcAccessTokenCibaGrantRequestValidator extends BaseOAuth20TokenRequestValidator<OidcConfigurationContext> {
     private final int order = Ordered.LOWEST_PRECEDENCE;
 
-    public OidcAccessTokenCibaGrantRequestValidator(final OidcConfigurationContext configurationContext) {
+    public OidcAccessTokenCibaGrantRequestValidator(final ObjectProvider<OidcConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 
     @Override
     protected boolean validateInternal(final WebContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile userProfile) {
-        val authRequestId = getConfigurationContext().getRequestParameterResolver().resolveRequestParameter(context, OidcConstants.AUTH_REQ_ID).orElseThrow();
-        val cibaFactory = (OidcCibaRequestFactory) getConfigurationContext().getTicketFactory().get(OidcCibaRequest.class);
+        val configurationContext = getConfigurationContext().getObject();
+        val authRequestId = configurationContext.getRequestParameterResolver().resolveRequestParameter(context, OidcConstants.AUTH_REQ_ID).orElseThrow();
+        val cibaFactory = (OidcCibaRequestFactory) configurationContext.getTicketFactory().get(OidcCibaRequest.class);
         val decodedId = cibaFactory.decodeId(authRequestId);
-        val ticket = getConfigurationContext().getTicketRegistry().getTicket(decodedId, OidcCibaRequest.class);
+        val ticket = configurationContext.getTicketRegistry().getTicket(decodedId, OidcCibaRequest.class);
         val result = ticket != null && !ticket.isExpired() && ticket.isReady();
         LOGGER.debug("CIBA authentication request is [{}]", BooleanUtils.toString(result, "valid", "invalid"));
 
         if (result) {
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-                getConfigurationContext().getServicesManager(), ticket.getClientId(), OidcRegisteredService.class);
+                configurationContext.getServicesManager(), ticket.getClientId(), OidcRegisteredService.class);
             val deliveryMode = OidcBackchannelTokenDeliveryModes.valueOf(registeredService.getBackchannelTokenDeliveryMode().toUpperCase(Locale.ENGLISH));
             if (deliveryMode != OidcBackchannelTokenDeliveryModes.POLL && deliveryMode != OidcBackchannelTokenDeliveryModes.PING) {
                 LOGGER.warn("Backchannel token delivery mode cannot grant access tokens");
@@ -59,7 +61,7 @@ public class OidcAccessTokenCibaGrantRequestValidator extends BaseOAuth20TokenRe
 
     @Override
     public boolean supports(final WebContext context) {
-        val authRequestId = getConfigurationContext().getRequestParameterResolver().resolveRequestParameter(context, OidcConstants.AUTH_REQ_ID);
+        val authRequestId = getConfigurationContext().getObject().getRequestParameterResolver().resolveRequestParameter(context, OidcConstants.AUTH_REQ_ID);
         return super.supports(context) && authRequestId.isPresent();
     }
 

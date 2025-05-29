@@ -68,7 +68,6 @@ public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreato
         claims.setClaim("events", events);
         claims.setClaim(OidcConstants.CLAIM_SESSION_ID,
                 DigestUtils.sha(DigestUtils.sha512(request.getExecutionRequest().getTicketGrantingTicket().getId())));
-
         return claims;
     }
 }

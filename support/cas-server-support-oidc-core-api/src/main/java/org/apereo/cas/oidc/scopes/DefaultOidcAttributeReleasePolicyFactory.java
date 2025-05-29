@@ -64,7 +64,7 @@ public class DefaultOidcAttributeReleasePolicyFactory implements OidcAttributeRe
         return switch (scope) {
             case EMAIL -> new OidcEmailScopeAttributeReleasePolicy();
             case ADDRESS -> new OidcAddressScopeAttributeReleasePolicy();
-            case OPENID -> new OidcOpenIdScopeAttributeReleasePolicy();
+            case OPENID, DEVICE_SSO -> new OidcOpenIdScopeAttributeReleasePolicy();
             case PHONE -> new OidcPhoneScopeAttributeReleasePolicy();
             case PROFILE -> new OidcProfileScopeAttributeReleasePolicy();
             case ASSURANCE -> new OidcAssuranceScopeAttributeReleasePolicy();

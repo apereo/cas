@@ -6,12 +6,13 @@
   "bypassApprovalPrompt": true,
   "name" : "Sample",
   "id" : 1,
-  "scopes" : [ "java.util.HashSet", [ "openid", "email", "profile" ] ],
+  "scopes" : [ "java.util.HashSet", [ "openid", "email", "profile", "device_sso" ] ],
   "generateRefreshToken": true,
-  "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials", "urn:ietf:params:oauth:grant-type:token-exchange" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code", "client_credentials", "urn:ietf:params:oauth:grant-type:token-exchange" ] ],
   "tokenExchangePolicy": {
     "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
     "allowedTokenTypes": [ "java.util.HashSet", [
+      "urn:openid:params:token-type:device-secret",
       "urn:ietf:params:oauth:token-type:access_token",
       "urn:ietf:params:oauth:token-type:id_token",
       "urn:ietf:params:oauth:token-type:jwt"

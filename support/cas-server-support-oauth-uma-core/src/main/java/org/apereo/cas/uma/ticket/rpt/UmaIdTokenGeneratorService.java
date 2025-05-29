@@ -39,19 +39,9 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService<UmaC
         val claims = buildJwtClaims(context.getAccessToken(), timeoutInSeconds,
             context.getUserProfile(), context.getRegisteredService(), context.getResponseType());
         val finalToken = encodeAndFinalizeToken(claims, context);
-        return new OidcIdToken(finalToken, claims);
+        return new OidcIdToken(finalToken, claims, null);
     }
 
-    /**
-     * Build jwt claims jwt claims.
-     *
-     * @param accessToken      the access token
-     * @param timeoutInSeconds the timeout in seconds
-     * @param service          the service
-     * @param profile          the profile
-     * @param responseType     the response type
-     * @return the jwt claims
-     */
     protected JwtClaims buildJwtClaims(final OAuth20AccessToken accessToken,
                                        final long timeoutInSeconds,
                                        final UserProfile profile,

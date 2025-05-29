@@ -46,6 +46,7 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcRegisteredServiceJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicy;
+import org.apereo.cas.oidc.nativesso.OidcDeviceSecretGenerator;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilter;
 import org.apereo.cas.oidc.profile.OidcTokenIntrospectionSigningAndEncryptionService;
 import org.apereo.cas.oidc.profile.OidcUserProfileDataCreator;
@@ -806,6 +807,8 @@ class OidcConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
             final OidcServerDiscoverySettings oidcServerDiscoverySettings,
+            @Qualifier(OidcDeviceSecretGenerator.BEAN_NAME)
+            final OidcDeviceSecretGenerator oidcDeviceSecretGenerator,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             final ConfigurableApplicationContext applicationContext,
@@ -836,6 +839,7 @@ class OidcConfiguration {
                 .builder()
                 .messageSource(messageSource)
                 .introspectionSigningAndEncryptionService(oidcTokenIntrospectionSigningAndEncryptionService)
+                .deviceSecretGenerator(oidcDeviceSecretGenerator)
                 .introspectionResponseGenerator(oauthIntrospectionResponseGenerator)
                 .argumentExtractor(argumentExtractor)
                 .responseModeJwtBuilder(oidcResponseModeJwtBuilder)

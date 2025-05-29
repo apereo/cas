@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -49,7 +50,8 @@ class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractorTests
         request.addParameter(OAuth20Constants.CODE, code.getId());
         
         val response = new MockHttpServletResponse();
-        val extractor = new AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(oauth20ConfigurationContext);
+        val extractor = new AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(
+            new DirectObjectProvider<>(oauth20ConfigurationContext));
         assertTrue(extractor.requestMustBeAuthenticated());
 
         val context = new JEEContext(request, response);
