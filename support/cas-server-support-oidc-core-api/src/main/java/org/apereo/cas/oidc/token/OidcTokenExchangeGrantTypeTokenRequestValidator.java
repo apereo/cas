@@ -28,7 +28,9 @@ public class OidcTokenExchangeGrantTypeTokenRequestValidator extends OAuth20Toke
     protected OAuthRegisteredService extractRegisteredService(final String subjectTokenType,
                                                               final String subjectToken) throws Exception {
         val configurationContext = getConfigurationContext().getObject();
-        if (OAuth20TokenExchangeTypes.from(subjectTokenType) == OAuth20TokenExchangeTypes.ID_TOKEN) {
+
+        if ( configurationContext.getDiscoverySettings().isNativeSsoSupported()
+            && OAuth20TokenExchangeTypes.from(subjectTokenType) == OAuth20TokenExchangeTypes.ID_TOKEN) {
             val parsedIdToken = JwtBuilder.parse(subjectToken);
             val clientIdInIdToken = parsedIdToken.getClaimAsString(OAuth20Constants.CLIENT_ID);
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientIdInIdToken);
