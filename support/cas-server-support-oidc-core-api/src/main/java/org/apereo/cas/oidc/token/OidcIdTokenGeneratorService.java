@@ -91,7 +91,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
 
         var deviceSecret = StringUtils.EMPTY;
         if (context.getGrantType() == OAuth20GrantTypes.AUTHORIZATION_CODE
-            && context.getAccessToken().getScopes().contains(OidcConstants.StandardScopes.DEVICE_SSO.getScope())) {
+            && context.getAccessToken().getScopes().contains(OidcConstants.StandardScopes.DEVICE_SSO.getScope())
+            && getConfigurationContext().getDiscoverySettings().isNativeSsoSupported()) {
             deviceSecret = getConfigurationContext().getDeviceSecretGenerator().generate();
             claims.setStringClaim(OidcConstants.DS_HASH, getConfigurationContext().getDeviceSecretGenerator().hash(deviceSecret));
             if (context.getAccessToken().getTicketGrantingTicket() != null) {
