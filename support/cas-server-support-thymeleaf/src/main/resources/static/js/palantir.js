@@ -1274,7 +1274,7 @@ async function initializeCasSpringWebflowOperations() {
                 const flow = response[flowId];
 
                 if (!selectedState) {
-                    const allStates = Object.keys(flow.states);
+                    const allStates = Object.keys(flow.states).sort();
                     $("#webflowStateFilter").empty().append(
                         $('<option>', {
                             value: "all",
