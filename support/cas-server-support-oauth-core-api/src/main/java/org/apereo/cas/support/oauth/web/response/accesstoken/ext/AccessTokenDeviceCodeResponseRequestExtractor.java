@@ -12,6 +12,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.AnonymousProfile;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link AccessTokenDeviceCodeResponseRequestExtractor}.
@@ -20,26 +21,27 @@ import org.pac4j.core.profile.AnonymousProfile;
  * @since 6.0.0
  */
 @Slf4j
-public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTokenGrantRequestExtractor {
-    public AccessTokenDeviceCodeResponseRequestExtractor(final OAuth20ConfigurationContext oAuthConfigurationContext) {
+public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTokenGrantRequestExtractor<OAuth20ConfigurationContext> {
+    public AccessTokenDeviceCodeResponseRequestExtractor(final ObjectProvider<OAuth20ConfigurationContext> oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 
     @Override
     public AccessTokenRequestContext extractRequest(final WebContext context) throws Throwable {
-        val clientId = getConfigurationContext().getRequestParameterResolver()
+        val configurationContext = getConfigurationContext().getObject();
+        val clientId = configurationContext.getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.CLIENT_ID).orElse(StringUtils.EMPTY);
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
 
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
-        val deviceCode = getConfigurationContext().getRequestParameterResolver()
+        val deviceCode = configurationContext.getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.DEVICE_CODE).orElse(StringUtils.EMPTY);
-        val service = getConfigurationContext().getAuthenticationBuilder().buildService(registeredService, context, false);
+        val service = configurationContext.getAuthenticationBuilder().buildService(registeredService, context, false);
 
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
-        val authentication = getConfigurationContext().getAuthenticationBuilder().build(new AnonymousProfile(),
+        val authentication = configurationContext.getAuthenticationBuilder().build(new AnonymousProfile(),
             registeredService, context, service);
 
         val audit = AuditableContext.builder()
@@ -47,7 +49,7 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
             .registeredService(registeredService)
             .authentication(authentication)
             .build();
-        val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+        val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         accessResult.throwExceptionIfNeeded();
 
         return AccessTokenRequestContext.builder()
@@ -63,13 +65,14 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
 
     @Override
     public boolean supports(final WebContext context) {
-        val responseType = getConfigurationContext().getRequestParameterResolver()
+        val configurationContext = getConfigurationContext().getObject();
+        val responseType = configurationContext.getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val grantType = getConfigurationContext().getRequestParameterResolver()
+        val grantType = configurationContext.getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val clientId = getConfigurationContext().getRequestParameterResolver()
+        val clientId = configurationContext.getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         val validRequest = OAuth20Utils.isResponseType(responseType, OAuth20ResponseTypes.DEVICE_CODE)

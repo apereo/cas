@@ -11,6 +11,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link AccessTokenRefreshTokenGrantRequestExtractor}.
@@ -20,13 +21,13 @@ import org.pac4j.core.context.WebContext;
  */
 @Slf4j
 public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAuthorizationCodeGrantRequestExtractor {
-    public AccessTokenRefreshTokenGrantRequestExtractor(final OAuth20ConfigurationContext oAuthConfigurationContext) {
+    public AccessTokenRefreshTokenGrantRequestExtractor(final ObjectProvider<OAuth20ConfigurationContext> oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 
     @Override
     public boolean supports(final WebContext context) {
-        val grantType = getConfigurationContext().getRequestParameterResolver()
+        val grantType = getConfigurationContext().getObject().getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
     }
@@ -58,15 +59,15 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     @Override
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final WebContext context) {
         val clientId = getRegisteredServiceIdentifierFromRequest(context);
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getObject().getServicesManager(), clientId);
         LOGGER.debug("Located registered service [{}]", registeredService);
         return registeredService;
     }
 
     @Override
     protected String getRegisteredServiceIdentifierFromRequest(final WebContext context) {
-        val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
-        return getConfigurationContext().getRequestParameterResolver()
+        val callContext = new CallContext(context, getConfigurationContext().getObject().getSessionStore());
+        return getConfigurationContext().getObject().getRequestParameterResolver()
             .resolveClientIdAndClientSecret(callContext).getLeft();
     }
 }

@@ -19,6 +19,7 @@ import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link OAuth20AuthorizationCodeGrantTypeTokenRequestValidator}.
@@ -27,8 +28,8 @@ import org.pac4j.core.profile.UserProfile;
  * @since 5.3.0
  */
 @Slf4j
-public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends BaseOAuth20TokenRequestValidator {
-    public OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(final OAuth20ConfigurationContext configurationContext) {
+public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends BaseOAuth20TokenRequestValidator<OAuth20ConfigurationContext> {
+    public OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(final ObjectProvider<OAuth20ConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 
@@ -40,16 +41,17 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
     @Override
     protected boolean validateInternal(final WebContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) throws Throwable {
-        val redirectUri = getConfigurationContext().getRequestParameterResolver()
+        val configurationContext = getConfigurationContext().getObject();
+        val redirectUri = configurationContext.getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI);
         
-        val code = getConfigurationContext().getRequestParameterResolver()
+        val code = configurationContext.getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.CODE);
 
         val clientId = ObjectUtils.defaultIfNull(uProfile.getAttribute(OAuth20Constants.CLIENT_ID), uProfile.getId()).toString();
         LOGGER.debug("Locating registered service for client id [{}]", clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-            getConfigurationContext().getServicesManager(), clientId);
+            configurationContext.getServicesManager(), clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
         LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
@@ -57,19 +59,19 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
 
         if (valid) {
             val oauthCode = FunctionUtils.doAndHandle(() -> {
-                val state = getConfigurationContext().getTicketRegistry().getTicket(code.get(), OAuth20Code.class);
+                val state = configurationContext.getTicketRegistry().getTicket(code.get(), OAuth20Code.class);
                 return state == null || state.isExpired() ? null : state;
             });
             if (oauthCode == null || oauthCode.isExpired()) {
-                val removeTokens = getConfigurationContext().getCasProperties().getAuthn().getOauth().getCode().isRemoveRelatedAccessTokens();
+                val removeTokens = configurationContext.getCasProperties().getAuthn().getOauth().getCode().isRemoveRelatedAccessTokens();
                 if (removeTokens) {
                     LOGGER.debug("Code [{}] is invalid or expired. Attempting to revoke access tokens issued to the code", code.get());
-                    val accessTokensByCode = getConfigurationContext().getTicketRegistry().getTickets(ticket ->
+                    val accessTokensByCode = configurationContext.getTicketRegistry().getTickets(ticket ->
                         ticket instanceof final OAuth20AccessToken accessToken
                         && StringUtils.equalsIgnoreCase(accessToken.getToken(), code.get()));
                     accessTokensByCode.forEach(Unchecked.consumer(ticket -> {
                         LOGGER.debug("Removing access token [{}] issued via expired/unknown code [{}]", ticket.getId(), code.get());
-                        getConfigurationContext().getTicketRegistry().deleteTicket(ticket);
+                        configurationContext.getTicketRegistry().deleteTicket(ticket);
                     }));
                 }
                 LOGGER.warn("Provided OAuth code [{}] is not found or has expired", code.get());
@@ -78,13 +80,13 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
 
             val serviceId = oauthCode.getService().getId();
             val codeRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-                getConfigurationContext().getServicesManager(), serviceId);
+                configurationContext.getServicesManager(), serviceId);
 
             val authentication = resolveAuthenticationFrom(oauthCode);
             val originalPrincipal = authentication.getPrincipal();
             val accessStrategyAttributes = CoreAuthenticationUtils.mergeAttributes(originalPrincipal.getAttributes(),
                 oauthCode.getAuthentication().getPrincipal().getAttributes());
-            val accessStrategyPrincipal = getConfigurationContext().getPrincipalFactory()
+            val accessStrategyPrincipal = configurationContext.getPrincipalFactory()
                 .createPrincipal(oauthCode.getAuthentication().getPrincipal().getId(), accessStrategyAttributes);
             val audit = AuditableContext.builder()
                 .service(oauthCode.getService())
@@ -92,7 +94,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                 .authentication(oauthCode.getAuthentication())
                 .principal(accessStrategyPrincipal)
                 .build();
-            val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+            val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
             accessResult.throwExceptionIfNeeded();
 
             if (!registeredService.equals(codeRegisteredService)) {

@@ -101,9 +101,18 @@ public interface OidcConstants {
      */
     String CLAIM_SESSION_ID = "sid";
     /**
+     * The session identifier that may be reversed back to the registry.
+     */
+    String CLAIM_SESSION_REF = "sid_ref";
+    /**
      * The id token.
      */
     String ID_TOKEN = "id_token";
+    /**
+     * For native SSO, the device secret contains relevant data to the device
+     * and the current users authenticated with the device.
+     */
+    String DEVICE_SECRET = "device_secret";
     /**
      * The issuer parameter.
      */
@@ -115,6 +124,11 @@ public interface OidcConstants {
      * parties involved in an OpenID Connect transaction.
      */
     String TXN = "txn";
+    /**
+     * The ds_hash value provides a binding between the
+     * id_token and the issued device_secret.
+     */
+    String DS_HASH = "ds_hash";
 
     /**
      * The max age.
@@ -298,6 +312,12 @@ public interface OidcConstants {
          * An extension of OpenID Connect for providing Relying Parties with Verified Claims about End-Users.
          */
         ASSURANCE("assurance"),
+        /**
+         * When this scope is present on the authorization request, and the
+         * code is exchanged for tokens, a new device_secret will be returned.
+         * This is relevant for native SSO and native app authorization flows.
+         */
+        DEVICE_SSO("device_sso"),
         /**
          * phone scope.
          */

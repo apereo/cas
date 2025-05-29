@@ -22,6 +22,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import com.google.common.io.ByteSource;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +59,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     private static final String TICKET_ENCRYPTION_LOG_MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
 
     @Setter
+    @Getter
     protected CipherExecutor cipherExecutor;
 
     protected final TicketSerializationManager ticketSerializationManager;

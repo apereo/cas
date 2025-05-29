@@ -27,9 +27,9 @@ async function exchangeToken(token, fromType, toType) {
             assert(payload.data.scope === "openid profile");
             break;
         case "id_token":
-            assert(payload.data.access_token === undefined);
-            assert(payload.data.token_type === undefined);
-            assert(payload.data.expires_in === undefined);
+            assert(payload.data.access_token !== undefined);
+            assert(payload.data.token_type !== undefined);
+            assert(payload.data.expires_in !== undefined);
             assert(payload.data.id_token !== undefined);
             assert(payload.data.issued_token_type === requestedTokenType);
 
@@ -73,7 +73,7 @@ async function exchangeToken(token, fromType, toType) {
     });
 }
 
-(async () => {
+async function verifyTokenExchangeTypes() {
     const params = "grant_type=client_credentials&scope=openid";
     const url = `https://localhost:8443/cas/oauth2.0/token?${params}`;
     await cas.log(`Calling ${url}`);
@@ -92,5 +92,111 @@ async function exchangeToken(token, fromType, toType) {
     }, (error) => {
         throw `Operation failed: ${error}`;
     });
+}
+
+async function verifyTokenExchangeNativeSso() {
+
+    const browser = await cas.newBrowser(cas.browserOptions());
+    try {
+        const context = await browser.createBrowserContext();
+        const page = await cas.newPage(context);
+
+        const redirectUri = "https://localhost:9859/anything/app";
+        let url = "https://localhost:8443/cas/oidc/authorize?response_type=code";
+        url += `&redirect_uri=${redirectUri}&client_id=client&scope=${encodeURIComponent("openid device_sso")}`;
+
+        await cas.goto(page, url);
+        await cas.logPage(page);
+        await cas.sleep(1000);
+        await cas.loginWith(page);
+        await cas.sleep(3000);
+
+        const code = await cas.assertParameter(page, "code");
+        await cas.log(`OAuth code ${code}`);
+        await context.close();
+
+        let accessTokenParams = "client_id=client&client_secret=secret&grant_type=authorization_code&";
+        accessTokenParams += `redirect_uri=${redirectUri}`;
+
+        const baseTokenUrl = "https://localhost:8443/cas/oidc/token";
+        const accessTokenUrl = `${baseTokenUrl}?${accessTokenParams}&code=${code}`;
+        await cas.log(`Calling ${accessTokenUrl}`);
+
+        const tokens = await cas.doPost(accessTokenUrl, "", {
+            "Content-Type": "application/json"
+        }, (res) => {
+            assert(res.data.access_token !== undefined);
+            assert(res.data.id_token !== undefined);
+            assert(res.data.device_secret !== undefined);
+            return {
+                id_token: res.data.id_token,
+                access_token: res.data.access_token,
+                device_secret: res.data.device_secret
+            };
+        }, (error) => {
+            throw `Operation failed to obtain access token: ${error}`;
+        });
+
+        await cas.log("Decoding ID token...");
+        const decoded = await cas.decodeJwt(tokens.id_token);
+        assert(decoded.sid !== undefined);
+        assert(decoded.ds_hash !== undefined);
+        assert(decoded.sid_ref !== undefined);
+
+        const grantType = "urn:ietf:params:oauth:grant-type:token-exchange";
+        const subjectTokenType = "urn:ietf:params:oauth:token-type:id_token";
+        const actorTokenType = "urn:openid:params:token-type:device-secret";
+
+        let params = `grant_type=${encodeURIComponent(grantType)}`;
+        params += `&scope=${encodeURIComponent("openid profile address phone")}`;
+        params += `&resource=${encodeURIComponent("https://localhost:9859/anything/backend")}`;
+        params += `&subject_token=${tokens.id_token}`;
+        params += `&subject_token_type=${encodeURIComponent(subjectTokenType)}`;
+        params += `&actor_token=${tokens.device_secret}`;
+        params += `&actor_token_type=${encodeURIComponent(actorTokenType)}`;
+
+        await cas.doPost(`${baseTokenUrl}?${params}`, "", {
+            "Content-Type": "application/json",
+            "Authorization": `Basic ${btoa("client:secret")}`
+        }, (res) => {
+            assert(res.data.access_token !== undefined);
+            assert(res.data.expires_in !== undefined);
+            assert(res.data.token_type === "Bearer");
+            assert(res.data.issued_token_type === "urn:ietf:params:oauth:token-type:access_token");
+        }, (error) => {
+            throw `Operation failed to obtain access token: ${error}`;
+        });
+
+        params = `grant_type=${encodeURIComponent(grantType)}`;
+        params += `&scope=${encodeURIComponent("openid profile address phone")}`;
+        params += `&resource=${encodeURIComponent("https://localhost:9859/anything/backend")}`;
+        params += `&subject_token=${tokens.id_token}`;
+        params += `&subject_token_type=${encodeURIComponent(subjectTokenType)}`;
+        params += `&actor_token=${tokens.device_secret}`;
+        params += `&actor_token_type=${encodeURIComponent(actorTokenType)}`;
+        params += `&requested_token_type=${encodeURIComponent("urn:ietf:params:oauth:token-type:id_token")}`;
+
+        await cas.doPost(`${baseTokenUrl}?${params}`, "", {
+            "Content-Type": "application/json",
+            "Authorization": `Basic ${btoa("client:secret")}`
+        }, (res) => {
+            assert(res.data.access_token !== undefined);
+            assert(res.data.expires_in !== undefined);
+            assert(res.data.token_type === "Bearer");
+            assert(res.data.id_token !== undefined);
+            assert(res.data.issued_token_type === "urn:ietf:params:oauth:token-type:id_token");
+        }, (error) => {
+            throw `Operation failed to obtain access token: ${error}`;
+        });
+
+    } finally {
+        await browser.close();
+    }
+
+}
+
+(async () => {
+    await verifyTokenExchangeTypes();
+    await verifyTokenExchangeNativeSso();
 
 })();
