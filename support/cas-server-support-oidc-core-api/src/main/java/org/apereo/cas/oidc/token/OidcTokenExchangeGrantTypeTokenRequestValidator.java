@@ -29,7 +29,7 @@ public class OidcTokenExchangeGrantTypeTokenRequestValidator extends OAuth20Toke
                                                               final String subjectToken) throws Exception {
         val configurationContext = getConfigurationContext().getObject();
 
-        if ( configurationContext.getDiscoverySettings().isNativeSsoSupported()
+        if (configurationContext.getDiscoverySettings().isNativeSsoSupported()
             && OAuth20TokenExchangeTypes.from(subjectTokenType) == OAuth20TokenExchangeTypes.ID_TOKEN) {
             val parsedIdToken = JwtBuilder.parse(subjectToken);
             val clientIdInIdToken = parsedIdToken.getClaimAsString(OAuth20Constants.CLIENT_ID);
