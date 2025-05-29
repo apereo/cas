@@ -17,6 +17,7 @@ import org.jose4j.jwt.JwtClaims;
 
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -85,6 +86,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
             .algorithm(getJsonWebKeySigningAlgorithm(registeredService, jsonWebKey))
             .allowedAlgorithms(new LinkedHashSet<>(getAllowedSigningAlgorithms(registeredService)))
             .mediaType(getSigningMediaType())
+            .headers(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()))
             .build()
             .sign(claims);
     }
