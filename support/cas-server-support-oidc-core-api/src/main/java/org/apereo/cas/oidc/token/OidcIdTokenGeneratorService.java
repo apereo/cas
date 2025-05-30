@@ -114,8 +114,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val authentication = accessToken.getAuthentication();
         val activePrincipal = buildPrincipalForAttributeFilter(accessToken, context.getRegisteredService());
         val principal = getConfigurationContext().getProfileScopeToAttributesFilter()
-            .filter(accessToken.getService(),
-                activePrincipal, context.getRegisteredService(), accessToken);
+            .filter(accessToken.getService(), activePrincipal, context.getRegisteredService(), accessToken);
         LOGGER.debug("Principal to use to build the ID token is [{}]", principal);
 
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
