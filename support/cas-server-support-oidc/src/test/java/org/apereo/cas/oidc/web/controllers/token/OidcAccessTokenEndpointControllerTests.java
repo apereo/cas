@@ -173,7 +173,7 @@ class OidcAccessTokenEndpointControllerTests {
                     .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id_token").exists())
-                .andExpect(jsonPath("$.access_token").doesNotExist())
+                .andExpect(jsonPath("$.access_token").exists())
                 .andReturn();
         }
 
