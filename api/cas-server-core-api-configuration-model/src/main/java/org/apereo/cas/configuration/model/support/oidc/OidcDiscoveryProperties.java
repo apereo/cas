@@ -61,7 +61,7 @@ public class OidcDiscoveryProperties implements Serializable {
     /**
      * Value indicating whether native SSO flows are supported.
      */
-    private boolean nativeSsoSupported;
+    private boolean nativeSsoSupported = true;
 
     /**
      * List of supported scopes.
