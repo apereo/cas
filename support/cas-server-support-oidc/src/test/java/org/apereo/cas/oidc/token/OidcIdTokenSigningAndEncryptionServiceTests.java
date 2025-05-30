@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenResponseEncoder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.token.JwtBuilder;
+import com.nimbusds.jose.JWSHeader;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -81,7 +82,7 @@ class OidcIdTokenSigningAndEncryptionServiceTests {
                 .encode(accessTokenContext, accessTokenResult);
             assertNotNull(encodedModelAndView);
             val accessToken = (String) encodedModelAndView.getModel().get(OAuth20Constants.ACCESS_TOKEN);
-            val header = JwtBuilder.parseHeader(accessToken);
+            val header = (JWSHeader) JwtBuilder.parseHeader(accessToken);
             assertNotNull(header);
             assertEquals(registeredService.getJwtAccessTokenSigningAlg(), header.getAlgorithm().getName());
             assertEquals(registeredService.getJwksKeyId(), header.getKeyID());

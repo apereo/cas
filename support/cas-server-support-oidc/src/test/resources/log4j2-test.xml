@@ -10,6 +10,7 @@
         <Logger name="org.apereo.inspektr" level="error" />
         <Logger name="org.apereo.cas" level="error"/>
         <Logger name="org.springframework.security" level="warn"/>
+        <Logger name="org.springframework.boot.autoconfigure.security.servlet" level="error"/>
         <Logger name="org.springframework.boot" level="warn"/>
         <Logger name="PROTOCOL_MESSAGE" level="info"/>
         <Root level="error">

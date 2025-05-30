@@ -39,7 +39,7 @@ class OidcAccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOid
 
     @Test
     void verifyExtractionWithJwtType() throws Throwable {
-        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString()).setEncryptIdToken(false);
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString()).setEncryptIdToken(true);
         registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE.getType()));
         servicesManager.save(registeredService);
 

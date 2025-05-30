@@ -12,7 +12,6 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenToke
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
-import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +47,7 @@ public class OidcAccessTokenTokenExchangeGrantRequestExtractor extends AccessTok
             .orElseThrow(() -> new IllegalArgumentException("Subject token cannot be undefined"));
 
         if (subjectTokenType == OAuth20TokenExchangeTypes.ID_TOKEN) {
-            val clientIdInIdToken = JwtBuilder.parse(subjectToken).getClaimAsString(OAuth20Constants.CLIENT_ID);
+            val clientIdInIdToken = OAuth20Utils.extractClientIdFromToken(subjectToken);
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientIdInIdToken);
             val claimSet = configurationContext.getIdTokenSigningAndEncryptionService().decode(subjectToken, Optional.ofNullable(registeredService));
             val service = configurationContext.getWebApplicationServiceServiceFactory().createService(claimSet.getIssuer());
@@ -85,7 +84,7 @@ public class OidcAccessTokenTokenExchangeGrantRequestExtractor extends AccessTok
             val subjectToken = configurationContext.getRequestParameterResolver()
                 .resolveRequestParameter(webContext, OAuth20Constants.SUBJECT_TOKEN)
                 .orElseThrow(() -> new IllegalArgumentException("Subject token type cannot be undefined when actor token is provided"));
-            val clientIdInIdToken = JwtBuilder.parse(subjectToken).getClaimAsString(OAuth20Constants.CLIENT_ID);
+            val clientIdInIdToken = OAuth20Utils.extractClientIdFromToken(subjectToken);
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientIdInIdToken);
             val claims = configurationContext.getIdTokenSigningAndEncryptionService().decode(subjectToken, Optional.ofNullable(registeredService));
             Assert.isTrue(claims.hasClaim(OidcConstants.DS_HASH), "Subject token must contain the claim %s".formatted(OidcConstants.DS_HASH));

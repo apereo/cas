@@ -15,6 +15,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -440,5 +441,21 @@ public class OAuth20Utils {
                 return ((OAuth20AccessToken) token).getExpiresIn();
             })
             .orElse(0L);
+    }
+
+    /**
+     * Extract client id from token.
+     *
+     * @param token the token
+     * @return the string
+     * @throws Exception the exception
+     */
+    public static String extractClientIdFromToken(final String token) throws Exception {
+        val claims = JwtBuilder.parse(token);
+        if (claims != null) {
+            return claims.getClaimAsString(OAuth20Constants.CLIENT_ID);
+        }
+        val header = JwtBuilder.parseHeader(token);
+        return (String) header.getCustomParam(OAuth20Constants.CLIENT_ID);
     }
 }
