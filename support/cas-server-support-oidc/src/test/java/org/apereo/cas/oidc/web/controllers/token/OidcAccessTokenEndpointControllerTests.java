@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.web.controllers.token;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointController;
@@ -32,7 +31,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -49,7 +47,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -63,7 +61,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class OidcAccessTokenEndpointControllerTests {
 
     @Nested
-    @ImportAutoConfiguration(CasWebAppAutoConfiguration.class)
     @TestPropertySource(properties = "cas.authn.oidc.core.accepted-issuers-pattern=.*")
     class MvcTests extends AbstractOidcTests {
         private MockMvc mvc;
