@@ -68,8 +68,8 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
         val iss = resolveIssuer(service);
         Objects.requireNonNull(iss, "Issuer cannot be null or undefined");
         FunctionUtils.throwIf(!claims.getIssuer().equalsIgnoreCase(iss),
-            () -> new IllegalArgumentException("Issuer assigned to claims "
-                + claims.getIssuer() + " does not match " + iss));
+            () -> new IllegalArgumentException("Issuer assigned to JWT claim "
+                + claims.getIssuer() + " does not match defined issuer " + iss));
     }
 
     protected String signToken(final OAuthRegisteredService registeredService,

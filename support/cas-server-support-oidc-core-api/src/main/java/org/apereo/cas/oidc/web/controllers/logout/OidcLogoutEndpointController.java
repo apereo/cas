@@ -10,6 +10,7 @@ import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -74,12 +75,16 @@ public class OidcLogoutEndpointController extends BaseOidcController {
 
         if (StringUtils.isNotBlank(idToken)) {
             LOGGER.trace("Decoding logout id token [{}]", idToken);
-            val claims = getConfigurationContext().getIdTokenSigningAndEncryptionService().decode(idToken, Optional.empty());
+            val clientIdInIdToken = JwtBuilder.parse(idToken).getClaimAsString(OAuth20Constants.CLIENT_ID);
+            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+                getConfigurationContext().getServicesManager(), clientIdInIdToken, OidcRegisteredService.class);
+            
+            val claims = getConfigurationContext().getIdTokenSigningAndEncryptionService().decode(idToken,
+                Optional.ofNullable(registeredService));
+
             clientId = claims.getStringClaimValue(OAuth20Constants.CLIENT_ID);
             LOGGER.debug("Client id retrieved from id token is [{}]", clientId);
 
-            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-                getConfigurationContext().getServicesManager(), clientId, OidcRegisteredService.class);
             LOGGER.debug("Located registered service [{}]", registeredService);
             val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(clientId);
             val audit = AuditableContext.builder()
