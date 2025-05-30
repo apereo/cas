@@ -47,20 +47,25 @@ public class OidcAccessTokenTokenExchangeGrantRequestExtractor extends AccessTok
             .orElseThrow(() -> new IllegalArgumentException("Subject token cannot be undefined"));
 
         if (subjectTokenType == OAuth20TokenExchangeTypes.ID_TOKEN) {
+            val userProfile = extractUserProfile(webContext).orElseThrow();
+            val requestingClientId = userProfile.getId();
+            
             val clientIdInIdToken = OAuth20Utils.extractClientIdFromToken(subjectToken);
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientIdInIdToken);
             val claimSet = configurationContext.getIdTokenSigningAndEncryptionService().decode(subjectToken, Optional.ofNullable(registeredService));
             val service = configurationContext.getWebApplicationServiceServiceFactory().createService(claimSet.getIssuer());
-            service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(claimSet.getIssuer()));
-            val userProfile = extractUserProfile(webContext).orElseThrow();
+            service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(requestingClientId));
+            
             userProfile.setId(claimSet.getSubject());
             claimSet.getClaimsMap().forEach(userProfile::addAttribute);
             val authentication = configurationContext.getAuthenticationBuilder().build(userProfile, registeredService, webContext, service);
             val accessTokenFactory = (OAuth20AccessTokenFactory) configurationContext.getTicketFactory().get(OAuth20AccessToken.class);
             val scopes = configurationContext.getRequestParameterResolver().resolveRequestedScopes(webContext);
-            val accessToken = accessTokenFactory.create(service, authentication, scopes, clientIdInIdToken,
+            val accessToken = accessTokenFactory.create(service, authentication, scopes, requestingClientId,
                 OAuth20ResponseTypes.NONE, OAuth20GrantTypes.TOKEN_EXCHANGE);
-            return new TokenExchangeRequest(accessToken, service, registeredService, authentication);
+            val requestedRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+                configurationContext.getServicesManager(), requestingClientId);
+            return new TokenExchangeRequest(accessToken, service, requestedRegisteredService, authentication);
 
         }
         return super.extractSubjectTokenExchangeRequest(webContext);

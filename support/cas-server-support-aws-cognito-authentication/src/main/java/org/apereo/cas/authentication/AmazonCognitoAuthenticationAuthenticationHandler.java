@@ -76,7 +76,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
             val authenticationResult = result.authenticationResult();
             val claims = jwtProcessor.process(authenticationResult.idToken(), new SimpleSecurityContext());
             if (StringUtils.isBlank(claims.getSubject())) {
-                throw new FailedLoginException("Unable to accept the id token with an invalid [sub] claim");
+                throw new FailedLoginException("Unable to accept the ID token with an invalid [sub] claim");
             }
 
             val userResult = cognitoIdentityProvider.adminGetUser(AdminGetUserRequest.builder()

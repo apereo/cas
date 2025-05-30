@@ -48,7 +48,7 @@ async function exchangeToken(token, fromType, toType) {
                         assert(verified.payload.iat !== undefined);
                         assert(verified.payload.jti !== undefined);
                         assert(verified.payload.exp !== undefined);
-                        assert(verified.payload.preferred_username === "client");
+                        assert(verified.payload.preferred_username === "casuser");
                         assert(verified.payload.name === "CAS");
                         assert(verified.payload.gender === "female");
                     });
@@ -103,7 +103,7 @@ async function verifyTokenExchangeNativeSso() {
 
         const redirectUri = "https://localhost:9859/anything/app";
         let url = "https://localhost:8443/cas/oidc/authorize?response_type=code";
-        url += `&redirect_uri=${redirectUri}&client_id=client&scope=${encodeURIComponent("openid device_sso")}`;
+        url += `&redirect_uri=${redirectUri}&client_id=client&scope=${encodeURIComponent("openid email device_sso")}`;
 
         await cas.goto(page, url);
         await cas.logPage(page);
@@ -122,7 +122,7 @@ async function verifyTokenExchangeNativeSso() {
         const accessTokenUrl = `${baseTokenUrl}?${accessTokenParams}&code=${code}`;
         await cas.log(`Calling ${accessTokenUrl}`);
 
-        const tokens = await cas.doPost(accessTokenUrl, "", {
+        let tokens = await cas.doPost(accessTokenUrl, "", {
             "Content-Type": "application/json"
         }, (res) => {
             assert(res.data.access_token !== undefined);
@@ -137,18 +137,23 @@ async function verifyTokenExchangeNativeSso() {
             throw `Operation failed to obtain access token: ${error}`;
         });
 
-        await cas.log("Decoding ID token...");
-        const decoded = await cas.decodeJwt(tokens.id_token);
+        await cas.log("Decoding ID token received from native device SSO...");
+        let decoded = await cas.decodeJwt(tokens.id_token);
         assert(decoded.sid !== undefined);
         assert(decoded.ds_hash !== undefined);
         assert(decoded.sid_ref !== undefined);
+        assert(decoded.aud === "client");
+        assert(decoded.gender === undefined);
+        assert(decoded.email === "casuser@apereo.org");
+
+        await cas.log("Exchanging ID token for access token...");
 
         const grantType = "urn:ietf:params:oauth:grant-type:token-exchange";
         const subjectTokenType = "urn:ietf:params:oauth:token-type:id_token";
         const actorTokenType = "urn:openid:params:token-type:device-secret";
 
         let params = `grant_type=${encodeURIComponent(grantType)}`;
-        params += `&scope=${encodeURIComponent("openid profile address phone")}`;
+        params += `&scope=${encodeURIComponent("openid profile email")}`;
         params += `&resource=${encodeURIComponent("https://localhost:9859/anything/backend")}`;
         params += `&subject_token=${tokens.id_token}`;
         params += `&subject_token_type=${encodeURIComponent(subjectTokenType)}`;
@@ -157,15 +162,23 @@ async function verifyTokenExchangeNativeSso() {
 
         await cas.doPost(`${baseTokenUrl}?${params}`, "", {
             "Content-Type": "application/json",
-            "Authorization": `Basic ${btoa("client:secret")}`
+            "Authorization": `Basic ${btoa("client2:secret2")}`
         }, (res) => {
             assert(res.data.access_token !== undefined);
+            assert(res.data.id_token === undefined);
             assert(res.data.expires_in !== undefined);
             assert(res.data.token_type === "Bearer");
             assert(res.data.issued_token_type === "urn:ietf:params:oauth:token-type:access_token");
+
+            return {
+                id_token: res.data.id_token,
+                access_token: res.data.access_token
+            };
         }, (error) => {
             throw `Operation failed to obtain access token: ${error}`;
         });
+
+        await cas.log("Exchanging ID token for ID token...");
 
         params = `grant_type=${encodeURIComponent(grantType)}`;
         params += `&scope=${encodeURIComponent("openid profile address phone")}`;
@@ -176,27 +189,38 @@ async function verifyTokenExchangeNativeSso() {
         params += `&actor_token_type=${encodeURIComponent(actorTokenType)}`;
         params += `&requested_token_type=${encodeURIComponent("urn:ietf:params:oauth:token-type:id_token")}`;
 
-        await cas.doPost(`${baseTokenUrl}?${params}`, "", {
+        tokens = await cas.doPost(`${baseTokenUrl}?${params}`, "", {
             "Content-Type": "application/json",
-            "Authorization": `Basic ${btoa("client:secret")}`
+            "Authorization": `Basic ${btoa("client2:secret2")}`
         }, (res) => {
             assert(res.data.access_token !== undefined);
             assert(res.data.expires_in !== undefined);
             assert(res.data.token_type === "Bearer");
             assert(res.data.id_token !== undefined);
             assert(res.data.issued_token_type === "urn:ietf:params:oauth:token-type:id_token");
+
+            return {
+                id_token: res.data.id_token,
+                access_token: res.data.access_token
+            };
         }, (error) => {
             throw `Operation failed to obtain access token: ${error}`;
         });
 
+        await cas.log("Decoding ID token...");
+        decoded = await cas.decodeJwt(tokens.id_token);
+        assert(decoded.sid !== undefined);
+        assert(decoded.email === undefined);
+        assert(decoded.gender === "female");
+        assert(decoded.name === "CAS");
+        assert(decoded.aud === "client2");
+
     } finally {
         await browser.close();
     }
-
 }
 
 (async () => {
     await verifyTokenExchangeTypes();
     await verifyTokenExchangeNativeSso();
-
 })();

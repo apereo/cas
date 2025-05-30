@@ -8,7 +8,7 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
-    "--cas.authn.oidc.discovery.claims=sub,name,gender",
+    "--cas.authn.oidc.discovery.claims=sub,name,gender,email,preferred_username",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
 
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",

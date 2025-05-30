@@ -49,25 +49,28 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
     @Override
     protected Map<String, Object> getAccessTokenResponseModel(final OAuth20AccessTokenResponseResult result) {
         val accessToken = result.getGeneratedToken().getAccessToken();
+        val model = super.getAccessTokenResponseModel(result);
 
         if (result.getGrantType() == OAuth20GrantTypes.TOKEN_EXCHANGE) {
-            if (result.getRequestedTokenType() == OAuth20TokenExchangeTypes.ID_TOKEN) {
-                val model = super.getAccessTokenResponseModel(result);
-                collectIdToken(result, (OAuth20AccessToken) accessToken.orElseThrow(), model);
-                model.put(OAuth20Constants.ISSUED_TOKEN_TYPE, result.getRequestedTokenType().getType());
-                return model;
-            }
+            buildResponseModelForTokenExchange(result, model);
+        } else {
+            accessToken.map(at -> resolveToken(at, OAuth20AccessToken.class))
+                .ifPresent(token -> {
+                    if (result.getRegisteredService() instanceof OidcRegisteredService
+                        && !token.getScopes().contains(OidcConstants.CLIENT_REGISTRATION_SCOPE)) {
+                        collectIdToken(result, token, model);
+                    }
+                });
         }
-
-        val model = super.getAccessTokenResponseModel(result);
-        accessToken.map(at -> resolveToken(at, OAuth20AccessToken.class))
-            .ifPresent(token -> {
-                if (result.getRegisteredService() instanceof OidcRegisteredService
-                    && !token.getScopes().contains(OidcConstants.CLIENT_REGISTRATION_SCOPE)) {
-                    collectIdToken(result, token, model);
-                }
-            });
         return model;
+    }
+
+    protected void buildResponseModelForTokenExchange(final OAuth20AccessTokenResponseResult result, final Map<String, Object> model) {
+        if (result.getRequestedTokenType() == OAuth20TokenExchangeTypes.ID_TOKEN) {
+            val accessToken = result.getGeneratedToken().getAccessToken();
+            accessToken.map(at -> resolveToken(at, OAuth20AccessToken.class)).ifPresent(at -> collectIdToken(result, at, model));
+        }
+        model.put(OAuth20Constants.ISSUED_TOKEN_TYPE, result.getRequestedTokenType().getType());
     }
 
     protected void collectIdToken(final OAuth20AccessTokenResponseResult result,
@@ -95,6 +98,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
                 .registeredService((OAuthRegisteredService) result.getRegisteredService())
                 .refreshToken(resolveToken(refreshToken, OAuth20RefreshToken.class))
                 .build();
+            LOGGER.debug("Generating ID token for access token [{}]", accessToken.getId());
             return configurationContext.getObject().getIdTokenGeneratorService().generate(idTokenContext);
         });
     }

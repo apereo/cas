@@ -52,7 +52,7 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder<T extends O
             .build();
         val idToken = configurationContext.getIdTokenGeneratorService().generate(idTokenContext);
         if (idToken != null) {
-            LOGGER.debug("Generated id token [{}]", idToken);
+            LOGGER.debug("Generated ID token [{}]", idToken);
             parameters.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken.token()));
         }
         return super.buildCallbackUrlResponseType(tokenRequestContext, accessToken, givenRefreshToken, parameters);

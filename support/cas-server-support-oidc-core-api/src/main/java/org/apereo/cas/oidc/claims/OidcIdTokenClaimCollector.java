@@ -26,9 +26,9 @@ public interface OidcIdTokenClaimCollector {
     }
 
     /**
-     * Default system behavior when collecting id token claims.
+     * Default system behavior when collecting ID token claims.
      *
-     * @return the oidc id token claim collector
+     * @return the oidc ID token claim collector
      */
     static OidcIdTokenClaimCollector defaultCollector() {
         return (claims, name, values) -> {
@@ -44,7 +44,7 @@ public interface OidcIdTokenClaimCollector {
      * Listable collector forces all claims to be collected
      * as list regardless of the number of values found for the claim.
      *
-     * @return the oidc id token claim collector
+     * @return the oidc ID token claim collector
      */
     static OidcIdTokenClaimCollector listableCollector() {
         return JwtClaims::setClaim;

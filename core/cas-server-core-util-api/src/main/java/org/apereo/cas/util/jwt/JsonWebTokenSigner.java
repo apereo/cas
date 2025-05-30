@@ -97,7 +97,7 @@ public class JsonWebTokenSigner {
             FunctionUtils.doIfNotNull(this.keyId, jws::setKeyIdHeaderValue);
         }
         headers.forEach((header, value) -> jws.setHeader(header, value.toString()));
-        LOGGER.trace("Signing id token with key id header value [{}] and algorithm header value [{}]",
+        LOGGER.trace("Signing ID token with key id header value [{}] and algorithm header value [{}]",
             jws.getKeyIdHeaderValue(), jws.getAlgorithmHeaderValue());
         return jws.getCompactSerialization();
     }
