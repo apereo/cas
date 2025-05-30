@@ -110,7 +110,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
     @SuppressWarnings("LongFloatConversion")
     protected JwtClaims buildJwtClaims(final IdTokenGenerationContext context) throws Throwable {
         val accessToken = context.getAccessToken();
-        LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
+        LOGGER.trace("Attempting to produce claims for the ID token [{}]", accessToken);
         val authentication = accessToken.getAuthentication();
         val activePrincipal = buildPrincipalForAttributeFilter(accessToken, context.getRegisteredService());
         val principal = getConfigurationContext().getProfileScopeToAttributesFilter()

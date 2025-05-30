@@ -23,7 +23,7 @@ public enum OAuth20TokenExchangeTypes {
      */
     DEVICE_SECRET("urn:openid:params:token-type:device-secret"),
     /**
-     * The token type identifier for an id token in OAuth token exchange.
+     * The token type identifier for an ID token in OAuth token exchange.
      */
     ID_TOKEN("urn:ietf:params:oauth:token-type:id_token"),
     /**

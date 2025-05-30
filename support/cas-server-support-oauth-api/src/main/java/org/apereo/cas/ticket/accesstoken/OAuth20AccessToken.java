@@ -21,16 +21,16 @@ public interface OAuth20AccessToken extends OAuth20Token, ServiceAwareTicket {
     String PREFIX = "AT";
 
     /**
-     * Sets id token.
+     * Sets ID token.
      *
-     * @param idToken the id token
+     * @param idToken the ID token
      */
     void setIdToken(String idToken);
 
     /**
-     * Gets id token.
+     * Gets ID token.
      *
-     * @return the id token
+     * @return the ID token
      */
     String getIdToken();
 

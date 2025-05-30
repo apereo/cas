@@ -46,11 +46,11 @@ public interface OidcConstants {
     String REQUESTED_EXPIRY = "requested_expiry";
     
     /**
-     * ACR passed in the id token.
+     * ACR passed in the ID token.
      */
     String ACR = "acr";
     /**
-     * Authentication method reference passed in the id token.
+     * Authentication method reference passed in the ID token.
      */
     String AMR = "amr";
     /**
@@ -105,7 +105,7 @@ public interface OidcConstants {
      */
     String CLAIM_SESSION_REF = "sid_ref";
     /**
-     * The id token.
+     * The ID token.
      */
     String ID_TOKEN = "id_token";
     /**

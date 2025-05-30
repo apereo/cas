@@ -137,7 +137,7 @@ public class OidcDiscoveryProperties implements Serializable {
     private List<String> dpopSigningAlgValuesSupported = Stream.of("RS256", "RS384", "RS512", "ES256", "ES384", "ES512").toList();
 
     /**
-     * Supported algorithms for id token signing.
+     * Supported algorithms for ID token signing.
      */
     private List<String> idTokenSigningAlgValuesSupported = Stream.of("none", "RS256", "RS384",
         "RS512", "PS256", "PS384",
@@ -145,14 +145,14 @@ public class OidcDiscoveryProperties implements Serializable {
         "ES512", "HS256", "HS384", "HS512").toList();
 
     /**
-     * Supported algorithms for id token encryption.
+     * Supported algorithms for ID token encryption.
      */
     private List<String> idTokenEncryptionAlgValuesSupported = Stream.of("RSA1_5", "RSA-OAEP", "RSA-OAEP-256",
         "A128KW", "A192KW", "A256KW", "A128GCMKW", "A192GCMKW", "A256GCMKW",
         "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW").toList();
 
     /**
-     * Supported encoding strategies for id token encryption.
+     * Supported encoding strategies for ID token encryption.
      */
     private List<String> idTokenEncryptionEncodingValuesSupported = Stream.of("A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512",
         "A128GCM", "A192GCM", "A256GCM").toList();
@@ -219,7 +219,7 @@ public class OidcDiscoveryProperties implements Serializable {
      * Support for authentication context class references is implemented in form of {@code acr_values} as part of the original
      * authorization request, which is mostly taken into account by
      * the multifactor authentication features of CAS.
-     * Once successful, {@code acr} and {@code amr} values are passed back to the relying party as part of the id token.
+     * Once successful, {@code acr} and {@code amr} values are passed back to the relying party as part of the ID token.
      */
     private List<String> acrValuesSupported = new ArrayList<>();
 

@@ -38,7 +38,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
         return FunctionUtils.doUnchecked(() -> {
             val jsonWebKey = getJsonWebKeySigningKey(registeredService);
             FunctionUtils.throwIf(jsonWebKey.getPublicKey() == null,
-                () -> new IllegalArgumentException("JSON web key to validate the id token signature has no public key"));
+                () -> new IllegalArgumentException("JSON web key to validate the ID token signature has no public key"));
             val jwt = Objects.requireNonNull(verifySignature(token, jsonWebKey),
                 "Unable to verify signature of the token using the JSON web key public key");
             val result = new String(jwt, StandardCharsets.UTF_8);
