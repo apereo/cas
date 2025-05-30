@@ -9,7 +9,6 @@ import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.WebUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -98,7 +97,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
         if (StringUtils.isNotBlank(idToken)) {
             LOGGER.trace("Decoding logout id token [{}]", idToken);
 
-            val clientIdInIdToken = JwtBuilder.parse(idToken).getClaimAsString(OAuth20Constants.CLIENT_ID);
+            val clientIdInIdToken = OAuth20Utils.extractClientIdFromToken(idToken);
             LOGGER.debug("Client id retrieved from id token is [{}]", clientIdInIdToken);
 
             if (StringUtils.isNotBlank(givenClientId) && !StringUtils.equalsIgnoreCase(givenClientId, clientIdInIdToken)) {

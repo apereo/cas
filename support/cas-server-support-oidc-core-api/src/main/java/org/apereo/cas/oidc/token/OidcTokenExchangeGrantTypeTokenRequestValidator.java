@@ -6,7 +6,6 @@ import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenExchangeGrantTypeTokenRequestValidator;
-import org.apereo.cas.token.JwtBuilder;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import java.util.List;
@@ -31,11 +30,10 @@ public class OidcTokenExchangeGrantTypeTokenRequestValidator extends OAuth20Toke
 
         if (configurationContext.getDiscoverySettings().isNativeSsoSupported()
             && OAuth20TokenExchangeTypes.from(subjectTokenType) == OAuth20TokenExchangeTypes.ID_TOKEN) {
-            val parsedIdToken = JwtBuilder.parse(subjectToken);
-            val clientIdInIdToken = parsedIdToken.getClaimAsString(OAuth20Constants.CLIENT_ID);
+            val clientIdInIdToken = OAuth20Utils.extractClientIdFromToken(subjectToken);
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientIdInIdToken);
-            configurationContext.getIdTokenSigningAndEncryptionService().decode(subjectToken, Optional.ofNullable(registeredService));
-            val service = configurationContext.getWebApplicationServiceServiceFactory().createService(parsedIdToken.getIssuer());
+            val claims = configurationContext.getIdTokenSigningAndEncryptionService().decode(subjectToken, Optional.ofNullable(registeredService));
+            val service = configurationContext.getWebApplicationServiceServiceFactory().createService(claims.getIssuer());
             service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(clientIdInIdToken));
             return OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientIdInIdToken);
         }
