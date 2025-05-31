@@ -23,7 +23,6 @@ import org.springframework.context.ApplicationEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -65,11 +64,6 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     @Override
     public Optional<RegisteredService> findIndexedServiceBy(final long id) {
         return configurationContext.getRegisteredServiceIndexService().findServiceBy(id);
-    }
-
-    @Override
-    public List<RegisteredService> getIndexedServices() {
-        return configurationContext.getRegisteredServiceIndexService().getIndexedServices();
     }
 
     @Override
