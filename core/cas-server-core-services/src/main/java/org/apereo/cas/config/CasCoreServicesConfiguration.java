@@ -29,6 +29,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
+import org.apereo.cas.services.RegisteredServiceIndexService;
 import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.RegisteredServicesEventListener;
@@ -44,6 +45,7 @@ import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.ServicesManagerScheduledLoader;
 import org.apereo.cas.services.mgmt.DefaultChainingServicesManager;
 import org.apereo.cas.services.mgmt.DefaultServicesManager;
+import org.apereo.cas.services.query.DefaultRegisteredServiceIndexService;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
@@ -296,6 +298,7 @@ class CasCoreServicesConfiguration {
     static class CasCoreServicesManagerExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = ServicesManagerConfigurationContext.BEAN_NAME)
         public ServicesManagerConfigurationContext servicesManagerConfigurationContext(
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,
@@ -304,6 +307,8 @@ class CasCoreServicesConfiguration {
             final RegisteredServicesTemplatesManager registeredServicesTemplatesManager,
             @Qualifier(ServiceRegistry.BEAN_NAME)
             final ChainingServiceRegistry serviceRegistry,
+            @Qualifier(RegisteredServiceIndexService.BEAN_NAME)
+            final RegisteredServiceIndexService registeredServiceIndexService,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory serviceFactory,
             @Qualifier("servicesManagerCache")
@@ -325,6 +330,7 @@ class CasCoreServicesConfiguration {
                 .casProperties(casProperties)
                 .tenantExtractor(tenantExtractor)
                 .serviceFactory(serviceFactory)
+                .registeredServiceIndexService(registeredServiceIndexService)
                 .build();
         }
 
@@ -344,6 +350,16 @@ class CasCoreServicesConfiguration {
         public ServicesManagerRegisteredServiceLocator defaultServicesManagerRegisteredServiceLocator() {
             return new DefaultServicesManagerRegisteredServiceLocator();
         }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = RegisteredServiceIndexService.BEAN_NAME)
+        public RegisteredServiceIndexService registeredServiceIndexService(
+            final List<ServicesManagerRegisteredServiceLocator> servicesManagerRegisteredServiceLocators,
+            final CasConfigurationProperties casProperties) {
+            return new DefaultRegisteredServiceIndexService(servicesManagerRegisteredServiceLocators, casProperties);
+        }
+        
     }
 
     @Configuration(value = "CasCoreServicesManagerConfiguration", proxyBeanMethods = false)

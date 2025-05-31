@@ -58,4 +58,6 @@ public class ServicesManagerConfigurationContext {
 
     @Nonnull
     private final ServiceFactory<WebApplicationService> serviceFactory;
+
+    private final RegisteredServiceIndexService registeredServiceIndexService;
 }
