@@ -37,67 +37,67 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-#      - name: Set up JDK
-#        uses: actions/setup-java@v4
-#        with:
-#          java-version: ${{ env.JDK_CURRENT }}
-#          distribution: ${{ env.JDK_DISTRIBUTION }}
-#      - name: Setup Gradle
-#        uses: gradle/actions/setup-gradle@v4
-#      - name: Initialize
-#        run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Initialize
+        run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
 ##########################################################################
 
-#  report-dependency-updates:
-#    runs-on: ubuntu-latest
-#    needs: [initialize]
-#    name: Report Dependency Updates
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#      - name: Set up JDK
-#        uses: actions/setup-java@v4
-#        with:
-#          java-version: ${{ env.JDK_CURRENT }}
-#          distribution: ${{ env.JDK_DISTRIBUTION }}
-#      - name: Setup Gradle
-#        uses: gradle/actions/setup-gradle@v4
-#      - name: Initialize
-#        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-#      - name: Report Dependency Updates
-#        run: |
-#          ./gradlew dependencyUpdates --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc \
-#            -x check --no-configuration-cache -Drevision=release -DskipAot=true -DskipNestedConfigMetadataGen=true \
-#            -DgradleReleaseChannel=current --max-workers=8 -DreportfileName=dependencies \
-#            -DoutputFormatter=json,plain -DoutputDir=./build/reports/dependency-updates
-#      - name: Upload Results
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: dependency-updates
-#          path: ./build/reports/dependency-updates/dependencies.json
-#          if-no-files-found: ignore
-#          retention-days: 2
+  report-dependency-updates:
+    runs-on: ubuntu-latest
+    needs: [initialize]
+    name: Report Dependency Updates
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Initialize
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+      - name: Report Dependency Updates
+        run: |
+          ./gradlew dependencyUpdates --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc \
+            -x check --no-configuration-cache -Drevision=release -DskipAot=true -DskipNestedConfigMetadataGen=true \
+            -DgradleReleaseChannel=current --max-workers=8 -DreportfileName=dependencies \
+            -DoutputFormatter=json,plain -DoutputDir=./build/reports/dependency-updates
+      - name: Upload Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-updates
+          path: ./build/reports/dependency-updates/dependencies.json
+          if-no-files-found: ignore
+          retention-days: 2
   ##########################################################################
 
-#  submit-dependency-graph:
-#    name: Submit Dependency Graph
-#    runs-on: ubuntu-latest
-#    needs: [initialize]
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#      - name: Set up JDK
-#        uses: actions/setup-java@v4
-#        with:
-#          java-version: ${{ env.JDK_CURRENT }}
-#          distribution: ${{ env.JDK_DISTRIBUTION }}
-#      - name: Setup Gradle
-#        uses: gradle/actions/setup-gradle@v4
-#      - name: Initialize
-#        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-#      - name: Submit Dependency Graph
-#        uses: gradle/actions/dependency-submission@v4
+  submit-dependency-graph:
+    name: Submit Dependency Graph
+    runs-on: ubuntu-latest
+    needs: [initialize]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Initialize
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+      - name: Submit Dependency Graph
+        uses: gradle/actions/dependency-submission@v4
 
   ##########################################################################
 
@@ -117,6 +117,6 @@ jobs:
           token: ${{ secrets.RENOVATE_TOKEN }}
           configurationFile: .github/renovate.json
         env:
-          LOG_LEVEL: debug
+          LOG_LEVEL: info
           RENOVATE_REPOSITORIES: ${{ github.repository }}
           
