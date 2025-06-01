@@ -109,14 +109,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Run Renovate
         uses: renovatebot/github-action@v42.0.4
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
           configurationFile: .github/renovate.json
-          docker-volumes: |
-            ${{ github.workspace }}:/tmp
         env:
-          RENOVATE_DIR: ${{ github.workspace }}/whatever
           LOG_LEVEL: debug
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
           
