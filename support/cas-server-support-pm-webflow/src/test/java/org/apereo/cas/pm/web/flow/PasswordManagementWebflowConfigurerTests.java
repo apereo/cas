@@ -152,7 +152,7 @@ class PasswordManagementWebflowConfigurerTests {
             state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD);
             assertNotNull(state);
 
-            state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_PASSWORD_CHANGE_ACTION);
+            state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_PASSWORD_CHANGE);
             assertNotNull(state);
 
             val event = StreamSupport.stream(flow.getStartActionList().spliterator(), false)

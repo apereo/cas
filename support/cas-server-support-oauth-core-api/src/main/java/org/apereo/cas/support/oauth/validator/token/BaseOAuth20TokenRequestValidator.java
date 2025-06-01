@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 import java.util.Locale;
@@ -33,8 +34,8 @@ import java.util.Locale;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRequestValidator {
-    private final OAuth20ConfigurationContext configurationContext;
+public abstract class BaseOAuth20TokenRequestValidator<T extends OAuth20ConfigurationContext> implements OAuth20TokenRequestValidator {
+    private final ObjectProvider<T> configurationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -51,14 +52,14 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
 
     @Override
     public boolean validate(final WebContext context) throws Throwable {
-        val grantType = configurationContext.getRequestParameterResolver()
+        val grantType = configurationContext.getObject().getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         if (!isGrantTypeSupported(grantType, OAuth20GrantTypes.values())) {
             LOGGER.warn("Grant type is not supported: [{}]", grantType);
             return false;
         }
 
-        val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
+        val manager = new ProfileManager(context, getConfigurationContext().getObject().getSessionStore());
         val profile = manager.getProfile();
         if (profile.isEmpty()) {
             LOGGER.warn("Could not locate authenticated profile for this request. Request is not authenticated");
@@ -74,7 +75,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
 
     @Override
     public boolean supports(final WebContext context) {
-        val grantType = configurationContext.getRequestParameterResolver().resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE);
+        val grantType = configurationContext.getObject().getRequestParameterResolver().resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType.map(String::valueOf).orElse(StringUtils.EMPTY), getGrantType());
     }
 
@@ -103,7 +104,7 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
     }
 
     protected boolean validateClientSecretInRequestIfAny(final WebContext webContext) {
-        val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
+        val requestParameterResolver = getConfigurationContext().getObject().getRequestParameterResolver();
         val httpMethod = HttpMethod.valueOf(webContext.getRequestMethod().toUpperCase(Locale.ROOT));
         return httpMethod.equals(HttpMethod.POST) || !requestParameterResolver.isParameterOnQueryString(webContext, OAuth20Constants.CLIENT_SECRET);
     }

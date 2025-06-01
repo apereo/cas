@@ -1062,3 +1062,14 @@ body {
         width: 60em;
     }
 }
+
+.nodeLabel,.edgeLabel {
+    font-family: Monaco, monospace !important;
+}
+foreignObject {
+    border-radius: 5px;
+}
+
+pre code.hljs {
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.9);
+}

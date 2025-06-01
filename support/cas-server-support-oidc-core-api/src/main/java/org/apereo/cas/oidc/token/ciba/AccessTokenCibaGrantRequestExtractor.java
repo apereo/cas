@@ -19,6 +19,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
+import org.springframework.beans.factory.ObjectProvider;
 import java.util.Locale;
 
 /**
@@ -28,36 +29,37 @@ import java.util.Locale;
  * @since 7.1.0
  */
 @Slf4j
-public class AccessTokenCibaGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor {
-    public AccessTokenCibaGrantRequestExtractor(final OidcConfigurationContext configurationContext) {
+public class AccessTokenCibaGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor<OidcConfigurationContext> {
+    public AccessTokenCibaGrantRequestExtractor(final ObjectProvider<OidcConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 
     @Override
     protected AccessTokenRequestContext extractRequest(final WebContext context) throws Throwable {
-        val manager = new ProfileManager(context, getConfigurationContext().getSessionStore());
+        val configurationContext = getConfigurationContext().getObject();
+        val manager = new ProfileManager(context, configurationContext.getSessionStore());
         val profile = manager.getProfile().orElseThrow(() -> UnauthorizedServiceException.denied("OAuth user profile cannot be determined"));
         val clientId = profile.getAttribute(OAuth20Constants.CLIENT_ID).toString();
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
 
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId, OidcRegisteredService.class);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientId, OidcRegisteredService.class);
         LOGGER.debug("Located registered service [{}]", registeredService);
 
-        val authRequestId = getConfigurationContext().getRequestParameterResolver()
+        val authRequestId = configurationContext.getRequestParameterResolver()
             .resolveRequestParameter(context, OidcConstants.AUTH_REQ_ID).orElseThrow();
-        val service = getConfigurationContext().getAuthenticationBuilder()
+        val service = configurationContext.getAuthenticationBuilder()
             .buildService(registeredService, context, true);
 
-        val cibaFactory = (OidcCibaRequestFactory) getConfigurationContext().getTicketFactory().get(OidcCibaRequest.class);
+        val cibaFactory = (OidcCibaRequestFactory) configurationContext.getTicketFactory().get(OidcCibaRequest.class);
         val decodedId = cibaFactory.decodeId(authRequestId);
-        val cibaRequest = getConfigurationContext().getTicketRegistry().getTicket(decodedId, OidcCibaRequest.class);
+        val cibaRequest = configurationContext.getTicketRegistry().getTicket(decodedId, OidcCibaRequest.class);
 
         val audit = AuditableContext.builder()
             .service(service)
             .registeredService(registeredService)
             .authentication(cibaRequest.getAuthentication())
             .build();
-        val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+        val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         accessResult.throwExceptionIfNeeded();
 
         if (!registeredService.getSupportedGrantTypes().contains(getGrantType().getType())
@@ -89,9 +91,10 @@ public class AccessTokenCibaGrantRequestExtractor extends BaseAccessTokenGrantRe
 
     @Override
     public boolean supports(final WebContext context) {
-        val grantType = getConfigurationContext().getRequestParameterResolver()
+        val configurationContext = getConfigurationContext().getObject();
+        val grantType = configurationContext.getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
-        val authRequestId = getConfigurationContext().getRequestParameterResolver()
+        val authRequestId = configurationContext.getRequestParameterResolver()
             .resolveRequestParameter(context, OidcConstants.AUTH_REQ_ID);
         return OAuth20Utils.isGrantType(grantType, getGrantType()) && authRequestId.isPresent();
     }

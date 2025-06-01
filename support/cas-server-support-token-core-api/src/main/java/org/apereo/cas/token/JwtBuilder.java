@@ -14,8 +14,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import com.nimbusds.jose.Header;
 import com.nimbusds.jose.JOSEObjectType;
-import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.PlainHeader;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -111,12 +111,16 @@ public class JwtBuilder {
      *
      * @param jwt the jwt
      * @return the jws header
+     * @throws Exception the exception
      */
-    public static JWSHeader parseHeader(final String jwt) {
-        return FunctionUtils.doUnchecked(() -> {
+    public static Header parseHeader(final String jwt) throws Exception {
+        try {
             val signedJWT = SignedJWT.parse(jwt);
             return signedJWT.getHeader();
-        });
+        } catch (final Exception e) {
+            val encryptedJWT = EncryptedJWT.parse(jwt);
+            return encryptedJWT.getHeader();
+        }
     }
     
     /**

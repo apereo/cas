@@ -9,6 +9,7 @@ import lombok.val;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.beans.factory.ObjectProvider;
 import java.util.Optional;
 
 /**
@@ -19,8 +20,8 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public abstract class BaseAccessTokenGrantRequestExtractor implements AccessTokenGrantRequestExtractor {
-    private final OAuth20ConfigurationContext configurationContext;
+public abstract class BaseAccessTokenGrantRequestExtractor<T extends OAuth20ConfigurationContext> implements AccessTokenGrantRequestExtractor {
+    private final ObjectProvider<T> configurationContext;
 
     @Override
     public AccessTokenRequestContext extract(final WebContext webContext) throws Throwable {
@@ -38,7 +39,7 @@ public abstract class BaseAccessTokenGrantRequestExtractor implements AccessToke
     }
 
     protected Optional<UserProfile> extractUserProfile(final WebContext webContext) {
-        return new ProfileManager(webContext, configurationContext.getSessionStore()).getProfile();
+        return new ProfileManager(webContext, configurationContext.getObject().getSessionStore()).getProfile();
     }
 
     protected abstract AccessTokenRequestContext extractRequest(WebContext webContext) throws Throwable;

@@ -9,7 +9,6 @@ import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.WebUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,7 +61,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
      *
      * @param postLogoutRedirectUrl the post logout redirect url
      * @param state                 the state
-     * @param idToken               the id token
+     * @param idToken               the ID token
      * @param request               the request
      * @param response              the response
      * @return the response entity
@@ -96,13 +95,13 @@ public class OidcLogoutEndpointController extends BaseOidcController {
         final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
 
         if (StringUtils.isNotBlank(idToken)) {
-            LOGGER.trace("Decoding logout id token [{}]", idToken);
+            LOGGER.trace("Decoding logout ID token [{}]", idToken);
 
-            val clientIdInIdToken = JwtBuilder.parse(idToken).getClaimAsString(OAuth20Constants.CLIENT_ID);
-            LOGGER.debug("Client id retrieved from id token is [{}]", clientIdInIdToken);
+            val clientIdInIdToken = OAuth20Utils.extractClientIdFromToken(idToken);
+            LOGGER.debug("Client id retrieved from ID token is [{}]", clientIdInIdToken);
 
             if (StringUtils.isNotBlank(givenClientId) && !StringUtils.equalsIgnoreCase(givenClientId, clientIdInIdToken)) {
-                LOGGER.warn("Client id [{}] in logout request does not match client id [{}] in id token", givenClientId, clientIdInIdToken);
+                LOGGER.warn("Client id [{}] in logout request does not match client id [{}] in ID token", givenClientId, clientIdInIdToken);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     configurationContext.getMessageSource().getMessage("screen.oidc.issuer.invalid", ArrayUtils.EMPTY_OBJECT_ARRAY, request.getLocale()));
             }
@@ -110,7 +109,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
                 getConfigurationContext().getServicesManager(), clientIdInIdToken, OidcRegisteredService.class);
             val idTokenClaims = getConfigurationContext().getIdTokenSigningAndEncryptionService().decode(idToken, Optional.of(registeredService));
             Assert.isTrue(idTokenClaims.getClaimValueAsString(OAuth20Constants.CLIENT_ID).equalsIgnoreCase(registeredService.getClientId()),
-                "Client id in id token does not match client id in registered service");
+                "Client id in ID token does not match client id in registered service");
             Assert.isTrue(idTokenClaims.hasClaim(OidcConstants.AUD), "Audience claim is not present");
             Assert.isTrue(idTokenClaims.hasClaim(OAuth20Constants.CLAIM_SUB), "Subject claim is not present");
 
