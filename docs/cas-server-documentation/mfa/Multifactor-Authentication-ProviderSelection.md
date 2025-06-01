@@ -47,8 +47,6 @@ provider instance is configured multiple times with many instances.
 
 Provider selection may also be carried out using Groovy scripting strategies more dynamically. 
 
-To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
-
 The following example should serve as an outline of how to select multifactor providers based on a Groovy script:
 
 ```groovy
