@@ -41,12 +41,6 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
-### Spring Boot 3.5
-
-The migration of the entire codebase to Spring Boot `3.5` is ongoing, and at the moment is waiting for the wider ecosystem
-of supporting frameworks and libraries to catch up to changes. We anticipate the work to finalize in the next few
-release candidates and certainly prior to the final release.
-
 ### OpenRewrite Recipes
 
 CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
@@ -62,15 +56,8 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `511` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `519` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
-
-### Java 24
-
-As described, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. We are still waiting for the
-wider ecosystem of supporting frameworks and libraries to catch up to Java `24`. We anticipate the work to finalize in the next few
-release candidates and certainly prior to the final release. Remember that the baseline requirement will remain unchanged
-and this is just a preparatory step to ensure CAS is ready for the next version of Java.
 
 ## Other Stuff

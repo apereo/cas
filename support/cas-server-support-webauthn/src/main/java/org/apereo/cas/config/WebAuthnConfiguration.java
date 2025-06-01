@@ -135,10 +135,12 @@ class WebAuthnConfiguration {
 
                     val loc = trustSource.getTrustedDeviceMetadata().getLocation();
                     if (ResourceUtils.doesResourceExist(loc)) {
-                        LOGGER.debug("Loading FIDO trusted device metadata from location [{}]", loc);
-                        val metadata = MetadataObject.readMetadata(loc.getInputStream());
-                        val jsonService = new YubicoJsonMetadataService(List.of(metadata));
-                        composite.addAttestationTrustSource(jsonService);
+                        try (val is = loc.getInputStream()) {
+                            LOGGER.debug("Loading FIDO trusted device metadata from location [{}]", loc);
+                            val metadata = MetadataObject.readMetadata(is);
+                            val jsonService = new YubicoJsonMetadataService(List.of(metadata));
+                            composite.addAttestationTrustSource(jsonService);
+                        }
                     }
 
                     val fidoProperties = trustSource.getFido();

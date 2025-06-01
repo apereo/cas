@@ -142,13 +142,15 @@ public class AttributeConsentReportEndpoint extends BaseCasRestActuatorEndpoint 
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Import a consent decision as a JSON document")
     public ResponseEntity importAccount(final HttpServletRequest request) throws Throwable {
-        val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
-        LOGGER.trace("Submitted account: [{}]", requestBody);
-        val decision = MAPPER.readValue(requestBody, new TypeReference<ConsentDecision>() {
-        });
-        LOGGER.trace("Storing account: [{}]", decision);
-        consentRepository.getObject().storeConsentDecision(decision);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        try (val is = request.getInputStream()) {
+            val requestBody = IOUtils.toString(is, StandardCharsets.UTF_8);
+            LOGGER.trace("Submitted account: [{}]", requestBody);
+            val decision = MAPPER.readValue(requestBody, new TypeReference<ConsentDecision>() {
+            });
+            LOGGER.trace("Storing account: [{}]", decision);
+            consentRepository.getObject().storeConsentDecision(decision);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
     }
 
     /**

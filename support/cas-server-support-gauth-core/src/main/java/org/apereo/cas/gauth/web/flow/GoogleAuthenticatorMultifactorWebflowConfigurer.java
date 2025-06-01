@@ -11,7 +11,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -79,16 +78,16 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
             googleLoginFormState.getEntryActionList().add(setPrincipalAction);
 
             createTransitionForState(googleLoginFormState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
-                CasWebflowConstants.STATE_ID_REAL_SUBMIT, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
+                CasWebflowConstants.STATE_ID_REAL_SUBMIT, createTransitionAttributes(true, true));
 
             createTransitionForState(googleLoginFormState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION,
-                Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
+                createTransitionAttributes(false, false));
 
             createTransitionForState(googleLoginFormState, CasWebflowConstants.TRANSITION_ID_CONFIRM, "validateGoogleAccountToken",
-                Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
+                createTransitionAttributes(false, false));
 
             createTransitionForState(googleLoginFormState, CasWebflowConstants.TRANSITION_ID_SELECT, "viewConfirmRegistration",
-                Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
+                createTransitionAttributes(false, false));
 
             val regViewState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION, "gauth/casGoogleAuthenticatorRegistrationView");
             regViewState.getEntryActionList().addAll(setPrincipalAction, createEvaluateAction(CasWebflowConstants.ACTION_ID_GOOGLE_ACCOUNT_CREATE_REGISTRATION));

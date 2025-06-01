@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import javax.sql.DataSource;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -179,7 +178,7 @@ class SingleRowJdbcPersonAttributeDaoTests {
         impl.setResultAttributeMapping(columnsToAttributes);
 
         val attribs = impl.getPerson("susan").getAttributes();
-        assertTrue(attribs.get("dressShirtColor").isEmpty());
+        assertNull(attribs.get("dressShirtColor"));
         assertEquals(List.of("Susan"), attribs.get("firstName"));
     }
 
@@ -273,15 +272,15 @@ class SingleRowJdbcPersonAttributeDaoTests {
         val impl = new SingleRowJdbcPersonAttributeDao(testDataSource, "SELECT netid, name, email FROM user_table WHERE {0}");
 
         impl.setQueryAttributeMapping(Map.of("shirt", "shirt_color"));
-        assertEquals(Map.of("shirt", Collections.singleton("shirt_color")), impl.getQueryAttributeMapping());
+        assertEquals(Map.of("shirt", Set.of("shirt_color")), impl.getQueryAttributeMapping());
 
         val columnsToAttributes = new HashMap<String, Object>();
         columnsToAttributes.put("netid", "uid");
         columnsToAttributes.put("name", "firstName");
 
         val expectedColumnsToAttributes = new HashMap<String, Set<String>>();
-        expectedColumnsToAttributes.put("netid", Collections.singleton("uid"));
-        expectedColumnsToAttributes.put("name", Collections.singleton("firstName"));
+        expectedColumnsToAttributes.put("netid", Set.of("uid"));
+        expectedColumnsToAttributes.put("name", Set.of("firstName"));
 
         impl.setResultAttributeMapping(columnsToAttributes);
         assertEquals(expectedColumnsToAttributes, impl.getResultAttributeMapping());

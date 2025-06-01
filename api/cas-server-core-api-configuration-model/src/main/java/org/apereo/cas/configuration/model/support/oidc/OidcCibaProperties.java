@@ -25,7 +25,7 @@ public class OidcCibaProperties implements Serializable {
     private static final long serialVersionUID = 313328615694269276L;
 
     /**
-     * Hard timeout to kill the id token and expire it.
+     * Hard timeout to kill the ID token and expire it.
      */
     @DurationCapable
     private String maxTimeToLiveInSeconds = "PT5M";

@@ -2,8 +2,8 @@
 aceEditor = "1.41.0"
 acmeClient = "3.5.1"
 amazonDax = "2.0.5"
-amazonSdk = "2.31.52"
-azureInsights = "3.7.2"
+amazonSdk = "2.31.53"
+azureInsights = "3.7.3"
 azureKustoLog4j = "1.0.0"
 animateCss = "4.1.1"
 apacheCassandra = "4.19.0"
@@ -58,11 +58,11 @@ duoClient = "0.7.1"
 duoUniversalSdk = "1.3.1"
 eclipseAngusMail = "2.0.3"
 eclipseLink = "4.0.6"
-elasticApm = "1.53.0"
+elasticApm = "1.54.0"
 errorprone = "2.38.0"
 es5Shim = "4.5.9"
-eurekaClient = "2.0.4"
-firebaseAdmin = "9.4.3"
+eurekaClient = "2.0.5"
+firebaseAdmin = "9.5.0"
 fluentd = "0.3.4"
 fluentdLog4j = "1.0.0"
 fontAwesome = "6.7.2"
@@ -84,7 +84,7 @@ h2 = "1.4.197"
 hazelcast = "5.5.0"
 hazelcastJClouds = "3.7.2"
 hazelcastZooKeeper = "4.0.2"
-hibernate = "6.6.16.Final"
+hibernate = "6.6.17.Final"
 hibernateValidator = "9.0.0.Final"
 highlightJs = "11.11.1"
 hikari = "6.3.0"
@@ -139,9 +139,9 @@ jsoup = "1.20.1"
 jsr305 = "3.0.2"
 jta = "2.0.1"
 jtds = "1.3.1"
-junit = "5.12.2"
+junit = "5.13.0"
 junitPioneer = "2.3.0"
-junitPlatform = "1.12.2"
+junitPlatform = "1.13.0"
 kafka = "4.0.0"
 kryo = "5.6.2"
 kryoSerializers = "0.45"
@@ -160,6 +160,7 @@ mariaDb = "3.5.3"
 material = "14.0.0"
 maxmind = "4.3.1"
 mdiFont = "7.4.47"
+mermaid = "11.6.0"
 micrometer = "1.15.0"
 micrometerOtel = "1.5.0"
 mockito = "5.18.0"
@@ -176,7 +177,7 @@ nimbusOidc = "11.25"
 normalize = "8.0.1"
 notyf = "3.10.0"
 okhttp3 = "4.12.0"
-okio = "3.11.0"
+okio = "3.12.0"
 okioHttp = "2.7.5"
 oktaHttpClient = "8.2.5"
 oktaSdk = "3.0.0"
@@ -195,7 +196,7 @@ saajImpl = "3.0.4"
 scimSdkClient = "1.27.1"
 semver = "3.1.0"
 sendGrid = "4.10.3"
-sentry = "8.12.0"
+sentry = "8.13.2"
 shibbolethUtilJavaSupport = "9.1.4"
 slackClient = "1.45.3"
 slf4j = "2.0.17"
@@ -204,16 +205,16 @@ socketJsClient = "1.5.1"
 splunkLogging = "1.11.8"
 spring = "6.2.7"
 springBoot = "3.5.0"
-springBootAdmin = "3.4.7"
+springBootAdmin = "3.5.0"
 springCloudAzure = "5.22.0"
-springCloudBus = "4.3.0-RC1"
-springCloudCommons = "4.3.0-RC1"
-springCloudConfig = "4.3.0-RC1"
-springCloudConsul = "4.3.0-RC1"
-springCloudEureka = "4.3.0-RC1"
-springCloudKubernetesConfig = "3.3.0-RC1"
-springCloudVault = "4.3.0-RC1"
-springCloudZookeeper = "4.3.0-RC1"
+springCloudBus = "4.3.0"
+springCloudCommons = "4.3.0"
+springCloudConfig = "4.3.0"
+springCloudConsul = "4.3.0"
+springCloudEureka = "4.3.0"
+springCloudKubernetesConfig = "3.3.0"
+springCloudVault = "4.3.0"
+springCloudZookeeper = "4.3.0"
 springDataCassandra = "4.5.0"
 springDataCommons = "3.5.0"
 springDataCosmosDb = "5.22.0"
@@ -235,13 +236,13 @@ spymemcached = "2.12.3"
 stompWebSocket = "2.3.4"
 streamBuffer = "2.1.0"
 swagger = "2.2.32"
-sweetAlert = "11.21.2"
+sweetAlert = "11.22.0"
 textEncoding = "0.7.0"
 textMagic = "2.0.2456"
 thymeleaf = "3.1.3.RELEASE"
 thymeleafDialect = "3.2.0"
 tomcat = "11.0.7"
-twilio = "10.9.0"
+twilio = "10.9.1"
 unboundid = "7.0.2"
 undertow = "2.3.18.Final"
 whatWgFetch = "3.6.20"
@@ -253,7 +254,7 @@ xmlSec = "4.0.4"
 yubico = "3.1.0"
 yubicoWebauthn = "2.7.0"
 yugabytedb = "42.7.3-yb-4"
-zipkinBrave = "3.5.0"
+zipkinBrave = "3.5.1"
 zookeeper = "3.9.3"
 zxcvbn = "4.4.2"
 
@@ -276,6 +277,15 @@ amazon-dax-client = { module = "software.amazon.dax:amazon-dax-client", version.
 angus-mail = { module = "org.eclipse.angus:angus-mail", version.ref = "eclipseAngusMail" }
 animate-css = { module = "org.webjars.npm:animate.css", version.ref = "animateCss" }
 apache-client = { module = "software.amazon.awssdk:apache-client", version.ref = "amazonSdk" }
+apachegroovy-core = { module = "org.apache.groovy:groovy", version.ref = "groovy" }
+apachegroovy-datetime = { module = "org.apache.groovy:groovy-datetime", version.ref = "groovy" }
+apachegroovy-groovysh = { module = "org.apache.groovy:groovy-groovysh", version.ref = "groovy" }
+apachegroovy-json = { module = "org.apache.groovy:groovy-json", version.ref = "groovy" }
+apachegroovy-jsr223 = { module = "org.apache.groovy:groovy-jsr223", version.ref = "groovy" }
+apachegroovy-sql = { module = "org.apache.groovy:groovy-sql", version.ref = "groovy" }
+apachegroovy-templates = { module = "org.apache.groovy:groovy-templates", version.ref = "groovy" }
+apachegroovy-xml = { module = "org.apache.groovy:groovy-xml", version.ref = "groovy" }
+apachegroovy-yaml = { module = "org.apache.groovy:groovy-yaml", version.ref = "groovy" }
 apiguardian-api = { module = "org.apiguardian:apiguardian-api", version.ref = "apiGuardian" }
 apm-agent-api = { module = "co.elastic.apm:apm-agent-api", version.ref = "elasticApm" }
 apm-agent-attach = { module = "co.elastic.apm:apm-agent-attach", version.ref = "elasticApm" }
@@ -367,16 +377,8 @@ google-compute-engine = { module = "org.apache.jclouds.labs:google-compute-engin
 google-maps-services = { module = "com.google.maps:google-maps-services", version.ref = "googleMapsGeoCoding" }
 googleauth = { module = "com.warrenstrange:googleauth", version.ref = "googleAuth" }
 graal-sdk = { module = "org.graalvm.sdk:graal-sdk", version.ref = "graalVm" }
-apachegroovy-core = { module = "org.apache.groovy:groovy", version.ref = "groovy" }
-apachegroovy-datetime = { module = "org.apache.groovy:groovy-datetime", version.ref = "groovy" }
-apachegroovy-groovysh = { module = "org.apache.groovy:groovy-groovysh", version.ref = "groovy" }
-apachegroovy-json = { module = "org.apache.groovy:groovy-json", version.ref = "groovy" }
-apachegroovy-jsr223 = { module = "org.apache.groovy:groovy-jsr223", version.ref = "groovy" }
-apachegroovy-sql = { module = "org.apache.groovy:groovy-sql", version.ref = "groovy" }
-apachegroovy-templates = { module = "org.apache.groovy:groovy-templates", version.ref = "groovy" }
-apachegroovy-xml = { module = "org.apache.groovy:groovy-xml", version.ref = "groovy" }
-apachegroovy-yaml = { module = "org.apache.groovy:groovy-yaml", version.ref = "groovy" }
 geode-core = { module = "org.apache.geode:geode-core", version.ref = "geode" }
+geode-logging = { module = "org.apache.geode:geode-logging", version.ref = "geode" }
 grouperclient = { module = "edu.internet2.middleware.grouper:grouperClient", version.ref = "grouper" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
@@ -508,6 +510,7 @@ mailjet-client = { module = "com.mailjet:mailjet-client", version.ref = "mailjet
 mariadb-java-client = { module = "org.mariadb.jdbc:mariadb-java-client", version.ref = "mariaDb" }
 material-components-web = { module = "org.webjars.npm:material-components-web", version.ref = "material" }
 mdi-font = { module = "org.webjars.npm:mdi__font", version.ref = "mdiFont" }
+mermaid = { module = "org.webjars.npm:mermaid", version.ref = "mermaid" }
 metrics-core = { module = "io.dropwizard.metrics:metrics-core", version.ref = "dropwizard" }
 micrometer-commons = { module = "io.micrometer:micrometer-commons", version.ref = "micrometer" }
 micrometer-core = { module = "io.micrometer:micrometer-core", version.ref = "micrometer" }

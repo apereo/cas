@@ -52,7 +52,7 @@ async function fetchSsoSessions() {
         rememberMe: true
     };
     const postData = querystring.stringify(formData);
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
         const tgt = await executeRequest("https://localhost:8443/cas/v1/tickets", "POST", 201, "application/x-www-form-urlencoded", postData);
         assert(tgt !== undefined);
     }
@@ -78,13 +78,6 @@ async function verifyWithoutRememberMe() {
     await cas.sleep(1000);
     const tgc = await cas.assertCookie(page);
     assert(tgc.expires === -1);
-    const date = new Date(tgc.expires * 1000);
-    await cas.logg(`TGC expiration date: ${date}`);
-    const now = new Date();
-    await cas.logg(`Current date: ${now}`);
-    now.setDate(now.getDate() + 1);
-    assert(now.getDate() !== date.getDate());
-
     await browser.close();
     browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);

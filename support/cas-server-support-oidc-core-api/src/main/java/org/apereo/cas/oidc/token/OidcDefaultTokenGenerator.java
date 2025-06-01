@@ -37,6 +37,7 @@ public class OidcDefaultTokenGenerator extends OAuth20DefaultTokenGenerator {
             FunctionUtils.doIfNotNull(tokenRequestContext.getCibaRequestId(),
                 __ -> authenticationBuilder.addAttribute(OidcConstants.AUTH_REQ_ID, tokenRequestContext.getCibaRequestId()));
         }
+
         return super.finalizeAuthentication(tokenRequestContext, authenticationBuilder);
     }
 }

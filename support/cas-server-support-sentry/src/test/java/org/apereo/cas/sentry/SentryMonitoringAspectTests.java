@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import io.sentry.spring.boot.jakarta.SentryAutoConfiguration;
+import io.sentry.spring.jakarta.opentelemetry.SentryOpenTelemetryAgentWithoutAutoInitConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    SentryAutoConfiguration.class,
+    SentryOpenTelemetryAgentWithoutAutoInitConfiguration.class,
     CasSentryAutoConfiguration.class,
     SentryMonitoringAspectTests.SentryMonitoringTestConfiguration.class
 })
