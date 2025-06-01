@@ -101,9 +101,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Initialize
-        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - name: Install Renovate
-        run: npm install -g renovate@latest
       - name: Run Renovate
-        run: renovate --platform local --detect-host-rules-from-env
+        uses: renovatebot/github-action@latest
+        with:
+          token: ${{ secrets.RENOVATE_TOKEN }}
+          configurationFile: .github/renovate.json
+        env:
+          RENOVATE_DIR: ${{ github.workspace }}
