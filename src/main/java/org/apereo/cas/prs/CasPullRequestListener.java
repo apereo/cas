@@ -228,6 +228,16 @@ public class CasPullRequestListener implements PullRequestListener {
                 repository.close(pr);
                 return true;
             }
+
+            if (count == 0) {
+                log.info("Closing invalid pull request {} with no changes", pr);
+                repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
+                var template = IOUtils.toString(new ClassPathResource("template-no-changes.md").getInputStream(), StandardCharsets.UTF_8);
+                repository.removeAllApereoCasBotCommentsFrom(pr);
+                repository.addComment(pr, template);
+                repository.close(pr);
+                return true;
+            }
         }
 
         if (pr.getTitle().matches("Update\\s\\w.java") || pr.getTitle().matches("^\\w+$")) {
