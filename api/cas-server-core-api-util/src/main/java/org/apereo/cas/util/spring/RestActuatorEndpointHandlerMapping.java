@@ -11,9 +11,9 @@ import org.springframework.web.util.pattern.PathPattern;
 import jakarta.annotation.Nonnull;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link RestActuatorEndpointHandlerMapping}.
@@ -60,7 +60,7 @@ public class RestActuatorEndpointHandlerMapping extends RequestMappingHandlerMap
                                                           final RequestMappingInfo mapping) {
         var patterns = mapping.getPathPatternsCondition().getPatterns();
         if (patterns.isEmpty()) {
-            patterns = Collections.singleton(getPatternParser().parse(StringUtils.EMPTY));
+            patterns = Set.of(getPatternParser().parse(StringUtils.EMPTY));
         }
         val endpointMappedPatterns = patterns.stream()
             .map(pattern -> getEndpointMappedPattern(endpoint, pattern))

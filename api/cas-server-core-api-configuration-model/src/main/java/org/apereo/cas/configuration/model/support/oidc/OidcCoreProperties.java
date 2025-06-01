@@ -97,7 +97,7 @@ public class OidcCoreProperties implements Serializable {
      * Support for authentication context class references is implemented in form of {@code acr_values} as part of the original
      * authorization request, which is mostly taken into account by
      * the multifactor authentication features of CAS.
-     * Once successful, {@code acr} and {@code amr} values are passed back to the relying party as part of the id token.
+     * Once successful, {@code acr} and {@code amr} values are passed back to the relying party as part of the ID token.
      */
     private List<String> authenticationContextReferenceMappings = new ArrayList<>();
 }

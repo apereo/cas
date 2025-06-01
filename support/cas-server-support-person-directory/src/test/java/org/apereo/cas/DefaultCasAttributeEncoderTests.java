@@ -15,9 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,7 +39,7 @@ class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
     private ServicesManager servicesManager;
 
     private static Collection<String> newSingleAttribute(final String attr) {
-        return Collections.singleton(attr);
+        return Set.of(attr);
     }
 
     @BeforeEach

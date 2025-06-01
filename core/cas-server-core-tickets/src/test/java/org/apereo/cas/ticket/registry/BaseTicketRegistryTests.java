@@ -72,9 +72,9 @@ import java.time.Clock;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -381,7 +381,7 @@ public abstract class BaseTicketRegistryTests {
             : ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
         assertInstanceOf(TicketGrantingTicket.class, tgtResult);
         services = tgtResult.getServices();
-        assertEquals(Collections.singleton(serviceTicketId), services.keySet());
+        assertEquals(Set.of(serviceTicketId), services.keySet());
     }
 
     @RepeatedTest(2)

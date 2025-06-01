@@ -4,6 +4,7 @@ import org.apereo.cas.oidc.claims.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.OidcIdTokenClaimCollector;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
+import org.apereo.cas.oidc.nativesso.OidcDeviceSecretGenerator;
 import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientRegistrationRequestTranslator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
@@ -49,4 +50,5 @@ public class OidcConfigurationContext extends OAuth20ConfigurationContext {
 
     private final OAuth20TokenSigningAndEncryptionService introspectionSigningAndEncryptionService;
 
+    private final OidcDeviceSecretGenerator deviceSecretGenerator;
 }

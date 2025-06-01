@@ -16,7 +16,6 @@ import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.RedirectView;
 import java.util.AbstractMap;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -79,8 +78,8 @@ class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests
 
         val service = RegisteredServiceTestUtils.getService("example");
         val attributes = new HashMap<String, List<Object>>();
-        attributes.put(OAuth20Constants.STATE, Collections.singletonList(STATE));
-        attributes.put(OAuth20Constants.NONCE, Collections.singletonList(NONCE));
+        attributes.put(OAuth20Constants.STATE, List.of(STATE));
+        attributes.put(OAuth20Constants.NONCE, List.of(NONCE));
 
         val holder = AccessTokenRequestContext
             .builder()

@@ -27,7 +27,7 @@ public abstract class BaseIdTokenGeneratorService<T extends OAuth20Configuration
     }
 
     protected String encodeAndFinalizeToken(final JwtClaims claims, final IdTokenGenerationContext context) throws Throwable {
-        LOGGER.debug("Received claims for the id token [{}] as [{}]", context.getAccessToken(), claims);
+        LOGGER.debug("Received claims for the ID token [{}] as [{}]", context.getAccessToken(), claims);
         val idTokenResult = getConfigurationContext().getIdTokenSigningAndEncryptionService().encode(context.getRegisteredService(), claims);
         context.getAccessToken().setIdToken(idTokenResult);
         if (context.getResponseType() != OAuth20ResponseTypes.ID_TOKEN && context.getAccessToken().getExpiresIn() > 0) {

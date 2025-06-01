@@ -19,6 +19,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
+import org.springframework.beans.factory.ObjectProvider;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -29,8 +30,8 @@ import java.util.TreeSet;
  * @since 5.1.0
  */
 @Slf4j
-public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor {
-    public AccessTokenAuthorizationCodeGrantRequestExtractor(final OAuth20ConfigurationContext config) {
+public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor<OAuth20ConfigurationContext> {
+    public AccessTokenAuthorizationCodeGrantRequestExtractor(final ObjectProvider<OAuth20ConfigurationContext> config) {
         super(config);
     }
 
@@ -40,7 +41,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
     @Override
     public AccessTokenRequestContext extractRequest(final WebContext context) throws Throwable {
-        val grantType = getConfigurationContext().getRequestParameterResolver()
+        val configurationContext = getConfigurationContext().getObject();
+        val grantType = configurationContext.getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE);
 
         LOGGER.debug("OAuth grant type is [{}]", grantType);
@@ -48,13 +50,13 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val registeredService = getOAuthRegisteredServiceBy(context);
         FunctionUtils.throwIf(registeredService == null,
             () -> UnauthorizedServiceException.denied("Unable to locate service in registry for redirect URI %s ".formatted(redirectUri)));
-        val requestedScopes = getConfigurationContext().getRequestParameterResolver().resolveRequestScopes(context);
+        val requestedScopes = configurationContext.getRequestParameterResolver().resolveRequestScopes(context);
         LOGGER.debug("Requested scopes are [{}]", requestedScopes);
         val token = getOAuthTokenFromRequest(context);
         ensureTokenIsValid(token);
 
         val scopes = extractRequestedScopesByToken(requestedScopes, token, context);
-        val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(redirectUri);
+        val service = configurationContext.getWebApplicationServiceServiceFactory().createService(redirectUri);
         val generateRefreshToken = isAllowedToGenerateRefreshToken() && registeredService.isGenerateRefreshToken();
 
         val builder = AccessTokenRequestContext
@@ -73,7 +75,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
     @Override
     public boolean supports(final WebContext context) {
-        val grantType = getConfigurationContext().getRequestParameterResolver()
+        val grantType = getConfigurationContext().getObject().getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
     }
@@ -90,7 +92,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
     protected boolean ensureTokenIsValid(final OAuth20Token token) {
         val validStatefulTicket = !token.isStateless() && token.isCode()
-            && getConfigurationContext().getTicketRegistry().getTicket(token.getTicketGrantingTicket().getId()) != null;
+            && getConfigurationContext().getObject().getTicketRegistry().getTicket(token.getTicketGrantingTicket().getId()) != null;
         return validStatefulTicket || (token.isStateless() && token.getAuthentication() != null && !token.isExpired());
     }
 
@@ -126,7 +128,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     }
 
     protected String getRegisteredServiceIdentifierFromRequest(final WebContext context) {
-        return getConfigurationContext().getRequestParameterResolver()
+        return getConfigurationContext().getObject().getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI).orElse(StringUtils.EMPTY);
     }
 
@@ -135,23 +137,24 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     }
 
     protected String getOAuthParameter(final WebContext context) {
-        return getConfigurationContext().getRequestParameterResolver()
+        return getConfigurationContext().getObject().getRequestParameterResolver()
             .resolveRequestParameter(context, getOAuthParameterName()).orElse(StringUtils.EMPTY);
     }
 
     protected OAuth20Token getOAuthTokenFromRequest(final WebContext context) {
         val id = getOAuthParameter(context);
-        return getConfigurationContext().getTicketRegistry().getTicket(id, OAuth20Token.class);
+        return getConfigurationContext().getObject().getTicketRegistry().getTicket(id, OAuth20Token.class);
     }
 
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final WebContext context) {
-        val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
-        val clientId = getConfigurationContext().getRequestParameterResolver()
+        val configurationContext = getConfigurationContext().getObject();
+        val callContext = new CallContext(context, configurationContext.getSessionStore());
+        val clientId = configurationContext.getRequestParameterResolver()
             .resolveClientIdAndClientSecret(callContext).getLeft();
         val redirectUri = getRegisteredServiceIdentifierFromRequest(context);
         val registeredService = StringUtils.isNotBlank(clientId)
-            ? OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId)
-            : OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(getConfigurationContext().getServicesManager(), redirectUri);
+            ? OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientId)
+            : OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(configurationContext.getServicesManager(), redirectUri);
         FunctionUtils.doIf(registeredService == null,
             param -> LOGGER.warn("Unable to locate registered service for clientId [{}] or redirectUri [{}]", clientId, redirectUri),
             ex -> LOGGER.debug("Located registered service [{}]", registeredService)).accept(registeredService);
@@ -162,11 +165,12 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         try {
             if (token.getTicketGrantingTicket() != null) {
                 val id = token.getTicketGrantingTicket().getId();
-                val ticketGrantingTicket = getConfigurationContext().getTicketRegistry().getTicket(id, TicketGrantingTicket.class);
+                val configurationContext = getConfigurationContext().getObject();
+                val ticketGrantingTicket = configurationContext.getTicketRegistry().getTicket(id, TicketGrantingTicket.class);
 
                 FunctionUtils.doUnchecked(__ -> {
                     token.assignTicketGrantingTicket(ticketGrantingTicket);
-                    getConfigurationContext().getTicketRegistry().updateTicket(token);
+                    configurationContext.getTicketRegistry().updateTicket(token);
                 });
 
                 return ticketGrantingTicket;

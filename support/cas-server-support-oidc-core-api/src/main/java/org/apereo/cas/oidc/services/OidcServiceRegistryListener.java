@@ -121,7 +121,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                         val policyToAdd = attributeReleasePolicyFactory.get(scope);
                         addAttributeReleasePolicy(policyChain, policyToAdd, givenScope, oidcService);
                     }
-                    case OPENID -> LOGGER.debug("Scope [{}] is found for service [{}]", givenScope, oidcService.getId());
+                    case OPENID, DEVICE_SSO -> LOGGER.debug("Scope [{}] is found for service [{}]", givenScope, oidcService.getId());
                     case OFFLINE_ACCESS -> {
                         LOGGER.debug("Given scope [{}], service [{}] is marked to generate refresh tokens", givenScope, oidcService.getId());
                         oidcService.setGenerateRefreshToken(true);

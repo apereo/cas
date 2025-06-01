@@ -9,7 +9,9 @@ ext {
 }
 dependencies {
     implementation libraries.sentry
-
+    implementation libraries.tracingotel
+    implementation libraries.opentelemetry
+    
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-multitenancy")

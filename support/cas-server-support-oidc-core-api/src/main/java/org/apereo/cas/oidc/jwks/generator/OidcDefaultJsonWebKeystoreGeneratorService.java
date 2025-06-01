@@ -113,10 +113,12 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
             LOGGER.trace(e.getMessage(), e);
             val resource = ResourceUtils.getRawResourceFrom(file);
             if (ResourceUtils.doesResourceExist(file)) {
-                val jwks = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-                if (CasConfigurationJasyptCipherExecutor.isValueEncrypted(jwks)) {
-                    val cipher = new CasConfigurationJasyptCipherExecutor(applicationContext.getEnvironment());
-                    return new ByteArrayResource(cipher.decryptValue(jwks).getBytes(StandardCharsets.UTF_8));
+                try (val is = resource.getInputStream()) {
+                    val jwks = IOUtils.toString(is, StandardCharsets.UTF_8);
+                    if (CasConfigurationJasyptCipherExecutor.isValueEncrypted(jwks)) {
+                        val cipher = new CasConfigurationJasyptCipherExecutor(applicationContext.getEnvironment());
+                        return new ByteArrayResource(cipher.decryptValue(jwks).getBytes(StandardCharsets.UTF_8));
+                    }
                 }
             }
             return resource;

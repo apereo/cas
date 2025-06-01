@@ -620,7 +620,7 @@ function buildAndRun() {
 -x check -x test -x javadoc --build-cache --configure-on-demand --parallel\
 ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=true \
 -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS:+ $BUILDFLAGS}")
-    printcyan "Executing build command in the ${BUILD_SPAWN}:\n➡️ ${BUILD_COMMAND}"
+    printcyan "Executing build command in the ${BUILD_SPAWN}:\n➡️  ${BUILD_COMMAND}"
 
     if [[ "${BUILD_SPAWN}" == "background" ]]; then
       printcyan "Launching build in background to make observing slow builds easier..."

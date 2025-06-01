@@ -14,6 +14,7 @@
             <li><a id="systemstatustab" href="#systemstatus-tab">System Status</a></li>
             <li><a id="httprequeststab" href="#httprequests-tab">HTTP Requests</a></li>
             <li><a id="casfeaturestab" href="#casfeaturestab-tab">Feature Catalog</a></li>
+            <li><a id="caswebflowtab" href="#caswebflowtab-tab">Authentication Flows</a></li>
           </ul>
 
             <div id="systeminfo-tab">
@@ -100,11 +101,23 @@
             </div>
 
             <div id="casfeaturestab-tab">
-            <div class="d-flex align-items-start mb-4">
-                <div id="casFeaturesChipset" class="mdc-chip-set" role="grid">
+                <div class="d-flex align-items-start mb-4">
+                    <div id="casFeaturesChipset" class="mdc-chip-set" role="grid">
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <div id="caswebflowtab-tab">
+                <label for="webflowFilter">Flow: </label><select id="webflowFilter" class="jqueryui-selectmenu"></select>
+                <label for="webflowStateFilter">State: </label><select id="webflowStateFilter" class="jqueryui-selectmenu"></select>
+                <br>
+                <div id="webflowContainer"></div>
+                
+                <div id="webflowMarkdownContainer" class="hide">
+                    <p>The above diagram is generated using the following markdown:</p>
+                    <pre><code id="webflowMarkdown" class="border-rounded language-markdown"></code></pre>
+                </div>
+            </div>
         </div>
     </div>
 </span>
