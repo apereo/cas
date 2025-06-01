@@ -37,15 +37,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-          distribution: ${{ env.JDK_DISTRIBUTION }}
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-      - name: Initialize
-        run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+#      - name: Set up JDK
+#        uses: actions/setup-java@v4
+#        with:
+#          java-version: ${{ env.JDK_CURRENT }}
+#          distribution: ${{ env.JDK_DISTRIBUTION }}
+#      - name: Setup Gradle
+#        uses: gradle/actions/setup-gradle@v4
+#      - name: Initialize
+#        run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
 ##########################################################################
 
@@ -109,20 +109,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: List files for debugging
-        run: |
-          echo "→ PWD: $(pwd)"
-          echo "→ .git exists?"; [ -d .git ] && echo "yes" || echo "no"
-          echo "--- git remote -v ---"
-          git remote -v || echo "(no remotes found)"
-          echo "--- .git/config ---"
-          cat .git/config
-          echo "--------------------"
       - name: Run Renovate
         uses: renovatebot/github-action@v42.0.4
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
           configurationFile: .github/renovate.json
+          docker-volumes: |
+            ${{ github.workspace }}:/tmp
         env:
           RENOVATE_DIR: ${{ github.workspace }}/whatever
           LOG_LEVEL: debug
