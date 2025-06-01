@@ -15,7 +15,7 @@ public class StagingRepositoryJob {
 
     private final MonitoredRepository repository;
 
-    @Scheduled(fixedRate = ONE_MINUTE * 5)
+    @Scheduled(fixedRate = ONE_MINUTE * 4)
     void monitorWorkflowRuns() {
         log.info("Monitoring {}", repository.getFullName());
         try {

@@ -25,6 +25,7 @@ import org.semver4j.Semver;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
+
 import java.io.StringReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -76,17 +77,17 @@ public class MonitoredRepository {
 
     public Workflows getSuccessfulWorkflowRunsFor(final Base base, final Commit first) {
         return gitHub.getWorkflowRuns(base.getRepository().getOwner().getLogin(),
-            base.getRepository().getName(), first, Workflows.WorkflowRunStatus.SUCCESS);
+                base.getRepository().getName(), first, Workflows.WorkflowRunStatus.SUCCESS);
     }
 
     public Boolean verifyPullRequest(final PullRequest pullRequest) {
         try {
             removeAllApereoCasBotCommentsFrom(pullRequest);
             val mostRecentCommit = getPullRequestCommits(pullRequest)
-                .stream()
-                .filter(c -> !c.getCommit().isMergeCommit())
-                .toList()
-                .getFirst();
+                    .stream()
+                    .filter(c -> !c.getCommit().isMergeCommit())
+                    .toList()
+                    .getFirst();
             val workflowRuns = getSuccessfulWorkflowRunsFor(pullRequest.getHead(), mostRecentCommit);
             var matchFound = true;
             var missingRuns = new ArrayList<String>();
@@ -141,7 +142,7 @@ public class MonitoredRepository {
             log.debug("Ignoring Milestone dependency upgrade {}", pr);
             return Optional.empty();
         }
-        
+
         var pattern = Pattern.compile("`(\\d+\\.\\d+\\.\\d+).*` \\-\\> `(\\d+\\.\\d+\\.\\d+).*`");
         var matcher = pattern.matcher(pr.getBody());
         if (matcher.find()) {
@@ -157,7 +158,7 @@ public class MonitoredRepository {
             var endingVersion = Semver.coerce(matcher.group(3));
             return Optional.of(new DependencyRange(startingVersion, endingVersion));
         }
-        
+
         pattern = Pattern.compile("Bump (.+) from (\\d+\\.\\d+(\\.\\d+)*).* to (\\d+\\.\\d+(\\.\\d+)*).*");
         matcher = pattern.matcher(pr.getTitle());
         if (matcher.find()) {
@@ -168,17 +169,17 @@ public class MonitoredRepository {
                 targetVersion = matcher.group(4);
             }
             targetVersion = targetVersion.replaceAll("(\\d+.\\d+.\\d+).\\d+", "$1");
-            
+
             var endingVersion = Semver.coerce(targetVersion);
             return Optional.of(new DependencyRange(startingVersion, endingVersion));
         }
 
-        
+
         pattern = Pattern.compile("chore\\(deps\\): bump (.+) from (\\d+\\.\\d+(\\.\\d+)*).* to (\\d+\\.\\d+(\\.\\d+)*).*");
         matcher = pattern.matcher(pr.getTitle());
         if (matcher.find()) {
             var initialVersion = matcher.group(2);
-            var startingVersion =Semver.coerce(initialVersion.replaceAll("(\\d+.\\d+.\\d+).\\d+", "$1"));
+            var startingVersion = Semver.coerce(initialVersion.replaceAll("(\\d+.\\d+.\\d+).\\d+", "$1"));
             var targetVersion = matcher.group(3);
             if (!StringUtils.hasText(targetVersion) || targetVersion.startsWith(".")) {
                 targetVersion = matcher.group(4);
@@ -283,12 +284,12 @@ public class MonitoredRepository {
             var timeline = getPullRequestTimeline(pr);
             var admins = getGitHubProperties().getRepository().getAdmins();
             var approvedByAdmin = timeline
-                .stream()
-                .anyMatch(timelineEntry ->
-                    timelineEntry.isLabeled()
-                        && timelineEntry.getLabel().getName().equals(CasLabels.LABEL_AUTO_MERGE.getTitle())
-                        && timelineEntry.getActor() != null
-                        && admins.contains(timelineEntry.getActor().getLogin()));
+                    .stream()
+                    .anyMatch(timelineEntry ->
+                            timelineEntry.isLabeled()
+                            && timelineEntry.getLabel().getName().equals(CasLabels.LABEL_AUTO_MERGE.getTitle())
+                            && timelineEntry.getActor() != null
+                            && admins.contains(timelineEntry.getActor().getLogin()));
             if (approvedByAdmin) {
                 log.info("Merging admin-approved pull request {}", pr);
                 return approveAndMergePullRequest(pr);
@@ -304,12 +305,12 @@ public class MonitoredRepository {
     public static Optional<Milestone> getMilestoneForBranch(final List<Milestone> milestones, final String branch) {
         val branchVersion = Version.parse(branch.replace(".x", "." + Integer.MAX_VALUE));
         return milestones.stream()
-            .filter(milestone -> {
-                val milestoneVersion = Version.parse(milestone.getTitle());
-                return milestoneVersion.majorVersion() == branchVersion.majorVersion()
-                    && milestoneVersion.minorVersion() == branchVersion.minorVersion();
-            })
-            .findFirst();
+                .filter(milestone -> {
+                    val milestoneVersion = Version.parse(milestone.getTitle());
+                    return milestoneVersion.majorVersion() == branchVersion.majorVersion()
+                           && milestoneVersion.minorVersion() == branchVersion.minorVersion();
+                })
+                .findFirst();
     }
 
     public static String getBranchForMilestone(final Milestone ms, final Optional<Milestone> master) {
@@ -325,8 +326,8 @@ public class MonitoredRepository {
             val rest = new RestTemplate();
 
             val url = String.format("https://raw.githubusercontent.com/%s/%s/master/gradle.properties",
-                repositoryProperties.getOrganization(),
-                repositoryProperties.getName());
+                    repositoryProperties.getOrganization(),
+                    repositoryProperties.getName());
 
             val uri = URI.create(url);
             val entity = rest.getForEntity(uri, String.class);
@@ -357,20 +358,20 @@ public class MonitoredRepository {
         }
         var milestones = getActiveMilestones();
         return branches
-            .stream()
-            .filter(branch -> {
-                if (branch.isMasterBranch()) {
+                .stream()
+                .filter(branch -> {
+                    if (branch.isMasterBranch()) {
+                        return true;
+                    }
+                    if (branch.isMilestoneBranch() && getMilestoneForBranch(milestones, branch.getName()).isEmpty()) {
+                        return false;
+                    }
+                    if (branch.isGhPagesBranch() || branch.isHerokuBranch()) {
+                        return false;
+                    }
                     return true;
-                }
-                if (branch.isMilestoneBranch() && getMilestoneForBranch(milestones, branch.getName()).isEmpty()) {
-                    return false;
-                }
-                if (branch.isGhPagesBranch() || branch.isHerokuBranch()) {
-                    return false;
-                }
-                return true;
-            })
-            .collect(Collectors.toList());
+                })
+                .collect(Collectors.toList());
     }
 
     public String getFullName() {
@@ -405,14 +406,14 @@ public class MonitoredRepository {
 
         var currentVersion = Version.valueOf(currentVersionInMaster.toString().replace("-SNAPSHOT", ""));
         return milestones
-            .stream()
-            .sorted()
-            .filter(milestone -> {
-                var masterVersion = Version.valueOf(milestone.getTitle());
-                return masterVersion.getMajorVersion() == currentVersion.getMajorVersion()
-                    && masterVersion.getMinorVersion() == currentVersion.getMinorVersion();
-            })
-            .findFirst();
+                .stream()
+                .sorted()
+                .filter(milestone -> {
+                    var masterVersion = Version.valueOf(milestone.getTitle());
+                    return masterVersion.getMajorVersion() == currentVersion.getMajorVersion()
+                           && masterVersion.getMinorVersion() == currentVersion.getMinorVersion();
+                })
+                .findFirst();
     }
 
     public PullRequest mergePullRequestWithBase(final PullRequest pr) {
@@ -428,8 +429,8 @@ public class MonitoredRepository {
         }
         log.debug("Merging pull request {} into base branch", pr);
         return gitHub.mergeIntoBase(getOrganization(), getName(),
-            pr, commitTitle, commitMessage,
-            pr.getHead().getSha(), "squash");
+                pr, commitTitle, commitMessage,
+                pr.getHead().getSha(), "squash");
     }
 
     public List<PullRequestReview> getPullRequestReviews(final PullRequest pr) {
@@ -554,7 +555,7 @@ public class MonitoredRepository {
 
     public CheckRun getLatestCompletedCheckRunsFor(final PullRequest pr, String checkName) {
         return this.gitHub.getCheckRunsFor(getOrganization(), getName(),
-            pr.getHead().getSha(), checkName, "completed", "latest");
+                pr.getHead().getSha(), checkName, "completed", "latest");
     }
 
     public CheckRun getLatestCompletedCheckRun(final PullRequest pr) {
@@ -566,7 +567,7 @@ public class MonitoredRepository {
         try {
             val output = Map.of("title", title, "summary", summary);
             return this.gitHub.createCheckRun(getOrganization(), getName(),
-                checkName, pr.getHead().getSha(), "completed", "action_required", output);
+                    checkName, pr.getHead().getSha(), "completed", "action_required", output);
         } catch (final Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -576,8 +577,8 @@ public class MonitoredRepository {
     public boolean createStatusForSuccess(final PullRequest pr, final String context, String description) {
         try {
             return this.gitHub.createStatus(getOrganization(), getName(),
-                pr.getHead().getSha(), "success", "https://apereo.github.io/cas",
-                description, context);
+                    pr.getHead().getSha(), "success", "https://apereo.github.io/cas",
+                    description, context);
         } catch (final Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -587,8 +588,8 @@ public class MonitoredRepository {
     public boolean createStatusForFailure(final PullRequest pr, final String context, String description) {
         try {
             return this.gitHub.createStatus(getOrganization(), getName(),
-                pr.getHead().getSha(), "failure", "https://apereo.github.io/cas",
-                description, context);
+                    pr.getHead().getSha(), "failure", "https://apereo.github.io/cas",
+                    description, context);
         } catch (final Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -612,12 +613,12 @@ public class MonitoredRepository {
     public void cancelQualifyingWorkflowRuns(final List<Branch> currentBranches) {
         currentBranches.forEach(branch -> {
             var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(),
-                branch, Workflows.WorkflowRunStatus.QUEUED);
+                    branch, Workflows.WorkflowRunStatus.QUEUED);
             cancelQualifyingWorkflowRuns(workflowRun);
         });
 
         var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(),
-            Workflows.WorkflowRunEvent.PULL_REQUEST, Workflows.WorkflowRunStatus.QUEUED);
+                Workflows.WorkflowRunEvent.PULL_REQUEST, Workflows.WorkflowRunStatus.QUEUED);
         cancelQualifyingWorkflowRuns(workflowRun);
         cancelWorkflowRunsForMissingPullRequests(workflowRun);
     }
@@ -672,8 +673,8 @@ public class MonitoredRepository {
             val found = pullRequests.stream().filter(pr -> pr.getHead().getRef().equals(run.getHeadBranch())).findFirst();
             if (found.isEmpty()) {
                 Workflows.WorkflowRunStatus.from(run)
-                    .filter(status -> status == Workflows.WorkflowRunStatus.IN_PROGRESS)
-                    .ifPresent(status -> cancelWorkflowRun(run));
+                        .filter(status -> status == Workflows.WorkflowRunStatus.IN_PROGRESS)
+                        .ifPresent(status -> cancelWorkflowRun(run));
 
                 log.debug("Removing workflow run {} without an active pull request", run);
                 gitHub.removeWorkflowRun(getOrganization(), getName(), run);
@@ -692,14 +693,14 @@ public class MonitoredRepository {
         var commit = getHeadCommitFor("master");
         var workflowRuns = gitHub.getWorkflowRuns(getOrganization(), getName(), commit, Workflows.WorkflowRunStatus.FAILURE);
         return workflowRuns
-            .getRuns()
-            .stream()
-            .filter(run -> WorkflowRuns.isAnyOf(run.getName()) && run.getRunAttempt() == 1)
-            .peek(run -> {
-                log.info("Rerunning failed workflow run {}", run);
-                gitHub.rerunFailedWorkflowJobs(getOrganization(), getName(), run);
-            })
-            .collect(Collectors.toSet());
+                .getRuns()
+                .stream()
+                .filter(run -> WorkflowRuns.isAnyOf(run.getName()) && run.getRunAttempt() == 1)
+                .peek(run -> {
+                    log.info("Rerunning failed workflow run {}", run);
+                    gitHub.rerunFailedWorkflowJobs(getOrganization(), getName(), run);
+                })
+                .collect(Collectors.toSet());
     }
 
     public void removeOldWorkflowRuns() {
@@ -714,13 +715,19 @@ public class MonitoredRepository {
                 val staleExp = run.getUpdatedTime().plusDays(gitHubProperties.getStaleWorkflowRunInDays());
                 if (staleExp.isBefore(now)) {
                     Workflows.WorkflowRunStatus.from(run)
-                        .filter(status -> status == Workflows.WorkflowRunStatus.IN_PROGRESS)
-                        .ifPresent(status -> cancelWorkflowRun(run));
+                            .filter(status -> status == Workflows.WorkflowRunStatus.IN_PROGRESS)
+                            .ifPresent(status -> cancelWorkflowRun(run));
 
                     log.info("Removing old workflow run {} @ {}", run, run.getUpdatedTime());
                     gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                 } else if (run.isRemovable()) {
-                    if (run.isConcludedSuccessfully() || run.isSkipped()) {
+                    if (run.getName().equalsIgnoreCase(WorkflowRuns.DEPENDENCY_SUBMISSION_MAVEN.getName())) {
+                        log.info("Removing Maven dependency submission workflow run {} @ {}", run, run.getUpdatedTime());
+                        gitHub.removeWorkflowRun(getOrganization(), getName(), run);
+                    } else if (run.getName().equalsIgnoreCase(WorkflowRuns.DEPENDENCY_SUBMISSION_GRADLE.getName())) {
+                        log.info("Removing Gradle dependency submission workflow run {} @ {}", run, run.getUpdatedTime());
+                        gitHub.removeWorkflowRun(getOrganization(), getName(), run);
+                    } else if (run.isConcludedSuccessfully() || run.isSkipped()) {
                         val completedExp = run.getUpdatedTime().plusDays(gitHubProperties.getCompletedSuccessfulWorkflowRunInDays());
                         if (completedExp.isBefore(now)) {
                             log.info("Removing completed successful workflow run {} @ {}", run, run.getUpdatedTime());
@@ -734,7 +741,7 @@ public class MonitoredRepository {
                         }
                     }
                 } else if (run.getName().equalsIgnoreCase(WorkflowRuns.RERUN_WORKFLOWS.getName())
-                    && ("success".equalsIgnoreCase(run.getConclusion()) || "skipped".equalsIgnoreCase(run.getConclusion()))) {
+                           && (run.isConcludedSuccessfully() || run.isSkipped())) {
                     log.info("Removing rerun workflow {} @ {}", run, run.getUpdatedTime());
                     gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                 }

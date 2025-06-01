@@ -148,6 +148,8 @@ public class Workflows {
 
         private final long runAttempt;
 
+        private final User actor;
+
         @JsonCreator
         public WorkflowRun(@JsonProperty("id") long id,
                            @JsonProperty("name") String name,
@@ -162,6 +164,7 @@ public class Workflows {
                            @JsonProperty("head_sha") String headSha,
                            @JsonProperty("workflow_id") long workflowId,
                            @JsonProperty("run_attempt") long runAttempt,
+                           @JsonProperty("actor") User actor,
                            @JsonProperty("head_commit") HeadCommit headCommit,
                            @JsonProperty("created_at") final OffsetDateTime creationTime,
                            @JsonProperty("updated_at") final OffsetDateTime updatedTime,
@@ -183,6 +186,7 @@ public class Workflows {
             this.creationTime = creationTime;
             this.updatedTime = updatedTime;
             this.runAttempt = runAttempt;
+            this.actor = actor;
         }
 
         public boolean isConcludedSuccessfully() {
