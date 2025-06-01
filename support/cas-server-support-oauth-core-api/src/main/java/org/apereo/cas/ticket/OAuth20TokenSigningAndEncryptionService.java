@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 public interface OAuth20TokenSigningAndEncryptionService {
     /**
-     * Sign id token.
+     * Sign ID token.
      *
      * @param registeredService the service
      * @param claims            the claims

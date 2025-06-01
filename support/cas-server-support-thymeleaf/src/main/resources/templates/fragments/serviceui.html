@@ -38,7 +38,7 @@
         </div>
 
         <div th:unless="${serviceUIMetadata}" class="d-flex align-items-center pr-2">
-            <img th:if="${registeredService.logo}" th:src="${registeredService.logo}"/>
+            <img th:if="${registeredService.logo}" th:src="${registeredService.logo}" th:alt="${registeredService.name}"/>
             <div id="servicedesc" class="ml-2">
                 <strong><i class="mdi mdi-web" aria-hidden="true"></i>[[${registeredService.name}]]</strong>
                 <p th:utext="${registeredService.description}">Registered Service Description</p>

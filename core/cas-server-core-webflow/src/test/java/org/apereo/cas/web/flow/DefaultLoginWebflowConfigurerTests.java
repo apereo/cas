@@ -44,7 +44,7 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_POST_VIEW));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_REDIRECT));
-        assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK));
+        assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_SERVICE_AUTHZ));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_VIEW_REDIR_UNAUTHZ_URL));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_VIEW_SERVICE_ERROR));

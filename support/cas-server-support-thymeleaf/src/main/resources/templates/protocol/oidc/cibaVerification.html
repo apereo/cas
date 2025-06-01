@@ -17,7 +17,7 @@
         <h1 th:text="#{screen.oidc.confirm.ciba.header}"/>
         
         <div class="d-flex flex-column align-items-center mb-2">
-            <img th:src="${registeredService.logo}" th:if="${registeredService.logo}"/>
+            <img th:src="${registeredService.logo}" th:if="${registeredService.logo}" alt="Service logo"/>
             <h2 th:text="${registeredService.name}"/>
             <p th:text="${registeredService.description}"/>
         </div>

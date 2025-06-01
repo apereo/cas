@@ -10,6 +10,7 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,7 +70,7 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
     private static ConditionOutcome verifySelectedFeatureModules(final CasFeatureModule.FeatureCatalog[] features,
                                                                  final String module, final String selectedModules) {
 
-        val selectedFeatures = Arrays.asList(selectedModules.split(","));
+        val selectedFeatures = List.of(selectedModules.split(","));
         var featureIsSelected = false;
         for (val feature : features) {
             val property = feature.toProperty(module);

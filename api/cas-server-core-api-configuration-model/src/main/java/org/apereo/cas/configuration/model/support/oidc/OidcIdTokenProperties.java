@@ -26,7 +26,7 @@ public class OidcIdTokenProperties implements Serializable {
     private static final long serialVersionUID = 813328615694269276L;
 
     /**
-     * Hard timeout to kill the id token and expire it.
+     * Hard timeout to kill the ID token and expire it.
      */
     @DurationCapable
     private String maxTimeToLiveInSeconds = "PT8H";

@@ -61,7 +61,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `518` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `519` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
@@ -91,8 +91,10 @@ internally based on the `Host` http header, in scenarios where CAS is deployed b
 - A new [Heimdall authorization policy](../authorization/Heimdall-Authorization-Overview.html) for SQL databases.
 - We have laid the groundwork to begin supporting OpenID Connect federations. Support for this topic will gradually mature as federations begin to operate and remain functional. 
 - Apache Tomcat's `RewriteValve` can be added as an engine valve.
+- A visual representation of the CAS authentication flows, as a state diagram, is now available in the [Palantir admin console](../installation/Admin-Dashboard.html).
 - CAS is publishing events internally when webflow actions are executed. Such events are recorded into the [CAS event repository](../authentication/Configuring-Authentication-Events.html) and are also available in the [Palantir admin console](../installation/Admin-Dashboard.html).
 - Redis integration tests are upgraded to use the latest Redis `8.0` server.
+- Apache Syncope integration tests are upgraded to use the latest Syncope `4.0` server.
 - Support for [ACME Integration](../integration/ACME-Integration.html) is deprecated.
 - [GitHub Actions CI workflows](https://github.com/apereo/cas/actions) check for code spelling mistakes and typos.
 - [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html) is to tuned to apply an LZ4 compression routine to stored documents.
@@ -107,3 +109,6 @@ internally based on the `Host` http header, in scenarios where CAS is deployed b
 - CAS endpoints are grouped and tagged for better visibility in the [Swagger UI](../integration/Swagger-Integration.html).
 - A large collection of documentation improvements and fixes to remove typos and grammatical errors.
 - Using advanced static analysis tools, a large number of leaking IO streams are closed properly.
+- CAS documentation is built with YJIT enabled, and the build time is cut down by approximately 6 minutes.
+- When processing logout requests for OpenID Connect, the `iss` claim of the ID token hint is now cross-checked against the `idTokenIssuer` property of the registered client application.
+- A series of small user interface improvements to assist with accessibility and usability.

@@ -30,7 +30,6 @@ import org.springframework.context.annotation.Bean;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,7 +109,7 @@ class CachingPrincipalAttributesRepositoryTests {
                 .build();
             val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5);
             repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD);
-            repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
+            repository.setAttributeRepositoryIds(Set.of("Stub"));
             val repositoryAttributes = repository.getAttributes(context);
             assertTrue(repositoryAttributes.containsKey(MAIL));
             val emailValue = repositoryAttributes.get(MAIL).getFirst().toString();
@@ -126,7 +125,7 @@ class CachingPrincipalAttributesRepositoryTests {
                 .build();
 
             val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5);
-            repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
+            repository.setAttributeRepositoryIds(Set.of("Stub"));
             repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
             val repositoryAttributes = repository.getAttributes(context);
             assertTrue(repositoryAttributes.containsKey(MAIL));
@@ -144,7 +143,7 @@ class CachingPrincipalAttributesRepositoryTests {
                 .build();
 
             val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5);
-            repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
+            repository.setAttributeRepositoryIds(Set.of("Stub"));
             repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
             val repositoryAttributes = repository.getAttributes(context);
             val mailAttr = repositoryAttributes.get(MAIL);

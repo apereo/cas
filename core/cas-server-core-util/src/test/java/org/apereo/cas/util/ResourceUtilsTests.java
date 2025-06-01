@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -79,7 +79,7 @@ class ResourceUtilsTests {
         try (val appCtx = new StaticApplicationContext()) {
             appCtx.refresh();
             assertDoesNotThrow(() -> ResourceUtils.exportResources(appCtx, parent,
-                Collections.singletonList("classpath:/" + resourceName)));
+                List.of("classpath:/" + resourceName)));
         }
         assertTrue(new File(parent, FilenameUtils.getName(resourceName)).exists());
         

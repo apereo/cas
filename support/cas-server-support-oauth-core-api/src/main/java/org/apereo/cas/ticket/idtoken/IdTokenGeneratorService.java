@@ -9,7 +9,7 @@ package org.apereo.cas.ticket.idtoken;
 @FunctionalInterface
 public interface IdTokenGeneratorService {
     /**
-     * Generate id token.
+     * Generate ID token.
      *
      * @param context the context
      * @return the string
