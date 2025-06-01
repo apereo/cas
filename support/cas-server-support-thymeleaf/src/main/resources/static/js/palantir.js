@@ -1247,6 +1247,7 @@ async function initializeCasSpringWebflowOperations() {
     function drawFlowStateDiagram() {
         $("#webflowMarkdownContainer").addClass("hide");
         $("#webflowDiagram").addClass("hide");
+        hideBanner();
         const flowId = $("#webflowFilter").val();
 
         Swal.fire({
@@ -1416,6 +1417,7 @@ async function initializeCasSpringWebflowOperations() {
                 $("#webflowDiagram").removeClass("hide");
                 Swal.close();
                 bindFunctions?.(container);
+                updateNavigationSidebar();
             },
             error: (xhr, textStatus, errorThrown) => {
                 console.error("Error fetching data:", errorThrown);

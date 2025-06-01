@@ -52,6 +52,10 @@ A CAS server installation and deployment process can be tuned to build and run
 as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html). We continue to polish native runtime hints.
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
 to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
+ 
+### OpenID Connect Native SSO
+
+CAS now supports [OpenID Connect Native SSO](../authentication/OIDC-Authentication-NativeSSO-MobileApps.html).
 
 ### Testing Strategy
 
