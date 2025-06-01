@@ -111,13 +111,19 @@ jobs:
         uses: actions/checkout@v4
       - name: List files for debugging
         run: |
-          pwd
-          ls -R -a .
+          echo "→ PWD: $(pwd)"
+          echo "→ .git exists?"; [ -d .git ] && echo "yes" || echo "no"
+          echo "--- git remote -v ---"
+          git remote -v || echo "(no remotes found)"
+          echo "--- .git/config ---"
+          cat .git/config
+          echo "--------------------"
       - name: Run Renovate
         uses: renovatebot/github-action@v42.0.4
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
           configurationFile: .github/renovate.json
         env:
+          RENOVATE_DIR: ${{ github.workspace }}/whatever
           LOG_LEVEL: debug
           
