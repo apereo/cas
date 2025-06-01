@@ -46,13 +46,6 @@ public class DefaultRegisteredServiceIndexService implements RegisteredServiceIn
     }
 
     @Override
-    public Optional<RegisteredService> findServiceBy(final long id) {
-        return isEnabled()
-            ? indexedRegisteredServices.stream().filter(registeredService -> registeredService.getId() == id).findFirst()
-            : Optional.empty();
-    }
-
-    @Override
     public void initialize() {
         if (isEnabled()) {
             registeredServiceLocators.forEach(locator -> locator.getRegisteredServiceIndexes()
@@ -76,6 +69,13 @@ public class DefaultRegisteredServiceIndexService implements RegisteredServiceIn
         }
     }
 
+    @Override
+    public Optional<RegisteredService> findServiceBy(final long id) {
+        return isEnabled()
+            ? indexedRegisteredServices.stream().filter(registeredService -> registeredService.getId() == id).findFirst()
+            : Optional.empty();
+    }
+    
     @Override
     public Stream<RegisteredService> findServiceBy(final RegisteredServiceQuery... queries) {
         if (isEnabled()) {

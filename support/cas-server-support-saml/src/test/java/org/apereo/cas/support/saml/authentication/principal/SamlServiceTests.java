@@ -6,8 +6,6 @@ import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.config.CasSamlAutoConfiguration;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.ServicesManagerConfigurationContext;
-import org.apereo.cas.services.mgmt.DefaultServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -42,12 +40,7 @@ class SamlServiceTests extends AbstractOpenSamlTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
-
-
-    @Autowired
-    @Qualifier(ServicesManagerConfigurationContext.BEAN_NAME)
-    private ServicesManagerConfigurationContext servicesManagerConfigurationContext;
-
+    
     @Autowired
     @Qualifier(UrlValidator.BEAN_NAME)
     private UrlValidator urlValidator;
@@ -62,7 +55,7 @@ class SamlServiceTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
         val impl = samlServiceFactory.createService(request);
 
-        val response = new SamlServiceResponseBuilder(new DefaultServicesManager(servicesManagerConfigurationContext), this.urlValidator)
+        val response = new SamlServiceResponseBuilder(servicesManager, this.urlValidator)
             .build(impl, "ticketId", CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.responseType());
@@ -83,7 +76,7 @@ class SamlServiceTests extends AbstractOpenSamlTests {
         val request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
         val impl = samlServiceFactory.createService(request);
-        val response = new SamlServiceResponseBuilder(new DefaultServicesManager(servicesManagerConfigurationContext), this.urlValidator)
+        val response = new SamlServiceResponseBuilder(servicesManager, this.urlValidator)
             .build(impl, null, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.responseType());
