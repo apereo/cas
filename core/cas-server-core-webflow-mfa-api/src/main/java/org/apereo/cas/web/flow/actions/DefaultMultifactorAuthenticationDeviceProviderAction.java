@@ -6,6 +6,7 @@ import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.HashSet;
@@ -31,5 +32,11 @@ public class DefaultMultifactorAuthenticationDeviceProviderAction extends BaseCa
         FunctionUtils.doIfNotNull(currentAccounts, __ -> accounts.addAll(currentAccounts));
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationRegisteredDevices(requestContext, new HashSet<>(accounts));
         return null;
+    }
+
+    @Override
+    public String getName() {
+        val sources = StringUtils.remove(String.join(StringUtils.EMPTY, multifactorAuthenticationDeviceManager.getSource()), " ");
+        return MultifactorAuthenticationDeviceProviderAction.super.getName() + sources;
     }
 }

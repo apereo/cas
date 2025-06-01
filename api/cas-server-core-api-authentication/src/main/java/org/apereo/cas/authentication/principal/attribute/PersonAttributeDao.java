@@ -6,7 +6,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.Ordered;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -259,9 +258,9 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
         for (val stringObjectEntry : personAttributesMap.entrySet()) {
             val value = stringObjectEntry.getValue();
             if (value instanceof final List list && !list.isEmpty()) {
-                personAttributes.put(stringObjectEntry.getKey(), (List<Object>) value);
-            } else {
-                personAttributes.put(stringObjectEntry.getKey(), new ArrayList<>(Collections.singletonList(value)));
+                personAttributes.put(stringObjectEntry.getKey(), list);
+            } else if (value != null) {
+                personAttributes.put(stringObjectEntry.getKey(), new ArrayList<>(List.of(value)));
             }
         }
         return personAttributes;

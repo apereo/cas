@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import org.apereo.cas.authentication.attribute.AggregatingPersonAttributeDao;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.resolvers.TenantPrincipalResolver;
@@ -22,6 +23,7 @@ public class PersonDirectoryRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         registerSpringProxyHints(hints, PersonDirectoryAttributeRepositoryPlan.class, DisposableBean.class);
         registerSpringProxyHints(hints, InitializingBean.class, PersonAttributeDao.class);
+        registerSpringProxyHints(hints, AggregatingPersonAttributeDao.class, PersonAttributeDao.class);
         registerSpringProxyHints(hints, PrincipalAttributesRepositoryCache.class, Closeable.class);
 
         registerProxyHints(hints, PersonDirectoryAttributeRepositoryPlanConfigurer.class);

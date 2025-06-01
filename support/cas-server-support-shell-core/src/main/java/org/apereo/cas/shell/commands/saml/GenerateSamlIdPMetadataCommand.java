@@ -23,7 +23,7 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -84,7 +84,7 @@ public class GenerateSamlIdPMetadataCommand {
             applicationContext);
         val writer = new DefaultSamlIdPCertificateAndKeyWriter(entityId);
         if (StringUtils.isNotBlank(subjectAltNames)) {
-            writer.setUriSubjectAltNames(Arrays.asList(StringUtils.split(subjectAltNames, ",")));
+            writer.setUriSubjectAltNames(List.of(StringUtils.split(subjectAltNames, ",")));
         }
 
         val generateMetadata = FunctionUtils.doIf(locator.exists(Optional.empty()),

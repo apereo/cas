@@ -25,7 +25,7 @@
                         <img id="guaImage" style="width:130px;height:130px;border-radius:20%;
                                 box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
                                 border: 1px solid #ddd;border-radius: 4px;"
-                            th:src="@{'data:image/jpeg;base64,' + ${guaUserImage}}" />
+                            th:src="@{'data:image/jpeg;base64,' + ${guaUserImage}}" alt="User graphic" />
                     </div>
                     <form method="post" id="fm1" class="fm-v clearfix" th:action="@{/login}">
                         <input type="hidden" name="username" th:value="${guaUsername}" />

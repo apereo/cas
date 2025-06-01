@@ -46,7 +46,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         super(properties, servicesManager, principalFactory, dataSource);
         if (StringUtils.isBlank(properties.getFieldPassword())) {
             LOGGER.warn("When the password field is left undefined, CAS will skip comparing database and user passwords for equality "
-                + ", (specially if the query results do not contain the password field),"
+                + ", (especially if the query results do not contain the password field),"
                 + "and will instead only rely on a successful query execution with returned results in order to verify credentials");
         }
     }

@@ -1,0 +1,22 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client2",
+  "clientSecret": "secret2",
+  "serviceId" : "^https://localhost:9859/anything/other.*",
+  "bypassApprovalPrompt": true,
+  "name" : "Sample",
+  "id" : 2,
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code", "client_credentials", "urn:ietf:params:oauth:grant-type:token-exchange" ] ],
+  "tokenExchangePolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
+    "allowedTokenTypes": [ "java.util.HashSet", [
+      "urn:openid:params:token-type:device-secret",
+      "urn:ietf:params:oauth:token-type:access_token",
+      "urn:ietf:params:oauth:token-type:id_token"
+    ] ],
+    "allowedResources": [ "java.util.HashSet", [
+      "^https://localhost:9859/anything/backend.*"
+    ] ]
+  }
+}

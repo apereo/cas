@@ -27,7 +27,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -68,7 +67,7 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
     }
 
     public SamlIdentityProviderEntityParser(final SamlIdentityProviderEntity... entity) {
-        this(Arrays.asList(entity));
+        this(List.of(entity));
     }
 
     public SamlIdentityProviderEntityParser(final List<SamlIdentityProviderEntity> entity) {
@@ -204,7 +203,7 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
                 && idpMetadataResolver.getEntityDescriptorElement() instanceof final EntityDescriptor entityDescriptor) {
                 return List.of(entityDescriptor);
             }
-            return Arrays.asList(Iterables.toArray(providers, EntityDescriptor.class));
+            return List.of(Iterables.toArray(providers, EntityDescriptor.class));
         });
     }
 }

@@ -83,6 +83,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
             new LinkedHashSet<>(discoveryConfig.getCodeChallengeMethodsSupported()));
 
         discovery.setRequirePushedAuthorizationRequests(discoveryConfig.isRequirePushedAuthorizationRequests());
+        discovery.setNativeSsoSupported(discoveryConfig.isNativeSsoSupported());
         discovery.setRequestParameterSupported(discoveryConfig.isRequestParameterSupported());
         discovery.setRequestUriParameterSupported(discoveryConfig.isRequestUriParameterSupported());
         discovery.setRequestObjectSigningAlgValuesSupported(new LinkedHashSet<>(discoveryConfig.getRequestObjectSigningAlgValuesSupported()));

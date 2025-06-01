@@ -7,9 +7,13 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.oidc.OidcConfigurationContext;
+import org.apereo.cas.oidc.nativesso.DefaultOidcDeviceSecretGenerator;
+import org.apereo.cas.oidc.nativesso.OidcDeviceSecretGenerator;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestValidator;
+import org.apereo.cas.oidc.token.OidcAccessTokenTokenExchangeGrantRequestExtractor;
 import org.apereo.cas.oidc.token.OidcIdTokenExpirationPolicyBuilder;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
+import org.apereo.cas.oidc.token.OidcTokenExchangeGrantTypeTokenRequestValidator;
 import org.apereo.cas.oidc.token.ciba.AccessTokenCibaGrantRequestExtractor;
 import org.apereo.cas.oidc.token.ciba.CibaPingTokenDeliveryHandler;
 import org.apereo.cas.oidc.token.ciba.CibaPollTokenDeliveryHandler;
@@ -71,6 +75,22 @@ class OidcResponseConfiguration {
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcAccessTokenResponseGenerator(oidcConfigurationContext);
+        }
+        
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AccessTokenGrantRequestExtractor accessTokenTokenExchangeGrantRequestExtractor(
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            return new OidcAccessTokenTokenExchangeGrantRequestExtractor(oidcConfigurationContext);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OAuth20TokenRequestValidator oauthTokenExchangeGrantTypeTokenRequestValidator(
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            return new OidcTokenExchangeGrantTypeTokenRequestValidator(oidcConfigurationContext);
         }
     }
 
@@ -172,7 +192,7 @@ class OidcResponseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oidcAccessTokenCibaGrantRequestValidator(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final OidcConfigurationContext oidcConfigurationContext) {
+            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcAccessTokenCibaGrantRequestValidator(oidcConfigurationContext);
         }
     }
@@ -248,6 +268,13 @@ class OidcResponseConfiguration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = OidcDeviceSecretGenerator.BEAN_NAME)
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OidcDeviceSecretGenerator oidcDeviceSecretGenerator() {
+            return new DefaultOidcDeviceSecretGenerator();
+        }
+        
+        @Bean
         @ConditionalOnMissingBean(name = "oidcIdTokenExpirationPolicy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ExpirationPolicyBuilder oidcIdTokenExpirationPolicy(final CasConfigurationProperties casProperties) {
@@ -285,7 +312,7 @@ class OidcResponseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcCibaAccessTokenGrantRequestExtractor")
         public AccessTokenGrantRequestExtractor oidcCibaAccessTokenGrantRequestExtractor(
-            @Qualifier(OidcConfigurationContext.BEAN_NAME) final OidcConfigurationContext context) {
+            @Qualifier(OidcConfigurationContext.BEAN_NAME) final ObjectProvider<OidcConfigurationContext> context) {
             return new AccessTokenCibaGrantRequestExtractor(context);
         }
     }

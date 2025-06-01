@@ -107,6 +107,9 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("request_uri_parameter_supported")
     private boolean requestUriParameterSupported = true;
 
+    @JsonProperty("native_sso_supported")
+    private boolean nativeSsoSupported = true;
+
     @JsonProperty("request_parameter_supported")
     private boolean requestParameterSupported = true;
 
