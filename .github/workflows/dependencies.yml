@@ -112,7 +112,7 @@ jobs:
       - name: List files for debugging
         run: |
           pwd
-          ls -R .
+          ls -R -a .
       - name: Run Renovate
         uses: renovatebot/github-action@v42.0.4
         with:
@@ -120,3 +120,4 @@ jobs:
           configurationFile: .github/renovate.json
         env:
           LOG_LEVEL: debug
+          
