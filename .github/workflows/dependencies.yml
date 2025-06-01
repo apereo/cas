@@ -101,17 +101,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ env.JDK_CURRENT }}
-          distribution: ${{ env.JDK_DISTRIBUTION }}
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+      - name: Install Renovate
+        run: npm install -g renovate@latest
       - name: Run Renovate
-        run: |
-          npm install -g renovate
-          renovate --version
-          renovate --platform local
+        run: renovate --platform local --detect-host-rules-from-env
