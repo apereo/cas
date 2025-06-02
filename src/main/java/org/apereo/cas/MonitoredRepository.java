@@ -245,13 +245,13 @@ public class MonitoredRepository {
                             if (stagingRepository && dependencyVersion.isQualifiedForMinorUpgrade()) {
                                 if (pr.getAssignee() == null) {
                                     log.info("Assigning dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
-                                    gitHub.assignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
-                                } else if (pr.getAssignee().getLogin().equalsIgnoreCase("apereocas-bot")) {
+                                    gitHub.assignPullRequest(getOrganization(), getName(), pr, Users.APEREO_CAS_BOT);
+                                } else if (pr.getAssignee().getLogin().equalsIgnoreCase(Users.APEREO_CAS_BOT)) {
                                     var checkrun = getLatestCompletedCheckRunsFor(pr, "build-pull-request");
                                     if (checkrun == null || checkrun.getCount() == 0) {
                                         log.info("Unassigning and re-assigning dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
-                                        gitHub.unassignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
-                                        gitHub.assignPullRequest(getOrganization(), getName(), pr, "apereocas-bot");
+                                        gitHub.unassignPullRequest(getOrganization(), getName(), pr, Users.APEREO_CAS_BOT);
+                                        gitHub.assignPullRequest(getOrganization(), getName(), pr, Users.APEREO_CAS_BOT);
                                     }
                                     if (checkrun != null && checkrun.getCount() == 1) {
                                         var run = checkrun.getRuns().getFirst();
@@ -410,8 +410,8 @@ public class MonitoredRepository {
                 .sorted()
                 .filter(milestone -> {
                     var masterVersion = Version.valueOf(milestone.getTitle());
-                    return masterVersion.getMajorVersion() == currentVersion.getMajorVersion()
-                           && masterVersion.getMinorVersion() == currentVersion.getMinorVersion();
+                    return masterVersion.majorVersion() == currentVersion.majorVersion()
+                           && masterVersion.minorVersion() == currentVersion.minorVersion();
                 })
                 .findFirst();
     }
@@ -466,7 +466,7 @@ public class MonitoredRepository {
     }
 
     public void removeAllApereoCasBotCommentsFrom(final PullRequest pr) {
-        removeAllCommentsFrom(pr, "apereocas-bot");
+        removeAllCommentsFrom(pr, Users.APEREO_CAS_BOT);
     }
 
     private List<Comment> getAllCommentsFor(final PullRequest pr) {

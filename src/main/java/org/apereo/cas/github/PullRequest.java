@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.ToString;
+import org.apereo.cas.Users;
 
 import java.util.List;
 
@@ -166,8 +167,12 @@ public class PullRequest {
         return user.getLogin().equalsIgnoreCase("dependabot[bot]");
     }
 
+    public boolean isApereoCasBot() {
+        return user.getLogin().equalsIgnoreCase(Users.APEREO_CAS_BOT);
+    }
+    
     public boolean isBot() {
-        return isDependaBot() || isRenovateBot();
+        return isApereoCasBot() || isDependaBot() || isRenovateBot();
     }
     
     public boolean isClosed() {
