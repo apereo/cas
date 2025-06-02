@@ -9,9 +9,8 @@ category: Logs & Audits
 # SysLog Logging
 
 CAS logging framework does have the ability to route messages to an external
-syslog instance. To configure this,
-you first to configure the `SysLogAppender` and then specify which
-messages needs to be routed over to this instance:
+syslog instance. To configure this, you first configure the `SysLogAppender` and then specify which
+messages need to be routed over to this instance:
 
 ```xml
 ...

@@ -78,7 +78,7 @@ It is often helpful to externalize the `log4j2.xml` file to a system path to pre
 The location of `log4j2.xml` file by default is on the runtime classpath and can be controlled
 via the CAS properties. 
 
-{% include_cached casproperties.html properties="cas.logging" thirdPartyStartsWith="logging." %}
+{% include_cached casproperties.html thirdPartyStartsWith="logging." %}
 
 To disable log sanitization, start the container with the system property `CAS_TICKET_ID_SANITIZE_SKIP=true`.
 
