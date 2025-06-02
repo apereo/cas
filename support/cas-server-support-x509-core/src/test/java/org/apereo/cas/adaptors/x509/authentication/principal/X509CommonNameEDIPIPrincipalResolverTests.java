@@ -13,6 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,8 +64,12 @@ class X509CommonNameEDIPIPrincipalResolverTests {
     }
 
     private static X509Certificate getCertificateFrom(final String certPath) throws Exception {
-        return (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
-            new FileInputStream(X509CommonNameEDIPIPrincipalResolverTests.class.getResource(certPath).getPath()));
+        val certLocation = X509CommonNameEDIPIPrincipalResolverTests.class.getResource(certPath).getPath();
+        return FunctionUtils.doUnchecked(() -> {
+            try (val in = new FileInputStream(certLocation)) {
+                return (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(in);
+            }
+        });
     }
 
     /**
