@@ -289,7 +289,7 @@ and the target CAS version that would ship with your changes in place. When in d
 
 If the enhancement is rather substantial or provides an integration with an external system or product, a best course of action would be to:
 
-- Build the enhancement as **external CAS module** outside the codebase in  public as open-source software with a CAS-compatible license.
+- Build the enhancement as **external CAS module** outside the codebase in public as open-source software with a CAS-compatible license.
 - Invite others to collaborate with you to define, refine, test, build and deploy the changeset into production.
 - Give yourself, your team and the collaborators time to verify the changes, show commitment and build support. Time allows you to demonstrate activity and community interest beyond words and on-paper intentions so the overall community can see your extension, changeset or idea is useful, in-demand and appealing to others. You may need a week, a month, three years, or more.
 

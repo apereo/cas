@@ -23,7 +23,7 @@ Specifically you want to make sure `DEBUG` levels are turned on the `org.apereo`
 ```
 
 When changes are applied, restart the server environment and observe the log files to get a better 
-understanding of CAS behavior. For more info, please [review  this guide](../logging/Logging.html) on how to configure logs with CAS.
+understanding of CAS behavior. For more info, please [review this guide](../logging/Logging.html) on how to configure logs with CAS.
 
 Note that the above configuration block only addresses logging behavior of CAS components; not those
 upon which CAS depends. Consult the log4j configuration and turn on appropriate `DEBUG` logs for each relevant component.

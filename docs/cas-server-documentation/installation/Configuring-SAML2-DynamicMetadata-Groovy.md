@@ -8,7 +8,7 @@ category: Protocols
 
 # Groovy - SAML2 Metadata Management
 
-A metadata location for a SAML service definition may  point to an external Groovy script, allowing the script to programmatically
+A metadata location for a SAML service definition may point to an external Groovy script, allowing the script to programmatically
 determine and build the metadata resolution machinery to be added to the collection of the existing resolvers.
 
 ```json
