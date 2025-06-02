@@ -100,7 +100,7 @@ JWT is automatically signed and encrypted by CAS and can only be decoded by the 
 
 The QR code contains a special identifier embedded within that allows the mobile device to establish 
 a communication channel using web sockets to the CAS server. The mobile device must be able 
-to scan the QR code  to extract the channel id in order to establish a 
+to scan the QR code to extract the channel id in order to establish a 
 communication route between CAS and the device.
 
 ## Mobile Device Authorization
