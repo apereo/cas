@@ -12,8 +12,8 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalAttribute
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +33,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
  * This is {@link X509CommonNameEDIPIPrincipalResolverTests}.
