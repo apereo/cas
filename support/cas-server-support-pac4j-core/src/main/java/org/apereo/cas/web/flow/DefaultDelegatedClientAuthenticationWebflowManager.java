@@ -54,9 +54,7 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
             trackSessionIdForCasClient(webContext, ticket, instance);
         } else {
             val builders = getDelegatedClientSessionManagers(client);
-            for (val builder : builders) {
-                builder.trackIdentifier(webContext, ticket, client);
-            }
+            builders.parallelStream().forEach(builder -> builder.trackIdentifier(webContext, ticket, client));
         }
         return ticket;
     }

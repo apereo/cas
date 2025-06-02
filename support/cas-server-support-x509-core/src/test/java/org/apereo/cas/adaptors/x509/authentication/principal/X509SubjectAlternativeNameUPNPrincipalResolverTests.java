@@ -26,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.io.FileInputStream;
+import org.apereo.cas.util.function.FunctionUtils;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
@@ -123,8 +124,12 @@ class X509SubjectAlternativeNameUPNPrincipalResolverTests {
         val resolver = new X509SubjectAlternativeNameUPNPrincipalResolver(context);
         resolver.setAlternatePrincipalAttribute(alternatePrincipalAttribute);
         resolver.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
-        val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
-            new FileInputStream(getClass().getResource(certPath).getPath()));
+        val certLocation = getClass().getResource(certPath).getPath();
+        val certificate = (X509Certificate) FunctionUtils.doUnchecked(() -> {
+            try (val in = new FileInputStream(certLocation)) {
+                return CertificateFactory.getInstance("X509").generateCertificate(in);
+            }
+        });
 
         val userId = resolver.resolvePrincipalInternal(certificate);
         assertEquals(expectedResult, userId);
