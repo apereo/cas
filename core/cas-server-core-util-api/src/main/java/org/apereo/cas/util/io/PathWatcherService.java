@@ -18,6 +18,8 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import static java.nio.file.StandardWatchEventKinds.*;
 
@@ -45,6 +47,8 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
     @Nullable
     private Thread thread;
 
+    private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
+
     public PathWatcherService(final File watchablePath, final CheckedConsumer<File> onModify) {
         this(watchablePath.toPath(),
             __ -> {
@@ -70,7 +74,8 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
             try {
                 var key = (WatchKey) null;
                 while ((key = watchService.take()) != null) {
-                    handleEvent(key);
+                    val finalKey = key;
+                    executorService.submit(() -> handleEvent(finalKey));
                     val valid = key.reset();
                     if (!valid) {
                         LOGGER.info("Directory key is no longer valid. Quitting watcher service");
@@ -90,6 +95,7 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
         if (this.thread != null) {
             thread.interrupt();
         }
+        executorService.shutdownNow();
         LOGGER.trace("Closed service registry watcher thread");
     }
 

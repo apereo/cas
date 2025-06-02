@@ -126,8 +126,6 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         return StreamSupport
             .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
             .map(key -> (String) redisTemplate.getKeySerializer().deserialize(key))
-            .collect(Collectors.toSet())
-            .stream()
             .onClose(() -> IOUtils.closeQuietly(cursor));
     }
 }

@@ -29,6 +29,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import java.io.FileInputStream;
 import java.io.IOException;
+import org.apereo.cas.util.function.FunctionUtils;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.stream.Stream;
@@ -142,8 +143,11 @@ class X509SubjectPrincipalResolverTests {
         val resolver = new X509SubjectPrincipalResolver(context);
         resolver.setPrincipalDescriptor(descriptor);
         resolver.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
-        val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
-            new FileInputStream(certPath));
+        val certificate = (X509Certificate) FunctionUtils.doUnchecked(() -> {
+            try (val in = new FileInputStream(certPath)) {
+                return CertificateFactory.getInstance("X509").generateCertificate(in);
+            }
+        });
 
         assertEquals(expectedResult, resolver.resolvePrincipalInternal(certificate));
     }
