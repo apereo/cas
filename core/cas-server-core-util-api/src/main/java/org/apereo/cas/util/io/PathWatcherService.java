@@ -69,6 +69,7 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
     }
 
     @Override
+    @SuppressWarnings("FutureReturnValueIgnored")
     public void run() {
         if (shouldEnableWatchService()) {
             try {
