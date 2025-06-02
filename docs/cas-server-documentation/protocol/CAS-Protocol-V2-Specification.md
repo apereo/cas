@@ -569,7 +569,7 @@ manner performs adequately:
                 <p>CAS login successful.</p>
                 <p>  Click <a xhref="https://portal.yale.edu/Login?ticket=ST-..." mce_href="https://portal.yale.edu/Login?ticket=ST-...">here</a>
                 to access the service you requested.<br />  </p>
-            </noscropt>
+            </noscript>
         </body>
     </html>
 

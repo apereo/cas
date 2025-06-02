@@ -15,7 +15,7 @@ enterprise multilingual identity provider and single sign-on solution for the we
 be a comprehensive platform for your authentication and authorization needs.
 
 CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is an open-source Java server
-component by the same name hosted here, with support for a plethora of additional authentication protocols and features such as SAML2, OpenID Connect, MFA
+component by the same name hosted here, with support for a plethora of additional authentication protocols and features such as SAML2, OpenID Connect, MFA,
 and many more.
 
 ## Contributions

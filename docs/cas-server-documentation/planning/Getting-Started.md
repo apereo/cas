@@ -10,9 +10,9 @@ category: Planning
 
 We want to start by saying thank you for using CAS.
 
-This document provides a high-level guide on how to get started with a CAS server deployment. 
-The sole focus of the guide is describe the process
-that must be followed and adopted by CAS deployers in order to arrive at a successful 
+This document provides a high-level guide on how to get started with a CAS server deployment.
+The sole focus of the guide is to describe the process
+that must be followed and adopted by CAS deployers in order to arrive at a successful
 and sustainable architecture and deployment.
        
 ## Before You Begin
