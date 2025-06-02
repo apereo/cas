@@ -12,7 +12,7 @@ Our premier *free* support channel is community discussion mediated primarily vi
 
 ## Apereo Foundation Membership
 
-The Apereo Foundation is a New Jersey non-stock, non-profit corporation, with members drawn from all walks of life and industry sectors on four continents. **It’s mission is to help educational organizations deliver their mission, by developing and sustaining open source software**. By becoming an Apereo Foundation member, you –
+The Apereo Foundation is a New Jersey non-stock, non-profit corporation, with members drawn from all walks of life and industry sectors on four continents. **Its mission is to help educational organizations deliver their mission by developing and sustaining open source software**. By becoming an Apereo Foundation member, you –
 
 - **Ensure support for software you rely on**. Your membership dues work to ensure effective licensing, IPR management practices, infrastructure support, community coordination, outreach, and more.
 - **Give your institution a say in the way Apereo is run, and how it sets priorities**. Your institution has a vote in elections for the Apereo Foundation Board, which provides strategic leadership for the foundation.
