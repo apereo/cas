@@ -7,12 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
-import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.validation.annotation.Validated;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link AuthZenResource}.
