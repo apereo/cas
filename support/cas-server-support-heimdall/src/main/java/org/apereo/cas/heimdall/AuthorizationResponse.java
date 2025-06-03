@@ -23,7 +23,7 @@ import java.io.Serial;
 @ToString
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-public class AuthorizationResponse extends BaseHeimdallRequest {
+public class AuthorizationResponse extends BaseHeimdallEntity {
 
     @Serial
     private static final long serialVersionUID = -1703161195540021350L;
@@ -32,6 +32,11 @@ public class AuthorizationResponse extends BaseHeimdallRequest {
     private HttpStatusCode status = HttpStatusCode.valueOf(HttpStatus.UNAUTHORIZED.value());
 
     private String message;
+
+    public boolean getDecision() {
+        return status.is2xxSuccessful();
+    }
+    
     /**
      * Ok authorization response.
      *

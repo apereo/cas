@@ -4,6 +4,8 @@ import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.AuthorizationResponse;
 import org.apereo.cas.heimdall.authorizer.ResourceAuthorizer;
 import org.apereo.cas.heimdall.authorizer.repository.AuthorizableResourceRepository;
+import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import java.util.List;
@@ -21,16 +23,27 @@ public class DefaultAuthorizationEngine implements AuthorizationEngine {
 
     @Override
     public AuthorizationResponse authorize(final AuthorizationRequest request) {
-        val resource = repository.find(request);
-        if (resource.isEmpty()) {
-            return AuthorizationResponse.notFound("Resource not found");
+        val resources = findResources(request);
+        if (resources.isEmpty()) {
+            return AuthorizationResponse.notFound("No authorizable resource can be found");
         }
-        for (val authorizer : authorizers) {
-            val result = authorizer.evaluate(request, resource.get());
-            if (!result.authorized()) {
-                return AuthorizationResponse.unauthorized(result.reason());
+
+        for (val resource : resources) {
+            for (val authorizer : authorizers) {
+                val result = authorizer.evaluate(request, resource);
+                if (!result.authorized()) {
+                    return AuthorizationResponse.unauthorized(result.reason());
+                }
             }
         }
         return AuthorizationResponse.ok();
+    }
+
+    private List<AuthorizableResource> findResources(final AuthorizationRequest request) {
+        if (StringUtils.isBlank(request.getNamespace())) {
+            return repository.find(request.getResource().getId());
+        }
+        val resource = repository.find(request);
+        return resource.map(List::of).orElseGet(List::of);
     }
 }

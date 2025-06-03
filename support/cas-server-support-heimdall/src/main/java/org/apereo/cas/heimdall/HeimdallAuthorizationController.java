@@ -48,6 +48,45 @@ public class HeimdallAuthorizationController {
     private final AuthorizationPrincipalParser principalParser;
 
     /**
+     * AuthZen access evaluation API.
+     *
+     * @param authorizationRequest the authorization request
+     * @param request              the request
+     * @return the response entity
+     */
+    @PostMapping("/authzen")
+    @Operation(summary = "Authorize request via OpenID Connect AuthZen API",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true,
+            description = "AuthZenRequest JSON payload",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = AuthorizationRequest.class)
+            )
+        ))
+    public ResponseEntity authzen(
+        @RequestBody
+        final @Valid AuthorizationRequest authorizationRequest,
+        final HttpServletRequest request) {
+
+        try {
+            Assert.notNull(authorizationRequest.getSubject(), "Method cannot be null");
+            Assert.notNull(authorizationRequest.getAction(), "URI cannot be null");
+            Assert.notNull(authorizationRequest.getResource(), "Namespace cannot be null");
+            Assert.notNull(authorizationRequest.getContext(), "Context cannot be null");
+            
+            val requestToAuthorize = prepareAuthorizationRequest(authorizationRequest, request);
+            requestToAuthorize.log();
+            val authorizationResponse = authorizationEngine.authorize(requestToAuthorize);
+            return buildResponse(authorizationResponse);
+        } catch (final Throwable e) {
+            LoggingUtils.error(LOGGER, e);
+            return buildResponse(AuthorizationResponse.unauthorized(e.getMessage()));
+        }
+    }
+
+
+    /**
      * Authorize response entity.
      *
      * @param authorizationRequest the authorization request
@@ -65,12 +104,18 @@ public class HeimdallAuthorizationController {
             )
         ))
     public ResponseEntity authorize(
-        @RequestBody final @Valid AuthorizationRequest authorizationRequest,
+        @RequestBody
+        final @Valid AuthorizationRequest authorizationRequest,
         final HttpServletRequest request) {
 
         try {
+            Assert.notNull(authorizationRequest.getMethod(), "Method cannot be null");
+            Assert.notNull(authorizationRequest.getUri(), "URI cannot be null");
+            Assert.notNull(authorizationRequest.getNamespace(), "Namespace cannot be null");
+            Assert.notNull(authorizationRequest.getContext(), "Context cannot be null");
+
             val requestToAuthorize = prepareAuthorizationRequest(authorizationRequest, request);
-            logRequest(requestToAuthorize);
+            requestToAuthorize.log();
             val authorizationResponse = authorizationEngine.authorize(requestToAuthorize);
             return buildResponse(authorizationResponse);
         } catch (final Throwable e) {
@@ -83,7 +128,7 @@ public class HeimdallAuthorizationController {
                                                              final HttpServletRequest request) throws Throwable {
         val authorizationHeader = Objects.requireNonNull(request.getHeader(HttpHeaders.AUTHORIZATION));
         Assert.hasText(authorizationHeader, "Authorization header cannot be blank");
-        val principal = principalParser.parse(authorizationHeader);
+        val principal = principalParser.parse(authorizationHeader, authorizationRequest);
         val headers = HttpRequestUtils.getRequestHeaders(request);
         val requestToAuthorize = authorizationRequest.withPrincipal(principal);
         requestToAuthorize.getContext().putAll((Map) headers);
@@ -92,15 +137,10 @@ public class HeimdallAuthorizationController {
 
     protected ResponseEntity<AuthorizationResponse> buildResponse(
         final AuthorizationResponse authorizationResponse) {
-        logRequest(authorizationResponse);
+        authorizationResponse.log();
         return ResponseEntity
             .status(authorizationResponse.getStatus())
             .body(authorizationResponse);
     }
-    
-    private static void logRequest(final BaseHeimdallRequest heimdallRequest) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(heimdallRequest.toJson());
-        }
-    }
 }
+

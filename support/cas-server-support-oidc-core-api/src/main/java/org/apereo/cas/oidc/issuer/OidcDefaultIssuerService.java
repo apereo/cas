@@ -37,7 +37,8 @@ public class OidcDefaultIssuerService implements OidcIssuerService {
     }
 
     @Override
-    public boolean validateIssuer(final WebContext webContext, final List<String> endpoints, final OidcRegisteredService registeredService) {
+    public boolean validateIssuer(final WebContext webContext, final List<String> endpoints,
+                                  final OidcRegisteredService registeredService) {
         val requestUrl = webContext.getRequestURL();
         val definedIssuer = determineIssuer(Optional.ofNullable(registeredService));
         val definedIssuerWithSlash = StringUtils.appendIfMissing(definedIssuer, "/");

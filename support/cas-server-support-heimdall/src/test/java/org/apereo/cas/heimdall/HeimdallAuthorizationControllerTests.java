@@ -3,6 +3,9 @@ package org.apereo.cas.heimdall;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.heimdall.authzen.AuthZenAction;
+import org.apereo.cas.heimdall.authzen.AuthZenResource;
+import org.apereo.cas.heimdall.authzen.AuthZenSubject;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -402,7 +405,45 @@ class HeimdallAuthorizationControllerTests {
             .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isForbidden());
     }
-    
+
+    @Test
+    void verifyAuthZenRequest() throws Throwable {
+        val credentials = EncodingUtils.encodeBase64("casuser:resusac");
+        mockMvc.perform(post("/heimdall/authzen")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AuthorizationRequest.builder()
+                    .subject(AuthZenSubject.builder().id("casperson").type("user").build())
+                    .resource(AuthZenResource.builder().id("authzen_resource").type("entity").build())
+                    .action(AuthZenAction.builder().name("can_read").build())
+                    .build()
+                    .toJson()
+                )
+                .header(HttpHeaders.AUTHORIZATION, "Basic %s".formatted(credentials))
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.decision").value(true));
+    }
+
+    @Test
+    void verifyAuthZenRequestFails() throws Throwable {
+        val credentials = EncodingUtils.encodeBase64("casuser:badpassword");
+        mockMvc.perform(post("/heimdall/authzen")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AuthorizationRequest.builder()
+                    .subject(AuthZenSubject.builder().id("casperson").type("user").build())
+                    .resource(AuthZenResource.builder().id("authzen_resource").type("entity").build())
+                    .action(AuthZenAction.builder().name("can_read").build())
+                    .build()
+                    .toJson()
+                )
+                .header(HttpHeaders.AUTHORIZATION, "Basic %s".formatted(credentials))
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.decision").value(false));
+    }
+
     private static OAuth20AccessToken buildAccessToken(final ExpirationPolicy expirationPolicy,
                                                        final Authentication authentication) {
         val accessToken = mock(OAuth20AccessToken.class);
