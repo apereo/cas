@@ -57,6 +57,10 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 
 CAS now supports [OpenID Connect Native SSO](../authentication/OIDC-Authentication-NativeSSO-MobileApps.html).
 
+### OpenID Connect AuthZEN
+
+Basic support for [OpenID Connect AuthZEN](../authorization/Heimdall-Authorization-Overview.html) is now available.
+
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases

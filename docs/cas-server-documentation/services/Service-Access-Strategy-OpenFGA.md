@@ -35,7 +35,7 @@ The following fields are available to this access strategy:
 
 | Field      | Purpose                                                                                            |
 |------------|----------------------------------------------------------------------------------------------------|
-| `userType` | <sup>[1]</sup> The user type in the authorization tuple; defaults to `user`. |
+| `userType` | <sup>[1]</sup> The user type in the authorization tuple; defaults to `user`.                       |
 | `relation` | <sup>[1]</sup> The relation or the type of access in the authorization tuple; defaults to `owner`. |
 | `object`   | <sup>[1]</sup> The *object* of the authorization tuple; defaults to the service URL if undefined.  |
 | `storeId`  | <sup>[1]</sup> The authorization store identifier.                                                 |

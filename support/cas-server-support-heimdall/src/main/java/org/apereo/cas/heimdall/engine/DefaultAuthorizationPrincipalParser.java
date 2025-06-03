@@ -3,11 +3,13 @@ package org.apereo.cas.heimdall.engine;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
@@ -47,12 +49,15 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
     protected final AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override
-    public Principal parse(final String authorizationHeader) throws Throwable {
+    public Principal parse(final String authorizationHeader, final AuthorizationRequest authorizationRequest) throws Throwable {
         val claims = parseAuthorizationHeader(authorizationHeader);
         val principalAttributes = new HashMap(claims.getClaims());
         principalAttributes.put(HttpHeaders.AUTHORIZATION, authorizationHeader);
-        return PrincipalFactoryUtils.newPrincipalFactory()
-            .createPrincipal(claims.getSubject(), principalAttributes);
+        if (authorizationRequest.getSubject() != null) {
+            val credential = new BasicIdentifiableCredential(authorizationRequest.getSubject().getId());
+            return authenticationSystemSupport.getPrincipalResolver().resolve(credential);
+        }
+        return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(claims.getSubject(), principalAttributes);
     }
 
     protected JWTClaimsSet parseAuthorizationHeader(final String authorizationHeader) throws Throwable {
