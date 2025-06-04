@@ -13,6 +13,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,7 +35,7 @@ public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthentic
                                                 final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
                                                 final ConfigurableApplicationContext applicationContext) {
         super(servicesManager, casProperties, principalAccessStrategyEnforcer, applicationContext);
-        this.eligibleAccounts = Map.copyOf(eligibleAccounts);
+        this.eligibleAccounts = new HashMap<>(eligibleAccounts);
     }
 
     @Override

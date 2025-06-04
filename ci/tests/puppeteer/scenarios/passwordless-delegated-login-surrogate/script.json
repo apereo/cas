@@ -38,8 +38,8 @@
     "--cas.authn.pac4j.cas[2].login-url=https://localhost:8444/cas/login",
     "--cas.authn.pac4j.cas[2].protocol=CAS30",
     "--cas.authn.pac4j.cas[2].client-name=CasClient-None",
-    
-    "--cas.authn.surrogate.simple.surrogates.casuser=user1,user2,user3"
+
+    "--cas.authn.surrogate.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/surrogates.json"
   ],
   "initScript": "${PWD}/ci/tests/cas/run-cas-server.sh"
 }
