@@ -11,10 +11,10 @@ find ./ci/tests -type f -name "*.sh" -exec chmod +x {} \;
 dockerPlatform="unknown"
 docker ps &> /dev/null
 if [[ $? -ne 0 ]] ; then
-  printf "\n${RED}Docker engine is not available.${ENDCOLOR}"
+  printf "%n${RED}Docker engine is not available.${ENDCOLOR}%n"
 else
   dockerPlatform=$(docker version --format '{{json .Server.Os}}')
-  printf "\nDocker engine platform is ${GREEN}%s${ENDCOLOR}\n" "$dockerPlatform."
+  printf "%nDocker engine platform is ${GREEN}%s${ENDCOLOR}%n" "$dockerPlatform."
 fi
 
 function isDockerOnLinux() {
@@ -34,10 +34,10 @@ function isDockerOnWindows() {
 }
 
 printHelp() {
-    printf "\nUsage: ${CYAN}./testcas.sh${ENDCOLOR} --category [category1,category2,...] [--help] [--test TestClass]\n\t[--ignore-failures] [--no-watch] [--no-wrapper] [--no-retry] [--debug] [--no-parallel]\n\t[--dry-run][--info] [--with-coverage] [--no-build-cache] \n"
-    printf "\nTo see what test categories are available, use:\n"
-    printf "\t${GREEN}./gradlew -q testCategories${ENDCOLOR}\n"
-    echo -e "\nPlease see the test script for details."
+    printf "%nUsage: ${CYAN}./testcas.sh${ENDCOLOR} --category [category1,category2,...] [--help] [--test TestClass]%n\t[--ignore-failures] [--no-watch] [--no-wrapper] [--no-retry] [--debug] [--no-parallel]%n\t[--dry-run][--info] [--with-coverage] [--no-build-cache] %n"
+    printf "%nTo see what test categories are available, use:%n"
+    printf "\t${GREEN}./gradlew -q testCategories${ENDCOLOR}%n"
+    echo -e "%nPlease see the test script for details."
 }
 
 task=""
@@ -63,7 +63,7 @@ while (( "$#" )); do
         shift
         ;;
     --pts)
-        printf "Running tests with predictive test selection mode: ${GREEN}$2${ENDCOLOR}\n"
+        printf "Running tests with predictive test selection mode: ${GREEN}$2${ENDCOLOR}%n"
         flags+=" -Dpts.mode=$2 "
         shift 2
         ;;
@@ -416,9 +416,6 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/cosmosdb/run-cosmosdb-server.sh
                 task+="testAzure "
                 ;;
-            simple|unit)
-                task+="testSimple "
-                ;;
             mssql|mssqlserver)
                 isDockerOnLinux && ./ci/tests/mssqlserver/run-mssql-server.sh
                 task+="testMsSqlServer "
@@ -516,7 +513,7 @@ while (( "$#" )); do
                 task+="testAMQP "
                 ;;
             *)
-                printf "${RED}Unable to recognize test category: ${item}${ENDCOLOR}\n"
+                printf "${RED}Unable to recognize test category: ${item}${ENDCOLOR}%n"
                 printHelp
                 exit 1
                 ;;
@@ -525,7 +522,7 @@ while (( "$#" )); do
         shift 2
         ;;
     *)
-        printf "${RED}Unable to accept parameter: $1${ENDCOLOR}\n"
+        printf "${RED}Unable to accept parameter: $1${ENDCOLOR}%n"
         printHelp
         exit 1
         ;;
@@ -534,7 +531,7 @@ done
 
 if [[ -n "$coverageTask" ]]; then
   task=""
-  printf "${GREEN}Running code coverage task [${coverageTask}] will disable all other task executions. Make sure all test tasks that generate code coverage data have already executed.${ENDCOLOR}\n"
+  printf "${GREEN}Running code coverage task [${coverageTask}] will disable all other task executions. Make sure all test tasks that generate code coverage data have already executed.${ENDCOLOR}%n"
 fi
 
 if [[ -z "$task" ]] && [[ -z "$coverageTask" ]]; then
@@ -549,7 +546,7 @@ cmd="$gradleCmd $task $tests $flags ${debug} ${parallel} ${dryRun} ${info} ${cov
 eval "$cmd"
 retVal=$?
 echo -e "***************************************************************************************"
-printf "${CYAN}Gradle build finished at `date` with exit code $retVal ${ENDCOLOR}%n"
+printf "${CYAN}Gradle build finished at $(date) with exit code $retVal ${ENDCOLOR}%n"
 echo -e "***************************************************************************************"
 
 if [ $retVal == 0 ]; then
