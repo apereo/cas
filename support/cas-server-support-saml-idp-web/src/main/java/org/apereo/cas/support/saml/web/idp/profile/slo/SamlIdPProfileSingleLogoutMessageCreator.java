@@ -1,19 +1,15 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.services.RegisteredServiceUsernameProviderContext;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
-import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlAttributeBasedNameIdGenerator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -44,40 +40,15 @@ import java.util.Optional;
 @Slf4j
 public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectBuilder implements SingleLogoutMessageCreator {
 
-    /**
-     * The Services manager.
-     */
-    protected final ServicesManager servicesManager;
-
-    /**
-     * The Saml registered service caching metadata resolver.
-     */
-    protected final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
-
-    /**
-     * SAML idp settings.
-     */
-    protected final SamlIdPProperties samlIdPProperties;
-
-    /**
-     * Saml idp object signer.
-     */
-    protected final SamlIdPObjectSigner samlObjectSigner;
-
+    private final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext;
+    
     private final SOAPObjectBuilder<Envelope> envelopeBuilder;
 
     private final SOAPObjectBuilder<Body> bodyBuilder;
 
-    public SamlIdPProfileSingleLogoutMessageCreator(final OpenSamlConfigBean configBean,
-                                                    final ServicesManager servicesManager,
-                                                    final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                                    final SamlIdPProperties samlIdPProperties,
-                                                    final SamlIdPObjectSigner samlObjectSigner) {
-        super(configBean);
-        this.servicesManager = servicesManager;
-        this.samlRegisteredServiceCachingMetadataResolver = resolver;
-        this.samlIdPProperties = samlIdPProperties;
-        this.samlObjectSigner = samlObjectSigner;
+    public SamlIdPProfileSingleLogoutMessageCreator(final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
+        super(samlProfileHandlerConfigurationContext.getOpenSamlConfigBean());
+        this.samlProfileHandlerConfigurationContext = samlProfileHandlerConfigurationContext;
         val builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
         this.envelopeBuilder = (SOAPObjectBuilder<Envelope>) builderFactory.getBuilder(Envelope.DEFAULT_ELEMENT_NAME);
         this.bodyBuilder = (SOAPObjectBuilder<Body>) builderFactory.getBuilder(Body.DEFAULT_ELEMENT_NAME);
@@ -85,6 +56,7 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
 
     @Override
     public SingleLogoutMessage create(final SingleLogoutRequestContext request) throws Throwable {
+        val samlIdPProperties = samlProfileHandlerConfigurationContext.getCasProperties().getAuthn().getSamlIdp();
         val id = '_' + String.valueOf(RandomUtils.nextLong());
 
         val samlService = (SamlRegisteredService) request.getRegisteredService();
@@ -108,11 +80,12 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
         val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
         if (shouldSignLogoutRequestFor(samlService)) {
             val serviceId = request.getService().getId();
-            val adaptorRes = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, samlService, serviceId);
+            val resolver = samlProfileHandlerConfigurationContext.getSamlRegisteredServiceCachingMetadataResolver();
+            val adaptorRes = SamlRegisteredServiceMetadataAdaptor.get(resolver, samlService, serviceId);
             val adaptor = adaptorRes.orElseThrow(() -> new IllegalArgumentException("Unable to find metadata for saml service " + serviceId));
             val httpRequest = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val httpResponse = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-            FunctionUtils.doUnchecked(__ -> samlObjectSigner.encode(samlLogoutRequest, samlService, adaptor,
+            FunctionUtils.doUnchecked(__ -> samlProfileHandlerConfigurationContext.getSamlObjectSigner().encode(samlLogoutRequest, samlService, adaptor,
                 httpResponse, httpRequest, binding, samlLogoutRequest, new MessageContext()));
         }
 
@@ -128,6 +101,7 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
     }
 
     protected boolean shouldSignLogoutRequestFor(final SamlRegisteredService registeredService) {
+        val samlIdPProperties = samlProfileHandlerConfigurationContext.getCasProperties().getAuthn().getSamlIdp();
         return registeredService.getSignLogoutRequest().isUndefined()
             ? samlIdPProperties.getLogout().isForceSignedLogoutRequests()
             : registeredService.getSignLogoutRequest().isTrue();
@@ -141,7 +115,7 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
             .registeredService(samlService)
             .service(request.getService())
             .principal(principal)
-            .applicationContext(samlRegisteredServiceCachingMetadataResolver.getOpenSamlConfigBean().getApplicationContext())
+            .applicationContext(samlProfileHandlerConfigurationContext.getApplicationContext())
             .build();
         val principalName = samlService.getUsernameAttributeProvider().resolveUsername(usernameContext);
         LOGGER.trace("Preparing NameID attribute for principal [{}]", principalName);

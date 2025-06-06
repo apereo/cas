@@ -2,19 +2,21 @@ package org.apereo.cas.support.saml.services.logout;
 
 import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
+import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
-import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPProfileSingleLogoutMessageCreator;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
 import java.net.URI;
 import java.util.Map;
@@ -33,13 +35,12 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigurationTests {
 
+    @Autowired
+    @Qualifier("samlLogoutBuilder")
+    private SingleLogoutMessageCreator samlLogoutBuilder;
+    
     @Test
     void verifyOperation() throws Throwable {
-        val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
-            defaultSamlRegisteredServiceCachingMetadataResolver,
-            casProperties.getAuthn().getSamlIdp(),
-            samlIdPObjectSigner);
-
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         samlRegisteredService.setWhiteListBlackListPrecedence("INCLUDE");
         samlRegisteredService.setSigningKeyAlgorithm("RSA");
@@ -57,17 +58,13 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
                 SAMLConstants.SAML2_POST_BINDING_URI))
             .build();
 
-        val result = creator.create(logoutRequest);
+        val result = samlLogoutBuilder.create(logoutRequest);
         assertNotNull(result);
     }
 
     @Test
     void verifySoapOperation() throws Throwable {
-        val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
-            defaultSamlRegisteredServiceCachingMetadataResolver,
-            casProperties.getAuthn().getSamlIdp(),
-            samlIdPObjectSigner);
-
+        
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
             .logoutUrl(new URI("https://sp.example.org/slo").toURL())
@@ -82,17 +79,12 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
                 SAMLConstants.SAML2_SOAP11_BINDING_URI))
             .build();
 
-        val result = creator.create(logoutRequest);
+        val result = samlLogoutBuilder.create(logoutRequest);
         assertNotNull(result);
     }
 
     @Test
     void verifySignByBasicCredOperation() throws Throwable {
-        val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
-            defaultSamlRegisteredServiceCachingMetadataResolver,
-            casProperties.getAuthn().getSamlIdp(),
-            samlIdPObjectSigner);
-
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         samlRegisteredService.setSigningCredentialType("basic");
         samlRegisteredService.setSkewAllowance(1000);
@@ -109,17 +101,12 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
                 SAMLConstants.SAML2_POST_BINDING_URI))
             .build();
 
-        val result = creator.create(logoutRequest);
+        val result = samlLogoutBuilder.create(logoutRequest);
         assertNotNull(result);
     }
 
     @Test
     void verifySignByFingerprintOperation() throws Throwable {
-        val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
-            defaultSamlRegisteredServiceCachingMetadataResolver,
-            casProperties.getAuthn().getSamlIdp(),
-            samlIdPObjectSigner);
-
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         samlRegisteredService.setSigningCredentialFingerprint("badfingerprint");
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
@@ -135,16 +122,11 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
                 SAMLConstants.SAML2_POST_BINDING_URI))
             .build();
 
-        assertThrows(IllegalArgumentException.class, () -> creator.create(logoutRequest));
+        assertThrows(IllegalArgumentException.class, () -> samlLogoutBuilder.create(logoutRequest));
     }
 
     @Test
     void verifyNameIdOperation() throws Throwable {
-        val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
-                defaultSamlRegisteredServiceCachingMetadataResolver,
-                casProperties.getAuthn().getSamlIdp(),
-                samlIdPObjectSigner);
-
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         samlRegisteredService.setWhiteListBlackListPrecedence("INCLUDE");
         samlRegisteredService.setSigningKeyAlgorithm("RSA");
@@ -167,18 +149,13 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
                         SAMLConstants.SAML2_POST_BINDING_URI))
                 .build();
 
-        val result = creator.create(logoutRequest);
+        val result = samlLogoutBuilder.create(logoutRequest);
         assertNotNull(result);
         assertTrue(result.getPayload().contains("casuser@example.org"));
     }
 
     @Test
     void verifyPrincipalIdIfNotAttrOperation() throws Throwable {
-        val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
-                defaultSamlRegisteredServiceCachingMetadataResolver,
-                casProperties.getAuthn().getSamlIdp(),
-                samlIdPObjectSigner);
-
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         samlRegisteredService.setWhiteListBlackListPrecedence("INCLUDE");
         samlRegisteredService.setSigningKeyAlgorithm("RSA");
@@ -199,7 +176,7 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
                         SAMLConstants.SAML2_POST_BINDING_URI))
                 .build();
 
-        val result = creator.create(logoutRequest);
+        val result = samlLogoutBuilder.create(logoutRequest);
         assertNotNull(result);
         assertFalse(result.getPayload().contains("casuser@example.org"));
     }
