@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.hc.core5.net.URIBuilder;
+import org.apereo.cas.web.SimpleUrlValidator;
 import org.springframework.core.Ordered;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -92,7 +93,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         if (service instanceof final WebApplicationService webApplicationService) {
             val originalUrl = webApplicationService.getOriginalUrl();
             try {
-                if (StringUtils.isNotBlank(originalUrl) && originalUrl.startsWith("http") && originalUrl.contains("?")) {
+                if (StringUtils.isNotBlank(originalUrl) && SimpleUrlValidator.getInstance().isValid(originalUrl)) {
                     val queryParams = FunctionUtils.doUnchecked(() -> new URIBuilder(originalUrl).getQueryParams());
                     queryParams.forEach(pair -> {
                         val values = CollectionUtils.wrapArrayList(StringEscapeUtils.escapeHtml4(pair.getValue()));
