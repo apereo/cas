@@ -7,7 +7,6 @@ import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
@@ -54,9 +53,6 @@ class DefaultLogoutManagerTests {
 
     @Mock
     private HttpClient client;
-
-    @Mock
-    private TenantExtractor tenantExtractor;
     
     private DefaultSingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
     
