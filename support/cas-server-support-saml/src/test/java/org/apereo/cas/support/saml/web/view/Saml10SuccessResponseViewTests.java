@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.authentication.support.NoOpProtocolAttributeEncoder;
-import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
@@ -33,7 +32,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link Saml10SuccessResponseView} class.
@@ -64,7 +62,7 @@ class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
             new NoOpProtocolAttributeEncoder(), servicesManager);
         this.response = new Saml10SuccessResponseView(protocolAttributeEncoder,
             servicesManager,
-            new DefaultArgumentExtractor(List.of(new SamlServiceFactory(mock(TenantExtractor.class)))),
+            new DefaultArgumentExtractor(List.of(new SamlServiceFactory(tenantExtractor, urlValidator))),
             new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(),
             NoOpProtocolAttributesRenderer.INSTANCE,

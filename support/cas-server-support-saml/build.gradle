@@ -50,6 +50,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-scripting")
+    testImplementation project(":core:cas-server-core-multitenancy")
 
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-person-directory")

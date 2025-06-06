@@ -17,6 +17,8 @@ import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.merger.MultivaluedAttributeMerger;
@@ -27,6 +29,7 @@ import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.SimpleUrlValidator;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import lombok.experimental.UtilityClass;
@@ -96,7 +99,16 @@ public class RegisteredServiceTestUtils {
     public static AbstractWebApplicationService getService(final String name) {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
-        return (AbstractWebApplicationService) new WebApplicationServiceFactory(mock(TenantExtractor.class)).createService(request);
+        return (AbstractWebApplicationService) getWebApplicationServiceFactory().createService(request);
+    }
+
+    /**
+     * Gets web application service factory.
+     *
+     * @return the web application service factory
+     */
+    public static ServiceFactory<WebApplicationService> getWebApplicationServiceFactory() {
+        return new WebApplicationServiceFactory(mock(TenantExtractor.class), SimpleUrlValidator.getInstance());
     }
 
     public static Service getService2() {

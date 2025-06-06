@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.AbstractServiceFactory;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.util.AbstractSamlObjectBuilder;
+import org.apereo.cas.web.UrlValidator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,8 +29,9 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
 
     private static final Namespace NAMESPACE_SAML1 = Namespace.getNamespace("urn:oasis:names:tc:SAML:1.0:protocol");
 
-    public SamlServiceFactory(final TenantExtractor tenantExtractor) {
-        super(tenantExtractor);
+    public SamlServiceFactory(final TenantExtractor tenantExtractor,
+                              final UrlValidator urlValidator) {
+        super(tenantExtractor, urlValidator);
     }
 
     @Override

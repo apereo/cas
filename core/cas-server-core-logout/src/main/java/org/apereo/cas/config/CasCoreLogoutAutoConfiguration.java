@@ -241,10 +241,12 @@ public class CasCoreLogoutAutoConfiguration {
         @ConditionalOnMissingBean(name = "logoutWebApplicationServiceFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceFactory<WebApplicationService> logoutWebApplicationServiceFactory(
+            @Qualifier(UrlValidator.BEAN_NAME)
+            final UrlValidator urlValidator,
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties) {
-            return new LogoutWebApplicationServiceFactory(tenantExtractor, casProperties.getLogout());
+            return new LogoutWebApplicationServiceFactory(tenantExtractor, urlValidator, casProperties.getLogout());
         }
 
         @Bean

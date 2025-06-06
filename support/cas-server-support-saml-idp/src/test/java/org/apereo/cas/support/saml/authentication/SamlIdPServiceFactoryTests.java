@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.authentication;
 
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.support.saml.SamlIdPConstants;
+import org.apereo.cas.web.SimpleUrlValidator;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class SamlIdPServiceFactoryTests {
     void verifyOperation() {
         val request = new MockHttpServletRequest();
         request.setParameter(SamlIdPConstants.PROVIDER_ID, "example-sp-entityid");
-        val input = new SamlIdPServiceFactory(mock(TenantExtractor.class));
+        val input = new SamlIdPServiceFactory(mock(TenantExtractor.class), SimpleUrlValidator.getInstance());
         val service = input.createService(request);
         assertNotNull(service);
         assertEquals("example-sp-entityid", service.getId());

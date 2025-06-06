@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -23,7 +22,7 @@ class SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     @Test
     void verifyAction() {
         val servicesManager = mock(ServicesManager.class);
-        val factory = new WebApplicationServiceFactory(mock(TenantExtractor.class));
+        val factory = RegisteredServiceTestUtils.getWebApplicationServiceFactory();
         val strategy = new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(servicesManager, factory, "http://localhost:8080/cas");
 
         val service = factory.createService("http://localhost:8080/cas/idp/profile/SAML2/Callback.+?"

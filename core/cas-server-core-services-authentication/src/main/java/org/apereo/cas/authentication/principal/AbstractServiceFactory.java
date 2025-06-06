@@ -5,6 +5,7 @@ import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.UrlValidator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -51,6 +52,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         CasProtocolConstants.PARAMETER_FORMAT);
 
     private final TenantExtractor tenantExtractor;
+    private final UrlValidator urlValidator;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -92,7 +94,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         if (service instanceof final WebApplicationService webApplicationService) {
             val originalUrl = webApplicationService.getOriginalUrl();
             try {
-                if (StringUtils.isNotBlank(originalUrl) && originalUrl.startsWith("http") && originalUrl.contains("?")) {
+                if (urlValidator.isValid(originalUrl)) {
                     val queryParams = FunctionUtils.doUnchecked(() -> new URIBuilder(originalUrl).getQueryParams());
                     queryParams.forEach(pair -> {
                         val values = CollectionUtils.wrapArrayList(StringEscapeUtils.escapeHtml4(pair.getValue()));

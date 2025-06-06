@@ -96,12 +96,12 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
                 return Optional.empty();
             }
 
-            val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
             validateCredentials(upc, registeredService, callContext);
 
             val credential = new OAuth20ClientIdClientSecretCredential(upc.getUsername(), upc.getPassword());
             val resolvedPrincipal = principalResolver.resolve(credential);
 
+            val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
             val profile = new CommonProfile();
             if (resolvedPrincipal instanceof NullPrincipal) {
                 LOGGER.debug("No principal was resolved. Falling back to the username [{}] from the credentials.", id);

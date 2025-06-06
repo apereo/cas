@@ -3,7 +3,6 @@ package org.apereo.cas.logout;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
@@ -13,6 +12,7 @@ import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.http.HttpClient;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 class DefaultLogoutManagerTests {
     private static final String ID = "id";
 
-    private static final String URL = "http://www.github.com";
+    private static final String URL = "https://www.github.com";
 
     private LogoutManager logoutManager;
 
@@ -59,11 +59,7 @@ class DefaultLogoutManagerTests {
     private TenantExtractor tenantExtractor;
     
     private DefaultSingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
-
-    DefaultLogoutManagerTests() throws Exception {
-        MockitoAnnotations.openMocks(this).close();
-    }
-
+    
     private static BaseRegisteredService getRegisteredService(final String id) {
         val service = new CasRegisteredService();
         service.setServiceId(id);
@@ -74,14 +70,10 @@ class DefaultLogoutManagerTests {
         return service;
     }
 
-    private AbstractWebApplicationService getService(final String url) {
-        val request = new MockHttpServletRequest();
-        request.addParameter("service", url);
-        return (AbstractWebApplicationService) new WebApplicationServiceFactory(tenantExtractor).createService(request);
-    }
-
     @BeforeEach
-    void initialize() {
+    void initialize() throws Exception {
+        MockitoAnnotations.openMocks(this).close();
+
         tgt = new MockTicketGrantingTicket("casuser");
 
         when(client.isValidEndPoint(any(String.class))).thenReturn(true);
@@ -95,7 +87,7 @@ class DefaultLogoutManagerTests {
             new DefaultSingleLogoutServiceLogoutUrlBuilder(servicesManager, validator), true,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
-        this.simpleWebApplicationServiceImpl = getService(URL);
+        this.simpleWebApplicationServiceImpl = RegisteredServiceTestUtils.getService(URL);
         tgt.getServices().put(ID, this.simpleWebApplicationServiceImpl);
 
         val plan = new DefaultLogoutExecutionPlan();
