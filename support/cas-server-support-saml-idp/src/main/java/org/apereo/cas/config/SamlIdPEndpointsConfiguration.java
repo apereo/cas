@@ -317,18 +317,9 @@ class SamlIdPEndpointsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SingleLogoutMessageCreator samlLogoutBuilder(
-            final CasConfigurationProperties casProperties,
-            @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager,
-            @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-            final OpenSamlConfigBean openSamlConfigBean,
-            @Qualifier(SamlRegisteredServiceCachingMetadataResolver.BEAN_NAME)
-            final SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver,
-            @Qualifier("samlObjectSigner")
-            final SamlIdPObjectSigner samlObjectSigner) {
-            return new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
-                defaultSamlRegisteredServiceCachingMetadataResolver, casProperties.getAuthn()
-                .getSamlIdp(), samlObjectSigner);
+            @Qualifier("samlProfileHandlerConfigurationContext")
+            final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext) {
+            return new SamlIdPProfileSingleLogoutMessageCreator(samlProfileHandlerConfigurationContext);
         }
 
         @ConditionalOnMissingBean(name = "samlSingleLogoutServiceMessageHandler")
