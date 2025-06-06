@@ -44,3 +44,15 @@ userPassword: 123456
 sn: CAS
 uid: nomail
 employeeType: nothing
+
+dn: cn=$helpdesk,ou=admins,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: account
+cn: $helpdesk
+userPassword: 123456
+mail: $user@example.org
+sn: CAS
+uid: $helpdesk
+employeeType: banderson
