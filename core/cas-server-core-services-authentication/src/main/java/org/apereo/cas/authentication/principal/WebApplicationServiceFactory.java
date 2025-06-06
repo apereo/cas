@@ -5,6 +5,7 @@ import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.validation.ValidationResponseType;
+import org.apereo.cas.web.UrlValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -23,8 +24,9 @@ import java.util.Optional;
 @Slf4j
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
 
-    public WebApplicationServiceFactory(final TenantExtractor tenantExtractor) {
-        super(tenantExtractor);
+    public WebApplicationServiceFactory(final TenantExtractor tenantExtractor,
+                                        final UrlValidator urlValidator) {
+        super(tenantExtractor, urlValidator);
     }
 
     private static AbstractWebApplicationService determineWebApplicationFormat(

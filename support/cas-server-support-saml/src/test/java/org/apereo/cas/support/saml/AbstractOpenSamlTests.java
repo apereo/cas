@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
@@ -24,10 +25,12 @@ import org.apereo.cas.config.CasSamlAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasValidationAutoConfiguration;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import org.apereo.cas.web.UrlValidator;
 import net.shibboleth.shared.xml.ParserPool;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -98,6 +101,14 @@ public abstract class AbstractOpenSamlTests {
     @Autowired
     @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    @Autowired
+    @Qualifier(UrlValidator.BEAN_NAME)
+    protected UrlValidator urlValidator;
+
+    @Autowired
+    @Qualifier(TenantExtractor.BEAN_NAME)
+    protected TenantExtractor tenantExtractor;
     
     @Test
     void autowireApplicationContext() {
@@ -145,6 +156,7 @@ public abstract class AbstractOpenSamlTests {
         CasCoreUtilAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
+        CasCoreMultitenancyAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class
