@@ -15,7 +15,6 @@
     "--management.endpoints.web.cors.allow-credentials=true",
     "--cas.http-web-request.header.xframe-options=SAMEORIGIN",
     
-    "--cas.http-client.allow-local-urls=true",
     "--cas.http-client.host-name-verifier=none",
     
     "--cas.authn.pac4j.cookie.enabled=true",

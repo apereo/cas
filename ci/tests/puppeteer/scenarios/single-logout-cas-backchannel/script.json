@@ -10,7 +10,6 @@
 
     "--cas.slo.disabled=false",
     
-    "--cas.http-client.allow-local-urls=true",
     "--cas.http-client.host-name-verifier=none"
   ],
   "initScript": "${PWD}/ci/tests/cas/run-cas-client.sh"

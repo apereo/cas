@@ -253,7 +253,8 @@ class SamlIdPConfiguration {
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlObjectEncrypter")
             final SamlIdPObjectEncrypter samlObjectEncrypter) {
-            return new SamlProfileSamlNameIdBuilder(openSamlConfigBean, shibbolethCompatiblePersistentIdGenerator,
+            return new SamlProfileSamlNameIdBuilder(openSamlConfigBean,
+                shibbolethCompatiblePersistentIdGenerator,
                 casSamlIdPMetadataResolver, samlObjectEncrypter);
         }
 

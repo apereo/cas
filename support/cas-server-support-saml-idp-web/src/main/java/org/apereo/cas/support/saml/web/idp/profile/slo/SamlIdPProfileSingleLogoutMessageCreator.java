@@ -41,7 +41,7 @@ import java.util.Optional;
 public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectBuilder implements SingleLogoutMessageCreator {
 
     private final SamlProfileHandlerConfigurationContext samlProfileHandlerConfigurationContext;
-    
+
     private final SOAPObjectBuilder<Envelope> envelopeBuilder;
 
     private final SOAPObjectBuilder<Body> bodyBuilder;
@@ -65,8 +65,8 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
             : Beans.newDuration(samlIdPProperties.getResponse().getSkewAllowance()).toSeconds();
 
         val issueInstant = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(skewAllowance);
-        val nameIdValue = buildLogoutRequestNameId(request);
         val nameFormat = StringUtils.defaultIfBlank(samlService.getRequiredNameIdFormat(), NameIDType.UNSPECIFIED);
+        val nameIdValue = buildLogoutRequestNameId(request, nameFormat);
         val encoder = SamlAttributeBasedNameIdGenerator.get(Optional.empty(), nameFormat, samlService, nameIdValue);
         LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
         val nameId = FunctionUtils.doUnchecked(() -> encoder.generate(new ProfileRequestContext(), nameFormat));
@@ -85,18 +85,20 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
             val adaptor = adaptorRes.orElseThrow(() -> new IllegalArgumentException("Unable to find metadata for saml service " + serviceId));
             val httpRequest = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val httpResponse = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-            FunctionUtils.doUnchecked(__ -> samlProfileHandlerConfigurationContext.getSamlObjectSigner().encode(samlLogoutRequest, samlService, adaptor,
+            FunctionUtils.doUnchecked(__ -> samlProfileHandlerConfigurationContext.getSamlObjectSigner().encode(
+                samlLogoutRequest, samlService, adaptor,
                 httpResponse, httpRequest, binding, samlLogoutRequest, new MessageContext()));
         }
-
         if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {
             val envelope = envelopeBuilder.buildObject();
             val body = bodyBuilder.buildObject();
             envelope.setBody(body);
             body.getUnknownXMLObjects().add(samlLogoutRequest);
+            SamlUtils.logSamlObject(openSamlConfigBean, envelope);
             return buildSingleLogoutMessage(samlLogoutRequest, envelope);
         }
 
+        SamlUtils.logSamlObject(openSamlConfigBean, samlLogoutRequest);
         return buildSingleLogoutMessage(samlLogoutRequest, samlLogoutRequest);
     }
 
@@ -107,10 +109,21 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
             : registeredService.getSignLogoutRequest().isTrue();
     }
 
-    protected String buildLogoutRequestNameId(final SingleLogoutRequestContext request) throws Throwable {
+    protected String buildLogoutRequestNameId(final SingleLogoutRequestContext request, final String nameIdFormat) throws Throwable {
         val samlService = (SamlRegisteredService) request.getRegisteredService();
         val principal = request.getExecutionRequest().getTicketGrantingTicket()
             .getAuthentication().getPrincipal();
+        if (NameIDType.TRANSIENT.equalsIgnoreCase(StringUtils.trim(nameIdFormat))) {
+            val serviceId = request.getService().getId();
+            val resolver = samlProfileHandlerConfigurationContext.getSamlRegisteredServiceCachingMetadataResolver();
+            val adaptorRes = SamlRegisteredServiceMetadataAdaptor.get(resolver, samlService, serviceId);
+            val adaptor = adaptorRes.orElseThrow(() -> new IllegalArgumentException("Unable to find metadata for saml service " + serviceId));
+            val entityId = adaptor.getEntityId();
+            val principalName = principal.getId();
+            LOGGER.debug("Generating transient NameID value for principal [{}] and entity id [{}]", principalName, entityId);
+            return samlProfileHandlerConfigurationContext.getPersistentIdGenerator().generate(principalName, entityId);
+        }
+
         val usernameContext = RegisteredServiceUsernameProviderContext.builder()
             .registeredService(samlService)
             .service(request.getService())
