@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -608,6 +609,8 @@ class SamlIdPEndpointsConfiguration {
             final TicketFactory defaultTicketFactory,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final PersonAttributeDao attributeRepository,
+            @Qualifier("shibbolethCompatiblePersistentIdGenerator")
+            final PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator,
             @Qualifier("ssoPostProfileHandlerDecoders")
             final XMLMessageDecodersMap ssoPostProfileHandlerDecoders) {
             return SamlProfileHandlerConfigurationContext.builder()
@@ -639,6 +642,7 @@ class SamlIdPEndpointsConfiguration {
                 .callbackService(samlIdPCallbackService)
                 .applicationContext(applicationContext)
                 .samlFaultResponseBuilder(samlProfileSamlAttributeQueryFaultResponseBuilder)
+                .persistentIdGenerator(shibbolethCompatiblePersistentIdGenerator)
                 .build();
         }
     }

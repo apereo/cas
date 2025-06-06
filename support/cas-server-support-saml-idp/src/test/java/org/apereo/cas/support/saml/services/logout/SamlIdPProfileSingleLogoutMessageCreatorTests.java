@@ -15,6 +15,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
@@ -38,7 +39,7 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
     @Autowired
     @Qualifier("samlLogoutBuilder")
     private SingleLogoutMessageCreator samlLogoutBuilder;
-    
+
     @Test
     void verifyOperation() throws Throwable {
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
@@ -63,8 +64,30 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
     }
 
     @Test
+    void verifyTransientNameIdOperation() throws Throwable {
+        val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
+        samlRegisteredService.setRequiredNameIdFormat(NameIDType.TRANSIENT);
+
+        val logoutRequest = DefaultSingleLogoutRequestContext.builder()
+            .logoutUrl(new URI("https://sp.example.org/slo").toURL())
+            .registeredService(samlRegisteredService)
+            .service(RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .ticketId("ST-123456789")
+            .executionRequest(SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+                .build())
+            .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
+            .properties(CollectionUtils.wrap(
+                SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING,
+                SAMLConstants.SAML2_POST_BINDING_URI))
+            .build();
+
+        val result = samlLogoutBuilder.create(logoutRequest);
+        assertNotNull(result);
+    }
+
+    @Test
     void verifySoapOperation() throws Throwable {
-        
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
             .logoutUrl(new URI("https://sp.example.org/slo").toURL())
@@ -132,22 +155,22 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
         samlRegisteredService.setSigningKeyAlgorithm("RSA");
         samlRegisteredService.setSigningSignatureCanonicalizationAlgorithm("http://www.w3.org/2001/10/xml-exc-c14n#");
         samlRegisteredService.setUsernameAttributeProvider(
-                new PrincipalAttributeRegisteredServiceUsernameProvider("email"));
+            new PrincipalAttributeRegisteredServiceUsernameProvider("email"));
 
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
-                .logoutUrl(new URI("https://sp.example.org/slo").toURL())
-                .registeredService(samlRegisteredService)
-                .service(RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
-                .ticketId("ST-123456789")
-                .executionRequest(SingleLogoutExecutionRequest.builder()
-                        .ticketGrantingTicket(
-                                new MockTicketGrantingTicket("casuser",
-                                        Map.of("email", "casuser@example.org"))).build())
-                .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
-                .properties(CollectionUtils.wrap(
-                        SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING,
-                        SAMLConstants.SAML2_POST_BINDING_URI))
-                .build();
+            .logoutUrl(new URI("https://sp.example.org/slo").toURL())
+            .registeredService(samlRegisteredService)
+            .service(RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .ticketId("ST-123456789")
+            .executionRequest(SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(
+                    new MockTicketGrantingTicket("casuser",
+                        Map.of("email", "casuser@example.org"))).build())
+            .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
+            .properties(CollectionUtils.wrap(
+                SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING,
+                SAMLConstants.SAML2_POST_BINDING_URI))
+            .build();
 
         val result = samlLogoutBuilder.create(logoutRequest);
         assertNotNull(result);
@@ -161,20 +184,20 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
         samlRegisteredService.setSigningKeyAlgorithm("RSA");
         samlRegisteredService.setSigningSignatureCanonicalizationAlgorithm("http://www.w3.org/2001/10/xml-exc-c14n#");
         samlRegisteredService.setUsernameAttributeProvider(
-                new PrincipalAttributeRegisteredServiceUsernameProvider("email"));
+            new PrincipalAttributeRegisteredServiceUsernameProvider("email"));
 
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
-                .logoutUrl(new URI("https://sp.example.org/slo").toURL())
-                .registeredService(samlRegisteredService)
-                .service(RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
-                .ticketId("ST-123456789")
-                .executionRequest(SingleLogoutExecutionRequest.builder()
-                        .ticketGrantingTicket(new MockTicketGrantingTicket("casuser")).build())
-                .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
-                .properties(CollectionUtils.wrap(
-                        SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING,
-                        SAMLConstants.SAML2_POST_BINDING_URI))
-                .build();
+            .logoutUrl(new URI("https://sp.example.org/slo").toURL())
+            .registeredService(samlRegisteredService)
+            .service(RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .ticketId("ST-123456789")
+            .executionRequest(SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(new MockTicketGrantingTicket("casuser")).build())
+            .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
+            .properties(CollectionUtils.wrap(
+                SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING,
+                SAMLConstants.SAML2_POST_BINDING_URI))
+            .build();
 
         val result = samlLogoutBuilder.create(logoutRequest);
         assertNotNull(result);
