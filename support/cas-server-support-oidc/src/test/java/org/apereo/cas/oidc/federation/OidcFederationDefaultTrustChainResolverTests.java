@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.federation;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
 import com.nimbusds.oauth2.sdk.GrantType;
 import com.nimbusds.oauth2.sdk.ResponseType;
 import com.nimbusds.oauth2.sdk.Scope;
@@ -79,7 +80,7 @@ class OidcFederationDefaultTrustChainResolverTests {
                 val metadataPolicy = mock(MetadataPolicy.class);
 
                 val clientMetadata = new OIDCClientMetadata();
-                clientMetadata.setScope(new Scope("openid"));
+                clientMetadata.setScope(new Scope(OidcConstants.StandardScopes.OPENID.getScope()));
                 clientMetadata.setApplicationType(ApplicationType.WEB);
                 clientMetadata.setSubjectType(SubjectType.PUBLIC);
                 clientMetadata.setEmailContacts(List.of("cas@example.org"));
