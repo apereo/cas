@@ -1,6 +1,4 @@
-
 const cas = require("../../cas.js");
-const assert = require("assert");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
@@ -36,9 +34,10 @@ async function getActuatorEndpoint(entityId) {
         await cas.goto(page, `file://${sloFile}`);
         await cas.sleep(4000);
         await cas.logPage(page);
-        const url = await page.url();
-        await cas.sleep(1000);
-        assert(url === "http://localhost:9443/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp");
+        await cas.assertVisibility(page, "#logoutPostButton");
+        await cas.submitForm(page, "#logoutPostButton");
+        await cas.sleep(2000);
+        await cas.assertPageUrl(page, "http://localhost:9443/simplesaml/module.php/saml/sp/saml2-logout.php/default-sp");
         await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     } finally {
         await browser.close();
