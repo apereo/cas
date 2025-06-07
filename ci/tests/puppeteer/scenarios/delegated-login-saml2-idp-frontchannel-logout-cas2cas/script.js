@@ -1,5 +1,4 @@
 const cas = require("../../cas.js");
-const assert = require("assert");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -18,8 +17,7 @@ const assert = require("assert");
 
     await cas.loginWith(page);
     await cas.sleep(2000);
-    const url = await page.url();
-    assert(url === "https://localhost:8444/cas/login?client_name=SAML");
+    await cas.assertPageUrl(page, "https://localhost:8444/cas/login?client_name=SAML");
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 

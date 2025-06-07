@@ -1,5 +1,4 @@
 
-const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
@@ -38,9 +37,8 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextStartsWith(page, "#authnContextClass td.attribute-value", "[mfa-gauth]");
     
     await cas.gotoLogin(page, "https://github.com/apereo/cas");
-    const url = await page.url();
     await cas.logPage(page);
-    assert(url.startsWith("https://github.com/"));
+    await cas.assertPageUrlStartsWith(page, "https://github.com/");
 
     await cas.gotoLogout(page);
     await cas.assertCookie(page, false);

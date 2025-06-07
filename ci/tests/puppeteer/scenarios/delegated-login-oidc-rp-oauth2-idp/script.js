@@ -40,7 +40,7 @@ const cas = require("../../cas.js");
         await cas.sleep(2000);
 
         await cas.logPage(page);
-        assert(page.url().startsWith("https://localhost:9859/anything/1"));
+        await cas.assertPageUrlStartsWith(page, "https://localhost:9859/anything/1");
         await cas.sleep(2000);
         const body = JSON.parse(await cas.innerText(page, "pre"));
         assert(body.args.code !== null);

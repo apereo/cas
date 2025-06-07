@@ -483,6 +483,11 @@ exports.assertPageUrlStartsWith = async (page, url) => {
     assert(result.startsWith(url));
 };
 
+exports.assertPageUrlContains = async (page, url) => {
+    const result = await page.url();
+    assert(result.includes(url));
+};
+
 exports.assertPageUrlProtocol = async (page, protocol) => {
     const result = new URL(await page.url());
     assert.equal(result.protocol, protocol);

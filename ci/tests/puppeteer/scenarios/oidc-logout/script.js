@@ -27,8 +27,7 @@ async function verifyLogoutWithIdTokenHint(clientId, casService, page) {
     await cas.logPage(page);
     await cas.log(`${response.status()} ${response.statusText()}`);
 
-    const url = await page.url();
-    assert(url.startsWith(casService));
+    await cas.assertPageUrlStartsWith(page, casService);
     await cas.assertParameter(page, "state");
     await cas.assertParameter(page, "client_id");
 
@@ -46,16 +45,14 @@ async function verifyLogoutWithIdTokenHint(clientId, casService, page) {
     await cas.logPage(page);
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
-    let url = await page.url();
-    assert(url === casService);
+    await cas.assertPageUrl(page, casService);
 
-    response = await cas.goto(page, url);
+    response = await cas.goto(page, await page.url());
     await cas.sleep(1000);
     await cas.logPage(page);
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.status() === 200);
-    url = await page.url();
-    assert(url === casService);
+    await cas.assertPageUrl(page, casService);
     
     await verifyLogoutWithIdTokenHint("client", casService, page);
     

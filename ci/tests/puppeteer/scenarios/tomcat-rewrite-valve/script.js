@@ -1,5 +1,4 @@
 
-const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
@@ -9,8 +8,7 @@ const cas = require("../../cas.js");
     await cas.goto(page, "https://localhost:8443/cas/auth");
     await cas.sleep(2000);
     await cas.logPage(page);
-    const url = await page.url();
-    assert(url === "https://localhost:8443/cas/auth");
+    await cas.assertPageUrl(page, "https://localhost:8443/cas/auth");
     await cas.loginWith(page);
     await cas.assertCookie(page);
     await cas.sleep(2000);

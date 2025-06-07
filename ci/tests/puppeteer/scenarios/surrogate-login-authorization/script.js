@@ -1,5 +1,4 @@
 const cas = require("../../cas.js");
-const assert = require("assert");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -14,8 +13,7 @@ const assert = require("assert");
     await cas.gotoLogin(page, service);
     await cas.sleep(2000);
     await cas.logPage(page);
-    const url = await page.url();
-    assert(url.startsWith("https://localhost:8443/cas/login"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:8443/cas/login");
     await cas.assertTicketParameter(page, false);
     await browser.close();
 })();

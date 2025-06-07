@@ -11,8 +11,7 @@ const assert = require("assert");
     await cas.sleep(3000);
     await cas.screenshot(page);
     await cas.logPage(page);
-    const url = await page.url();
-    assert(url.startsWith("https://localhost:9859/anything/1"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:9859/anything/1");
 
     const content = await cas.textContent(page, "body pre");
     const payload = JSON.parse(content);

@@ -1,6 +1,5 @@
 
 const cas = require("../../cas.js");
-const assert = require("assert");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -16,6 +15,6 @@ const assert = require("assert");
     await cas.loginWith(page);
     await cas.sleep(2000);
     await cas.logPage(page);
-    assert(await page.url() === `${redirectUrl}?error=unmet_authentication_requirements`);
+    await cas.assertPageUrl(page, `${redirectUrl}?error=unmet_authentication_requirements`);
     await browser.close();
 })();

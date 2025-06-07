@@ -15,7 +15,7 @@ const path = require("path");
 
     await cas.click(page, "#allow");
     await cas.waitForNavigation(page);
-    await cas.log(`Page url: ${await page.url()}\n`);
+    await cas.logPage(page);
     const response = await cas.assertParameter(page, "response");
 
     const configFilePath = path.join(__dirname, "services/Sample-1.jwks");

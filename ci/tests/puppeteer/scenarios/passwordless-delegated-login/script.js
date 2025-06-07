@@ -14,14 +14,13 @@ async function startAuthFlow(page, username) {
     await cas.sleep(5000);
     await cas.screenshot(page);
     await cas.logPage(page);
-    const url = await page.url();
 
     let expectedUser = "casuser";
     if (username.endsWith("-saml")) {
         expectedUser = "user1@example.com";
         await cas.loginWith(page, "user1", "password");
     } else {
-        assert(url.startsWith("https://localhost:8444"));
+        await cas.assertPageUrlStartsWith(page, "https://localhost:8444");
         await cas.sleep(1000);
         await cas.loginWith(page);
     }

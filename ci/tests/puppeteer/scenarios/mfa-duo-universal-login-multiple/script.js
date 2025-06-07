@@ -26,7 +26,6 @@ async function login(page, providerId, service = undefined) {
     await cas.screenshot(page);
     if (service !== undefined) {
         await cas.sleep(4000);
-        await page.url();
         await cas.logPage(page);
         const ticket = await cas.assertTicketParameter(page);
         const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);

@@ -40,10 +40,9 @@ async function verifyNormalAuthenticationFlow(browser) {
     await cas.sleep(3000);
     await cas.gotoLogin(page);
     await cas.sleep(2000);
-    const url = await page.url();
     await cas.logPage(page);
     await cas.sleep(3000);
-    assert(url.startsWith("http://localhost:9443/simplesaml/"));
+    await cas.assertPageUrlStartsWith(page, "http://localhost:9443/simplesaml/");
 }
 
 async function verifySaml1AuthenticationFlow(context) {

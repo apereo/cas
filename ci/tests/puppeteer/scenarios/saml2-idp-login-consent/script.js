@@ -23,7 +23,7 @@ const assert = require("assert");
     await cas.sleep(6000);
     await cas.logPage(page);
     await cas.screenshot(page);
-    assert(page.url().startsWith("https://localhost:9859/post"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:9859/post");
     const content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
     await cas.log(payload);

@@ -1,6 +1,5 @@
 
 const cas = require("../../cas.js");
-const assert = require("assert");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -11,8 +10,7 @@ const assert = require("assert");
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.sleep(2000);
     await cas.logPage(page);
-    let url = await page.url();
-    assert(url.startsWith("https://localhost:8444/cas/login"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:8444/cas/login");
     await cas.loginWith(page);
     await cas.sleep(8000);
     await cas.assertTicketParameter(page);
@@ -22,16 +20,14 @@ const assert = require("assert");
     await cas.log("Checking for SSO availability of our CAS server...");
     await cas.gotoLogin(page);
     await cas.logPage(page);
-    url = await page.url();
-    assert(url.startsWith("https://localhost:8443/cas/login"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:8443/cas/login");
     await cas.sleep(2000);
     await cas.assertCookie(page);
 
     await cas.log("Checking for SSO availability of external CAS server...");
     await cas.goto(page, "https://localhost:8444/cas/login");
     await cas.logPage(page);
-    url = await page.url();
-    assert(url.startsWith("https://localhost:8444/cas/login"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:8444/cas/login");
     await cas.sleep(2000);
     await cas.assertCookie(page, true, "TGCEXT");
 

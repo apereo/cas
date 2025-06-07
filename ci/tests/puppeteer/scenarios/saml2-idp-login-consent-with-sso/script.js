@@ -1,7 +1,6 @@
 
 const path = require("path");
 const cas = require("../../cas.js");
-const assert = require("assert");
 
 (async () => {
 
@@ -28,7 +27,7 @@ const assert = require("assert");
     await cas.sleep(6000);
     await cas.logPage(page);
     await cas.screenshot(page);
-    assert(page.url().startsWith("https://localhost:9859/post"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:9859/post");
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await cas.sleep(4000);
