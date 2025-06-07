@@ -24,8 +24,7 @@ const assert = require("assert");
 
         await cas.gotoLogout(page);
         await cas.logPage(page);
-        const url = await page.url();
-        assert(url === "https://localhost:8443/cas/logout");
+        await cas.assertPageUrl(page, "https://localhost:8443/cas/logout");
         await cas.sleep(1000);
         await cas.assertCookie(page, false);
         await cas.goto(page, "https://localhost:8444/cas/login");

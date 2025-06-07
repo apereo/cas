@@ -1,7 +1,6 @@
 
 const cas = require("../../cas.js");
 const path = require("path");
-const assert = require("assert");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -31,8 +30,7 @@ const assert = require("assert");
     await cas.sleep(2000);
     await cas.logPage(page);
     await cas.sleep(3000);
-    const url = await page.url();
-    assert(url.startsWith("http://localhost:9443/simplesaml/"));
+    await cas.assertPageUrlStartsWith(page, "http://localhost:9443/simplesaml/");
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();

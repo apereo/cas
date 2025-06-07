@@ -13,7 +13,7 @@ const assert = require("assert");
 
     await cas.click(page, "#allow");
     await cas.waitForNavigation(page);
-    await cas.log(`Page url: ${await page.url()}\n`);
+    await cas.logPage(page);
     const response = await cas.assertParameter(page, "response");
 
     const token = await cas.decodeJwt(response, true);

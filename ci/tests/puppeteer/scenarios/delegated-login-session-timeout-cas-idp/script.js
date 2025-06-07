@@ -1,5 +1,4 @@
 
-const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
@@ -20,8 +19,7 @@ const cas = require("../../cas.js");
     await cas.logPage(page);
     await cas.assertParameter(page, "ticket");
     await cas.assertParameter(page, "client_name");
-    const url = await page.url();
-    assert(url.includes("https://localhost:8443/cas/login"));
+    await cas.assertPageUrlContains(page, "https://localhost:8443/cas/login");
     await browser.close();
 })();
 
