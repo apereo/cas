@@ -547,7 +547,7 @@ public class CollectionUtils {
     }
 
     /**
-     * Wrap set set.
+     * Wrap set.
      *
      * @param <T>    the type parameter
      * @param source the source

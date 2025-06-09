@@ -47,7 +47,7 @@ public class DefaultCasWebflowAuthenticationExceptionHandler implements CasWebfl
      * Maps an authentication exception onto a state name equal to the simple class name of the handler errors.
      * with highest precedence. Also sets an ERROR severity message in the
      * message context of the form {@code [messageBundlePrefix][exceptionClassSimpleName]}
-     * for for the first handler
+     * for the first handler
      * error that is configured. If no match is found, {@value CasWebflowExceptionCatalog#UNKNOWN} is returned.
      *
      * @param exception              Authentication error to handle.
