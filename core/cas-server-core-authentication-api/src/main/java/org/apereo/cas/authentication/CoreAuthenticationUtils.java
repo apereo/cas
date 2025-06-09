@@ -182,7 +182,7 @@ public class CoreAuthenticationUtils {
     }
 
     /**
-     * Transform principal attributes list into map map.
+     * Transform principal attributes list into map.
      *
      * @param list the list
      * @return the map

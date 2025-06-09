@@ -75,7 +75,7 @@ public class SmsProvidersProperties implements CasFeatureModule, Serializable {
     private GroovySmsProperties groovy = new GroovySmsProperties();
 
     /**
-     * Send SMS via via REST.
+     * Send SMS via REST.
      */
     @NestedConfigurationProperty
     private RestfulSmsProperties rest = new RestfulSmsProperties();

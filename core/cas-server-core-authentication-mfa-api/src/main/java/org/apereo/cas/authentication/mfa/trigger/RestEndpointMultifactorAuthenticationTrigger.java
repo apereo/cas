@@ -94,7 +94,7 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
      *
      * @param principal       the principal
      * @param resolvedService the resolved service
-     * @return return the rest response, typically the mfa id.
+     * @return the rest response, typically the mfa id.
      * @throws Exception the exception
      */
     protected String callRestEndpointForMultifactor(final Principal principal,
