@@ -72,7 +72,7 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
      * is always added to calculate and resolve metadata globally as the last step,
      * in case an override is not available.
      *
-     * @param criteria criteria set
+     * @param criteria the criteria set
      * @return list of optional service definitions
      */
     private static List<Optional<SamlRegisteredService>> determineFilteringCriteria(final CriteriaSet criteria) {

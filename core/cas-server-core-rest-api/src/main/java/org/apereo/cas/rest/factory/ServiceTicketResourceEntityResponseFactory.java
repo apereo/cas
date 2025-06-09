@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 public interface ServiceTicketResourceEntityResponseFactory extends Ordered {
 
     /**
-     * Build response response entity.
+     * Build response entity.
      *
      * @param ticketGrantingTicket the ticket granting ticket
      * @param service              the service

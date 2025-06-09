@@ -43,7 +43,7 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
     /**
      * If a ticket definition is going to be removed
      * as part of a cascade operation, should this definition
-     * be be excluded from removals allowing the ticket
+     * be excluded from removals allowing the ticket
      * to hang around without its parent?
      */
     private boolean excludeFromCascade;

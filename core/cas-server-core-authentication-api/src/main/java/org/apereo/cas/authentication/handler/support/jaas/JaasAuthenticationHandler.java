@@ -132,7 +132,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     /**
-     * Authenticate and get principal principal.
+     * Authenticate and get principal.
      *
      * @param credential the credential
      * @return the principal

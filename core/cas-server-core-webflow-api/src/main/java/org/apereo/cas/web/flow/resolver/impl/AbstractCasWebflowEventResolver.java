@@ -81,7 +81,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     }
 
     /**
-     * New event event.
+     * New event.
      *
      * @param id the id
      * @return the event
