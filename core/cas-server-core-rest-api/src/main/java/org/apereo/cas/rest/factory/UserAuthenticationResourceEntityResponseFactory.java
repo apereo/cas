@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface UserAuthenticationResourceEntityResponseFactory {
 
     /**
-     * Build response response entity.
+     * Build response entity.
      *
      * @param result  the result
      * @param request the request
