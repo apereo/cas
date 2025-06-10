@@ -1,4 +1,4 @@
-package org.apereo.cas.configuration.model.support.jpa;
+package org.apereo.cas.jpa;
 
 import lombok.Builder;
 import lombok.Getter;

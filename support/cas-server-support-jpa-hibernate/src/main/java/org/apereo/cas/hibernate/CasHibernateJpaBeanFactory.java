@@ -2,9 +2,9 @@ package org.apereo.cas.hibernate;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.jpa.JpaConfigurationContext;
 import org.apereo.cas.jpa.JpaPersistenceProviderConfigurer;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
 import org.apereo.cas.util.function.FunctionUtils;

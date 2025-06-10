@@ -425,6 +425,8 @@ subprojects {
         api libraries.springintegration
         api libraries.springwebflow
         api libraries.jakarta
+        
+        compileOnly libraries.jakartapersistence
 
         annotationProcessor libraries.springindexer
 
@@ -435,6 +437,7 @@ subprojects {
         testImplementation libraries.tests
         testImplementation libraries.log4j
         testImplementation libraries.hibernatevalidator
+        testImplementation libraries.jakartapersistence
 
         runtimeOnly libraries.httpclient4
 

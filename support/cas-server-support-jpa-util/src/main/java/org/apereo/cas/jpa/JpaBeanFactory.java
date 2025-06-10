@@ -2,7 +2,6 @@ package org.apereo.cas.jpa;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 
 import lombok.val;
 import org.springframework.beans.factory.FactoryBean;
