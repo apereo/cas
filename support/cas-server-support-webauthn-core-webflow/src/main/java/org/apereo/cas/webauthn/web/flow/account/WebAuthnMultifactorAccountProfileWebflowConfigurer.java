@@ -42,6 +42,9 @@ public class WebAuthnMultifactorAccountProfileWebflowConfigurer extends Multifac
             createEvaluateAction(CasWebflowConstants.ACTION_ID_WEB_AUTHN_START_REGISTRATION));
         createTransitionForState(regViewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION);
 
+        val saveState = createActionState(accountFlow, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION, CasWebflowConstants.ACTION_ID_WEBAUTHN_SAVE_ACCOUNT_REGISTRATION);
+        createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
+
         val accountProfileView = (ViewState) accountFlow.getState(CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
         createTransitionForState(accountProfileView, "registerWebAuthn", regViewState.getId());
     }
