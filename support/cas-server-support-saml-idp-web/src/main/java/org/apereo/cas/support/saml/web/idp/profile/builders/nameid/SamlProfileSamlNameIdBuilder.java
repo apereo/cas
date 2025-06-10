@@ -106,8 +106,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         LOGGER.debug("AuthN request indicates [{}] is the required NameID format", requiredNameFormat);
         return requiredNameFormat;
     }
-
-
+    
     @Override
     public SAMLObject build(final SamlProfileBuilderContext context) throws SamlException {
         if (context.getSamlRequest() instanceof AttributeQuery) {
@@ -116,15 +115,6 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         return buildNameId(context);
     }
 
-    /**
-     * Build name id.
-     * If there are no explicitly defined NameIDFormats, include the default format.
-     * see: <a href="http://saml2int.org/profile/current/#section92">here</a>.
-     *
-     * @param context the context
-     * @return the name id
-     * @throws SamlException the saml exception
-     */
     protected NameID buildNameId(final SamlProfileBuilderContext context) throws SamlException {
         val supportedNameFormats = getSupportedNameIdFormats(context);
         val requiredNameFormat = getRequiredNameIdFormatIfAny(context);
@@ -170,13 +160,6 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         }
     }
 
-    /**
-     * Determine name id name id.
-     *
-     * @param supportedNameFormats the supported name formats
-     * @param context              the context
-     * @return the name id
-     */
     protected NameID determineNameId(final List<String> supportedNameFormats, final SamlProfileBuilderContext context) {
         for (val nameFormat : supportedNameFormats) {
             LOGGER.debug("Evaluating NameID format [{}]", nameFormat);

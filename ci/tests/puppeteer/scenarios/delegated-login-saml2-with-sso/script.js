@@ -1,4 +1,4 @@
-const assert = require("assert");
+
 const path = require("path");
 const cas = require("../../cas.js");
 
@@ -30,8 +30,7 @@ const cas = require("../../cas.js");
         await cas.loginWith(page, "user1", "password");
         await cas.sleep(8000);
         await cas.logPage(page);
-        const url = await page.url();
-        assert(url.startsWith("https://github.com"));
+        await cas.assertPageUrlStartsWith(page, "https://github.com");
 
         await cas.assertTicketParameter(page);
         success = true;

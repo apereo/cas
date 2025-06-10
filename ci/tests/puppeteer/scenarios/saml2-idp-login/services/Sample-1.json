@@ -1,10 +1,11 @@
 {
   "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "http://localhost:9443/simplesaml.+",
+  "serviceId" : "^http://localhost:9443/simplesaml.+",
   "name" : "Sample",
   "id" : 1,
   "evaluationOrder" : 1,
   "metadataLocation" : "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp",
+  "requiredNameIdFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:transient",
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
     "mergingPolicy": "ADD",

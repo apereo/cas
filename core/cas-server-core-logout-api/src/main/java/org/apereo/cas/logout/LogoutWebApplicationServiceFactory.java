@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.web.UrlValidator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,8 +24,10 @@ import java.util.Objects;
 public class LogoutWebApplicationServiceFactory extends WebApplicationServiceFactory {
     private final LogoutProperties logoutProperties;
 
-    public LogoutWebApplicationServiceFactory(final TenantExtractor tenantExtractor, final LogoutProperties logoutProperties) {
-        super(tenantExtractor);
+    public LogoutWebApplicationServiceFactory(final TenantExtractor tenantExtractor,
+                                              final UrlValidator urlValidator,
+                                              final LogoutProperties logoutProperties) {
+        super(tenantExtractor, urlValidator);
         this.logoutProperties = logoutProperties;
     }
 

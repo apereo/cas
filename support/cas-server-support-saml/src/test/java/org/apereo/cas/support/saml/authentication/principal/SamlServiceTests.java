@@ -9,7 +9,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -40,10 +39,6 @@ class SamlServiceTests extends AbstractOpenSamlTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
-    
-    @Autowired
-    @Qualifier(UrlValidator.BEAN_NAME)
-    private UrlValidator urlValidator;
 
     @Autowired
     @Qualifier("samlServiceFactory")

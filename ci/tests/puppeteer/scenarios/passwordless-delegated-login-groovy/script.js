@@ -1,5 +1,4 @@
 
-const assert = require("assert");
 const cas = require("../../cas.js");
 
 async function submitUser(page, user) {
@@ -31,9 +30,8 @@ async function submitUser(page, user) {
         await cas.log("Checking for user account with a single delegated client");
         await cas.gotoLogin(page);
         await submitUser(page, "single-delegation");
-        const url = await page.url();
         await cas.logPage(page);
-        assert(url.startsWith("https://localhost:9859/anything/cas3"));
+        await cas.assertPageUrlStartsWith(page, "https://localhost:9859/anything/cas3");
 
         await cas.log("Checking for all-options user account");
         await cas.gotoLogin(page);

@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.UrlValidator;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -39,9 +40,11 @@ class CasWebApplicationServiceFactoryConfiguration {
         @ConditionalOnMissingBean(name = WebApplicationService.BEAN_NAME_FACTORY)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ServiceFactory<WebApplicationService> webApplicationServiceFactory(
+            @Qualifier(UrlValidator.BEAN_NAME)
+            final UrlValidator urlValidator,
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor) {
-            return new WebApplicationServiceFactory(tenantExtractor);
+            return new WebApplicationServiceFactory(tenantExtractor, urlValidator);
         }
     }
 
