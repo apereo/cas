@@ -995,7 +995,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
       while [ $retry_count -lt $max_retries ]; do
         echo -e "**************************************************************************"
         echo -e "Attempt: #${retry_count}: Running ${scriptPath}\n"
-        node --unhandled-rejections=strict --no-experimental-websocket ${scriptPath} ${config}
+        node --unhandled-rejections=strict ${scriptPath} ${config}
         RC=$?
 
         if [[ $RC -ne 0 ]]; then
