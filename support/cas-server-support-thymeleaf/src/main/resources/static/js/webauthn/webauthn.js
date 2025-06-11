@@ -487,7 +487,7 @@ function register(username, displayName, credentialNickname, csrfToken,
         }
     })
         .then(data => {
-            console.log(`registration data: ${JSON.stringify(data.registration)}`);
+            console.log(`data: ${JSON.stringify(data)}`);
             clearMessages();
             if (data.registration) {
                 const nicknameInfo = {nickname: data.registration.credentialNickname};
