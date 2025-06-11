@@ -1,9 +1,11 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
@@ -46,6 +48,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     private static final int CONST_SALT_ABBREV_LENGTH = 4;
 
     @JsonProperty
+    @ExpressionLanguageCapable
     private String salt;
 
     @JsonProperty
@@ -55,13 +58,6 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         this.salt = salt;
     }
 
-    /**
-     * Prepare message digest message digest.
-     *
-     * @param principal the principal
-     * @param service   the service
-     * @return the message digest
-     */
     protected static MessageDigest prepareMessageDigest(final String principal, final String service) {
         return FunctionUtils.doUnchecked(() -> {
             val md = MessageDigest.getInstance("SHA");
@@ -96,14 +92,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         return generate(principalId, service);
     }
 
-    /**
-     * Determine principal id from attributes.
-     *
-     * @param defaultId  the default id
-     * @param attributes the attributes
-     * @return the string
-     */
-    public String determinePrincipalIdFromAttributes(final String defaultId, final Map<String, List<Object>> attributes) {
+    protected String determinePrincipalIdFromAttributes(final String defaultId, final Map<String, List<Object>> attributes) {
         return FunctionUtils.doIf(
             StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute),
             () -> {
@@ -133,7 +122,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
      * @return the string
      */
     protected String digestAndEncodeWithSalt(final MessageDigest md) {
-        val sanitizedSalt = StringUtils.replace(salt, "\n", " ");
+        val sanitizedSalt = StringUtils.replace(SpringExpressionLanguageValueResolver.getInstance().resolve(salt), "\n", " ");
         val digested = md.digest(sanitizedSalt.getBytes(StandardCharsets.UTF_8));
         return EncodingUtils.encodeBase64(digested, false);
     }
