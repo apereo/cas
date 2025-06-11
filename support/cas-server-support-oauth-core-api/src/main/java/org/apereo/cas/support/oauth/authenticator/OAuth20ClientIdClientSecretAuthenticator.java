@@ -37,8 +37,10 @@ import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.context.ConfigurableApplicationContext;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Authenticator for client credentials authentication.
@@ -136,7 +138,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
     protected Principal buildAuthenticatedPrincipal(final Principal resolvedPrincipal, final OAuthRegisteredService registeredService,
                                                     final WebApplicationService service, final CallContext callContext) throws Throwable {
         val accessTokenFactory = (OAuth20AccessTokenFactory) ticketFactory.get(OAuth20AccessToken.class);
-        val scopes = requestParameterResolver.resolveRequestedScopes(callContext.webContext());
+        val scopes = getScopes(callContext);
         val responseType = requestParameterResolver.resolveResponseType(callContext.webContext());
         val grantType = requestParameterResolver.resolveGrantType(callContext.webContext());
 
@@ -146,6 +148,11 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
         val finalPrincipal = profileScopeToAttributesFilter.filter(service, resolvedPrincipal, registeredService, accessToken);
         LOGGER.debug("Built final principal [{}]", finalPrincipal);
         return finalPrincipal;
+    }
+
+    protected Collection<String> getScopes(final CallContext callContext) {
+        val requestScopes = requestParameterResolver.resolveRequestedScopes(callContext.webContext());
+        return requestScopes.isEmpty() ? Set.of("openid") : requestScopes;
     }
 
     protected void validateCredentials(final UsernamePasswordCredentials credentials,

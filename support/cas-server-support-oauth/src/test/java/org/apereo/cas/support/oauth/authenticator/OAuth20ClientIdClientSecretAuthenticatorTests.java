@@ -159,6 +159,16 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
             oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNotNull(credentials.getUserProfile());
         }
+
+        @Test
+        void verifyGetScopes() {
+            val authenticator = (OAuth20ClientIdClientSecretAuthenticator) oauthClientAuthenticator;
+            val request = new MockHttpServletRequest();
+            val ctx = new JEEContext(request, new MockHttpServletResponse());
+            val scopes = authenticator.getScopes(new CallContext(ctx, new JEESessionStore()));
+            assertNotNull(scopes);
+            assertFalse(scopes.isEmpty());
+        }
     }
 
     @Import(NullPrincipalTestConfiguration.class)
