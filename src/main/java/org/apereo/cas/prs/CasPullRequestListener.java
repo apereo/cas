@@ -196,7 +196,7 @@ public class CasPullRequestListener implements PullRequestListener {
         }
 
         if (!pr.isUnderReview()) {
-            val count = repository.getPullRequestFiles(pr).stream()
+            var count = repository.getPullRequestFiles(pr).stream()
                 .filter(file -> {
                     var filename = file.getFilename();
                     return !filename.contains("src/test/java")
@@ -229,6 +229,7 @@ public class CasPullRequestListener implements PullRequestListener {
                 return true;
             }
 
+            count = repository.getPullRequestFiles(pr).size();
             if (count == 0) {
                 log.info("Closing invalid pull request {} with no changes", pr);
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
