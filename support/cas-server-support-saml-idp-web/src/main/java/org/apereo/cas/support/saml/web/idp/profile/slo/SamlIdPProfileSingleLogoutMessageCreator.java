@@ -137,6 +137,7 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
 
     protected String buildLogoutRequestNameId(final SingleLogoutRequestContext request, final String nameIdFormat) throws Throwable {
         val samlService = (SamlRegisteredService) request.getRegisteredService();
+        LOGGER.debug("Preparing NameID attribute for SAML service [{}] with format [{}]", samlService.getName(), nameIdFormat);
         val principal = request.getExecutionRequest().getTicketGrantingTicket()
             .getAuthentication().getPrincipal();
         if (NameIDType.TRANSIENT.equalsIgnoreCase(StringUtils.trim(nameIdFormat))) {
