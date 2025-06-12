@@ -434,6 +434,8 @@ function validateScenario() {
     exit 0
   fi
 
+  nodeArgs=$(jq -j '.requirements.node.args // empty' "${config}")
+  
   export SCENARIO="${scenarioName}"
   export SCENARIO_PATH="${scenario}"
   export SCENARIO_FOLDER=$(cd -- "${SCENARIO_PATH}" &>/dev/null && pwd)
@@ -995,7 +997,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
       while [ $retry_count -lt $max_retries ]; do
         echo -e "**************************************************************************"
         echo -e "Attempt: #${retry_count}: Running ${scriptPath}\n"
-        node --unhandled-rejections=strict ${scriptPath} ${config}
+        node --unhandled-rejections=strict ${nodeArgs} ${scriptPath} ${config}
         RC=$?
 
         if [[ $RC -ne 0 ]]; then
