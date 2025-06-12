@@ -1156,6 +1156,11 @@ public interface CasWebflowConstants {
     String STATE_ID_SAVE_REGISTRATION = "saveRegistration";
 
     /**
+     * State id 'saveRegistrationWebAuthn'.
+     */
+    String STATE_ID_WEBAUTHN_SAVE_REGISTRATION = "saveRegistrationWebAuthn";
+
+    /**
      * State id 'initPasswordReset'.
      */
     String STATE_ID_INIT_PASSWORD_RESET = "initPasswordReset";
