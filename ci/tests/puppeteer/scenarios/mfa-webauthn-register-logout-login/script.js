@@ -18,7 +18,7 @@ const cas = require("../../cas.js");
             isUserVerified: true
         }
     });
-    console.log("authenticator: ", authenticator);
+    cas.logg("authenticator: ", authenticator);
 
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-webauthn");
 
