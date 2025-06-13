@@ -28,7 +28,7 @@ public class CasThymeleafExpressionDialect implements IExpressionObjectDialect {
         return new CasThymeleafExpressionObjectFactory();
     }
 
-    private class CasThymeleafExpressionObjectFactory implements IExpressionObjectFactory {
+    private final class CasThymeleafExpressionObjectFactory implements IExpressionObjectFactory {
 
         @Override
         public Set<String> getAllExpressionObjectNames() {
