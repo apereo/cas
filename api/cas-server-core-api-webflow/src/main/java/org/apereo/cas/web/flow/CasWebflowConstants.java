@@ -1151,9 +1151,14 @@ public interface CasWebflowConstants {
     String STATE_ID_WEBAUTHN_VALIDATE = "validateWebAuthnToken";
 
     /**
-     * State id 'saveRegistration'.
+     * State id 'saveRegistrationGoogle'.
      */
-    String STATE_ID_SAVE_REGISTRATION = "saveRegistration";
+    String STATE_ID_GOOGLE_SAVE_REGISTRATION = "saveRegistrationGoogle";
+
+    /**
+     * State id 'saveRegistrationYubiKey'.
+     */
+    String STATE_ID_YUBIKEY_SAVE_REGISTRATION = "saveRegistrationYubiKey";
 
     /**
      * State id 'saveRegistrationWebAuthn'.
@@ -2319,5 +2324,3 @@ public interface CasWebflowConstants {
      * The action id 'oktaPrincipalProvisionerAction'.
      */
     String ACTION_ID_OKTA_PRINCIPAL_PROVISIONER_ACTION = "oktaPrincipalProvisionerAction";
-
-}
