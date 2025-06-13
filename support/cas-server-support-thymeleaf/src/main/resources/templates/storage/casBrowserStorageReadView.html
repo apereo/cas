@@ -3,7 +3,7 @@
 <body id="cas">
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" id="login">
-        <span th:remove="tag" th:if="${'true' == #strings.defaultString(#themes.code('cas.browser-storage.show-progress'), 'true')}">
+        <span th:remove="tag" th:if="${#cas.isTrue(#themes.code('cas.browser-storage.show-progress'))}">
             <div id="mainPanel" class="mdc-card p-4 m-auto w-lg-50">
                 <h2 th:utext="#{screen.processing.title}"></h2>
                 <p th:utext="#{screen.processing.text}"></p>

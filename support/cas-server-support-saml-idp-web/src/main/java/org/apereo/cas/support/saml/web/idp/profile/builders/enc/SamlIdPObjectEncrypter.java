@@ -436,7 +436,7 @@ public class SamlIdPObjectEncrypter {
 
 
     /**
-     * Configure key decryption credential credential.
+     * Configure key decryption credential.
      *
      * @param peerEntityId            the peer entity id
      * @param adaptor                 the adaptor

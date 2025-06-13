@@ -133,7 +133,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     }
 
     /**
-     * New status status.
+     * New status.
      *
      * @param codeValue the code value
      * @return the status

@@ -12,6 +12,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -169,7 +170,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     LOGGER.error("Could not update the LDAP entry's password for [{}]", dn);
                     return Boolean.FALSE;
                 }).toList();
-            return results.stream().allMatch(result -> result);
+            return !results.isEmpty() && results.stream().allMatch(BooleanUtils::isTrue);
         }, e -> false).get();
     }
 

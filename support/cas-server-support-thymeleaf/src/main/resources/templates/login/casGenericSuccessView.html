@@ -33,7 +33,7 @@
             </p>
 
             <div id="view-genericsuccess-authn-data"
-                 th:if="${'true' == #strings.defaultString(#themes.code('cas.successful-login.display-attributes'), 'true')}">
+                 th:if="${#cas.isTrue(#themes.code('cas.successful-login.display-attributes'))}">
                 <p th:unless="${#maps.isEmpty(authentication.principal.attributes)}">
                     The following attributes and services are resolved and available for <strong th:utext="${authentication.principal.id}"/>:
 
