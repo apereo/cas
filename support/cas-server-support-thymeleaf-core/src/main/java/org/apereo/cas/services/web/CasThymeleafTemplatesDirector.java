@@ -7,6 +7,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.thymeleaf.context.WebEngineContext;
+import org.thymeleaf.util.EvaluationUtils;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -71,8 +72,8 @@ public class CasThymeleafTemplatesDirector {
         val requestContext = RequestContextHolder.getRequestContext();
         val providers = webflowExecutionPlan.getWebflowLoginContextProviders();
         return requestContext != null
-               && (WebUtils.isCasLoginFormViewable(requestContext) || providers.isEmpty()
-                   || providers.stream().anyMatch(provider -> provider.isLoginFormUsernameInputVisible(requestContext)));
+            && (WebUtils.isCasLoginFormViewable(requestContext) || providers.isEmpty()
+            || providers.stream().anyMatch(provider -> provider.isLoginFormUsernameInputVisible(requestContext)));
     }
 
     /**
@@ -84,10 +85,10 @@ public class CasThymeleafTemplatesDirector {
     public boolean isLoginFormUsernameInputDisabled(final WebEngineContext vars) {
         val requestContext = RequestContextHolder.getRequestContext();
         return requestContext == null || !WebUtils.isCasLoginFormViewable(requestContext)
-               || WebUtils.isGraphicalUserAuthenticationEnabled(requestContext)
-               || webflowExecutionPlan.getWebflowLoginContextProviders()
-                   .stream()
-                   .anyMatch(provider -> provider.isLoginFormUsernameInputDisabled(requestContext));
+            || WebUtils.isGraphicalUserAuthenticationEnabled(requestContext)
+            || webflowExecutionPlan.getWebflowLoginContextProviders()
+            .stream()
+            .anyMatch(provider -> provider.isLoginFormUsernameInputDisabled(requestContext));
     }
 
     /**
@@ -121,4 +122,15 @@ public class CasThymeleafTemplatesDirector {
         return dateTime.format(DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH));
     }
 
+    /**
+     * Utility to consider blank string values as false.
+     *
+     * @param target the target
+     * @return true/false
+     */
+    public Boolean isTrue(final Object target) {
+        return (target instanceof final String value && StringUtils.isBlank(value.trim()))
+            ? Boolean.FALSE
+            : EvaluationUtils.evaluateAsBoolean(target);
+    }
 }

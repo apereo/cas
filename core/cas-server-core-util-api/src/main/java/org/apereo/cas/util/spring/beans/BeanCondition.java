@@ -137,7 +137,7 @@ public interface BeanCondition {
     }
 
     /**
-     * To supplier supplier.
+     * To supplier.
      *
      * @param applicationContext the application context
      * @return the supplier

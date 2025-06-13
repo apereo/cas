@@ -43,7 +43,7 @@
                             th:if="${#strings.equalsIgnoreCase(logoutPropagationType, 'AJAX')}">
                         /*<![CDATA[*/
                         $.ajax({
-                            url: [[${@casThymeleafTemplatesDirector.getUrlExternalForm(entry.key.logoutUrl)}]],
+                            url: [[${#cas.getUrlExternalForm(entry.key.logoutUrl)}]],
                             dataType: 'jsonp',
                             async: true,
                             contentType: [[${entry.value.contentType}]]
@@ -68,7 +68,7 @@
                     </p>
 
                     <iframe width="1px" height="1px" style="display: none"
-                            th:src="${@casThymeleafTemplatesDirector.getUrlExternalForm(entry.key.logoutUrl) + entry.value.message}"
+                            th:src="${#cas.getUrlExternalForm(entry.key.logoutUrl) + entry.value.message}"
                             th:if="${#strings.equalsIgnoreCase(logoutPropagationType, 'IFRAME')}"/>
                 </li>
             </ul>

@@ -2,9 +2,9 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.jpa.JpaConfigurationContext;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.ticket.resource.repository.impl.JpaResourceSetRepository;

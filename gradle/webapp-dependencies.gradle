@@ -20,6 +20,7 @@ dependencies {
     implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-person-directory")
     implementation project(":support:cas-server-support-themes")
+    implementation project(":support:cas-server-support-themes-bootstrap")
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-thymeleaf")
     implementation project(":support:cas-server-support-pm-webflow")

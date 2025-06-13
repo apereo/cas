@@ -9,8 +9,7 @@ ext {
 
 dependencies {
     runtimeOnly libraries.webjars
-    runtimeOnly libraries.webjarsbootstrap
-
+    
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-cookie-api")

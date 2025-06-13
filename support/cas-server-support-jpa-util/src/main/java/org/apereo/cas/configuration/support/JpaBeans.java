@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.support;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
+import org.apereo.cas.jpa.JpaConfigurationContext;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
