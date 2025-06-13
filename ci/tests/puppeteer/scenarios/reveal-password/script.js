@@ -22,7 +22,7 @@ const cas = require("../../cas.js");
     await cas.log(`password input type is ${pwdType}`);
     assert(pwdType === "text");
 
-    await cas.log("click button to unreveal password");
+    await cas.log("click button to show password");
     await page.click(".reveal-password");
     pwdType = await page.evaluate((pwd) => pwd.type, pwd);
     await cas.log(`password input type is ${pwdType}`);
