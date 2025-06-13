@@ -1,24 +1,10 @@
-
 const cas = require("../../cas.js");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    const client = await page.target().createCDPSession();
-
-    await client.send("WebAuthn.enable");
-
-    const authenticator = await client.send("WebAuthn.addVirtualAuthenticator", {
-        options: {
-            protocol: "u2f",
-            transport: "usb",
-            hasResidentKey: false,
-            hasUserVerification: true,
-            isUserVerified: true
-        }
-    });
-    cas.logg("authenticator: ", authenticator);
+    const virtualAuthenticator = await cas.createWebAuthnVirtualAuthenticator(page);
 
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-webauthn");
 
@@ -34,22 +20,22 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#residentKeysPanel");
     await cas.assertVisibility(page, "#registerDiscoverableCredentialButton");
 
-    await page.click("#credentialNickname", { clickCount: 3 });
-    await page.keyboard.press("Backspace");
+    await page.click("#credentialNickname", {clickCount: 3});
+    await cas.pressBackspace(page);
     await page.type("#credentialNickname", "mydevice");
 
-    await page.click("#registerButton");
+    await cas.click(page,"#registerButton");
 
     await cas.sleep(5000);
 
-    await page.click("#authnButton");
+    await cas.click(page, "#authnButton");
 
     await cas.sleep(5000);
 
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-    await page.click("#auth-tab");
+    await cas.click(page, "#auth-tab");
     await cas.sleep(1000);
     await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[WebAuthnAuthenticationHandler]");
     await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[mfa-webauthn]");
@@ -67,23 +53,20 @@ const cas = require("../../cas.js");
     await cas.loginWith(page);
     await cas.sleep(1000);
 
-    await page.click("#authnButton");
+    await cas.click(page, "#authnButton");
 
     await cas.sleep(5000);
 
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-    await page.click("#auth-tab");
+    await cas.click(page, "#auth-tab");
     await cas.sleep(1000);
     await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[WebAuthnAuthenticationHandler]");
     await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[mfa-webauthn]");
     await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[WebAuthnCredential]");
 
     await cas.sleep(2000);
-
-    await client.send("WebAuthn.removeVirtualAuthenticator", {
-        authenticatorId: authenticator.authenticatorId
-    });
+    await cas.removeWebAuthnVirtualAuthenticator(virtualAuthenticator);
     await browser.close();
 })();

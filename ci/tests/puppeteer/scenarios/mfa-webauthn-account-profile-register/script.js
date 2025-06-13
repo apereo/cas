@@ -5,20 +5,7 @@ const cas = require("../../cas.js");
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    const client = await page.target().createCDPSession();
-
-    await client.send("WebAuthn.enable");
-
-    const authenticator = await client.send("WebAuthn.addVirtualAuthenticator", {
-        options: {
-            protocol: "u2f",
-            transport: "usb",
-            hasResidentKey: false,
-            hasUserVerification: true,
-            isUserVerified: true
-        }
-    });
-    cas.logg("authenticator: ", authenticator);
+    const virtualAuthenticator = await cas.createWebAuthnVirtualAuthenticator(page);
 
     await cas.gotoLogin(page);
 
@@ -39,10 +26,10 @@ const cas = require("../../cas.js");
     await cas.sleep(2000);
 
     await page.click("#credentialNickname", { clickCount: 3 });
-    await page.keyboard.press("Backspace");
+    await cas.pressBackspace(page);
     await page.type("#credentialNickname", "mydevice");
 
-    await page.click("#registerButton");
+    await cas.click(page, "#registerButton");
 
     await cas.sleep(4000);
 
@@ -50,8 +37,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#mfaDevicesTable tbody tr td:nth-child(3)", "mydevice");
     await cas.sleep(2000);
 
-    await client.send("WebAuthn.removeVirtualAuthenticator", {
-        authenticatorId: authenticator.authenticatorId
-    });
+    await cas.removeWebAuthnVirtualAuthenticator(virtualAuthenticator);
+    
     await browser.close();
 })();
