@@ -1,5 +1,10 @@
 {
   "dependencies": "qr-authentication,reports",
+  "requirements": {
+    "node": {
+      "args": "--no-experimental-websocket"
+    }
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",

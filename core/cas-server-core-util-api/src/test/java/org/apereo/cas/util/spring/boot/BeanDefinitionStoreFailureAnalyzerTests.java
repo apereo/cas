@@ -24,7 +24,7 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.*;
 class BeanDefinitionStoreFailureAnalyzerTests {
 
     @Test
-    static void analyzeBeanDefinitionStoreException() {
+    void analyzeBeanDefinitionStoreException() {
         val analysis = performAnalysis();
         val description = analysis.getDescription();
         assertThat(description).contains("not.defined");

@@ -40,7 +40,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
     }
 
     /**
-     * Build conditions conditions.
+     * Build conditions.
      *
      * @param context the context
      * @return the conditions

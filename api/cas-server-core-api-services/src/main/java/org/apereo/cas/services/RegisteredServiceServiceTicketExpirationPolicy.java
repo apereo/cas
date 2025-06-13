@@ -17,9 +17,9 @@ import java.io.Serializable;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceServiceTicketExpirationPolicy extends Serializable {
     /**
-     * Undefined registered service service ticket expiration policy.
+     * Undefined registered service ticket expiration policy.
      *
-     * @return the registered service service ticket expiration policy
+     * @return the registered service ticket expiration policy
      */
     static RegisteredServiceServiceTicketExpirationPolicy undefined() {
         return new RegisteredServiceServiceTicketExpirationPolicy() {

@@ -7,8 +7,6 @@ ext {
     ]
 }
 dependencies {
-    runtimeOnly libraries.webjarsbootstrap
-    
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-web-api")
@@ -20,6 +18,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication")
 
+    implementation project(":support:cas-server-support-themes-bootstrap")
     implementation project(":support:cas-server-support-themes-core")
     implementation project(":support:cas-server-support-themes")
 }
