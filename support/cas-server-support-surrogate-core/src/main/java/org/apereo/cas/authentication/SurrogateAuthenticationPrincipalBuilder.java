@@ -19,7 +19,7 @@ public interface SurrogateAuthenticationPrincipalBuilder {
     String BEAN_NAME = "surrogatePrincipalBuilder";
 
     /**
-     * Build surrogate principal principal.
+     * Build surrogate principal.
      *
      * @param credential         the surrogate
      * @param primaryPrincipal  the primary principal
@@ -30,7 +30,7 @@ public interface SurrogateAuthenticationPrincipalBuilder {
     Principal buildSurrogatePrincipal(Credential credential, Principal primaryPrincipal, RegisteredService registeredService) throws Throwable;
 
     /**
-     * Build surrogate principal principal without a service.
+     * Build surrogate principal without a service.
      *
      * @param credential        the surrogate
      * @param primaryPrincipal the primary principal

@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.principal.PersistentIdGenerator;
+import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.support.saml.DefaultOpenSamlConfigBean;
@@ -116,5 +118,16 @@ public class CasCoreSamlAutoConfiguration {
     @DependsOn(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
     public UnmarshallerFactory unmarshallerFactory() {
         return XMLObjectProviderRegistrySupport.getUnmarshallerFactory();
+    }
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Bean
+    @ConditionalOnMissingBean(name = "shibbolethCompatiblePersistentIdGenerator")
+    public PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator(
+        final CasConfigurationProperties casProperties) {
+        val salt = casProperties.getSamlCore().getPersistentIdSalt();
+        val generator = new ShibbolethCompatiblePersistentIdGenerator();
+        generator.setSalt(salt);
+        return generator;
     }
 }

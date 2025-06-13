@@ -11,6 +11,8 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMe
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlAttributeBasedNameIdGenerator;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
@@ -23,6 +25,7 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.LogoutRequest;
+import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.soap.soap11.Body;
@@ -65,24 +68,21 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
             : Beans.newDuration(samlIdPProperties.getResponse().getSkewAllowance()).toSeconds();
 
         val issueInstant = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(skewAllowance);
-        val nameFormat = StringUtils.defaultIfBlank(samlService.getRequiredNameIdFormat(), NameIDType.UNSPECIFIED);
-        val nameIdValue = buildLogoutRequestNameId(request, nameFormat);
-        val encoder = SamlAttributeBasedNameIdGenerator.get(Optional.empty(), nameFormat, samlService, nameIdValue);
-        LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
-        val nameId = FunctionUtils.doUnchecked(() -> encoder.generate(new ProfileRequestContext(), nameFormat));
+
+        val serviceId = request.getService().getId();
+        val resolver = samlProfileHandlerConfigurationContext.getSamlRegisteredServiceCachingMetadataResolver();
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(resolver, samlService, serviceId)
+            .orElseThrow(() -> new IllegalArgumentException("Unable to find metadata for saml service " + serviceId));
+
+        val nameId = buildNameId(request, adaptor);
 
         val samlLogoutRequest = newLogoutRequest(id, issueInstant,
             request.getLogoutUrl().toExternalForm(),
             newIssuer(samlIdPProperties.getCore().getEntityId()),
             request.getTicketId(),
             nameId);
-
         val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
         if (shouldSignLogoutRequestFor(samlService)) {
-            val serviceId = request.getService().getId();
-            val resolver = samlProfileHandlerConfigurationContext.getSamlRegisteredServiceCachingMetadataResolver();
-            val adaptorRes = SamlRegisteredServiceMetadataAdaptor.get(resolver, samlService, serviceId);
-            val adaptor = adaptorRes.orElseThrow(() -> new IllegalArgumentException("Unable to find metadata for saml service " + serviceId));
             val httpRequest = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val httpResponse = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
             FunctionUtils.doUnchecked(__ -> samlProfileHandlerConfigurationContext.getSamlObjectSigner().encode(
@@ -102,6 +102,32 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
         return buildSingleLogoutMessage(samlLogoutRequest, samlLogoutRequest);
     }
 
+    private NameID buildNameId(final SingleLogoutRequestContext request, final SamlRegisteredServiceMetadataAdaptor adaptor) throws Throwable {
+        val samlService = (SamlRegisteredService) request.getRegisteredService();
+        val effectiveNameIdFormats = StringUtils.isNotBlank(samlService.getRequiredNameIdFormat())
+            ? CollectionUtils.wrapList(samlService.getRequiredNameIdFormat())
+            : adaptor.getSupportedNameIdFormats();
+        if (effectiveNameIdFormats.isEmpty()) {
+            effectiveNameIdFormats.add(NameIDType.UNSPECIFIED);
+        }
+
+        for (val nameFormat : effectiveNameIdFormats) {
+            try {
+                val nameIdValue = buildLogoutRequestNameId(request, nameFormat);
+                val encoder = SamlAttributeBasedNameIdGenerator.get(Optional.empty(), nameFormat, samlService, nameIdValue);
+                LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
+                val nameId = encoder.generate(new ProfileRequestContext(), nameFormat);
+                if (nameId != null) {
+                    LOGGER.debug("Generated NameID [{}] with format [{}]", nameId.getValue(), nameFormat);
+                    return nameId;
+                }
+            } catch (final Exception e) {
+                LoggingUtils.error(LOGGER, e);
+            }
+        }
+        throw new IllegalArgumentException("Unable to find supported NameID format for service %s".formatted(samlService.getServiceId()));
+    }
+
     protected boolean shouldSignLogoutRequestFor(final SamlRegisteredService registeredService) {
         val samlIdPProperties = samlProfileHandlerConfigurationContext.getCasProperties().getAuthn().getSamlIdp();
         return registeredService.getSignLogoutRequest().isUndefined()
@@ -111,6 +137,7 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
 
     protected String buildLogoutRequestNameId(final SingleLogoutRequestContext request, final String nameIdFormat) throws Throwable {
         val samlService = (SamlRegisteredService) request.getRegisteredService();
+        LOGGER.debug("Preparing NameID attribute for SAML service [{}] with format [{}]", samlService.getName(), nameIdFormat);
         val principal = request.getExecutionRequest().getTicketGrantingTicket()
             .getAuthentication().getPrincipal();
         if (NameIDType.TRANSIENT.equalsIgnoreCase(StringUtils.trim(nameIdFormat))) {

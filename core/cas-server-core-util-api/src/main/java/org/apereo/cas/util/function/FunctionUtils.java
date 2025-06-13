@@ -118,7 +118,7 @@ public class FunctionUtils {
     }
 
     /**
-     * Conditional function function.
+     * Conditional function.
      *
      * @param <T>           the type parameter
      * @param <R>           the type parameter
@@ -331,7 +331,7 @@ public class FunctionUtils {
     }
 
     /**
-     * Default function function.
+     * Default function.
      *
      * @param <T>          the type parameter
      * @param <R>          the type parameter

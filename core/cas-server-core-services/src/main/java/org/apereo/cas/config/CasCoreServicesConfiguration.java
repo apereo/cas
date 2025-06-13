@@ -2,11 +2,9 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.DefaultWebApplicationResponseBuilderLocator;
-import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -151,14 +149,6 @@ class CasCoreServicesConfiguration {
     @Configuration(value = "CasCoreServicesBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasCoreServicesBaseConfiguration {
-
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Bean
-        @ConditionalOnMissingBean(name = "shibbolethCompatiblePersistentIdGenerator")
-        public PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator() {
-            return new ShibbolethCompatiblePersistentIdGenerator();
-        }
-
         @ConditionalOnMissingBean(name = RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
