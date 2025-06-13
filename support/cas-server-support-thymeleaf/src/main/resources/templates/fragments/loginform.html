@@ -14,7 +14,7 @@
 <main class="container mt-3 mb-3">
 
     <div th:fragment="loginform" class="d-flex flex-column justify-content-between m-auto"
-         th:with="loginFormEnabled=${#strings.defaultString(#themes.code('cas.login-form.enabled'), 'true') == 'true'},
+         th:with="loginFormEnabled=${#bools.isTrue(#themes.code('cas.login-form.enabled'))},
                 loginFormViewable=${@casThymeleafTemplatesDirector.isLoginFormViewable(#vars)}">
 
         <div th:if="${delegatedAuthenticationProviderPrimary == null}">
@@ -220,7 +220,7 @@
                     </section>
 
                     <section class="cas-field form-check"
-                             th:if="${'true' == #strings.defaultString(#themes.code('cas.warn-on-redirect.enabled'), 'true')}">
+                             th:if="${#bools.isTrue(#themes.code('cas.warn-on-redirect.enabled'))}">
                         <div class="mdc-form-field ">
                             <div th:replace="~{fragments/switchbutton :: switchbutton (id='warn', label='screen.welcome.label.warn')}"/>
                         </div>
@@ -228,7 +228,7 @@
                     </section>
 
                     <section class="cas-field form-check"
-                             th:if="${'true' == #strings.defaultString(#themes.code('cas.public-workstation.enabled'), 'true')}">
+                             th:if="${#bools.isTrue(#themes.code('cas.public-workstation.enabled'))}">
                         <div class="mdc-form-field ">
                             <div th:replace="~{fragments/switchbutton :: switchbutton (id='publicWorkstation', label='screen.welcome.label.publicstation')}"/>
                         </div>
@@ -320,7 +320,7 @@
 
             <div th:if="${loginFormViewable and loginFormEnabled}">
                 <span th:remove="tag"
-                      th:if="${'true' == #strings.defaultString(#themes.code('cas.pm-links.enabled'), 'true')}">
+                      th:if="${#bools.isTrue(#themes.code('cas.pm-links.enabled'))}">
                     <div th:replace="~{fragments/pmlinks :: pmlinks}"/>
                 </span>
             </div>
