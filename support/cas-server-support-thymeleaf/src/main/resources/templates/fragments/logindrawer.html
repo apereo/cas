@@ -14,7 +14,7 @@
 <main class="container mt-3 mb-3">
     <div th:fragment="logindrawer" id="logindrawer">
         <aside id="app-drawer"
-               th:if="${#bools.isTrue(#themes.code('cas.drawer-menu.enabled'))}"
+               th:if="${#cas.isTrue(#themes.code('cas.drawer-menu.enabled'))}"
                class="mdc-drawer mdc-drawer--dismissible mdc-drawer--modal offcanvas offcanvas-start">
             
             <div class="mdc-drawer__header offcanvas-header flex-column">

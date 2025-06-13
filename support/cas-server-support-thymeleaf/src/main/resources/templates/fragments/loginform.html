@@ -14,8 +14,8 @@
 <main class="container mt-3 mb-3">
 
     <div th:fragment="loginform" class="d-flex flex-column justify-content-between m-auto"
-         th:with="loginFormEnabled=${#bools.isTrue(#themes.code('cas.login-form.enabled'))},
-                loginFormViewable=${@casThymeleafTemplatesDirector.isLoginFormViewable(#vars)}">
+         th:with="loginFormEnabled=${#cas.isTrue(#themes.code('cas.login-form.enabled'))},
+                loginFormViewable=${#cas.isLoginFormViewable(#vars)}">
 
         <div th:if="${delegatedAuthenticationProviderPrimary == null}">
             <div th:if="${!#strings.isEmpty(#themes.code('cas.hero-banner.file'))}">
@@ -75,7 +75,7 @@
                             <input class="mdc-text-field__input form-control" id="username"
                                    size="25"
                                    type="text"
-                                   th:readonly="!${@casThymeleafTemplatesDirector.isLoginFormUsernameInputVisible(#vars)}"
+                                   th:readonly="!${#cas.isLoginFormUsernameInputVisible(#vars)}"
                                    th:field="*{username}"
                                    th:accesskey="#{screen.welcome.label.netid.accesskey}"
                                    autocapitalize="none"
@@ -91,8 +91,8 @@
 
                         <script type="text/javascript" th:inline="javascript">
                             /*<![CDATA[*/
-                            let username = /*[[${@casThymeleafTemplatesDirector.getLoginFormUsername(#vars)}]]*/;
-                            let disabled = /*[[${@casThymeleafTemplatesDirector.isLoginFormUsernameInputDisabled(#vars)}]]*/;
+                            let username = /*[[${#cas.getLoginFormUsername(#vars)}]]*/;
+                            let disabled = /*[[${#cas.isLoginFormUsernameInputDisabled(#vars)}]]*/;
 
                             if (username != null && username !== '') {
                                 $('#username').val(username);
@@ -220,7 +220,7 @@
                     </section>
 
                     <section class="cas-field form-check"
-                             th:if="${#bools.isTrue(#themes.code('cas.warn-on-redirect.enabled'))}">
+                             th:if="${#cas.isTrue(#themes.code('cas.warn-on-redirect.enabled'))}">
                         <div class="mdc-form-field ">
                             <div th:replace="~{fragments/switchbutton :: switchbutton (id='warn', label='screen.welcome.label.warn')}"/>
                         </div>
@@ -228,7 +228,7 @@
                     </section>
 
                     <section class="cas-field form-check"
-                             th:if="${#bools.isTrue(#themes.code('cas.public-workstation.enabled'))}">
+                             th:if="${#cas.isTrue(#themes.code('cas.public-workstation.enabled'))}">
                         <div class="mdc-form-field ">
                             <div th:replace="~{fragments/switchbutton :: switchbutton (id='publicWorkstation', label='screen.welcome.label.publicstation')}"/>
                         </div>
@@ -272,7 +272,7 @@
             </form>
 
             <div id="selectIdentityProvider"
-                 th:if="${#bools.isTrue(delegatedAuthenticationDynamicProviderSelection) and loginFormViewable and loginFormEnabled}">
+                 th:if="${#cas.isTrue(delegatedAuthenticationDynamicProviderSelection) and loginFormViewable and loginFormEnabled}">
                 <p>
                 <form method="post" id="providerDiscoveryForm">
                     <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
@@ -320,7 +320,7 @@
 
             <div th:if="${loginFormViewable and loginFormEnabled}">
                 <span th:remove="tag"
-                      th:if="${#bools.isTrue(#themes.code('cas.pm-links.enabled'))}">
+                      th:if="${#cas.isTrue(#themes.code('cas.pm-links.enabled'))}">
                     <div th:replace="~{fragments/pmlinks :: pmlinks}"/>
                 </span>
             </div>

@@ -144,7 +144,7 @@
                 </tbody>
             </table>
 
-            <div th:if="${#bools.isTrue(gauthAccountProfileRegistrationEnabled) || #bools.isTrue(webauthnAccountProfileRegistrationEnabled)}">
+            <div th:if="${#cas.isTrue(gauthAccountProfileRegistrationEnabled) || #cas.isTrue(webauthnAccountProfileRegistrationEnabled)}">
                 <hr>
 
                 <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>

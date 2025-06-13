@@ -11,7 +11,7 @@
         <main class="container mt-3 mb-3">
             <div layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
                 <h2 id="view-accountlocked-heading" th:utext="#{screen.accountlocked.heading}">This account has been locked.</h2>
-                <span th:remove="tag" th:if="${#bools.isTrue(enableAccountUnlock)}">
+                <span th:remove="tag" th:if="${#cas.isTrue(enableAccountUnlock)}">
                     <p th:utext="#{screen.account.unlock.description}">Please unlock the account.</p>
                     <div th:replace="~{fragments/unlockaccount :: unlock}"></div>
                 </span>
