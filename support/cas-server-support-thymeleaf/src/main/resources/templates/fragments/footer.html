@@ -1,4 +1,4 @@
-<footer th:if="${#bools.isTrue(#themes.code('cas.footer.show'))}"
+<footer th:if="${#cas.isTrue(#themes.code('cas.footer.show'))}"
         class="py-3 d-flex justify-content-center align-items-center cas-footer"
         id="casFooter">
     <span id="copyright" th:utext="#{copyright}" class="me-2 d-inline-block">Copyright Apereo, Inc</span>
@@ -6,11 +6,11 @@
         <span th:utext="#{poweredBy}">Powered by </span><a href="https://github.com/apereo/cas">Apereo CAS</a>
     </span>
     <code class="version"
-          th:if="${#bools.isTrue(#themes.code('cas.footer.show-version'))}"
+          th:if="${#cas.isTrue(#themes.code('cas.footer.show-version'))}"
           th:text="${T(org.apereo.cas.util.CasVersion).getVersion() + ' ' + T(org.apereo.cas.util.CasVersion).getDateTime()}">
     </code>
     <code class="host pl-2"
-          th:if="${#bools.isTrue(#themes.code('cas.footer.show-host'))}"
+          th:if="${#cas.isTrue(#themes.code('cas.footer.show-host'))}"
           th:text="${'🖥️ ' + host}">
     </code>
 </footer>

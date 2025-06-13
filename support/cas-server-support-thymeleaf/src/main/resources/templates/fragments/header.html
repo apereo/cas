@@ -23,7 +23,7 @@
         <nav class="mdc-top-app-bar__row navbar navbar-dark bg-dark">
             <div class="container-fluid container-fluid d-flex align-items-center justify-content-between">
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-                    <button th:if="${#bools.isTrue(#themes.code('cas.drawer-menu.enabled'))}"
+                    <button th:if="${#cas.isTrue(#themes.code('cas.drawer-menu.enabled'))}"
                             class="mdc-icon-button mdc-top-app-bar__navigation-icon  btn btn-outline-light"
                             id="drawerButton"
                             data-bs-toggle="offcanvas"
@@ -45,7 +45,7 @@
                 </section>
                 <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
                     <button id="cas-notifications-menu"
-                            th:if="${#bools.isTrue(#themes.code('cas.notifications-menu.enabled'))}"
+                            th:if="${#cas.isTrue(#themes.code('cas.notifications-menu.enabled'))}"
                             class="mdc-icon-button mdc-top-app-bar__action-item cas-notification-toggle btn btn-outline-light"
                             aria-label="Bookmark this page"
                             data-bs-toggle="modal"
@@ -74,7 +74,7 @@
 
     <script>let countMessages = 0;</script>
     <div
-            th:if="${#bools.isTrue(#themes.code('cas.notifications-menu.enabled'))}"
+            th:if="${#cas.isTrue(#themes.code('cas.notifications-menu.enabled'))}"
             class="mdc-dialog cas-notification-dialog modal"
             id="cas-notification-dialog" role="alertdialog"
             aria-modal="true" aria-labelledby="notif-dialog-title"

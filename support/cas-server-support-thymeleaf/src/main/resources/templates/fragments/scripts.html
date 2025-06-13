@@ -2,7 +2,7 @@
 <script type="text/javascript" th:src="@{#{webjars.dataTables.js}}"></script>
 <script type="text/javascript" th:src="@{#{webjars.clientjs.js}}"></script>
 
-<span th:remove="tag" th:if="${#bools.isTrue(#themes.code('cas.js.core.enabled'))}">
+<span th:remove="tag" th:if="${#cas.isTrue(#themes.code('cas.js.core.enabled'))}">
     <span th:replace="~{fragments/includes :: javascript}">
         <a href="fragments/includes.html">Theme</a> fragment will go here
     </span>
