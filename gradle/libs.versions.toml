@@ -48,7 +48,6 @@ commonsValidator = "1.9.0"
 cosmosdb = "4.71.0"
 cqEngine = "3.6.0"
 cryptacular = "1.2.7"
-cssVarsPonyfill = "2.4.9"
 curator = "5.8.0"
 datatables = "2.3.0"
 disruptor = "4.0.0"
@@ -60,7 +59,6 @@ eclipseAngusMail = "2.0.3"
 eclipseLink = "4.0.6"
 elasticApm = "1.54.0"
 errorprone = "2.38.0"
-es5Shim = "4.5.9"
 eurekaClient = "2.0.5"
 firebaseAdmin = "9.5.0"
 fluentd = "0.3.4"
@@ -337,7 +335,6 @@ converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.r
 core = { module = "com.google.zxing:core", version.ref = "googleZxing" }
 cqengine = { module = "com.googlecode.cqengine:cqengine", version.ref = "cqEngine" }
 cryptacular = { module = "org.cryptacular:cryptacular", version.ref = "cryptacular" }
-css-vars-ponyfill = { module = "org.webjars.npm:css-vars-ponyfill", version.ref = "cssVarsPonyfill" }
 curator-client = { module = "org.apache.curator:curator-client", version.ref = "curator" }
 curator-framework = { module = "org.apache.curator:curator-framework", version.ref = "curator" }
 curator-recipes = { module = "org.apache.curator:curator-recipes", version.ref = "curator" }
@@ -360,7 +357,6 @@ duo-client = { module = "com.duosecurity:duo-client", version.ref = "duoClient" 
 duo-universal-sdk = { module = "com.duosecurity:duo-universal-sdk", version.ref = "duoUniversalSdk" }
 dynamodb = { module = "software.amazon.awssdk:dynamodb", version.ref = "amazonSdk" }
 elasticache-java-cluster-client = { module = "com.amazonaws:elasticache-java-cluster-client", version.ref = "awsmemcached" }
-es5-shim = { module = "org.webjars:es5-shim", version.ref = "es5Shim" }
 eureka-client = { module = "com.netflix.eureka:eureka-client", version.ref = "eurekaClient" }
 expressly = { module = "org.glassfish.expressly:expressly", version.ref = "jakartaElImpl" }
 fediz-core = { module = "org.apache.cxf.fediz:fediz-core", version.ref = "apacheFediz" }
