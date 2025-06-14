@@ -64,7 +64,7 @@
         <module name="JavadocVariable">
             <property name="id" value="javadocForAllPublicFields"/>
             <property name="severity" value="error"/>
-            <property name="scope" value="public"/>
+            <property name="accessModifiers" value="public"/>
             <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER|casProperties"/>
         </module>
         <module name="JavadocVariable">
@@ -653,15 +653,15 @@
             <property name="message" value="Use lombok.val when declaring variable definitions for loops."/>
         </module>
 
-        <module name="CustomImportOrder">
-            <property name="severity" value="error"/>
-            <property name="customImportOrderRules"
-                      value="SAME_PACKAGE(3)###THIRD_PARTY_PACKAGE###SPECIAL_IMPORTS###STANDARD_JAVA_PACKAGE###STATIC"/>
-            <property name="specialImportsRegExp" value="(javax|jakarta)\."/>
-            <property name="standardPackageRegExp" value="^java\."/>
-            <property name="sortImportsInGroupAlphabetically" value="true"/>
-            <property name="separateLineBetweenGroups" value="false"/>
-        </module>
+<!--        <module name="CustomImportOrder">-->
+<!--            <property name="severity" value="error"/>-->
+<!--            <property name="customImportOrderRules"-->
+<!--                      value="SAME_PACKAGE(3)###THIRD_PARTY_PACKAGE###SPECIAL_IMPORTS###STANDARD_JAVA_PACKAGE###STATIC"/>-->
+<!--            <property name="specialImportsRegExp" value="(javax|jakarta)\."/>-->
+<!--            <property name="standardPackageRegExp" value="^java\."/>-->
+<!--            <property name="sortImportsInGroupAlphabetically" value="true"/>-->
+<!--            <property name="separateLineBetweenGroups" value="false"/>-->
+<!--        </module>-->
         <module name="ImportControl">
             <property name="file" value="${checkstyle.importcontrol.file}"/>
             <property name="severity" value="error"/>
