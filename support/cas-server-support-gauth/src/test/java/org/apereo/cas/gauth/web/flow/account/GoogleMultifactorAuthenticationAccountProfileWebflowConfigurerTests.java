@@ -32,7 +32,7 @@ class GoogleMultifactorAuthenticationAccountProfileWebflowConfigurerTests extend
         assertEquals(4, accountView.getRenderActionList().size());
         assertTrue(accountView.getRenderActionList().get(0).toString().contains(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE));
         assertNotNull(flow.getState(CasWebflowConstants.STATE_ID_VIEW_REGISTRATION));
-        assertNotNull(flow.getState(CasWebflowConstants.STATE_ID_SAVE_REGISTRATION));
+        assertNotNull(flow.getState(CasWebflowConstants.STATE_ID_GOOGLE_SAVE_REGISTRATION));
         assertNotNull(flow.getState(CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_GOOGLE_REGISTRATION_FINALIZED));
 
     }
