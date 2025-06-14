@@ -13,7 +13,7 @@
                   loginFormViewable=${@casThymeleafTemplatesDirector.isLoginFormViewable(#vars)}">
 
        <section id="loginSidePanel"
-                th:if="${loginFormViewable and loginFormEnabled and ('true' == #strings.defaultString(#themes.code('cas.login-side-panel.enabled'), 'true'))}"
+                th:if="${loginFormViewable and loginFormEnabled and ('true' == #strings.defaultString(#themes.code('cas.login-side-panel.enabled'), 'false'))}"
                 class="login-section d-xs-none d-md-block card-body">
            <div th:replace="~{fragments/loginSidePanel :: loginSidePanel}">
                <a href="fragments/loginSidePanel.html">loginSidePanel</a>
