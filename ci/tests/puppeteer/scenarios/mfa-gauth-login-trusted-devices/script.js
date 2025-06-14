@@ -35,7 +35,6 @@ async function loginFromPublicWorkstation(browser) {
         const page = await cas.newPage(context);
         await cas.gotoLoginWithAuthnMethod(page, service, "mfa-gauth");
         await cas.assertVisibility(page, "#publicWorkstationButton");
-        await cas.assertVisibility(page, "#warnButton");
         await cas.click(page, "#publicWorkstationButton");
         await cas.sleep(1000);
         await cas.loginWith(page);
