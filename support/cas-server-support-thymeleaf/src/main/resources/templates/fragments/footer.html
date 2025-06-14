@@ -8,5 +8,9 @@
           th:if="${'true' == #strings.defaultString(#themes.code('cas.footer.show-version'), 'true')}"
           th:text="${T(org.apereo.cas.util.CasVersion).getVersion() + ' ' + T(org.apereo.cas.util.CasVersion).getDateTime()}">
     </code>
+    <code class="host pl-2"
+          th:if="${'true' == #strings.defaultString(#themes.code('cas.footer.show-host'), 'true')}"
+          th:text="${'🖥️ ' + host}">
+    </code>
 </footer>
 

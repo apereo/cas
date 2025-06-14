@@ -9,6 +9,7 @@ import org.apereo.cas.services.web.ThemeBasedViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -95,12 +96,14 @@ public class CasThymeleafAutoConfiguration {
         public void configureThymeleafViewResolver(final ThymeleafViewResolver thymeleafViewResolver) {
             thymeleafViewResolver.addStaticVariable("cas", casProperties);
             thymeleafViewResolver.addStaticVariable("casProperties", casProperties);
+            thymeleafViewResolver.addStaticVariable("host", InetAddressUtils.getCasServerHostName());
         }
 
         @Override
         public void configureThymeleafView(final AbstractThymeleafView thymeleafView) {
             thymeleafView.addStaticVariable("cas", casProperties);
             thymeleafView.addStaticVariable("casProperties", casProperties);
+            thymeleafView.addStaticVariable("host", InetAddressUtils.getCasServerHostName());
         }
 
     }

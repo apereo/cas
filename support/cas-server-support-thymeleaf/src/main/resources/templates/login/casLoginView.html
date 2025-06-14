@@ -11,6 +11,15 @@
    <div class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card-content card flex-grow-1"
          th:with="loginFormEnabled=${#strings.defaultString(#themes.code('cas.login-form.enabled'), 'true') == 'true'},
                   loginFormViewable=${@casThymeleafTemplatesDirector.isLoginFormViewable(#vars)}">
+
+       <section id="loginSidePanel"
+                th:if="${loginFormViewable and loginFormEnabled and ('true' == #strings.defaultString(#themes.code('cas.login-side-panel.enabled'), 'true'))}"
+                class="login-section d-xs-none d-md-block card-body">
+           <div th:replace="~{fragments/loginSidePanel :: loginSidePanel}">
+               <a href="fragments/loginSidePanel.html">loginSidePanel</a>
+           </div>
+       </section>
+       
         <section id="loginForm"
                  th:if="${loginFormViewable and loginFormEnabled}"
                  class="login-section login-form card-body">
