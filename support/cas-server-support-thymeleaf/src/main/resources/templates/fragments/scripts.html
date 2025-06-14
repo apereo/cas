@@ -8,7 +8,7 @@
     </span>
 </span>
 
-<span th:remove="tag" th:each="file : ${#strings.arraySplit(#themes.code('cas.standard.js.file'), ',')}">
+<span th:remove="tag" th:each="file : ${#strings.setSplit(#themes.code('cas.standard.js.file'), ',')}">
     <script type="text/javascript" th:src="@{${file}}"></script>
 </span>
 

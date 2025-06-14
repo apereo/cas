@@ -67,6 +67,8 @@ public class DefaultCasThemeSource extends ResourceBundleThemeSource {
                         source.addMessage(key.toString(), locale, value.toString());
                     }));
             }
+            val defaultSource = super.createMessageSource(ThemeProperties.DEFAULT_THEME_NAME);
+            source.setParentMessageSource(defaultSource);
         }
         return source;
     }
