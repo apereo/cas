@@ -27,7 +27,7 @@ async function verifyWebAuthnLogin(browser) {
             assert(response.status() === 200);
         }
     });
-    await page.click("#authnButton");
+    await cas.click(page, "#authnButton");
     await cas.sleep(1000);
 
     const baseEndpoint = "https://localhost:8443/cas/webauthn";
