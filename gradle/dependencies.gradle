@@ -3778,10 +3778,6 @@ ext.libraries = [
                 },
                 dependencies.create(libs.normalize.css.get()) {
                 },
-                dependencies.create(libs.es5.shim.get()) {
-                },
-                dependencies.create(libs.css.vars.ponyfill.get()) {
-                },
                 dependencies.create(libs.text.encoding.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
