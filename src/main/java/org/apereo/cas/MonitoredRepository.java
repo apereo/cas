@@ -505,7 +505,7 @@ public class MonitoredRepository {
     }
 
     public boolean approveAndMergePullRequest(final PullRequest pr, final boolean includeComment) {
-        if (approvePullRequest(pr, includeComment)) {
+        if (pr.isApereoCasBot() || approvePullRequest(pr, includeComment)) {
             return mergePullRequestIntoBase(pr);
         }
         return false;
