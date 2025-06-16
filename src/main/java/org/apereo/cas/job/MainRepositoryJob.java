@@ -1,12 +1,11 @@
 package org.apereo.cas.job;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.MonitoredRepository;
 import org.apereo.cas.PullRequestListener;
 import org.apereo.cas.github.GitHubOperations;
 import org.apereo.cas.github.PullRequest;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class MainRepositoryJob {
     private final MonitoredRepository repository;
 
     private final List<PullRequestListener> pullRequestListeners;
-    
+
     @Scheduled(fixedRate = ONE_MINUTE * 3)
     void monitorPullRequests() {
         log.info("Monitoring {}", this.repository.getFullName());
@@ -31,9 +30,16 @@ public class MainRepositoryJob {
             var page = this.gitHub.getPullRequests(this.repository.getOrganization(), this.repository.getName());
             while (page != null) {
                 page.getContent()
-                    .stream()
-                    .filter(PullRequest::isOpen)
-                    .forEach(pr -> pullRequestListeners.forEach(listener -> listener.onOpenPullRequest(pr)));
+                        .stream()
+                        .filter(PullRequest::isOpen)
+                        .forEach(pr -> pullRequestListeners.forEach(listener -> {
+                            try {
+                                listener.onOpenPullRequest(pr);
+                            } catch (final Exception e) {
+                                log.warn("An error occurred while processing pull request {}", pr.getNumber());
+                                log.error(e.getMessage(), e);
+                            }
+                        }));
                 page = page.next();
             }
         } catch (final Exception ex) {

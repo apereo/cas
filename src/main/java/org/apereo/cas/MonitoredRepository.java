@@ -211,6 +211,15 @@ public class MonitoredRepository {
 
     public boolean autoMergePullRequest(final PullRequest pr) {
         if (pr.isMergeable() && pr.isBot()) {
+
+            if (pr.isBehind()) {
+                var mergedPr = mergePullRequestWithBase(pr);
+                var files = getPullRequestFiles(mergedPr);
+                if (files.isEmpty()) {
+                    return closePullRequestWithInvalidChangeset(mergedPr);
+                }
+            }
+
             if (canBotPullRequestBeMerged(pr)) {
                 return true;
             }
@@ -812,4 +821,19 @@ public class MonitoredRepository {
     }
 
 
+    public boolean closePullRequestWithInvalidChangeset(final PullRequest pr) {
+        try {
+            log.info("Closing empty pull request {} with no changes", pr);
+            labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
+            var classPathResource = new ClassPathResource("template-no-changes.md");
+            var template = IOUtils.toString(classPathResource.getInputStream(), StandardCharsets.UTF_8);
+            removeAllApereoCasBotCommentsFrom(pr);
+            addComment(pr, template);
+            close(pr);
+            return true;
+        } catch (final Exception e) {
+            log.error("Unable to close pull request {} with no changes", pr, e);
+        }
+        return false;
+    }
 }

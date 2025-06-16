@@ -182,4 +182,17 @@ public class PullRequest {
     public boolean isTargetedAtRepository(final String fullName) {
         return getBase().getRepository().getFullName().equalsIgnoreCase(fullName);
     }
+
+    public boolean isBlocked() {
+        return "blocked".equalsIgnoreCase(this.mergeableState);
+    }
+
+    
+    public boolean isClean() {
+        return "clean".equalsIgnoreCase(this.mergeableState);
+    }
+    
+    public boolean isBehind() {
+        return "behind".equalsIgnoreCase(this.mergeableState);
+    }
 }
