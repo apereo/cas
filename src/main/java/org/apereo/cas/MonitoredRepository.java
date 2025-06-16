@@ -650,6 +650,16 @@ public class MonitoredRepository {
                 gitHub.removeWorkflowRun(getOrganization(), getName(), run);
             });
         }
+
+        workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(), Workflows.WorkflowRunEvent.DYNAMIC);
+        if (!workflowRun.getRuns().isEmpty()) {
+            workflowRun.getRuns().forEach(run -> {
+                var workflow = gitHub.getWorkflow(getOrganization(), getName(), run.getWorkflowId());
+                if (workflow != null && workflow.getName().equalsIgnoreCase(WorkflowRuns.CODEQL.getName())) {
+                    gitHub.removeWorkflowRun(getOrganization(), getName(), run);
+                }
+            });
+        }
     }
 
     public boolean shouldResumeCiBuild(final PullRequest pr) {

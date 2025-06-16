@@ -123,6 +123,8 @@ public class Workflows {
         private final String status;
 
         private final String conclusion;
+        
+        private final String displayTitle;
 
         private final List<PullRequest> pullRequests;
 
@@ -150,12 +152,15 @@ public class Workflows {
 
         private final User actor;
 
+        private final User triggeringActor;
+        
         @JsonCreator
         public WorkflowRun(@JsonProperty("id") long id,
                            @JsonProperty("name") String name,
                            @JsonProperty("run_number") long runNumber,
                            @JsonProperty("event") String event,
                            @JsonProperty("status") String status,
+                           @JsonProperty("display_title") String displayTitle,
                            @JsonProperty("conclusion") String conclusion,
                            @JsonProperty("cancel_url") String cancelUrl,
                            @JsonProperty("pull_requests") List<PullRequest> pullRequests,
@@ -165,6 +170,7 @@ public class Workflows {
                            @JsonProperty("workflow_id") long workflowId,
                            @JsonProperty("run_attempt") long runAttempt,
                            @JsonProperty("actor") User actor,
+                           @JsonProperty("triggering_actor") User triggeringActor,
                            @JsonProperty("head_commit") HeadCommit headCommit,
                            @JsonProperty("created_at") final OffsetDateTime creationTime,
                            @JsonProperty("updated_at") final OffsetDateTime updatedTime,
@@ -187,6 +193,8 @@ public class Workflows {
             this.updatedTime = updatedTime;
             this.runAttempt = runAttempt;
             this.actor = actor;
+            this.triggeringActor = triggeringActor;
+            this.displayTitle = displayTitle;
         }
 
         public boolean isConcludedSuccessfully() {

@@ -608,6 +608,14 @@ public class GitHubTemplate implements GitHubOperations {
         }
     }
 
+    @Override
+    public Workflow getWorkflow(String organization, String repository, long workflowId) {
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/actions/workflows/" + workflowId;
+        var builder = UriComponentsBuilder.fromUriString(url);
+        return getSinglePage(builder.build().toUriString(), Workflow.class, Map.of(),
+                new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github+json"))));
+    }
+
     private static final class ErrorLoggingMappingJackson2HttpMessageConverter
         extends MappingJackson2HttpMessageConverter {
 

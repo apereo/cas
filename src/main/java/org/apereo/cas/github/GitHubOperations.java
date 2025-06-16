@@ -114,6 +114,8 @@ public interface GitHubOperations {
         return getWorkflowRuns(organization, repository, null, null, null, null, page);
     }
 
+    Workflow getWorkflow(String organization, String repository, long workflowId);
+    
     Page<CommitStatus> getPullRequestCommitStatus(String organization, String repository, String number);
 
     Page<CommitStatus> getPullRequestCommitStatus(PullRequest pr);

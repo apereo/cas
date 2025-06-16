@@ -7,6 +7,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 @Getter
 public enum WorkflowRuns {
+    CODEQL("CodeQL"),
     CODE_ANALYSIS("Code Analysis"),
     FUNCTIONAL_TESTS("Functional Tests"),
     UNIT_TESTS("Unit & Integration Tests"),
