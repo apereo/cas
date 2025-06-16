@@ -7,9 +7,9 @@ const cas = require("../../cas.js");
 
     await cas.gotoLogin(page);
     await page.focus("#username");
-    await page.keyboard.press("Tab");
+    await cas.pressTab(page);
     await page.focus("#password");
-    await page.keyboard.press("Tab");
+    await cas.pressTab(page);
 
     await cas.assertVisibility(page, "#usernameValidationMessage");
     await cas.assertVisibility(page, "#passwordValidationMessage");
