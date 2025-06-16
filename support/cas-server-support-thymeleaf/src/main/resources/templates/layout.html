@@ -17,12 +17,12 @@
         </span>
     </span>
 
-    <span th:remove="tag" th:each="file : ${#strings.arraySplit(#themes.code('cas.standard.css.file'), ',')}">
+    <span th:remove="tag" th:each="file : ${#strings.setSplit(#themes.code('cas.standard.css.file'), ',')}">
         <link rel="stylesheet" type="text/css" href="../static/css/cas.css" th:href="@{${file}}" />
     </span>
     <link rel="shortcut icon" th:href="@{${#strings.defaultString(#themes.code('cas.favicon.file'), '/favicon.ico')}}" />
 
-    <span th:remove="tag" th:each="name : ${#strings.arraySplit(#themes.code('cas.standard.fragments.head'), ',')}">
+    <span th:remove="tag" th:each="name : ${#strings.setSplit(#themes.code('cas.standard.fragments.head'), ',')}">
         <span th:replace="~{fragments/custom :: ${name}}" th:remove="tag" />
     </span>
 

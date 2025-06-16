@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
 
-    await page.keyboard.press("CapsLock");
+    await cas.pressCapslock(page);
     await page.type("#password", "M");
 
     await cas.assertVisibility(page, ".caps-warn");
