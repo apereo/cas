@@ -55,7 +55,7 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
                     createEvaluateAction(CasWebflowConstants.ACTION_ID_YUBIKEY_ACCOUNT_REGISTRATION));
                 createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION);
                 createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
-                val saveState = createActionState(flow, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION,
+                val saveState = createActionState(flow, CasWebflowConstants.STATE_ID_YUBIKEY_SAVE_REGISTRATION,
                     createEvaluateAction(CasWebflowConstants.ACTION_ID_YUBIKEY_SAVE_ACCOUNT_REGISTRATION));
                 createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
                 createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
@@ -66,7 +66,7 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
                 val setPrincipalAction = createSetAction("viewScope.principal", "conversationScope.authentication.principal");
                 val viewRegState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION, "yubikey/casYubiKeyRegistrationView");
                 viewRegState.getEntryActionList().addAll(setPrincipalAction);
-                createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION);
+                createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_YUBIKEY_SAVE_REGISTRATION);
                 val loginProperties = CollectionUtils.wrapList("token");
                 val loginBinder = createStateBinderConfiguration(loginProperties);
                 val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "yubikey/casYubiKeyLoginView", loginBinder);
