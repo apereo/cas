@@ -199,11 +199,9 @@ configurations.configureEach {
     exclude(group: "javax.annotation", module: "javax.annotation-api")
     exclude(group: "javax.activation", module: "activation")
     exclude group: "com.sun.activation", module: "jakarta.activation"
-    exclude(group: "commons-logging", module: "commons-logging")
     exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
     exclude(group: "org.bouncycastle", module: "bcprov-ext-jdk15on")
     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
-    
     exclude(group: "io.netty", module: "netty-transport-native-kqueue")
 }
