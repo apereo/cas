@@ -52,6 +52,9 @@ A CAS server installation and deployment process can be tuned to build and run
 as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html). We continue to polish native runtime hints.
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
 to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
+
+Note that Apache Log4j `2.25.0` now supports native images and is no longer a blocker.
+Integration and functional tests are tuned to use Apache Log4j instead of Logback as the logging backend for CAS native images.
  
 ### OpenID Connect Native SSO
 
