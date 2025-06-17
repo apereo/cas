@@ -46,10 +46,11 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication-attributes")
-
-//    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
-//    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
-//    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
-//    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }
+
+compileJava {
+    options.compilerArgs << "-Alog4j.graalvm.groupId=${project.group}"
+    options.compilerArgs << "-Alog4j.graalvm.artifactId=${project.name}"
+}
+
