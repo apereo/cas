@@ -26,4 +26,10 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
 }
 
+compileJava {
+    options.compilerArgs << "-Alog4j.graalvm.groupId=${project.group}"
+    options.compilerArgs << "-Alog4j.graalvm.artifactId=${project.name}"
+}
+
+
 
