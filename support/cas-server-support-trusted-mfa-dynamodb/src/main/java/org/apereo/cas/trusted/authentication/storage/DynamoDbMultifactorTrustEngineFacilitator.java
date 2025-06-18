@@ -53,7 +53,7 @@ public record DynamoDbMultifactorTrustEngineFacilitator(DynamoDbTrustedDevicesMu
     }
 
     /**
-     * Build table attribute values map map.
+     * Build table attribute values map.
      *
      * @param record the record
      * @return the map

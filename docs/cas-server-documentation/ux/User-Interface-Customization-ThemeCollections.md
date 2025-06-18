@@ -25,3 +25,10 @@ The following themes are provided by this module and can be assigned to service 
 
 The collection of themes above can also serve as reference examples of how to define a theme with
 custom CSS, JavaScript and associated views and fragments.
+
+## Bootstrap Themes
+
+If you intend to build your own themes based on Bootstrap, you will need to include the following
+module in the WAR overlay:
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-themes-bootstrap" %}

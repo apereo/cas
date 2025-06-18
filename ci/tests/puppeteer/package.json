@@ -4,7 +4,7 @@
   "dependencies": {
     "@stomp/stompjs": "7.1.1",
     "archiver": "7.0.1",
-    "axios": "1.9.0",
+    "axios": "1.10.0",
     "basic-auth": "2.0.1",
     "colors": "1.4.0",
     "crypto-js": "4.2.0",
@@ -26,7 +26,7 @@
     "pino-pretty": "13.0.0",
     "properties-reader": "2.3.0",
     "ps-node": "0.1.6",
-    "puppeteer": "24.10.0",
+    "puppeteer": "24.10.1",
     "puppeteer-loadtest": "2.2.1",
     "request": "2.88.2",
     "@napi-rs/canvas": "0.1.71",
@@ -38,8 +38,8 @@
     "yaml": "2.8.0"
   },
   "devDependencies": {
-    "@eslint/js": "9.28.0",
-    "eslint": "9.28.0",
+    "@eslint/js": "9.29.0",
+    "eslint": "9.29.0",
     "globals": "16.2.0"
   }
 }

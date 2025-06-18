@@ -80,7 +80,7 @@
 
                     <td class="mdc-data-table__cell"><code th:utext="${entry.actionPerformed}">Value</code></td>
                     <td class="mdc-data-table__cell"
-                        th:utext="${@casThymeleafTemplatesDirector.format(entry.whenActionWasPerformed, 'MMMM dd, yyyy')}">Value
+                        th:utext="${#cas.format(entry.whenActionWasPerformed, 'MMMM dd, yyyy')}">Value
                     </td>
                     <td class="mdc-data-table__cell"
                         th:utext="${entry.resourceOperatedUpon}">Value
