@@ -10,12 +10,6 @@ async function proxyValidateTicket(service, ticket, format = "JSON") {
     return body;
 }
 
-async function validateTicket(service, ticket, format = "JSON") {
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=${format}`);
-    await cas.log(body);
-    return body;
-}
-
 async function getProxyTicket(service, ticket) {
     const body = await cas.doRequest(`https://localhost:8443/cas/proxy?service=${service}&pgt=${ticket}`);
     await cas.log(body);
@@ -66,9 +60,7 @@ async function getProxyTicket(service, ticket) {
     const proxyTicket = ptMatch && ptMatch[1];
     assert(proxyTicket !== undefined);
 
-    const validationResponse = await validateTicket(PROXIED_SERVICE, proxyTicket);
-    assert(validationResponse !== undefined);
-    json = JSON.parse(validationResponse);
+    json = await cas.validateTicket(PROXIED_SERVICE, proxyTicket);
     authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
     assert(authenticationSuccess.attributes.uid[0] === "casuser");

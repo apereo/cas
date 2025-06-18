@@ -29,9 +29,7 @@ async function verifyNormalAuthenticationFlow(browser) {
 
     await cas.gotoLogin(page, service);
     const ticket = await cas.assertTicketParameter(page);
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    await cas.log(body);
-    const json = JSON.parse(body);
+    const json = await cas.validateTicket(service, ticket);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.attributes.email[0] === "Hello-user1@example.com");
 

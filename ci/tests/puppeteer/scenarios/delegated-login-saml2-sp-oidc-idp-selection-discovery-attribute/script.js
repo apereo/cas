@@ -24,7 +24,6 @@ async function startWithCasSp(page) {
     await cas.loginWith(page);
     await cas.sleep(3000);
     const ticket = await cas.assertTicketParameter(page);
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
-    await cas.log(body);
+    const body = await cas.validateTicket(service, ticket, "XML");
     assert(body.includes("<cas:user>casuser</cas:user>"));
 }

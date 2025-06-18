@@ -46,9 +46,7 @@ async function login(page, service, providerId) {
 }
 
 async function validateTicketFor(service, ticket, authMethod, authnContext) {
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    await cas.log(body);
-    const json = JSON.parse(body);
+    const json = await cas.validateTicket(service, ticket);
     const success = json.serviceResponse.authenticationSuccess;
     await cas.log(`Verifying authentication for service ${service}`);
     assert(success.attributes.duoSub[0] !== undefined);

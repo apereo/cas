@@ -30,9 +30,7 @@ async function verifyAuthenticationFlow(context, service) {
     assert(body.includes("<cas:successfulAuthenticationHandlers>STATIC</cas:successfulAuthenticationHandlers>"));
     assert(body.includes("<cas:longTermAuthenticationRequestTokenUsed>true</cas:longTermAuthenticationRequestTokenUsed>"));
 
-    body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    await cas.log(body);
-    const json = JSON.parse(body);
+    const json = await cas.validateTicket(service, ticket);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
     assert(authenticationSuccess.attributes.credentialType[0] === "RememberMeUsernamePasswordCredential");
@@ -64,9 +62,7 @@ async function verifyExistingSsoSession(context, service) {
     await cas.assertInvisibility(page, "#username");
     await cas.assertInvisibility(page, "#password");
     const ticket = await cas.assertTicketParameter(page);
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    await cas.log(body);
-    const json = JSON.parse(body);
+    const json = await cas.validateTicket(service, ticket);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
     assert(authenticationSuccess.attributes.credentialType[0] === "RememberMeUsernamePasswordCredential");

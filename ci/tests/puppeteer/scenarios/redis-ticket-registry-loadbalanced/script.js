@@ -22,9 +22,7 @@ async function testBasicLoginLogout(browser) {
     await cas.sleep(8000);
     await cas.screenshot(page);
     const ticket = await cas.assertTicketParameter(page);
-    await page.goto(`https://localhost:8444/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    const content = await cas.textContent(page, "body");
-    const payload = JSON.parse(content);
+    const payload = await cas.validateTicket(service, ticket);
     const authenticationSuccess = payload.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
     await logoutEverywhere(page);
@@ -49,16 +47,12 @@ async function checkTicketValidationAcrossNodes(browser) {
     const ticket = await cas.assertTicketParameter(page);
 
     await cas.log("Validating ticket on second node");
-    await page.goto(`https://localhost:8444/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    let content = await cas.textContent(page, "body");
-    let payload = JSON.parse(content);
+    let payload = await cas.validateTicket(service, ticket);
     const authenticationSuccess = payload.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
 
     await cas.log(`Validating ticket ${ticket} again on original node`);
-    await page.goto(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    content = await cas.textContent(page, "body");
-    payload = JSON.parse(content);
+    payload = await cas.validateTicket(service, ticket);
     const authenticationFailure = payload.serviceResponse.authenticationFailure;
     assert(authenticationFailure.code === "INVALID_TICKET");
 

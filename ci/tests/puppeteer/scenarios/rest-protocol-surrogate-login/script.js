@@ -62,9 +62,7 @@ const cas = require("../../cas.js");
         });
     await cas.log(`Received service ticket ${st}`);
 
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${st}&format=JSON`);
-    await cas.logg(body);
-    const json = JSON.parse(body.toString());
+    const json = await cas.validateTicket(service, st);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.attributes.employeeNumber !== undefined);
     assert(authenticationSuccess.attributes["fname"] === undefined);

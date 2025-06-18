@@ -24,11 +24,10 @@ const assert = require("assert");
         assert(browserStorage.DuoSecuritySessionContext !== undefined);
         await browser.close();
 
-        const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-        await cas.log(body);
-        const json = JSON.parse(body).serviceResponse.authenticationSuccess.attributes;
-        assert(json.cn === "casuser");
-        assert(json.mail === "casuser@example.org");
+        const json = await cas.validateTicket(service, ticket);
+        const attributes = json.serviceResponse.authenticationSuccess.attributes;
+        assert(attributes.cn === "casuser");
+        assert(attributes.mail === "casuser@example.org");
     } catch (e) {
         failed = true;
         throw e;

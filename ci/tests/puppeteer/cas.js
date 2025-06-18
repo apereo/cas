@@ -534,6 +534,15 @@ exports.assertTicketParameter = async (page, found = true) => {
     return null;
 };
 
+exports.validateTicket = async (service, ticket, format = "JSON") => {
+    const body = await this.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=${format}`);
+    await this.log(body);
+    if (format === "XML") {
+        return body;
+    }
+    return JSON.parse(body);
+};
+
 exports.doRequest = async (url, method = "GET",
     headers = {},
     statusCode = 200,

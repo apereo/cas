@@ -8,9 +8,7 @@ async function impersonate(page, surrogate, user) {
     await cas.loginWith(page, `${surrogate}+${user}`);
     await cas.sleep(1000);
     const ticket = await cas.assertTicketParameter(page);
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${SERVICE}&ticket=${ticket}&format=JSON`);
-    await cas.log(body);
-    const json = JSON.parse(body);
+    const json = await cas.validateTicket(SERVICE, ticket);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === surrogate);
     assert(authenticationSuccess.attributes.cn[0] === surrogate);
