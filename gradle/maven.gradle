@@ -46,43 +46,33 @@ ext.createPom = { pom, project ->
 
     pom.contributors {
         contributor {
-            id = "dima767"
             name = "Dmitriy Kopylenko"
         }
         contributor {
-            id = "tduehr"
             name = "Timur Duehr"
         }
         contributor {
-            id = "mindblender"
             name = "Jeff Sittler"
         }
         contributor {
-            id = "apetro"
             name = "Andrew Petro"
         }
         contributor {
-            id = "wgthom"
             name = "William G. Thompson"
         }
         contributor {
-            id = "serac"
             name = "Marvin S. Addison"
         }
         contributor {
-            id = "battags"
             name = "Scott Battaglia"
         }
         contributor {
-            id = "tsschmidt"
             name = "Travis Schmidt"
         }
         contributor {
-            id = "robertoschwald"
             name = "Robert Oschwald"
         }
         contributor {
-            id = "frett"
             name = "Daniel Frett"
         }
         contributor {

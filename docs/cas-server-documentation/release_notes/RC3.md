@@ -63,6 +63,11 @@ CAS now supports [OpenID Connect Native SSO](../authentication/OIDC-Authenticati
 ### OpenID Connect AuthZEN
 
 Basic support for [OpenID Connect AuthZEN](../authorization/Heimdall-Authorization-Overview.html) is now available.
+ 
+### Gradle 9
+
+CAS is now built with Gradle 9 and the build process has been updated to
+use the latest Gradle features and capabilities. 
 
 ### Testing Strategy
 
@@ -74,7 +79,7 @@ are now configured to run with parallelism enabled.
 ## Other Stuff
   
 - Support for *CSS Vars*, which provides CSS property/variable extraction for legacy browsers, is removed from the CAS.
-- Support for *ES5-Shim*, which provides ECMAScript5 utilities for older JavaScript engines is now removed from CAS.
+- Support for *ES5-Shim*, which provides ECMAScript5 utilities for older legacy JavaScript engines is removed from CAS.
 - Salt value used for generating persistent name IDs in particular for SAML2 responses or logout requests can be predefined.
 - Jakarta Persistence libraries are moved out of the CAS web application by default.
 - Extracting query parameters from the request URLs will check for URL validity and correctness.

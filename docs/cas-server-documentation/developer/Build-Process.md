@@ -56,11 +56,6 @@ When done, you may build the codebase via the following command:
 ./gradlew build --parallel -x test -x javadoc -x check --build-cache --configure-on-demand
 ```
 
-<div class="alert alert-info">:information_source: <strong>Gradle Wrapper & Gum</strong>
-<p>Rather than using the Gradle Wrapper directly, you
-might want to <a href="https://github.com/kordamp/gm">use Gum</a>, which is able to 
-auto-detect the location of the Gradle Wrapper anywhere in the project structure.</p></div>
-
 The following commandline boolean flags are supported by the build and can be passed in form of system properties via `-D`:
 
 | Flag                          | Description                                                                                          |
