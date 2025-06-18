@@ -1151,14 +1151,14 @@ exports.removeWebAuthnVirtualAuthenticator = async(device) => {
     });
 };
 
-exports.createWebAuthnVirtualAuthenticator = async(page) => {
+exports.createWebAuthnVirtualAuthenticator = async(page, protocol = "u2f", hasResidentKey = false) => {
     const client = await page.target().createCDPSession();
     await client.send("WebAuthn.enable");
     const authenticator = await client.send("WebAuthn.addVirtualAuthenticator", {
         options: {
-            protocol: "u2f",
+            protocol: protocol,
             transport: "usb",
-            hasResidentKey: false,
+            hasResidentKey: hasResidentKey,
             hasUserVerification: true,
             isUserVerified: true
         }
