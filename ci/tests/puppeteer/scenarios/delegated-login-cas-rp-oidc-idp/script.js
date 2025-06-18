@@ -24,9 +24,7 @@ const cas = require("../../cas.js");
     assert(result.searchParams.has("ticket") === true);
 
     const ticket = result.searchParams.get("ticket");
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    await cas.log(body);
-    const json = JSON.parse(body);
+    const json = await cas.validateTicket(service, ticket);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "caskeycloak@example.org");
     assert(authenticationSuccess.attributes.name !== undefined);

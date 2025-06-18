@@ -36,8 +36,7 @@ async function loginWithToken(page, service, token) {
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
     const ticket = await cas.assertTicketParameter(page);
-    body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
-    await cas.log(body);
+    body = await cas.validateTicket(service, ticket, "XML");
     const token = body.match(/<cas:token>(.+)<\/cas:token>/)[1];
     await cas.log(`SSO Token ${token}`);
     await loginWithToken(page, service, token);
