@@ -15,4 +15,4 @@ six==1.16.0
 setuptools==78.1.1
 requests==2.32.4
 Werkzeug==3.1.3
-urllib3==2.2.3
+urllib3==2.5.0
