@@ -142,11 +142,13 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
         val grantType = requestParameterResolver.resolveGrantType(callContext.webContext());
 
         requestParameterResolver.resolveRequestParameter(callContext.webContext(), OAuth20Constants.CODE).ifPresent(code -> {
-            val oauthCode = ticketRegistry.getTicket(code, OAuth20Token.class);
-            if (oauthCode != null && !oauthCode.isExpired()) {
-                LOGGER.debug("Found OAuth code [{}] in the ticket registry", code);
-                scopes.addAll(oauthCode.getScopes());
-            }
+            FunctionUtils.doAndHandle(__ -> {
+                val oauthCode = ticketRegistry.getTicket(code, OAuth20Token.class);
+                if (oauthCode != null && !oauthCode.isExpired()) {
+                    LOGGER.debug("Found OAuth code [{}] in the ticket registry", code);
+                    scopes.addAll(oauthCode.getScopes());
+                }
+            });
         });
 
         val authentication = DefaultAuthenticationBuilder.newInstance(resolvedPrincipal).build();
