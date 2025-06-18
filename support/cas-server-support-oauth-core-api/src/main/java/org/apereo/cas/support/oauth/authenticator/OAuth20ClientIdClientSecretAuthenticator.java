@@ -18,6 +18,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
@@ -140,9 +141,18 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
         val responseType = requestParameterResolver.resolveResponseType(callContext.webContext());
         val grantType = requestParameterResolver.resolveGrantType(callContext.webContext());
 
+        requestParameterResolver.resolveRequestParameter(callContext.webContext(), OAuth20Constants.CODE).ifPresent(code -> {
+            val oauthCode = ticketRegistry.getTicket(code, OAuth20Token.class);
+            if (oauthCode != null && !oauthCode.isExpired()) {
+                LOGGER.debug("Found OAuth code [{}] in the ticket registry", code);
+                scopes.addAll(oauthCode.getScopes());
+            }
+        });
+
         val authentication = DefaultAuthenticationBuilder.newInstance(resolvedPrincipal).build();
         val accessToken = accessTokenFactory.create(service, authentication, scopes,
             registeredService.getClientId(), responseType, grantType);
+        LOGGER.debug("Created access token [{}] for service [{}] based on scopes [{}]", accessToken.getId(), service.getId(), scopes);
         val finalPrincipal = profileScopeToAttributesFilter.filter(service, resolvedPrincipal, registeredService, accessToken);
         LOGGER.debug("Built final principal [{}]", finalPrincipal);
         return finalPrincipal;
