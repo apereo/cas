@@ -14,7 +14,7 @@ const cas = require("../../cas.js");
     let attributes = json.serviceResponse.authenticationSuccess.attributes;
     assert(attributes.lastName[0] === "Johnson");
     assert(attributes.employeeNumber[0] === "123456");
-    const originalFirstName = json.firstName[0];
+    const originalFirstName = attributes.firstName[0];
     assert(originalFirstName !== undefined);
     assert(attributes.displayName === undefined);
     assert(attributes.cn === undefined);
