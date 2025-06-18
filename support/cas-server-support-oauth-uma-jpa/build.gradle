@@ -65,7 +65,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 
     testImplementation project(path: ":support:cas-server-support-oauth", configuration: "tests")
-    testImplementation project(path: ":support:cas-server-support-oauth-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-oauth-services", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-oauth-uma", configuration: "tests")
 }
