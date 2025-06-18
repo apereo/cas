@@ -24,7 +24,7 @@ const cas = require("../../cas.js");
     await cas.pressBackspace(page);
     await page.type("#credentialNickname", "mydevice");
 
-    await cas.click(page,"#registerDiscoverableCredentialButton");
+    await cas.click(page, "#registerDiscoverableCredentialButton");
 
     await cas.sleep(5000);
 
