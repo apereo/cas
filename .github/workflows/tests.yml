@@ -135,7 +135,7 @@ jobs:
             if [[ "${{ github.event_name }}" == "schedule" ]] && [[ "${{ github.event.schedule == '0 10 * * *'}}" ]]; then
               echo "Running tests without PTS mode"
               ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --no-pts
-              [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage --offline
+              [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
             else 
               if [[ "${{ github.event_name }}" == "push" ]] || [[ "${{ github.event_name }}" == "schedule" ]]; then
                 ptsMode="REMAINING_TESTS";
@@ -144,7 +144,7 @@ jobs:
               fi
               echo "Running tests with PTS mode: $ptsMode"
               ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --pts $ptsMode
-              [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage --offline
+              [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
             fi
       - name: Check Coverage Report
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
