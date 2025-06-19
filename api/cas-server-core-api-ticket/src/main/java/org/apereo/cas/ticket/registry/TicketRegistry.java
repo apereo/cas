@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.jooq.lambda.Unchecked;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -242,4 +243,11 @@ public interface TicketRegistry {
     default long countTickets() {
         return stream().count();
     }
+
+    /**
+     * Gets cipher executor.
+     *
+     * @return the cipher executor
+     */
+    CipherExecutor getCipherExecutor();
 }

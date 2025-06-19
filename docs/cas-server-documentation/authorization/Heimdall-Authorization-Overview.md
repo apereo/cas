@@ -45,7 +45,11 @@ Heimdall authorization support is enabled by including the following dependency 
 
 ## Authorization Request
 
-The authorization request is a simple payload that is sent to the Heimdall authorization 
+{% tabs authorizationrequest %}
+
+{% tab authorizationrequest Heimdall %}
+
+The authorization request is a simple payload that is sent to the Heimdall authorization
 engine using the endpoint `/heimdall/authorize` via a `POST`. The payload has the following structure:
 
 ```json
@@ -61,7 +65,7 @@ engine using the endpoint `/heimdall/authorize` via a `POST`. The payload has th
 
 ...which is trying to ask CAS:
 
-> Is the request to `/api/example?hello=world`, owned by `API_EXAMPLE`, using the HTTP method `POST`, allowed?     
+> Is the request to `/api/example?hello=world`, owned by `API_EXAMPLE`, using the HTTP method `POST`, allowed?
 
 The following elements are supported:
 
@@ -71,8 +75,50 @@ The following elements are supported:
 | `uri`       | The request URI intended for access and invocation by the caller.                         |
 | `namespace` | Logical name for the owner of the API or resource in question.                            |
 | `context`   | Free-form key-value pairs for more advanced decisions based on arbitrary contextual data. |
-         
+
 Typical responses include `200`, `401` or `403`.
+
+{% endtab %}
+
+{% tab authorizationrequest AuthZEN %}
+
+Heimdall also supports the OpenID Connect AuthZEN Access Evaluation API. Using this strategy, the authorization
+request is composed of the following entities:
+
+```json
+{
+  "subject": {
+    "type": "user",
+    "id": "alice@acmecorp.com"
+  },
+  "resource": {
+    "type": "account",
+    "id": "123"
+  },
+  "action": {
+    "name": "can_read",
+    "properties": {
+      "hello": "world"
+    }
+  },
+  "context": {
+    "field": "value"
+  }
+}
+```
+
+This authorization request is sent to the Heimdall authorization engine using the endpoint `/heimdall/authzen` 
+via a `POST`. Once the request is evaluated, the typical response may match the following:
+
+```json
+{
+  "decision": true
+}
+```
+
+{% endtab %}
+
+{% endtabs %}
 
 ## Authorization Principal
        
@@ -88,7 +134,8 @@ The authorization header value can be *one* of the following:
 - A valid Base64-encoded `username:password`, passed as a `Basic` token, that can be accepted by the CAS authentication engine.
 
 Claims or attributes from all token types are extracted and attached to the final principal, which is then
-passed to the authorization policy engine to make decisions.
+passed to the authorization policy engine to make decisions. However, when using OpenID Connect ID AuthZEN protocol
+CAS will attempt to resolve claims and attributes based on the `subject` ID in the authorization request.
         
 ## Authorization Resources
 
@@ -128,18 +175,24 @@ that operate on patterns, you may want to ensure that the most specific policies
 <div class="alert alert-info">:information_source: <strong>Usage</strong>
 <p>Remember that the file name is mostly irrelevant. While we recommend reasonable naming conventions,
 the <code>namespace</code> field inside the policy is really the piece that determines its owner.</p></div>
-   
+
+<div class="alert alert-info">:information_source: <strong>AuthZEN Namespace</strong>
+<p>Please note that when using the AuthZEN protocol, the authorization resource's <code>namespace</code> field is 
+expected to be set to the resource ID field for relevant resources and policies to be found and activated.</p></div>
+
 The authorization policies owned by the indicated namespace and resource support the following elements:
 
-| Field                | Description                                                                                               |
-|----------------------|-----------------------------------------------------------------------------------------------------------|
-| `id`                 | Unique numeric identifier for this resource.                                                              |
-| `pattern`            | The URI regular expression pattern that describes the resource or API endpoint.                           |
-| `method`             | The HTTP method (as a regular expression pattern, or `*` for all) that is allowed to access the resource. |
-| `policies`           | A list of policies that are attached to the resource to allow or deny access.                             |
-| `enforceAllPolicies` | Whether all policies must be consulted to authorize the request. Default is `false`.                      |
-| `properties`         | Arbitrary key-value pairs attached to the resource for advanced decision making.                          |
-   
+| Field                | Description                                                                                                              |
+|----------------------|--------------------------------------------------------------------------------------------------------------------------|
+| `id`                 | Unique numeric identifier for this resource.                                                                             |
+| `pattern`            | <sup>[1]</sup> The URI regular expression pattern that describes the resource or API endpoint.                           |
+| `method`             | <sup>[1]</sup> The HTTP method (as a regular expression pattern, or `*` for all) that is allowed to access the resource. |
+| `policies`           | A list of policies that are attached to the resource to allow or deny access.                                            |
+| `enforceAllPolicies` | Whether all policies must be consulted to authorize the request. Default is `false`.                                     |
+| `properties`         | Arbitrary key-value pairs attached to the resource for advanced decision making.                                         |
+
+<sub><i>[1] This field is not necessary when using the AuthZEN protocol.</i></sub>
+
 ### Custom
 
 You can also build your own repository implementation to register and load authorizable resources.
@@ -159,8 +212,13 @@ more about how to register configurations into the CAS runtime.
 ## Authorization Policies
 
 Policies are the rules attached to resources to allow or deny access. Each authorizable resource may have one or more
-policies assigned to it. Policies are evaluated in the order in which they are defined for the resource. The following policies are 
-supported by CAS:
+policies assigned to it. Policies are evaluated in the order in which they are defined for the resource. 
+
+<div class="alert alert-info">:information_source: <strong>Coverage</strong>
+<p>Please note that not all policies support the AuthZEN protocol. Support in this area will gradually 
+improve based on demand and use case discovery. YMMV.</p></div>                           
+
+The following policies are supported by CAS:
 
 {% tabs heimdallauthzpolicies %}
 

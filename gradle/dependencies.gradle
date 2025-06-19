@@ -1075,6 +1075,14 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create(libs.geode.logging.get()) {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "log4j", module: "log4j")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "joda-time", module: "joda-time")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
         ignite                     : [
@@ -1096,6 +1104,11 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "org.springframework", module: "spring-jdbc")
                     exclude(group: "org.springframework", module: "spring-tx")
+                }
+        ],
+        jakartapersistence : [
+                dependencies.create(libs.jakarta.persistence.api.get()) {
+                    exclude(group: "xml-apis", module: "xml-apis")
                 }
         ],
         jakarta                    : [
@@ -1126,9 +1139,6 @@ ext.libraries = [
                 dependencies.create(libs.jakarta.annotation.api.get()) {
                 },
                 dependencies.create(libs.jakarta.activation.api.get()) {
-                },
-                dependencies.create(libs.jakarta.persistence.api.get()) {
-                    exclude(group: "xml-apis", module: "xml-apis")
                 },
                 dependencies.create(libs.jakarta.jms.api.get()),
                 dependencies.create(libs.jakarta.servlet.jsp.jstl.api.get()),
@@ -3737,6 +3747,9 @@ ext.libraries = [
                 },
                 dependencies.create(libs.notyf.get()) {
                     exclude(group: "org.webjars", module: "jquery")
+                },
+                dependencies.create(libs.mermaid.get()) {
+                    exclude(group: "org.webjars", module: "jquery")
                 }
         ],
         webjars                    : [
@@ -3764,10 +3777,6 @@ ext.libraries = [
                 dependencies.create(libs.mdi.font.get()) {
                 },
                 dependencies.create(libs.normalize.css.get()) {
-                },
-                dependencies.create(libs.es5.shim.get()) {
-                },
-                dependencies.create(libs.css.vars.ponyfill.get()) {
                 },
                 dependencies.create(libs.text.encoding.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")

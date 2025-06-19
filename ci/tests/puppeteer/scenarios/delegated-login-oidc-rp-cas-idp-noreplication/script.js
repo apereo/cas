@@ -37,13 +37,13 @@ const cas = require("../../cas.js");
     await cas.waitForNavigation(page);
     await cas.sleep(2000);
 
-    await cas.log(await page.url());
-    assert(page.url().startsWith("https://localhost:9859/anything/1"));
+    await cas.logPage(page);
+    await cas.assertPageUrlStartsWith(page, "https://localhost:9859/anything/1");
     await cas.sleep(2000);
     await cas.assertInnerTextContains(page, "pre", "OC-1-");
 
     await cas.gotoLogout(page);
-    assert(page.url().startsWith("https://localhost:8444/cas/logout"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:8444/cas/logout");
     await cas.sleep(2000);
 
     await browser.close();

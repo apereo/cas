@@ -127,7 +127,6 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @ExtendWith(CasTestExtension.class)
-@AutoConfigureMockMvc
 @SpringBootTest(classes = AbstractOidcTests.SharedTestConfiguration.class,
     properties = {
         "spring.threads.virtual.enabled=true",
@@ -140,6 +139,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.oidc.jwks.file-system.jwks-file=classpath:keystore.jwks"
     }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfigureMockMvc
 public abstract class AbstractOidcTests {
     protected static final String TGT_ID = "TGT-0";
 
@@ -505,6 +505,10 @@ public abstract class AbstractOidcTests {
 
     protected String randomServiceUrl() {
         return "https://app.example.org/%s".formatted(RandomUtils.randomAlphabetic(8));
+    }
+
+    protected String regexServiceUrl() {
+        return "https://app.example.org|http:\\/\\/.*/example/app%s".formatted(RandomUtils.randomAlphabetic(8));
     }
 
     protected OAuth20Code addCode(final Principal principal,

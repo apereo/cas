@@ -15,8 +15,8 @@ enterprise multilingual identity provider and single sign-on solution for the we
 be a comprehensive platform for your authentication and authorization needs.
 
 CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is an open-source Java server
-component by the same name hosted here, with support for a plethora of additional authentication protocols and features such a SAML2, OpenID Connect, MFA 
-and many many more.
+component by the same name hosted here, with support for a plethora of additional authentication protocols and features such as SAML2, OpenID Connect, MFA,
+and many more.
 
 ## Contributions
 
@@ -70,7 +70,7 @@ The following features are supported by the CAS project:
 * Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Remote, Apache Cassandra, Trusted, BASIC, MongoDB and more.
 * Delegated (social) authentication to external identity providers such as WS-FED, SAML2, OpenID Connect, OAuth CAS and more.
 * Authorization via Heimdall, OpenFGA, OPA, ABAC, Time/Date, REST, Internet2's Grouper and more.
-* HA clustered deployments via Hazelcast, JPA, Hazelcast, Memcached, Apache Ignite, MongoDB, Redis, DynamoDb, and more.
+* HA clustered deployments via Hazelcast, JPA, Memcached, Apache Ignite, MongoDB, Redis, DynamoDb, and more.
 * Application registration backed by JSON, LDAP, YAML, Google Cloud, JPA, MongoDB, DynamoDb, Redis and more.
 * Multifactor authentication via Duo Security, Simple MFA, YubiKey, RSA, Google Authenticator, WebAuthn FIDO2 and more.
 * Administrative UIs to manage logging, monitoring, statistics, configuration, client registration and more.

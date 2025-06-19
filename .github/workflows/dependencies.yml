@@ -5,6 +5,7 @@ env:
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   TERM: xterm-256color
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
 #  GRADLE_BUILDCACHE_USER: ci
 #  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
@@ -22,11 +23,16 @@ concurrency:
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 19 * * *'
+    - cron: '0 */2 * * *'
+
+permissions:
+  contents: write
+  pull-requests: write
 ##########################################################################
 
 jobs:
   initialize:
+    name: Initialize Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -46,6 +52,7 @@ jobs:
   report-dependency-updates:
     runs-on: ubuntu-latest
     needs: [initialize]
+    name: Report Dependency Updates
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -74,6 +81,7 @@ jobs:
   ##########################################################################
 
   submit-dependency-graph:
+    name: Submit Dependency Graph
     runs-on: ubuntu-latest
     needs: [initialize]
     steps:
@@ -90,3 +98,25 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Submit Dependency Graph
         uses: gradle/actions/dependency-submission@v4
+
+  ##########################################################################
+
+  renovate:
+    runs-on: ubuntu-latest
+    needs: [initialize]
+    timeout-minutes: 60
+    name: Run Renovate
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Run Renovate
+        uses: renovatebot/github-action@v42.0.6
+        with:
+          token: ${{ secrets.RENOVATE_TOKEN }}
+          configurationFile: .github/renovate.json
+        env:
+          LOG_LEVEL: info
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          

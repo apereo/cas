@@ -39,7 +39,6 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -539,8 +538,8 @@ public abstract class AbstractServiceRegistryTests {
             val authz = new DefaultRegisteredServiceAccessStrategy(false, false);
 
             val attrs = new HashMap<String, Set<String>>();
-            attrs.put("cn", Collections.singleton("v1, v2, v3"));
-            attrs.put("memberOf", Collections.singleton("v4, v5, v6"));
+            attrs.put("cn", Set.of("v1, v2, v3"));
+            attrs.put("memberOf", Set.of("v4, v5, v6"));
             authz.setRequiredAttributes(attrs);
             registeredService.setAccessStrategy(authz);
 

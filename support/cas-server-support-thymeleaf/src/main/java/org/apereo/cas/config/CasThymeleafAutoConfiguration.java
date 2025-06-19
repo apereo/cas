@@ -17,6 +17,7 @@ import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.view.CasProtocolMustacheViewFactory;
 import org.apereo.cas.web.view.CasProtocolThymeleafViewFactory;
+import org.apereo.cas.web.view.CasThymeleafExpressionDialect;
 import org.apereo.cas.web.view.ChainingTemplateViewResolver;
 import org.apereo.cas.web.view.RestfulUrlTemplateResolver;
 import org.apereo.cas.web.view.ThemeClassLoaderTemplateResolver;
@@ -336,6 +337,14 @@ public class CasThymeleafAutoConfiguration {
                 .sorted(OrderComparator.INSTANCE)
                 .forEach(configurer -> configurer.configureThymeleafViewResolver(resolver));
             return resolver;
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public IDialect casThymeleafExpressionDialect(
+            @Qualifier("casThymeleafTemplatesDirector")
+            final ObjectProvider<CasThymeleafTemplatesDirector> casThymeleafTemplatesDirector) {
+            return new CasThymeleafExpressionDialect(casThymeleafTemplatesDirector);
         }
     }
 }

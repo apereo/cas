@@ -1062,3 +1062,25 @@ body {
         width: 60em;
     }
 }
+
+.nodeLabel,.edgeLabel {
+    font-family: Monaco, monospace !important;
+}
+foreignObject {
+    border-radius: 5px;
+}
+
+pre code.hljs {
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.9);
+}
+
+
+.fade-in {
+    animation: appear 0.4s ease-in-out forwards;
+}
+
+@keyframes appear {
+    0%   { opacity: 0;   filter: blur(20px); }
+    50%  { opacity: 0.5; filter: blur(10px); }
+    100% { opacity: 1;   filter: blur(0);   }
+}

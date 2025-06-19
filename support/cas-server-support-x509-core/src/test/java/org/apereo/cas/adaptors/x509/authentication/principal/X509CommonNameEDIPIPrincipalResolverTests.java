@@ -12,6 +12,7 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalAttribute
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +33,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
  * This is {@link X509CommonNameEDIPIPrincipalResolverTests}.
@@ -63,8 +64,12 @@ class X509CommonNameEDIPIPrincipalResolverTests {
     }
 
     private static X509Certificate getCertificateFrom(final String certPath) throws Exception {
-        return (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
-            new FileInputStream(X509CommonNameEDIPIPrincipalResolverTests.class.getResource(certPath).getPath()));
+        val certLocation = X509CommonNameEDIPIPrincipalResolverTests.class.getResource(certPath).getPath();
+        return FunctionUtils.doUnchecked(() -> {
+            try (val in = new FileInputStream(certLocation)) {
+                return (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(in);
+            }
+        });
     }
 
     /**

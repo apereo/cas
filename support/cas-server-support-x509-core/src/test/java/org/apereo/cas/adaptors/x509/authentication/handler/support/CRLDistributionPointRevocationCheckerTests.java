@@ -178,8 +178,9 @@ class CRLDistributionPointRevocationCheckerTests extends BaseCRLRevocationChecke
         final GeneralSecurityException expected) throws Exception {
 
         val file = new File(FileUtils.getTempDirectory(), "ca.crl");
-        val out = new FileOutputStream(file);
-        IOUtils.copy(new ClassPathResource(crlFile).getInputStream(), out);
+        try (val out = new FileOutputStream(file)) {
+            IOUtils.copy(new ClassPathResource(crlFile).getInputStream(), out);
+        }
 
         this.webServer = new MockWebServer(8085, new FileSystemResource(file), "text/plain");
         this.webServer.start();

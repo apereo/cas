@@ -1,11 +1,14 @@
 {
   "dependencies": "webauthn",
-
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.mfa.web-authn.core.allow-untrusted-attestation=true",
+    "--cas.authn.mfa.web-authn.core.qr-code-authentication-enabled=false",
     "--cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
     "--cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
     "--cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",
-    "--cas.authn.mfa.web-authn.core.relying-party-id=cas.example.org",
     "--cas.authn.mfa.web-authn.core.allow-primary-authentication=true"
   ]
 }

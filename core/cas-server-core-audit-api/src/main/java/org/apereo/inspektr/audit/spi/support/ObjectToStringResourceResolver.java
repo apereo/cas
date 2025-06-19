@@ -35,7 +35,7 @@ public class ObjectToStringResourceResolver implements AuditResourceResolver {
     }
 
     /**
-     * To resource string string.
+     * To resource string.
      *
      * @param arg the arg
      * @return the string

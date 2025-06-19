@@ -88,7 +88,7 @@ class OidcConsentApprovalViewResolverTests extends AbstractOidcTests {
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .responseType(OAuth20ResponseTypes.CODE)
             .userProfile(profile)
-            .scopes(CollectionUtils.wrapSet("email", "profile"))
+            .scopes(CollectionUtils.wrapSet(OidcConstants.StandardScopes.EMAIL.getScope(), OidcConstants.StandardScopes.PROFILE.getScope()))
             .build();
         val factory = (OidcPushedAuthorizationRequestFactory) defaultTicketFactory.get(OidcPushedAuthorizationRequest.class);
         val ticket = factory.create(holder);

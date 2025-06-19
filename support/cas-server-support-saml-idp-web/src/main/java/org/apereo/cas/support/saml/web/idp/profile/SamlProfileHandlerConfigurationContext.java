@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.idp.profile;
 
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -128,4 +129,7 @@ public class SamlProfileHandlerConfigurationContext {
 
     @Nonnull
     private final ApplicationContext applicationContext;
+
+    @Nonnull
+    private final PersistentIdGenerator persistentIdGenerator;
 }

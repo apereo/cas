@@ -1,6 +1,5 @@
 
 const cas = require("../../cas.js");
-const assert = require("assert");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -12,8 +11,7 @@ const assert = require("assert");
     await cas.loginWith(page);
     await cas.sleep(1000);
     await cas.logPage(page);
-    let url = await page.url();
-    assert(url.startsWith("https://localhost:8444/protected"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:8444/protected");
     await cas.assertInnerTextContains(page, "div.starter-template h2 span", "casuser");
     await cas.sleep(1000);
     // renew login at the CAS server as admin
@@ -23,8 +21,7 @@ const assert = require("assert");
     // call the CAS app to confirm the new session as admin
     await cas.goto(page, "https://localhost:8444/protected");
     await cas.sleep(1000);
-    url = await page.url();
-    assert(url.startsWith("https://localhost:8444/protected"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:8444/protected");
     await cas.assertInnerTextContains(page, "div.starter-template h2 span", "admin");
     await cas.sleep(1000);
     await browser.close();

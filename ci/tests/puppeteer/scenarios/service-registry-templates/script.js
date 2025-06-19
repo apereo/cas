@@ -8,7 +8,6 @@ const assert = require("assert");
 
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.loginWith(page);
-    await page.url();
     await cas.logPage(page);
     await cas.assertTicketParameter(page);
 

@@ -30,6 +30,6 @@ From CURL man page:
 ```bash
 --location-trusted
         (HTTP/HTTPS) Like -L, --location, but will allow sending the name + password to all hosts that the site may redirect to. This may or may
-        not  introduce a security breach if the site redirects you to a site to which you'll send your authentication info 
+        not introduce a security breach if the site redirects you to a site to which you'll send your authentication info 
         (which is plaintext in the case of HTTP Basic authentication).
 ```

@@ -1,4 +1,3 @@
-
 const cas = require("../../cas.js");
 const path = require("path");
 const assert = require("assert");
@@ -28,10 +27,9 @@ const assert = require("assert");
     await cas.sleep(4000);
 
     await cas.log("Checking CAS application access...");
-    let url = await page.url();
     await cas.logPage(page);
     await cas.screenshot(page);
-    assert(url.startsWith("https://localhost:8444/protected"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:8444/protected");
     await cas.assertInnerTextContains(page, "div.starter-template h2 span", "user1@example.com");
 
     await cas.log("Checking CAS SSO session...");
@@ -48,8 +46,7 @@ const assert = require("assert");
     await cas.sleep(5000);
     await cas.logPage(page);
     await cas.screenshot(page);
-    url = await page.url();
-    assert(url.startsWith("https://apereo.github.io"));
+    await cas.assertPageUrlStartsWith(page, "https://apereo.github.io");
 
     await cas.sleep(1000);
     await cas.gotoLogin(page);
@@ -59,10 +56,9 @@ const assert = require("assert");
     await cas.goto(page, "https://localhost:8444/protected");
     await cas.sleep(3000);
     await cas.screenshot(page);
-    url = await page.url();
     await cas.logPage(page);
     await cas.screenshot(page);
-    assert(url.startsWith("http://localhost:9443/simplesaml"));
+    await cas.assertPageUrlStartsWith(page, "http://localhost:9443/simplesaml");
     await cas.assertVisibility(page, "#username");
     await cas.assertVisibility(page, "#password");
     const title = await page.title();

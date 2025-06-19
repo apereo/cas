@@ -47,12 +47,10 @@ async function verifyInterruptionBlocked(context) {
     
     const page = await cas.newPage(context);
     await cas.gotoLogin(page, service);
-    const url = await page.url();
     await cas.loginWith(page, "casblock", "Mellon");
     await cas.screenshot(page);
     await cas.logPage(page);
     await cas.assertMissingParameter(page, "ticket");
-    await cas.assertPageUrl(page, url);
 
     await cas.assertTextContent(page, "#content h1", "Authentication Interrupt");
     await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");

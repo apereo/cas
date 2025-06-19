@@ -128,12 +128,12 @@
                         <td class="mdc-data-table__cell" th:title="${entry.number}"
                             th:utext="*{entry.number}?: 'N/A'">Value</td>
                         <td class="mdc-data-table__cell">
-                            <button type="button" name="viewMfaDeviceDetails" href="#" th:if="${entry.payload}"
+                            <button type="button" name="viewMfaDeviceDetails" th:if="${entry.payload}"
                                     class="mdc-button mdc-button--raised me-2 btn btn-link min-width-48x">
                                 <i class="mdi mdi-account-details fas fa-eye min-width-48x" aria-hidden="true"></i>
                                 <span style="display: none" th:utext="${entry.payload}"/>
                             </button>
-                            <button type="button" name="deleteMfaDevice" href="#"
+                            <button type="button" name="deleteMfaDevice"
                                     th:attr="data-name=${entry.name},data-id=${entry.id},data-source=${entry.source},data-number=${entry.number},data-type=${entry.type}"
                                     class="mdc-button mdc-button--raised me-2 btn btn-link min-width-48x">
                                 <i class="mdi mdi-delete fas fa-trash min-width-48x" aria-hidden="true"></i>
@@ -144,7 +144,7 @@
                 </tbody>
             </table>
 
-            <div th:if="${#bools.isTrue(gauthAccountProfileRegistrationEnabled) || #bools.isTrue(webauthnAccountProfileRegistrationEnabled)}">
+            <div th:if="${#cas.isTrue(gauthAccountProfileRegistrationEnabled) || #cas.isTrue(webauthnAccountProfileRegistrationEnabled)}">
                 <hr>
 
                 <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
@@ -167,9 +167,9 @@
                                         <span th:text="#{cas.mfa.providerselection.mfa-gauth.notes}"/>
                                         <p></p>
                                         <i class="mdi mdi-arrow-right" aria-hidden="true"></i>
-                                        <a id="gauthRegistrationLink"
-                                           href="#" th:utext="#{screen.welcome.button.register}"
-                                           onclick="submitRegistrationRequest('gauth');"/>
+                                        <button type="button" id="gauthRegistrationLink"
+                                                th:utext="#{screen.welcome.button.register}"
+                                                onclick="submitRegistrationRequest('gauth');"></button>
                                     </div>
                                 </li>
                                 <li class="mdc-list-item" role="menuitem" style="margin-top: 10px;" th:if="${webauthnAccountProfileRegistrationEnabled}">
@@ -181,9 +181,9 @@
                                         <span th:text="#{cas.mfa.providerselection.mfa-webauthn.notes}"/>
                                             <p></p>
                                             <i class="mdi mdi-arrow-right" aria-hidden="true"></i>
-                                            <a id="webauthnRegistrationLink"
-                                               href="#" th:utext="#{screen.welcome.button.register}"
-                                               onclick="submitRegistrationRequest('webauthn');"/>
+                                            <button type="button" id="webauthnRegistrationLink"
+                                                    th:utext="#{screen.welcome.button.register}"
+                                                    onclick="submitRegistrationRequest('webauthn');"></button>
                                     </div>
                                 </li>
                             </ul>

@@ -33,6 +33,6 @@ class WebAuthnMultifactorAccountProfileWebflowConfigurerTests extends BaseWebflo
         val registrationState = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_WEBAUTHN_VIEW_REGISTRATION);
         assertNotNull(registrationState);
         assertEquals(5, registrationState.getEntryActionList().size());
+        assertNotNull(flow.getState(CasWebflowConstants.STATE_ID_WEBAUTHN_SAVE_REGISTRATION));
     }
 }
-

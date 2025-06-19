@@ -1,10 +1,8 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -29,7 +27,6 @@ import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.mock.web.MockHttpServletRequest;
 import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -65,22 +62,17 @@ class SessionHealthIndicatorTests {
         }));
 
         if (ticket[0] != null) {
-            val testService = getService("junit");
+            val testService = RegisteredServiceTestUtils.getService("junit");
             IntStream.range(0, stCount).forEach(Unchecked.intConsumer(i -> registry.addTicket(ticket[0].grantServiceTicket(GENERATOR.getNewTicketId("ST"),
                 testService, TEST_EXP_POLICY, false, serviceTicketSessionTrackingPolicy))));
         }
     }
 
-    public static AbstractWebApplicationService getService(final String name) {
-        val request = new MockHttpServletRequest();
-        request.addParameter("service", name);
-        return (AbstractWebApplicationService) new WebApplicationServiceFactory(mock(TenantExtractor.class)).createService(request);
-    }
-
     @BeforeEach
     void initialize() {
-        this.defaultRegistry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog(),
-                mock(ConfigurableApplicationContext.class));
+        this.defaultRegistry = new DefaultTicketRegistry(
+            mock(TicketSerializationManager.class), new DefaultTicketCatalog(),
+            mock(ConfigurableApplicationContext.class));
     }
 
     @Test

@@ -11,7 +11,6 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
     "--cas.slo.disabled=false",
-    "--cas.http-client.allow-local-urls=true",
     "--cas.http-client.host-name-verifier=none",
     "--cas.http-web-request.header.content-security-policy=${#environmentVariables['CSP']}"
   ],

@@ -13,7 +13,6 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -72,10 +71,10 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
         for (val seedEntry : seed.entrySet()) {
             val seedName = seedEntry.getKey();
             val seedValue = seedEntry.getValue();
-            if (seedValue instanceof List) {
-                multiSeed.put(seedName, (List<Object>) seedValue);
-            } else {
-                multiSeed.put(seedName, Collections.singletonList(seedValue));
+            if (seedValue instanceof final List list) {
+                multiSeed.put(seedName, list);
+            } else if (seedValue != null) {
+                multiSeed.put(seedName, List.of(seedValue));
             }
         }
         return multiSeed;

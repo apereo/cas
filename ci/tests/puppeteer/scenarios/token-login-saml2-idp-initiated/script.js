@@ -26,9 +26,8 @@ async function cleanUp() {
         await cas.goto(page, url);
         await cas.sleep(5000);
 
-        const resultUrl = await page.url();
-        await cas.logg(`Page url: ${resultUrl}`);
-        assert(resultUrl === "https://localhost:9876/sp/");
+        await cas.logPage(page);
+        await cas.assertPageUrl(page, "https://localhost:9876/sp/");
         await cas.assertInnerText(page, "#principal", "casuser");
 
         await cas.gotoLogin(page);

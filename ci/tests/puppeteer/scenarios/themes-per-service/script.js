@@ -1,5 +1,4 @@
 
-const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
@@ -28,9 +27,8 @@ const cas = require("../../cas.js");
     await cas.submitForm(page, "#fm1");
 
     await cas.sleep(1000);
-    const url = await page.url();
     await cas.logPage(page);
-    assert(url.toString().startsWith("https://localhost:8443/cas/logout"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:8443/cas/logout");
     await cas.assertCookie(page, false);
 
     await cas.assertVisibility(page, "#twitter-link");

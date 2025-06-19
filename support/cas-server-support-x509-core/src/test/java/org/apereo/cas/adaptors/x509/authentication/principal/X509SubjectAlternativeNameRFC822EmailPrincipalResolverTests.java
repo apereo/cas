@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalAttribute
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -31,7 +32,7 @@ import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
 /**
@@ -128,8 +129,12 @@ class X509SubjectAlternativeNameRFC822EmailPrincipalResolverTests {
         val resolver = new X509SubjectAlternativeNameRFC822EmailPrincipalResolver(context);
         resolver.setAlternatePrincipalAttribute(alternatePrincipalAttribute);
         resolver.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
-        val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
-            new FileInputStream(getClass().getResource(certPath).getPath()));
+        val certLocation = getClass().getResource(certPath).getPath();
+        val certificate = (X509Certificate) FunctionUtils.doUnchecked(() -> {
+            try (val in = new FileInputStream(certLocation)) {
+                return CertificateFactory.getInstance("X509").generateCertificate(in);
+            }
+        });
 
         val userId = resolver.resolvePrincipalInternal(certificate);
         assertEquals(expectedResult, userId);

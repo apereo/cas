@@ -4,6 +4,8 @@
     "docker": "true"
   },
   "properties": [
+
+    "--cas.http-web-request.header.content-security-policy=",
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=samlPostProfileResponse",

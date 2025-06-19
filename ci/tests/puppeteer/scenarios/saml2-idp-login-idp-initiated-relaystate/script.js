@@ -12,9 +12,8 @@ async function unsolicited(page, target) {
 
     await cas.goto(page, url);
     await cas.sleep(8000);
-    const result = await page.url();
-    await cas.log(`Page url: ${result}`);
-    assert(result.includes(target));
+    await cas.logPage(page);
+    await cas.assertPageUrlContains(page, target);
 }
 
 (async () => {

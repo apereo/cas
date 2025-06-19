@@ -104,30 +104,12 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
         return this.logoutMessageBuilder.create(logoutRequest);
     }
 
-    /**
-     * Supports internal.
-     *
-     * @param singleLogoutService the single logout service
-     * @param registeredService   the registered service
-     * @param context             the context
-     * @return true /false
-     */
     protected boolean supportsInternal(final WebApplicationService singleLogoutService,
                                        final RegisteredService registeredService,
                                        final SingleLogoutExecutionRequest context) {
         return true;
     }
 
-    /**
-     * Create logout requests collection.
-     *
-     * @param ticketId          the ticket id
-     * @param selectedService   the selected service
-     * @param registeredService the registered service
-     * @param logoutUrls        the logout urls
-     * @param context           the context
-     * @return the collection
-     */
     protected Collection<SingleLogoutRequestContext> createLogoutRequests(final String ticketId,
                                                                           final WebApplicationService selectedService,
                                                                           final RegisteredService registeredService,
@@ -140,16 +122,6 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
             .collect(Collectors.toList());
     }
 
-    /**
-     * Create logout request logout request.
-     *
-     * @param ticketId          the ticket id
-     * @param selectedService   the selected service
-     * @param registeredService the registered service
-     * @param logoutUrl         the logout url
-     * @param context           the context
-     * @return the logout request
-     */
     protected SingleLogoutRequestContext createLogoutRequest(final String ticketId,
                                                              final WebApplicationService selectedService,
                                                              final RegisteredService registeredService,
@@ -181,13 +153,6 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
         return logoutRequest;
     }
 
-    /**
-     * Send single logout message.
-     *
-     * @param request       the request
-     * @param logoutMessage the logout request
-     * @return true if the message was successfully sent.
-     */
     protected boolean sendSingleLogoutMessage(final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
         val logoutService = request.getService();
         LOGGER.trace("Preparing logout request for [{}] to [{}]", logoutService.getId(), request.getLogoutUrl());

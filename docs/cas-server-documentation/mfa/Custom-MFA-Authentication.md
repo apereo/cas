@@ -18,9 +18,9 @@ and technologies that make this possible, such as Spring Webflow.</p></div>
 
 ## Provider ID
 
-Each multifactor provider is assigned a unique identifier that is typically mapped or made equal to the underlying webflow. The unique 
-identifier can be any arbitrary string of your choosing, provided it's kept distinct and sensible as it, depending on 
-use case, may be used in other systems and by other applications to act as a trigger.
+Each multifactor provider is assigned a unique identifier that is typically mapped or made equal to the underlying webflow. The unique
+identifier can be any arbitrary string of your choosing, provided it's kept distinct and sensible, as it may be used in other systems
+and by other applications to act as a trigger.
 
 For the purposes of this guide, let's choose `mfa-custom` as our provider id.
 

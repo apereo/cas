@@ -4,6 +4,10 @@ const cas = require("../../cas.js");
 async function verifyWebAuthnLogin(browser) {
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-webauthn");
+    await cas.sleep(1000);
+    await cas.assertVisibility(page, "#webauthnLoginPanel div h2#status");
+    await cas.assertTextContent(page, "#webauthnLoginPanel div h2#status","Login with FIDO2-enabled Device");
+
     await cas.loginWith(page);
     await cas.sleep(3000);
     await cas.screenshot(page);
@@ -23,7 +27,7 @@ async function verifyWebAuthnLogin(browser) {
             assert(response.status() === 200);
         }
     });
-    await page.click("#authnButton");
+    await cas.click(page, "#authnButton");
     await cas.sleep(1000);
 
     const baseEndpoint = "https://localhost:8443/cas/webauthn";

@@ -12,7 +12,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -68,9 +67,9 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_WEBAUTHN_POPULATE_CSRF_TOKEN),
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_WEB_AUTHN_START_REGISTRATION),
                 setPrincipalAction);
-            createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION);
+            createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_WEBAUTHN_SAVE_REGISTRATION);
 
-            val saveState = createActionState(flow, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION, CasWebflowConstants.ACTION_ID_WEBAUTHN_SAVE_ACCOUNT_REGISTRATION);
+            val saveState = createActionState(flow, CasWebflowConstants.STATE_ID_WEBAUTHN_SAVE_REGISTRATION, CasWebflowConstants.ACTION_ID_WEBAUTHN_SAVE_ACCOUNT_REGISTRATION);
             createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CHECK_ACCOUNT_REGISTRATION);
             createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_STOP_WEBFLOW);
 
@@ -82,7 +81,7 @@ public class WebAuthnMultifactorWebflowConfigurer extends AbstractCasMultifactor
             viewLoginFormState.getEntryActionList().addAll(createEvaluateAction(CasWebflowConstants.ACTION_ID_WEBAUTHN_POPULATE_CSRF_TOKEN),
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_WEBAUTHN_START_AUTHENTICATION), setPrincipalAction);
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_VALIDATE,
-                CasWebflowConstants.STATE_ID_REAL_SUBMIT, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
+                CasWebflowConstants.STATE_ID_REAL_SUBMIT, createTransitionAttributes(true, true));
 
             val realSubmitState = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT,
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_WEBAUTHN_AUTHENTICATION_WEBFLOW));

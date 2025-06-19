@@ -1,6 +1,5 @@
 
 const cas = require("../../cas.js");
-const assert = require("assert");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -26,8 +25,7 @@ const assert = require("assert");
     await cas.click(page, "#link1");
     await cas.sleep(2000);
     await cas.logPage(page);
-    const url = await page.url();
-    assert(url.includes("https://localhost:9859/anything/cas"));
+    await cas.assertPageUrlContains(page, "https://localhost:9859/anything/cas");
     await cas.gotoLogout(page);
 
     await cas.gotoLogin(page);
@@ -37,8 +35,7 @@ const assert = require("assert");
     await page.locator("div ::-p-text(Test link with special symbols: é & @)").click();
     await cas.sleep(2000);
     await cas.logPage(page);
-    const url2 = await page.url();
-    assert(url2.includes("https://localhost:9859/anything/cas"));
+    await cas.assertPageUrlContains(page, "https://localhost:9859/anything/cas");
     await cas.gotoLogout(page);
     
     await browser.close();

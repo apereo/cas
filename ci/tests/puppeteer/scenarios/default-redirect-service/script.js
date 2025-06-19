@@ -1,5 +1,4 @@
 
-const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
@@ -12,8 +11,7 @@ const cas = require("../../cas.js");
     await cas.attributeValue(page, "#username", "autocomplete", "username");
     await cas.loginWith(page);
     
-    const url = await page.url();
     await cas.logPage(page);
-    assert(url === "https://github.com/");
+    await cas.assertPageUrl(page, "https://github.com/");
     await browser.close();
 })();

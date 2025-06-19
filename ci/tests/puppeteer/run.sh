@@ -434,6 +434,8 @@ function validateScenario() {
     exit 0
   fi
 
+  nodeArgs=$(jq -j '.requirements.node.args // empty' "${config}")
+  
   export SCENARIO="${scenarioName}"
   export SCENARIO_PATH="${scenario}"
   export SCENARIO_FOLDER=$(cd -- "${SCENARIO_PATH}" &>/dev/null && pwd)
@@ -620,7 +622,7 @@ function buildAndRun() {
 -x check -x test -x javadoc --build-cache --configure-on-demand --parallel\
 ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=true \
 -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS:+ $BUILDFLAGS}")
-    printcyan "Executing build command in the ${BUILD_SPAWN}:\n➡️ ${BUILD_COMMAND}"
+    printcyan "Executing build command in the ${BUILD_SPAWN}:\n➡️  ${BUILD_COMMAND}"
 
     if [[ "${BUILD_SPAWN}" == "background" ]]; then
       printcyan "Launching build in background to make observing slow builds easier..."
@@ -846,6 +848,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
             -Dlog.console.stacktraces=true \
             -DaotSpringActiveProfiles=none \
             "$systemProperties" \
+            --cas.http-client.allow-local-urls=true \
             --spring.main.lazy-initialization=false \
             --spring.devtools.restart.enabled=false \
             --management.endpoints.web.discovery.enabled=true \
@@ -889,6 +892,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
               -Dcom.sun.net.ssl.checkRevocation=false \
               --spring.main.lazy-initialization=false \
               --spring.profiles.active=none \
+              --cas.http-client.allow-local-urls=true \
               --spring.devtools.restart.enabled=false \
               --management.endpoints.web.discovery.enabled=true \
               --cas.audit.engine.enabled=true \
@@ -903,6 +907,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
               -Dcom.sun.net.ssl.checkRevocation=false \
               --server.port=${serverPort} \
               --spring.main.lazy-initialization=false \
+              --cas.http-client.allow-local-urls=true \
               --spring.profiles.active=none \
               --spring.devtools.restart.enabled=false \
               --management.endpoints.web.discovery.enabled=true \
@@ -992,7 +997,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
       while [ $retry_count -lt $max_retries ]; do
         echo -e "**************************************************************************"
         echo -e "Attempt: #${retry_count}: Running ${scriptPath}\n"
-        node --unhandled-rejections=strict --no-experimental-websocket ${scriptPath} ${config}
+        node --unhandled-rejections=strict ${nodeArgs} ${scriptPath} ${config}
         RC=$?
 
         if [[ $RC -ne 0 ]]; then

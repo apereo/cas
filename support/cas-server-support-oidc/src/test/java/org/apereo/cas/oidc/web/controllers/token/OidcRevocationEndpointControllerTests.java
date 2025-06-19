@@ -3,16 +3,13 @@ package org.apereo.cas.oidc.web.controllers.token;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletResponse;
-
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link OidcRevocationEndpointControllerTests}.
@@ -22,26 +19,37 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDCWeb")
 class OidcRevocationEndpointControllerTests extends AbstractOidcTests {
-    @Autowired
-    @Qualifier("oidcRevocationEndpointController")
-    protected OidcRevocationEndpointController oidcRevocationEndpointController;
-
     @Test
-    void verifyGivenAccessTokenInRegistry() throws Throwable {
-        val request = getHttpRequestForEndpoint(OidcConstants.REVOCATION_URL);
-        val response = new MockHttpServletResponse();
-        val mv = oidcRevocationEndpointController.handleRequest(request, response);
-        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
-        assertEquals(OAuth20Constants.INVALID_REQUEST, mv.getModel().get("error"));
+    void verifyBadEndpointRequest() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+        mockMvc.perform(post('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REVOCATION_URL)
+                .secure(true)
+                .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+            )
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value(OAuth20Constants.INVALID_REQUEST));
     }
 
     @Test
-    void verifyBadEndpointRequest() throws Throwable {
-        val request = getHttpRequestForEndpoint("unknown/issuer");
-        request.setRequestURI("unknown/issuer");
-        val response = new MockHttpServletResponse();
-        val mv = oidcRevocationEndpointController.handleRequest(request, response);
-        assertEquals(HttpStatus.BAD_REQUEST, mv.getStatus());
+    void verifyAccessTokenRevocation() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
+
+        val token = getAccessToken(registeredService.getClientId());
+        ticketRegistry.addTicket(token.getTicketGrantingTicket());
+        ticketRegistry.addTicket(token);
+
+        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REVOCATION_URL)
+                .secure(true)
+                .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                .param(OAuth20Constants.TOKEN, token.getId())
+                .with(withHttpRequestProcessor())
+            )
+            .andExpect(status().isOk());
+        assertNull(ticketRegistry.getTicket(token.getId()));
     }
 
 }
