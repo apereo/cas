@@ -163,7 +163,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         }
         generateAccessTokenHash(accessToken, oidcRegisteredService, claims);
 
-        val includeClaims = context.getResponseType() != OAuth20ResponseTypes.CODE && context.getGrantType() != OAuth20GrantTypes.AUTHORIZATION_CODE;
+        val includeClaims = context.getResponseType() != OAuth20ResponseTypes.CODE && context.getGrantType() != OAuth20GrantTypes.AUTHORIZATION_CODE && context.getGrantType() != OAuth20GrantTypes.REFRESH_TOKEN;
         if (includeClaims || includeClaimsInIdTokenForcefully(context)) {
             FunctionUtils.doIf(includeClaimsInIdTokenForcefully(context),
                     __ -> LOGGER.warn("Individual claims requested by OpenID scopes are forced to be included in the ID token. "
