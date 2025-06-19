@@ -1,7 +1,8 @@
 description = "Apereo CAS JPA Utilities and Support"
 dependencies {
     implementation libraries.hikaricp
-    
+    implementation libraries.jakartapersistence
+
     implementation project(":core:cas-server-core-util-api")
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")

@@ -11,8 +11,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import jakarta.persistence.LockModeType;
-
 import java.io.Serial;
 
 /**
@@ -40,7 +38,7 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
      * {@code READ,WRITE,OPTIMISTIC,OPTIMISTIC_FORCE_INCREMENT,PESSIMISTIC_READ,
      * PESSIMISTIC_WRITE,PESSIMISTIC_FORCE_INCREMENT,NONE}.
      */
-    private LockModeType ticketLockType = LockModeType.NONE;
+    private String ticketLockType = "NONE";
 
     /**
      * Indicates the lock duration when one is about to be acquired by the cleaner.

@@ -76,7 +76,7 @@ public interface BeanContainer<T> extends DisposableBean {
     List<T> toList();
 
     /**
-     * To set set.
+     * To set.
      *
      * @return the set
      */

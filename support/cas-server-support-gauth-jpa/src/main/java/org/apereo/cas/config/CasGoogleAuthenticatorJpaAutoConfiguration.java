@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
@@ -10,6 +9,7 @@ import org.apereo.cas.gauth.credential.JpaGoogleAuthenticatorTokenCredentialRepo
 import org.apereo.cas.gauth.token.GoogleAuthenticatorJpaTokenRepository;
 import org.apereo.cas.gauth.token.JpaGoogleAuthenticatorToken;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.jpa.JpaConfigurationContext;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.util.CollectionUtils;

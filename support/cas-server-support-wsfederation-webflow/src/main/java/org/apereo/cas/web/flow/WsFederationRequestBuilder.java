@@ -53,7 +53,7 @@ public class WsFederationRequestBuilder {
     }
 
     /**
-     * Build authentication request event event.
+     * Build authentication request event.
      *
      * @param context the context
      * @return the event

@@ -15,6 +15,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -149,6 +150,33 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
     }
 
     @Test
+    void verifyNameIdAssignedToServiceOperation() throws Throwable {
+        val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
+        samlRegisteredService.setRequiredNameIdFormat(NameIDType.EMAIL);
+        samlRegisteredService.setUsernameAttributeProvider(
+            new PrincipalAttributeRegisteredServiceUsernameProvider("email"));
+
+        val logoutRequest = DefaultSingleLogoutRequestContext.builder()
+            .logoutUrl(new URI("https://sp.example.org/slo").toURL())
+            .registeredService(samlRegisteredService)
+            .service(RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .ticketId("ST-123456789")
+            .executionRequest(SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(
+                    new MockTicketGrantingTicket("casuser",
+                        Map.of("email", "casuser@example.org"))).build())
+            .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
+            .properties(CollectionUtils.wrap(
+                SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING,
+                SAMLConstants.SAML2_POST_BINDING_URI))
+            .build();
+
+        val result = samlLogoutBuilder.create(logoutRequest);
+        assertNotNull(result);
+        assertEquals("casuser@example.org", ((LogoutRequest) result.getMessage()).getNameID().getValue());
+    }
+    
+    @Test
     void verifyNameIdOperation() throws Throwable {
         val samlRegisteredService = SamlIdPTestUtils.getSamlRegisteredService();
         samlRegisteredService.setWhiteListBlackListPrecedence("INCLUDE");
@@ -174,7 +202,7 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
 
         val result = samlLogoutBuilder.create(logoutRequest);
         assertNotNull(result);
-        assertTrue(result.getPayload().contains("casuser@example.org"));
+        assertEquals(NameIDType.TRANSIENT, ((LogoutRequest) result.getMessage()).getNameID().getFormat());
     }
 
     @Test

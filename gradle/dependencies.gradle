@@ -1106,6 +1106,11 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-tx")
                 }
         ],
+        jakartapersistence : [
+                dependencies.create(libs.jakarta.persistence.api.get()) {
+                    exclude(group: "xml-apis", module: "xml-apis")
+                }
+        ],
         jakarta                    : [
                 dependencies.create(libs.jakarta.validation.api.get()),
                 dependencies.create(libs.jakarta.xml.bind.api.get()) {
@@ -1134,9 +1139,6 @@ ext.libraries = [
                 dependencies.create(libs.jakarta.annotation.api.get()) {
                 },
                 dependencies.create(libs.jakarta.activation.api.get()) {
-                },
-                dependencies.create(libs.jakarta.persistence.api.get()) {
-                    exclude(group: "xml-apis", module: "xml-apis")
                 },
                 dependencies.create(libs.jakarta.jms.api.get()),
                 dependencies.create(libs.jakarta.servlet.jsp.jstl.api.get()),
@@ -3775,10 +3777,6 @@ ext.libraries = [
                 dependencies.create(libs.mdi.font.get()) {
                 },
                 dependencies.create(libs.normalize.css.get()) {
-                },
-                dependencies.create(libs.es5.shim.get()) {
-                },
-                dependencies.create(libs.css.vars.ponyfill.get()) {
                 },
                 dependencies.create(libs.text.encoding.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
