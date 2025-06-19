@@ -8,7 +8,7 @@
     "basic-auth": "2.0.1",
     "colors": "1.4.0",
     "crypto-js": "4.2.0",
-    "dpop": "1.4.1",
+    "dpop": "2.1.0",
     "express": "5.1.0",
     "figlet": "1.8.1",
     "http-cas-client": "0.4.3",
