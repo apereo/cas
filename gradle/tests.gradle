@@ -190,7 +190,8 @@ TestCategories.values().each({ testCategory ->
             tasks.register(taskName, Test) {
                 description = "Run unit/integration tests to verify the test category: ${testCategory.name()}"
                 group = "CAS Tests"
-
+                testClassesDirs = sourceSets.test.output.classesDirs
+                classpath = sourceSets.test.runtimeClasspath
                 enabled = shouldWeTest
                 outputs.file(jacocoTestExecutionResultsFile)
 
