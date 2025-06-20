@@ -25,7 +25,7 @@ recipeList:
       filePattern: 'gradle.properties'
   - org.openrewrite.gradle.AddProperty:
       key: springBootVersion
-      value: 3.5.1
+      value: 3.5.3
       overwrite: true
       filePattern: 'gradle.properties'
   - org.openrewrite.gradle.UpdateGradleWrapper:
