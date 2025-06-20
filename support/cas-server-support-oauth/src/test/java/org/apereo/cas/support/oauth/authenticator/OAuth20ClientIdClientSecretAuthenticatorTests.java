@@ -69,9 +69,13 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
     @Nested
     class DefaultPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
         @RetryingTest(3)
-        void verifyAuthentication() {
+        void verifyAuthentication() throws Throwable {
+            val code = getCode();
+            ticketRegistry.addTicket(code);
+            
             val credentials = new UsernamePasswordCredentials("client", "secret");
             val request = new MockHttpServletRequest();
+            request.addParameter(OAuth20Constants.CODE, code.getId());
             val ctx = new JEEContext(request, new MockHttpServletResponse());
             oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNotNull(credentials.getUserProfile());

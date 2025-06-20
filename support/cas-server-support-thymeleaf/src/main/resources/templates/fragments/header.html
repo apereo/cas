@@ -35,8 +35,9 @@
                 <section class="mdc-top-app-bar__section">
                     <div class="cas-brand mx-auto">
                         <h1 class="visually-hidden" th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</h1>
-                        <a th:href="@{/}">
-                            <img id="cas-logo" class="cas-logo"
+                        <a th:href="@{/}" th:if="${#cas.isTrue(#themes.code('cas.logo.enabled'))}">
+                            <img id="cas-logo"
+                                 class="cas-logo"
                                  th:alt="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
                                  th:src="@{${#strings.defaultString(#themes.code('cas.logo.file'), '/images/cas-logo.png')}}"
                             />
