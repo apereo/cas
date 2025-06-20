@@ -2,11 +2,9 @@ package org.apereo.cas.configuration.model.support.oauth;
 
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -48,5 +46,13 @@ public class OAuthRefreshTokenProperties implements Serializable {
      * Create access token as JWTs.
      */
     private boolean createAsJwt;
-    
+
+    /**
+     * If true, the refresh token will keep track of the access tokens
+     * issued using it. The access tokens will remain attached to the refresh token
+     * as long as the refresh token is valid and they are not periodically on on-demand
+     * checked for validity or removed from the refresh token if they expire.
+     * The tracking mechanism is only for history and auditing purposes.
+     */
+    private boolean trackAccessTokens = true;
 }

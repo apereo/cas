@@ -39,7 +39,7 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     @Override
     public void registerServiceManager(final ServicesManager manager) {
-        this.serviceManagers.add(manager);
+        serviceManagers.add(manager);
         AnnotationAwareOrderComparator.sortIfNecessary(serviceManagers);
     }
 
@@ -171,7 +171,8 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     @Override
     public Collection<RegisteredService> load() {
-        return serviceManagers.stream()
+        return serviceManagers
+            .stream()
             .flatMap(manager -> manager.load().stream())
             .collect(Collectors.toList());
     }
@@ -200,7 +201,8 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     @Override
     public Stream<String> getDomains() {
-        return serviceManagers.stream()
+        return serviceManagers
+            .stream()
             .flatMap(ServicesManager::getDomains);
     }
 

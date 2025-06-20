@@ -395,6 +395,7 @@ class OAuth20DefaultTokenGeneratorTests {
             val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
             val mv = generateAccessTokenResponseAndGetModelAndView(registeredService, authentication, OAuth20GrantTypes.AUTHORIZATION_CODE);
             assertFalse(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
+            assertTrue(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
         }
     }
 

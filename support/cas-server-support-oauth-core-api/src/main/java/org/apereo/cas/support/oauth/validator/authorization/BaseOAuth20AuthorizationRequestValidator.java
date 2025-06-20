@@ -147,7 +147,7 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
         }
 
         if (!OAuth20Utils.checkCallbackValid(registeredService, redirectUri)) {
-            LOGGER.warn("Redirect URI [{}] found in the request is not authorized for registered service id [{}].",
+            LOGGER.warn("Redirect URI [{}] found in the request is not authorized for registered service [{}].",
                 redirectUri, registeredService.getServiceId());
             setErrorDetails(context, OAuth20Constants.INVALID_REQUEST, StringUtils.EMPTY, false);
             return false;

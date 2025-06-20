@@ -86,13 +86,14 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
     }
 
     protected void revokeToken(final OAuth20RefreshToken token) throws Exception {
+        LOGGER.debug("Revoking refresh token [{}] and all associated access tokens", token.getId());
+        token.getAccessTokens().removeIf(Unchecked.predicate(this::revokeToken));
         revokeToken(token.getId());
-        token.getAccessTokens().forEach(Unchecked.consumer(this::revokeToken));
     }
 
-    protected void revokeToken(final String token) throws Exception {
+    protected boolean revokeToken(final String token) throws Exception {
         LOGGER.debug("Revoking token [{}]", token);
-        getConfigurationContext().getTicketRegistry().deleteTicket(token);
+        return getConfigurationContext().getTicketRegistry().deleteTicket(token) > 0;
     }
 
 }

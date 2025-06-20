@@ -272,9 +272,10 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         return finalAccessToken;
     }
 
-    private void updateRefreshToken(final AccessTokenRequestContext tokenRequestContext,
+    protected void updateRefreshToken(final AccessTokenRequestContext tokenRequestContext,
                                     final Ticket accessToken) throws Exception {
-        if (tokenRequestContext.isRefreshToken() && !tokenRequestContext.getToken().isStateless()) {
+        val trackAccessTokens = casProperties.getAuthn().getOauth().getRefreshToken().isTrackAccessTokens();
+        if (tokenRequestContext.isRefreshToken() && !tokenRequestContext.getToken().isStateless() && trackAccessTokens) {
             val refreshToken = (OAuth20RefreshToken) tokenRequestContext.getToken();
             LOGGER.trace("Tracking access token [{}] linked to refresh token [{}]", accessToken.getId(), refreshToken.getId());
             refreshToken.getAccessTokens().add(accessToken.getId());
