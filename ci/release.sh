@@ -8,11 +8,11 @@ ENDCOLOR="\e[0m"
 casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
 
 function printgreen() {
-  printf "☘️ ${GREEN}$1${ENDCOLOR}\n"
+  printf "☘️  ${GREEN}$1${ENDCOLOR}\n"
 }
 
 function printred() {
-  printf "🚨 ${RED}$1${ENDCOLOR}\n"
+  printf "🚨  ${RED}$1${ENDCOLOR}\n"
 }
 
 function clean {
@@ -27,8 +27,10 @@ function build {
         git add "**/rewrite/*.yml" && git commit -m "Generated OpenRewrite recipe for ${casVersion}"
 
     printgreen "Building CAS. Please be patient as this might take a while..."
-    ./gradlew assemble -x test -x check --no-daemon --parallel --no-watch-fs --no-configuration-cache \
-        -DskipAot=true -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2"
+    ./gradlew assemble -x test -x check --no-daemon --parallel \
+        --no-watch-fs --no-configuration-cache \
+        -DskipAot=true -DpublishReleases=true \
+        -DrepositoryUsername="$1" -DrepositoryPassword="$2"
     if [ $? -ne 0 ]; then
         printred "Building CAS failed."
         exit 1
@@ -43,7 +45,8 @@ function snapshot() {
   fi
   printgreen "Publishing CAS SNAPSHOT artifacts. This might take a while..."
   ./gradlew build publish -x test -x javadoc -x check --no-daemon --parallel \
-    -DskipAot=true -DpublishSnapshots=true --no-build-cache --no-configuration-cache --configure-on-demand \
+    -DskipAot=true -DpublishSnapshots=true --no-build-cache \
+    --no-configuration-cache --configure-on-demand \
     -Dorg.gradle.internal.http.socketTimeout=640000 \
     -Dorg.gradle.internal.http.connectionTimeout=640000 \
     -Dorg.gradle.internal.publish.checksums.insecure=true \
@@ -64,7 +67,8 @@ function publish {
     fi
     printgreen "Publishing CAS releases. This might take a while..."
     ./gradlew publishToSonatype closeAndReleaseStagingRepository \
-      --no-build-cache --no-daemon --no-parallel --no-watch-fs --no-configuration-cache -DskipAot=true -DpublishReleases=true \
+      --no-build-cache --no-daemon --no-parallel --no-watch-fs --no-configuration-cache \
+      -DskipAot=true -DpublishReleases=true \
       -DrepositoryUsername="$1" -DrepositoryPassword="$2" -DpublishReleases=true \
       -Dorg.gradle.internal.http.socketTimeout=640000 \
       -Dorg.gradle.internal.http.connectionTimeout=640000 \
@@ -131,9 +135,6 @@ echo -e "\t- Your PGP signatures must be configured via '~/.gradle/gradle.proper
 echo -e "\t\tsigning.keyId=YOUR_KEY_ID"
 echo -e "\t\tsigning.password=YOUR_KEY_PASSWORD"
 echo -e "\t\tsigning.secretKeyRingFile=/path/to/.gnupg/secring.gpg"
-echo -e "\t- Disable the Gradle daemon and parallel processing via '~/.gradle/gradle.properties':"
-echo -e "\t\torg.gradle.daemon=false"
-echo -e "\t\torg.gradle.parallel=false"
 echo -e "\nFor more information, please visit\n\thttps://apereo.github.io/cas/developer/Release-Process.html\n"
 
 if [[ -z $REPOSITORY_USER && -z $REPOSITORY_PWD ]]; then

@@ -259,7 +259,7 @@ zxcvbn = "4.4.2"
 #################################################################
 # This section handles Gradle build classpath dependency versions
 #################################################################
-gradleGit = "2.5.0"
+gradleGit = "1.0.0"
 gradleLombok = "8.14"
 gradleDependencyVersions = "0.52.0"
 gradleErrorProne = "4.2.0"
@@ -752,7 +752,7 @@ zxcvbn = { module = "org.webjars:zxcvbn", version.ref = "zxcvbn" }
 ###########################################################
 
 gradle-plugin-spring-boot = { module = "org.springframework.boot:spring-boot-gradle-plugin", version.ref = "springBoot" }
-gradle-plugin-git-properties = { module = "com.gorylenko.gradle-git-properties:gradle-git-properties", version.ref = "gradleGit" }
+gradle-plugin-git-properties = { module = "io.hndrs.git-properties:io.hndrs.git-properties.gradle.plugin", version.ref = "gradleGit" }
 gradle-plugin-lombok = { module = "io.freefair.gradle:lombok-plugin", version.ref = "gradleLombok" }
 gradle-plugin-versions = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "gradleDependencyVersions" }
 gradle-plugin-native = { module = "org.graalvm.buildtools:native-gradle-plugin", version.ref = "gradleGraalVmNative" }

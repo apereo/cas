@@ -146,23 +146,26 @@ allprojects {
         logger.info("The OS platform architecture for this Gradle build is reset to ${arch} for ${name}")
     }
 
-    if (rootProject.generateGitProperties) {
-        apply plugin: "com.gorylenko.gradle-git-properties"
-    }
-
     project.ext["forceBootifulArtifact"] = null
 
-    afterEvaluate { project ->
-        if (rootProject.generateGitProperties) {
-            gitProperties {
-                dotGitDirectory = project.rootProject.layout.projectDirectory.dir(".git")
-                customProperty 'project.group', project.group
-                customProperty 'project.name', project.name
-                customProperty 'project.version', project.version
-                customProperty 'project.description', project.description
-                extProperty = "gitProps"
-                keys = ["git.branch", "git.build.time", "git.build.user.name",
-                        "git.build.version", "git.commit.id", "git.remote.origin.url"]
+    if (rootProject.generateGitProperties) {
+        apply plugin: "io.hndrs.git-properties"
+        tasks.named("generateGitProperties") {
+            def propertiesFile = project.layout.buildDirectory.file("resources/main/git.properties").get().asFile
+            def projectGroup = project.group
+            def projectName = project.name
+            def projectVersion = project.version
+            def projectDescription = project.description
+
+            it.dotGitDirectory.set(rootProject.layout.projectDirectory.dir(".git"))
+            it.output.set(propertiesFile)
+            doLast {
+                propertiesFile.withWriterAppend('UTF-8') { writer ->
+                    writer << "project.group=${projectGroup}"
+                    writer << "\nproject.name=${projectName}"
+                    writer << "\nproject.version=${projectVersion}"
+                    writer << "\nproject.description=${projectDescription}\n"
+                }
             }
         }
     }
@@ -475,7 +478,7 @@ if (!gradle.startParameter.excludedTaskNames.contains("javadoc") || rootProject.
 if (rootProject.publishFlag) {
     tasks.register('rootSourcesJar', Jar) {
         description = "Build JAR for the root CAS module"
-        archiveBaseName.set("${project.archiveBaseName}")
+        archiveBaseName.set("${project.name}-sources")
         from rootProject.file("src")
     }
 }
