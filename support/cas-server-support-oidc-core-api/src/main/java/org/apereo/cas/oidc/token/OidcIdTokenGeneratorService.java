@@ -163,8 +163,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         }
         generateAccessTokenHash(accessToken, oidcRegisteredService, claims);
 
-        val includeClaims = context.getResponseType() != OAuth20ResponseTypes.CODE && context.getGrantType() != OAuth20GrantTypes.AUTHORIZATION_CODE && context.getGrantType() != OAuth20GrantTypes.REFRESH_TOKEN;
-        if (includeClaims || includeClaimsInIdTokenForcefully(context)) {
+        if (includeClaimsInIdToken(context) || includeClaimsInIdTokenForcefully(context)) {
             FunctionUtils.doIf(includeClaimsInIdTokenForcefully(context),
                     __ -> LOGGER.warn("Individual claims requested by OpenID scopes are forced to be included in the ID token. "
                         + "This is a violation of the OpenID Connect specification and a workaround via dedicated CAS configuration. "
@@ -182,6 +181,12 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             generateCibaClaims(context, claims);
         }
         return claims;
+    }
+
+    protected boolean includeClaimsInIdToken(final IdTokenGenerationContext context) {
+        return context.getResponseType() != OAuth20ResponseTypes.CODE
+            && context.getGrantType() != OAuth20GrantTypes.AUTHORIZATION_CODE
+            && context.getGrantType() != OAuth20GrantTypes.REFRESH_TOKEN;
     }
 
     private boolean includeClaimsInIdTokenForcefully(final IdTokenGenerationContext context) {

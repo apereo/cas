@@ -214,6 +214,7 @@ subprojects {
         tests
         provided
         jvmAgents
+        javadocClasspath
     }
 
     apply from: rootProject.file("gradle/overrides.gradle")
@@ -447,6 +448,8 @@ subprojects {
         jvmAgents(libs.mockito.inline) {
             transitive = false
         }
+
+        javadocClasspath project(path: project.path, configuration: 'compileClasspath')
     }
 }
 
@@ -454,14 +457,16 @@ if (!gradle.startParameter.excludedTaskNames.contains("javadoc") || rootProject.
     tasks.withType(Javadoc).configureEach {
         source subprojects.collect { project -> project.sourceSets.main.allJava }
         destinationDir = new File(project.layout.buildDirectory.getAsFile().get(), "javadoc")
-        classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
+        if (project != rootProject) {
+            classpath = configurations.javadocClasspath
+        }
         options.addBooleanOption('html5', true)
         failOnError = providers.systemProperty("ignoreJavadocFailures").present
     }
 
     tasks.register('aggregateJavadocsIntoJar', Jar) {
         dependsOn javadoc
-        description = "Aggregate all Javadocs into a single directory"
+        description = "Aggregate all Javadoc into a single artifact"
         archiveClassifier.set("javadoc")
         from javadoc
     }
