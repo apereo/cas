@@ -22,9 +22,7 @@ async function verifyImpersonationWithMfa(page) {
     await cas.screenshot(page);
     const ticket = await cas.assertTicketParameter(page);
 
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    await cas.logg(body);
-    const json = JSON.parse(body.toString());
+    const json = await cas.validateTicket(service, ticket);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "user3");
     assert(authenticationSuccess.attributes.surrogateEnabled[0] === true);
@@ -56,9 +54,7 @@ async function verifyNoImpersonationWithMfa(page) {
     await cas.logPage(page);
     await cas.screenshot(page);
     const ticket = await cas.assertTicketParameter(page);
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    await cas.logg(body);
-    const json = JSON.parse(body.toString());
+    const json = await cas.validateTicket(service, ticket);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "duocode");
     assert(authenticationSuccess.attributes.lastname[0] === "User");

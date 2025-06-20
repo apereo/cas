@@ -26,13 +26,13 @@ configurations {
             Log4j does not support Graal VM and leads to com.oracle.svm.core.jdk.UnsupportedFeatureError:
             Defining hidden classes at runtime is not supported. We use logback instead.
          */
-        exclude(group: "org.apache.logging.log4j", module: "log4j-api")
-        exclude(group: "org.apache.logging.log4j", module: "log4j-jakarta-web")
-        exclude(group: "org.apache.logging.log4j", module: "log4j-web")
-        exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
-        exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
-        exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j2-impl")
-        exclude(group: "org.apereo.cas", module: "cas-server-core-logging")
+//        exclude(group: "org.apache.logging.log4j", module: "log4j-api")
+//        exclude(group: "org.apache.logging.log4j", module: "log4j-jakarta-web")
+//        exclude(group: "org.apache.logging.log4j", module: "log4j-web")
+//        exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
+//        exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
+//        exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j2-impl")
+//        exclude(group: "org.apereo.cas", module: "cas-server-core-logging")
         /*
          * Micrometer support for Java 21's virtual threads is disabled,
          * because: java.lang.IllegalArgumentException:
@@ -52,7 +52,7 @@ dependencies {
     processAotClasspath libraries.graalvmpolyglot
     processTestAotClasspath libraries.graalvmsdk
     processTestAotClasspath libraries.graalvmpolyglot
-
+    
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
     implementation project(":webapp:cas-server-webapp-init-tomcat")
@@ -72,6 +72,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-validation")
     implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-logging")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-notifications")
@@ -79,7 +80,6 @@ dependencies {
 
     implementation project(":support:cas-server-support-native")
     implementation project(":support:cas-server-support-webconfig")
-    implementation project(":support:cas-server-support-logback")
     implementation project(":support:cas-server-support-person-directory")
     implementation project(":support:cas-server-support-themes")
     implementation project(":support:cas-server-support-validation")
