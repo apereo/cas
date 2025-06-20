@@ -2,12 +2,6 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
 
-async function validateTicket(service, ticket, format = "JSON") {
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=${format}`);
-    await cas.log(body);
-    return body;
-}
-
 async function verifyAccountSelection(browser) {
     const context = await browser.createBrowserContext();
     const page = await cas.newPage(context);
@@ -31,8 +25,7 @@ async function verifyImpersonationByPrincipalAttributes(browser) {
     await cas.loginWith(page, "impersonated+casuser", "Mellon");
     await cas.sleep(2000);
     const ticket = await cas.assertTicketParameter(page);
-    const body = await validateTicket(service, ticket);
-    const json = JSON.parse(body);
+    const json = await cas.validateTicket(service, ticket);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "impersonated");
     assert(authenticationSuccess.attributes.surrogateUser[0] === "impersonated");
