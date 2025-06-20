@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.transforms.BlockingPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.ChainingPrincipalNameTransformer;
@@ -27,44 +28,46 @@ public class PrincipalNameTransformerUtils {
     /**
      * New principal name transformer.
      *
-     * @param p the p
+     * @param properties the properties
      * @return the principal name transformer
      */
-    public static PrincipalNameTransformer newPrincipalNameTransformer(final PrincipalTransformationProperties p) {
+    public static PrincipalNameTransformer newPrincipalNameTransformer(final PrincipalTransformationProperties properties) {
         val chain = new ChainingPrincipalNameTransformer();
 
-        if (p.getGroovy().getLocation() != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
-            val t = new GroovyPrincipalNameTransformer(p.getGroovy().getLocation());
-            chain.addTransformer(t);
+        if (properties.getGroovy().getLocation() != null
+            && CasRuntimeHintsRegistrar.notInNativeImage()
+            && ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory().isPresent()) {
+            val transformer = new GroovyPrincipalNameTransformer(properties.getGroovy().getLocation());
+            chain.addTransformer(transformer);
         }
 
-        if (StringUtils.isNotBlank(p.getPattern())) {
-            val t = new RegexPrincipalNameTransformer(SpringExpressionLanguageValueResolver.getInstance().resolve(p.getPattern()));
-            chain.addTransformer(t);
+        if (StringUtils.isNotBlank(properties.getPattern())) {
+            val transformer = new RegexPrincipalNameTransformer(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getPattern()));
+            chain.addTransformer(transformer);
         }
 
-        if (StringUtils.isNotBlank(p.getPrefix()) || StringUtils.isNotBlank(p.getSuffix())) {
-            val t = new PrefixSuffixPrincipalNameTransformer();
-            t.setPrefix(SpringExpressionLanguageValueResolver.getInstance().resolve(p.getPrefix()));
-            t.setSuffix(SpringExpressionLanguageValueResolver.getInstance().resolve(p.getSuffix()));
-            chain.addTransformer(t);
+        if (StringUtils.isNotBlank(properties.getPrefix()) || StringUtils.isNotBlank(properties.getSuffix())) {
+            val transformer = new PrefixSuffixPrincipalNameTransformer();
+            transformer.setPrefix(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getPrefix()));
+            transformer.setSuffix(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getSuffix()));
+            chain.addTransformer(transformer);
         }
 
-        if (p.getCaseConversion() == PrincipalTransformationProperties.CaseConversion.UPPERCASE) {
-            val t = new ConvertCasePrincipalNameTransformer();
-            t.setToUpperCase(true);
-            chain.addTransformer(t);
+        if (properties.getCaseConversion() == PrincipalTransformationProperties.CaseConversion.UPPERCASE) {
+            val transformer = new ConvertCasePrincipalNameTransformer();
+            transformer.setToUpperCase(true);
+            chain.addTransformer(transformer);
         }
 
-        if (p.getCaseConversion() == PrincipalTransformationProperties.CaseConversion.LOWERCASE) {
-            val t = new ConvertCasePrincipalNameTransformer();
-            t.setToUpperCase(false);
-            chain.addTransformer(t);
+        if (properties.getCaseConversion() == PrincipalTransformationProperties.CaseConversion.LOWERCASE) {
+            val transformer = new ConvertCasePrincipalNameTransformer();
+            transformer.setToUpperCase(false);
+            chain.addTransformer(transformer);
         }
 
-        if (StringUtils.isNotBlank(p.getBlockingPattern())) {
-            val t = new BlockingPrincipalNameTransformer(SpringExpressionLanguageValueResolver.getInstance().resolve(p.getBlockingPattern()));
-            chain.addTransformer(t);
+        if (StringUtils.isNotBlank(properties.getBlockingPattern())) {
+            val transformer = new BlockingPrincipalNameTransformer(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getBlockingPattern()));
+            chain.addTransformer(transformer);
         }
 
         val transformers = ServiceLoader.load(PrincipalNameTransformer.class)

@@ -89,7 +89,7 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
         LOGGER.trace("Delegated clients received are [{}]", clients);
         val callbackUrl = (String) clients.getOrDefault("callbackUrl", null);
         val properties = (Map<String, String>)
-            clients.getOrDefault("properties", new HashMap<String, String>(0));
+            clients.getOrDefault("properties", new HashMap<String, String>());
         val factory = new PropertiesConfigFactory(callbackUrl, properties);
         return factory.build()
             .getClients()

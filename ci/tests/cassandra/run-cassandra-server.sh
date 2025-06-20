@@ -35,7 +35,7 @@ docker exec cassandra cqlsh --ssl -e "CREATE KEYSPACE cas WITH REPLICATION = {'c
 sleep 5
 
 echo "Creating new super user: cassystem"
-docker exec cassandra cqlsh --ssl -u cassandra -p cassandra -e "CREATE ROLE cassystem WITH PASSWORD = 'RUstriFINFiENtrO' AND SUPERUSER = true AND LOGIN = true"
+docker exec cassandra cqlsh --ssl -u cassandra -p cassandra -e "CREATE ROLE cassystem WITH PASSWORD = 'RUstriFINFiENtrO' AND LOGIN = true"
 sleep 5
 
 echo "Creating Cassandra users table"
@@ -50,4 +50,4 @@ echo "Creating Cassandra user record"
 docker exec cassandra cqlsh --ssl -e "INSERT INTO cas.users_table (id,user_attr,pwd_attr) VALUES (6ab09bec-e68e-48d9-a5f8-97e6fb4c9b47, 'casuser','Mellon') USING TTL 86400 AND TIMESTAMP 123456789;"
 sleep 5
 
-docker exec -it cassandra nodetool status
+docker exec cassandra nodetool status

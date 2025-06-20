@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -7,6 +8,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
 import java.util.LinkedHashMap;
@@ -26,6 +28,12 @@ import java.util.Map;
 public class LdapPasswordManagementProperties extends AbstractLdapSearchProperties {
     @Serial
     private static final long serialVersionUID = -2610186056194686825L;
+
+    /**
+     * Principal transformation properties.
+     */
+    @NestedConfigurationProperty
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     /**
      * Collection of attribute names that indicate security questions answers.
