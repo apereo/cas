@@ -98,7 +98,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         val context = new JEEContext(request, response);
         try {
             if (!verifyAccessTokenRequest(context)) {
-                LoggingUtils.error(LOGGER, "Access token validation failed");
+                LOGGER.warn("Access token validation failed for request [{}]", context.getFullRequestURL());
                 return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_GRANT);
             }
         } catch (final Throwable e) {

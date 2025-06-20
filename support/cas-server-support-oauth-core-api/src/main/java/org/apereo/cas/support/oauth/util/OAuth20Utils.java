@@ -284,7 +284,7 @@ public class OAuth20Utils {
         val matchingStrategy = Optional.of(registeredService).map(RegisteredService::getMatchingStrategy).orElse(null);
         validateRedirectUri(redirectUri);
         if (matchingStrategy == null || !matchingStrategy.matches(registeredService, redirectUri)) {
-            LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
+            LOGGER.warn("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
                     + "Service is considered unauthorized. Verify the service matching strategy used in the service "
                     + "definition is correct and does in fact match the client [{}]",
                 OAuth20Constants.REDIRECT_URI, redirectUri, registeredService.getServiceId(), redirectUri);
