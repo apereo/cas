@@ -820,7 +820,10 @@ layout: null
         *   [Overview](/cas/{{ version }}/webflow/Webflow-Customization-Decorators.html)
         *   [Groovy](/cas/{{ version }}/webflow/Webflow-Customization-Decorators-Groovy.html)
         *   [REST](/cas/{{ version }}/webflow/Webflow-Customization-Decorators-REST.html)
-    *   [Session Persistence](/cas/{{ version }}/webflow/Webflow-Customization-Sessions.html)
+    *   [Session Persistence](#swfsessions)
+        *   [Overview](/cas/{{ version }}/webflow/Webflow-Customization-Sessions.html)
+        *   [Client Side](/cas/{{ version }}/webflow/Webflow-Customization-Sessions-ClientSide.html)
+        *   [Server Side](/cas/{{ version }}/webflow/Webflow-Customization-Sessions-ServerSide.html)
     *   [SSO & Services](/cas/{{ version }}/webflow/Webflow-Customization-Services.html)
 
 * [High Availability](#highavailability)
