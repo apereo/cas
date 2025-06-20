@@ -1,10 +1,8 @@
 {
-  "dependencies": "webauthn",
+  "dependencies": "session-hazelcast,webauthn",
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-
-    "--logging.level.org.apereo.cas.webauthn.web.WebAuthnController=trace",
 
     "--cas.authn.mfa.web-authn.core.allow-untrusted-attestation=true",
     "--cas.authn.mfa.web-authn.core.qr-code-authentication-enabled=false",

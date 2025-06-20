@@ -165,7 +165,7 @@ while (( "$#" )); do
                 task+="testAuthenticationPolicy "
                 ;;
             authz|heimdall|authorization)
-                isDockerOnLinux && ./ci/tests/mysql/run-mysql-server.sh
+                isDockerOnLinux && ./ci/tests/mysql/run-mysql-server.sh || exit 1
                 task+="testAuthorization "
                 ;;
             auth|authn|authentication)
@@ -175,7 +175,7 @@ while (( "$#" )); do
                 task+="testTickets "
                 ;;
             syncope)
-                isDockerOnLinux && ./ci/tests/syncope/run-syncope-server.sh
+                isDockerOnLinux && ./ci/tests/syncope/run-syncope-server.sh || exit 1
                 task+="testSyncope "
                 ;;
             native|graal|graalvm)
@@ -209,19 +209,19 @@ while (( "$#" )); do
                 task+="testCipher "
                 ;;
             elastic)
-                isDockerOnLinux && ./ci/tests/elastic/run-elastic-apm.sh
+                isDockerOnLinux && ./ci/tests/elastic/run-elastic-apm.sh || exit 1
                 task+="testElastic "
                 ;;
             gcp|googlecloud|gcloud)
-                isDockerOnLinux && ./ci/tests/gcp/run-gcp-server.sh
+                isDockerOnLinux && ./ci/tests/gcp/run-gcp-server.sh || exit 1
                 task+="testGCP "
                 ;;
             web)
-                isDockerOnLinux && ./ci/tests/httpbin/run-httpbin-server.sh
+                isDockerOnLinux && ./ci/tests/httpbin/run-httpbin-server.sh || exit 1
                 task+="testWeb "
                 ;;
             scim)
-                isDockerOnLinux && ./ci/tests/scim/run-scim-server.sh
+                isDockerOnLinux && ./ci/tests/scim/run-scim-server.sh || exit 1
                 task+="testSCIM "
                 ;;
             logout|slo)
@@ -309,23 +309,23 @@ while (( "$#" )); do
                 task+="testOAuth "
                 ;;
             oidcservices)
-                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh || exit 1
                 task+="testOIDCServices "
                 ;;
             oidcauthentication|oidcauthn)
-                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh || exit 1
                 task+="testOIDCAuthentication "
                 ;;
             oidcattributes|oidcclaims|oidcattrs)
-                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh || exit 1
                 task+="testOIDCAttributes "
                 ;;
             oidcweb)
-                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh || exit 1
                 task+="testOIDCWeb "
                 ;;
             oidc)
-                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh || exit 1
                 task+="testOIDC "
                 ;;
             mfa)
@@ -413,103 +413,103 @@ while (( "$#" )); do
                 task+="testSpnego "
                 ;;
             azure|cosmosdb)
-                isDockerOnLinux && ./ci/tests/cosmosdb/run-cosmosdb-server.sh
+                isDockerOnLinux && ./ci/tests/cosmosdb/run-cosmosdb-server.sh || exit 1
                 task+="testAzure "
                 ;;
             mssql|mssqlserver)
-                isDockerOnLinux && ./ci/tests/mssqlserver/run-mssql-server.sh
+                isDockerOnLinux && ./ci/tests/mssqlserver/run-mssql-server.sh || exit 1
                 task+="testMsSqlServer "
                 ;;
             influx|influxdb)
-                isDockerOnLinux && ./ci/tests/influxdb/run-influxdb-server.sh
+                isDockerOnLinux && ./ci/tests/influxdb/run-influxdb-server.sh || exit 1
                 task+="testInfluxDb "
                 ;;
             memcached|memcache|kryo)
-                isDockerOnLinux && ./ci/tests/memcached/run-memcached-server.sh
+                isDockerOnLinux && ./ci/tests/memcached/run-memcached-server.sh || exit 1
                 task+="testMemcached "
                 ;;
             activedirectory|ad)
-                isDockerOnLinux && ./ci/tests/ldap/run-ad-server.sh true
+                isDockerOnLinux && ./ci/tests/ldap/run-ad-server.sh || exit 1
                 task+="testActiveDirectory "
                 ;;
             ldapservices)
-                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh || exit 1
                 task+="testLdapServices "
                 ;;
             ldaprepository|ldaprepo)
-                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh || exit 1
                 task+="testLdapRepository "
                 ;;
             ldapauthentication|ldapauthn)
-                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh || exit 1
                 task+="testLdapAuthentication "
                 ;;
             ldapattributes|ldapattrs)
-                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh || exit 1
                 task+="testLdapAttributes "
                 ;;
             ldap)
-                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh || exit 1
                 task+="testLdap "
                 ;;
             mongodbmfa)
-                isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh
+                isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh || exit 1
                 task+="testMongoDbMFA "
                 ;;
             mongo|mongodb)
-                isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh
+                isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh || exit 1
                 task+="testMongoDb "
                 ;;
             mysql)
-                isDockerOnLinux && ./ci/tests/mysql/run-mysql-server.sh
+                isDockerOnLinux && ./ci/tests/mysql/run-mysql-server.sh || exit 1
                 task+="testMySQL "
                 ;;
             maria|mariadb)
-                isDockerOnLinux && ./ci/tests/mariadb/run-mariadb-server.sh
+                isDockerOnLinux && ./ci/tests/mariadb/run-mariadb-server.sh || exit 1
                 task+="testMariaDb "
                 ;;
             postgres|pg|postgresql)
-                isDockerOnLinux && ./ci/tests/postgres/run-postgres-server.sh
+                isDockerOnLinux && ./ci/tests/postgres/run-postgres-server.sh || exit 1
                 task+="testPostgres "
                 ;;
             cassandra)
-                isDockerOnLinux && ./ci/tests/cassandra/run-cassandra-server.sh
+                isDockerOnLinux && ./ci/tests/cassandra/run-cassandra-server.sh || exit 1
                 task+="testCassandra "
                 ;;
             kafka)
-                isDockerOnLinux && ./ci/tests/kafka/run-kafka-server.sh
+                isDockerOnLinux && ./ci/tests/kafka/run-kafka-server.sh || exit 1
                 task+="testKafka "
                 ;;
             aws|amz|amazonwebservices)
-                isDockerOnLinux && ./ci/tests/aws/run-aws-server.sh
+                isDockerOnLinux && ./ci/tests/aws/run-aws-server.sh || exit 1
                 task+="testAmazonWebServices "
                 ;;
             radius)
-                isDockerOnLinux && ./ci/tests/radius/run-radius-server.sh
+                isDockerOnLinux && ./ci/tests/radius/run-radius-server.sh || exit 1
                 task+="testRadius "
                 ;;
             mail|email)
-                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh || exit 1
                 task+="testMail "
                 ;;
             zoo|zookeeper)
-                isDockerOnLinux && ./ci/tests/zookeeper/run-zookeeper-server.sh
+                isDockerOnLinux && ./ci/tests/zookeeper/run-zookeeper-server.sh || exit 1
                 task+="testZooKeeper "
                 ;;
             dynamodb|dynamo)
-                isDockerOnLinux && ./ci/tests/dynamodb/run-dynamodb-server.sh
+                isDockerOnLinux && ./ci/tests/dynamodb/run-dynamodb-server.sh || exit 1
                 task+="testDynamoDb "
                 ;;
             oracle)
-                isDockerOnLinux && ./ci/tests/oracle/run-oracle-server.sh
+                isDockerOnLinux && ./ci/tests/oracle/run-oracle-server.sh || exit 1
                 task+="testOracle "
                 ;;
             redis)
-                isDockerOnLinux && ./ci/tests/redis/run-redis-server.sh
+                isDockerOnLinux && ./ci/tests/redis/run-redis-server.sh || exit 1
                 task+="testRedis "
                 ;;
             activemq|amq|jms|rabbitmq|artemis|amqp)
-                isDockerOnLinux && ./ci/tests/rabbitmq/run-rabbitmq-server.sh
+                isDockerOnLinux && ./ci/tests/rabbitmq/run-rabbitmq-server.sh || exit 1
                 task+="testAMQP "
                 ;;
             *)

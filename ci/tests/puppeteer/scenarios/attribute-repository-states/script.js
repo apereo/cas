@@ -12,9 +12,7 @@ async function returnCasResponse(page, appId) {
     await cas.sleep(2000);
     await cas.logPage(page);
     const ticket = await cas.assertTicketParameter(page);
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    await cas.log(body);
-    const response = JSON.parse(body);
+    const response = await cas.validateTicket(service, ticket);
     return response.serviceResponse.authenticationSuccess;
 }
 

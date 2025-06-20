@@ -146,23 +146,26 @@ allprojects {
         logger.info("The OS platform architecture for this Gradle build is reset to ${arch} for ${name}")
     }
 
-    if (rootProject.generateGitProperties) {
-        apply plugin: "com.gorylenko.gradle-git-properties"
-    }
-
     project.ext["forceBootifulArtifact"] = null
 
-    afterEvaluate { project ->
-        if (rootProject.generateGitProperties) {
-            gitProperties {
-                dotGitDirectory = project.rootProject.layout.projectDirectory.dir(".git")
-                customProperty 'project.group', project.group
-                customProperty 'project.name', project.name
-                customProperty 'project.version', project.version
-                customProperty 'project.description', project.description
-                extProperty = "gitProps"
-                keys = ["git.branch", "git.build.time", "git.build.user.name",
-                        "git.build.version", "git.commit.id", "git.remote.origin.url"]
+    if (rootProject.generateGitProperties) {
+        apply plugin: "io.hndrs.git-properties"
+        tasks.named("generateGitProperties") {
+            def propertiesFile = project.layout.buildDirectory.file("resources/main/git.properties").get().asFile
+            def projectGroup = project.group
+            def projectName = project.name
+            def projectVersion = project.version
+            def projectDescription = project.description
+
+            it.dotGitDirectory.set(rootProject.layout.projectDirectory.dir(".git"))
+            it.output.set(propertiesFile)
+            doLast {
+                propertiesFile.withWriterAppend('UTF-8') { writer ->
+                    writer << "project.group=${projectGroup}"
+                    writer << "\nproject.name=${projectName}"
+                    writer << "\nproject.version=${projectVersion}"
+                    writer << "\nproject.description=${projectDescription}\n"
+                }
             }
         }
     }
@@ -214,6 +217,7 @@ subprojects {
         tests
         provided
         jvmAgents
+        javadocClasspath
     }
 
     apply from: rootProject.file("gradle/overrides.gradle")
@@ -447,6 +451,8 @@ subprojects {
         jvmAgents(libs.mockito.inline) {
             transitive = false
         }
+
+        javadocClasspath project(path: project.path, configuration: 'compileClasspath')
     }
 }
 
@@ -454,14 +460,16 @@ if (!gradle.startParameter.excludedTaskNames.contains("javadoc") || rootProject.
     tasks.withType(Javadoc).configureEach {
         source subprojects.collect { project -> project.sourceSets.main.allJava }
         destinationDir = new File(project.layout.buildDirectory.getAsFile().get(), "javadoc")
-        classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
+        if (project != rootProject) {
+            classpath = configurations.javadocClasspath
+        }
         options.addBooleanOption('html5', true)
         failOnError = providers.systemProperty("ignoreJavadocFailures").present
     }
 
     tasks.register('aggregateJavadocsIntoJar', Jar) {
         dependsOn javadoc
-        description = "Aggregate all Javadocs into a single directory"
+        description = "Aggregate all Javadoc into a single artifact"
         archiveClassifier.set("javadoc")
         from javadoc
     }
@@ -470,7 +478,7 @@ if (!gradle.startParameter.excludedTaskNames.contains("javadoc") || rootProject.
 if (rootProject.publishFlag) {
     tasks.register('rootSourcesJar', Jar) {
         description = "Build JAR for the root CAS module"
-        archiveBaseName.set("${project.archivesBaseName}")
+        archiveBaseName.set("${project.name}-sources")
         from rootProject.file("src")
     }
 }

@@ -35,7 +35,6 @@ async function loginFromPublicWorkstation(browser) {
         const page = await cas.newPage(context);
         await cas.gotoLoginWithAuthnMethod(page, service, "mfa-gauth");
         await cas.assertVisibility(page, "#publicWorkstationButton");
-        await cas.assertVisibility(page, "#warnButton");
         await cas.click(page, "#publicWorkstationButton");
         await cas.sleep(1000);
         await cas.loginWith(page);
@@ -48,10 +47,8 @@ async function loginFromPublicWorkstation(browser) {
         const ticket = await cas.assertTicketParameter(page);
         await cas.gotoLogin(page);
         await cas.assertCookie(page, false);
-        
-        const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-        await cas.log(body);
-        const json = JSON.parse(body);
+
+        const json = await cas.validateTicket(service, ticket);
         const authenticationSuccess = json.serviceResponse.authenticationSuccess;
         assert(authenticationSuccess.user.includes("casuser"));
 

@@ -395,6 +395,12 @@ exports.pressEnter = async (page) => {
     this.sleep(1000);
 };
 
+exports.pressTab = async (page) => page.keyboard.press("Tab");
+
+exports.pressCapslock = async (page) => page.keyboard.press("CapsLock");
+
+exports.pressBackspace = async (page) => page.keyboard.press("Backspace");
+
 exports.type = async (page, selector, value, obfuscate = false) => {
     await page.waitForSelector(selector, {visible: true, timeout: 3000});
     const logValue = obfuscate ? "******" : value;
@@ -526,6 +532,15 @@ exports.assertTicketParameter = async (page, found = true) => {
     }
     assert(result.searchParams.has("ticket") === false);
     return null;
+};
+
+exports.validateTicket = async (service, ticket, format = "JSON") => {
+    const body = await this.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=${format}`);
+    await this.log(body);
+    if (format === "XML") {
+        return body;
+    }
+    return JSON.parse(body);
 };
 
 exports.doRequest = async (url, method = "GET",
@@ -1128,6 +1143,31 @@ exports.generateOtp = async (otpConfig) => {
     }
     USED_OTPS.push(otp);
     return otp;
+};
+
+exports.removeWebAuthnVirtualAuthenticator = async(device) => {
+    await device.client.send("WebAuthn.removeVirtualAuthenticator", {
+        authenticatorId: device.authenticator.authenticatorId
+    });
+};
+
+exports.createWebAuthnVirtualAuthenticator = async(page, protocol = "u2f", hasResidentKey = false) => {
+    const client = await page.target().createCDPSession();
+    await client.send("WebAuthn.enable");
+    const authenticator = await client.send("WebAuthn.addVirtualAuthenticator", {
+        options: {
+            protocol: protocol,
+            transport: "usb",
+            hasResidentKey: hasResidentKey,
+            hasUserVerification: true,
+            isUserVerified: true
+        }
+    });
+    await this.logg(`WebAuthn authenticator: ${authenticator}`);
+    return {
+        authenticator: authenticator,
+        client: client
+    };
 };
 
 exports.dockerContainer = async (name) => {
