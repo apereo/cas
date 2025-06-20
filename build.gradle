@@ -475,7 +475,7 @@ if (!gradle.startParameter.excludedTaskNames.contains("javadoc") || rootProject.
 if (rootProject.publishFlag) {
     tasks.register('rootSourcesJar', Jar) {
         description = "Build JAR for the root CAS module"
-        archiveBaseName.set("${project.archivesBaseName}")
+        archiveBaseName.set("${project.archiveBaseName}")
         from rootProject.file("src")
     }
 }
