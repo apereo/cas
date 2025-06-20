@@ -39,7 +39,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
 
     if (plugins.hasPlugin("war")) {
         tasks.named('javadoc') {
-            enabled false
+            enabled = false
         }
 
         tasks.named('bootWar') {
