@@ -19,4 +19,9 @@ dependencies {
     annotationProcessor libraries.log4j
 }
 
+compileJava {
+    options.compilerArgs << "-Alog4j.graalvm.groupId=${project.group}"
+    options.compilerArgs << "-Alog4j.graalvm.artifactId=${project.name}"
+}
+
 
