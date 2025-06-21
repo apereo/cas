@@ -116,7 +116,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * @param hints               the hints
      * @param subclassesInPackage the subclasses in package
      */
-    default void registerProxyHints(final RuntimeHints hints, final Collection<Class> subclassesInPackage) {
+    default void registerProxyHints(final RuntimeHints hints, final Collection<? extends Class> subclassesInPackage) {
         subclassesInPackage.forEach(clazz -> hints.proxies().registerJdkProxy(clazz));
     }
 

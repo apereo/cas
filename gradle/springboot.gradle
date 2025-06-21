@@ -40,8 +40,15 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         }
 
         tasks.named('bootWar') {
+            def propertiesFile = project.layout.buildDirectory.file("resources/main/git.properties").get().asFile
+            def properties = new Properties()
+            if (propertiesFile.exists()) {
+                propertiesFile.withInputStream { stream ->
+                    properties.load(stream)
+                }
+            }
+            def projectSpecVersion = properties.getProperty('git.commit.id', 'N/A')
 
-            def gitCommitId = project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'
             mainClass.set(project.ext.mainClassName)
             manifest {
                 attributes(
@@ -54,7 +61,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                 }
 
                 attributes(
-                        "Specification-Version": "${-> gitCommitId}",
+                        "Specification-Version": "${-> projectSpecVersion}",
                         "Implementation-Version": project.version)
             }
             from "${project.layout.buildDirectory.getAsFile().get().path}/resources/main", { into "WEB-INF/classes" }
