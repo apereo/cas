@@ -33,9 +33,6 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
             }
         }
     }
-    tasks.named("bootBuildInfo") {
-        notCompatibleWithConfigurationCache("bootBuildInfo is not supported by the Gradle configuration cache: https://github.com/gradle/gradle/issues/20469")
-    }
 
     if (plugins.hasPlugin("war")) {
         tasks.named('javadoc') {
