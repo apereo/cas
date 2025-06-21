@@ -4,6 +4,8 @@ title: CAS - Release Notes
 category: Planning
 ---
 
+{% include variables.html %}
+
 # 7.3.0-RC4 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
