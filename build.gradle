@@ -156,7 +156,7 @@ allprojects {
             def projectName = project.name
             def projectVersion = project.version
             def projectDescription = project.description
-
+            
             it.dotGitDirectory.set(rootProject.layout.projectDirectory.dir(".git"))
             it.output.set(propertiesFile)
             doLast {
@@ -381,13 +381,23 @@ subprojects {
         def projectName = project.name
         def projectGroup = project.group
         def projectVersion = project.version
-        def projectSpecVersion = project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'
+
+        def propertiesFile = project.layout.buildDirectory.file("resources/main/git.properties").get().asFile
+        def properties = new Properties()
+        if (propertiesFile.exists()) {
+            propertiesFile.withInputStream { stream ->
+                properties.load(stream)
+            }
+        }
+        def projectSpecVersion = properties.getProperty('git.commit.id', 'N/A')
+        
         manifest {
             attributes(
                     "Automatic-Module-Name": project.name.replace("-", "."),
                     "Implementation-Title": projectName,
                     "Implementation-Vendor": projectGroup,
-                    "Created-By": projectGroup)
+                    "Created-By": projectGroup
+            )
             if (generateTimestamps) {
                 attributes("Implementation-Date": java.time.ZonedDateTime.now(java.time.ZoneOffset.UTC))
             }

@@ -14,6 +14,7 @@ import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
 import org.springframework.webflow.conversation.Conversation;
+import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.impl.ConversationContainer;
 import org.springframework.webflow.core.AnnotatedObject;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -57,7 +58,9 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSerializationHints(hints,
             ClientFlowExecutionRepository.SerializedFlowExecutionState.class,
             ConversationContainer.class,
-            LocalAttributeMap.class);
+            ConversationId.class,
+            LocalAttributeMap.class
+        );
 
         registerSerializationHints(hints, findSubclassesInPackage(FlowExecutionSnapshotGroup.class, "org.springframework.webflow"));
         registerSerializationHints(hints, findSubclassesInPackage(Conversation.class, "org.springframework.webflow"));

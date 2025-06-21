@@ -1,6 +1,6 @@
 package org.apereo.cas.nativex;
 
-import org.apereo.cas.ticket.registry.MapAttributeValueExtractor;
+import com.hazelcast.spi.properties.ClusterProperty;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -9,17 +9,17 @@ import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link HazelcastTicketRegistryRuntimeHintsTests}.
+ * This is {@link HazelcastCoreRuntimeHintsTests}.
  *
  * @author Misagh Moayyed
- * @since 7.0.0
+ * @since 7.3.0
  */
 @Tag("Native")
-class HazelcastTicketRegistryRuntimeHintsTests {
+class HazelcastCoreRuntimeHintsTests {
     @Test
     void verifyHints() {
         val hints = new RuntimeHints();
-        new HazelcastTicketRegistryRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.reflection().onType(MapAttributeValueExtractor.class).test(hints));
+        new HazelcastCoreRuntimeHints().registerHints(hints, getClass().getClassLoader());
+        assertTrue(RuntimeHintsPredicates.reflection().onType(ClusterProperty.class).test(hints));
     }
 }
