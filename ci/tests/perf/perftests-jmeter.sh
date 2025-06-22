@@ -97,6 +97,7 @@ if [ $retVal == 0 ]; then
       --cas.server.prefix=https://localhost:8443/cas \
       --cas.audit.engine.enabled=false \
       --spring.profiles.active=none \
+      --cas.http-client.allow-local-urls=true \
       --cas.audit.slf4j.use-single-line=true \
       --cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS \
       --management.endpoints.web.exposure.include=* \
