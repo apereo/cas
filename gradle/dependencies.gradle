@@ -2643,8 +2643,6 @@ ext.libraries = [
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-core")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-websocket")
-//                    exclude(group: "ch.qos.logback", module: "logback-core")
-//                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 },
                 dependencies.create(libs.spring.boot.autoconfigure.get()) {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
