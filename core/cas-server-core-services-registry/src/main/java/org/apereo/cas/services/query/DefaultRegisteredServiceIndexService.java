@@ -2,14 +2,12 @@ package org.apereo.cas.services.query;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceIndexService;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import com.googlecode.cqengine.ConcurrentIndexedCollection;
 import com.googlecode.cqengine.IndexedCollection;
 import com.googlecode.cqengine.index.AttributeIndex;
 import com.googlecode.cqengine.query.QueryFactory;
 import com.googlecode.cqengine.query.option.QueryOptions;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import java.util.Arrays;
@@ -25,12 +23,15 @@ import java.util.stream.Stream;
  * @since 7.3.0
  */
 @Slf4j
-@RequiredArgsConstructor
-public class DefaultRegisteredServiceIndexService implements RegisteredServiceIndexService {
-    private final List<ServicesManagerRegisteredServiceLocator> registeredServiceLocators;
-    private final CasConfigurationProperties casProperties;
+public class DefaultRegisteredServiceIndexService extends BaseRegisteredServiceIndexService {
     private final IndexedCollection<RegisteredService> indexedRegisteredServices = new ConcurrentIndexedCollection<>();
-    
+
+    public DefaultRegisteredServiceIndexService(
+        final List<ServicesManagerRegisteredServiceLocator> registeredServiceLocators,
+        final CasConfigurationProperties casProperties) {
+        super(registeredServiceLocators, casProperties);
+    }
+
     @Override
     public void clear() {
         if (isEnabled()) {
@@ -75,7 +76,7 @@ public class DefaultRegisteredServiceIndexService implements RegisteredServiceIn
             ? indexedRegisteredServices.stream().filter(registeredService -> registeredService.getId() == id).findFirst()
             : Optional.empty();
     }
-    
+
     @Override
     public Stream<RegisteredService> findServiceBy(final RegisteredServiceQuery... queries) {
         if (isEnabled()) {
@@ -102,11 +103,6 @@ public class DefaultRegisteredServiceIndexService implements RegisteredServiceIn
             }
         }
         return Stream.empty();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return casProperties.getServiceRegistry().getCore().isIndexServices();
     }
 
     @Override
