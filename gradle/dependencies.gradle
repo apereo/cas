@@ -19,6 +19,7 @@ ext.libraries = [
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                 },
                 dependencies.create(libs.google.cloud.monitoring.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -35,6 +36,7 @@ ext.libraries = [
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                 },
                 dependencies.create(libs.google.cloud.monitoring.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -51,6 +53,8 @@ ext.libraries = [
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                 }
         ],
         javersmongo: [
@@ -81,6 +85,7 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback.contrib", module: "logback-json-classic")
                     exclude(group: "com.google.cloud", module: "google-cloud-logging-logback")
                     exclude(group: "net.logstash.logback", module: "logstash-logback-encoder")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                 },
                 dependencies.create(libs.google.cloud.logging.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -100,6 +105,7 @@ ext.libraries = [
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                 },
                 dependencies.create(libs.spring.cloud.gcp.starter.secretmanager.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -107,6 +113,7 @@ ext.libraries = [
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                 }
         ],
         googlecloudfirestore       : [
@@ -118,6 +125,7 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "io.projectreactor", module: "reactor-core")
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                 },
                 dependencies.create(libs.spring.cloud.gcp.data.firestore.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -127,6 +135,7 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "io.projectreactor", module: "reactor-core")
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                 }
         ],
         pushy              : [
@@ -1076,6 +1085,8 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.sun.xml.bind", module: "jaxb-impl")
+                    exclude(group: "com.sun.xml.bind", module: "jaxb-core")
                 },
                 dependencies.create(libs.geode.logging.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -1356,16 +1367,19 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                 },
                 dependencies.create(libs.spring.cloud.azure.starter.keyvault.sdk.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                 },
                 dependencies.create(libs.spring.cloud.azure.starter.actuator.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                 }
         ],
         azuread                    : [
@@ -2429,6 +2443,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "com.vaadin.external.google", module: "android-json")
                     exclude(group: "org.json", module: "json")
                     exclude(group: "commons-cli", module: "commons-cli")
@@ -2464,6 +2479,7 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
@@ -2627,6 +2643,8 @@ ext.libraries = [
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-core")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-websocket")
+//                    exclude(group: "ch.qos.logback", module: "logback-core")
+//                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 },
                 dependencies.create(libs.spring.boot.autoconfigure.get()) {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
@@ -2744,6 +2762,7 @@ ext.libraries = [
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-websocket")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                 },
@@ -3193,6 +3212,8 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-commons")
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
         springcloudconfigserver    : [
@@ -3229,6 +3250,7 @@ ext.libraries = [
         springcloudbootstrap       : [
                 dependencies.create(libs.spring.cloud.starter.bootstrap.get()) {
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-commons")
                     exclude(group: "org.objenesis", module: "objenesis")
                     exclude(group: "org.springframework.security", module: "spring-security-crypto")
                     exclude(group: "org.springframework", module: "spring-messaging")
@@ -3249,8 +3271,11 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
         springcloud                : [
