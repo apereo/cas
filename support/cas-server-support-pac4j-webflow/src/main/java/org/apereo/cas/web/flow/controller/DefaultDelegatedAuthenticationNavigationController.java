@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.pac4j.core.util.Pac4jConstants;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
+@ConditionalOnBean(DelegatedClientAuthenticationConfigurationContext.class)
 @Controller("defaultDelegatedAuthenticationNavigationController")
 @Slf4j
 @RequiredArgsConstructor

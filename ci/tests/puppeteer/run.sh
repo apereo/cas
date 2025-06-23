@@ -738,7 +738,12 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
       eval "$cmd"
     done
 
-    systemProperties=$(jq -r 'if (.systemProperties // []) | length == 0 then "-DTEST_TYPE=PUPPETEER" else .systemProperties[] | "-D" + . end' "${config}" | paste -sd' ' -)
+    systemProperties=$(jq -r '
+      if (.systemProperties // [] | length) == 0
+        then "-DTEST_TYPE=PUPPETEER"
+        else .systemProperties | map("-D" + .) | join(" ")
+      end
+    ' "${config}")
 
     bootstrapScript=$(jq -j '.bootstrapScript // empty' "${config}")
     bootstrapScript="${bootstrapScript//\$\{PWD\}/${PWD}}"
@@ -847,7 +852,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
             -Dcom.sun.net.ssl.checkRevocation=false \
             -Dlog.console.stacktraces=true \
             -DaotSpringActiveProfiles=none \
-            "$systemProperties" \
+            $systemProperties \
             --cas.http-client.allow-local-urls=true \
             --spring.main.lazy-initialization=false \
             --spring.devtools.restart.enabled=false \
@@ -888,7 +893,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
             downloadAndRunExternalTomcat "$casArtifactToRun" \
               "${runArgs}" \
               -Dlog.console.stacktraces=true \
-              "$systemProperties" \
+              $systemProperties \
               -Dcom.sun.net.ssl.checkRevocation=false \
               --spring.main.lazy-initialization=false \
               --spring.profiles.active=none \
@@ -902,7 +907,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
             printcyan "Launching CAS instance #${c} under port ${serverPort} from ${casArtifactToRun}"
             java ${runArgs} \
               -Dlog.console.stacktraces=true \
-              "$systemProperties" \
+              $systemProperties \
               -jar "${casArtifactToRun}" \
               -Dcom.sun.net.ssl.checkRevocation=false \
               --server.port=${serverPort} \

@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.client.SAML2Client;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,6 +30,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@ConditionalOnBean({DelegatedIdentityProviders.class, OpenSamlConfigBean.class})
 @Controller("delegatedSaml2ClientMetadataController")
 @RequestMapping
 @RequiredArgsConstructor

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +34,7 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@ConditionalOnBean({SamlIdentityProviderDiscoveryFeedService.class})
 @RestController("identityProviderDiscoveryFeedController")
 @Slf4j
 @RequiredArgsConstructor
