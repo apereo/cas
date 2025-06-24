@@ -31,7 +31,6 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.github.benmanes.caffeine.cache.Cache;
 import com.yubico.data.AssertionRequestWrapper;
 import com.yubico.data.AssertionResponse;
 import com.yubico.data.CredentialRegistration;
@@ -83,8 +82,8 @@ public class WebAuthnServer {
     private static final ObjectMapper OBJECT_MAPPER = JacksonCodecs.json();
 
     private final RegistrationStorage userStorage;
-    private final Cache<ByteArray, RegistrationRequest> registerRequestStorage;
-    private final Cache<ByteArray, AssertionRequestWrapper> assertRequestStorage;
+    private final WebAuthnCache<RegistrationRequest> registerRequestStorage;
+    private final WebAuthnCache<AssertionRequestWrapper> assertRequestStorage;
     private final RelyingParty relyingParty;
     private final SessionManager sessionManager;
     private final CasConfigurationProperties casProperties;

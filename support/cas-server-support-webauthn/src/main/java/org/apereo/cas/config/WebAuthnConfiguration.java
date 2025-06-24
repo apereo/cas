@@ -43,14 +43,15 @@ import org.apereo.cas.webauthn.web.BaseWebAuthnController;
 import org.apereo.cas.webauthn.web.WebAuthnController;
 import org.apereo.cas.webauthn.web.WebAuthnQRCodeController;
 import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpoint;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.yubico.core.DefaultSessionManager;
 import com.yubico.core.InMemoryRegistrationStorage;
 import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
 import com.yubico.core.WebAuthnServer;
+import com.yubico.core.WebSessionWebAuthnCache;
+import com.yubico.data.AssertionRequestWrapper;
+import com.yubico.data.RegistrationRequest;
 import com.yubico.fido.metadata.FidoMetadataDownloader;
 import com.yubico.fido.metadata.FidoMetadataService;
 import com.yubico.webauthn.RelyingParty;
@@ -89,7 +90,6 @@ import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import java.net.URI;
 import java.time.Clock;
-import java.time.Duration;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -107,14 +107,6 @@ import java.util.stream.Collectors;
 @Configuration(value = "WebAuthnConfiguration", proxyBeanMethods = false)
 class WebAuthnConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.web-authn.core.enabled").isTrue().evenIfMissing();
-
-    private static final int WEBAUTHN_SERVER_CACHE_SIZE = 10_000;
-    private static final int SESSION_MANAGER_CACHE_SIZE = 100;
-
-    private static <K, V> Cache<K, V> newCache(final int cacheSize) {
-        return Caffeine.newBuilder().maximumSize(cacheSize)
-            .expireAfterAccess(Duration.ofMinutes(5)).build();
-    }
 
     @Configuration(value = "WebAuthnMetadataServiceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -190,7 +182,8 @@ class WebAuthnConfiguration {
         public SessionManager webAuthnSessionManager(final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(SessionManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new DefaultSessionManager(newCache(SESSION_MANAGER_CACHE_SIZE), newCache(SESSION_MANAGER_CACHE_SIZE)))
+                .supply(() -> new DefaultSessionManager(new WebSessionWebAuthnCache<>("WebAuthn_sessionIdsToUsers", ByteArray.class),
+                        new WebSessionWebAuthnCache<>("WebAuthn_usersToSessionIds", ByteArray.class)))
                 .otherwiseProxy()
                 .get();
         }
@@ -277,7 +270,9 @@ class WebAuthnConfiguration {
                 .appId(appId)
                 .build();
             return new WebAuthnServer(webAuthnCredentialRepository,
-                newCache(WEBAUTHN_SERVER_CACHE_SIZE), newCache(WEBAUTHN_SERVER_CACHE_SIZE), relyingParty,
+                new WebSessionWebAuthnCache<>("WebAuthn_registerRequestStorage", RegistrationRequest.class),
+                new WebSessionWebAuthnCache<>("WebAuthn_assertionRequestStorage", AssertionRequestWrapper.class),
+                relyingParty,
                 webAuthnSessionManager, casProperties);
         }
     }
