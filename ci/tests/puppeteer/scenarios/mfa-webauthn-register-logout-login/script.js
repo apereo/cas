@@ -26,11 +26,11 @@ const cas = require("../../cas.js");
 
     await cas.click(page,"#registerButton");
 
-    await cas.sleep(10000);
+    await cas.sleep(5000);
 
     await cas.click(page, "#authnButton");
 
-    await cas.sleep(10000);
+    await cas.sleep(5000);
 
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");

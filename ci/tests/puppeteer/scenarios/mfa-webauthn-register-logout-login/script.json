@@ -4,10 +4,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--logging.level.com.yubico.core.WebSessionWebAuthnCache=DEBUG",
-    "--logging.level.org.apereo.cas.webauthn.web.WebAuthnController=TRACE",
-    "--logging.level.com.yubico.core.DefaultSessionManager=DEBUG",
-
     "--cas.authn.mfa.web-authn.core.allow-untrusted-attestation=true",
     "--cas.authn.mfa.web-authn.core.qr-code-authentication-enabled=false",
     "--cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
