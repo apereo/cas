@@ -618,6 +618,7 @@ ext.libraries = [
                 dependencies.create(libs.cqengine.get()) {
                     exclude(group: 'org.xerial', module: "sqlite-jdbc")
                     exclude(group: "org.javassist", module: "javassist")
+                    exclude(group: "org.antlr", module: "antlr4-runtime")
                 }
         ],
         maxmind                    : [
