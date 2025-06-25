@@ -129,18 +129,20 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
     }
 
     private void validateFlowDefinitionConfiguration() {
-        this.multifactorAuthenticationFlowDefinitionRegistries.forEach(registry -> {
-            val msg = "CAS application context cannot find bean [%s] or [%s]. "
-                + "This typically indicates that configuration is attempting to activate trusted-devices functionality for "
-                + "multifactor authentication, yet the configuration modules that auto-configure the webflow are absent "
-                + "from the CAS application runtime. If you have no need for trusted-devices functionality and wish to let the "
-                + "multifactor authentication provider (and not CAS) remember and record trusted devices for you, you need to "
-                + "turn this behavior off.";
-
+        multifactorAuthenticationFlowDefinitionRegistries.forEach(registry -> {
             if (!applicationContext.containsBean(CasWebflowConstants.ACTION_ID_MFA_SET_TRUST_ACTION)
                 || !applicationContext.containsBean(CasWebflowConstants.ACTION_ID_MFA_VERIFY_TRUST_ACTION)) {
-                throw new IllegalArgumentException(String.format(msg, CasWebflowConstants.ACTION_ID_MFA_SET_TRUST_ACTION,
-                    CasWebflowConstants.ACTION_ID_MFA_VERIFY_TRUST_ACTION));
+                throw new IllegalArgumentException(
+                    """
+                        CAS application context cannot find bean %s or %s.
+                        This typically indicates that configuration is attempting to activate trusted-devices functionality for
+                        multifactor authentication, yet the configuration modules that auto-configure the webflow are absent
+                        from the CAS application runtime. If you have no need for trusted-devices functionality and wish to let the
+                        multifactor authentication provider (and not CAS) remember and record trusted devices for you, you need to
+                        turn this behavior off.
+                        """.stripIndent().stripLeading().formatted(
+                        CasWebflowConstants.ACTION_ID_MFA_SET_TRUST_ACTION,
+                        CasWebflowConstants.ACTION_ID_MFA_VERIFY_TRUST_ACTION));
             }
         });
     }
