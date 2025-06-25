@@ -1,8 +1,10 @@
 package org.apereo.cas.web.saml2;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.client.SAML2Client;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,8 +31,8 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@ConditionalOnBean({DelegatedIdentityProviders.class, OpenSamlConfigBean.class})
 @Controller("delegatedSaml2ClientMetadataController")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "saml")
 @RequestMapping
 @RequiredArgsConstructor
 @Tag(name = "Delegated Authentication")

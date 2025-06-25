@@ -1,10 +1,12 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.entity.SamlIdentityProviderEntity;
 import org.apereo.cas.services.SamlIdentityProviderDiscoveryFeedService;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -12,7 +14,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,8 +35,8 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@ConditionalOnBean({SamlIdentityProviderDiscoveryFeedService.class})
 @RestController("identityProviderDiscoveryFeedController")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "saml")
 @Slf4j
 @RequiredArgsConstructor
 @Tag(name = "SAML2")
