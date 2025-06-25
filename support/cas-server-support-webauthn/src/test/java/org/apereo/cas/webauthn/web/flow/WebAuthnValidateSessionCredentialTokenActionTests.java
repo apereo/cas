@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Action;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -84,8 +85,9 @@ class WebAuthnValidateSessionCredentialTokenActionTests {
     @Test
     void verifyNoUserForToken() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
+        val request = new MockHttpServletRequest();
 
-        val token = webAuthnSessionManager.createSession(ByteArray.fromBase64Url(SAMPLE_TOKEN));
+        val token = webAuthnSessionManager.createSession(request, ByteArray.fromBase64Url(SAMPLE_TOKEN));
         context.setParameter("token", token.getBase64Url());
 
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, webAuthnMultifactorAuthenticationProvider);
@@ -97,9 +99,10 @@ class WebAuthnValidateSessionCredentialTokenActionTests {
     @Test
     void verifySuccessAuthForToken() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
+        val request = new MockHttpServletRequest();
 
         val userHandle = ByteArray.fromBase64Url(SAMPLE_TOKEN);
-        val token = webAuthnSessionManager.createSession(userHandle);
+        val token = webAuthnSessionManager.createSession(request, userHandle);
         context.setParameter("token", token.getBase64Url());
 
         webAuthnCredentialRepository.addRegistrationByUsername("casuser",

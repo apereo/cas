@@ -24,6 +24,7 @@
 
 package com.yubico.core;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -89,6 +90,7 @@ public class WebAuthnServer {
     private final CasConfigurationProperties casProperties;
 
     public Either<String, RegistrationRequest> startRegistration(
+        final HttpServletRequest request,
         @NonNull final String username,
         final Optional<String> displayName,
         final Optional<String> credentialNickname,
@@ -99,7 +101,7 @@ public class WebAuthnServer {
         val registrations = userStorage.getRegistrationsByUsername(username);
         val existingUser = registrations.stream().findAny().map(CredentialRegistration::getUserIdentity);
         val permissionGranted = casProperties.getAuthn().getMfa().getWebAuthn().getCore().isMultipleDeviceRegistrationEnabled()
-            || existingUser.map(userIdentity -> sessionManager.isSessionForUser(userIdentity.getId(), sessionToken)).orElse(true);
+            || existingUser.map(userIdentity -> sessionManager.isSessionForUser(request, userIdentity.getId(), sessionToken)).orElse(true);
 
         if (permissionGranted) {
             val registrationUserId = existingUser.orElseGet(() ->
@@ -110,7 +112,7 @@ public class WebAuthnServer {
                     .build()
             );
 
-            val request = new RegistrationRequest(
+            val registrationRequest = new RegistrationRequest(
                 username,
                 credentialNickname,
                 SessionManager.generateRandom(IDENTIFIER_LENGTH),
@@ -123,71 +125,71 @@ public class WebAuthnServer {
                         )
                         .build()
                 ),
-                Optional.of(sessionManager.createSession(registrationUserId.getId()))
+                Optional.of(sessionManager.createSession(request, registrationUserId.getId()))
             );
-            registerRequestStorage.put(request.requestId(), request);
-            return Either.right(request);
+            registerRequestStorage.put(request, registrationRequest.requestId(), registrationRequest);
+            return Either.right(registrationRequest);
         }
         return Either.left("The username %s is already registered and/or has an active session.".formatted(username));
     }
 
-    public Either<List<String>, SuccessfulRegistrationResult> finishRegistration(final String responseJson) {
+    public Either<List<String>, SuccessfulRegistrationResult> finishRegistration(final HttpServletRequest request, final String responseJson) {
         LOGGER.trace("Finishing registration with response: [{}]", responseJson);
-        RegistrationResponse response;
+        RegistrationResponse registrationResponse;
         try {
-            response = OBJECT_MAPPER.readValue(responseJson, RegistrationResponse.class);
+            registrationResponse = OBJECT_MAPPER.readValue(responseJson, RegistrationResponse.class);
         } catch (final IOException e) {
             LOGGER.error("Registration failed; response: [{}]", responseJson, e);
             return Either.left(List.of("Registration failed", "Failed to decode response object.", e.getMessage()));
         }
 
-        val request = registerRequestStorage.getIfPresent(response.requestId());
-        registerRequestStorage.invalidate(response.requestId());
+        val registrationRequest = registerRequestStorage.getIfPresent(request, registrationResponse.requestId());
+        registerRequestStorage.invalidate(request, registrationResponse.requestId());
 
-        if (request == null) {
+        if (registrationRequest == null) {
             LOGGER.debug("Finishing registration failed with: [{}]", responseJson);
             return Either.left(List.of("Registration failed", "No such registration in progress."));
         } else {
             try {
                 val registration = relyingParty.finishRegistration(
                     FinishRegistrationOptions.builder()
-                        .request(request.publicKeyCredentialCreationOptions())
-                        .response(response.credential())
+                        .request(registrationRequest.publicKeyCredentialCreationOptions())
+                        .response(registrationResponse.credential())
                         .build()
                 );
 
-                if (userStorage.userExists(request.username())) {
+                if (userStorage.userExists(registrationRequest.username())) {
                     var permissionGranted = false;
 
-                    val isValidSession = request.sessionToken().map(token ->
-                        sessionManager.isSessionForUser(request.publicKeyCredentialCreationOptions().getUser().getId(), token)
+                    val isValidSession = registrationRequest.sessionToken().map(token ->
+                        sessionManager.isSessionForUser(request, registrationRequest.publicKeyCredentialCreationOptions().getUser().getId(), token)
                     ).orElse(false);
 
-                    LOGGER.debug("Session token: [{}], valid session [{}]", request.sessionToken(), isValidSession);
+                    LOGGER.debug("Session token: [{}], valid session [{}]", registrationRequest.sessionToken(), isValidSession);
 
                     if (isValidSession) {
                         permissionGranted = true;
-                        LOGGER.info("Session token accepted for user [{}]", request.publicKeyCredentialCreationOptions().getUser().getId());
+                        LOGGER.info("Session token accepted for user [{}]", registrationRequest.publicKeyCredentialCreationOptions().getUser().getId());
                     }
 
                     LOGGER.debug("Permission granted to finish registration: [{}]", permissionGranted);
 
                     if (!permissionGranted) {
-                        throw new RegistrationFailedException(new IllegalArgumentException("User %s already exists".formatted(request.username())));
+                        throw new RegistrationFailedException(new IllegalArgumentException("User %s already exists".formatted(registrationRequest.username())));
                     }
                 }
 
                 return Either.right(
                     new SuccessfulRegistrationResult(
-                        request,
-                        response,
+                        registrationRequest,
+                        registrationResponse,
                         addRegistration(
-                            request.publicKeyCredentialCreationOptions().getUser(),
-                            request.credentialNickname(),
+                            registrationRequest.publicKeyCredentialCreationOptions().getUser(),
+                            registrationRequest.credentialNickname(),
                             registration
                         ),
                         registration.isAttestationTrusted() || relyingParty.isAllowUntrustedAttestation(),
-                        sessionManager.createSession(request.publicKeyCredentialCreationOptions().getUser().getId())
+                        sessionManager.createSession(request, registrationRequest.publicKeyCredentialCreationOptions().getUser().getId())
                     )
                 );
             } catch (final RegistrationFailedException e) {
@@ -200,38 +202,38 @@ public class WebAuthnServer {
         }
     }
 
-    public Either<List<String>, AssertionRequestWrapper> startAuthentication(final Optional<String> username) {
+    public Either<List<String>, AssertionRequestWrapper> startAuthentication(final HttpServletRequest request, final Optional<String> username) {
         if (username.isPresent() && !userStorage.userExists(username.get())) {
             return Either.left(List.of("The username %s is not registered.".formatted(username.get())));
         }
-        val request = new AssertionRequestWrapper(
+        val assertionRequest = new AssertionRequestWrapper(
             SessionManager.generateRandom(IDENTIFIER_LENGTH),
             relyingParty.startAssertion(StartAssertionOptions.builder().username(username).build())
         );
-        assertRequestStorage.put(request.getRequestId(), request);
-        return Either.right(request);
+        assertRequestStorage.put(request, assertionRequest.getRequestId(), assertionRequest);
+        return Either.right(assertionRequest);
     }
 
-    public Either<List<String>, SuccessfulAuthenticationResult> finishAuthentication(final String responseJson) {
-        final AssertionResponse response;
+    public Either<List<String>, SuccessfulAuthenticationResult> finishAuthentication(final HttpServletRequest request, final String responseJson) {
+        final AssertionResponse assertionResponse;
         try {
-            response = OBJECT_MAPPER.readValue(responseJson, AssertionResponse.class);
+            assertionResponse = OBJECT_MAPPER.readValue(responseJson, AssertionResponse.class);
         } catch (final IOException e) {
             LOGGER.debug("Failed to decode response object", e);
             return Either.left(List.of("Assertion failed!", "Failed to decode response object.", e.getMessage()));
         }
 
-        val request = assertRequestStorage.getIfPresent(response.requestId());
-        assertRequestStorage.invalidate(response.requestId());
+        val assertionRequestWrapper = assertRequestStorage.getIfPresent(request, assertionResponse.requestId());
+        assertRequestStorage.invalidate(request, assertionResponse.requestId());
 
-        if (request == null) {
+        if (assertionRequestWrapper == null) {
             return Either.left(List.of("Assertion failed!", "No such assertion in progress."));
         } else {
             try {
                 val assertionResult = relyingParty.finishAssertion(
                     FinishAssertionOptions.builder()
-                        .request(request.getRequest())
-                        .response(response.credential())
+                        .request(assertionRequestWrapper.getRequest())
+                        .response(assertionResponse.credential())
                         .build()
                 );
 
@@ -242,16 +244,16 @@ public class WebAuthnServer {
                         LOGGER.error(
                             "Failed to update signature count for user \"{}\", credential \"{}\"",
                             assertionResult.getUsername(),
-                            response.credential().getId(),
+                            assertionResponse.credential().getId(),
                             e
                         );
                     }
 
-                    val session = sessionManager.createSession(assertionResult.getCredential().getUserHandle());
+                    val session = sessionManager.createSession(request, assertionResult.getCredential().getUserHandle());
                     return Either.right(
                         new SuccessfulAuthenticationResult(
-                            request,
-                            response,
+                            assertionRequestWrapper,
+                            assertionResponse,
                             userStorage.getRegistrationsByUsername(assertionResult.getUsername()),
                             assertionResult.getUsername(),
                             session

@@ -7,14 +7,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests {@link WebSessionWebAuthnCache}.
@@ -28,43 +24,41 @@ class WebSessionWebAuthnCacheTests {
     private static final ByteArray KEY = new ByteArray("key".getBytes(StandardCharsets.UTF_8));
     private static final ByteArray VALUE = new ByteArray("value".getBytes(StandardCharsets.UTF_8));
 
+    private MockHttpServletRequest request;
+
     private WebAuthnCache<ByteArray> cache;
 
     @BeforeEach
     public void beforeEach() {
-        val requestAttributes = mock(ServletRequestAttributes.class);
-        RequestContextHolder.setRequestAttributes(requestAttributes);
-        val request = new MockHttpServletRequest();
-        when(requestAttributes.getRequest()).thenReturn(request);
+        request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
-
         cache = new WebSessionWebAuthnCache<>("test", ByteArray.class);
     }
 
     @Test
     void verifyGet() {
-        val value = cache.getIfPresent(KEY);
+        val value = cache.getIfPresent(request, KEY);
         assertNull(value);
     }
 
     @Test
     void verifyGetAndLoad() {
-        val value = cache.get(KEY, v -> VALUE);
+        val value = cache.get(request, KEY, v -> VALUE);
         assertEquals(VALUE, value);
 
-        val newValue = cache.getIfPresent(KEY);
+        val newValue = cache.getIfPresent(request, KEY);
         assertEquals(VALUE, newValue);
     }
 
     @Test
     void verifyPutInvalidateGet() {
-        cache.put(KEY, VALUE);
-        val value = cache.getIfPresent(KEY);
+        cache.put(request, KEY, VALUE);
+        val value = cache.getIfPresent(request, KEY);
         assertEquals(VALUE, value);
 
-        cache.invalidate(KEY);
+        cache.invalidate(request, KEY);
 
-        val newValue = cache.getIfPresent(KEY);
+        val newValue = cache.getIfPresent(request, KEY);
         assertNull(newValue);
     }
 }

@@ -1,5 +1,6 @@
 package com.yubico.core;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yubico.internal.util.JacksonCodecs;
@@ -8,8 +9,6 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,11 +30,10 @@ public class WebSessionWebAuthnCache<R> implements WebAuthnCache<R> {
 
     private final Class<R> clazz;
 
-    private HttpSession retrieveSession() {
+    private static HttpSession retrieveSession(final HttpServletRequest request) {
         HttpSession session = null;
-        val request = RequestContextHolder.getRequestAttributes();
-        if (request instanceof ServletRequestAttributes servletRequestAttributes) {
-            session = servletRequestAttributes.getRequest().getSession(true);
+        if (request != null) {
+            session = request.getSession(true);
             LOGGER.trace("Session from web request: [{}]", session);
         } else {
             LOGGER.error("Cannot get session");
@@ -43,8 +41,8 @@ public class WebSessionWebAuthnCache<R> implements WebAuthnCache<R> {
         return session;
     }
 
-    private Map<String,String> retrieveMap() {
-        val session = retrieveSession();
+    private Map<String,String> retrieveMap(final HttpServletRequest request) {
+        val session = retrieveSession(request);
         if (session != null) {
             var map = (Map<String, String>) session.getAttribute(mapName);
             if (map == null) {
@@ -57,19 +55,19 @@ public class WebSessionWebAuthnCache<R> implements WebAuthnCache<R> {
     }
 
     @Override
-    public void put(final ByteArray key, final R obj) {
+    public void put(final HttpServletRequest request, final ByteArray key, final R obj) {
         val key64 = key.getBase64();
         FunctionUtils.doUnchecked(__ -> {
             val value = MAPPER.writeValueAsString(obj);
             LOGGER.trace("Put value([{}]): [{}] for key: [{}]", clazz, value, key64);
-            retrieveMap().put(key64, value);
+            retrieveMap(request).put(key64, value);
         });
     }
 
     @Override
-    public R getIfPresent(final ByteArray key) {
+    public R getIfPresent(final HttpServletRequest request, final ByteArray key) {
         val key64 = key.getBase64();
-        val value = retrieveMap().get(key64);
+        val value = retrieveMap(request).get(key64);
         if (value == null) {
             return null;
         }
@@ -78,11 +76,11 @@ public class WebSessionWebAuthnCache<R> implements WebAuthnCache<R> {
     }
 
     @Override
-    public R get(final ByteArray key, final Function<ByteArray, ? extends R> mappingFunction) {
+    public R get(final HttpServletRequest request, final ByteArray key, final Function<ByteArray, ? extends R> mappingFunction) {
         val key64 = key.getBase64();
-        val map = retrieveMap();
+        val map = retrieveMap(request);
         return FunctionUtils.doUnchecked(() -> {
-            var value = retrieveMap().get(key64);
+            var value = retrieveMap(request).get(key64);
             if (value == null) {
                 val newObj = mappingFunction.apply(key);
                 if (newObj != null) {
@@ -98,9 +96,9 @@ public class WebSessionWebAuthnCache<R> implements WebAuthnCache<R> {
     }
 
     @Override
-    public void invalidate(final ByteArray key) {
+    public void invalidate(final HttpServletRequest request, final ByteArray key) {
         val key64 = key.getBase64();
         LOGGER.trace("Invalidate value for key: [{}]", key64);
-        retrieveMap().remove(key64);
+        retrieveMap(request).remove(key64);
     }
 }

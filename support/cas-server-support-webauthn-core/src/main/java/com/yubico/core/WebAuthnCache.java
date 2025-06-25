@@ -1,6 +1,7 @@
 package com.yubico.core;
 
 import com.yubico.webauthn.data.ByteArray;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.function.Function;
 
@@ -12,11 +13,11 @@ import java.util.function.Function;
  */
 public interface WebAuthnCache<R> {
 
-    void put(ByteArray key, R request);
+    void put(HttpServletRequest request, ByteArray key, R obj);
 
-    R getIfPresent(ByteArray key);
+    R getIfPresent(HttpServletRequest request, ByteArray key);
 
-    R get(ByteArray key, Function<ByteArray, ? extends R> mappingFunction);
+    R get(HttpServletRequest request, ByteArray key, Function<ByteArray, ? extends R> mappingFunction);
 
-    void invalidate(ByteArray key);
+    void invalidate(HttpServletRequest request, ByteArray key);
 }
