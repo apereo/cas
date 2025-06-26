@@ -14,12 +14,12 @@
         let data = {
             attributes: /*[[${attributes}]]*/
         };
-        function jqueryReady() {
+        document.addEventListener("DOMContentLoaded", (event) => {
             let consentjs = /*[[@{/js/consent.js}]]*/
 
             $.getScript(consentjs, (data, textStatus, jqxhr) => {
             });
-        }
+        });
 
         /*]]>*/
     </script>

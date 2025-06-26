@@ -50,18 +50,6 @@ Most importantly, the following JavaScript libraries are utilized by CAS automat
 * [Bootstrap for grid / flex utilities](https://getbootstrap.com/docs/4.5/getting-started/contents/#css-files)
 * [Material.io](https://material.io/)
 
-## Script Loading
-
-CAS provides a callback function that allows adopters to be notified when script 
-loading has completed and this would be a safe time to execute/load other JavaScript-related 
-functions that depend on JQuery inside the actual page.
-
-```javascript
-function jqueryReady() {
-    // Custom JavaScript tasks can be carried out now via JQuery...
-}
-```
-
 ## Checking CAPSLOCK
 
 CAS will display a brief warning when the CAPSLOCK key is turned on during the typing 
