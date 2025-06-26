@@ -2976,7 +2976,8 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-commons")
-                    exclude(group: "org.springframework.cloud", module: "spring-cloud-config-server")
+                    exclude(group: "org.apache.sshd", module: "sshd-sftp")
+                    exclude(group: "org.apache.sshd", module: "sshd-osgi")
                 },
                 dependencies.create(libs.spring.cloud.starter.bus.amqp.get()) {
                     exclude(group: "org.springframework.retry", module: "spring-retry")
