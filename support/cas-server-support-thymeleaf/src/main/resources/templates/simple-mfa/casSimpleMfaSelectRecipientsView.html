@@ -86,12 +86,12 @@
 
         <script type="text/javascript">
             $('#continueButton').prop('disabled', true);
-            function jqueryReady() {
+            document.addEventListener("DOMContentLoaded", (event) => {
                 $('#fm1 input[type="checkbox"]').change(() => {
                     const atLeastOneChecked = $('input[type="checkbox"]').is(':checked');
                     $('#continueButton').prop('disabled', !atLeastOneChecked);
                 });
-            }
+            });
         </script>
         
     </div>

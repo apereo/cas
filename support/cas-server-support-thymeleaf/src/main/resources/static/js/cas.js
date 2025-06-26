@@ -306,9 +306,6 @@ function resourceLoadedSuccessfully() {
             }
             ev.preventDefault();
         });
-        if (typeof (jqueryReady) == "function") {
-            jqueryReady();
-        }
         if (typeof hljs !== 'undefined') {
             hljs.highlightAll();
         }

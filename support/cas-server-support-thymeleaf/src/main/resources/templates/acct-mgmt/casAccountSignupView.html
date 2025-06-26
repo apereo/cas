@@ -11,9 +11,7 @@
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-100">
         <script>
-            function jqueryReady() {
-                document.forms[0].elements[0].focus();
-            }
+            document.addEventListener("DOMContentLoaded", (event) => document.forms[0].elements[0].focus());
         </script>
 
         <h2 th:utext="#{cas.screen.acct.title}" />

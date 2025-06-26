@@ -17,7 +17,7 @@
 <main class="container-xxl mt-3 mb-3">
     <div layout:fragment="content">
         <script type="text/javascript">
-            function jqueryReady() {
+            document.addEventListener("DOMContentLoaded", (event) => {
                 if (window.location.hash) {
                     console.log(`Fragment ${window.location.hash}`);
                     showPanel(window.location.hash);
@@ -26,7 +26,7 @@
                     console.log(`Selected tab: ${selectedTab}`);
                     showPanel(selectedTab);
                 }
-            }
+            });
 
             function showPanel(element) {
                 let effectiveElement = element;
