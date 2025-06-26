@@ -2976,6 +2976,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-commons")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-config-server")
                 },
                 dependencies.create(libs.spring.cloud.starter.bus.amqp.get()) {
                     exclude(group: "org.springframework.retry", module: "spring-retry")
@@ -3774,6 +3775,7 @@ ext.libraries = [
                 },
                 dependencies.create(libs.mermaid.get()) {
                     exclude(group: "org.webjars", module: "jquery")
+                    exclude(group: "org.webjars.npm", module: "mermaid-js__parser")
                 }
         ],
         webjars                    : [
