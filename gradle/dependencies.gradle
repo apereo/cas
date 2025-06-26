@@ -172,6 +172,7 @@ ext.libraries = [
             dependencies.create(libs.azure.kusto.log4j.get()) {
                 exclude(group: "org.slf4j", module: "slf4j-api")
                 exclude(group: "org.apache.logging.log4j", module: "log4j-core")
+                exclude(group: "org.jetbrains", module: "annotations")
             }
         ],
         elasticapmagent : [
@@ -892,6 +893,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "software.amazon.awssdk", module: "annotations")
                 }
         ],
         awssns                     : [
@@ -1100,12 +1102,15 @@ ext.libraries = [
         ignite                     : [
                 dependencies.create(libs.ignite.core.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.jetbrains", module: "annotations")
                 },
                 dependencies.create(libs.ignite.log4j2.get()) {
                     exclude(group: "log4j", module: "log4j")
+                    exclude(group: "org.jetbrains", module: "annotations")
                 },
                 dependencies.create(libs.ignite.indexing.get()) {
                     exclude(group: "log4j", module: "log4j")
+                    exclude(group: "org.jetbrains", module: "annotations")
                 },
                 dependencies.create(libs.ignite.spring.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -1116,6 +1121,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "org.springframework", module: "spring-jdbc")
                     exclude(group: "org.springframework", module: "spring-tx")
+                    exclude(group: "org.jetbrains", module: "annotations")
                 }
         ],
         jakartapersistence : [
@@ -1420,6 +1426,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.squareup.okhttp3", module: "okhttp")
                     exclude(group: "com.squareup.okio", module: "okio")
+                    exclude(group: "org.jetbrains", module: "annotations")
                 },
                 dependencies.create(libs.converter.moshi.get()) {
                 },
@@ -1433,10 +1440,12 @@ ext.libraries = [
                 dependencies.create(libs.okta.authn.sdk.api.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.yaml", module: "snakeyaml")
+                    exclude(group: "org.jetbrains", module: "annotations")
                 },
                 dependencies.create(libs.okta.authn.sdk.impl.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.yaml", module: "snakeyaml")
+                    exclude(group: "org.jetbrains", module: "annotations")
                 },
                 dependencies.create(libs.okta.sdk.httpclient.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -2422,6 +2431,7 @@ ext.libraries = [
             exclude(group: "commons-logging", module: "commons-logging")
             exclude(group: "commons-codec", module: "commons-codec")
             exclude(group: "org.apache.commons", module: "commons-lang3")
+            exclude(group: "org.jetbrains", module: "annotations")
         },
         textmagic                  : [
                 dependencies.create(libs.textmagic.java.sdk.get()) {
