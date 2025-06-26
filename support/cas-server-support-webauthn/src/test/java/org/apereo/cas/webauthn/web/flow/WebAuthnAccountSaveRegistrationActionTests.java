@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.webflow.execution.Action;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,6 +62,8 @@ class WebAuthnAccountSaveRegistrationActionTests {
         val context = MockRequestContext.create(applicationContext);
         context.setParameter("sessionToken", EncodingUtils.encodeBase64(RandomUtils.randomAlphabetic(8)));
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, webAuthnMultifactorAuthenticationProvider);
+        val request = context.getHttpServletRequest();
+        request.setSession(new MockHttpSession());
 
         val authn = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
         WebUtils.putAuthentication(authn, context);
@@ -76,7 +79,7 @@ class WebAuthnAccountSaveRegistrationActionTests {
                     .build())
                 .build());
         val token = EncodingUtils.encodeBase64(RandomUtils.randomAlphabetic(8));
-        val sessionId = webAuthnSessionManager.createSession(ByteArray.fromBase64(token));
+        val sessionId = webAuthnSessionManager.createSession(request, ByteArray.fromBase64(token));
         context.setParameter("sessionToken", sessionId.getBase64Url());
 
         result = webAuthnSaveAccountRegistrationAction.execute(context);
