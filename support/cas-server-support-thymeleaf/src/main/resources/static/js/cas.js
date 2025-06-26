@@ -286,6 +286,11 @@ function resourceLoadedSuccessfully() {
             $("input:visible:enabled:first").focus();
         }
 
+        try {
+            $("table").DataTable();
+        } catch (e) {
+            console.log(`Failed to initialize DataTable: ${e}`);
+        }
         preserveAnchorTagOnForm();
         preventFormResubmission();
         $("#fm1 input[name=\"username\"],[name=\"password\"]").trigger("input");
@@ -301,7 +306,6 @@ function resourceLoadedSuccessfully() {
             }
             ev.preventDefault();
         });
-        // console.log(`JQuery Ready: ${typeof (jqueryReady)}`);
         if (typeof (jqueryReady) == "function") {
             jqueryReady();
         }
