@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.webflow.execution.Action;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -99,7 +100,8 @@ class WebAuthnValidateSessionCredentialTokenActionTests {
     @Test
     void verifySuccessAuthForToken() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        val request = new MockHttpServletRequest();
+        val request = context.getHttpServletRequest();
+        request.setSession(new MockHttpSession());
 
         val userHandle = ByteArray.fromBase64Url(SAMPLE_TOKEN);
         val token = webAuthnSessionManager.createSession(request, userHandle);

@@ -30,6 +30,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.test.web.servlet.MockMvc;
@@ -111,7 +112,9 @@ class WebAuthnQRCodeControllerMvcTests {
     void verifyQRCodeSuccessfully() throws Exception {
         val context = MockRequestContext.create(webApplicationContext);
         val authn = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
-        val request = new MockHttpServletRequest();
+        val request = context.getHttpServletRequest();
+        val session = new MockHttpSession();
+        request.setSession(session);
         val ticket = getQRCodeTicket(context, authn);
         val csrfToken = createCsrfToken(context);
         val sessionId = webAuthnSessionManager.createSession(request, ByteArray.fromBase64Url(authn.getPrincipal().getId()));
@@ -121,6 +124,7 @@ class WebAuthnQRCodeControllerMvcTests {
                 .queryParam("ticket", ticket.getId())
                 .queryParam("principal", authn.getPrincipal().getId())
                 .header("X-CSRF-TOKEN", csrfToken.getToken())
+                .session(session)
             )
             .andExpect(status().isOk())
             .andReturn()
@@ -128,10 +132,10 @@ class WebAuthnQRCodeControllerMvcTests {
         assertTrue((Boolean) mv.getModel().get("success"));
         assertNotNull(mv.getModel().get("principal"));
 
-        mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", ticket.getId()))
-            .andExpect(status().isOk());
-        mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", UUID.randomUUID().toString()))
-            .andExpect(status().isBadRequest());
+        mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", ticket.getId()).session(session)
+            ).andExpect(status().isOk());
+        mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", UUID.randomUUID().toString()).session(session)
+            ).andExpect(status().isBadRequest());
     }
 
     @Test
