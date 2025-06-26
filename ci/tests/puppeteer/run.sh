@@ -618,7 +618,7 @@ function buildAndRun() {
     WEBAPP_PROJECT=":webapp:cas-server-webapp${serverType:+-$serverType}"
     BUILD_TASKS="${WEBAPP_PROJECT}:build"
     if [[ "${DEP_INSIGHT}" != "" ]]; then
-     BUILD_TASKS="${WEBAPP_PROJECT}:dependencyInsight --configuration runtimeClasspath --dependency $dependency $BUILD_TASKS"
+     BUILD_TASKS="${WEBAPP_PROJECT}:dependencyInsight --configuration runtimeClasspath --dependency $DEP_INSIGHT $BUILD_TASKS"
     fi
 
     if [[ "${NATIVE_BUILD}" == "true" ]]; then
