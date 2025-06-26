@@ -224,6 +224,10 @@ function parseArguments() {
       scenario="$2"
       shift 2
       ;;
+    --dependencyInsight | --di)
+      DEP_INSIGHT="$2"
+      shift 2
+      ;;
     --install-puppeteer | --install | --i)
       INSTALL_PUPPETEER="true"
       shift 1
@@ -611,9 +615,14 @@ function buildAndRun() {
       rm -rf ./webapp/cas-server-webapp${serverType:+-$serverType}/build/libs
     fi
 
-    BUILD_TASKS=":webapp:cas-server-webapp${serverType:+-$serverType}:build"
+    WEBAPP_PROJECT=":webapp:cas-server-webapp${serverType:+-$serverType}"
+    BUILD_TASKS="${WEBAPP_PROJECT}:build"
+    if [[ "${DEP_INSIGHT}" != "" ]]; then
+     BUILD_TASKS="${WEBAPP_PROJECT}:dependencyInsight --configuration runtimeClasspath --dependency $dependency $BUILD_TASKS"
+    fi
+
     if [[ "${NATIVE_BUILD}" == "true" ]]; then
-      BUILD_TASKS="${BUILD_TASKS} :webapp:cas-server-webapp${serverType:+-$serverType}:nativeCompile -DaotSpringActiveProfiles=none"
+      BUILD_TASKS="${BUILD_TASKS} ${WEBAPP_PROJECT}:nativeCompile -DaotSpringActiveProfiles=none"
     fi
 
     rm -rf ${targetArtifact}
