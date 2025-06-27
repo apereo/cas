@@ -17,7 +17,6 @@ import org.hjson.JsonValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +30,6 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Controller("umaUpdateResourceSetRegistrationEndpointController")
 @Slf4j
 @Tag(name = "User Managed Access")
 public class UmaUpdateResourceSetRegistrationEndpointController extends BaseUmaEndpointController {

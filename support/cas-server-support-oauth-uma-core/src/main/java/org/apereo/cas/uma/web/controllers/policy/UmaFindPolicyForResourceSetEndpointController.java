@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -29,7 +28,6 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @Slf4j
 @Tag(name = "User Managed Access")
-@Controller("umaFindPolicyForResourceSetEndpointController")
 public class UmaFindPolicyForResourceSetEndpointController extends BaseUmaEndpointController {
     public UmaFindPolicyForResourceSetEndpointController(final UmaConfigurationContext umaConfigurationContext) {
         super(umaConfigurationContext);

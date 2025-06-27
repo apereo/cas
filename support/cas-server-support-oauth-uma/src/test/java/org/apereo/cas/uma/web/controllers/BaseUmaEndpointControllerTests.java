@@ -10,7 +10,6 @@ import org.apereo.cas.uma.ticket.resource.ResourceSetPolicyPermission;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.authz.UmaAuthorizationRequestEndpointController;
 import org.apereo.cas.uma.web.controllers.claims.UmaRequestingPartyClaimsCollectionEndpointController;
-import org.apereo.cas.uma.web.controllers.discovery.UmaWellKnownEndpointController;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationRequest;
 import org.apereo.cas.uma.web.controllers.policy.UmaCreatePolicyForResourceSetEndpointController;
@@ -57,11 +56,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "cas.authn.oauth.uma.requesting-party-token.jwks-file.location=classpath:uma-keystore.jwks")
 @Slf4j
 public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Tests {
-
-    @Autowired
-    @Qualifier("umaWellKnownEndpointController")
-    protected UmaWellKnownEndpointController umaWellKnownEndpointController;
-
     @Autowired
     @Qualifier("umaPermissionRegistrationEndpointController")
     protected UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController;

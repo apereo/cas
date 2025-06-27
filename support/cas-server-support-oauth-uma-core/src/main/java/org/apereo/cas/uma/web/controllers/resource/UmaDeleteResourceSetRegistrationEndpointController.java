@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -28,7 +27,6 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Controller("umaDeleteResourceSetRegistrationEndpointController")
 @Slf4j
 @Tag(name = "User Managed Access")
 public class UmaDeleteResourceSetRegistrationEndpointController extends BaseUmaEndpointController {

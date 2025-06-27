@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -31,7 +30,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Tag(name = "User Managed Access")
-@Controller("umaDeletePolicyForResourceSetEndpointController")
 public class UmaDeletePolicyForResourceSetEndpointController extends BaseUmaEndpointController {
     public UmaDeletePolicyForResourceSetEndpointController(final UmaConfigurationContext umaConfigurationContext) {
         super(umaConfigurationContext);

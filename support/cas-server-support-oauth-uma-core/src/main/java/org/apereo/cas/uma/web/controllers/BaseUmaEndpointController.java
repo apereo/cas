@@ -9,6 +9,7 @@ import org.apereo.cas.uma.ticket.resource.InvalidResourceSetException;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.web.AbstractController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
@@ -32,7 +33,7 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class BaseUmaEndpointController {
+public abstract class BaseUmaEndpointController extends AbstractController {
     /**
      * Json object mapper instance.
      */

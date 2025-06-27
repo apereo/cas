@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
+import org.apereo.cas.web.AbstractController;
 import org.apereo.cas.web.support.CookieUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,7 +17,6 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
-import org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpServletRequest;
 
 
@@ -26,11 +26,10 @@ import jakarta.servlet.http.HttpServletRequest;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@Controller
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Slf4j
-public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContext> {
+public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContext> extends AbstractController {
     protected final T configurationContext;
 
     protected OAuth20AccessToken resolveAccessToken(final Ticket givenAccessToken) {

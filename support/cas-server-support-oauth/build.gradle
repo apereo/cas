@@ -56,6 +56,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-throttle")
+    testImplementation project(":support:cas-server-support-webconfig")
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

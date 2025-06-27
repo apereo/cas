@@ -26,7 +26,6 @@ import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -44,7 +43,6 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @Slf4j
-@Controller("umaAuthorizationRequestEndpointController")
 @Tag(name = "User Managed Access")
 public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointController {
 

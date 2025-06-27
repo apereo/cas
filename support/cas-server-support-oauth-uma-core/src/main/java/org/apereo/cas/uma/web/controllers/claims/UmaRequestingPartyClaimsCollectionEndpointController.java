@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.View;
@@ -30,7 +29,6 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Controller("umaRequestingPartyClaimsCollectionEndpointController")
 @Tag(name = "User Managed Access")
 public class UmaRequestingPartyClaimsCollectionEndpointController extends BaseUmaEndpointController {
     public UmaRequestingPartyClaimsCollectionEndpointController(final UmaConfigurationContext umaConfigurationContext) {
