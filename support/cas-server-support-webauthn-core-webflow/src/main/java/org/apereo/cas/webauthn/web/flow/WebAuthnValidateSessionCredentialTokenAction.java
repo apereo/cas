@@ -47,7 +47,7 @@ public class WebAuthnValidateSessionCredentialTokenAction extends AbstractMultif
         val credential = new WebAuthnCredential(token);
         WebUtils.putCredential(requestContext, credential);
 
-        val session = sessionManager.getSession(WebAuthnCredential.from(credential));
+        val session = sessionManager.getSession(request, WebAuthnCredential.from(credential));
         if (session.isEmpty()) {
             LOGGER.warn("Unable to locate existing session from the current token [{}]", token);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);

@@ -107,7 +107,7 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
             Assert.notNull(webAuthnCredential, "WebAuthn credential not found in the ticket");
             val principal = transientTicket.getProperty(Principal.class.getName(), Principal.class);
 
-            val session = sessionManager.getSession(WebAuthnCredential.from(webAuthnCredential));
+            val session = sessionManager.getSession(request, WebAuthnCredential.from(webAuthnCredential));
             Assert.isTrue(session.isPresent(), "Session is not found for the given credential");
             ticketRegistry.deleteTicket(ticketId);
             return ResponseEntity.ok(Map.of("principal", principal, "sessionToken", webAuthnCredential.getToken()));
@@ -129,7 +129,8 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
      */
     @PostMapping(ENDPOINT_QR_VERIFY)
     @ResponseBody
-    public ModelAndView verifyCode(@RequestParam("token") final String sessionToken,
+    public ModelAndView verifyCode(final HttpServletRequest request,
+                                   @RequestParam("token") final String sessionToken,
                                    @RequestParam("ticket") final String ticketId,
                                    @RequestParam("principal") final String principalId) throws Throwable {
         try {
@@ -139,7 +140,7 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
             Assert.isTrue(webAuthnCredentialRepository.userExists(principalId), "Principal not found");
             val principal = transientTicket.getProperty(Principal.class.getName(), Principal.class);
             val credential = new WebAuthnCredential(sessionToken);
-            val session = sessionManager.getSession(WebAuthnCredential.from(credential));
+            val session = sessionManager.getSession(request, WebAuthnCredential.from(credential));
             FunctionUtils.throwIf(session.isEmpty(), () -> new IllegalStateException("Session not found for the given credential"));
             val result = webAuthnCredentialRepository.getUsernameForUserHandle(session.get());
             FunctionUtils.throwIf(result.isEmpty(), () -> new IllegalStateException("Unable to locate user based on the given user handle"));
