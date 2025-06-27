@@ -1,4 +1,4 @@
-function jqueryReady() {
+document.addEventListener("DOMContentLoaded", (event) => {
     let strength = passwordStrengthI18n;
 
     $.fn.zxcvbnProgressBar = function (options) {
@@ -160,4 +160,4 @@ function jqueryReady() {
             $('#password-policy-violation-msg').show();
         }
     }
-}
+});

@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import com.hazelcast.core.HazelcastInstance;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.pac4j.saml.store.HazelcastSAMLMessageStoreFactory;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -22,6 +24,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  */
 @ConditionalOnClass(HazelcastInstance.class)
 @Configuration(value = "DelegatedAuthenticationSaml2HazelcastConfiguration", proxyBeanMethods = false)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "hazelcast")
 class DelegatedAuthenticationSaml2HazelcastConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
