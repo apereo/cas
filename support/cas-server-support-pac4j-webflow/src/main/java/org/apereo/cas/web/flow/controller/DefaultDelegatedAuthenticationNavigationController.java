@@ -1,9 +1,7 @@
 package org.apereo.cas.web.flow.controller;
 
-import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.AbstractController;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -14,13 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.pac4j.core.util.Pac4jConstants;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -30,13 +26,11 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Controller("defaultDelegatedAuthenticationNavigationController")
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "saml")
 @Slf4j
 @RequiredArgsConstructor
 @Getter
 @Tag(name = "Delegated Authentication")
-public class DefaultDelegatedAuthenticationNavigationController {
+public class DefaultDelegatedAuthenticationNavigationController extends AbstractController {
     /**
      * Endpoint path controlled by this controller that receives the response to PAC4J.
      */
