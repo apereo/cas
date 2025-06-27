@@ -12,12 +12,6 @@
 <body>
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-75">
-        <script>
-            function jqueryReady() {
-                $('table').DataTable();
-            }
-        </script>
-
         <div class="col-xs-6 col-xs-offset-2 col-sm-offset-3">
             <h2 th:utext="#{screen.pac4j.credential-selection.title}">Delegated Authentication Profile Selection</h2>
             <p class="intro" th:utext="#{screen.pac4j.credential-selection.intro}">Please select your profile:</p>
