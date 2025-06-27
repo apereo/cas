@@ -224,6 +224,10 @@ function parseArguments() {
       scenario="$2"
       shift 2
       ;;
+    --dependencyInsight | --di)
+      DEP_INSIGHT="$2"
+      shift 2
+      ;;
     --install-puppeteer | --install | --i)
       INSTALL_PUPPETEER="true"
       shift 1
@@ -611,9 +615,14 @@ function buildAndRun() {
       rm -rf ./webapp/cas-server-webapp${serverType:+-$serverType}/build/libs
     fi
 
-    BUILD_TASKS=":webapp:cas-server-webapp${serverType:+-$serverType}:build"
+    WEBAPP_PROJECT=":webapp:cas-server-webapp${serverType:+-$serverType}"
+    BUILD_TASKS="${WEBAPP_PROJECT}:build"
+    if [[ "${DEP_INSIGHT}" != "" ]]; then
+     BUILD_TASKS="${WEBAPP_PROJECT}:dependencyInsight --configuration runtimeClasspath --dependency $DEP_INSIGHT $BUILD_TASKS"
+    fi
+
     if [[ "${NATIVE_BUILD}" == "true" ]]; then
-      BUILD_TASKS="${BUILD_TASKS} :webapp:cas-server-webapp${serverType:+-$serverType}:nativeCompile -DaotSpringActiveProfiles=none"
+      BUILD_TASKS="${BUILD_TASKS} ${WEBAPP_PROJECT}:nativeCompile -DaotSpringActiveProfiles=none"
     fi
 
     rm -rf ${targetArtifact}
@@ -738,7 +747,12 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
       eval "$cmd"
     done
 
-    systemProperties=$(jq -r 'if (.systemProperties // []) | length == 0 then "-DTEST_TYPE=PUPPETEER" else .systemProperties[] | "-D" + . end' "${config}" | paste -sd' ' -)
+    systemProperties=$(jq -r '
+      if (.systemProperties // [] | length) == 0
+        then "-DTEST_TYPE=PUPPETEER"
+        else .systemProperties | map("-D" + .) | join(" ")
+      end
+    ' "${config}")
 
     bootstrapScript=$(jq -j '.bootstrapScript // empty' "${config}")
     bootstrapScript="${bootstrapScript//\$\{PWD\}/${PWD}}"
@@ -847,7 +861,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
             -Dcom.sun.net.ssl.checkRevocation=false \
             -Dlog.console.stacktraces=true \
             -DaotSpringActiveProfiles=none \
-            "$systemProperties" \
+            $systemProperties \
             --cas.http-client.allow-local-urls=true \
             --spring.main.lazy-initialization=false \
             --spring.devtools.restart.enabled=false \
@@ -888,7 +902,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
             downloadAndRunExternalTomcat "$casArtifactToRun" \
               "${runArgs}" \
               -Dlog.console.stacktraces=true \
-              "$systemProperties" \
+              $systemProperties \
               -Dcom.sun.net.ssl.checkRevocation=false \
               --spring.main.lazy-initialization=false \
               --spring.profiles.active=none \
@@ -902,7 +916,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
             printcyan "Launching CAS instance #${c} under port ${serverPort} from ${casArtifactToRun}"
             java ${runArgs} \
               -Dlog.console.stacktraces=true \
-              "$systemProperties" \
+              $systemProperties \
               -jar "${casArtifactToRun}" \
               -Dcom.sun.net.ssl.checkRevocation=false \
               --server.port=${serverPort} \
