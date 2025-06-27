@@ -14,6 +14,10 @@ authentication into applications using support built in to all leading browsers 
 that web services can now easily offer their users strong authentication with a choice of authenticators 
 such as security keys or built-in platform authenticators such as biometric readers.
 
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>To use WebAuth support in a cluster,
+you must either enable session affinity (so that the same user always connects to the same node),
+or share the web session across all nodes in the cluster.</p></div>
+
 Support is enabled by including the following module in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-webauthn" %}

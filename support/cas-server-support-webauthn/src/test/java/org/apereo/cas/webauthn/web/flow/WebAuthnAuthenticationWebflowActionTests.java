@@ -16,6 +16,8 @@ import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.data.ByteArray;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.webflow.execution.Action;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,7 +77,10 @@ class WebAuthnAuthenticationWebflowActionTests {
 
     @Test
     void verifyToken() throws Throwable {
+        ClientInfoHolder.setClientInfo(new ClientInfo());
         val context = MockRequestContext.create(applicationContext);
+        val request = context.getHttpServletRequest();
+        request.setSession(new MockHttpSession());
 
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser");
         WebUtils.putAuthentication(authn, context);
@@ -91,7 +97,7 @@ class WebAuthnAuthenticationWebflowActionTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());
 
         val token = EncodingUtils.encodeBase64(RandomUtils.randomAlphabetic(8));
-        val sessionId = webAuthnSessionManager.createSession(ByteArray.fromBase64(token));
+        val sessionId = webAuthnSessionManager.createSession(request, ByteArray.fromBase64(token));
 
         val builder = mock(AuthenticationResultBuilder.class);
         when(builder.getInitialAuthentication()).thenReturn(Optional.of(authn));
