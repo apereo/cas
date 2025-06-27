@@ -51,9 +51,10 @@ class WebAuthnControllerTests {
         val authenticatedPrincipal = new TestingAuthenticationToken("casuser", List.of());
         val server = mock(WebAuthnServer.class);
         val controller = new WebAuthnController(server);
+        val request = new MockHttpServletRequest();
 
-        when(server.startAuthentication(any())).thenReturn(Either.left(List.of("failed")));
-        var result = controller.startAuthentication(authenticatedPrincipal);
+        when(server.startAuthentication(any(), any())).thenReturn(Either.left(List.of("failed")));
+        var result = controller.startAuthentication(request, authenticatedPrincipal);
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
 
         val publicKeyRequest = PublicKeyCredentialRequestOptions.builder()
@@ -71,9 +72,9 @@ class WebAuthnControllerTests {
             ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)),
             assertionRequest);
 
-        when(server.startAuthentication(any())).thenReturn(Either.right(assertion));
+        when(server.startAuthentication(any(), any())).thenReturn(Either.right(assertion));
         
-        result = controller.startAuthentication(authenticatedPrincipal);
+        result = controller.startAuthentication(request, authenticatedPrincipal);
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
@@ -83,9 +84,10 @@ class WebAuthnControllerTests {
 
         val server = mock(WebAuthnServer.class);
         val controller = new WebAuthnController(server);
+        val request = new MockHttpServletRequest();
 
-        when(server.finishAuthentication(any())).thenReturn(Either.left(List.of("fails")));
-        var result = controller.finishAuthentication("casuser");
+        when(server.finishAuthentication(any(), any())).thenReturn(Either.left(List.of("fails")));
+        var result = controller.finishAuthentication(request, "casuser");
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
 
         val registration = CredentialRegistration.builder()
@@ -131,8 +133,8 @@ class WebAuthnControllerTests {
             response, List.of(registration),
             "casuser", ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)));
 
-        when(server.finishAuthentication(any())).thenReturn(Either.right(authnResult));
-        result = controller.finishAuthentication("casuser");
+        when(server.finishAuthentication(any(), any())).thenReturn(Either.right(authnResult));
+        result = controller.finishAuthentication(request, "casuser");
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
@@ -158,7 +160,7 @@ class WebAuthnControllerTests {
             ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)),
             publicKeyCredential,
             Optional.of(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8))));
-        when(server.startRegistration(anyString(), any(), any(), any(ResidentKeyRequirement.class), any()))
+        when(server.startRegistration(any(), anyString(), any(), any(), any(ResidentKeyRequirement.class), any()))
             .thenReturn(Either.right(registrationRequest));
 
         val request = new MockHttpServletRequest();
@@ -170,7 +172,7 @@ class WebAuthnControllerTests {
             authenticatedPrincipal, request, response);
         assertEquals(HttpStatus.OK, result.getStatusCode());
 
-        when(server.startRegistration(anyString(), any(), any(), any(ResidentKeyRequirement.class), any())).thenReturn(Either.left("failed"));
+        when(server.startRegistration(any(), anyString(), any(), any(), any(ResidentKeyRequirement.class), any())).thenReturn(Either.left("failed"));
         result = controller.startRegistration("displayName", "nickName", false,
             "sessionToken", authenticatedPrincipal, request, response);
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
@@ -182,6 +184,7 @@ class WebAuthnControllerTests {
 
         val server = mock(WebAuthnServer.class);
         val controller = new WebAuthnController(server);
+        val request = new MockHttpServletRequest();
 
         val registrationRequest = new RegistrationRequest("casuser", Optional.empty(),
             ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)),
@@ -200,8 +203,8 @@ class WebAuthnControllerTests {
             Optional.of(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8))));
 
 
-        when(server.finishRegistration(anyString())).thenReturn(Either.left(List.of("Fails")));
-        var result = controller.finishRegistration("registration-data");
+        when(server.finishRegistration(any(), anyString())).thenReturn(Either.left(List.of("Fails")));
+        var result = controller.finishRegistration(request, "registration-data");
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
 
         val exampleAttestation = ByteArray.fromHex(
@@ -250,7 +253,7 @@ class WebAuthnControllerTests {
             (PublicKeyCredential) publicKeyCredential,
             Optional.of(ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8))));
 
-        when(server.finishRegistration(anyString())).thenReturn(
+        when(server.finishRegistration(any(), anyString())).thenReturn(
             Either.right(new WebAuthnServer.SuccessfulRegistrationResult(
                 registrationRequest, registrationResponse,
                 CredentialRegistration.builder()
@@ -267,7 +270,7 @@ class WebAuthnControllerTests {
                         .build())
                     .build(), true,
                 ByteArray.fromBase64Url(RandomUtils.randomAlphabetic(8)))));
-        result = controller.finishRegistration("registration-data");
+        result = controller.finishRegistration(request, "registration-data");
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 }
