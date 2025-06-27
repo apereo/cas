@@ -133,7 +133,7 @@ function fetchServices(callback) {
                 $("#saml2metadataproviders").toggle(metadataSourcesCount > 0);
             }
 
-            applicationsTable.on("draw", function () {
+            applicationsTable.on("draw", () => {
                 initializeServiceButtons();
             });
             

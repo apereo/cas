@@ -47,7 +47,7 @@ public class SyncopeAuthenticationProperties extends BaseSyncopeProperties {
     private int order = Integer.MAX_VALUE;
 
     /**
-     * Max retry attempts for the authentication
+     * Max retry attempts for the authentication.
      */
     private int maxRetryAttempts;
 
