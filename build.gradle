@@ -360,8 +360,9 @@ subprojects {
             it.options.errorprone.disableAllChecks = !rootProject.ext.terminateCompilerOnWarning
             it.options.errorprone.allErrorsAsWarnings = false
             it.options.errorprone.disableWarningsInGeneratedCode = true
-            it.options.errorprone.errorproneArgs = ['-Xep:ClassCanBeStatic:OFF',
+            it.options.errorprone.errorproneArgs = [
                                                     '-Xep:JavaUtilDate:OFF',
+                                                    '-Xep:BooleanLiteral:OFF',
                                                     '-Xep:StringConcatToTextBlock:OFF',
                                                     '-Xep:AddressSelection:OFF']
             casCompilerArgs.add("-XDcompilePolicy=byfile")

@@ -33,10 +33,9 @@ public class CompositeX509TrustManager implements X509TrustManager {
                 trustManager.checkClientTrusted(chain, authType);
                 return true;
             } catch (final CertificateException e) {
-                val msg = "Unable to trust the client certificates [%s] for auth type [%s]: [%s]";
                 if (LOGGER.isDebugEnabled()) {
                     val certs = Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet());
-                    LOGGER.debug(String.format(msg, certs, authType, e.getMessage()), e);
+                    LOGGER.debug("Unable to trust the client certificates [{}] for auth type [{}]: [{}]", certs, authType, e);
                 }
                 return false;
             }
@@ -49,16 +48,14 @@ public class CompositeX509TrustManager implements X509TrustManager {
 
     @Override
     public void checkServerTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-
-        val trusted = this.trustManagers.stream().anyMatch(trustManager -> {
+        val trusted = trustManagers.stream().anyMatch(trustManager -> {
             try {
                 trustManager.checkServerTrusted(chain, authType);
                 return true;
             } catch (final CertificateException e) {
-                val msg = "Unable to trust the server certificates [%s] for auth type [%s]: [%s]";
-                val certs = Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet());
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(String.format(msg, certs, authType, e.getMessage()), e);
+                    val certs = Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet());
+                    LOGGER.debug("Unable to trust the server certificates [{}] for auth type [{}]: [{}]", certs, authType, e);
                 }
                 return false;
             }

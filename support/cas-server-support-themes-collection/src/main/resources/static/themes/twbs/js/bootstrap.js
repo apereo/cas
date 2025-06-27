@@ -37,9 +37,6 @@ function resourceLoadedSuccessfully() {
             ev.preventDefault();
         });
 
-        if (typeof(jqueryReady) === 'function') {
-            jqueryReady();
-        }
     });
 
 }

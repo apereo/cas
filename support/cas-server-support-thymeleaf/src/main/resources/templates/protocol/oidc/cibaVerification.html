@@ -102,7 +102,7 @@
                 <input type="hidden" name="cibaRequestId" th:value="${cibaRequest.id}"/>
 
                 <script type="text/javascript">
-                    function jqueryReady() {
+                    document.addEventListener("DOMContentLoaded", (event) => {
                         const form = document.getElementById("fm1");
                         form.submit = () => false;
                         $("#fm1").submit(function (event) {
@@ -134,8 +134,7 @@
                                 }
                             });
                         })
-                    }
-                    
+                    });
                 </script>
             </form>
         </div>

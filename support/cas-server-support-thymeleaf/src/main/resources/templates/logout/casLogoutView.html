@@ -19,8 +19,10 @@
                     <span th:utext="#{screen.logout.header}">Logout successful</span>
                 </h2>
 
-                <p id="logoutMessage" class="banner-message" th:utext="#{screen.logout.success}">You have successfully logged out of the Central Authentication
-                    Service. You may <a href="login">log in</a> again.</p>
+                <p id="logoutMessage" class="banner-message"
+                   th:with="loginUrl=@{/login}"
+                   th:utext="#{screen.logout.success(${loginUrl})}">You have successfully logged out of the Central Authentication
+                    Service. You may <a th:href="@{/login}">log in</a> again.</p>
                 <p class="banner-message" th:utext="#{screen.logout.security}">For security reasons, exit your web browser.</p>
 
                 <div th:remove="tag" th:if="${enableProceed}">
