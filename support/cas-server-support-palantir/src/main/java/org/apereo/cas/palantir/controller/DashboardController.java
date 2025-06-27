@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.web.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,11 +36,10 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Controller
 @RequestMapping(PalantirConstants.URL_PATH_PALANTIR)
 @RequiredArgsConstructor
 @Tag(name = "Palantir")
-public class DashboardController {
+public class DashboardController extends AbstractController {
     private final CasConfigurationProperties casProperties;
     private final EndpointLinksResolver endpointLinksResolver;
     private final WebEndpointProperties webEndpointProperties;

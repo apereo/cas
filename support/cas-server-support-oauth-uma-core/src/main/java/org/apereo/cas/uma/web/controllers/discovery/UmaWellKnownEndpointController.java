@@ -2,14 +2,13 @@ package org.apereo.cas.uma.web.controllers.discovery;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.uma.discovery.UmaServerDiscoverySettings;
-
+import org.apereo.cas.web.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
@@ -18,10 +17,9 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Controller("umaWellKnownEndpointController")
 @RequiredArgsConstructor
 @Tag(name = "User Managed Access")
-public class UmaWellKnownEndpointController {
+public class UmaWellKnownEndpointController extends AbstractController {
     private final UmaServerDiscoverySettings discovery;
 
     /**
