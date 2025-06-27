@@ -43,14 +43,16 @@ import org.apereo.cas.webauthn.web.BaseWebAuthnController;
 import org.apereo.cas.webauthn.web.WebAuthnController;
 import org.apereo.cas.webauthn.web.WebAuthnQRCodeController;
 import org.apereo.cas.webauthn.web.WebAuthnRegisteredDevicesEndpoint;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.yubico.core.DefaultSessionManager;
 import com.yubico.core.InMemoryRegistrationStorage;
 import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
+import com.yubico.core.WebAuthnCache;
 import com.yubico.core.WebAuthnServer;
+import com.yubico.core.WebSessionWebAuthnCache;
+import com.yubico.data.AssertionRequestWrapper;
+import com.yubico.data.RegistrationRequest;
 import com.yubico.fido.metadata.FidoMetadataDownloader;
 import com.yubico.fido.metadata.FidoMetadataService;
 import com.yubico.webauthn.RelyingParty;
@@ -89,7 +91,6 @@ import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import java.net.URI;
 import java.time.Clock;
-import java.time.Duration;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -107,14 +108,6 @@ import java.util.stream.Collectors;
 @Configuration(value = "WebAuthnConfiguration", proxyBeanMethods = false)
 class WebAuthnConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.web-authn.core.enabled").isTrue().evenIfMissing();
-
-    private static final int WEBAUTHN_SERVER_CACHE_SIZE = 10_000;
-    private static final int SESSION_MANAGER_CACHE_SIZE = 100;
-
-    private static <K, V> Cache<K, V> newCache(final int cacheSize) {
-        return Caffeine.newBuilder().maximumSize(cacheSize)
-            .expireAfterAccess(Duration.ofMinutes(5)).build();
-    }
 
     @Configuration(value = "WebAuthnMetadataServiceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -182,13 +175,31 @@ class WebAuthnConfiguration {
     @Configuration(value = "WebAuthnCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class WebAuthnCoreConfiguration {
+        @ConditionalOnMissingBean(name = "webAuthnSessionIdsToUsersCache")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public WebAuthnCache<ByteArray> webAuthnSessionIdsToUsersCache() {
+            return new WebSessionWebAuthnCache<>("WebAuthn_sessionIdsToUsers", ByteArray.class);
+        }
+
+        @ConditionalOnMissingBean(name = "webAuthnUsersToSessionIdsCache")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public WebAuthnCache<ByteArray> webAuthnUsersToSessionIdsCache() {
+            return new WebSessionWebAuthnCache<>("WebAuthn_usersToSessionIds", ByteArray.class);
+        }
+
         @ConditionalOnMissingBean(name = SessionManager.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public SessionManager webAuthnSessionManager(final ConfigurableApplicationContext applicationContext) {
+        public SessionManager webAuthnSessionManager(final ConfigurableApplicationContext applicationContext,
+                                                     @Qualifier("webAuthnSessionIdsToUsersCache")
+                                                     final WebAuthnCache<ByteArray> webAuthnSessionIdsToUsersCache,
+                                                     @Qualifier("webAuthnUsersToSessionIdsCache")
+                                                     final WebAuthnCache<ByteArray> webAuthnUsersToSessionIdsCache) {
             return BeanSupplier.of(SessionManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new DefaultSessionManager(newCache(SESSION_MANAGER_CACHE_SIZE), newCache(SESSION_MANAGER_CACHE_SIZE)))
+                .supply(() -> new DefaultSessionManager(webAuthnSessionIdsToUsersCache, webAuthnUsersToSessionIdsCache))
                 .otherwiseProxy()
                 .get();
         }
@@ -239,6 +250,20 @@ class WebAuthnConfiguration {
     @Configuration(value = "WebAuthnServerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class WebAuthnServerConfiguration {
+        @ConditionalOnMissingBean(name = "webAuthnRegisterRequestStorageCache")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public WebAuthnCache<RegistrationRequest> webAuthnRegisterRequestStorageCache() {
+            return new WebSessionWebAuthnCache<>("WebAuthn_registerRequestStorage", RegistrationRequest.class);
+        }
+
+        @ConditionalOnMissingBean(name = "webAuthnAssertionRequestStorageCache")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public WebAuthnCache<AssertionRequestWrapper> webAuthnAssertionRequestStorageCache() {
+            return new WebSessionWebAuthnCache<>("WebAuthn_assertionRequestStorage", AssertionRequestWrapper.class);
+        }
+
         @Bean
         @ConditionalOnMissingBean(name = "webAuthnServer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -246,7 +271,9 @@ class WebAuthnConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final WebAuthnCredentialRepository webAuthnCredentialRepository,
             @Qualifier("webAuthnMetadataService") final AttestationTrustSource webAuthnMetadataService,
-            @Qualifier(SessionManager.BEAN_NAME) final SessionManager webAuthnSessionManager) throws Exception {
+            @Qualifier(SessionManager.BEAN_NAME) final SessionManager webAuthnSessionManager,
+            @Qualifier("webAuthnRegisterRequestStorageCache") final WebAuthnCache<RegistrationRequest> webAuthnRegisterRequestStorageCache,
+            @Qualifier("webAuthnAssertionRequestStorageCache") final WebAuthnCache<AssertionRequestWrapper> webAuthnAssertionRequestStorageCache) throws Exception {
 
             val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn().getCore();
             val serverName = casProperties.getServer().getName();
@@ -274,9 +301,8 @@ class WebAuthnConfiguration {
                 .validateSignatureCounter(webAuthn.isValidateSignatureCounter())
                 .appId(appId)
                 .build();
-            return new WebAuthnServer(webAuthnCredentialRepository,
-                newCache(WEBAUTHN_SERVER_CACHE_SIZE), newCache(WEBAUTHN_SERVER_CACHE_SIZE), relyingParty,
-                webAuthnSessionManager, casProperties);
+            return new WebAuthnServer(webAuthnCredentialRepository, webAuthnRegisterRequestStorageCache,
+                    webAuthnAssertionRequestStorageCache, relyingParty, webAuthnSessionManager, casProperties);
         }
     }
 

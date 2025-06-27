@@ -36,10 +36,10 @@ public class WebAuthnAccountSaveRegistrationAction extends AbstractMultifactorAu
         LOGGER.trace("Checking registration record for [{}] by session id [{}]", principal.getId(), sessionToken);
         val token = ByteArray.fromBase64Url(sessionToken);
         val credentials = webAuthnCredentialRepository.getCredentialIdsForUsername(principal.getId());
-        if (!credentials.isEmpty() && sessionManager.getSession(token).isPresent()) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        if (!credentials.isEmpty() && sessionManager.getSession(request, token).isPresent()) {
             return success();
         }
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         WebUtils.produceErrorView(request, HttpStatus.BAD_REQUEST, "Unable to verify registration record");
         return error();
     }
