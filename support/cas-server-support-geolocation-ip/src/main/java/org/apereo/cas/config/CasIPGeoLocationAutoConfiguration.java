@@ -6,7 +6,8 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.support.geo.GeoLocationServiceConfigurer;
 import org.apereo.cas.support.geo.ip.IPGeoLocationService;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import io.ipgeolocation.api.IPGeolocationAPI;
+import io.ipgeolocation.sdk.api.IPGeolocationAPI;
+import io.ipgeolocation.sdk.invoker.ApiClient;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -32,7 +33,9 @@ public class CasIPGeoLocationAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public GeoLocationService ipGeoLocationService(final CasConfigurationProperties casProperties) {
         val key = casProperties.getGeoLocation().getIpGeoLocation().getApiKey();
-        return new IPGeoLocationService(new IPGeolocationAPI(key));
+        val apiClient = new ApiClient();
+        apiClient.setApiKey(key);
+        return new IPGeoLocationService(new IPGeolocationAPI(apiClient));
     }
 
     @Bean
