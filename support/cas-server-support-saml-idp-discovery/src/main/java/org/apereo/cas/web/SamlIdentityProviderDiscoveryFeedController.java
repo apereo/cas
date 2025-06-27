@@ -1,12 +1,10 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.entity.SamlIdentityProviderEntity;
 import org.apereo.cas.services.SamlIdentityProviderDiscoveryFeedService;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
-import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -19,7 +17,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
@@ -35,13 +32,11 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RestController("identityProviderDiscoveryFeedController")
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "saml")
 @Slf4j
 @RequiredArgsConstructor
 @Tag(name = "SAML2")
 @RequestMapping(path = SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY)
-public class SamlIdentityProviderDiscoveryFeedController {
+public class SamlIdentityProviderDiscoveryFeedController extends AbstractRestController {
     /**
      * Base endpoint url.
      */
