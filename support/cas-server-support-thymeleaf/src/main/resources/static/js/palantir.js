@@ -133,6 +133,10 @@ function fetchServices(callback) {
                 $("#saml2metadataproviders").toggle(metadataSourcesCount > 0);
             }
 
+            applicationsTable.on("draw", function () {
+                initializeServiceButtons();
+            });
+            
             applicationsTable.search("").draw();
             saml2MetadataProvidersTable.search("").draw();
 
@@ -142,8 +146,6 @@ function fetchServices(callback) {
             if (callback !== undefined) {
                 callback(applicationsTable);
             }
-
-            initializeServiceButtons();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
             displayBanner(xhr);
