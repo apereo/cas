@@ -84,7 +84,7 @@
                                     url: /*[[@{${entry.redirectUrl}}]]*/
                                 });
 
-                                function jqueryReady() {
+                                document.addEventListener("DOMContentLoaded", (event) => {
                                     $("#fm1 #username").on("focusout", () => {
                                         const user = $("#fm1 #username").val();
                                         /*
@@ -95,7 +95,7 @@
                                         }
                                         */
                                     });
-                                }
+                                });
                                 /*]]>*/
                             </script>
 
