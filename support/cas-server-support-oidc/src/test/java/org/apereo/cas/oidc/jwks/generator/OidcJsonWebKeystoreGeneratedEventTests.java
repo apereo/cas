@@ -1,13 +1,10 @@
 package org.apereo.cas.oidc.jwks.generator;
 
-import java.nio.file.Files;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
-
-import java.io.File;
-
+import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

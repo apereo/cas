@@ -1,6 +1,5 @@
 package org.apereo.cas.services.web;
 
-import java.nio.file.Files;
 import org.apereo.cas.BaseThemeTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -17,9 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-import java.io.File;
+import java.nio.file.Files;
 import java.util.UUID;
-import static java.nio.charset.StandardCharsets.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

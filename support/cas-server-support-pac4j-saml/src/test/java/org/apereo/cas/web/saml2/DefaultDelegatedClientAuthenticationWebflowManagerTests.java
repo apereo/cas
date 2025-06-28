@@ -1,6 +1,5 @@
 package org.apereo.cas.web.saml2;
 
-import java.nio.file.Files;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -47,6 +46,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import java.io.File;
+import java.nio.file.Files;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;

@@ -1,6 +1,5 @@
 package org.apereo.cas.consent;
 
-import java.nio.file.Files;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
 import lombok.val;
@@ -11,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.FileSystemResource;
-import java.io.File;
+import java.nio.file.Files;
 import java.util.UUID;
 import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,11 +1,10 @@
 package org.apereo.cas.metadata;
 
-import java.nio.file.Files;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;

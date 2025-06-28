@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;

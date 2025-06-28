@@ -1,6 +1,5 @@
 package org.apereo.cas.util.ldap.uboundid;
 
-import java.nio.file.Files;
 import org.apereo.cas.util.LdapTestUtils;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
@@ -18,10 +17,10 @@ import org.apache.commons.io.IOUtils;
 import org.ldaptive.LdapEntry;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.ClassPathResource;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Properties;
 
