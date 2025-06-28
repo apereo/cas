@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" th:lang="${#locale}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" th:lang="${#strings.replace(#locale.toString(), '_', '-')}">
 
 <head>
     <meta charset="UTF-8" />

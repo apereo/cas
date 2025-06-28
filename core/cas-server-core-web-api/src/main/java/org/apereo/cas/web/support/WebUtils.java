@@ -81,6 +81,10 @@ public class WebUtils {
      * Flow attribute to indicate surrogate authn is requested..
      */
     public static final String REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE = "requestSurrogateAccount";
+    /**
+     * Parameter to indicate logout request is confirmed.
+     */
+    public static final String REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED = "LogoutRequestConfirmed";
 
     /**
      * Ticket-granting ticket id parameter used in various flow scopes.
@@ -538,7 +542,7 @@ public class WebUtils {
         }
         return false;
     }
-    
+
     /**
      * Put public workstation into the flow if request parameter present.
      *
@@ -603,7 +607,7 @@ public class WebUtils {
     public static void putAuthentication(final Authentication authentication, final MutableAttributeMap scope) {
         scope.put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, authentication);
     }
-    
+
     /**
      * Gets authentication from conversation scope.
      *
@@ -958,7 +962,6 @@ public class WebUtils {
     }
 
 
-
     /**
      * Sets service user interface metadata.
      *
@@ -1058,9 +1061,9 @@ public class WebUtils {
     /**
      * Produce error view.
      *
-     * @param request    the request
-     * @param status the bad request
-     * @param message    the message
+     * @param request the request
+     * @param status  the bad request
+     * @param message the message
      */
     public static void produceErrorView(final HttpServletRequest request, final HttpStatus status, final String message) {
         request.setAttribute("status", status.value());
@@ -1375,7 +1378,7 @@ public class WebUtils {
             flowVariable.create(requestContext);
         }
     }
-   
+
     /**
      * Put single logout request.
      *
@@ -1476,7 +1479,6 @@ public class WebUtils {
     public static Boolean isRecaptchaPasswordManagementEnabled(final RequestContext requestContext) {
         return requestContext.getFlowScope().get("recaptchaPasswordManagementEnabled", Boolean.class);
     }
-
 
 
     /**
@@ -1650,7 +1652,7 @@ public class WebUtils {
     public static void putInterruptAuthenticationFlowFinalized(final RequestContext requestContext) {
         requestContext.getRequestScope().put("authenticationFlowInterruptFinalized", Boolean.TRUE);
     }
-    
+
     /**
      * Put ws federation delegated clients.
      *
@@ -1949,5 +1951,17 @@ public class WebUtils {
             .defaultText(warning.getDefaultMessage())
             .args((Object[]) warning.getParams());
         context.addMessage(builder.build());
+    }
+
+    /**
+     * Is logout request confirmed?.
+     *
+     * @param requestContext the request context
+     * @return true/false
+     */
+    public static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        return request.getParameterMap().containsKey(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED)
+            && Boolean.parseBoolean(request.getParameter(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED));
     }
 }

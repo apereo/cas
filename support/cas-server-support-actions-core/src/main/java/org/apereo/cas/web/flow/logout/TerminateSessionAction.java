@@ -35,12 +35,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class TerminateSessionAction extends BaseCasWebflowAction {
-
-    /**
-     * Parameter to indicate logout request is confirmed.
-     */
-    public static final String REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED = "LogoutRequestConfirmed";
-
     protected final EventFactorySupport eventFactorySupport = eventFactory;
 
     protected final CentralAuthenticationService centralAuthenticationService;
@@ -54,16 +48,11 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
     protected final LogoutManager logoutManager;
 
     protected final SingleLogoutRequestExecutor singleLogoutRequestExecutor;
-
-    protected static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        return request.getParameterMap().containsKey(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED);
-    }
-
+    
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val terminateSession = FunctionUtils.doIf(logoutProperties.isConfirmLogout(),
-                () -> isLogoutRequestConfirmed(requestContext),
+                () -> WebUtils.isLogoutRequestConfirmed(requestContext),
                 () -> Boolean.TRUE)
             .get();
 
