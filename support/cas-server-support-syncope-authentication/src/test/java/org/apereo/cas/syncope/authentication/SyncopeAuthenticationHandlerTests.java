@@ -124,9 +124,9 @@ class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
                 assertTrue(membershipAttrs.containsKey("groupName"));
                 assertTrue(membershipAttrs.containsKey("testSchema1"));
                 assertTrue(membershipAttrs.containsKey("testSchema2"));
-                assertEquals(membershipAttrs.get("groupName"), "G1");
-                assertEquals(membershipAttrs.get("testSchema1"), "[\"valueSchema1\"]");
-                assertEquals(membershipAttrs.get("testSchema2"), "[\"valueSchema2\"]");
+                assertEquals("G1", membershipAttrs.get("groupName"));
+                assertEquals("[\"valueSchema1\"]", membershipAttrs.get("testSchema1"));
+                assertEquals("[\"valueSchema2\"]", membershipAttrs.get("testSchema2"));
             }
         }
     }
