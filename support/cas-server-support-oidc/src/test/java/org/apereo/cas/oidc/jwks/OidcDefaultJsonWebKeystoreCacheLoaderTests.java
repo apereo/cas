@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks;
 
+import java.nio.file.Files;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.util.ResourceUtils;
@@ -102,7 +103,7 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
         val loader = new OidcDefaultJsonWebKeystoreCacheLoader(gen);
         assertNull(loader.load(new OidcJsonWebKeyCacheKey("https://cas.example.org", OidcJsonWebKeyUsage.SIGNING)));
 
-        val file = File.createTempFile("keys", ".json");
+        val file = Files.createTempFile("keys", ".json").toFile();
         FileUtils.writeStringToFile(file, new JsonWebKeySet(List.of()).toJson(), StandardCharsets.UTF_8);
         when(gen.generate()).thenReturn(new FileSystemResource(file));
         assertNull(loader.load(new OidcJsonWebKeyCacheKey("https://cas.example.org", OidcJsonWebKeyUsage.SIGNING)));

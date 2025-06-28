@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import java.nio.file.Files;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.scripting.ScriptingUtils;
@@ -75,7 +76,7 @@ class ScriptingUtilsTests {
 
     @Test
     void verifyGroovyResourceFileExecution() throws Throwable {
-        val file = File.createTempFile("test", ".groovy");
+        val file = Files.createTempFile("test", ".groovy").toFile();
         FileUtils.write(file, "def process(String name) { return name }", StandardCharsets.UTF_8);
         val resource = new FileSystemResource(file);
 
@@ -85,7 +86,7 @@ class ScriptingUtilsTests {
 
     @Test
     void verifyGroovyReturnTypeMismatch() throws Throwable {
-        val file = File.createTempFile("test", ".groovy");
+        val file = Files.createTempFile("test", ".groovy").toFile();
         FileUtils.write(file, "def process(String name) { return name }", StandardCharsets.UTF_8);
         val resource = new FileSystemResource(file);
         assertNull(ScriptingUtils.getObjectInstanceFromGroovyResource(resource,

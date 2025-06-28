@@ -1,5 +1,6 @@
 package org.apereo.cas.services.support;
 
+import java.nio.file.Files;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +41,7 @@ class RegisteredServiceScriptedAttributeFilterTests {
 
     @Test
     void verifyScriptedAttributeFilter() throws Throwable {
-        val f = File.createTempFile("attr", ".groovy");
+        val f = Files.createTempFile("attr", ".groovy").toFile();
         val stream = new ClassPathResource("groovy-attr-filter.groovy").getInputStream();
         FileUtils.copyInputStreamToFile(stream, f);
         val filter = new RegisteredServiceScriptedAttributeFilter(0, "file:" + f.getCanonicalPath());

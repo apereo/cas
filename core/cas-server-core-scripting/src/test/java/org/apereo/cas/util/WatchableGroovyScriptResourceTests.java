@@ -25,7 +25,7 @@ class WatchableGroovyScriptResourceTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val file = File.createTempFile("file", ".groovy");
+        val file = Files.createTempFile("file", ".groovy").toFile();
         FileUtils.writeStringToFile(file, "println 'hello'", StandardCharsets.UTF_8);
 
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();

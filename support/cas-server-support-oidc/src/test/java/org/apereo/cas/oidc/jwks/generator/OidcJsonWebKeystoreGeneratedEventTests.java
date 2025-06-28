@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks.generator;
 
+import java.nio.file.Files;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class OidcJsonWebKeystoreGeneratedEventTests {
     @Test
     void verifyOperation() throws Throwable {
         val event = new OidcJsonWebKeystoreGeneratedEvent(this,
-            new FileSystemResource(File.createTempFile("first", "second")), null);
+            new FileSystemResource(Files.createTempFile("first", "second").toFile()), null);
         assertNotNull(event.getSource());
         assertNotNull(event.getFile());
     }

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration;
 
+import java.nio.file.Files;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
@@ -32,7 +33,7 @@ class CasConfigurationPropertiesEnvironmentManagerTests {
         val sources = CasConfigurationPropertiesEnvironmentManager.configureEnvironmentPropertySources(env);
         env.getPropertySources().addFirst(sources);
 
-        val file = File.createTempFile("cas", ".properties");
+        val file = Files.createTempFile("cas", ".properties").toFile();
         FileUtils.writeStringToFile(file, "server.port=8899", StandardCharsets.UTF_8);
         env.setProperty(CasConfigurationPropertiesSourceLocator.PROPERTY_CAS_STANDALONE_CONFIGURATION_FILE, file.getCanonicalPath());
         assertEquals(file.getCanonicalPath(), CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationFile(env).getCanonicalPath());

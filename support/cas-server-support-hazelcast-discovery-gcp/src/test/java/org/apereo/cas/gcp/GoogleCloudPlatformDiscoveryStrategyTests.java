@@ -1,5 +1,6 @@
 package org.apereo.cas.gcp;
 
+import java.nio.file.Files;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
 import org.apereo.cas.test.CasTestExtension;
 
@@ -33,7 +34,7 @@ class GoogleCloudPlatformDiscoveryStrategyTests {
         gcp.setRegion("region");
         gcp.setZones("zone1");
         gcp.setProjects("project1");
-        gcp.setPrivateKeyPath(File.createTempFile("sample", ".json").getAbsolutePath());
+        gcp.setPrivateKeyPath(Files.createTempFile("sample", ".json").toFile().getAbsolutePath());
         val hz = new GoogleCloudPlatformDiscoveryStrategy();
         val result = hz.get(cluster, mock(JoinConfig.class), mock(Config.class), mock(NetworkConfig.class));
         assertNotNull(result);

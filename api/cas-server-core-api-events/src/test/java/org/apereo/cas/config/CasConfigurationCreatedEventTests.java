@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import java.nio.file.Files;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -21,7 +22,7 @@ class CasConfigurationCreatedEventTests {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
-                new CasConfigurationCreatedEvent(this, File.createTempFile("temp", ".file").toPath(), null);
+                new CasConfigurationCreatedEvent(this, Files.createTempFile("temp", ".file").toFile().toPath(), null);
             }
         });
     }
