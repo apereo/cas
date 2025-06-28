@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import java.nio.file.Files;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.SamlException;
@@ -66,7 +67,7 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
 
     @Test
     void verifyFileByExpression() throws Throwable {
-        val mdFile = File.createTempFile("spsamlmetadata", ".xml");
+        val mdFile = Files.createTempFile("spsamlmetadata", ".xml").toFile();
         val content = IOUtils.toString(new ClassPathResource("sample-sp.xml").getInputStream(), StandardCharsets.UTF_8);
         FileUtils.writeStringToFile(mdFile, content, StandardCharsets.UTF_8);
         System.setProperty("FILE_EXPR_SP", mdFile.getCanonicalPath());

@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.authn;
 
+import java.nio.file.Files;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
@@ -70,7 +71,7 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService();
         registeredService.setClientId(UUID.randomUUID().toString());
 
-        val file = File.createTempFile("jwks-service", ".jwks");
+        val file = Files.createTempFile("jwks-service", ".jwks").toFile();
         val core = casProperties.getAuthn().getOidc().getJwks().getCore();
         val jsonWebKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey(
             core.getJwksType(), core.getJwksKeySize(), OidcJsonWebKeyUsage.SIGNING);

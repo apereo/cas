@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.jasypt;
 
+import java.nio.file.Files;
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 
 import lombok.val;
@@ -29,7 +30,7 @@ class JasyptEncryptPropertyCommandTests extends BaseCasShellCommandTests {
 
     @Test
     void verifyFileEncryption() throws Throwable {
-        val file = File.createTempFile("file", ".txt");
+        val file = Files.createTempFile("file", ".txt").toFile();
         FileUtils.write(file, UUID.randomUUID().toString(), StandardCharsets.UTF_8);
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "encrypt-value --file " + file.getAbsolutePath() + " --password "
                                                       + "JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC"));

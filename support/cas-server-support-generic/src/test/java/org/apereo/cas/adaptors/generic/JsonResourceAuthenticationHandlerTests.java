@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic;
 
+import java.nio.file.Files;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -125,7 +126,7 @@ class JsonResourceAuthenticationHandlerTests {
             CollectionUtils.wrapList("CAS")));
         accounts.put("badtime", acct);
 
-        val resource = new FileSystemResource(File.createTempFile("account", ".json"));
+        val resource = new FileSystemResource(Files.createTempFile("account", ".json").toFile());
 
         val mapper = Jackson2ObjectMapperBuilder.json()
             .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
@@ -183,7 +184,7 @@ class JsonResourceAuthenticationHandlerTests {
 
     @Test
     void verifyInvalidAccounts() throws Throwable {
-        val resource = new FileSystemResource(File.createTempFile("bad-account", ".json"));
+        val resource = new FileSystemResource(Files.createTempFile("bad-account", ".json").toFile());
         FileUtils.write(resource.getFile(), "invalid-data", StandardCharsets.UTF_8);
         val jsonHandler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), null, resource);

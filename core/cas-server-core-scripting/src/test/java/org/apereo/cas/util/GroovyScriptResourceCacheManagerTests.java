@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import java.nio.file.Files;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -40,7 +41,7 @@ class GroovyScriptResourceCacheManagerTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val file = File.createTempFile("scripted", ".groovy");
+        val file = Files.createTempFile("scripted", ".groovy").toFile();
         FileUtils.writeStringToFile(file, "println 'hello'", StandardCharsets.UTF_8);
 
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
