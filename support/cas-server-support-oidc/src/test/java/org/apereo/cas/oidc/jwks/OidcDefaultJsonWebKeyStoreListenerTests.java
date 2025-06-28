@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks;
 
+import java.nio.file.Files;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreModifiedEvent;
 
@@ -31,7 +32,7 @@ class OidcDefaultJsonWebKeyStoreListenerTests extends AbstractOidcTests {
         assertNotNull(keys);
         assertNotNull(oidcJsonWebKeyStoreListener);
         realApplicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this,
-            File.createTempFile("prefix", "postfix"), null));
+            Files.createTempFile("prefix", "postfix").toFile(), null));
         Thread.sleep(2000);
         val newKeys = oidcDefaultJsonWebKeystoreCache.getIfPresent(cacheKey);
         assertNull(newKeys);

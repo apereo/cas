@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import java.nio.file.Files;
 import org.apereo.cas.BaseThemeTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -87,7 +88,7 @@ class RegisteredServiceThemeResolverTests {
             val context = MockRequestContext.create(applicationContext);
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
 
-            val file = File.createTempFile("Theme", ".groovy");
+            val file = Files.createTempFile("Theme", ".groovy").toFile();
             val script = IOUtils.toString(new ClassPathResource("GroovyTheme.groovy").getInputStream(), UTF_8);
             FileUtils.writeStringToFile(file, script, UTF_8);
             registeredService.setTheme(file.getCanonicalPath());

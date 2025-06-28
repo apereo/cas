@@ -1,5 +1,6 @@
 package org.apereo.cas.services.resource;
 
+import java.nio.file.Files;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 
@@ -49,7 +50,7 @@ class ModifyResourceBasedRegisteredServiceWatcherTests {
         val service = registry.findServiceById(1);
         service.setEvaluationOrder(666);
         registry.load();
-        val temp = new FileSystemResource(File.createTempFile("Sample-1", ".json"));
+        val temp = new FileSystemResource(Files.createTempFile("Sample-1", ".json").toFile());
         new RegisteredServiceJsonSerializer(mockAppContext).to(temp.getFile(), service);
 
         val watcher = new ModifyResourceBasedRegisteredServiceWatcher(registry);

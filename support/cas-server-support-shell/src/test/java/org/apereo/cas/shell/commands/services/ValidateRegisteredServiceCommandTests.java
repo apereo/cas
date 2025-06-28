@@ -28,10 +28,10 @@ class ValidateRegisteredServiceCommandTests extends BaseCasShellCommandTests {
     void verifyOperation() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
-        val file = File.createTempFile("service", ".json");
-        val yaml = File.createTempFile("service", ".yaml");
+        val file = Files.createTempFile("service", ".json").toFile();
+        val yaml = Files.createTempFile("service", ".yaml").toFile();
 
-        val other = File.createTempFile("service-bad", ".json");
+        val other = Files.createTempFile("service-bad", ".json").toFile();
         FileUtils.write(other, "data{{}}", StandardCharsets.UTF_8);
 
         val svc = RegisteredServiceTestUtils.getRegisteredService("example");

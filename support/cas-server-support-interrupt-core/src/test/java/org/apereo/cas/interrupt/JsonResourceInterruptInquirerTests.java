@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt;
 
+import java.nio.file.Files;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
@@ -34,7 +35,7 @@ class JsonResourceInterruptInquirerTests {
             "field2", List.of("value3", "value4")));
         map.put("casuser", response);
 
-        val f = File.createTempFile("interrupt", "json");
+        val f = Files.createTempFile("interrupt", "json").toFile();
         MAPPER.writer().withDefaultPrettyPrinter().writeValue(f, map);
         assertTrue(f.exists());
 
