@@ -287,7 +287,7 @@ function resourceLoadedSuccessfully() {
         }
 
         try {
-            $("table").DataTable();
+            $("table.auto-init").DataTable();
         } catch (e) {
             console.log(`Failed to initialize DataTable: ${e}`);
         }
