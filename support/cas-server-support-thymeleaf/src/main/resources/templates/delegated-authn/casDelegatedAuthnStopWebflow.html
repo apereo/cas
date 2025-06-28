@@ -31,7 +31,7 @@
 
                 <div class="mdc-data-table table-responsive w-100">
                     <table id="errorTable" th:if="${error != null or reason != null or code != null or description != null}"
-                        class="table table-striped w-100" aria-label="Error information">
+                        class="table table-striped w-100 auto-init" aria-label="Error information">
                         <thead>
                             <tr class="mdc-data-table__header-row">
                                 <th class="mdc-data-table__header-cell" th:text="#{screen.delegation.unauthz.error.title}">Error</th>
