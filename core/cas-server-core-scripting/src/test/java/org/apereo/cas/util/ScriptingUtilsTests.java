@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import java.nio.file.Files;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.scripting.ScriptingUtils;
@@ -15,6 +14,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.Map;

@@ -1,13 +1,10 @@
 package org.apereo.cas.config;
 
-import java.nio.file.Files;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-
-import java.io.File;
-
+import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

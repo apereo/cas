@@ -1,10 +1,8 @@
 package org.apereo.cas.oidc.jwks;
 
-import java.nio.file.Files;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.util.ResourceUtils;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.jose4j.jwk.JsonWebKey;
@@ -17,13 +15,12 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.TestPropertySource;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
