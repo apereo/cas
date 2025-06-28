@@ -1,5 +1,6 @@
 package org.apereo.cas.consent;
 
+import java.nio.file.Files;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
 import lombok.val;
@@ -45,7 +46,7 @@ class JsonConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Test
     void verifyDisposedRepository() throws Throwable {
-        val repo = new JsonConsentRepository(new FileSystemResource(File.createTempFile("records", ".json")));
+        val repo = new JsonConsentRepository(new FileSystemResource(Files.createTempFile("records", ".json").toFile()));
         assertNotNull(repo.getWatcherService());
         assertDoesNotThrow(repo::destroy);
     }

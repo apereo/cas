@@ -54,7 +54,7 @@ class JsonWebKeySetStringCipherExecutorTests {
 
     @Test
     void verifyEmptyFileForEncoding() throws Throwable {
-        val keystoreFile = File.createTempFile("keystore", ".json");
+        val keystoreFile = Files.createTempFile("keystore", ".json").toFile();
         FileUtils.write(keystoreFile, "{ \"keys\": [] }", StandardCharsets.UTF_8);
         try (val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile)) {
             assertThrows(IllegalArgumentException.class, () -> cipher.encode("value", EMPTY_OBJECT_ARRAY));
@@ -66,7 +66,7 @@ class JsonWebKeySetStringCipherExecutorTests {
         val jwksKeystore = new ClassPathResource("sample.jwks");
         val data = IOUtils.toString(jwksKeystore.getInputStream(), StandardCharsets.UTF_8);
         val json = new JsonWebKeySet(data).toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
-        val keystoreFile = File.createTempFile("keystorepub", ".json");
+        val keystoreFile = Files.createTempFile("keystorepub", ".json").toFile();
         FileUtils.write(keystoreFile, json, StandardCharsets.UTF_8);
         try (val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile, Optional.of("cas"))) {
             assertThrows(IllegalArgumentException.class, () -> cipher.encode("value", EMPTY_OBJECT_ARRAY));
@@ -75,7 +75,7 @@ class JsonWebKeySetStringCipherExecutorTests {
 
     @Test
     void verifyEmptyFileForDecoding() throws Throwable {
-        val keystoreFile = File.createTempFile("keystore", ".json");
+        val keystoreFile = Files.createTempFile("keystore", ".json").toFile();
         FileUtils.write(keystoreFile, "{ \"keys\": [] }", StandardCharsets.UTF_8);
         try (val cipher = new JsonWebKeySetStringCipherExecutor(keystoreFile, Optional.of("kid"))) {
             assertThrows(IllegalArgumentException.class, () -> cipher.decode("value", EMPTY_OBJECT_ARRAY));

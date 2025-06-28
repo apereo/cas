@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.properties;
 
+import java.nio.file.Files;
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 
 import org.junit.jupiter.api.Tag;
@@ -19,9 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class AddPropertiesToConfigurationCommandTests extends BaseCasShellCommandTests {
     @Test
     void verifyOperation() throws Throwable {
-        var file = File.createTempFile("cas", ".properties");
+        var file = Files.createTempFile("cas", ".properties").toFile();
         exportProperties(file);
-        file = File.createTempFile("cas", ".yml");
+        file = Files.createTempFile("cas", ".yml").toFile();
         exportProperties(file);
     }
 

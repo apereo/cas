@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.web.controllers.rpt;
 
+import java.nio.file.Files;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 
 import lombok.val;
@@ -37,7 +38,7 @@ class UmaRequestingPartyTokenJwksEndpointControllerTests extends BaseUmaEndpoint
 
     @Test
     void verifyBadFile() throws Throwable {
-        val file = File.createTempFile("uma", ".jwks");
+        val file = Files.createTempFile("uma", ".jwks").toFile();
         FileUtils.write(file, "@@", StandardCharsets.UTF_8);
         casProperties.getAuthn().getOauth().getUma().getRequestingPartyToken()
             .getJwksFile().setLocation(new FileSystemResource(file));

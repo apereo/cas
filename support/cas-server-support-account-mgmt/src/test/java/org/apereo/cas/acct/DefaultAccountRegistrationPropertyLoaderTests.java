@@ -1,5 +1,6 @@
 package org.apereo.cas.acct;
 
+import java.nio.file.Files;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ class DefaultAccountRegistrationPropertyLoaderTests {
             .label("cas.screen.acct.label.lastName")
             .required(true)
             .build());
-        val resource = new FileSystemResource(File.createTempFile("accounts", ".json"));
+        val resource = new FileSystemResource(Files.createTempFile("accounts", ".json").toFile());
         val loader = new DefaultAccountRegistrationPropertyLoader(resource);
         loader.store(map);
         assertFalse(loader.load().isEmpty());

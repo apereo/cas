@@ -1,5 +1,6 @@
 package org.apereo.cas.metadata;
 
+import java.nio.file.Files;
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -34,7 +35,7 @@ class CasConfigurationMetadataRepositoryTests {
             .build());
         assertFalse(properties.properties().isEmpty());
 
-        val file = File.createTempFile("config", ".yml");
+        val file = Files.createTempFile("config", ".yml").toFile();
         CasConfigurationMetadataCatalog.export(file, properties);
         assertTrue(file.exists());
 

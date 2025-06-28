@@ -1,5 +1,6 @@
 package org.apereo.cas.aws;
 
+import java.nio.file.Files;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ class ChainingAWSCredentialsProviderTests {
 
     @Test
     void verifyInstance() throws Throwable {
-        val path = File.createTempFile("props", ".txt").getCanonicalPath();
+        val path = Files.createTempFile("props", ".txt").toFile().getCanonicalPath();
         val p = (AwsCredentialsProviderChain) ChainingAWSCredentialsProvider.getInstance("accesskey", "secretKey",
             "profilePath", path);
         val credentials = p.resolveCredentials();
