@@ -46,6 +46,8 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
 
     protected final TicketRegistry ticketRegistry;
 
+    protected final CasConfigurationProperties casProperties;
+
     @Override
     protected Event doPreExecute(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
