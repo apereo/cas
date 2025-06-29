@@ -26,5 +26,11 @@ async function impersonate(page, surrogate, user) {
     await impersonate(page, "casperson1", "casuser");
     await cas.separator();
     await impersonate(page, "casperson2", "casuser");
+    await cas.separator();
+    await impersonate(page, "casperson1", "notcasuser");
+    await cas.separator();
+    await impersonate(page, "affiliate0", "casuser");
+    await cas.separator();
+    await impersonate(page, "affiliate0", "notcasuser");
     await browser.close();
 })();
