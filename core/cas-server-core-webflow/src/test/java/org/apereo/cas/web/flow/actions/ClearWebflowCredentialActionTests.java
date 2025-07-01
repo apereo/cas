@@ -29,6 +29,7 @@ class ClearWebflowCredentialActionTests {
         verifyAction(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
         verifyAction(CasWebflowConstants.TRANSITION_ID_ERROR);
     }
+    
     private void verifyAction(final String currentEvent) throws Exception {
         val context = MockRequestContext.create();
 

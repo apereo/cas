@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -37,10 +38,13 @@ class YubiKeyMultifactorAuthenticationDeviceProviderActionTests {
     @Autowired
     @Qualifier("yubiKeyDeviceProviderAction")
     private MultifactorAuthenticationDeviceProviderAction yubiKeyDeviceProviderAction;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
     
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuseryubikey");
         WebUtils.putAuthentication(authentication, context);
         assertNull(yubiKeyDeviceProviderAction.execute(context));

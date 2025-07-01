@@ -40,7 +40,7 @@ class AccountManagementRegistrationCaptchaWebflowConfigurerTests extends BaseWeb
 
     @Test
     void verifyCaptcha() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         initCaptchaAction.execute(context);
         assertTrue(AccountRegistrationUtils.isAccountRegistrationCaptchaEnabled(context));
     }
