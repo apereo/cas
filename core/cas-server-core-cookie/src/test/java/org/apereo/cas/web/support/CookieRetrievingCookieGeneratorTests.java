@@ -220,7 +220,6 @@ class CookieRetrievingCookieGeneratorTests {
     @Test
     void verifyTgcCookieForNoRememberMeByAuthnRequest() throws Throwable {
         val ctx = getCookieGenerationContext();
-        // set the max age to -1 (session cookie) as ticketGrantingCookieBuilder
         ctx.setMaxAge(-1);
         val cookieValueManager = new NoOpCookieValueManager(tenantExtractor);
         val gen = CookieUtils.buildCookieRetrievingGenerator(cookieValueManager, ctx);
