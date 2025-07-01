@@ -317,18 +317,6 @@ function resourceLoadedSuccessfully() {
             hljs.highlightAll();
         }
     });
-
-    /*
-    revealPasswordButton.addEventListener("click", handleSwitchToggle, false);
-
-function handleSwitchToggle() {
-    if (revealPasswordButton.getAttribute("aria-checked") === "true") {
-        revealPasswordButton.setAttribute("aria-checked", "false");
-    } else {
-        revealPasswordButton.setAttribute("aria-checked", "true");
-    }
-}
-     */
 }
 
 function autoHideElement(id, timeout = 1500) {

@@ -19,7 +19,7 @@ docker compose -f $COMPOSE_FILE down >/dev/null 2>/dev/null || true
 docker compose -f $COMPOSE_FILE up -d
 docker logs syncope-syncope-1 -f &
 printgreen "Waiting for Apache Syncope server to come online...\n"
-sleep 15
+sleep 25
 until $(curl --output /dev/null --silent --head --fail http://localhost:18080/syncope/); do
     printf '.'
     sleep 1
