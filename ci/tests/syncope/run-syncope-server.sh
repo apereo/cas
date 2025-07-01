@@ -12,7 +12,6 @@ function printgreen() {
   printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
 }
 
-
 printgreen "Running Apache Syncope docker container..."
 COMPOSE_FILE=./ci/tests/syncope/docker-compose.yml
 test -f $COMPOSE_FILE || COMPOSE_FILE=docker-compose.yml
@@ -20,14 +19,14 @@ docker compose -f $COMPOSE_FILE down >/dev/null 2>/dev/null || true
 docker compose -f $COMPOSE_FILE up -d
 docker logs syncope-syncope-1 -f &
 printgreen "Waiting for Apache Syncope server to come online...\n"
-sleep 30
+sleep 15
 until $(curl --output /dev/null --silent --head --fail http://localhost:18080/syncope/); do
     printf '.'
     sleep 1
 done
 printgreen "\nApache Syncope docker container is running."
 
-echo "Creating CSV Dir conn instance"
+echo "Creating CSV Dir connector instance"
 curl -X 'POST' \
   'http://localhost:18080/syncope/rest/connectors' \
   -H 'accept: */*' \
@@ -475,7 +474,7 @@ curl -X 'POST' \
     "anyTypeClass": "BaseUser"
 }'
 
-echo "Creating givenName plain schema..."
+echo -e "Creating givenName plain schema...\n"
 curl -X 'POST' \
   'http://localhost:18080/syncope/rest/schemas/PLAIN' \
   -H 'accept: */*' \
@@ -493,7 +492,48 @@ if [ $? -ne 0 ]; then
 fi
 echo -e "\n-----------------\n"
 
-echo "Creating sample user: syncopecas..."
+echo -e "Creating security question...\n"
+curl -X 'POST' \
+  'http://localhost:18080/syncope/rest/securityQuestions' \
+  -H 'accept: */*' \
+  -H 'X-Syncope-Domain: Master' \
+  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "key": "DefaultSecurityQuestion",
+    "content": "What is your favorite city?"
+}'
+if [ $? -ne 0 ]; then
+  printred "Failed to create security question"
+  exit 1
+fi
+
+SECURITY_QUESTION_KEY=$(curl -X 'GET' \
+  'http://localhost:18080/syncope/rest/securityQuestions' \
+  -H 'accept: */*' \
+  -H 'X-Syncope-Domain: Master' \
+  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
+  -H 'Content-Type: application/json' | jq -r '.[0].key')
+echo -e "Created security question with key ${SECURITY_QUESTION_KEY}\n"
+echo -e "\n-----------------\n"
+
+echo -e "Updating configuration parameters...\n"
+curl -X 'POST' \
+  'http://localhost:18080/syncope/rest/keymaster/conf/return.password.value' \
+  -H 'accept: */*' \
+  -H 'X-Syncope-Domain: Master' \
+  -H 'Authorization: Basic c3luY29wZTpzeW5jb3Bl' \
+  -H 'Content-Type: application/json' \
+  -d 'true'
+if [ $? -ne 0 ]; then
+  printred "Failed to update parameters"
+  exit 1
+fi
+echo -e "\n-----------------\n"
+
+
+
+echo -e "Creating sample user: syncopecas...\n"
 curl -X 'POST' \
   'http://localhost:18080/syncope/rest/users?storePassword=true' \
   -H 'accept: application/json' \
@@ -506,6 +546,8 @@ curl -X 'POST' \
         "realm": "/",
         "username": "syncopecas",
         "password": "Mellon",
+        "securityQuestion": "'"${SECURITY_QUESTION_KEY}"'",
+        "securityAnswer": "Paris",
         "plainAttrs": [
             {
               "schema": "email",
@@ -538,7 +580,7 @@ if [ $? -ne 0 ]; then
 fi
 echo -e "\n-----------------\n"
 
-echo "Creating sample user: casuser..."
+echo -e "Creating sample user: casuser...\n"
 curl -X 'POST' \
   'http://localhost:18080/syncope/rest/users?storePassword=true' \
   -H 'accept: application/json' \
@@ -556,6 +598,12 @@ curl -X 'POST' \
       "schema": "email",
       "values": [
         "casuser@syncope.org"
+      ]
+    },
+    {
+      "schema": "phoneNumber",
+      "values": [
+        "3477464523"
       ]
     }
   ],
