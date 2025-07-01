@@ -68,6 +68,12 @@ public class PasswordManagementProperties implements CasFeatureModule, Serializa
     private JsonPasswordManagementProperties json = new JsonPasswordManagementProperties();
 
     /**
+     * Manage account passwords in Syncope.
+     */
+    @NestedConfigurationProperty
+    private SyncopePasswordManagementProperties syncope = new SyncopePasswordManagementProperties();
+
+    /**
      * Settings related to resetting password.
      */
     @NestedConfigurationProperty

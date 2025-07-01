@@ -2,8 +2,6 @@ package org.apereo.cas.syncope;
 
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
-import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
-import org.apereo.cas.config.CasSyncopeAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
@@ -28,11 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfListeningOnPort(port = 18080)
-@SpringBootTest(classes = {
-    CasSyncopeAutoConfiguration.class,
-    CasAccountManagementWebflowAutoConfiguration.class,
-    BaseSyncopeTests.SharedTestConfiguration.class
-}, properties = {
+@SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class, properties = {
     "cas.account-registration.provisioning.syncope.url=http://localhost:18080/syncope",
     "cas.account-registration.provisioning.syncope.basic-auth-username=admin",
     "cas.account-registration.provisioning.syncope.basic-auth-password=password"

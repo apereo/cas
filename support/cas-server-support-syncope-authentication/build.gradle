@@ -19,13 +19,13 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-multitenancy")
     
+    implementation project(":support:cas-server-support-pm-core")
     implementation project(":support:cas-server-support-person-directory-core")
     implementation project(":support:cas-server-support-actions-core")
     
     compileOnly project(":support:cas-server-support-account-mgmt-api")
     compileOnly project(":support:cas-server-support-passwordless-api")
     compileOnly project(":support:cas-server-support-passwordless-webflow")
-
     
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
@@ -34,6 +34,8 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+
+    testImplementation libraries.springboottomcat
     
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-webflow")
@@ -58,4 +60,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-account-mgmt-api")
     testImplementation project(":support:cas-server-support-account-mgmt")
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-pm")
+    testImplementation project(":support:cas-server-support-pm-webflow")
+    testImplementation project(":support:cas-server-support-webconfig")
 }
