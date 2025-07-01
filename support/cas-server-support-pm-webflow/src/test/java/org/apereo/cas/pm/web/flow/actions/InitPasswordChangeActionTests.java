@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class InitPasswordChangeActionTests extends BasePasswordManagementActionTests {
     @Test
     void verifyAction() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val attributes = new LocalAttributeMap<Object>(CasWebflowConstants.TRANSITION_ID_ERROR, new FailedLoginException());
         attributes.put(Credential.class.getName(), RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         context.setCurrentEvent(new Event(this, "eventId", attributes));

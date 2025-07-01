@@ -29,7 +29,7 @@ class OidcCasWebflowLoginContextProviderTests extends AbstractOidcTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         assertTrue(oidcCasWebflowLoginContextProvider.getCandidateUsername(context).isEmpty());
         context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "https://localhost/cas?service=https://example.net&login_hint=casuser");
         assertTrue(oidcCasWebflowLoginContextProvider.getCandidateUsername(context).isPresent());

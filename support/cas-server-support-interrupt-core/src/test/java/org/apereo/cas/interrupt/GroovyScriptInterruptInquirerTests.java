@@ -9,7 +9,9 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,6 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = CasCoreScriptingAutoConfiguration.class)
 class GroovyScriptInterruptInquirerTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyResponseCanBeFoundFromGroovy() throws Throwable {
         val inquirer = new GroovyScriptInterruptInquirer(new ClassPathResource("interrupt.groovy"));
@@ -31,7 +36,7 @@ class GroovyScriptInterruptInquirerTests {
             CoreAuthenticationTestUtils.getRegisteredService(),
             CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-            MockRequestContext.create());
+            MockRequestContext.create(applicationContext));
         assertNotNull(response);
         assertFalse(response.isBlock());
         assertTrue(response.isSsoEnabled());

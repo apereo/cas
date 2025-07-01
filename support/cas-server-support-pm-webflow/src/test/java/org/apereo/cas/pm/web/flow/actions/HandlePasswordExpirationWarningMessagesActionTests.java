@@ -8,6 +8,8 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 
@@ -21,9 +23,12 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 class HandlePasswordExpirationWarningMessagesActionTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyAction() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val exception = new PasswordExpiringWarningMessageDescriptor("About to expire", 10);
         val event = new Event(this, "success",

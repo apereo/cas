@@ -19,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.List;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,6 +46,9 @@ class GoogleAuthenticatorAuthenticationDeviceProviderActionTests {
     @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyOperation() throws Throwable {
         val acct = GoogleAuthenticatorAccount.builder()
@@ -56,7 +60,7 @@ class GoogleAuthenticatorAuthenticationDeviceProviderActionTests {
             .build();
         googleAuthenticatorAccountRegistry.save(acct);
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(acct.getUsername()), context);
         assertNull(googleAccountDeviceProviderAction.execute(context));

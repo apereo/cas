@@ -44,6 +44,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -102,6 +103,9 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
     @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
     protected CasWebflowExecutionPlan casWebflowExecutionPlan;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @BeforeEach
     void setup() {
         casWebflowExecutionPlan.execute();
@@ -114,7 +118,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
 
     @Test
     void verifyFlowExecutorByClient() throws Throwable {
-        val context = MockRequestContext.create().withLocale(Locale.ENGLISH);
+        val context = MockRequestContext.create(applicationContext).withLocale(Locale.ENGLISH);
         val map = new LocalAttributeMap<>();
         getFlowExecutor().launchExecution("login", map, context.getExternalContext());
     }

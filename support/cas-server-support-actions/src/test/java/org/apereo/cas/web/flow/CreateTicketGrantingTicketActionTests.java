@@ -34,10 +34,10 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET)
     private Action action;
-
+    
     @Test
     void verifySkipTgt() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val tgt = new MockTicketGrantingTicket("casuser-new");
         val added = (TicketGrantingTicket) getTicketRegistry().addTicket(tgt);
@@ -50,7 +50,7 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
 
     @Test
     void verifyCreateTgt() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         prepareRequestContextForAuthentication(context, authentication);
@@ -63,7 +63,7 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
 
     @Test
     void verifyCreateTgtWithWarnings() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val handlerResult = new DefaultAuthenticationHandlerExecutionResult();

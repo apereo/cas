@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountNotFoundException;
@@ -68,6 +69,9 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
     @Autowired
     @Qualifier(TenantExtractor.BEAN_NAME)
     private TenantExtractor tenantExtractor;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
     
     private CasGoogleAuthenticator googleAuthenticator;
 
@@ -93,7 +97,7 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
             new GoogleAuthenticatorOneTimeTokenCredentialValidator(googleAuthenticator, tokenRepository, tokenCredentialRepository),
             null, new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
 
-        val context = MockRequestContext.create().setClientInfo();
+        val context = MockRequestContext.create(applicationContext).setClientInfo();
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
     }
 

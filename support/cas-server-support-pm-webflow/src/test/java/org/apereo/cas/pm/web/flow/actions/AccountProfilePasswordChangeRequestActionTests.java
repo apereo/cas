@@ -33,7 +33,7 @@ class AccountProfilePasswordChangeRequestActionTests extends BasePasswordManagem
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
