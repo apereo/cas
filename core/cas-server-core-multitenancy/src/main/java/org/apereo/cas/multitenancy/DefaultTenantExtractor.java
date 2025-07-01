@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
+
 import java.util.Optional;
 
 /**
@@ -21,6 +23,8 @@ public class DefaultTenantExtractor implements TenantExtractor {
 
     private final TenantsManager tenantsManager;
 
+    private final ApplicationContext applicationContext;
+    
     private final CasConfigurationProperties casProperties;
 
     @Override

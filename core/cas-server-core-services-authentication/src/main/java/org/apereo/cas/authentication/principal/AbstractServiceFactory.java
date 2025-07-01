@@ -1,23 +1,23 @@
 package org.apereo.cas.authentication.principal;
 
-import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.multitenancy.TenantDefinition;
-import org.apereo.cas.multitenancy.TenantExtractor;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.SimpleUrlValidator;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.text.StringEscapeUtils;
-import org.apache.hc.core5.net.URIBuilder;
-import org.springframework.core.Ordered;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.hc.core5.net.URIBuilder;
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.UrlValidator;
+import org.springframework.core.Ordered;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,7 +94,8 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         if (service instanceof final WebApplicationService webApplicationService) {
             val originalUrl = webApplicationService.getOriginalUrl();
             try {
-                if (StringUtils.isNotBlank(originalUrl) && SimpleUrlValidator.getInstance().isValid(originalUrl)) {
+                val urlValidator = tenantExtractor.getApplicationContext().getBean(UrlValidator.BEAN_NAME, UrlValidator.class);
+                if (StringUtils.isNotBlank(originalUrl) && urlValidator.isValid(originalUrl)) {
                     val queryParams = FunctionUtils.doUnchecked(() -> new URIBuilder(originalUrl).getQueryParams());
                     queryParams.forEach(pair -> {
                         val values = CollectionUtils.wrapArrayList(StringEscapeUtils.escapeHtml4(pair.getValue()));

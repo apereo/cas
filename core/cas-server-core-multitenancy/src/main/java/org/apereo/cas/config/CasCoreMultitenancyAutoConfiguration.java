@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import lombok.val;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.multitenancy.DefaultTenantExtractor;
@@ -8,13 +10,12 @@ import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.multitenancy.TenantsManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -43,10 +44,11 @@ public class CasCoreMultitenancyAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = TenantExtractor.BEAN_NAME)
     public TenantExtractor tenantExtractor(
+        final ApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier(TenantsManager.BEAN_NAME)
         final TenantsManager tenantsManager) {
-        return new DefaultTenantExtractor(tenantsManager, casProperties);
+        return new DefaultTenantExtractor(tenantsManager, applicationContext, casProperties);
     }
     
     @Bean

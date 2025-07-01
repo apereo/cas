@@ -2,6 +2,7 @@ package org.apereo.cas.multitenancy;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,6 +33,13 @@ public interface TenantExtractor {
      */
     TenantsManager getTenantsManager();
 
+    /**
+     * Gets application context.
+     *
+     * @return the application context
+     */
+    ApplicationContext getApplicationContext();
+    
     /**
      * Extract tenant id from request.
      *
