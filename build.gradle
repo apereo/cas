@@ -81,24 +81,23 @@ def isArtifactSigningRequired = {
     publishReleases && !skipArtifactSigning
 }
 
-if ("${releaseRepositoryUrl}".contains("oss.sonatype.org")) {
-    apply plugin: "io.github.gradle-nexus.publish-plugin"
-    nexusPublishing {
-        packageGroup = "org.apereo"
-        repositories {
-            sonatype {
-                stagingProfileId = "${rootProject.sonatypeStagingProfileId}"
-                username = "${repositoryUsername}"
-                password = "${repositoryPassword}"
-            }
+apply plugin: "io.github.gradle-nexus.publish-plugin"
+nexusPublishing {
+    packageGroup = "org.apereo"
+    repositories {
+        sonatype {
+            username = "${repositoryUsername}"
+            password = "${repositoryPassword}"
+            nexusUrl.set(uri("${releaseRepositoryUrl}"))
+            snapshotRepositoryUrl.set(uri("${snapshotsRepositoryUrl}"))
         }
+    }
 
-        clientTimeout = java.time.Duration.ofSeconds(120)
-        connectTimeout = java.time.Duration.ofSeconds(120)
-        transitionCheckOptions {
-            maxRetries.set(100)
-            delayBetween.set(java.time.Duration.ofSeconds(60))
-        }
+    clientTimeout = java.time.Duration.ofSeconds(120)
+    connectTimeout = java.time.Duration.ofSeconds(120)
+    transitionCheckOptions {
+        maxRetries.set(100)
+        delayBetween.set(java.time.Duration.ofSeconds(60))
     }
 }
 
@@ -266,37 +265,6 @@ subprojects {
                             }
                             pom.withXml {
                                 createPomRepositories(asNode())
-                            }
-                        }
-                    }
-                }
-
-                if (!"${releaseRepositoryUrl}".contains("oss.sonatype.org")) {
-                    repositories {
-                        if (rootProject.publishReleases) {
-                            maven {
-                                name "CAS-Releases"
-                                url "${releaseRepositoryUrl}"
-                                mavenContent {
-                                    releasesOnly()
-                                }
-                                credentials {
-                                    username "${repositoryUsername}"
-                                    password "${repositoryPassword}"
-                                }
-                            }
-                        }
-                        if (rootProject.publishSnapshots) {
-                            maven {
-                                name "CAS-Snapshots"
-                                url "${snapshotsRepositoryUrl}"
-                                mavenContent {
-                                    snapshotsOnly()
-                                }
-                                credentials {
-                                    username "${repositoryUsername}"
-                                    password "${repositoryPassword}"
-                                }
                             }
                         }
                     }
