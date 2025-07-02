@@ -266,7 +266,7 @@ gradleErrorProne = "4.3.0"
 gradleGraalVmNative = "0.10.6"
 gradleSonarqube = "6.2.0.5505"
 gradleNexusPublishing = "2.0.0"
-gradleJib = "3.4.5"
+gradleJib = "3.4.6"
 
 [libraries]
 ace-builds = { module = "org.webjars.npm:ace-builds", version.ref = "aceEditor" }
