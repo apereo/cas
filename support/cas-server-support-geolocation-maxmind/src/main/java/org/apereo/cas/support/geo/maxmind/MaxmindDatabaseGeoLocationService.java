@@ -35,7 +35,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @With
-@Setter
 public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationService {
     protected final MaxmindProperties properties;
 

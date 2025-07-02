@@ -889,6 +889,11 @@ select.palantir {
     vertical-align: sub;
 }
 
+#fieldsLegend {
+    font-size: 14px;
+    font-style: italic;
+}
+
 .dataTables_wrapper {
     margin-left: 5px;
     margin-top: 5px;
@@ -952,8 +957,6 @@ select.palantir {
     margin-left: 10px;
     margin-top: 2px;
 }
-
-/* oddly, the auto right and left margins caused the login form to not be centered in IE */
 
 @media all and (min-width: 768px) {
     .login-section {
@@ -1073,7 +1076,6 @@ foreignObject {
 pre code.hljs {
     box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.9);
 }
-
 
 .fade-in {
     animation: appear 0.4s ease-in-out forwards;

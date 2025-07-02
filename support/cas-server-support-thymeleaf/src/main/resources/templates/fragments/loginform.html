@@ -59,7 +59,6 @@
                          th:if="${#fields.hasErrors('*')}" role="alert">
                         <h2 th:utext="#{screen.authentication.error.title}">Authentication Failure</h2>
                         <p th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}">Example error</p>
-                        <!--<a href="#" class="close" data-dismiss="alert" th:aria-label="#{screen.pm.button.close}">&times;</a>-->
                     </div>
                     <section class="cas-field form-group my-3" id="usernameSection">
                         <label for="username"
@@ -80,11 +79,12 @@
                                    th:accesskey="#{screen.welcome.label.netid.accesskey}"
                                    autocapitalize="none"
                                    spellcheck="false"
-                                   autocomplete="username" required />
+                                   autocomplete="username" required/>
                         </label>
 
                         <div class="mdc-text-field-helper-line invalid-feedback">
-                            <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
+                            <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
+                                 aria-hidden="true">
                                 <span id="usernameValidationMessage" th:utext="#{username.required}"></span>
                             </div>
                         </div>
@@ -94,10 +94,10 @@
                             let username = /*[[${#cas.getLoginFormUsername(#vars)}]]*/;
                             let disabled = /*[[${#cas.isLoginFormUsernameInputDisabled(#vars)}]]*/;
 
-                            if (username != null && username !== '') {
-                                $('#username').val(username);
+                            if (username != null && username !== "") {
+                                $("#username").val(username);
                                 if (disabled) {
-                                    $('#usernameSection').hide();
+                                    $("#usernameSection").hide();
                                 }
                             }
                             /*]]>*/
@@ -111,7 +111,8 @@
                                     <span class="mdc-notched-outline">
                                         <span class="mdc-notched-outline__leading"></span>
                                         <span class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label" th:utext="#{screen.welcome.label.password}">Password</span>
+                                            <span class="mdc-floating-label"
+                                                  th:utext="#{screen.welcome.label.password}">Password</span>
                                         </span>
                                         <span class="mdc-notched-outline__trailing"></span>
                                     </span>
@@ -130,7 +131,8 @@
                                 </button>
                             </label>
                             <div class="mdc-text-field-helper-line invalid-feedback">
-                                <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg" aria-hidden="true">
+                                <div class="mdc-text-field-helper-text mdc-text-field-helper-text--validation-msg"
+                                     aria-hidden="true">
                                     <span id="passwordValidationMessage" th:utext="#{password.required}"></span>
                                 </div>
                             </div>
@@ -139,7 +141,7 @@
 
                         <div class="mdc-text-field-helper-line invalid-feedback caps-warn">
                             <div class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg text-danger">
-                                <span th:utext="#{screen.capslock.on}" />
+                                <span th:utext="#{screen.capslock.on}"/>
                             </div>
                         </div>
                     </section>
@@ -167,7 +169,8 @@
                                         <span class="mdc-select__selected-text"/>
                                     </span>
                                     <span class="mdc-select__dropdown-icon">
-                                        <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5" focusable="false">
+                                        <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5"
+                                             focusable="false">
                                             <polygon class="mdc-select__dropdown-icon-inactive" stroke="none"
                                                      fill-rule="evenodd" points="7 10 12 15 17 10">
                                             </polygon>
@@ -263,9 +266,23 @@
                         <script type="text/javascript">
                             let client = new ClientJS();
                             let fingerprint = client.getFingerprint();
-                            $('[name="deviceFingerprint"]').val(fingerprint);
+                            $("[name=\"deviceFingerprint\"]").val(fingerprint);
                         </script>
                     </section>
+
+                    <p id="fieldsLegend"
+                       class="text-muted mb-3"
+                       th:if="${#cas.isTrue(#themes.code('cas.login-form.legend.enabled'))}"
+                       th:utext="#{screen.welcome.fields.legend}">
+                        * Indicates required fields
+                    </p>
+
+                    <div id="termsOfUse"
+                         class="text-muted mb-3"
+                         th:if="${#cas.isTrue(#themes.code('cas.login-form.terms-of-use.enabled'))}"
+                         th:utext="#{screen.welcome.termsofuse}">
+                        You agree to the terms of use by logging in.
+                    </div>
 
                     <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')}"/>
                 </div>
@@ -295,7 +312,7 @@
                         function x509login() {
                             let url =  /*[[${x509ClientAuthLoginEndpointUrl}]]*/;
                             url += window.location.search;
-                            window.location.assign(url)
+                            window.location.assign(url);
                         }
 
                         /*]]>*/
@@ -310,7 +327,7 @@
 
             <span id="webauthnLoginPanel" th:if="${webAuthnPrimaryAuthenticationEnabled}">
                 <script type="text/javascript">
-                    $('#webauthnLoginPanel').show();
+                    $("#webauthnLoginPanel").show();
                 </script>
 
                 <div th:replace="~{fragments/webAuthnLogin :: webAuthnLogin}"/>
@@ -330,9 +347,9 @@
                 var i = /*[[@{#{screen.welcome.button.loginwip}}]]*/
                 var j = /*[[@{#{screen.welcome.button.login}}]]*/
                     /*]]>*/
-                    $(window).on('pageshow', function () {
-                        $(':submit').prop('disabled', false);
-                        $(':submit').attr('value', j);
+                    $(window).on("pageshow", function () {
+                        $(":submit").prop("disabled", false);
+                        $(":submit").attr("value", j);
                     });
                 $(document).ready(function () {
                     $("#fm1").submit(function () {
