@@ -73,7 +73,7 @@ jobs:
            max_attempts: 3
            retry_on: error
            retry_wait_seconds: 10
-           timeout_minutes: 50
+           timeout_minutes: 70
            shell: bash
            command: ./ci/release.sh
   ##########################################################################
