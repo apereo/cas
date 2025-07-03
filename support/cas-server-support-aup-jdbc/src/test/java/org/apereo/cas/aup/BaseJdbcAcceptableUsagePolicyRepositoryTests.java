@@ -31,7 +31,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.support.TransactionOperations;
 import javax.sql.DataSource;
 import java.util.List;
@@ -67,9 +66,7 @@ import java.util.Map;
 })
 @ExtendWith(CasTestExtension.class)
 public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
-    @Autowired
-    protected ConfigurableApplicationContext applicationContext;
-    
+
     @Autowired
     @Qualifier("acceptableUsagePolicyDataSource")
     protected DataSource acceptableUsagePolicyDataSource;
