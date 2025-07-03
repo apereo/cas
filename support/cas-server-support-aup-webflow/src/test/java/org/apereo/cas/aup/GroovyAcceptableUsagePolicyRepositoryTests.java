@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,9 +30,6 @@ class GroovyAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePoli
     @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
-    @Autowired
-    protected ConfigurableApplicationContext applicationContext;
-    
     @Test
     void verifyRepositoryActionWithAdvancedConfig() throws Throwable {
         verifyRepositoryAction("casuser", CollectionUtils.wrap("aupAccepted", "false"));
