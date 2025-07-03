@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
-export DOCKER_IMAGE="localstack/localstack:4.5.0"
+export DOCKER_IMAGE="localstack/localstack:4.6.0"
 echo "Running localstack docker container..."
 docker stop localstack || true && docker rm localstack || true
 docker run --rm -d -e 'DEBUG=1' -e 'SERVICES=kinesis,firehose,ses,ssm,events,cloudwatch,logs,s3,s3api,secretsmanager,sqs,sts' \
