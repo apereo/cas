@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultLoginWebflowConfigurerRememberMeTests extends BaseWebflowConfigurerTests {
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);

@@ -56,7 +56,7 @@ class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
 
     @Test
     void verifyFailingOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val results = submitAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, results.getId());
     }

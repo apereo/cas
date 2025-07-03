@@ -42,7 +42,7 @@ class FinalizeAccountRegistrationActionTests extends BaseWebflowConfigurerTests 
 
     @BeforeEach
     void setup() throws Exception {
-        this.context = MockRequestContext.create();
+        this.context = MockRequestContext.create(applicationContext);
     }
 
     @Test

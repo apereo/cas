@@ -132,8 +132,7 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
             acceptableUsagePolicyDataSource,
             jdbcAcceptableUsagePolicyTransactionTemplate);
 
-        val context = MockRequestContext.create();
-
+        val context = MockRequestContext.create(applicationContext);
         val credentials = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
         val principal = CoreAuthenticationTestUtils.getPrincipal(credentials.getId(), profileAttributes);
         val auth = CoreAuthenticationTestUtils.getAuthentication(principal);

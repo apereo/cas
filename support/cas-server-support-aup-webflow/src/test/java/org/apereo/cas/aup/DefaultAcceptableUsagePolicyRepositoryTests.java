@@ -50,7 +50,7 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
         void verifyActionAcceptedGlobal() throws Throwable {
             val properties = new AcceptableUsagePolicyProperties();
             properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.GLOBAL);
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             val repo = getRepositoryInstance(properties);
             val authentication = CoreAuthenticationTestUtils.getAuthentication();
             authentication.getPrincipal().getAttributes().put(
@@ -72,7 +72,7 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
         void verifyActionNoAuthentication() throws Throwable {
             val properties = new AcceptableUsagePolicyProperties();
             properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             val repo = getRepositoryInstance(properties);
             assertThrows(AuthenticationException.class, () -> repo.verify(context));
         }

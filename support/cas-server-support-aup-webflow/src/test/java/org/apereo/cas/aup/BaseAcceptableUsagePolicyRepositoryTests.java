@@ -62,7 +62,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     protected CasConfigurationProperties casProperties;
 
     @Autowired
-    private ConfigurableApplicationContext applicationContext;
+    protected ConfigurableApplicationContext applicationContext;
 
     public abstract AcceptableUsagePolicyRepository getAcceptableUsagePolicyRepository();
 
@@ -77,7 +77,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
 
     protected void verifyFetchingPolicy(final RegisteredService service,
                                         final Authentication authentication, final boolean expectPolicyFound) throws Exception {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val flowDefinition = mock(Flow.class);
         when(flowDefinition.getApplicationContext()).thenReturn(applicationContext);
         context.setActiveFlow(flowDefinition);
@@ -106,7 +106,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     protected MockRequestContext getRequestContext(final String actualPrincipalId,
                                                    final Map<String, List<Object>> profileAttributes,
                                                    final Credential credential) throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val tgt = new MockTicketGrantingTicket(actualPrincipalId, credential, profileAttributes);
         ticketRegistry.addTicket(tgt);
         val principal = CoreAuthenticationTestUtils.getPrincipal(credential.getId(), profileAttributes);

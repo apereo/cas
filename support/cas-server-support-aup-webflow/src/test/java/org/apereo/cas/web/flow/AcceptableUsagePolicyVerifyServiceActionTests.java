@@ -36,7 +36,7 @@ class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptableUsageP
 
     @Test
     void verifyNoService() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         assertNull(acceptableUsagePolicyVerifyAction.execute(context));
     }
 
