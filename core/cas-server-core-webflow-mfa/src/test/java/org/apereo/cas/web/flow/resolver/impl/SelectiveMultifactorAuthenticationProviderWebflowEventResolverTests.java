@@ -144,7 +144,7 @@ class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests {
 
         @Test
         void verifyNoProvider() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             servicesManager.save(service);

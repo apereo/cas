@@ -121,7 +121,7 @@ class GoogleAuthenticatorSaveRegistrationActionTests {
             context.getFlowScope().put(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, acct);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, googleSaveAccountRegistrationAction.execute(context).getId());
 
-            context = MockRequestContext.create();
+            context = MockRequestContext.create(applicationContext);
             context.setParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, "987654");
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, googleSaveAccountRegistrationAction.execute(context).getId());
             assertEquals(HttpStatus.UNAUTHORIZED.value(), context.getHttpServletResponse().getStatus());
