@@ -8,8 +8,6 @@ import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import lombok.ToString;
 import lombok.val;
-import org.jooq.lambda.Unchecked;
-import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +17,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import java.time.ZonedDateTime;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
@@ -162,8 +161,8 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    public <T> void withTransaction(final CheckedConsumer<T> action) {
+    public <T> void withTransaction(final Consumer<T> action) {
         val transactionTemplate = new TransactionTemplate(this.transactionManager);
-        transactionTemplate.executeWithoutResult(Unchecked.consumer(ts -> action.accept(null)));
+        transactionTemplate.executeWithoutResult(ts -> super.withTransaction(action));
     }
 }
