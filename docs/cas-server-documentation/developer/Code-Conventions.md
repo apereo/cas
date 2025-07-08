@@ -5,13 +5,13 @@ title: CAS - Code Conventions
 
 # Code Conventions
 
-Following the lead of well established projects such as Apache and Eclipse, all code in CAS will comply with the [Code Conventions for the Java](http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html) and additionally with the CAS specific conventions listed below. Javadoc should exist on all publicly exported class members and follow the [standard guidelines](http://java.sun.com/j2se/javadoc/writingdoccomments/index.html).
+Following the lead of well established projects such as Apache and Eclipse, all code in CAS will comply with the [Code Conventions for the Java](https://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html) and additionally with the CAS specific conventions listed below. Javadoc should exist on all publicly exported class members and follow the [standard guidelines](https://java.sun.com/j2se/javadoc/writingdoccomments/index.html).
 
 The following document describes the set of coding conventions that are specific to the CAS project:
 
 ## Tooling
 
-- The current codebase takes advantage of the [Checkstyle engine](https://checkstyle.sourceforge.net) to [enforce conventions](https://github.com/Apereo/cas/blob/master/style/checkstyle-rules.xml) as much as possible. Certain number of checks are also executed using [SpotBugs](https://spotbugs.github.io/).
+- The current codebase takes advantage of the [Checkstyle engine](https://checkstyle.sourceforge.io/) to [enforce conventions](https://github.com/Apereo/cas/blob/master/style/checkstyle-rules.xml) as much as possible. Certain number of checks are also executed using [SpotBugs](https://spotbugs.github.io/).
 - Where appropriate, the codebase takes advantage of [Project Lombok](https://projectlombok.org/) for auto-generation of code constructs such as getters and setters, etc.
 
 ## Consistency
