@@ -45,7 +45,6 @@ public class FooClass {
         if (...) {
             return "foo";
         }
-         
         return bar;
     }
 }
@@ -78,8 +77,8 @@ We use [SLF4J](https://www.slf4j.org/index.html) for logging. Unless noted other
 [Parameterized log messages](https://www.slf4j.org/faq.html#logging_performance) are preferred:
 
 ```java
-final Object entry = new SomeObject();
-logger.debug("The entry is {}.", entry);
+var entry = new SomeObject();
+LOGGER.debug("The entry is [{}].", entry);
 ```
 
 This is the preferred method over checking for a particular logging level and concatenating parameters through String objects.
@@ -88,13 +87,15 @@ This is the preferred method over checking for a particular logging level and co
 
 Try to qualify all instance variables with `this` with the exception of the Logging instances.
 
-## Use of the `var` keyword
+## Use of the `var` and `val` keywords
 
 Local variables are commended to use Project Lombok's `val`. In situations where mutability is needed, `var` is recommended.
 
 ## Naming testcases
 
-If we were writing a JUnit testcase for code defined in `Foo.java`, we would name it `FooTests.java`. We do not allow any code which is not a testcase to have a name ending in "Tests". All testcase must use annotations `(@Test)` instead of extending `junit.framework.TestCase`. Furthermore, the usage of `junit.framework` classes is generally discouraged.
+If we were writing a JUnit testcase for code defined in `Foo.java`, we would 
+name it `FooTests.java`. We do not allow any code which is not a testcase to have a name ending in `Tests`. All testcase must 
+use annotations `(@Test)`.
 
 ## Injection
 
