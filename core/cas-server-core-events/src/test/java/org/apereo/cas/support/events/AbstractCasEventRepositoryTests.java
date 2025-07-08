@@ -14,6 +14,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -34,7 +35,7 @@ public abstract class AbstractCasEventRepositoryTests {
     @Test
     protected void verifyLoadOps() throws Throwable {
         val eventRepository = getEventRepository();
-        eventRepository.withTransaction(__ -> {
+        eventRepository.withTransaction(Unchecked.consumer(__ -> {
             eventRepository.removeAll();
 
             val dto1 = getCasEvent("example1");
@@ -52,13 +53,13 @@ public abstract class AbstractCasEventRepositoryTests {
 
             assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId()).findAny().isEmpty());
             assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId(), dt).findAny().isEmpty());
-        });
+        }));
     }
 
     @Test
     protected void verifySave() throws Throwable {
         val eventRepository = getEventRepository();
-        eventRepository.withTransaction(__ -> {
+        eventRepository.withTransaction(Unchecked.consumer(__ -> {
             eventRepository.removeAll();
 
             val dto1 = getCasEvent("casuser");
@@ -105,7 +106,7 @@ public abstract class AbstractCasEventRepositoryTests {
                     fail("Unexpected event");
                 }
             });
-        });
+        }));
     }
 
     public abstract CasEventRepository getEventRepository();
