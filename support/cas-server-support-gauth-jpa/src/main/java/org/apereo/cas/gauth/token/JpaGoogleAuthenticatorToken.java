@@ -35,4 +35,10 @@ public class JpaGoogleAuthenticatorToken extends GoogleAuthenticatorToken {
     @GenericGenerator(name = "native", strategy = "native")
     @SuppressWarnings("UnusedVariable")
     private long id;
+
+    @Override
+    public void setId(final long id) {
+        super.setId(id);
+        this.id = id;
+    }
 }

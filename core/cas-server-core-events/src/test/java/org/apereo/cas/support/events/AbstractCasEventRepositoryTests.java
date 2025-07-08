@@ -34,69 +34,77 @@ public abstract class AbstractCasEventRepositoryTests {
     @Test
     protected void verifyLoadOps() throws Throwable {
         val eventRepository = getEventRepository();
-        eventRepository.removeAll();
-        
-        val dto1 = getCasEvent("example1");
+        eventRepository.withTransaction(__ -> {
+            eventRepository.removeAll();
 
-        eventRepository.save(dto1);
-        val dt = ZonedDateTime.now(ZoneOffset.UTC).minusMonths(12);
-        val loaded = eventRepository.load(dt);
-        assertTrue(loaded.findAny().isPresent());
+            val dto1 = getCasEvent("example1");
 
-        assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId()).findAny().isEmpty());
-        assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId(), dt).findAny().isEmpty());
+            eventRepository.save(dto1);
+            val dt = ZonedDateTime.now(ZoneOffset.UTC).minusMonths(12);
+            val loaded = eventRepository.load(dt);
+            assertTrue(loaded.findAny().isPresent());
 
-        assertFalse(eventRepository.getEventsOfType(dto1.getType(), dt).findAny().isEmpty());
-        assertFalse(eventRepository.getEventsOfType(dto1.getType()).findAny().isEmpty());
+            assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId()).findAny().isEmpty());
+            assertFalse(eventRepository.getEventsOfTypeForPrincipal(dto1.getType(), dto1.getPrincipalId(), dt).findAny().isEmpty());
 
-        assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId()).findAny().isEmpty());
-        assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId(), dt).findAny().isEmpty());
+            assertFalse(eventRepository.getEventsOfType(dto1.getType(), dt).findAny().isEmpty());
+            assertFalse(eventRepository.getEventsOfType(dto1.getType()).findAny().isEmpty());
+
+            assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId()).findAny().isEmpty());
+            assertFalse(eventRepository.getEventsForPrincipal(dto1.getPrincipalId(), dt).findAny().isEmpty());
+        });
     }
 
     @Test
     protected void verifySave() throws Throwable {
-        getEventRepository().removeAll();
-        
-        val dto1 = getCasEvent("casuser");
-        getEventRepository().save(dto1);
+        val eventRepository = getEventRepository();
+        eventRepository.withTransaction(__ -> {
+            eventRepository.removeAll();
 
-        val dto2 = getCasEvent("casuser");
-        getEventRepository().save(dto2);
+            val dto1 = getCasEvent("casuser");
+            eventRepository.save(dto1);
 
-        val col = getEventRepository().load().toList();
-        assertEquals(2, col.size());
+            val dto2 = getCasEvent("casuser");
+            eventRepository.save(dto2);
 
-        assertNotEquals(dto2.getEventId(), dto1.getEventId(), "Created event IDs are equal but they should not be");
+            assertNotNull(CasEvent.from(dto1));
+            assertNotNull(CasEvent.from(dto2));
+            
+            val col = eventRepository.load().toList();
+            assertEquals(2, col.size());
 
-        val load2 = getEventRepository().load();
-        val loadedEvents = load2.map(CasEvent::getEventId).distinct().toList();
-        assertTrue(loadedEvents.stream().anyMatch(dto1.getEventId()::equals));
-        assertTrue(loadedEvents.stream().anyMatch(dto2.getEventId()::equals));
+            assertNotEquals(dto2.getEventId(), dto1.getEventId(), "Created event IDs are equal but they should not be");
 
-        val load3 = getEventRepository().load();
-        load3.forEach(event -> {
-            assertFalse(event.getProperties().isEmpty());
-            if (event.getEventId().equals(dto1.getEventId())) {
-                assertEquals(dto1.getType(), event.getType());
-                assertEquals(dto1.getTimestamp(), event.getTimestamp());
-                assertEquals(dto1.getCreationTime().truncatedTo(ChronoUnit.SECONDS),
-                    event.getCreationTime().truncatedTo(ChronoUnit.SECONDS));
-                assertEquals(dto1.getPrincipalId(), event.getPrincipalId());
-                assertEquals(dto1.getGeoLocation(), event.getGeoLocation());
-                assertEquals(dto1.getClientIpAddress(), event.getClientIpAddress());
-                assertEquals(dto1.getServerIpAddress(), event.getServerIpAddress());
-            } else if (event.getEventId().equals(dto2.getEventId())) {
-                assertEquals(dto2.getType(), event.getType());
-                assertEquals(dto2.getTimestamp(), event.getTimestamp());
-                assertEquals(dto2.getCreationTime().truncatedTo(ChronoUnit.SECONDS),
-                    event.getCreationTime().truncatedTo(ChronoUnit.SECONDS));
-                assertEquals(dto2.getPrincipalId(), event.getPrincipalId());
-                assertEquals(dto2.getGeoLocation(), event.getGeoLocation());
-                assertEquals(dto2.getClientIpAddress(), event.getClientIpAddress());
-                assertEquals(dto2.getServerIpAddress(), event.getServerIpAddress());
-            } else {
-                fail("Unexpected event");
-            }
+            val load2 = eventRepository.load();
+            val loadedEvents = load2.map(CasEvent::getEventId).distinct().toList();
+            assertTrue(loadedEvents.stream().anyMatch(dto1.getEventId()::equals));
+            assertTrue(loadedEvents.stream().anyMatch(dto2.getEventId()::equals));
+
+            val load3 = eventRepository.load();
+            load3.forEach(event -> {
+                assertFalse(event.getProperties().isEmpty());
+                if (event.getEventId().equals(dto1.getEventId())) {
+                    assertEquals(dto1.getType(), event.getType());
+                    assertEquals(dto1.getTimestamp(), event.getTimestamp());
+                    assertEquals(dto1.getCreationTime().truncatedTo(ChronoUnit.SECONDS),
+                        event.getCreationTime().truncatedTo(ChronoUnit.SECONDS));
+                    assertEquals(dto1.getPrincipalId(), event.getPrincipalId());
+                    assertEquals(dto1.getGeoLocation(), event.getGeoLocation());
+                    assertEquals(dto1.getClientIpAddress(), event.getClientIpAddress());
+                    assertEquals(dto1.getServerIpAddress(), event.getServerIpAddress());
+                } else if (event.getEventId().equals(dto2.getEventId())) {
+                    assertEquals(dto2.getType(), event.getType());
+                    assertEquals(dto2.getTimestamp(), event.getTimestamp());
+                    assertEquals(dto2.getCreationTime().truncatedTo(ChronoUnit.SECONDS),
+                        event.getCreationTime().truncatedTo(ChronoUnit.SECONDS));
+                    assertEquals(dto2.getPrincipalId(), event.getPrincipalId());
+                    assertEquals(dto2.getGeoLocation(), event.getGeoLocation());
+                    assertEquals(dto2.getClientIpAddress(), event.getClientIpAddress());
+                    assertEquals(dto2.getServerIpAddress(), event.getServerIpAddress());
+                } else {
+                    fail("Unexpected event");
+                }
+            });
         });
     }
 

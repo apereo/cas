@@ -36,4 +36,11 @@ public class JpaYubiKeyAccount extends YubiKeyAccount {
     @GenericGenerator(name = "native", strategy = "native")
     @Builder.Default
     private long id = -1;
+
+    @Override
+    public YubiKeyAccount setId(final long id) {
+        super.setId(id);
+        this.id = id;
+        return this;
+    }
 }

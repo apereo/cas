@@ -39,6 +39,13 @@ public class JpaGoogleAuthenticatorAccount extends GoogleAuthenticatorAccount {
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
+
+    @Override
+    public void setId(final long id) {
+        super.setId(id);
+        this.id = id;
+    }
+    
     /**
      * Update account info from account object.
      *
