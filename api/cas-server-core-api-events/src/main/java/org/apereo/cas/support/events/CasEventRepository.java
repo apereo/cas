@@ -1,6 +1,7 @@
 package org.apereo.cas.support.events;
 
 import org.apereo.cas.support.events.dao.CasEvent;
+import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.stream.Stream;
@@ -16,7 +17,7 @@ public interface CasEventRepository {
      * Name of the events transaction manager.
      */
     String TRANSACTION_MANAGER_EVENTS = "transactionManagerEvents";
-    
+
     /**
      * Bean name.
      */
@@ -34,7 +35,17 @@ public interface CasEventRepository {
     /**
      * Remove all.
      */
-    default void removeAll() {}
+    default void removeAll() {
+    }
+
+    /**
+     * With transaction.
+     *
+     * @param <T>    the type parameter
+     * @param action the action
+     */
+    default <T> void withTransaction(final CheckedConsumer<T> action) {
+    }
 
     /**
      * Save.

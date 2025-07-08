@@ -41,4 +41,10 @@ public class OracleJpaMultifactorAuthenticationTrustRecord extends MultifactorAu
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id = -1;
+
+    @Override
+    public void setId(final long id) {
+        super.setId(id);
+        this.id = id;
+    }
 }
