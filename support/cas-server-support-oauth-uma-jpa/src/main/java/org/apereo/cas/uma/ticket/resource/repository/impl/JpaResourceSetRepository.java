@@ -42,29 +42,23 @@ public class JpaResourceSetRepository extends BaseResourceSetRepository {
         }
         val jpaResource = new JpaResourceSet();
         FunctionUtils.doUnchecked(__ -> BeanUtils.copyProperties(jpaResource, set));
-
-        val isNew = jpaResource.getId() <= 0;
-        val r = this.entityManager.merge(jpaResource);
-        if (!isNew) {
-            this.entityManager.persist(r);
-        }
-        return r;
+        return entityManager.merge(jpaResource);
     }
 
     @Override
     public Collection<? extends ResourceSet> getAll() {
         val query = String.format("SELECT r FROM %s r", ENTITY_NAME);
-        return this.entityManager.createQuery(query, JpaResourceSet.class).getResultList();
+        return entityManager.createQuery(query, JpaResourceSet.class).getResultList();
     }
 
     @Override
     public Optional<ResourceSet> getById(final long id) {
         try {
             val query = String.format("SELECT r FROM %s r WHERE r.id = :id", ENTITY_NAME);
-            val r = this.entityManager.createQuery(query, JpaResourceSet.class)
+            val resourceSet = entityManager.createQuery(query, JpaResourceSet.class)
                 .setParameter("id", id)
                 .getSingleResult();
-            return Optional.of(r);
+            return Optional.of(resourceSet);
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage());
         }
@@ -73,16 +67,16 @@ public class JpaResourceSetRepository extends BaseResourceSetRepository {
 
     @Override
     public void remove(final ResourceSet set) {
-        if (this.entityManager.contains(set)) {
-            this.entityManager.remove(set);
+        if (entityManager.contains(set)) {
+            entityManager.remove(set);
         } else {
-            this.entityManager.remove(this.entityManager.merge(set));
+            entityManager.remove(entityManager.merge(set));
         }
     }
 
     @Override
     public void removeAll() {
         val query = String.format("DELETE FROM %s", ENTITY_NAME);
-        this.entityManager.createQuery(query).executeUpdate();
+        entityManager.createQuery(query).executeUpdate();
     }
 }
