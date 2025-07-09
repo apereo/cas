@@ -72,7 +72,14 @@ public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
      *
      * @return the collection
      */
-    @GetMapping(produces = MediaType.APPLICATION_NDJSON_VALUE)
+    @GetMapping(produces = {
+        MediaType.APPLICATION_JSON_VALUE,
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+        MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+        MEDIA_TYPE_CAS_YAML,
+        MediaType.APPLICATION_NDJSON_VALUE
+    })
     @SuppressWarnings("FutureReturnValueIgnored")
     @Operation(summary = "Provide a report of CAS events in the event repository",
         parameters = @Parameter(name = "limit", required = false, description = "Limit the number of events to fetch"))
