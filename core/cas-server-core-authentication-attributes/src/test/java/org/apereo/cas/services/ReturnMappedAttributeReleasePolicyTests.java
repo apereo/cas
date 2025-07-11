@@ -367,7 +367,7 @@ class ReturnMappedAttributeReleasePolicyTests {
     @Test
     void verifyExternalGroovyFailsPartially() throws Throwable {
         val allowed1 = ArrayListMultimap.<String, Object>create();
-        val file = File.createTempFile("something", ".groovy");
+        val file = Files.createTempFile("something", ".groovy").toFile();
         FileUtils.write(file, "bad-data", StandardCharsets.UTF_8);
         allowed1.put("attr1", "file:" + file.getCanonicalPath());
         allowed1.put("uid", "userId");

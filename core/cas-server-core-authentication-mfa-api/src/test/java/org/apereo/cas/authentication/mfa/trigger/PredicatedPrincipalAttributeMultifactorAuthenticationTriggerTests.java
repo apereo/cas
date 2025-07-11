@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -28,7 +28,7 @@ class PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests extends 
         appContext.refresh();
         
         val props = new CasConfigurationProperties();
-        val file = File.createTempFile("example", ".txt");
+        val file = Files.createTempFile("example", ".txt").toFile();
         FileUtils.writeStringToFile(file, "script", StandardCharsets.UTF_8);
         props.getAuthn().getMfa().getTriggers().getPrincipal().getGlobalPrincipalAttributePredicate().setLocation(new FileSystemResource(file));
         val trigger = new PredicatedPrincipalAttributeMultifactorAuthenticationTrigger(props, appContext);
@@ -49,7 +49,7 @@ class PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests extends 
     @Test
     void verifyNoPredicate() throws Throwable {
         val props = new CasConfigurationProperties();
-        val file = File.createTempFile("predicate", ".txt");
+        val file = Files.createTempFile("predicate", ".txt").toFile();
         FileUtils.writeStringToFile(file, "script", StandardCharsets.UTF_8);
         props.getAuthn().getMfa().getTriggers().getPrincipal().getGlobalPrincipalAttributePredicate().setLocation(new FileSystemResource(file));
         val trigger = new PredicatedPrincipalAttributeMultifactorAuthenticationTrigger(props, this.applicationContext);

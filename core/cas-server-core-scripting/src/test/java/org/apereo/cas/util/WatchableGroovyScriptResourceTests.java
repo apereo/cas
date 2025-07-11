@@ -7,7 +7,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
-import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
@@ -25,7 +24,7 @@ class WatchableGroovyScriptResourceTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val file = File.createTempFile("file", ".groovy");
+        val file = Files.createTempFile("file", ".groovy").toFile();
         FileUtils.writeStringToFile(file, "println 'hello'", StandardCharsets.UTF_8);
 
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
