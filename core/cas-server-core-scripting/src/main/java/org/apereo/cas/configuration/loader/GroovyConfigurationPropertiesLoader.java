@@ -38,7 +38,11 @@ public class GroovyConfigurationPropertiesLoader extends BaseConfigurationProper
         applicationProfiles.forEach(Unchecked.consumer(profile -> {
             configSlurper.setEnvironment(profile);
             configSlurper.registerConditionalBlock("profiles", profile);
-            val bindings = CollectionUtils.wrap("profile", profile, "logger", LOGGER);
+            val bindings = CollectionUtils.wrap(
+                "profile", profile,
+                "logger", LOGGER,
+                "env", System.getenv()
+            );
             configSlurper.setBinding(bindings);
             val groovyConfig = configSlurper.parse(resource.getURL());
             val pp = groovyConfig.toProperties();

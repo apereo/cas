@@ -287,7 +287,7 @@ function resourceLoadedSuccessfully() {
         }
 
         try {
-            $("table").DataTable();
+            $("table.auto-init").DataTable();
         } catch (e) {
             console.log(`Failed to initialize DataTable: ${e}`);
         }
@@ -296,16 +296,23 @@ function resourceLoadedSuccessfully() {
         $("#fm1 input[name=\"username\"],[name=\"password\"]").trigger("input");
         $("#fm1 input[name=\"username\"]").focus();
 
-        $(".reveal-password").click(ev => {
-            if ($(".pwd").attr("type") === "text") {
-                $(".pwd").attr("type", "password");
-                $(".reveal-password-icon").removeClass("mdi mdi-eye-off").addClass("mdi mdi-eye");
-            } else {
-                $(".pwd").attr("type", "text");
-                $(".reveal-password-icon").removeClass("mdi mdi-eye").addClass("mdi mdi-eye-off");
-            }
+        $(".reveal-password").on("click", function(ev) {
             ev.preventDefault();
+
+            const btn  = $(this);
+            const pwd  = $(".pwd");
+            const icon = $(".reveal-password-icon");
+
+            btn.attr("aria-checked", (i, val) => val === "true" ? "false" : "true");
+            if (pwd.attr("type") === "text") {
+                pwd.attr("type", "password");
+                icon.removeClass("mdi-eye-off").addClass("mdi-eye");
+            } else {
+                pwd.attr("type", "text");
+                icon.removeClass("mdi-eye").addClass("mdi-eye-off");
+            }
         });
+        
         if (typeof hljs !== 'undefined') {
             hljs.highlightAll();
         }

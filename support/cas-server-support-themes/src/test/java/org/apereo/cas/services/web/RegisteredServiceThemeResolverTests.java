@@ -16,9 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-import java.io.File;
+import java.nio.file.Files;
 import java.util.UUID;
-import static java.nio.charset.StandardCharsets.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -87,7 +87,7 @@ class RegisteredServiceThemeResolverTests {
             val context = MockRequestContext.create(applicationContext);
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
 
-            val file = File.createTempFile("Theme", ".groovy");
+            val file = Files.createTempFile("Theme", ".groovy").toFile();
             val script = IOUtils.toString(new ClassPathResource("GroovyTheme.groovy").getInputStream(), UTF_8);
             FileUtils.writeStringToFile(file, script, UTF_8);
             registeredService.setTheme(file.getCanonicalPath());

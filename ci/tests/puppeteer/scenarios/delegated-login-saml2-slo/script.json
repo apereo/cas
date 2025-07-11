@@ -1,5 +1,5 @@
 {
-  "dependencies": "pac4j-webflow,pac4j-saml",
+  "dependencies": "pac4j-webflow,pac4j-saml,reports",
   "conditions": {
     "docker": "true"
   },
@@ -8,6 +8,10 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
 
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+    
     "--cas.logout.follow-service-redirects=true",
 
     "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",

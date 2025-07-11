@@ -38,10 +38,14 @@ dependencies {
     implementation libraries.jose4j
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+
+    testImplementation libraries.springboottomcat
     
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-throttle")
     testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(":support:cas-server-support-webconfig")
+    
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core")
