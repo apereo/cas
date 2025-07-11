@@ -16,7 +16,6 @@ import lombok.val;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +30,6 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Controller("umaCreatePolicyForResourceSetEndpointController")
 @Slf4j
 @Tag(name = "User Managed Access")
 public class UmaCreatePolicyForResourceSetEndpointController extends BaseUmaEndpointController {

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContext;
@@ -36,9 +37,12 @@ class DelegatedAuthenticationGenerateClientsActionTests {
         @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS)
         private Action delegatedAuthenticationCreateClientsAction;
 
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
+        
         @Test
         void verifyAuthnFailureProduces() throws Throwable {
-            val context2 = getMockRequestContext();
+            val context2 = getMockRequestContext(applicationContext);
             WebUtils.getHttpServletResponseFromExternalWebflowContext(context2).setStatus(HttpStatus.UNAUTHORIZED.value());
             assertDoesNotThrow(() -> delegatedAuthenticationCreateClientsAction.execute(context2));
             assertFalse(DelegationWebflowUtils.getDelegatedAuthenticationProviderConfigurations(context2).isEmpty());
@@ -46,7 +50,7 @@ class DelegatedAuthenticationGenerateClientsActionTests {
 
         @Test
         void verifyOperation() throws Throwable {
-            val context1 = getMockRequestContext();
+            val context1 = getMockRequestContext(applicationContext);
             val result = delegatedAuthenticationCreateClientsAction.execute(context1);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
             assertFalse(DelegationWebflowUtils.getDelegatedAuthenticationProviderConfigurations(context1).isEmpty());
@@ -56,8 +60,8 @@ class DelegatedAuthenticationGenerateClientsActionTests {
         }
     }
 
-    private static RequestContext getMockRequestContext() throws Exception {
-        return MockRequestContext.create().withUserAgent("Mozilla/5.0 (Windows NT 10.0; WOW64");
+    private static RequestContext getMockRequestContext(final ConfigurableApplicationContext applicationContext) throws Exception {
+        return MockRequestContext.create(applicationContext).withUserAgent("Mozilla/5.0 (Windows NT 10.0; WOW64");
     }
 
     @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class, properties = "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC")
@@ -68,9 +72,12 @@ class DelegatedAuthenticationGenerateClientsActionTests {
         @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS)
         private Action delegatedAuthenticationCreateClientsAction;
 
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
+        
         @Test
         void verifyOperation() throws Throwable {
-            val context = getMockRequestContext();
+            val context = getMockRequestContext(applicationContext);
 
             val result = delegatedAuthenticationCreateClientsAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());

@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,7 +67,7 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
 
     @Test
     void verifyFileByExpression() throws Throwable {
-        val mdFile = File.createTempFile("spsamlmetadata", ".xml");
+        val mdFile = Files.createTempFile("spsamlmetadata", ".xml").toFile();
         val content = IOUtils.toString(new ClassPathResource("sample-sp.xml").getInputStream(), StandardCharsets.UTF_8);
         FileUtils.writeStringToFile(mdFile, content, StandardCharsets.UTF_8);
         System.setProperty("FILE_EXPR_SP", mdFile.getCanonicalPath());
