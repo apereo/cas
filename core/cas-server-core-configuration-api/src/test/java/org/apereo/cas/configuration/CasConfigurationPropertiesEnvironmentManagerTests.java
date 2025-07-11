@@ -11,8 +11,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.env.MockEnvironment;
-import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,7 +32,7 @@ class CasConfigurationPropertiesEnvironmentManagerTests {
         val sources = CasConfigurationPropertiesEnvironmentManager.configureEnvironmentPropertySources(env);
         env.getPropertySources().addFirst(sources);
 
-        val file = File.createTempFile("cas", ".properties");
+        val file = Files.createTempFile("cas", ".properties").toFile();
         FileUtils.writeStringToFile(file, "server.port=8899", StandardCharsets.UTF_8);
         env.setProperty(CasConfigurationPropertiesSourceLocator.PROPERTY_CAS_STANDALONE_CONFIGURATION_FILE, file.getCanonicalPath());
         assertEquals(file.getCanonicalPath(), CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationFile(env).getCanonicalPath());

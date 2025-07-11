@@ -175,9 +175,12 @@ class InquireInterruptActionTests {
         @Qualifier(CasWebflowConstants.ACTION_ID_INQUIRE_INTERRUPT)
         private Action action;
 
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
+        
         @Test
         void verifyInterruptedAlready() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(
                 Map.of(InterruptTrackingEngine.AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT, List.of(Boolean.TRUE))), context);
@@ -193,7 +196,7 @@ class InquireInterruptActionTests {
 
         @Test
         void verifyInterruptFinalized() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
             WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
@@ -208,7 +211,7 @@ class InquireInterruptActionTests {
 
         @Test
         void verifyNotInterrupted() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
             WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
@@ -222,7 +225,7 @@ class InquireInterruptActionTests {
 
         @Test
         void verifyNotInterruptedAsFinalized() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("casuser",
                 Map.of(CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED, List.of(Boolean.TRUE))), context);

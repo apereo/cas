@@ -14,7 +14,6 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -31,17 +30,15 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -125,7 +122,7 @@ class JsonResourceAuthenticationHandlerTests {
             CollectionUtils.wrapList("CAS")));
         accounts.put("badtime", acct);
 
-        val resource = new FileSystemResource(File.createTempFile("account", ".json"));
+        val resource = new FileSystemResource(Files.createTempFile("account", ".json").toFile());
 
         val mapper = Jackson2ObjectMapperBuilder.json()
             .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
@@ -183,7 +180,7 @@ class JsonResourceAuthenticationHandlerTests {
 
     @Test
     void verifyInvalidAccounts() throws Throwable {
-        val resource = new FileSystemResource(File.createTempFile("bad-account", ".json"));
+        val resource = new FileSystemResource(Files.createTempFile("bad-account", ".json").toFile());
         FileUtils.write(resource.getFile(), "invalid-data", StandardCharsets.UTF_8);
         val jsonHandler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), null, resource);

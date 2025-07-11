@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 /**
  * This is {@link CasConfigurationWatchServiceTests}.
@@ -30,7 +31,7 @@ class CasConfigurationWatchServiceTests {
 
     @Test
     void verifyOperationByFile() throws Throwable {
-        val cas = File.createTempFile("cas", ".properties");
+        val cas = Files.createTempFile("cas", ".properties").toFile();
         FileUtils.writeStringToFile(cas, "server.port=0", StandardCharsets.UTF_8);
         val service = new CasConfigurationWatchService(applicationContext);
         service.initialize();

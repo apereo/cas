@@ -43,5 +43,11 @@ public class OracleSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
     @GenericGenerator(name = "native", strategy = "native")
     @SuppressWarnings("UnusedVariable")
     private long id = -1;
+
+    @Override
+    public void setId(final long id) {
+        super.setId(id);
+        this.id = id;
+    }
 }
 

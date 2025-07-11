@@ -19,13 +19,11 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.text.MessageSanitizer;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
-
 import java.time.Instant;
 
 /**
@@ -49,7 +47,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
 
     private final LogoutManager logoutManager;
 
-    private CasEvent prepareCasEvent(final AbstractCasEvent event) {
+    protected CasEvent prepareCasEvent(final AbstractCasEvent event) {
         val dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
@@ -68,12 +66,13 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         return dto;
     }
 
-    private GeoLocationRequest determineGeoLocationFor(final ClientInfo clientInfo) {
+    protected GeoLocationRequest determineGeoLocationFor(final ClientInfo clientInfo) {
         val geoLocationRequest = HttpRequestUtils.getHttpServletRequestGeoLocation(clientInfo.getGeoLocation());
         if (!geoLocationRequest.isValid() && geoLocationService != null) {
             val geoResponse = geoLocationService.locate(clientInfo.getClientIpAddress());
             if (geoResponse != null) {
-                return new GeoLocationRequest(geoResponse.getLatitude(), geoResponse.getLongitude());
+                return new GeoLocationRequest(geoResponse.getLatitude(),
+                    geoResponse.getLongitude()).setAddress(geoResponse.build());
             }
         }
         return geoLocationRequest;
@@ -85,7 +84,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toInstant());
         dto.putEventId(messageSanitizer.sanitize(event.getTicketGrantingTicket().getId()));
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
-        this.casEventRepository.save(dto);
+        casEventRepository.save(dto);
     }
 
     @Override
@@ -94,7 +93,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toInstant());
         dto.putEventId(messageSanitizer.sanitize(event.getTicketGrantingTicket().getId()));
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
-        this.casEventRepository.save(dto);
+        casEventRepository.save(dto);
     }
 
     @Override
@@ -102,7 +101,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         val dto = prepareCasEvent(event);
         dto.setPrincipalId(event.getCredential().getId());
         dto.putEventId(CasAuthenticationTransactionFailureEvent.class.getSimpleName());
-        this.casEventRepository.save(dto);
+        casEventRepository.save(dto);
     }
 
     @Override
@@ -110,7 +109,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         val dto = prepareCasEvent(event);
         dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
         dto.putEventId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
-        this.casEventRepository.save(dto);
+        casEventRepository.save(dto);
     }
 
     @Override
@@ -118,7 +117,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         val dto = prepareCasEvent(event);
         dto.putEventId(event.getService().getName());
         dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
-        this.casEventRepository.save(dto);
+        casEventRepository.save(dto);
     }
 
     @Override

@@ -38,12 +38,12 @@ async function getAllAggregatedEvents() {
     await cas.sleep(1000);
 
     const body = await getAllEvents();
-    let count = Object.keys(body[1]).length;
+    let count = body.length;
     await cas.log(`Total event records found ${count}`);
     assert(count >= totalAttempts);
 
     fs.rmSync(`${__dirname}/events.zip`, {force: true});
-    await cas.createZipFile(`${__dirname}/events.zip`, async (archive) => body[1].forEach((entry) => archive.append(JSON.stringify(entry), {name: `event-${entry.id}.json`})));
+    await cas.createZipFile(`${__dirname}/events.zip`, async (archive) => body.forEach((entry) => archive.append(JSON.stringify(entry), {name: `event-${entry.id}.json`})));
 
     await cas.log("Deleting all events...");
     await cas.doDelete("https://localhost:8443/cas/actuator/events");
@@ -59,7 +59,7 @@ async function getAllAggregatedEvents() {
     await fs.rmSync(`${__dirname}/events.zip`, {force: true});
 
     const newEvents = await getAllEvents();
-    count = Object.keys(newEvents[1]).length;
+    count = newEvents.length;
     await cas.log(`Total event records found ${count}`);
 
     const aggregated = await getAllAggregatedEvents();
