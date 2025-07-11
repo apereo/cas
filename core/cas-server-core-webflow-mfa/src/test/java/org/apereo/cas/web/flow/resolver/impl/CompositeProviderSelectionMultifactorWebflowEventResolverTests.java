@@ -80,7 +80,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
 
         @Test
         void verifyCompositeBypass() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             val provider = new DefaultChainingMultifactorAuthenticationProvider(applicationContext,
                 new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
             val event = new EventFactorySupport().event(this,
@@ -109,7 +109,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
 
         @Test
         void verifyCompositeWithCookie() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             multifactorAuthenticationProviderSelectionCookieGenerator.addCookie(
                 context.getHttpServletRequest(),
                 context.getHttpServletResponse(), TestMultifactorAuthenticationProvider.ID);

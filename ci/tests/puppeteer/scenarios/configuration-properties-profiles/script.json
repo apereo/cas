@@ -1,5 +1,5 @@
 {
-  "dependencies": "scripting",
+  "dependencies": "scripting,reports",
   "properties": [
     "--management.endpoints.access.default=UNRESTRICTED",
     "--management.endpoints.web.exposure.include=*",

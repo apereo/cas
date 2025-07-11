@@ -1,7 +1,6 @@
 package org.apereo.cas.syncope.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasSyncopeAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.syncope.BaseSyncopeTests;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
@@ -33,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfListeningOnPort(port = 18080)
-@ImportAutoConfiguration(CasSyncopeAutoConfiguration.class)
 @Import(BaseSyncopeTests.SharedTestConfiguration.class)
 @TestPropertySource(properties = {
     "cas.authn.syncope.provisioning.enabled=true",
@@ -49,7 +46,7 @@ class SyncopeWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
     void verifyCreateUpdateOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val username = RandomUtils.randomAlphabetic(8);
         val authentication = RegisteredServiceTestUtils.getAuthentication(username);

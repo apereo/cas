@@ -46,6 +46,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import java.io.File;
+import java.nio.file.Files;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -141,7 +142,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         servicesManager.save(registeredService);
 
         requestContext.setParameter(CasProtocolConstants.PARAMETER_SERVICE, registeredService.getServiceId());
-        val pair = setupTestContextFor(File.createTempFile("sp-metadata", ".xml").getAbsolutePath(), "cas.example.sp");
+        val pair = setupTestContextFor(Files.createTempFile("sp-metadata", ".xml").toFile().getAbsolutePath(), "cas.example.sp");
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, pair.getLeft());
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());
@@ -165,7 +166,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
         servicesManager.save(registeredService);
 
         requestContext.setParameter(CasProtocolConstants.PARAMETER_SERVICE, registeredService.getServiceId());
-        val pair = setupTestContextFor(File.createTempFile("sp-metadata", ".xml").getAbsolutePath(), "cas.example.sp");
+        val pair = setupTestContextFor(Files.createTempFile("sp-metadata", ".xml").toFile().getAbsolutePath(), "cas.example.sp");
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, pair.getLeft());
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
         assertEquals(ticket.getId(), delegatedClientDistributedSessionStore.get(context, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE).get());

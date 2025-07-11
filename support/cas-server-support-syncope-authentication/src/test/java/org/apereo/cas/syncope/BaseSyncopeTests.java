@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope;
 
+import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
@@ -17,6 +18,8 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
+import org.apereo.cas.config.CasPasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasSyncopeAutoConfiguration;
@@ -173,7 +176,10 @@ public abstract class BaseSyncopeTests {
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasCoreScriptingAutoConfiguration.class
+        CasCoreScriptingAutoConfiguration.class,
+        CasPasswordlessAuthenticationAutoConfiguration.class,
+        CasPasswordManagementAutoConfiguration.class,
+        CasAccountManagementWebflowAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
     @SpringBootTestAutoConfigurations
