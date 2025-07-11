@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
@@ -58,12 +59,15 @@ class GoogleAuthenticatorSaveRegistrationActionTests {
     @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Nested
     @TestPropertySource(properties = "cas.authn.mfa.gauth.core.multiple-device-registration-enabled=false")
     class MultipleRegistrationTests {
         @Test
         void verifyMultipleRegDisabled() throws Exception {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             val acct = GoogleAuthenticatorAccount.builder()
                 .username(UUID.randomUUID().toString())
                 .name(UUID.randomUUID().toString())
@@ -92,7 +96,7 @@ class GoogleAuthenticatorSaveRegistrationActionTests {
                 .id(RandomUtils.nextLong())
                 .build();
 
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             context.setParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, "918273");
             context.setParameter(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_ACCOUNT_NAME, acct.getName());
             context.getFlowScope().put(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, acct);
@@ -110,19 +114,19 @@ class GoogleAuthenticatorSaveRegistrationActionTests {
                 .id(RandomUtils.nextLong())
                 .build();
 
-            var context = MockRequestContext.create();
+            var context = MockRequestContext.create(applicationContext);
             context.setParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, String.valueOf(acct.getValidationCode()));
             context.setParameter(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_ACCOUNT_NAME, acct.getName());
             context.setParameter(OneTimeTokenAccountSaveRegistrationAction.REQUEST_PARAMETER_VALIDATE, "true");
             context.getFlowScope().put(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT, acct);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, googleSaveAccountRegistrationAction.execute(context).getId());
 
-            context = MockRequestContext.create();
+            context = MockRequestContext.create(applicationContext);
             context.setParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, "987654");
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, googleSaveAccountRegistrationAction.execute(context).getId());
             assertEquals(HttpStatus.UNAUTHORIZED.value(), context.getHttpServletResponse().getStatus());
 
-            context = MockRequestContext.create();
+            context = MockRequestContext.create(applicationContext);
             context.setParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, "112233");
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, googleSaveAccountRegistrationAction.execute(context).getId());
             assertEquals(HttpStatus.UNAUTHORIZED.value(), context.getHttpServletResponse().getStatus());

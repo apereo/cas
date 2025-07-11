@@ -30,6 +30,7 @@ import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
+import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mock.MockServiceTicket;
@@ -104,6 +105,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
@@ -113,6 +115,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -152,10 +155,11 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.oauth.session-replication.cookie.crypto.alg=" + ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256,
         "cas.authn.oauth.session-replication.cookie.crypto.encryption.key=3RXtt06xYUAli7uU-Z915ZGe0MRBFw3uDjWgOEf1GT8",
         "cas.authn.oauth.session-replication.cookie.crypto.signing.key=jIFR-fojN0vOIUcT0hDRXHLVp07CV-YeU8GnjICsXpu65lfkJbiKP028pT74Iurkor38xDGXNcXk_Y1V4rNDqw"
-    })
+    }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
+@AutoConfigureMockMvc
 @Slf4j
 public abstract class AbstractOAuth20Tests {
 
@@ -258,7 +262,7 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
     protected RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
-    
+
     @Autowired
     @Qualifier("oauthDistributedSessionStore")
     protected SessionStore oauthDistributedSessionStore;
@@ -361,6 +365,10 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     protected CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("mockMvc")
+    protected MockMvc mockMvc;
+
     public static ExpirationPolicyBuilder alwaysExpiresExpirationPolicyBuilder() {
         return new ExpirationPolicyBuilder() {
             @Serial
@@ -384,7 +392,7 @@ public abstract class AbstractOAuth20Tests {
     protected static OAuth20AccessToken getAccessToken(final Authentication authentication, final String serviceId, final String clientId) {
         return OAuth20TestUtils.getAccessToken(new MockTicketGrantingTicket(authentication), UUID.randomUUID().toString(), serviceId, clientId);
     }
-    
+
 
     protected static OAuth20AccessToken getAccessToken(final String serviceId, final String clientId) {
         return getAccessToken(UUID.randomUUID().toString(), serviceId, clientId);
@@ -833,7 +841,8 @@ public abstract class AbstractOAuth20Tests {
         CasCoreWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasOAuth20AutoConfiguration.class
+        CasOAuth20AutoConfiguration.class,
+        CasWebAppAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({

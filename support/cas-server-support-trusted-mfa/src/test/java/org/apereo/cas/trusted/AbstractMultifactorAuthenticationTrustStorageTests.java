@@ -94,7 +94,6 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         record.setDeviceFingerprint(UUID.randomUUID().toString());
         record.setName("DeviceName");
         record.setPrincipal(UUID.randomUUID().toString());
-        record.setId(1000);
         record.setRecordDate(ZonedDateTime.now(ZoneOffset.UTC).minusDays(1));
         record.setExpirationDate(DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1)));
         return record;
@@ -119,6 +118,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
             disposableBean.destroy();
         }
     }
+
     @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
         CasCoreAutoConfiguration.class,

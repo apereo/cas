@@ -18,7 +18,7 @@ class HashCodeCacheKeyTests {
     void verifyOperation() {
         val key = new HashCodeCacheKey(System.nanoTime(), RandomUtils.nextInt());
         assertEquals(key, key);
-        assertNotEquals(key, new Object());
+        assertNotEquals(new Object(), key);
         val key2 = new HashCodeCacheKey(System.nanoTime(), RandomUtils.nextInt());
         assertNotEquals(key, key2);
         val key3 = new HashCodeCacheKey(key.getCheckSum(), RandomUtils.nextInt());

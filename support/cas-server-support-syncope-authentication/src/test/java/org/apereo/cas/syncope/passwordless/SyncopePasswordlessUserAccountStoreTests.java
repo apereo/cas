@@ -2,7 +2,6 @@ package org.apereo.cas.syncope.passwordless;
 
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
-import org.apereo.cas.config.CasPasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.syncope.BaseSyncopeTests;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -24,20 +23,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Syncope")
 @ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 18080)
-@SpringBootTest(
-    classes = {
-        BaseSyncopeTests.SharedTestConfiguration.class,
-        CasPasswordlessAuthenticationAutoConfiguration.class
-    },
-    properties = {
-        "cas.authn.passwordless.accounts.syncope.basic-auth-username=admin",
-        "cas.authn.passwordless.accounts.syncope.basic-auth-password=password",
-        "cas.authn.passwordless.accounts.syncope.url=http://localhost:18080/syncope",
-        "cas.authn.passwordless.accounts.syncope.attribute-mappings.syncopeUserAttr_givenName=name",
-        "cas.authn.passwordless.accounts.syncope.attribute-mappings.syncopeUserAttr_email=email",
-        "cas.authn.passwordless.accounts.syncope.attribute-mappings.syncopeUserAttr_phoneNumber=phoneNumber",
-        "cas.authn.passwordless.accounts.syncope.attribute-mappings.username=username"
-    })
+@SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class, properties = {
+    "cas.authn.passwordless.accounts.syncope.basic-auth-username=admin",
+    "cas.authn.passwordless.accounts.syncope.basic-auth-password=password",
+    "cas.authn.passwordless.accounts.syncope.url=http://localhost:18080/syncope",
+    "cas.authn.passwordless.accounts.syncope.attribute-mappings.syncopeUserAttr_givenName=name",
+    "cas.authn.passwordless.accounts.syncope.attribute-mappings.syncopeUserAttr_email=email",
+    "cas.authn.passwordless.accounts.syncope.attribute-mappings.syncopeUserAttr_phoneNumber=phoneNumber",
+    "cas.authn.passwordless.accounts.syncope.attribute-mappings.username=username"
+})
 class SyncopePasswordlessUserAccountStoreTests {
     @Autowired
     @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)

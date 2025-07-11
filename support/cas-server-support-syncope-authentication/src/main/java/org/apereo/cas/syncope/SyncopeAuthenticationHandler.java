@@ -15,7 +15,6 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +25,6 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.http.HttpMethod;
-
 import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -42,7 +40,7 @@ import java.util.Optional;
 @Monitorable
 public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-            .defaultTypingEnabled(false).build().toObjectMapper();
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final SyncopeAuthenticationProperties properties;
 
@@ -59,21 +57,21 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-            final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
+        final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
         val result = authenticateSyncopeUser(credential);
         if (result.isPresent()) {
             val user = result.get();
             LOGGER.debug("Received user object as [{}]", user);
             if (user.has("suspended") && user.get("suspended").asBoolean()) {
                 throw new AccountDisabledException(
-                        "Could not authenticate forbidden account for " + credential.getUsername());
+                    "Could not authenticate forbidden account for " + credential.getUsername());
             }
             if (user.has("mustChangePassword") && user.get("mustChangePassword").asBoolean()) {
                 throw new AccountPasswordMustChangeException(
-                        "Account password must change for " + credential.getUsername());
+                    "Account password must change for " + credential.getUsername());
             }
             val principal = principalFactory.createPrincipal(user.get("username").asText(),
-                    SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
+                SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
             return createHandlerResult(credential, principal, new ArrayList<>());
         }
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
@@ -83,16 +81,16 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         HttpResponse response = null;
         try {
             val syncopeRestUrl = StringUtils.appendIfMissing(
-                    SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()),
-                    "/rest/users/self");
+                SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()),
+                "/rest/users/self");
             val exec = HttpExecutionRequest.builder()
-                    .method(HttpMethod.GET)
-                    .url(syncopeRestUrl)
-                    .basicAuthUsername(credential.getUsername())
-                    .basicAuthPassword(credential.toPassword())
-                    .headers(CollectionUtils.wrap("X-Syncope-Domain", syncopeDomain))
-                    .maximumRetryAttempts(properties.getMaxRetryAttempts())
-                    .build();
+                .method(HttpMethod.GET)
+                .url(syncopeRestUrl)
+                .basicAuthUsername(credential.getUsername())
+                .basicAuthPassword(credential.toPassword())
+                .headers(CollectionUtils.wrap("X-Syncope-Domain", syncopeDomain))
+                .maximumRetryAttempts(properties.getMaxRetryAttempts())
+                .build();
             response = Objects.requireNonNull(HttpUtils.execute(exec));
             LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
             if (response.getCode() == HttpStatus.SC_OK) {
