@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationPropert
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +34,7 @@ class CasConfigurationMetadataRepositoryTests {
             .build());
         assertFalse(properties.properties().isEmpty());
 
-        val file = File.createTempFile("config", ".yml");
+        val file = Files.createTempFile("config", ".yml").toFile();
         CasConfigurationMetadataCatalog.export(file, properties);
         assertTrue(file.exists());
 

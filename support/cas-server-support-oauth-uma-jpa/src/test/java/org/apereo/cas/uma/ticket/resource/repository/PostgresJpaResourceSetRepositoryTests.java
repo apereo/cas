@@ -42,13 +42,13 @@ class PostgresJpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTes
 
     @Test
     void verifyOperation() {
-        var r = buildTestResource();
+        var resourceSet = buildTestResource();
         assertTrue(umaResourceSetRepository.getAll().isEmpty());
-        assertFalse(umaResourceSetRepository.getById(r.getId()).isPresent());
+        assertFalse(umaResourceSetRepository.getById(resourceSet.getId()).isPresent());
 
-        r = umaResourceSetRepository.save(r);
+        resourceSet = umaResourceSetRepository.save(resourceSet);
         assertFalse(umaResourceSetRepository.getAll().isEmpty());
-        assertTrue(umaResourceSetRepository.getById(r.getId()).isPresent());
+        assertTrue(umaResourceSetRepository.getById(resourceSet.getId()).isPresent());
 
         val perms = new ResourceSetPolicyPermission();
         perms.setSubject("casuser");
@@ -57,25 +57,25 @@ class PostgresJpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTes
 
         val policy = new ResourceSetPolicy();
         policy.setPermissions(CollectionUtils.wrapHashSet(perms));
-        r.setOwner("UMA");
-        r.setPolicies(CollectionUtils.wrapHashSet(policy));
-        r = umaResourceSetRepository.save(r);
-        assertEquals("UMA", r.getOwner());
-        assertFalse(r.getPolicies().isEmpty());
+        resourceSet.setOwner("UMA");
+        resourceSet.setPolicies(CollectionUtils.wrapHashSet(policy));
+        resourceSet = umaResourceSetRepository.save(resourceSet);
+        assertEquals("UMA", resourceSet.getOwner());
+        assertFalse(resourceSet.getPolicies().isEmpty());
 
         umaResourceSetRepository.removeAll();
         assertTrue(umaResourceSetRepository.getAll().isEmpty());
     }
     
     private static ResourceSet buildTestResource() {
-        val r = new ResourceSet();
-        r.setClientId("clientid");
-        r.setIconUri("https://www.example.com/icon");
-        r.setName("resource");
-        r.setOwner("cas");
-        r.setScopes(CollectionUtils.wrapHashSet("read", "write"));
-        r.setType("CAS-UMA");
-        r.setUri("https://www.example.com/cas");
-        return r;
+        val resourceSet = new ResourceSet();
+        resourceSet.setClientId("clientid");
+        resourceSet.setIconUri("https://www.example.com/icon");
+        resourceSet.setName("resource");
+        resourceSet.setOwner("cas");
+        resourceSet.setScopes(CollectionUtils.wrapHashSet("read", "write"));
+        resourceSet.setType("CAS-UMA");
+        resourceSet.setUri("https://www.example.com/cas");
+        return resourceSet;
     }
 }

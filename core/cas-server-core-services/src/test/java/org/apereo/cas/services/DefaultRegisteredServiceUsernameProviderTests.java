@@ -89,7 +89,7 @@ class DefaultRegisteredServiceUsernameProviderTests {
             .principal(principal)
             .build();
         val id = provider.resolveUsername(usernameContext);
-        assertEquals(id, "CASUSER");
+        assertEquals("CASUSER", id);
     }
 
     @Test

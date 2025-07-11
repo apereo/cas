@@ -17,8 +17,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.FileSystemResource;
-import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,7 +40,7 @@ class GroovyScriptResourceCacheManagerTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val file = File.createTempFile("scripted", ".groovy");
+        val file = Files.createTempFile("scripted", ".groovy").toFile();
         FileUtils.writeStringToFile(file, "println 'hello'", StandardCharsets.UTF_8);
 
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();

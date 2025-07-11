@@ -1,16 +1,13 @@
 package org.apereo.cas.shell.commands.cipher;
 
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
 import java.nio.charset.StandardCharsets;
-
+import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,7 +32,7 @@ class StringableCipherExecutorCommandTests extends BaseCasShellCommandTests {
 
     @Test
     void verifyFile() throws Throwable {
-        val file = File.createTempFile("file", "txt");
+        val file = Files.createTempFile("file", "txt").toFile();
         FileUtils.write(file, "example", StandardCharsets.UTF_8);
 
         val path = file.getCanonicalPath();

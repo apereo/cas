@@ -70,10 +70,9 @@ public class SyncopeUtils {
         val attributes = new HashMap<String, List<Object>>();
 
         if (user.has("securityQuestion") && !user.get("securityQuestion").isNull()) {
-            var name = attributeMappings.getOrDefault("securityQuestion", "syncopeUserSecurityQuestion");
+            val name = attributeMappings.getOrDefault("securityQuestion", "syncopeUserSecurityQuestion");
             attributes.put(name, CollectionUtils.wrapList(user.get("securityQuestion").asText()));
         }
-
         var name = attributeMappings.getOrDefault("key", "syncopeUserKey");
         attributes.put(name, CollectionUtils.wrapList(user.get("key").asText()));
 
@@ -205,7 +204,7 @@ public class SyncopeUtils {
      * @param user       the user
      * @return the optional
      */
-    public static List<Map<String, List<Object>>> syncopeUserSearchForDomain(final BaseSyncopeSearchProperties properties,
+    private static List<Map<String, List<Object>>> syncopeUserSearchForDomain(final BaseSyncopeSearchProperties properties,
                                                                              final String domain,
                                                                              final String user) {
         HttpResponse response = null;
@@ -436,4 +435,5 @@ public class SyncopeUtils {
         }
         return List.of();
     }
+    
 }

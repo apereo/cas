@@ -29,6 +29,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.TicketValidationResult;
+import org.apereo.cas.web.AbstractController;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
@@ -59,7 +60,6 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -78,12 +78,11 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Controller
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Tag(name = "SAML2")
-public abstract class AbstractSamlIdPProfileHandlerController {
+public abstract class AbstractSamlIdPProfileHandlerController extends AbstractController {
 
     /**
      * SAML profile configuration context.

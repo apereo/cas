@@ -66,6 +66,7 @@ import java.util.Map;
 })
 @ExtendWith(CasTestExtension.class)
 public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
+
     @Autowired
     @Qualifier("acceptableUsagePolicyDataSource")
     protected DataSource acceptableUsagePolicyDataSource;
@@ -91,7 +92,7 @@ public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseA
             aupProperties, acceptableUsagePolicyDataSource,
             jdbcAcceptableUsagePolicyTransactionTemplate);
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(actualPrincipalId);
         val principal = CoreAuthenticationTestUtils.getPrincipal(c.getId(), profileAttributes);
         val auth = CoreAuthenticationTestUtils.getAuthentication(principal);

@@ -14,6 +14,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.Map;
@@ -75,7 +76,7 @@ class ScriptingUtilsTests {
 
     @Test
     void verifyGroovyResourceFileExecution() throws Throwable {
-        val file = File.createTempFile("test", ".groovy");
+        val file = Files.createTempFile("test", ".groovy").toFile();
         FileUtils.write(file, "def process(String name) { return name }", StandardCharsets.UTF_8);
         val resource = new FileSystemResource(file);
 
@@ -85,7 +86,7 @@ class ScriptingUtilsTests {
 
     @Test
     void verifyGroovyReturnTypeMismatch() throws Throwable {
-        val file = File.createTempFile("test", ".groovy");
+        val file = Files.createTempFile("test", ".groovy").toFile();
         FileUtils.write(file, "def process(String name) { return name }", StandardCharsets.UTF_8);
         val resource = new FileSystemResource(file);
         assertNull(ScriptingUtils.getObjectInstanceFromGroovyResource(resource,
