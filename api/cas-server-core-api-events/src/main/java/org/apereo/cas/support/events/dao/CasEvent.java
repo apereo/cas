@@ -24,6 +24,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -80,6 +81,10 @@ public class CasEvent implements Serializable {
      * Field name for the accuracy of the geographical location.
      */
     public static final String FIELD_GEO_ACCURACY = "geoAccuracy";
+    /**
+     * Field name for the address associated with the geographical location.
+     */
+    public static final String FIELD_GEO_ADDRESS = "geoAddress";
 
     /**
      * Field name for the timestamp of the geographical location data.
@@ -249,7 +254,19 @@ public class CasEvent implements Serializable {
         putGeoLatitude(location.getLatitude());
         putGeoLongitude(location.getLongitude());
         putGeoTimestamp(location.getTimestamp());
+        putGeoAddress(location.getAddress());
         return this;
+    }
+
+    /**
+     * Put geo address cas event.
+     *
+     * @param address the address
+     * @return the cas event
+     */
+    @CanIgnoreReturnValue
+    public CasEvent putGeoAddress(final String address) {
+        return put(FIELD_GEO_ADDRESS, address);
     }
 
     /**
@@ -313,5 +330,32 @@ public class CasEvent implements Serializable {
             setId(System.currentTimeMillis());
         }
         return this;
+    }
+
+    /**
+     * As new entity event.
+     *
+     * @return the cas event
+     */
+    @CanIgnoreReturnValue
+    public CasEvent asNewEntity() {
+        setId(0L);
+        return this;
+    }
+
+    /**
+     * From cas event to a new event.
+     *
+     * @param event the event
+     * @return the cas event
+     */
+    public static CasEvent from(final CasEvent event) {
+        val newEvent = new CasEvent();
+        newEvent.setId(event.getId());
+        newEvent.setType(event.getType());
+        newEvent.setPrincipalId(event.getPrincipalId());
+        newEvent.setCreationTime(event.getCreationTime());
+        newEvent.setProperties(new LinkedHashMap<>(event.getProperties()));
+        return newEvent;
     }
 }

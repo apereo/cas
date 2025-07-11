@@ -8,3 +8,4 @@ profiles {
 }
 
 cas.custom.properties.all="everything"
+logging.config="file:${env.SCENARIO_FOLDER}/config/log4j2.xml"

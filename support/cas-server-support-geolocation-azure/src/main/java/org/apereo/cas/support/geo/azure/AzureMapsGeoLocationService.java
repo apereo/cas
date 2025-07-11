@@ -83,8 +83,10 @@ public class AzureMapsGeoLocationService extends AbstractGeoLocationService {
     public GeoLocationResponse locate(final InetAddress address) {
         val location = new GeoLocationResponse();
         val results = geoLocationClient.getLocation(address);
-        location.addAddress(results.getCountryRegion().getIsoCode());
-        LOGGER.debug("Geo location for [{}] is calculated as [{}]", address, location);
+        if (results.getCountryRegion() != null) {
+            location.addAddress(results.getCountryRegion().getIsoCode());
+            LOGGER.debug("Geo location for [{}] is calculated as [{}]", address, location);
+        }
         return location;
     }
 

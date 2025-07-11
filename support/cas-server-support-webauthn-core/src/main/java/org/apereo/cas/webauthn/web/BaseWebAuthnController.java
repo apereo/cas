@@ -1,8 +1,8 @@
 package org.apereo.cas.webauthn.web;
 
+import org.apereo.cas.web.AbstractController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yubico.internal.util.JacksonCodecs;
-import org.springframework.stereotype.Controller;
 
 /**
  * This is {@link BaseWebAuthnController}.
@@ -10,8 +10,7 @@ import org.springframework.stereotype.Controller;
  * @author Misagh Moayyed
  * @since 7.2.0
  */
-@Controller
-public abstract class BaseWebAuthnController {
+public abstract class BaseWebAuthnController extends AbstractController {
     /**
      * Base endpoint for all webauthn web resources.
      */
