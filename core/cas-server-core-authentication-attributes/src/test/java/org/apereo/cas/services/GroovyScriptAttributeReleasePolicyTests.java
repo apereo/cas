@@ -17,7 +17,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -81,7 +80,7 @@ class GroovyScriptAttributeReleasePolicyTests {
 
     @Test
     void verifySystemPropertyInRef() throws Throwable {
-        val file = File.createTempFile("GroovyAttributeRelease", ".groovy");
+        val file = Files.createTempFile("GroovyAttributeRelease", ".groovy").toFile();
         try (val is = new ClassPathResource("GroovyAttributeRelease.groovy").getInputStream();
              val out = new FileOutputStream(file)) {
             is.transferTo(out);

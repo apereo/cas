@@ -21,6 +21,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,7 +42,7 @@ class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
 
     @BeforeAll
     public static void setup() throws Exception {
-        METADATA_FILE = File.createTempFile("sp-saml-metadata", ".xml");
+        METADATA_FILE = Files.createTempFile("sp-saml-metadata", ".xml").toFile();
         val content = IOUtils.toString(new ClassPathResource("sample-sp.xml").getInputStream(), StandardCharsets.UTF_8);
         FileUtils.writeStringToFile(METADATA_FILE, content, StandardCharsets.UTF_8);
     }

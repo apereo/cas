@@ -4,9 +4,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-
-import java.io.File;
-
+import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -22,7 +20,7 @@ class CasConfigurationModifiedEventTests {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
-                val event = new CasConfigurationModifiedEvent(this, File.createTempFile("temp", ".file").toPath(), null);
+                val event = new CasConfigurationModifiedEvent(this, Files.createTempFile("temp", ".file").toFile().toPath(), null);
                 assertFalse(event.isEligibleForContextRefresh());
             }
         });

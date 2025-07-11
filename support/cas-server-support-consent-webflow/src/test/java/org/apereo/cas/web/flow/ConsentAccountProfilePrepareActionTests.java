@@ -45,7 +45,7 @@ class ConsentAccountProfilePrepareActionTests extends BaseConsentActionTests {
             CoreAuthenticationTestUtils.getAttributes());
         consentRepository.storeConsentDecision(desc);
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val authn = RegisteredServiceTestUtils.getAuthentication(uid);
         WebUtils.putAuthentication(authn, context);

@@ -9,7 +9,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
-import java.io.File;
+import java.nio.file.Files;
 import java.util.LinkedHashMap;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +34,7 @@ class JsonResourceInterruptInquirerTests {
             "field2", List.of("value3", "value4")));
         map.put("casuser", response);
 
-        val f = File.createTempFile("interrupt", "json");
+        val f = Files.createTempFile("interrupt", "json").toFile();
         MAPPER.writer().withDefaultPrettyPrinter().writeValue(f, map);
         assertTrue(f.exists());
 
