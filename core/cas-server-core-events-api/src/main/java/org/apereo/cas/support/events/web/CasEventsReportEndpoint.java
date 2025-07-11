@@ -16,18 +16,21 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -37,16 +40,18 @@ import java.util.zip.ZipInputStream;
  * @since 5.3.0
  */
 @Endpoint(id = "events", defaultAccess = Access.NONE)
+@EnableTransactionManagement(proxyTargetClass = false)
+@Transactional(transactionManager = CasEventRepository.TRANSACTION_MANAGER_EVENTS)
 public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    
-    private final ObjectProvider<CasEventRepository> eventRepository;
+
+    private final ObjectProvider<CasEventRepository> eventRepositoryProvider;
 
     public CasEventsReportEndpoint(final CasConfigurationProperties casProperties,
                                    final ConfigurableApplicationContext applicationContext,
-                                   final ObjectProvider<CasEventRepository> eventRepository) {
+                                   final ObjectProvider<CasEventRepository> eventRepositoryProvider) {
         super(casProperties, applicationContext);
-        this.eventRepository = eventRepository;
+        this.eventRepositoryProvider = eventRepositoryProvider;
     }
 
 
@@ -58,7 +63,7 @@ public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
     @DeleteMapping
     @Operation(summary = "Delete all CAS events in the event repository")
     public ResponseEntity deleteAllEvents() {
-        eventRepository.getObject().removeAll();
+        eventRepositoryProvider.getObject().removeAll();
         return ResponseEntity.ok().build();
     }
 
@@ -72,18 +77,39 @@ public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-        MEDIA_TYPE_CAS_YAML
+        MEDIA_TYPE_CAS_YAML,
+        MediaType.APPLICATION_NDJSON_VALUE
     })
+    @SuppressWarnings("FutureReturnValueIgnored")
     @Operation(summary = "Provide a report of CAS events in the event repository",
         parameters = @Parameter(name = "limit", required = false, description = "Limit the number of events to fetch"))
-    public ResponseEntity events(
+    public ResponseBodyEmitter events(
+        final HttpServletResponse response,
         @RequestParam(required = false, defaultValue = "1000")
         final int limit) throws Exception {
-        val results = eventRepository.getObject().load()
-            .sorted(Comparator.comparingLong(CasEvent::getTimestamp).reversed())
-            .limit(limit)
-            .collect(Collectors.toList());
-        return ResponseEntity.ok(MAPPER.writeValueAsString(results));
+        response.setContentType(MediaType.APPLICATION_NDJSON_VALUE);
+        val emitter = new ResponseBodyEmitter();
+
+        executor.submit(() ->
+            eventRepositoryProvider.getObject().withTransaction(__ -> {
+                try (val stream = eventRepositoryProvider.getObject().load()
+                    .sorted(Comparator.comparingLong(CasEvent::getTimestamp).reversed())
+                    .limit(limit)) {
+                    emitter.send("[", MediaType.APPLICATION_JSON);
+                    val first = new AtomicBoolean(true);
+                    stream.forEach(Unchecked.consumer(pojo -> {
+                        if (!first.getAndSet(false)) {
+                            emitter.send(",");
+                        }
+                        emitter.send(MAPPER.writeValueAsString(pojo), MediaType.APPLICATION_JSON);
+                    }));
+                    emitter.send("]", MediaType.APPLICATION_JSON);
+                    emitter.complete();
+                } catch (final Exception e) {
+                    emitter.completeWithError(e);
+                }
+            }));
+        return emitter;
     }
 
     /**
@@ -98,14 +124,13 @@ public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
     public ResponseBodyEmitter aggregate() throws Exception {
         val emitter = new ResponseBodyEmitter();
         executor.submit(() -> {
-            try (val stream = eventRepository.getObject().aggregate()) {
-                stream.forEach(Unchecked.consumer(pojo -> emitter.send(pojo, MediaType.APPLICATION_JSON)));
+            try (val stream = eventRepositoryProvider.getObject().aggregate()) {
+                stream.forEach(Unchecked.consumer(pojo -> emitter.send(MAPPER.writeValueAsString(pojo), MediaType.APPLICATION_JSON)));
                 emitter.complete();
             } catch (final Exception e) {
                 emitter.completeWithError(e);
             }
         });
-
         return emitter;
     }
 
@@ -133,10 +158,11 @@ public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
     }
 
     private ResponseEntity<CasEvent> importSingleEvent(final HttpServletRequest request) throws Throwable {
+        val eventRepository = eventRepositoryProvider.getObject();
         try (val in = request.getInputStream()) {
             val requestBody = IOUtils.toString(in, StandardCharsets.UTF_8);
             val casEvent = MAPPER.readValue(requestBody, CasEvent.class);
-            eventRepository.getObject().save(casEvent);
+            eventRepository.save(CasEvent.from(casEvent).asNewEntity());
             return ResponseEntity.ok().build();
         }
     }
@@ -145,11 +171,12 @@ public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
         try (val bais = new ByteArrayInputStream(IOUtils.toByteArray(request.getInputStream()));
              val zipIn = new ZipInputStream(bais)) {
             var entry = zipIn.getNextEntry();
+            val eventRepository = eventRepositoryProvider.getObject();
             while (entry != null) {
                 if (!entry.isDirectory() && !entry.getName().contains("..") && entry.getName().endsWith(".json")) {
                     val requestBody = IOUtils.toString(zipIn, StandardCharsets.UTF_8);
                     val casEvent = MAPPER.readValue(requestBody, CasEvent.class);
-                    eventRepository.getObject().save(casEvent);
+                    eventRepository.save(CasEvent.from(casEvent).asNewEntity());
                 }
                 zipIn.closeEntry();
                 entry = zipIn.getNextEntry();

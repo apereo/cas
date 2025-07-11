@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,11 +29,14 @@ class GroovyCasWebflowAuthenticationExceptionHandlerTests {
     @Qualifier("groovyCasWebflowAuthenticationExceptionHandler")
     private CasWebflowExceptionHandler groovyCasWebflowAuthenticationExceptionHandler;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyOperation() throws Throwable {
         assertNotNull(groovyCasWebflowAuthenticationExceptionHandler);
 
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         assertTrue(groovyCasWebflowAuthenticationExceptionHandler.supports(new RuntimeException(), context));
         assertEquals("customEvent",

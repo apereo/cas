@@ -23,9 +23,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import java.io.File;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -66,7 +66,7 @@ class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeT
         assertNull(repo.update(OneTimeTokenAccount.builder().build()));
         assertEquals(0, repo.count());
         assertDoesNotThrow(() -> repo.delete("casuser"));
-        when(resource.getFile()).thenReturn(File.createTempFile("test", ".json"));
+        when(resource.getFile()).thenReturn(Files.createTempFile("test", ".json").toFile());
         assertTrue(repo.get("casuser").isEmpty());
     }
 
@@ -78,7 +78,7 @@ class JsonGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeT
 
     @Test
     void verifyNoAccounts() throws Throwable {
-        val file = File.createTempFile("account", ".json");
+        val file = Files.createTempFile("account", ".json").toFile();
         FileUtils.writeStringToFile(file, "{}", StandardCharsets.UTF_8);
         val repo = buildRepositoryInstance(new FileSystemResource(file));
         assertTrue(repo.get("casuser").isEmpty());

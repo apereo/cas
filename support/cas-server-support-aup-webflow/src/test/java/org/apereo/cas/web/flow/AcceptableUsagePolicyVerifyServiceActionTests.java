@@ -36,13 +36,13 @@ class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptableUsageP
 
     @Test
     void verifyNoService() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         assertNull(acceptableUsagePolicyVerifyAction.execute(context));
     }
 
     @Test
     void verifyDisabledService() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val service = RegisteredServiceTestUtils.getService("https://aup.service.disabled");

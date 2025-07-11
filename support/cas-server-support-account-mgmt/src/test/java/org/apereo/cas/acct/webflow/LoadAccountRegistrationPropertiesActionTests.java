@@ -29,7 +29,7 @@ class LoadAccountRegistrationPropertiesActionTests extends BaseWebflowConfigurer
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         assertNull(loadAccountRegistrationPropertiesAction.execute(context));
         assertTrue(context.getFlowScope().contains("registrationProperties"));
     }

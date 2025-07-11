@@ -3,6 +3,7 @@ package org.apereo.cas.support.events;
 import org.apereo.cas.support.events.dao.CasEvent;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
@@ -16,7 +17,7 @@ public interface CasEventRepository {
      * Name of the events transaction manager.
      */
     String TRANSACTION_MANAGER_EVENTS = "transactionManagerEvents";
-    
+
     /**
      * Bean name.
      */
@@ -34,7 +35,18 @@ public interface CasEventRepository {
     /**
      * Remove all.
      */
-    default void removeAll() {}
+    default void removeAll() {
+    }
+
+    /**
+     * With transaction.
+     *
+     * @param <T>    the type parameter
+     * @param action the action
+     */
+    default <T> void withTransaction(final Consumer<T> action) {
+        action.accept(null);
+    }
 
     /**
      * Save.

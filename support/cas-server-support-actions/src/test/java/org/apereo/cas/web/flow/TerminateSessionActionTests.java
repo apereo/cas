@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.web.flow.logout.TerminateSessionAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -63,7 +62,7 @@ class TerminateSessionActionTests {
         @Test
         void verifyTerminateActionConfirmed() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-            context.setParameter(TerminateSessionAction.REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED, "true");
+            context.setParameter(WebUtils.REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED, "true");
             WebUtils.putTicketGrantingTicketInScopes(context, "TGT-123456-something");
             assertEquals(CasWebflowConstants.TRANSITION_ID_REDIRECT, action.execute(context).getId());
         }
@@ -73,7 +72,7 @@ class TerminateSessionActionTests {
             val tgt = new MockTicketGrantingTicket(RegisteredServiceTestUtils.getAuthentication());
             getTicketRegistry().addTicket(tgt);
             val context = MockRequestContext.create(applicationContext);
-            context.setParameter(TerminateSessionAction.REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED, "true");
+            context.setParameter(WebUtils.REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED, "true");
             WebUtils.putTicketGrantingTicketInScopes(context, tgt.getId());
             WebUtils.putAuthentication(tgt.getAuthentication(), context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_REDIRECT, action.execute(context).getId());

@@ -1,0 +1,30 @@
+{
+  "dependencies": "events-jpa,reports,geolocation-azure",
+  "conditions": {
+    "env": "AZURE_MAPS_CLIENT_ID,AZURE_MAPS_API_KEY",
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.events.core.track-geolocation=true",
+
+    "--cas.jdbc.show-sql=false",
+    "--cas.events.jpa.ddl-auto=create-drop",
+    "--cas.events.jpa.user=postgres",
+    "--cas.events.jpa.password=password",
+    "--cas.events.jpa.driver-class=org.postgresql.Driver",
+    "--cas.events.jpa.url=jdbc:postgresql://localhost:5432/events",
+    "--cas.events.jpa.dialect=org.hibernate.dialect.PostgreSQLDialect",
+
+    "--cas.geo-location.azure.client-id=${#environmentVars['AZURE_MAPS_CLIENT_ID']}",
+    "--cas.geo-location.azure.api-key=${#environmentVars['AZURE_MAPS_API_KEY']}",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=events",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true",
+  "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh"
+}
+
