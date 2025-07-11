@@ -35,7 +35,7 @@ class AccountProfileUpdateSecurityQuestionsActionTests extends BasePasswordManag
     private Action accountProfileUpdateSecurityQuestionsAction;
 
     private MockRequestContext prepareContext() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val tgt = new MockTicketGrantingTicket("casuser");
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putTicketGrantingTicket(context, tgt);

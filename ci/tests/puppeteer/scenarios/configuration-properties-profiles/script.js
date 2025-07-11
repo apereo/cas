@@ -3,12 +3,20 @@ const assert = require("assert");
 
 (async () => {
     await sendRequest("cas.custom.properties.all", "everything");
-    // await sendRequest("cas.custom.properties.direct", "directValue")
     await sendRequest("cas.custom.properties.groovy1", "custom1");
     await sendRequest("cas.custom.properties.groovy2", "custom2");
     await sendRequest("cas.custom.properties.environment", "custom1");
     await sendRequest("cas.custom.properties.profile", "custom2");
     await sendRequest("cas.custom.properties.source", "yaml");
+
+    await cas.doGet("https://localhost:8443/cas/actuator/loggers/org.apereo.cas",
+        (res) => {
+            assert(res.status === 200);
+            assert(res.data.configuredLevel === "DEBUG");
+            assert(res.data.effectiveLevel === "DEBUG");
+        }, (error) => {
+            throw error;
+        });
 })();
 
 async function sendRequest(key, value) {

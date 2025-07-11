@@ -2,19 +2,16 @@ package org.apereo.cas.services.resource;
 
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-
-import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -49,7 +46,7 @@ class ModifyResourceBasedRegisteredServiceWatcherTests {
         val service = registry.findServiceById(1);
         service.setEvaluationOrder(666);
         registry.load();
-        val temp = new FileSystemResource(File.createTempFile("Sample-1", ".json"));
+        val temp = new FileSystemResource(Files.createTempFile("Sample-1", ".json").toFile());
         new RegisteredServiceJsonSerializer(mockAppContext).to(temp.getFile(), service);
 
         val watcher = new ModifyResourceBasedRegisteredServiceWatcher(registry);
