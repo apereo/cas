@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +22,9 @@ public class GroovyScriptWebflowAction extends BaseCasWebflowAction {
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        return FunctionUtils.doUnchecked(() -> {
-            val applicationContext = requestContext.getActiveFlow().getApplicationContext();
-            val args = new Object[]{requestContext, applicationContext, casProperties, LOGGER};
-            return script.execute(args, Event.class);
-        });
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
+        val args = new Object[]{requestContext, applicationContext, casProperties, LOGGER};
+        return script.execute(args, Event.class);
     }
 }
