@@ -17,7 +17,7 @@
             <p class="intro" th:utext="#{screen.pac4j.credential-selection.intro}">Please select your profile:</p>
             <span th:if="${delegatedAuthenticationCredentials}" th:remove="tag">
                 <div class="mdc-data-table table-responsive w-100">
-                    <table id="profilesTable" class="table table-striped w-100">
+                    <table id="profilesTable" class="table table-striped w-100 auto-init">
                         <thead>
                         <tr class="mdc-data-table__header-row">
                             <th class="mdc-data-table__header-cell">ID</th>
