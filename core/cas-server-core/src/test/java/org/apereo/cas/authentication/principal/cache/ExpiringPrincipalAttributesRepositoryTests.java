@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("Attributes")
+@Tag("AttributeRepository")
 @ExtendWith(CasTestExtension.class)
 class ExpiringPrincipalAttributesRepositoryTests {
     private static final String MAIL = "mail";

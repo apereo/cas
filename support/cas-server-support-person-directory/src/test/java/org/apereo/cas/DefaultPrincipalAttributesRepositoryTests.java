@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Tag("Attributes")
+@Tag("AttributeRepository")
 @Import(CasPersonDirectoryTestConfiguration.class)
 class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("Attributes")
+@Tag("AttributeRelease")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
