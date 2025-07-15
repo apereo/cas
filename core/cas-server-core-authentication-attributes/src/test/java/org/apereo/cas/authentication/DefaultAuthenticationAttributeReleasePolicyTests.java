@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Attributes")
+@Tag("AttributeRelease")
 class DefaultAuthenticationAttributeReleasePolicyTests {
     @Test
     void verifyNoRelease() {

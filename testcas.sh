@@ -245,6 +245,12 @@ while (( "$#" )); do
             wsfed|wsfederation)
                 task+="testWSFederation "
                 ;;
+            attributerepository|attrrepo|attrsrepo|attr-repo|attribute-repository)
+                task+="testAttributeRepository "
+                ;;
+            attributerelease|attrrelease|attrsrelease|attr-release|attribute-release)
+                task+="testAttributeRelease "
+                ;;
             attrs|attr|attributes)
                 task+="testAttributes "
                 ;;

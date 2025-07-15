@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@Tag("Attributes")
+@Tag("AttributeRepository")
 class MergingPersonAttributeDaoImplTests {
     private static final String QUERY_ATTR = "username";
 

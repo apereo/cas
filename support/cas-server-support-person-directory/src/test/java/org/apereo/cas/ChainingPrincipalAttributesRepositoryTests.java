@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Tag("Attributes")
+@Tag("AttributeRepository")
 @ExtendWith(CasTestExtension.class)
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {

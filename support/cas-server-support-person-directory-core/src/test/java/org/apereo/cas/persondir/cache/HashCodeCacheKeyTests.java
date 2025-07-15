@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.2.0
  */
-@Tag("Attributes")
+@Tag("AttributeRepository")
 class HashCodeCacheKeyTests {
     @Test
     void verifyOperation() {

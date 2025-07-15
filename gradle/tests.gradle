@@ -8,6 +8,8 @@ enum TestCategories {
     AmazonWebServices(true, true),
     AMQP(false, true),
     Attributes(true, true),
+    AttributeRelease(true, true),
+    AttributeRepository(true, true),
     Audits(true, true),
     Authentication(true, true),
     AuthenticationHandler(true, true),
