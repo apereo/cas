@@ -1,6 +1,5 @@
 package org.apereo.cas.otp.web.flow;
 
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,7 @@ public class OneTimeTokenAuthenticationWebflowAction extends BaseCasWebflowActio
     private final CasWebflowEventResolver casWebflowEventResolver;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        return FunctionUtils.doUnchecked(() -> casWebflowEventResolver.resolveSingle(requestContext));
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        return casWebflowEventResolver.resolveSingle(requestContext);
     }
 }
