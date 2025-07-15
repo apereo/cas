@@ -44,10 +44,11 @@ public class LogoutViewSetupAction extends AbstractLogoutAction {
     @Override
     protected Event doInternalExecute(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        WebUtils.putGeoLocationTrackingIntoFlowScope(context,
-            casProperties.getEvents().getCore().isTrackGeolocation());
-        Optional.ofNullable((SingleLogoutContinuation) request.getAttribute(SingleLogoutContinuation.class.getName()))
-            .or(() -> Optional.ofNullable(context.getConversationScope().get(SingleLogoutContinuation.class.getName(), SingleLogoutContinuation.class)))
+        WebUtils.putGeoLocationTrackingIntoFlowScope(context, casProperties.getEvents().getCore().isTrackGeolocation());
+        val requestLogoutContinuation = (SingleLogoutContinuation) request.getAttribute(SingleLogoutContinuation.class.getName());
+        val conversationLogoutContinuation = context.getConversationScope().get(SingleLogoutContinuation.class.getName(), SingleLogoutContinuation.class);
+        Optional.ofNullable(requestLogoutContinuation)
+            .or(() -> Optional.ofNullable(conversationLogoutContinuation))
             .ifPresent(continuation -> {
                 context.getFlowScope().put(FLOW_SCOPE_ATTRIBUTE_PROCEED, Boolean.TRUE);
                 FunctionUtils.doIfNotBlank(continuation.getContent(), cnt -> context.getFlowScope().put(DynamicHtmlView.class.getName(), cnt));

@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.actions.logout;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.LogoutConfirmationResolver;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -49,8 +50,10 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
 
     protected final CasConfigurationProperties casProperties;
 
+    protected final LogoutConfirmationResolver logoutConfirmationResolver;
+
     @Override
-    protected Event doPreExecute(final RequestContext requestContext) {
+    protected Event doPreExecute(final RequestContext requestContext) throws Exception {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val context = new JEEContext(request, response);
@@ -62,33 +65,35 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
             LOGGER.debug("Handling logout for delegated authentication client [{}]", client);
             DelegationWebflowUtils.putDelegatedAuthenticationClientName(requestContext, client.getName());
         }
-        return null;
+        return super.doPreExecute(requestContext);
     }
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val context = new JEEContext(request, response);
+        if (logoutConfirmationResolver.isLogoutRequestConfirmed(requestContext)) {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            val context = new JEEContext(request, response);
 
-        val currentProfile = findCurrentProfile(context);
-        val clientResult = findCurrentClient(currentProfile, context);
-        if (clientResult.isPresent()) {
-            val client = clientResult.get();
-            LOGGER.trace("Located client [{}]", client);
-            val service = WebUtils.getService(requestContext);
-            val targetUrl = Optional.ofNullable(service).map(Service::getId).orElse(null);
-            LOGGER.debug("Logout target url based on service [{}] is [{}]", service, targetUrl);
+            val currentProfile = findCurrentProfile(context);
+            val clientResult = findCurrentClient(currentProfile, context);
+            if (clientResult.isPresent()) {
+                val client = clientResult.get();
+                LOGGER.trace("Located client [{}]", client);
+                val service = WebUtils.getService(requestContext);
+                val targetUrl = Optional.ofNullable(service).map(Service::getId).orElse(null);
+                LOGGER.debug("Logout target url based on service [{}] is [{}]", service, targetUrl);
 
-            val callContext = new CallContext(context, sessionStore);
-            val actionResult = client.getLogoutAction(callContext, currentProfile, targetUrl);
-            actionResult.ifPresent(action -> {
-                captureDelegatedAuthenticationLogoutRequest(requestContext, action, targetUrl);
-                LOGGER.debug("Adapting logout action [{}] for client [{}]", action, client);
-                JEEHttpActionAdapter.INSTANCE.adapt(action, context);
-            });
-        } else {
-            LOGGER.debug("The current client cannot be found; No logout action can execute");
+                val callContext = new CallContext(context, sessionStore);
+                val actionResult = client.getLogoutAction(callContext, currentProfile, targetUrl);
+                actionResult.ifPresent(action -> {
+                    captureDelegatedAuthenticationLogoutRequest(requestContext, action, targetUrl);
+                    LOGGER.debug("Adapting logout action [{}] for client [{}]", action, client);
+                    JEEHttpActionAdapter.INSTANCE.adapt(action, context);
+                });
+            } else {
+                LOGGER.debug("The current client cannot be found; No logout action can execute");
+            }
         }
         return null;
     }

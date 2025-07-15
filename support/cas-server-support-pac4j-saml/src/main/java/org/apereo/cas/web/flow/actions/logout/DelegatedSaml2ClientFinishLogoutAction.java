@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions.logout;
 
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.logout.LogoutConfirmationResolver;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -57,69 +58,72 @@ public class DelegatedSaml2ClientFinishLogoutAction extends BaseCasWebflowAction
     private final TicketRegistry ticketRegistry;
 
     private final TicketFactory ticketFactory;
-    
+
     private final ServiceFactory serviceFactory;
+
+    private final LogoutConfirmationResolver logoutConfirmationResolver;
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val context = new JEEContext(request, response);
+        if (logoutConfirmationResolver.isLogoutRequestConfirmed(requestContext)) {
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            val context = new JEEContext(request, response);
 
-        var clientName = DelegationWebflowUtils.getDelegatedAuthenticationClientName(requestContext);
-        if (clientName == null) {
-            clientName = requestContext.getRequestParameters().get(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
-            if (StringUtils.isNotBlank(clientName)) {
+            var clientName = DelegationWebflowUtils.getDelegatedAuthenticationClientName(requestContext);
+            if (clientName == null) {
+                clientName = requestContext.getRequestParameters().get(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
+                if (StringUtils.isNotBlank(clientName)) {
+                    identityProviders.findClient(clientName, context)
+                        .filter(SAML2Client.class::isInstance)
+                        .map(SAML2Client.class::cast)
+                        .ifPresent(client -> FunctionUtils.doAndHandle(__ -> {
+                            client.init();
+                            LOGGER.debug("Located client from relay-state [{}]", client);
+                            val callContext = new CallContext(context, sessionStore);
+                            client.getCredentialsExtractor().extract(callContext).ifPresent(logoutCredentials -> {
+                                val result = client.getLogoutProcessor().processLogout(callContext, logoutCredentials);
+                                JEEHttpActionAdapter.INSTANCE.adapt(result, context);
+                            });
+                        }));
+                }
+            } else {
+                val logoutRedirect = WebUtils.getLogoutRedirectUrl(requestContext, String.class);
+                val delegatedClientLogoutRequest = DelegationWebflowUtils.getDelegatedAuthenticationLogoutRequest(requestContext,
+                    DelegatedAuthenticationClientLogoutRequest.class);
                 identityProviders.findClient(clientName, context)
                     .filter(SAML2Client.class::isInstance)
                     .map(SAML2Client.class::cast)
-                    .ifPresent(client -> FunctionUtils.doAndHandle(__ -> {
+                    .ifPresent(client -> {
                         client.init();
+                        Optional.ofNullable(delegatedClientLogoutRequest)
+                            .filter(__ -> StringUtils.isNotBlank(logoutRedirect))
+                            .filter(__ -> StringUtils.isNotBlank(delegatedClientLogoutRequest.getLocation()))
+                            .ifPresent(Unchecked.consumer(__ -> {
+                                try {
+                                    val urlBuilder = new URIBuilder(delegatedClientLogoutRequest.getLocation());
+                                    val samlRequestParam = Optional.ofNullable(urlBuilder.getFirstQueryParam(SamlProtocolConstants.PARAMETER_SAML_REQUEST));
+                                    samlRequestParam.ifPresent(Unchecked.consumer(samlRequest -> {
+                                        val logoutRequest = SamlUtils.convertToSamlObject(openSamlConfigBean, samlRequest.getValue(), LogoutRequest.class);
+                                        val service = serviceFactory.createService(logoutRequest.getIssuer().getValue());
+                                        service.setTenant(ClientInfoHolder.getClientInfo().getTenant());
 
-                        LOGGER.debug("Located client from relay-state [{}]", client);
-                        val callContext = new CallContext(context, sessionStore);
-                        client.getCredentialsExtractor().extract(callContext).ifPresent(logoutCredentials -> {
-                            val result = client.getLogoutProcessor().processLogout(callContext, logoutCredentials);
-                            JEEHttpActionAdapter.INSTANCE.adapt(result, context);
-                        });
-                    }));
+                                        val logoutRequestTicketId = TransientSessionTicketFactory.normalizeTicketId(logoutRequest.getID());
+                                        val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
+                                        val transientSessionTicket = transientFactory.create(logoutRequestTicketId,
+                                            service,
+                                            Map.of(DelegatedAuthenticationClientLogoutRequest.class.getName(), delegatedClientLogoutRequest)
+                                        );
+                                        val storedTicket = ticketRegistry.addTicket(transientSessionTicket);
+                                        DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequestTicket(requestContext, storedTicket);
+                                    }));
+                                } finally {
+                                    LOGGER.debug("Captured post logout url: [{}]", logoutRedirect);
+                                    WebUtils.putLogoutRedirectUrl(requestContext, null);
+                                }
+                            }));
+                    });
             }
-        } else {
-            val logoutRedirect = WebUtils.getLogoutRedirectUrl(requestContext, String.class);
-            val delegatedClientLogoutRequest = DelegationWebflowUtils.getDelegatedAuthenticationLogoutRequest(requestContext,
-                DelegatedAuthenticationClientLogoutRequest.class);
-            identityProviders.findClient(clientName, context)
-                .filter(SAML2Client.class::isInstance)
-                .map(SAML2Client.class::cast)
-                .ifPresent(client -> {
-                    client.init();
-                    Optional.ofNullable(delegatedClientLogoutRequest)
-                        .filter(__ -> StringUtils.isNotBlank(logoutRedirect))
-                        .filter(__ -> StringUtils.isNotBlank(delegatedClientLogoutRequest.getLocation()))
-                        .ifPresent(Unchecked.consumer(__ -> {
-                            try {
-                                val urlBuilder = new URIBuilder(delegatedClientLogoutRequest.getLocation());
-                                val samlRequestParam = Optional.ofNullable(urlBuilder.getFirstQueryParam(SamlProtocolConstants.PARAMETER_SAML_REQUEST));
-                                samlRequestParam.ifPresent(Unchecked.consumer(samlRequest -> {
-                                    val logoutRequest = SamlUtils.convertToSamlObject(openSamlConfigBean, samlRequest.getValue(), LogoutRequest.class);
-                                    val service = serviceFactory.createService(logoutRequest.getIssuer().getValue());
-                                    service.setTenant(ClientInfoHolder.getClientInfo().getTenant());
-
-                                    val logoutRequestTicketId = TransientSessionTicketFactory.normalizeTicketId(logoutRequest.getID());
-                                    val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
-                                    val transientSessionTicket = transientFactory.create(logoutRequestTicketId,
-                                        service,
-                                        Map.of(DelegatedAuthenticationClientLogoutRequest.class.getName(), delegatedClientLogoutRequest)
-                                    );
-                                    val storedTicket = ticketRegistry.addTicket(transientSessionTicket);
-                                    DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequestTicket(requestContext, storedTicket);
-                                }));
-                            } finally {
-                                LOGGER.debug("Captured post logout url: [{}]", logoutRedirect);
-                                WebUtils.putLogoutRedirectUrl(requestContext, null);
-                            }
-                        }));
-                });
         }
         return null;
     }
