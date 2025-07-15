@@ -240,6 +240,7 @@ while (( "$#" )); do
                 task+="testActuatorEndpoint "
                 ;;
             utility|utils|util)
+                isDockerOnLinux && ./ci/tests/httpbin/run-httpbin-server.sh || exit 1
                 task+="testUtility "
                 ;;
             wsfed|wsfederation)
