@@ -9,6 +9,8 @@
     "--management.endpoints.web.exposure.include=gauthCredentialRepository",
     "--management.endpoints.access.default=UNRESTRICTED",
 
+    "--cas.authn.mfa.gauth.core.maximum-authentication-attempts=3",
+    
     "--cas.authn.mfa.gauth.crypto.enabled=false",
     "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.authn.mfa.gauth.core.multiple-device-registration-enabled=true",
