@@ -35,8 +35,8 @@ docker run -d --rm --name keycloak \
   -e KC_HTTPS_CERTIFICATE_KEY_FILE=/opt/keycloak/conf/server.key \
   -v $PWD/ci/tests/keycloak/data/server.crt:/opt/keycloak/conf/server.crt \
   -v $PWD/ci/tests/keycloak/data/server.key:/opt/keycloak/conf/server.key \
-  -e KEYCLOAK_ADMIN=admin \
-  -e KEYCLOAK_ADMIN_PASSWORD=admin \
+  -e KC_BOOTSTRAP_ADMIN_USERNAME=admin \
+  -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
   -e KC_DB=dev-file \
   -e KC_HEALTH_ENABLED=true \
   -e KC_METRICS_ENABLED=true \
