@@ -24,7 +24,7 @@ until $(curl --output /dev/null --silent --head --fail http://localhost:18080/sy
     printf '.'
     sleep 1
 done
-printgreen "\nApache Syncope docker container is running."
+printgreen "Apache Syncope docker container is running."
 
 
 echo "Creating derived attribute"
@@ -240,4 +240,4 @@ curl -X 'POST' \
     }
   ]
 }'
-printgreen "\nReady!\n"
+printgreen "Ready!\n"
