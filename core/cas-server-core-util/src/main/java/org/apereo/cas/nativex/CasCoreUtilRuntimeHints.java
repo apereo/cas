@@ -54,6 +54,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
 import java.util.ServiceLoader;
@@ -66,6 +67,7 @@ import java.util.TreeSet;
 import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -143,7 +145,8 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             ResolvedModule.class,
             ServiceLoader.class,
             Callable.class,
-            Map.class
+            Map.class,
+            Locale.class
         ));
 
         registerReflectionHintsForPublicElements(hints, List.of(System.class));
@@ -210,6 +213,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             Integer.class,
             Long.class,
             String.class,
+            Float.class,
 
             ZonedDateTime.class,
             LocalDateTime.class,
@@ -218,7 +222,8 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             ZoneId.class,
             ZoneOffset.class,
             Instant.class,
-
+            Locale.class,
+            
             ArrayList.class,
             Vector.class,
             CopyOnWriteArrayList.class,
@@ -230,6 +235,8 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             TreeMap.class,
 
             ConcurrentSkipListSet.class,
+            ConcurrentLinkedQueue.class,
+            ConcurrentHashMap.class,
             HashSet.class,
             LinkedHashSet.class,
             CopyOnWriteArraySet.class,

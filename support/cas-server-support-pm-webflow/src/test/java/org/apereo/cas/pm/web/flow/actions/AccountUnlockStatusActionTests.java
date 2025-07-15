@@ -41,8 +41,8 @@ class AccountUnlockStatusActionTests extends BasePasswordManagementActionTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
     }
 
-    private static RequestContext getRequestContext(final String captcha, final String givenCaptcha) throws Exception {
-        val context = MockRequestContext.create();
+    private RequestContext getRequestContext(final String captcha, final String givenCaptcha) throws Exception {
+        val context = MockRequestContext.create(applicationContext);
         context.setParameter("captchaValue", givenCaptcha);
         val credential = RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
         context.getConversationScope().put(Credential.class.getName(), credential);

@@ -101,7 +101,7 @@ class CasEventsReportEndpointTests {
 
         mockMvc.perform(get("/actuator/events")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .accept(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_NDJSON_VALUE)
                 .headers(HttpUtils.createBasicAuthHeaders("casuser", "Mellon"))
             )
             .andExpect(status().isOk());

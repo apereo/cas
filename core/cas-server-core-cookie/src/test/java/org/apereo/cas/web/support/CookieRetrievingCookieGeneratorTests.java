@@ -182,7 +182,7 @@ class CookieRetrievingCookieGeneratorTests {
             tenantExtractor,
             new DirectObjectProvider<>(mock(GeoLocationService.class)),
             DefaultCookieSameSitePolicy.INSTANCE, new PinnableCookieProperties().setPinToSession(false)), ctx);
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         gen.addCookie(context.getHttpServletRequest(), context.getHttpServletResponse(), false, "CAS-Cookie-Value");
         val cookie = (MockCookie) context.getHttpServletResponse().getCookie(ctx.getName());
         assertNotNull(cookie);
