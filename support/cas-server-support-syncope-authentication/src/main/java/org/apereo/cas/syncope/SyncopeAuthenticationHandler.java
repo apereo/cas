@@ -77,7 +77,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
     }
 
-    protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential) {
+    protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential) throws Throwable {
         HttpResponse response = null;
         try {
             val syncopeRestUrl = StringUtils.appendIfMissing(
@@ -95,6 +95,15 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
             if (response.getCode() == HttpStatus.SC_OK) {
                 return parseResponseResults((HttpEntityContainer) response);
+            }
+            if (response.getCode() == HttpStatus.SC_FORBIDDEN) {
+                val appInfoHeader = response.getFirstHeader("X-Application-Error-Info");
+                if (appInfoHeader != null && StringUtils.equalsIgnoreCase("Please change your password first", appInfoHeader.getValue())) {
+                    val user = MAPPER.createObjectNode();
+                    user.put("username", credential.getUsername());
+                    user.put("mustChangePassword", true);
+                    return Optional.of(user);
+                }
             }
         } finally {
             HttpUtils.close(response);

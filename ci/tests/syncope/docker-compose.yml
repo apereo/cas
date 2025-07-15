@@ -28,3 +28,18 @@ services:
       SERVICE_DISCOVERY_ADDRESS: http://syncope:8080/syncope/rest/
       ANONYMOUS_USER: syncope
       ANONYMOUS_KEY: syncope
+  syncope-console:
+    depends_on:
+      - syncope
+    image: apache/syncope-console:4.0.0
+    ports:
+      - "28080:8080"
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: docker,postgresql
+      KEYMASTER_ADDRESS: http://syncope:8080/syncope/rest/keymaster
+      KEYMASTER_USERNAME: syncope
+      KEYMASTER_PASSWORD: syncope
+      SERVICE_DISCOVERY_ADDRESS: http://syncope-console:8080/syncope-console/
+      ANONYMOUS_USER: syncope
+      ANONYMOUS_KEY: syncope
