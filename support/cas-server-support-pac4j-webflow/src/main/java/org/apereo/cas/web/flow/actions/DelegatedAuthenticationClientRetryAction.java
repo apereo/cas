@@ -1,11 +1,9 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderConfigurationProducer;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
@@ -28,20 +26,18 @@ public class DelegatedAuthenticationClientRetryAction extends BaseCasWebflowActi
     private final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        return FunctionUtils.doUnchecked(() -> {
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            val clientName = DelegationWebflowUtils.getDelegatedAuthenticationClientName(requestContext);
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        val clientName = DelegationWebflowUtils.getDelegatedAuthenticationClientName(requestContext);
 
-            val webContext = new JEEContext(request, response);
-            val client = identityProviders.findClient(clientName, webContext).map(IndirectClient.class::cast).orElseThrow();
-            val config = providerConfigurationProducer.produce(requestContext, client).orElseThrow();
+        val webContext = new JEEContext(request, response);
+        val client = identityProviders.findClient(clientName, webContext).map(IndirectClient.class::cast).orElseThrow();
+        val config = providerConfigurationProducer.produce(requestContext, client).orElseThrow();
 
-            val urlBuilder = new URIBuilder(config.getRedirectUrl());
-            urlBuilder.addParameter(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, Boolean.TRUE.toString());
-            response.sendRedirect(urlBuilder.toString());
-            return null;
-        });
+        val urlBuilder = new URIBuilder(config.getRedirectUrl());
+        urlBuilder.addParameter(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, Boolean.TRUE.toString());
+        response.sendRedirect(urlBuilder.toString());
+        return null;
     }
 }

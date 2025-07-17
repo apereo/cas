@@ -5,6 +5,8 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,6 +38,7 @@ import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.util.Timeout;
 import org.springframework.http.MediaType;
 import javax.net.ssl.SSLHandshakeException;
+import java.io.Serial;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -53,10 +56,15 @@ import java.util.Optional;
 @Slf4j
 @UtilityClass
 public class HttpUtils {
-    private static final Timeout CONNECT_TIMEOUT_IN_MILLISECONDS = Timeout.ofMilliseconds(5000);
-    private static final Timeout SOCKET_TIMEOUT_IN_MILLISECONDS = Timeout.ofMilliseconds(5000);
-    private static final Timeout CONNECT_TTL_TIMEOUT_IN_MILLISECONDS = Timeout.ofMilliseconds(5000);
-    private static final Timeout CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS = Timeout.ofMilliseconds(5000);
+    private static final Timeout CONNECT_TIMEOUT_IN_MILLISECONDS = getTimeout("connectionTimeout");
+    private static final Timeout SOCKET_TIMEOUT_IN_MILLISECONDS = getTimeout("socketTimeout");
+    private static final Timeout CONNECT_TTL_TIMEOUT_IN_MILLISECONDS = getTimeout("connectionTimeToLive");
+    private static final Timeout CONNECTION_REQUEST_TIMEOUT_IN_MILLISECONDS = getTimeout("connectionRequest");
+
+    private static Timeout getTimeout(final String setting) {
+        val timeoutValue = StringUtils.defaultIfBlank(System.getProperty(HttpUtils.class.getName() + '.' + setting), "5000");
+        return Timeout.ofMilliseconds(Long.parseLong(timeoutValue));
+    }
 
     /**
      * Execute http request and produce a response.
@@ -82,7 +90,7 @@ public class HttpUtils {
                 if (res == null || org.springframework.http.HttpStatus.valueOf(res.getCode()).isError()) {
                     val maxAttempts = (Integer) retryContext.getAttribute("retry.maxAttempts");
                     if (maxAttempts == null || retryContext.getRetryCount() != maxAttempts - 1) {
-                        throw new IllegalStateException();
+                        throw new HttpRequestExecutionException(res);
                     }
                 }
                 return res;
@@ -94,6 +102,11 @@ public class HttpUtils {
             return new BasicHttpResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, sanitizedUrl);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
+            if (e instanceof final HttpRequestExecutionException hre && hre.getResponse() != null) {
+                val response = new BasicHttpResponse(hre.getResponse().getCode(), hre.getResponse().getReasonPhrase());
+                response.setHeaders(hre.getResponse().getHeaders());
+                return response;
+            }
         }
         return null;
     }
@@ -241,4 +254,12 @@ public class HttpUtils {
         return builder.build();
     }
 
+    @RequiredArgsConstructor
+    @Getter
+    private static final class HttpRequestExecutionException extends IllegalStateException {
+        @Serial
+        private static final long serialVersionUID = 3764678971716744728L;
+
+        private final HttpResponse response;
+    }
 }

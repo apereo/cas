@@ -34,8 +34,21 @@ class EndViewStateTests {
     @Test
     void verifyOperation() throws Exception {
         val context = MockRequestContext.create(applicationContext);
-        val state = new EndViewState(new Flow("flow"), "end", new ActionExecutingViewFactory(ConsumerExecutionAction.OK));
+        val state = new EndViewState(new Flow("flow"), "end",
+            new ActionExecutingViewFactory(ConsumerExecutionAction.OK));
         state.enter(context);
+        assertTrue(context.getFlowExecutionContext().hasEnded());
+    }
+
+    @Test
+    void verifyForceViewRendering() throws Exception {
+        val context = MockRequestContext.create(applicationContext);
+        val state = new EndViewState(new Flow("flow"), "end",
+            new ActionExecutingViewFactory(ConsumerExecutionAction.OK));
+        state.setForceRenderView(true);
+        state.enter(context);
+        val currentView = context.getCurrentView();
+        assertNotNull(currentView);
         assertTrue(context.getFlowExecutionContext().hasEnded());
     }
 }
