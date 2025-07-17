@@ -7,10 +7,8 @@ import org.apereo.cas.support.saml.mdui.MetadataUIUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,26 +31,24 @@ public class SamlIdPMetadataUIAction extends BaseCasWebflowAction {
     private final AuthenticationServiceSelectionPlan serviceSelectionStrategy;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        return FunctionUtils.doUnchecked(() -> {
-            val service = serviceSelectionStrategy.resolveService(WebUtils.getService(requestContext));
-            if (service != null) {
-                val samlService = servicesManager.findServiceBy(service, SamlRegisteredService.class);
-                if (samlService != null) {
-                    RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, samlService);
-                    val adaptor = SamlRegisteredServiceMetadataAdaptor.get(resolver, samlService, service.getId());
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        val service = serviceSelectionStrategy.resolveService(WebUtils.getService(requestContext));
+        if (service != null) {
+            val samlService = servicesManager.findServiceBy(service, SamlRegisteredService.class);
+            if (samlService != null) {
+                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, samlService);
+                val adaptor = SamlRegisteredServiceMetadataAdaptor.get(resolver, samlService, service.getId());
 
-                    if (adaptor.isEmpty()) {
-                        LOGGER.debug("Cannot find SAML2 metadata linked to [{}]. Skipping MDUI...", service.getId());
-                        return success();
-                    }
-
-                    val mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(adaptor.get().getEntityDescriptor(),
-                        service.getId(), samlService, WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext));
-                    WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
+                if (adaptor.isEmpty()) {
+                    LOGGER.debug("Cannot find SAML2 metadata linked to [{}]. Skipping MDUI...", service.getId());
+                    return success();
                 }
+
+                val mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(adaptor.get().getEntityDescriptor(),
+                    service.getId(), samlService, WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext));
+                WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
             }
-            return success();
-        });
+        }
+        return success();
     }
 }

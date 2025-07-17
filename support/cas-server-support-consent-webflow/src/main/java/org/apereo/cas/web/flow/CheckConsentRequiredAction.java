@@ -9,7 +9,6 @@ import org.apereo.cas.consent.ConsentActivationStrategy;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -42,15 +41,13 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        return FunctionUtils.doUnchecked(() -> {
-            val consentEvent = determineConsentEvent(requestContext);
-            if (StringUtils.isBlank(consentEvent)) {
-                return null;
-            }
-            prepareConsentForRequestContext(requestContext);
-            return eventFactory.event(this, consentEvent);
-        });
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        val consentEvent = determineConsentEvent(requestContext);
+        if (StringUtils.isBlank(consentEvent)) {
+            return null;
+        }
+        prepareConsentForRequestContext(requestContext);
+        return eventFactory.event(this, consentEvent);
     }
 
     protected String determineConsentEvent(final RequestContext requestContext) throws Throwable {

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.logout.LogoutConfirmationResolver;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
@@ -69,6 +70,8 @@ class DelegatedAuthenticationSaml2Configuration {
         public Action delegatedSaml2ClientTerminateSessionAction(
             @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
             final DelegatedIdentityProviders identityProviders,
+            @Qualifier(LogoutConfirmationResolver.DEFAULT_BEAN_NAME)
+            final LogoutConfirmationResolver logoutConfirmationResolver,
             @Qualifier("delegatedClientDistributedSessionStore")
             final SessionStore delegatedClientDistributedSessionStore,
             final CasConfigurationProperties casProperties,
@@ -79,7 +82,9 @@ class DelegatedAuthenticationSaml2Configuration {
                 .supply(() -> WebflowActionBeanSupplier.builder()
                     .withApplicationContext(applicationContext)
                     .withProperties(casProperties)
-                    .withAction(() -> new DelegatedSaml2ClientTerminateSessionAction(identityProviders, delegatedClientDistributedSessionStore))
+                    .withAction(() -> new DelegatedSaml2ClientTerminateSessionAction(
+                        identityProviders, delegatedClientDistributedSessionStore,
+                        logoutConfirmationResolver))
                     .withId(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_TERMINATE_SESSION)
                     .build()
                     .get())
@@ -114,6 +119,8 @@ class DelegatedAuthenticationSaml2Configuration {
         public Action delegatedAuthenticationSaml2ClientFinishLogoutAction(
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
+            @Qualifier(LogoutConfirmationResolver.DEFAULT_BEAN_NAME)
+            final LogoutConfirmationResolver logoutConfirmationResolver,
             @Qualifier(TicketFactory.BEAN_NAME)
             final TicketFactory ticketFactory,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
@@ -131,7 +138,8 @@ class DelegatedAuthenticationSaml2Configuration {
                 .withProperties(casProperties)
                 .withAction(() -> new DelegatedSaml2ClientFinishLogoutAction(identityProviders,
                     delegatedClientDistributedSessionStore, configBean,
-                    ticketRegistry, ticketFactory, serviceFactory))
+                    ticketRegistry, ticketFactory, serviceFactory,
+                    logoutConfirmationResolver))
                 .withId(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_CLIENT_FINISH_LOGOUT)
                 .build()
                 .get();
