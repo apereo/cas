@@ -1,11 +1,7 @@
 package org.apereo.cas.syncope.pm;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import javax.security.auth.login.FailedLoginException;
 import lombok.val;
@@ -110,7 +106,7 @@ class SyncopePasswordManagementServiceTests {
                 "Password123!".toCharArray(),
                 "Password123!".toCharArray());
 
-        assertTrue(((SyncopePasswordManagementService)passwordChangeService).changeInternal(passwordChangeRequest));
+        assertTrue(((SyncopePasswordManagementService) passwordChangeService).changeInternal(passwordChangeRequest));
         assertThrows(FailedLoginException.class,
                 () -> syncopeAuthenticationHandler.authenticate(credential, mock(Service.class)));
 

@@ -2,15 +2,14 @@ package org.apereo.cas.syncope.pm;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -25,14 +24,17 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
+/**
+ * This is {@link SyncopePasswordManagementService}.
+ *
+ * @author Misagh Moayyed
+ * @since 7.3.0
+ */
+@Slf4j
 public class SyncopePasswordManagementService extends BasePasswordManagementService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SyncopePasswordManagementService.class);
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(false).build().toObjectMapper();
@@ -46,12 +48,12 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
     @Override
     public boolean changeInternal(final PasswordChangeRequest bean) {
         return FunctionUtils.doAndHandle(() -> {
-            String syncopeRestPasswordResetUrl = StringUtils.appendIfMissing(
+            val syncopeRestPasswordResetUrl = StringUtils.appendIfMissing(
                     SpringExpressionLanguageValueResolver.getInstance().resolve(
                             casProperties.getAuthn().getPm().getSyncope().getUrl()),
                     "/rest/users/self/mustChangePassword");
             LOGGER.debug("Updating account password on syncope for user [{}]", bean.getUsername());
-            HttpExecutionRequest exec = HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                     .method(HttpMethod.POST)
                     .url(syncopeRestPasswordResetUrl)
                     .basicAuthUsername(bean.getUsername())
@@ -60,9 +62,9 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
                             HttpHeaders.ACCEPT, "application/json",
                             HttpHeaders.CONTENT_TYPE, "application/json"))
                     .entity(MAPPER.writeValueAsString(getPasswordPatch(bean)))
-                    .maximumRetryAttempts(1)
+                    .maximumRetryAttempts(casProperties.getAuthn().getSyncope().getMaxRetryAttempts())
                     .build();
-            HttpResponse response = Objects.requireNonNull(HttpUtils.execute(exec));
+            val response = Objects.requireNonNull(HttpUtils.execute(exec));
             if (response.getCode() == HttpStatus.SC_OK) {
                 LOGGER.debug("Successfully updated the account password on Syncope for [{}]", bean.getUsername());
                 return true;
@@ -109,7 +111,7 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
                 .stream()
                 .findFirst()
                 .map(syncopeUser -> {
-                    String prefix = "%s_%s".formatted("syncopeUserAttr", attributeName);
+                    val prefix = "%s_%s".formatted("syncopeUserAttr", attributeName);
                     return syncopeUser.getOrDefault(attributeName, syncopeUser.get(prefix));
                 })
                 .filter(Objects::nonNull)
@@ -122,12 +124,12 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
     }
 
     private JsonNode getPasswordPatch(final PasswordChangeRequest bean) {
-        ObjectNode passwordPatch = MAPPER.createObjectNode();
+        val passwordPatch = MAPPER.createObjectNode();
         passwordPatch.put("operation", "ADD_REPLACE");
         passwordPatch.put("value", bean.toConfirmedPassword());
         passwordPatch.put("onSyncope", true);
 
-        ArrayNode resources = MAPPER.createArrayNode();
+        val resources = MAPPER.createArrayNode();
         passwordPatch.set("resources", resources);
 
         return passwordPatch;

@@ -98,7 +98,7 @@ public class PasswordManagementProperties implements CasFeatureModule, Serializa
         return core;
     }
 
-    public void setCore(PasswordManagementCoreProperties core) {
+    public void setCore(final PasswordManagementCoreProperties core) {
         this.core = core;
     }
 
@@ -106,7 +106,7 @@ public class PasswordManagementProperties implements CasFeatureModule, Serializa
         return googleRecaptcha;
     }
 
-    public void setGoogleRecaptcha(GoogleRecaptchaProperties googleRecaptcha) {
+    public void setGoogleRecaptcha(final GoogleRecaptchaProperties googleRecaptcha) {
         this.googleRecaptcha = googleRecaptcha;
     }
 
@@ -114,7 +114,7 @@ public class PasswordManagementProperties implements CasFeatureModule, Serializa
         return ldap;
     }
 
-    public void setLdap(List<LdapPasswordManagementProperties> ldap) {
+    public void setLdap(final List<LdapPasswordManagementProperties> ldap) {
         this.ldap = ldap;
     }
 
@@ -122,7 +122,7 @@ public class PasswordManagementProperties implements CasFeatureModule, Serializa
         return jdbc;
     }
 
-    public void setJdbc(JdbcPasswordManagementProperties jdbc) {
+    public void setJdbc(final JdbcPasswordManagementProperties jdbc) {
         this.jdbc = jdbc;
     }
 
@@ -130,7 +130,7 @@ public class PasswordManagementProperties implements CasFeatureModule, Serializa
         return rest;
     }
 
-    public void setRest(RestfulPasswordManagementProperties rest) {
+    public void setRest(final RestfulPasswordManagementProperties rest) {
         this.rest = rest;
     }
 
@@ -138,7 +138,7 @@ public class PasswordManagementProperties implements CasFeatureModule, Serializa
         return syncope;
     }
 
-    public void setSyncope(SyncopePasswordManagementProperties syncope) {
+    public void setSyncope(final SyncopePasswordManagementProperties syncope) {
         this.syncope = syncope;
     }
 
@@ -146,7 +146,7 @@ public class PasswordManagementProperties implements CasFeatureModule, Serializa
         return json;
     }
 
-    public void setJson(JsonPasswordManagementProperties json) {
+    public void setJson(final JsonPasswordManagementProperties json) {
         this.json = json;
     }
 
@@ -154,7 +154,7 @@ public class PasswordManagementProperties implements CasFeatureModule, Serializa
         return reset;
     }
 
-    public void setReset(ResetPasswordManagementProperties reset) {
+    public void setReset(final ResetPasswordManagementProperties reset) {
         this.reset = reset;
     }
 
@@ -163,7 +163,7 @@ public class PasswordManagementProperties implements CasFeatureModule, Serializa
     }
 
     public void setForgotUsername(
-            ForgotUsernamePasswordManagementProperties forgotUsername) {
+            final ForgotUsernamePasswordManagementProperties forgotUsername) {
         this.forgotUsername = forgotUsername;
     }
 
@@ -171,7 +171,7 @@ public class PasswordManagementProperties implements CasFeatureModule, Serializa
         return history;
     }
 
-    public void setHistory(PasswordHistoryProperties history) {
+    public void setHistory(final PasswordHistoryProperties history) {
         this.history = history;
     }
 
@@ -179,7 +179,7 @@ public class PasswordManagementProperties implements CasFeatureModule, Serializa
         return groovy;
     }
 
-    public void setGroovy(GroovyPasswordManagementProperties groovy) {
+    public void setGroovy(final GroovyPasswordManagementProperties groovy) {
         this.groovy = groovy;
     }
 
@@ -187,7 +187,7 @@ public class PasswordManagementProperties implements CasFeatureModule, Serializa
         return webflow;
     }
 
-    public void setWebflow(WebflowAutoConfigurationProperties webflow) {
+    public void setWebflow(final WebflowAutoConfigurationProperties webflow) {
         this.webflow = webflow;
     }
 }

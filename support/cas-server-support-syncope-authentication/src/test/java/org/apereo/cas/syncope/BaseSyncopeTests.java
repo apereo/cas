@@ -157,25 +157,25 @@ public abstract class BaseSyncopeTests {
     }
 
     @ImportAutoConfiguration({
-            CasSyncopeAutoConfiguration.class,
-            CasCoreAutoConfiguration.class,
-            CasCoreLogoutAutoConfiguration.class,
-            CasCoreCookieAutoConfiguration.class,
-            CasCoreServicesAutoConfiguration.class,
-            CasCoreTicketsAutoConfiguration.class,
-            CasCoreAuthenticationAutoConfiguration.class,
-            CasCoreMultifactorAuthenticationAutoConfiguration.class,
-            CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-            CasCoreAuditAutoConfiguration.class,
-            CasCoreWebAutoConfiguration.class,
-            CasCoreUtilAutoConfiguration.class,
-            CasPersonDirectoryAutoConfiguration.class,
-            CasCoreWebflowAutoConfiguration.class,
-            CasCoreNotificationsAutoConfiguration.class,
-            CasCoreScriptingAutoConfiguration.class,
-            CasPasswordlessAuthenticationAutoConfiguration.class,
-            CasPasswordManagementAutoConfiguration.class,
-            CasAccountManagementWebflowAutoConfiguration.class
+        CasSyncopeAutoConfiguration.class,
+        CasCoreAutoConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
+        CasCoreCookieAutoConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+        CasCoreAuditAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
+        CasCoreUtilAutoConfiguration.class,
+        CasPersonDirectoryAutoConfiguration.class,
+        CasCoreWebflowAutoConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
+        CasPasswordlessAuthenticationAutoConfiguration.class,
+        CasPasswordManagementAutoConfiguration.class,
+        CasAccountManagementWebflowAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
     @SpringBootTestAutoConfigurations

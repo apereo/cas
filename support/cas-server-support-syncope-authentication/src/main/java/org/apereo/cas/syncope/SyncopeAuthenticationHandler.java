@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope;
 
+import java.util.Locale;
 import org.apache.hc.core5.http.ProtocolException;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -64,7 +65,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
         val result = authenticateSyncopeUser(credential);
         if (result.isPresent()) {
-            JsonNode user = result.get();
+            val user = result.get();
             LOGGER.debug("Received user object as [{}]", user);
             Principal principal = principalFactory.createPrincipal(user.get("username").asText(),
                     SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
@@ -94,15 +95,17 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                 return parseResponseResults((HttpEntityContainer) response);
             }
             val header = response.getHeader("x-application-error-info");
-            if (header.getValue().contains("change your password")) {
+            if (header != null && header.getValue().toLowerCase(Locale.ROOT).contains("password")) {
                 throw new AccountPasswordMustChangeException(
                         "Account password must change for " + credential.getUsername());
-            } else if (header.getValue().contains("suspended")) {
+            } else if (header != null && header.getValue().toLowerCase(Locale.ROOT).contains("suspended")) {
                 throw new AccountDisabledException(
                         "Could not authenticate forbidden account for " + credential.getUsername());
             }
-        } catch (ProtocolException e) {
+        } catch (final ProtocolException e) {
             throw new RuntimeException(e);
+        } catch (final NullPointerException e) {
+            return Optional.empty();
         } finally {
             HttpUtils.close(response);
         }

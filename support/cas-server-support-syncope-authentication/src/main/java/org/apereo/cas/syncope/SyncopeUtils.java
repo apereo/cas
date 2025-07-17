@@ -364,6 +364,12 @@ public class SyncopeUtils {
         return entity;
     }
 
+    /**
+     * Execute http request.
+     *
+     * @param execution http request
+     * @return http response
+     */
     public static HttpResponse execute(final HttpExecutionRequest execution) {
         val uri = HttpUtils.buildHttpUri(execution.getUrl().trim(), execution.getParameters());
         val request = HttpUtils.getHttpRequestByMethod(execution.getMethod().name().toLowerCase(Locale.ENGLISH).trim(),
