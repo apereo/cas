@@ -67,7 +67,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         if (result.isPresent()) {
             val user = result.get();
             LOGGER.debug("Received user object as [{}]", user);
-            Principal principal = principalFactory.createPrincipal(user.get("username").asText(),
+            val principal = principalFactory.createPrincipal(user.get("username").asText(),
                     SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
             return createHandlerResult(credential, principal, new ArrayList<>());
         }

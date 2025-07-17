@@ -4,6 +4,10 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
@@ -17,6 +21,10 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-pm-webflow")
+@Getter
+@Setter
+@NoArgsConstructor
+@Accessors(chain = true)
 public class PasswordManagementProperties implements CasFeatureModule, Serializable {
 
     @Serial
@@ -94,100 +102,4 @@ public class PasswordManagementProperties implements CasFeatureModule, Serializa
     @NestedConfigurationProperty
     private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties().setOrder(200);
 
-    public PasswordManagementCoreProperties getCore() {
-        return core;
-    }
-
-    public void setCore(final PasswordManagementCoreProperties core) {
-        this.core = core;
-    }
-
-    public GoogleRecaptchaProperties getGoogleRecaptcha() {
-        return googleRecaptcha;
-    }
-
-    public void setGoogleRecaptcha(final GoogleRecaptchaProperties googleRecaptcha) {
-        this.googleRecaptcha = googleRecaptcha;
-    }
-
-    public List<LdapPasswordManagementProperties> getLdap() {
-        return ldap;
-    }
-
-    public void setLdap(final List<LdapPasswordManagementProperties> ldap) {
-        this.ldap = ldap;
-    }
-
-    public JdbcPasswordManagementProperties getJdbc() {
-        return jdbc;
-    }
-
-    public void setJdbc(final JdbcPasswordManagementProperties jdbc) {
-        this.jdbc = jdbc;
-    }
-
-    public RestfulPasswordManagementProperties getRest() {
-        return rest;
-    }
-
-    public void setRest(final RestfulPasswordManagementProperties rest) {
-        this.rest = rest;
-    }
-
-    public SyncopePasswordManagementProperties getSyncope() {
-        return syncope;
-    }
-
-    public void setSyncope(final SyncopePasswordManagementProperties syncope) {
-        this.syncope = syncope;
-    }
-
-    public JsonPasswordManagementProperties getJson() {
-        return json;
-    }
-
-    public void setJson(final JsonPasswordManagementProperties json) {
-        this.json = json;
-    }
-
-    public ResetPasswordManagementProperties getReset() {
-        return reset;
-    }
-
-    public void setReset(final ResetPasswordManagementProperties reset) {
-        this.reset = reset;
-    }
-
-    public ForgotUsernamePasswordManagementProperties getForgotUsername() {
-        return forgotUsername;
-    }
-
-    public void setForgotUsername(
-            final ForgotUsernamePasswordManagementProperties forgotUsername) {
-        this.forgotUsername = forgotUsername;
-    }
-
-    public PasswordHistoryProperties getHistory() {
-        return history;
-    }
-
-    public void setHistory(final PasswordHistoryProperties history) {
-        this.history = history;
-    }
-
-    public GroovyPasswordManagementProperties getGroovy() {
-        return groovy;
-    }
-
-    public void setGroovy(final GroovyPasswordManagementProperties groovy) {
-        this.groovy = groovy;
-    }
-
-    public WebflowAutoConfigurationProperties getWebflow() {
-        return webflow;
-    }
-
-    public void setWebflow(final WebflowAutoConfigurationProperties webflow) {
-        this.webflow = webflow;
-    }
 }
