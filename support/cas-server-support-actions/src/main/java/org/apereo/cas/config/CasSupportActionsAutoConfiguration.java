@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.logout.LogoutConfirmationResolver;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
@@ -521,6 +522,8 @@ public class CasSupportActionsAutoConfiguration {
         public Action terminateSessionAction(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(LogoutConfirmationResolver.DEFAULT_BEAN_NAME)
+            final LogoutConfirmationResolver logoutConfirmationResolver,
             @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
             final LogoutManager logoutManager,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
@@ -536,7 +539,7 @@ public class CasSupportActionsAutoConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
                     warnCookieGenerator, casProperties.getLogout(), logoutManager,
-                    defaultSingleLogoutRequestExecutor))
+                    defaultSingleLogoutRequestExecutor, logoutConfirmationResolver))
                 .withId(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
                 .build()
                 .get();
