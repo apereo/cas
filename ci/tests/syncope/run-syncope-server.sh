@@ -5,11 +5,11 @@ GREEN="\e[32m"
 ENDCOLOR="\e[0m"
 
 function printred() {
-  printf "🔥 ${RED}$1${ENDCOLOR}\n"
+  printf "\n🔥 ${RED}$1${ENDCOLOR}\n"
 }
 
 function printgreen() {
-  printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
+  printf "\n🍀 ${GREEN}$1${ENDCOLOR}\n"
 }
 
 printgreen "Running Apache Syncope docker container..."
