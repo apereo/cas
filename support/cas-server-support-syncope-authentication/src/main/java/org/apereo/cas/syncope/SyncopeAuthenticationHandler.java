@@ -1,10 +1,12 @@
 package org.apereo.cas.syncope;
 
+import org.apache.hc.core5.http.ProtocolException;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationProperties;
 import org.apereo.cas.monitor.Monitorable;
@@ -62,40 +64,43 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         if (result.isPresent()) {
             val user = result.get();
             LOGGER.debug("Received user object as [{}]", user);
-            if (user.has("suspended") && user.get("suspended").asBoolean()) {
-                throw new AccountDisabledException(
-                    "Could not authenticate forbidden account for " + credential.getUsername());
-            }
-            if (user.has("mustChangePassword") && user.get("mustChangePassword").asBoolean()) {
-                throw new AccountPasswordMustChangeException(
-                    "Account password must change for " + credential.getUsername());
-            }
-            val principal = principalFactory.createPrincipal(user.get("username").asText(),
-                SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
+            Principal principal = principalFactory.createPrincipal(user.get("username").asText(),
+                    SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
             return createHandlerResult(credential, principal, new ArrayList<>());
         }
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
     }
 
-    protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential) {
+    protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential)
+            throws AccountPasswordMustChangeException, AccountDisabledException {
         HttpResponse response = null;
         try {
-            val syncopeRestUrl = StringUtils.appendIfMissing(
-                SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()),
-                "/rest/users/self");
-            val exec = HttpExecutionRequest.builder()
-                .method(HttpMethod.GET)
-                .url(syncopeRestUrl)
-                .basicAuthUsername(credential.getUsername())
-                .basicAuthPassword(credential.toPassword())
-                .headers(CollectionUtils.wrap("X-Syncope-Domain", syncopeDomain))
-                .maximumRetryAttempts(properties.getMaxRetryAttempts())
-                .build();
-            response = Objects.requireNonNull(HttpUtils.execute(exec));
+            String syncopeRestUrl = StringUtils.appendIfMissing(
+                    SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()),
+                    "/rest/users/self");
+            HttpExecutionRequest exec = HttpExecutionRequest.builder()
+                    .method(HttpMethod.GET)
+                    .url(syncopeRestUrl)
+                    .basicAuthUsername(credential.getUsername())
+                    .basicAuthPassword(credential.toPassword())
+                    .headers(CollectionUtils.wrap("X-Syncope-Domain", syncopeDomain))
+                    .maximumRetryAttempts(properties.getMaxRetryAttempts())
+                    .build();
+            response = Objects.requireNonNull(SyncopeUtils.execute(exec));
             LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
             if (response.getCode() == HttpStatus.SC_OK) {
                 return parseResponseResults((HttpEntityContainer) response);
             }
+            val header = response.getHeader("x-application-error-info");
+            if (header.getValue().contains("change your password")) {
+                throw new AccountPasswordMustChangeException(
+                        "Account password must change for " + credential.getUsername());
+            } else if (header.getValue().contains("suspended")) {
+                throw new AccountDisabledException(
+                        "Could not authenticate forbidden account for " + credential.getUsername());
+            }
+        } catch (ProtocolException e) {
+            throw new RuntimeException(e);
         } finally {
             HttpUtils.close(response);
         }

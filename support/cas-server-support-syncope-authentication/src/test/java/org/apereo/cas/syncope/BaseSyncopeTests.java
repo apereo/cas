@@ -50,14 +50,14 @@ import java.util.UUID;
  */
 public abstract class BaseSyncopeTests {
     protected static final ObjectMapper MAPPER =
-        JacksonObjectMapperFactory.builder().defaultTypingEnabled(true).build().toObjectMapper();
+            JacksonObjectMapperFactory.builder().defaultTypingEnabled(true).build().toObjectMapper();
 
     protected static MockWebServer startMockSever(final JsonNode json, final HttpStatus status,
                                                   final int port) throws Exception {
         val data = MAPPER.writeValueAsString(json);
         val webServer = new MockWebServer(port,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
-            MediaType.APPLICATION_JSON_VALUE, status);
+                new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
+                MediaType.APPLICATION_JSON_VALUE, status);
         webServer.start();
         return webServer;
     }
@@ -70,11 +70,11 @@ public abstract class BaseSyncopeTests {
         user.putArray("dynRoles").add("DynRole1");
         user.putArray("dynRealms").add("Realm1");
         user.putArray("memberships").add(MAPPER.createObjectNode()
-            .put("groupName", "G1"));
+                .put("groupName", "G1"));
         user.putArray("dynMemberships").add(MAPPER.createObjectNode()
-            .put("groupName", "G1"));
+                .put("groupName", "G1"));
         user.putArray("relationships").add(MAPPER.createObjectNode()
-            .put("type", "T1").put("otherEndName", "Other1"));
+                .put("type", "T1").put("otherEndName", "Other1"));
 
         val plainAttrs = MAPPER.createObjectNode();
         plainAttrs.put("schema", "S1");
@@ -101,8 +101,8 @@ public abstract class BaseSyncopeTests {
 
         return user;
     }
-    
-    protected static ObjectNode userForMembershipsTypeExtension(){
+
+    protected static ObjectNode userForMembershipsTypeExtension() {
         val user = MAPPER.createObjectNode();
         user.put("key", UUID.randomUUID().toString());
         user.put("username", "casuser");
@@ -113,7 +113,7 @@ public abstract class BaseSyncopeTests {
                 .put("groupName", "G1"));
         user.putArray("relationships").add(MAPPER.createObjectNode()
                 .put("type", "T1").put("otherEndName", "Other1"));
-        
+
         val memberships = user.putArray("memberships");
         val membershipsInfo = MAPPER.createObjectNode().put("groupName", "G1");
         val membershipPlainAttrs = membershipsInfo.putArray("plainAttrs");
@@ -129,9 +129,9 @@ public abstract class BaseSyncopeTests {
         val values2 = plainAttrNode2.putArray("values");
         values2.add("valueSchema2");
         membershipPlainAttrs.add(plainAttrNode2);
-        
+
         memberships.add(membershipsInfo);
-        
+
         val plainAttrs = MAPPER.createObjectNode();
         plainAttrs.put("schema", "S1");
         plainAttrs.putArray("values").add("V1");
@@ -157,7 +157,7 @@ public abstract class BaseSyncopeTests {
 
         return user;
     }
-    
+
     @ImportAutoConfiguration({
         CasSyncopeAutoConfiguration.class,
         CasCoreAutoConfiguration.class,

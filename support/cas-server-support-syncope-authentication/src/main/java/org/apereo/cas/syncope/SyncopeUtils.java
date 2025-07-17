@@ -1,5 +1,9 @@
 package org.apereo.cas.syncope;
 
+import java.util.Locale;
+import javax.net.ssl.SSLHandshakeException;
+import org.apache.hc.core5.http.message.BasicHttpResponse;
+import org.apache.hc.core5.net.URIBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -15,6 +19,7 @@ import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalAttrib
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
@@ -388,6 +393,41 @@ public class SyncopeUtils {
         return entity;
     }
 
+    public static HttpResponse execute(final HttpExecutionRequest execution) {
+        val uri = HttpUtils.buildHttpUri(execution.getUrl().trim(), execution.getParameters());
+        val request = HttpUtils.getHttpRequestByMethod(execution.getMethod().name().toLowerCase(Locale.ENGLISH).trim(),
+                execution.getEntity(), uri);
+        try {
+            val expressionResolver = SpringExpressionLanguageValueResolver.getInstance();
+            execution.getHeaders().forEach((key, value) -> {
+                val headerValue = expressionResolver.resolve(value);
+                val headerKey = expressionResolver.resolve(key);
+                request.addHeader(headerKey, headerValue);
+            });
+            HttpUtils.prepareHttpRequest(request, execution);
+            val client = HttpUtils.getHttpClient(execution);
+            return FunctionUtils.doAndRetry(retryContext -> {
+                LOGGER.trace("Sending HTTP request to [{}]. Attempt: [{}]", request.getUri(), retryContext.getRetryCount());
+                val res = client.execute(request);
+                if (res == null || org.springframework.http.HttpStatus.valueOf(res.getCode()).isError()) {
+                    val maxAttempts = (Integer) retryContext.getAttribute("retry.maxAttempts");
+                    if (maxAttempts != null && retryContext.getRetryCount() != maxAttempts - 1) {
+                        return res;
+                    }
+                }
+                return res;
+            }, execution.getMaximumRetryAttempts());
+        } catch (final SSLHandshakeException e) {
+            val sanitizedUrl = FunctionUtils.doUnchecked(
+                    () -> new URIBuilder(execution.getUrl()).removeQuery().clearParameters().build().toASCIIString());
+            LoggingUtils.error(LOGGER, "SSL error accessing: [" + sanitizedUrl + ']', e);
+            return new BasicHttpResponse(org.apache.hc.core5.http.HttpStatus.SC_INTERNAL_SERVER_ERROR, sanitizedUrl);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return null;
+    }
+
     /**
      * New person attribute daos list.
      *
@@ -435,5 +475,5 @@ public class SyncopeUtils {
         }
         return List.of();
     }
-    
+
 }

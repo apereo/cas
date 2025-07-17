@@ -1,5 +1,17 @@
 package org.apereo.cas.syncope.pm;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
@@ -14,6 +26,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 
 /**
  * This is {@link SyncopePasswordManagementService}.
@@ -22,6 +43,10 @@ import java.util.Optional;
  * @since 7.3.0
  */
 public class SyncopePasswordManagementService extends BasePasswordManagementService {
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+            .defaultTypingEnabled(false).build().toObjectMapper();
+
     public SyncopePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                             final CasConfigurationProperties casProperties,
                                             final PasswordHistoryService passwordHistoryService) {
@@ -30,7 +55,33 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
 
     @Override
     public boolean changeInternal(final PasswordChangeRequest bean) {
-        return false;
+        return FunctionUtils.doAndHandle(() -> {
+            String syncopeRestPasswordResetUrl = StringUtils.appendIfMissing(
+                    SpringExpressionLanguageValueResolver.getInstance().resolve(
+                            casProperties.getAuthn().getPm().getSyncope().getUrl()),
+                    "/rest/users/self/mustChangePassword");
+            LOGGER.debug("Updating account password on syncope for user [{}]", bean.getUsername());
+            HttpExecutionRequest exec = HttpExecutionRequest.builder()
+                    .method(HttpMethod.POST)
+                    .url(syncopeRestPasswordResetUrl)
+                    .basicAuthUsername(bean.getUsername())
+                    .basicAuthPassword(bean.toCurrentPassword())
+                    .headers(Map.of("X-Syncope-Domain", casProperties.getAuthn().getSyncope().getDomain(),
+                            HttpHeaders.ACCEPT, "application/json",
+                            HttpHeaders.CONTENT_TYPE, "application/json"))
+                    .entity(MAPPER.writeValueAsString(getPasswordPatch(bean)))
+                    .maximumRetryAttempts(1)
+                    .build();
+            HttpResponse response = Objects.requireNonNull(HttpUtils.execute(exec));
+            if (response.getCode() == HttpStatus.SC_OK) {
+                LOGGER.debug("Successfully updated the account password on Syncope for [{}]", bean.getUsername());
+                return true;
+            }
+            return false;
+        }, e -> {
+            LOGGER.error("Error while update password on Syncope for user [{}]", bean.getUsername());
+            return false;
+        }).get();
     }
 
     @Override
@@ -78,5 +129,17 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
 
     private List<Map<String, List<Object>>> searchUser(final PasswordManagementQuery query) {
         return SyncopeUtils.syncopeUserSearch(casProperties.getAuthn().getPm().getSyncope(), query.getUsername());
+    }
+
+    private JsonNode getPasswordPatch(final PasswordChangeRequest bean) {
+        PasswordPatch passwordPatch = MAPPER.createObjectNode();
+        passwordPatch.put("operation", "ADD_REPLACE");
+        passwordPatch.put("value", bean.toConfirmedPassword());
+        passwordPatch.put("onSyncope", true);
+
+        ArrayNode resources = MAPPER.createArrayNode();
+        passwordPatch.set("resources", resources);
+
+        return passwordPatch;
     }
 }
