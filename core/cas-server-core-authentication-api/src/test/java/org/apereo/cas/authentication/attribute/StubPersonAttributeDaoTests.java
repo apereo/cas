@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@Tag("Attributes")
+@Tag("AttributeRepository")
 class StubPersonAttributeDaoTests {
 
     private StubPersonAttributeDao testInstance;

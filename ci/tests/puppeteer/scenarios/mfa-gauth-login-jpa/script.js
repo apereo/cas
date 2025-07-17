@@ -1,9 +1,8 @@
-
 const cas = require("../../cas.js");
 
 (async () => {
     await cas.doRequest("https://localhost:8443/cas/actuator/gauthCredentialRepository", "DELETE");
-    
+
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "GoogleAuth");
@@ -46,6 +45,24 @@ const cas = require("../../cas.js");
     await cas.waitForNavigation(page);
     await cas.sleep(1000);
     await cas.assertCookie(page);
-    
+    await cas.gotoLogout(page);
+
+    await cas.gotoLoginWithAuthnMethod(page, undefined, "GoogleAuth");
+    await cas.loginWith(page);
+    await cas.sleep(2000);
+
+    for (let i = 0; i < 3; i++) {
+        await cas.type(page, "#token", "657465");
+        await cas.sleep(1000);
+        await cas.pressEnter(page);
+        await cas.waitForNavigation(page);
+    }
+    await cas.type(page, "#token", "234231");
+    await cas.sleep(1000);
+    await cas.pressEnter(page);
+    await cas.waitForNavigation(page);
+    await cas.sleep(1000);
+    await cas.assertInnerText(page, "#login div h2", "Blocked Multifactor Authentication Attempt");
+    await cas.assertInnerTextStartsWith(page, "#login div p", "Your multifactor authentication attempt is blocked");
     await browser.close();
 })();

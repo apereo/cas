@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("Attributes")
+@Tag("AttributeRepository")
 @ExtendWith(CasTestExtension.class)
 class DefaultAttributeRepositoryResolverTests {
 

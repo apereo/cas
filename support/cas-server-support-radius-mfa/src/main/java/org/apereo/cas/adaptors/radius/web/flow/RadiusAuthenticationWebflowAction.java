@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.radius.web.flow;
 
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -19,8 +18,8 @@ public class RadiusAuthenticationWebflowAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolver radiusAuthenticationWebflowEventResolver;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        return FunctionUtils.doUnchecked(() -> radiusAuthenticationWebflowEventResolver.resolveSingle(requestContext));
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        return radiusAuthenticationWebflowEventResolver.resolveSingle(requestContext);
     }
 }
 
