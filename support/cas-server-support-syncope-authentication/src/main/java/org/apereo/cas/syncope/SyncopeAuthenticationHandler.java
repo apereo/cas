@@ -78,10 +78,10 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             throws AccountPasswordMustChangeException, AccountDisabledException {
         HttpResponse response = null;
         try {
-            String syncopeRestUrl = StringUtils.appendIfMissing(
+            val syncopeRestUrl = StringUtils.appendIfMissing(
                     SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()),
                     "/rest/users/self");
-            HttpExecutionRequest exec = HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                     .method(HttpMethod.GET)
                     .url(syncopeRestUrl)
                     .basicAuthUsername(credential.getUsername())
@@ -89,23 +89,23 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                     .headers(CollectionUtils.wrap("X-Syncope-Domain", syncopeDomain))
                     .maximumRetryAttempts(properties.getMaxRetryAttempts())
                     .build();
-            response = Objects.requireNonNull(SyncopeUtils.execute(exec));
+            response = SyncopeUtils.execute(exec);
             LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
-            if (response.getCode() == HttpStatus.SC_OK) {
-                return parseResponseResults((HttpEntityContainer) response);
-            }
-            val header = response.getHeader("x-application-error-info");
-            if (header != null && header.getValue().toLowerCase(Locale.ROOT).contains("password")) {
-                throw new AccountPasswordMustChangeException(
-                        "Account password must change for " + credential.getUsername());
-            } else if (header != null && header.getValue().toLowerCase(Locale.ROOT).contains("suspended")) {
-                throw new AccountDisabledException(
-                        "Could not authenticate forbidden account for " + credential.getUsername());
+            if (response != null) {
+                if (response.getCode() == HttpStatus.SC_OK) {
+                    return parseResponseResults((HttpEntityContainer) response);
+                }
+                val header = response.getHeader("x-application-error-info");
+                if (header != null && header.getValue().toLowerCase(Locale.ROOT).contains("password")) {
+                    throw new AccountPasswordMustChangeException(
+                            "Account password must change for " + credential.getUsername());
+                } else if (header != null && header.getValue().toLowerCase(Locale.ROOT).contains("suspended")) {
+                    throw new AccountDisabledException(
+                            "Could not authenticate forbidden account for " + credential.getUsername());
+                }
             }
         } catch (final ProtocolException e) {
             throw new RuntimeException(e);
-        } catch (final NullPointerException e) {
-            return Optional.empty();
         } finally {
             HttpUtils.close(response);
         }
