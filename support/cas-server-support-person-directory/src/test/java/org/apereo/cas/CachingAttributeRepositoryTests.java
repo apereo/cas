@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.stub.attributes.givenName=givenName",
         "cas.authn.attribute-repository.stub.attributes.eppn=eppn"
     })
-@Tag("Attributes")
+@Tag("AttributeRepository")
 @ExtendWith(CasTestExtension.class)
 class CachingAttributeRepositoryTests {
     @Autowired
