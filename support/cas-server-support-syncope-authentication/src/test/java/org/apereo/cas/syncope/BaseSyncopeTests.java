@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope;
 
+import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
@@ -15,6 +16,8 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
+import org.apereo.cas.config.CasPasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasSyncopeAutoConfiguration;
@@ -45,14 +48,14 @@ import java.util.UUID;
  */
 public abstract class BaseSyncopeTests {
     protected static final ObjectMapper MAPPER =
-        JacksonObjectMapperFactory.builder().defaultTypingEnabled(true).build().toObjectMapper();
+            JacksonObjectMapperFactory.builder().defaultTypingEnabled(true).build().toObjectMapper();
 
     protected static MockWebServer startMockSever(final JsonNode json, final HttpStatus status,
                                                   final int port) throws Exception {
         val data = MAPPER.writeValueAsString(json);
         val webServer = new MockWebServer(port,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
-            MediaType.APPLICATION_JSON_VALUE, status);
+                new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
+                MediaType.APPLICATION_JSON_VALUE, status);
         webServer.start();
         return webServer;
     }
@@ -65,11 +68,11 @@ public abstract class BaseSyncopeTests {
         user.putArray("dynRoles").add("DynRole1");
         user.putArray("dynRealms").add("Realm1");
         user.putArray("memberships").add(MAPPER.createObjectNode()
-            .put("groupName", "G1"));
+                .put("groupName", "G1"));
         user.putArray("dynMemberships").add(MAPPER.createObjectNode()
-            .put("groupName", "G1"));
+                .put("groupName", "G1"));
         user.putArray("relationships").add(MAPPER.createObjectNode()
-            .put("type", "T1").put("otherEndName", "Other1"));
+                .put("type", "T1").put("otherEndName", "Other1"));
 
         val plainAttrs = MAPPER.createObjectNode();
         plainAttrs.put("schema", "S1");
@@ -96,8 +99,8 @@ public abstract class BaseSyncopeTests {
 
         return user;
     }
-    
-    protected static ObjectNode userForMembershipsTypeExtension(){
+
+    protected static ObjectNode userForMembershipsTypeExtension() {
         val user = MAPPER.createObjectNode();
         user.put("key", UUID.randomUUID().toString());
         user.put("username", "casuser");
@@ -108,7 +111,7 @@ public abstract class BaseSyncopeTests {
                 .put("groupName", "G1"));
         user.putArray("relationships").add(MAPPER.createObjectNode()
                 .put("type", "T1").put("otherEndName", "Other1"));
-        
+
         val memberships = user.putArray("memberships");
         val membershipsInfo = MAPPER.createObjectNode().put("groupName", "G1");
         val membershipPlainAttrs = membershipsInfo.putArray("plainAttrs");
@@ -124,9 +127,9 @@ public abstract class BaseSyncopeTests {
         val values2 = plainAttrNode2.putArray("values");
         values2.add("valueSchema2");
         membershipPlainAttrs.add(plainAttrNode2);
-        
+
         memberships.add(membershipsInfo);
-        
+
         val plainAttrs = MAPPER.createObjectNode();
         plainAttrs.put("schema", "S1");
         plainAttrs.putArray("values").add("V1");
@@ -152,24 +155,27 @@ public abstract class BaseSyncopeTests {
 
         return user;
     }
-    
+
     @ImportAutoConfiguration({
-        CasSyncopeAutoConfiguration.class,
-        CasCoreAutoConfiguration.class,
-        CasCoreLogoutAutoConfiguration.class,
-        CasCoreCookieAutoConfiguration.class,
-        CasCoreServicesAutoConfiguration.class,
-        CasCoreTicketsAutoConfiguration.class,
-        CasCoreAuthenticationAutoConfiguration.class,
-        CasCoreMultifactorAuthenticationAutoConfiguration.class,
-        CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasCoreAuditAutoConfiguration.class,
-        CasCoreWebAutoConfiguration.class,
-        CasCoreUtilAutoConfiguration.class,
-        CasPersonDirectoryAutoConfiguration.class,
-        CasCoreWebflowAutoConfiguration.class,
-        CasCoreNotificationsAutoConfiguration.class,
-        CasCoreScriptingAutoConfiguration.class
+            CasSyncopeAutoConfiguration.class,
+            CasCoreAutoConfiguration.class,
+            CasCoreLogoutAutoConfiguration.class,
+            CasCoreCookieAutoConfiguration.class,
+            CasCoreServicesAutoConfiguration.class,
+            CasCoreTicketsAutoConfiguration.class,
+            CasCoreAuthenticationAutoConfiguration.class,
+            CasCoreMultifactorAuthenticationAutoConfiguration.class,
+            CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+            CasCoreAuditAutoConfiguration.class,
+            CasCoreWebAutoConfiguration.class,
+            CasCoreUtilAutoConfiguration.class,
+            CasPersonDirectoryAutoConfiguration.class,
+            CasCoreWebflowAutoConfiguration.class,
+            CasCoreNotificationsAutoConfiguration.class,
+            CasCoreScriptingAutoConfiguration.class,
+            CasPasswordlessAuthenticationAutoConfiguration.class,
+            CasPasswordManagementAutoConfiguration.class,
+            CasAccountManagementWebflowAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
     @SpringBootTestAutoConfigurations

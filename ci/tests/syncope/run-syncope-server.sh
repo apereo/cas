@@ -487,6 +487,21 @@ curl -X 'POST' \
 
 echo -e "\n-----------------\n"
 
+echo "Creating phoneNumber plain schema..."
+curl -X 'POST' \
+  'http://localhost:18080/syncope/rest/schemas/PLAIN' \
+  -H 'accept: */*' \
+  -H 'X-Syncope-Domain: Master' \
+  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "_class": "org.apache.syncope.common.lib.to.PlainSchemaTO",
+    "key": "phoneNumber",
+    "anyTypeClass": "BaseUser"
+}'
+
+echo -e "\n-----------------\n"
+
 echo "Creating sample user: syncopecas..."
 curl -X 'POST' \
   'http://localhost:18080/syncope/rest/users?storePassword=true' \
@@ -505,6 +520,12 @@ curl -X 'POST' \
               "schema": "email",
               "values": [
                 "syncopecas@syncope.org"
+              ]
+            },
+            {
+              "schema": "phoneNumber",
+              "values": [
+                "1234567890"
               ]
             }
         ],
@@ -540,6 +561,54 @@ curl -X 'POST' \
       "schema": "email",
       "values": [
         "casuser@syncope.org"
+      ]
+    },
+    {
+      "schema": "phoneNumber",
+      "values": [
+        "3477464523"
+      ]
+    }
+  ],
+  "derAttrs": [
+    {
+      "schema": "description"
+    }
+  ],
+  "virAttrs": [
+    {
+      "schema": "toBeVirtualized"
+    }
+  ]
+}'
+
+echo -e "\n-----------------\n"
+
+echo "Creating sample user: mustChangePasswordUser..."
+curl -X 'POST' \
+  'http://localhost:18080/syncope/rest/users?storePassword=true' \
+  -H 'accept: application/json' \
+  -H 'Prefer: return-content' \
+  -H 'X-Syncope-Null-Priority-Async: false' \
+  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "_class": "org.apache.syncope.common.lib.request.UserCR",
+  "realm": "/",
+  "username": "mustChangePasswordUser",
+  "password": "ChangePassword",
+  "mustChangePassword": true,
+  "plainAttrs": [
+    {
+      "schema": "email",
+      "values": [
+        "mustChangePasswordUser@syncope.org"
+      ]
+    },
+    {
+      "schema": "phoneNumber",
+      "values": [
+        "2345678901"
       ]
     }
   ],
