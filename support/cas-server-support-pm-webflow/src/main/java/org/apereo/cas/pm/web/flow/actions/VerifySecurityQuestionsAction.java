@@ -3,15 +3,12 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -26,32 +23,30 @@ public class VerifySecurityQuestionsAction extends BasePasswordManagementAction 
     private final PasswordManagementService passwordManagementService;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        return FunctionUtils.doUnchecked(() -> {
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val username = PasswordManagementWebflowUtils.getPasswordResetUsername(requestContext);
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val username = PasswordManagementWebflowUtils.getPasswordResetUsername(requestContext);
 
-            val query = PasswordManagementQuery.builder().username(username).build();
-            val questions = passwordManagementService.getSecurityQuestions(query);
-            val canonicalQuestions = PasswordManagementService.canonicalizeSecurityQuestions(questions);
-            LOGGER.debug("Canonical security questions are [{}]", canonicalQuestions);
+        val query = PasswordManagementQuery.builder().username(username).build();
+        val questions = passwordManagementService.getSecurityQuestions(query);
+        val canonicalQuestions = PasswordManagementService.canonicalizeSecurityQuestions(questions);
+        LOGGER.debug("Canonical security questions are [{}]", canonicalQuestions);
 
-            val index = new AtomicInteger(0);
-            val count = canonicalQuestions
-                .stream()
-                .filter(question -> {
-                    val answer = request.getParameter("q%d".formatted(index.getAndIncrement()));
-                    val answerOnRecord = questions.get(question);
-                    LOGGER.trace("Validating security question [{}] with answer [{}] against provided answer [{}] by username [{}]",
-                        question, answerOnRecord, answer, username);
-                    return passwordManagementService.isValidSecurityQuestionAnswer(query, question, answerOnRecord, answer);
-                })
-                .count();
-            if (count == questions.size()) {
-                return success();
-            }
-            LOGGER.error("Unable to validate answers to all security questions; only validated [{}] question(s) successfully", count);
-            return error();
-        });
+        val index = new AtomicInteger(0);
+        val count = canonicalQuestions
+            .stream()
+            .filter(question -> {
+                val answer = request.getParameter("q%d".formatted(index.getAndIncrement()));
+                val answerOnRecord = questions.get(question);
+                LOGGER.trace("Validating security question [{}] with answer [{}] against provided answer [{}] by username [{}]",
+                    question, answerOnRecord, answer, username);
+                return passwordManagementService.isValidSecurityQuestionAnswer(query, question, answerOnRecord, answer);
+            })
+            .count();
+        if (count == questions.size()) {
+            return success();
+        }
+        LOGGER.error("Unable to validate answers to all security questions; only validated [{}] question(s) successfully", count);
+        return error();
     }
 }
