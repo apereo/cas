@@ -53,15 +53,15 @@ public class SamlMetadataUIParserAction extends BaseCasWebflowAction {
             return success();
         }
         LOGGER.debug("Located entity id [{}] from request", entityId);
-        if (!MetadataUIUtils.isMetadataFoundForEntityId(metadataAdapter, entityId)) {
-            LOGGER.debug("Metadata is not found for entity [{}] and CAS service registry is consulted for the entity definition", entityId);
-            val registeredService = getRegisteredServiceFromRequest(requestContext, entityId);
+        if (MetadataUIUtils.isMetadataFoundForEntityId(metadataAdapter, entityId)) {
+            LOGGER.debug("Metadata is found for entity [{}]", entityId);
+            val registeredService = getRegisteredServiceFromRequest(requestContext);
             LOGGER.debug("Registered service definition linked to [{}] is found as [{}]", entityId, registeredService);
             verifyRegisteredService(requestContext, registeredService);
             loadSamlMetadataIntoRequestContext(requestContext, entityId, registeredService);
         } else {
-            LOGGER.debug("Metadata is found for entity [{}]", entityId);
-            val registeredService = getRegisteredServiceFromRequest(requestContext);
+            LOGGER.debug("Metadata is not found for entity [{}] and CAS service registry is consulted for the entity definition", entityId);
+            val registeredService = getRegisteredServiceFromRequest(requestContext, entityId);
             LOGGER.debug("Registered service definition linked to [{}] is found as [{}]", entityId, registeredService);
             verifyRegisteredService(requestContext, registeredService);
             loadSamlMetadataIntoRequestContext(requestContext, entityId, registeredService);

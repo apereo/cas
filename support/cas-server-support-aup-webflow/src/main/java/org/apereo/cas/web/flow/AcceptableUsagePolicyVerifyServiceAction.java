@@ -8,7 +8,6 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.AcceptableUsagePolicyStatus;
 import org.apereo.cas.services.WebBasedRegisteredService;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -35,8 +34,8 @@ public class AcceptableUsagePolicyVerifyServiceAction extends BaseCasWebflowActi
         actionResolverName = AuditActionResolvers.AUP_VERIFY_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        return FunctionUtils.doUnchecked(() -> verify(requestContext));
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        return verify(requestContext);
     }
 
     private Event verify(final RequestContext context) throws Throwable {

@@ -5,8 +5,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.discovery.DelegatedAuthenticationDynamicDiscoveryProviderLocator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+import org.apereo.cas.web.flow.states.EndViewState;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -90,8 +90,8 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         val logoutSubflow = createSubflowState(flow, "logoutSubflow", CasWebflowConfigurer.FLOW_ID_LOGOUT);
         createStateDefaultTransition(logoutSubflow, "logoutCompleted");
         
-        val logoutCompleted = createEndState(flow, "logoutCompleted");
-        logoutCompleted.setFinalResponseAction(ConsumerExecutionAction.OK);
+        val logoutCompleted = (EndViewState) createEndViewState(flow, "logoutCompleted", "logout/casLogoutView");
+        logoutCompleted.setForceRenderView(true);
     }
 
     protected void createClientActionState(final Flow flow) {

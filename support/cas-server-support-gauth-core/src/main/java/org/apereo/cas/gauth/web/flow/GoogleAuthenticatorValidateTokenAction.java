@@ -48,7 +48,7 @@ public class GoogleAuthenticatorValidateTokenAction extends AbstractMultifactorA
             }
             return success();
         }
-        LOGGER.warn("Authorization of OTP token [{}] has failed", token);
+        LOGGER.warn("Authorization of OTP token [{}] has failed for [{}]", token, authentication.getPrincipal().getId());
         throw new FailedLoginException("Failed to authenticate code " + token);
     }
 }

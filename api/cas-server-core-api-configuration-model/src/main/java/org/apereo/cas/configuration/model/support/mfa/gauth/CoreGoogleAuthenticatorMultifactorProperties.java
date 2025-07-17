@@ -2,12 +2,10 @@ package org.apereo.cas.configuration.model.support.mfa.gauth;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -56,6 +54,17 @@ public class CoreGoogleAuthenticatorMultifactorProperties implements Serializabl
      * the tolerance defined here as the window size.
      */
     private int windowSize = 3;
+
+    /**
+     * Maximum number of authentication attempts allowed
+     * for a token validation attempt. If the number of attempts
+     * exceeds this value, authentication will halt.
+     * A negative or zero value (default) means no limits are enforced.
+     * Note that the user account is not locked out by default; only the
+     * CAS authentication flow is halted and user is notified and required
+     * to restart the authentication process again.
+     */
+    private int maximumAuthenticationAttempts;
 
     /**
      * When enabled, allows the user/system to accept multiple accounts
