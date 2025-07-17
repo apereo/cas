@@ -64,7 +64,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Tag("Attributes")
+@Tag("AttributeRelease")
 @Execution(ExecutionMode.SAME_THREAD)
 @ExtendWith(CasTestExtension.class)
 class ReturnAllowedAttributeReleasePolicyTests {
