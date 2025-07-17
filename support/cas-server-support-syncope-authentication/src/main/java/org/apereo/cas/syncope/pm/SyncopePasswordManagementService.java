@@ -3,12 +3,13 @@ package org.apereo.cas.syncope.pm;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
@@ -20,19 +21,11 @@ import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.impl.BasePasswordManagementService;
 import org.apereo.cas.syncope.SyncopeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import lombok.val;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
@@ -42,6 +35,7 @@ import org.springframework.http.HttpMethod;
  * @author Misagh Moayyed
  * @since 7.3.0
  */
+@Slf4j
 public class SyncopePasswordManagementService extends BasePasswordManagementService {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -132,12 +126,12 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
     }
 
     private JsonNode getPasswordPatch(final PasswordChangeRequest bean) {
-        PasswordPatch passwordPatch = MAPPER.createObjectNode();
+        val passwordPatch = MAPPER.createObjectNode();
         passwordPatch.put("operation", "ADD_REPLACE");
         passwordPatch.put("value", bean.toConfirmedPassword());
         passwordPatch.put("onSyncope", true);
 
-        ArrayNode resources = MAPPER.createArrayNode();
+        val resources = MAPPER.createArrayNode();
         passwordPatch.set("resources", resources);
 
         return passwordPatch;
