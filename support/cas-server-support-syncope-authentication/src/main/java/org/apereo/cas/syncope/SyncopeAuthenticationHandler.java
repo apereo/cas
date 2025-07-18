@@ -1,12 +1,10 @@
 package org.apereo.cas.syncope;
 
-import org.apache.hc.core5.http.ProtocolException;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationProperties;
 import org.apereo.cas.monitor.Monitorable;
@@ -25,11 +23,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.ProtocolException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.http.HttpMethod;
 import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -42,7 +41,7 @@ import java.util.Optional;
 @Monitorable
 public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
+            .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final SyncopeAuthenticationProperties properties;
 
@@ -59,13 +58,13 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
+            final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
         val result = authenticateSyncopeUser(credential);
         if (result.isPresent()) {
             val user = result.get();
             LOGGER.debug("Received user object as [{}]", user);
-            Principal principal = principalFactory.createPrincipal(user.get("username").asText(),
-                    SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
+            val principal = principalFactory.createPrincipal(user.get("username").asText(),
+                                                                   SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
             return createHandlerResult(credential, principal, new ArrayList<>());
         }
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
@@ -75,10 +74,10 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             throws AccountPasswordMustChangeException, AccountDisabledException {
         HttpResponse response = null;
         try {
-            String syncopeRestUrl = StringUtils.appendIfMissing(
+            val syncopeRestUrl = StringUtils.appendIfMissing(
                     SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()),
                     "/rest/users/self");
-            HttpExecutionRequest exec = HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                     .method(HttpMethod.GET)
                     .url(syncopeRestUrl)
                     .basicAuthUsername(credential.getUsername())
@@ -86,20 +85,23 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                     .headers(CollectionUtils.wrap("X-Syncope-Domain", syncopeDomain))
                     .maximumRetryAttempts(properties.getMaxRetryAttempts())
                     .build();
-            response = Objects.requireNonNull(SyncopeUtils.execute(exec));
-            LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
-            if (response.getCode() == HttpStatus.SC_OK) {
-                return parseResponseResults((HttpEntityContainer) response);
+            response = SyncopeUtils.execute(exec);
+            if (response != null) {
+                LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
+                if (response.getCode() == HttpStatus.SC_OK) {
+                    return parseResponseResults((HttpEntityContainer) response);
+                }
+                val header = response.getHeader("x-application-error-info");
+                if (header != null && header.getValue().toLowerCase(Locale.ROOT).contains("change your password")) {
+                    throw new AccountPasswordMustChangeException(
+                            "Account password must change for " + credential.getUsername());
+                } else if (header != null && header.getValue().toLowerCase(Locale.ROOT).contains("is suspended")) {
+                    throw new AccountDisabledException(
+                            "Could not authenticate forbidden account for " + credential.getUsername());
+                }
             }
-            val header = response.getHeader("x-application-error-info");
-            if (header.getValue().contains("change your password")) {
-                throw new AccountPasswordMustChangeException(
-                        "Account password must change for " + credential.getUsername());
-            } else if (header.getValue().contains("suspended")) {
-                throw new AccountDisabledException(
-                        "Could not authenticate forbidden account for " + credential.getUsername());
-            }
-        } catch (ProtocolException e) {
+            LOGGER.debug("Received http response with null value");
+        } catch (final ProtocolException e) {
             throw new RuntimeException(e);
         } finally {
             HttpUtils.close(response);

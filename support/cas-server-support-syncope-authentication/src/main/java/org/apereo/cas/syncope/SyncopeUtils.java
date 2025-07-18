@@ -1,9 +1,5 @@
 package org.apereo.cas.syncope;
 
-import java.util.Locale;
-import javax.net.ssl.SSLHandshakeException;
-import org.apache.hc.core5.http.message.BasicHttpResponse;
-import org.apache.hc.core5.net.URIBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -35,14 +31,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.message.BasicHttpResponse;
+import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import javax.net.ssl.SSLHandshakeException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -61,7 +61,7 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class SyncopeUtils {
     private static final ObjectMapper MAPPER =
-        JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).build().toObjectMapper();
+            JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).build().toObjectMapper();
 
     /**
      * Convert user as a JSON node into a map of details.
@@ -130,7 +130,7 @@ public class SyncopeUtils {
         if (user.has("relationships")) {
             val relationships = new ArrayList<>();
             user.get("relationships").forEach(
-                r -> relationships.add(r.get("type").asText() + ';' + r.get("otherEndName").asText()));
+                    r -> relationships.add(r.get("type").asText() + ';' + r.get("otherEndName").asText()));
             if (!relationships.isEmpty()) {
                 name = attributeMappings.getOrDefault("relationships", "syncopeUserRelationships");
                 attributes.put(name, relationships);
@@ -151,7 +151,7 @@ public class SyncopeUtils {
             membershipInfo.put("groupName", member.get("groupName").asText());
             if (member.has("plainAttrs")) {
                 member.get("plainAttrs").forEach(attr ->
-                    membershipInfo.put(attr.get("schema").asText(), attr.get("values").toString())
+                                                         membershipInfo.put(attr.get("schema").asText(), attr.get("values").toString())
                 );
                 memberships.add(membershipInfo);
             }
@@ -167,8 +167,8 @@ public class SyncopeUtils {
             user.get(attributeName).forEach(attr -> {
                 val attrName = prefix + attr.get("schema").asText();
                 attributes.put(
-                    attributeMappings.getOrDefault(attrName, attrName),
-                    MAPPER.convertValue(attr.get("values"), ArrayList.class));
+                        attributeMappings.getOrDefault(attrName, attrName),
+                        MAPPER.convertValue(attr.get("values"), ArrayList.class));
             });
         }
     }
@@ -178,8 +178,8 @@ public class SyncopeUtils {
                                           final String casAttribute,
                                           final Map<String, String> attributeMappings) {
         val values = user.has(syncopeAttribute)
-            ? MAPPER.convertValue(user.get(syncopeAttribute), ArrayList.class)
-            : CollectionUtils.wrapList();
+                ? MAPPER.convertValue(user.get(syncopeAttribute), ArrayList.class)
+                : CollectionUtils.wrapList();
         if (!values.isEmpty()) {
             val name = attributeMappings.getOrDefault(syncopeAttribute, casAttribute);
             attributes.put(name, values);
@@ -195,10 +195,10 @@ public class SyncopeUtils {
      */
     public static List<Map<String, List<Object>>> syncopeUserSearch(final BaseSyncopeSearchProperties properties, final String user) {
         return Splitter.on(",").splitToList(properties.getDomain())
-            .stream()
-            .map(domain -> syncopeUserSearchForDomain(properties, domain, user))
-            .flatMap(List::stream)
-            .toList();
+                .stream()
+                .map(domain -> syncopeUserSearchForDomain(properties, domain, user))
+                .flatMap(List::stream)
+                .toList();
     }
 
     /**
@@ -210,25 +210,25 @@ public class SyncopeUtils {
      * @return the optional
      */
     private static List<Map<String, List<Object>>> syncopeUserSearchForDomain(final BaseSyncopeSearchProperties properties,
-                                                                             final String domain,
-                                                                             final String user) {
+                                                                              final String domain,
+                                                                              final String user) {
         HttpResponse response = null;
         try {
             val filter = properties.getSearchFilter().replace("{user}", user).replace("{0}", user);
             val fiql = EncodingUtils.urlEncode(filter);
             val syncopeRestUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/")
-                + "rest/users/?page=1&size=1&details=true&fiql=" + fiql;
+                    + "rest/users/?page=1&size=1&details=true&fiql=" + fiql;
             LOGGER.debug("Executing Syncope search via [{}]", syncopeRestUrl);
             val requestHeaders = new LinkedHashMap<String, String>();
             requestHeaders.put("X-Syncope-Domain", domain);
             requestHeaders.putAll(properties.getHeaders());
             val exec = HttpExecutionRequest.builder()
-                .method(HttpMethod.GET)
-                .url(syncopeRestUrl)
-                .basicAuthUsername(properties.getBasicAuthUsername())
-                .basicAuthPassword(properties.getBasicAuthPassword())
-                .headers(requestHeaders)
-                .build();
+                    .method(HttpMethod.GET)
+                    .url(syncopeRestUrl)
+                    .basicAuthUsername(properties.getBasicAuthUsername())
+                    .basicAuthPassword(properties.getBasicAuthPassword())
+                    .headers(requestHeaders)
+                    .build();
             response = Objects.requireNonNull(HttpUtils.execute(exec));
             LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
             if (HttpStatus.resolve(response.getCode()).is2xxSuccessful()) {
@@ -237,13 +237,13 @@ public class SyncopeUtils {
                     val result = EntityUtils.toString(entity);
                     LOGGER.debug("Received user entity as [{}]", result);
                     val it = Optional.of(MAPPER.readTree(result))
-                        .filter(sr -> sr.has("result"))
-                        .map(sr -> sr.get("result"))
-                        .map(JsonNode::iterator)
-                        .orElse(Collections.emptyIterator());
+                            .filter(sr -> sr.has("result"))
+                            .map(sr -> sr.get("result"))
+                            .map(JsonNode::iterator)
+                            .orElse(Collections.emptyIterator());
                     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
-                        .map(node -> SyncopeUtils.convertFromUserEntity(node, properties.getAttributeMappings()))
-                        .collect(Collectors.toList());
+                            .map(node -> SyncopeUtils.convertFromUserEntity(node, properties.getAttributeMappings()))
+                            .collect(Collectors.toList());
                 });
             }
         } finally {
@@ -251,7 +251,6 @@ public class SyncopeUtils {
         }
         return new ArrayList<>();
     }
-
 
     /**
      * Syncope user groups search.
@@ -267,19 +266,19 @@ public class SyncopeUtils {
         try {
             val fiql = EncodingUtils.urlEncode("$member==%s".formatted(user));
             val syncopeRestUrl = StringUtils.appendIfMissing(
-                SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/")
-                + "rest/groups/?page=1&size=50&details=true&fiql=" + fiql;
+                    SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/")
+                    + "rest/groups/?page=1&size=50&details=true&fiql=" + fiql;
             LOGGER.debug("Executing Syncope user group search via [{}]", syncopeRestUrl);
             val requestHeaders = new LinkedHashMap<String, String>();
             requestHeaders.put("X-Syncope-Domain", properties.getDomain());
             requestHeaders.putAll(properties.getHeaders());
             val exec = HttpExecutionRequest.builder()
-                .method(HttpMethod.GET)
-                .url(syncopeRestUrl)
-                .basicAuthUsername(properties.getBasicAuthUsername())
-                .basicAuthPassword(properties.getBasicAuthPassword())
-                .headers(requestHeaders)
-                .build();
+                    .method(HttpMethod.GET)
+                    .url(syncopeRestUrl)
+                    .basicAuthUsername(properties.getBasicAuthUsername())
+                    .basicAuthPassword(properties.getBasicAuthPassword())
+                    .headers(requestHeaders)
+                    .build();
 
             response = Objects.requireNonNull(HttpUtils.execute(exec));
             if (Objects.requireNonNull(HttpStatus.resolve(response.getCode())).is2xxSuccessful()) {
@@ -287,13 +286,13 @@ public class SyncopeUtils {
                 return FunctionUtils.doUnchecked(() -> {
                     val result = EntityUtils.toString(entity);
                     val it = Optional.of(MAPPER.readTree(result))
-                        .filter(sr -> sr.has("result"))
-                        .map(sr -> sr.get("result"))
-                        .map(JsonNode::iterator)
-                        .orElse(Collections.emptyIterator());
+                            .filter(sr -> sr.has("result"))
+                            .map(sr -> sr.get("result"))
+                            .map(JsonNode::iterator)
+                            .orElse(Collections.emptyIterator());
                     val groups = new ArrayList<>();
                     StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
-                        .forEach(node -> convertFromGroupEntity(node, groups));
+                            .forEach(node -> convertFromGroupEntity(node, groups));
                     val name = properties.getAttributeMappings().getOrDefault("groups", "syncopeUserGroups");
                     val attributes = new HashMap<String, List<Object>>();
                     attributes.put(name, groups);
@@ -315,7 +314,6 @@ public class SyncopeUtils {
         attributes.add(groupAttrs);
     }
 
-
     /**
      * Convert to user create entity map.
      *
@@ -331,10 +329,10 @@ public class SyncopeUtils {
 
         val plainAttrs = new ArrayList<Map<String, Object>>();
         principal.getAttributes()
-            .entrySet()
-            .stream()
-            .filter(entry -> !"username".equals(entry.getKey()) && !"password".equals(entry.getKey()))
-            .forEach(entry -> plainAttrs.add(Map.of("schema", entry.getKey(), "values", CollectionUtils.toCollection(entry.getValue()))));
+                .entrySet()
+                .stream()
+                .filter(entry -> !"username".equals(entry.getKey()) && !"password".equals(entry.getKey()))
+                .forEach(entry -> plainAttrs.add(Map.of("schema", entry.getKey(), "values", CollectionUtils.toCollection(entry.getValue()))));
         entity.put("plainAttrs", plainAttrs);
         return entity;
     }
@@ -358,10 +356,10 @@ public class SyncopeUtils {
 
         val plainAttrs = new ArrayList<Map<String, Object>>();
         userProperties
-            .entrySet()
-            .stream()
-            .filter(entry -> !"username".equals(entry.getKey()) && !"password".equals(entry.getKey()))
-            .forEach(entry -> plainAttrs.add(Map.of("schema", entry.getKey(), "values", CollectionUtils.toCollection(entry.getValue()))));
+                .entrySet()
+                .stream()
+                .filter(entry -> !"username".equals(entry.getKey()) && !"password".equals(entry.getKey()))
+                .forEach(entry -> plainAttrs.add(Map.of("schema", entry.getKey(), "values", CollectionUtils.toCollection(entry.getValue()))));
         entity.put("plainAttrs", plainAttrs);
         return entity;
     }
@@ -381,22 +379,28 @@ public class SyncopeUtils {
 
         val plainAttrs = new ArrayList<Map<String, Object>>();
         principal.getAttributes()
-            .entrySet()
-            .stream()
-            .filter(entry -> !"username".equals(entry.getKey()) && !"password".equals(entry.getKey()))
-            .forEach(entry -> {
-                val attribute = Map.of("operation", "ADD_REPLACE",
-                    "attr", Map.of("schema", entry.getKey(), "values", CollectionUtils.toCollection(entry.getValue())));
-                plainAttrs.add(attribute);
-            });
+                .entrySet()
+                .stream()
+                .filter(entry -> !"username".equals(entry.getKey()) && !"password".equals(entry.getKey()))
+                .forEach(entry -> {
+                    val attribute = Map.of("operation", "ADD_REPLACE",
+                                           "attr", Map.of("schema", entry.getKey(), "values", CollectionUtils.toCollection(entry.getValue())));
+                    plainAttrs.add(attribute);
+                });
         entity.put("plainAttrs", plainAttrs);
         return entity;
     }
 
+    /**
+     * Execute http request.
+     *
+     * @param execution http request
+     * @return http response
+     */
     public static HttpResponse execute(final HttpExecutionRequest execution) {
         val uri = HttpUtils.buildHttpUri(execution.getUrl().trim(), execution.getParameters());
         val request = HttpUtils.getHttpRequestByMethod(execution.getMethod().name().toLowerCase(Locale.ENGLISH).trim(),
-                execution.getEntity(), uri);
+                                                       execution.getEntity(), uri);
         try {
             val expressionResolver = SpringExpressionLanguageValueResolver.getInstance();
             execution.getHeaders().forEach((key, value) -> {
@@ -452,26 +456,26 @@ public class SyncopeUtils {
      * @return the list
      */
     public static List<? extends AuthenticationHandler> newAuthenticationHandlers(
-        final SyncopeAuthenticationProperties syncope,
-        final ConfigurableApplicationContext applicationContext,
-        final PrincipalFactory syncopePrincipalFactory,
-        final ServicesManager servicesManager,
-        final PasswordPolicyContext syncopePasswordPolicyConfiguration) {
+            final SyncopeAuthenticationProperties syncope,
+            final ConfigurableApplicationContext applicationContext,
+            final PrincipalFactory syncopePrincipalFactory,
+            final ServicesManager servicesManager,
+            final PasswordPolicyContext syncopePasswordPolicyConfiguration) {
         if (syncope.isDefined()) {
             return Splitter.on(",").splitToList(syncope.getDomain())
-                .stream()
-                .map(domain -> {
-                    val handler = new SyncopeAuthenticationHandler(syncope, servicesManager, syncopePrincipalFactory, domain.trim());
-                    handler.setState(syncope.getState());
-                    handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(syncope.getPasswordEncoder(), applicationContext));
-                    handler.setPasswordPolicyConfiguration(syncopePasswordPolicyConfiguration);
-                    val predicate = CoreAuthenticationUtils.newCredentialSelectionPredicate(syncope.getCredentialCriteria());
-                    handler.setCredentialSelectionPredicate(predicate);
-                    val transformer = PrincipalNameTransformerUtils.newPrincipalNameTransformer(syncope.getPrincipalTransformation());
-                    handler.setPrincipalNameTransformer(transformer);
-                    return handler;
-                })
-                .collect(Collectors.toList());
+                    .stream()
+                    .map(domain -> {
+                        val handler = new SyncopeAuthenticationHandler(syncope, servicesManager, syncopePrincipalFactory, domain.trim());
+                        handler.setState(syncope.getState());
+                        handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(syncope.getPasswordEncoder(), applicationContext));
+                        handler.setPasswordPolicyConfiguration(syncopePasswordPolicyConfiguration);
+                        val predicate = CoreAuthenticationUtils.newCredentialSelectionPredicate(syncope.getCredentialCriteria());
+                        handler.setCredentialSelectionPredicate(predicate);
+                        val transformer = PrincipalNameTransformerUtils.newPrincipalNameTransformer(syncope.getPrincipalTransformation());
+                        handler.setPrincipalNameTransformer(transformer);
+                        return handler;
+                    })
+                    .collect(Collectors.toList());
         }
         return List.of();
     }

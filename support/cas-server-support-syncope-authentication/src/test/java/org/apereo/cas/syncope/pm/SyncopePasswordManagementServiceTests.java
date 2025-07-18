@@ -1,14 +1,5 @@
 package org.apereo.cas.syncope.pm;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import javax.security.auth.login.FailedLoginException;
-import lombok.val;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
@@ -20,15 +11,17 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.syncope.BaseSyncopeTests;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-import lombok.val;
 import org.apereo.cas.util.spring.beans.BeanContainer;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import javax.security.auth.login.FailedLoginException;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SyncopePasswordManagementServiceTests}.
@@ -79,21 +72,21 @@ class SyncopePasswordManagementServiceTests {
     @Test
     void verifyFindSecurityQuestions() {
         assertThrows(UnsupportedOperationException.class,
-                () -> passwordChangeService.getSecurityQuestions(
-                        PasswordManagementQuery.builder().username("mustChangePasswordUser").build()));
+                     () -> passwordChangeService.getSecurityQuestions(
+                             PasswordManagementQuery.builder().username("mustChangePasswordUser").build()));
     }
 
     @Test
     void verifyUpdateSecurityQuestions() {
         assertThrows(UnsupportedOperationException.class,
-                () -> passwordChangeService.updateSecurityQuestions(
-                        PasswordManagementQuery.builder().username("mustChangePasswordUser").build()));
+                     () -> passwordChangeService.updateSecurityQuestions(
+                             PasswordManagementQuery.builder().username("mustChangePasswordUser").build()));
     }
 
     @Test
     void verifyUnlockSecurityQuestions() {
         assertThrows(UnsupportedOperationException.class,
-                () -> passwordChangeService.unlockAccount(new BasicIdentifiableCredential("mustChangePasswordUser")));
+                     () -> passwordChangeService.unlockAccount(new BasicIdentifiableCredential("mustChangePasswordUser")));
     }
 
     @Test
@@ -104,7 +97,7 @@ class SyncopePasswordManagementServiceTests {
                 "mustChangePasswordUser",
                 "ChangePassword");
         assertThrows(AccountPasswordMustChangeException.class,
-                () -> syncopeAuthenticationHandler.authenticate(credential, mock(Service.class)));
+                     () -> syncopeAuthenticationHandler.authenticate(credential, mock(Service.class)));
 
         val passwordChangeRequest = new PasswordChangeRequest(
                 "mustChangePasswordUser",
@@ -112,9 +105,9 @@ class SyncopePasswordManagementServiceTests {
                 "Password123!".toCharArray(),
                 "Password123!".toCharArray());
 
-        assertTrue(((SyncopePasswordManagementService)passwordChangeService).changeInternal(passwordChangeRequest));
+        assertTrue(((SyncopePasswordManagementService) passwordChangeService).changeInternal(passwordChangeRequest));
         assertThrows(FailedLoginException.class,
-                () -> syncopeAuthenticationHandler.authenticate(credential, mock(Service.class)));
+                     () -> syncopeAuthenticationHandler.authenticate(credential, mock(Service.class)));
 
         credential.setPassword("Password123!".toCharArray());
         assertDoesNotThrow(() -> syncopeAuthenticationHandler.authenticate(credential, mock(Service.class)));

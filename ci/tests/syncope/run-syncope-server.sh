@@ -648,11 +648,6 @@ curl -X 'POST' \
     {
       "schema": "description"
     }
-  ],
-  "virAttrs": [
-    {
-      "schema": "toBeVirtualized"
-    }
   ]
 }'
 
