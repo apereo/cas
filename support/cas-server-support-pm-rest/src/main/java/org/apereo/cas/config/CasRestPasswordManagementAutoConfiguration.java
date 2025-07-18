@@ -65,7 +65,6 @@ public class CasRestPasswordManagementAutoConfiguration {
             builder = builder.basicAuthentication(username, password, StandardCharsets.UTF_8);
         }
         builder = builder.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .defaultHeader(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
         for (val entry : pmRest.getHeaders().entrySet()) {
             LOGGER.debug("Configuring header [{}] with value [{}]", entry.getKey(), entry.getValue());
