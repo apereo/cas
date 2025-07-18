@@ -4,7 +4,6 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 
 import lombok.Getter;
@@ -31,13 +30,11 @@ public class AcceptableUsagePolicySubmitAction extends BaseCasWebflowAction {
         actionResolverName = AuditActionResolvers.AUP_SUBMIT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUP_SUBMIT_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        return FunctionUtils.doUnchecked(() -> {
-            LOGGER.trace("Submitting acceptable usage policy");
-            if (repository.submit(requestContext)) {
-                return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED);
-            }
-            return error();
-        });
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        LOGGER.trace("Submitting acceptable usage policy");
+        if (repository.submit(requestContext)) {
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED);
+        }
+        return error();
     }
 }

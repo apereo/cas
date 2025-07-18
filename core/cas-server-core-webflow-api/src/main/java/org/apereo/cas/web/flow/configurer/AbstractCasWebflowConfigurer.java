@@ -398,14 +398,14 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public ViewState createEndViewState(final Flow flow, final String id, final String viewId) {
         val viewFactory = flowBuilderServices.getViewFactoryCreator()
             .createViewFactory(new LiteralExpression(viewId), flowBuilderServices.getExpressionParser(),
-                flowBuilderServices.getConversionService(), null, this.flowBuilderServices.getValidator(),
+                flowBuilderServices.getConversionService(), null, flowBuilderServices.getValidator(),
                 flowBuilderServices.getValidationHintResolver());
         return createEndViewState(flow, id, viewFactory);
     }
 
     @Override
     public SubflowState createSubflowState(final Flow flow, final String stateId, final String subflow, final Action entryAction) {
-        return createSubflowState(flow, stateId, subflow, this.flowDefinitionRegistry, entryAction);
+        return createSubflowState(flow, stateId, subflow, flowDefinitionRegistry, entryAction);
     }
 
     @Override

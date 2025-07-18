@@ -13,6 +13,7 @@
     "--management.endpoints.access.default=UNRESTRICTED",
     
     "--cas.authn.mfa.gauth.core.multiple-device-registration-enabled=true",
+    "--cas.authn.mfa.gauth.core.maximum-authentication-attempts=3",
     "--cas.authn.mfa.gauth.id=GoogleAuth",
 
     "--cas.authn.mfa.gauth.crypto.signing.key=7zNPHGAiD-xPLt1EPJgbx9itrLg1zqnA6gI3YSWjwly6rVTSTwnM3h4DB4kt0rOCPZJGI1SmhVAxYw0G-lwJEw",

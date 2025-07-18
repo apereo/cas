@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.3.0
  */
-@Tag("Attributes")
+@Tag("AttributeRepository")
 @ExtendWith(CasTestExtension.class)
 @SpringBootTest(
     classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,

@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -21,6 +22,7 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.execution.View;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
@@ -38,7 +40,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
+@Getter
 public class MockRequestContext extends MockRequestControlContext {
+    private View viewRendered;
+
     public MockRequestContext(final MessageContext messageContext) throws Exception {
         setMessageContext(messageContext);
     }
@@ -240,5 +245,10 @@ public class MockRequestContext extends MockRequestControlContext {
     public MockRequestContext withDefaultMessageContext() throws Exception {
         setMessageContext(new DefaultMessageContext());
         return this;
+    }
+
+    @Override
+    public void viewRendered(final View view) {
+        this.viewRendered = view;
     }
 }

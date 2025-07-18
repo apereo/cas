@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.web.flow;
 
 import org.apereo.cas.multitenancy.TenantExtractor;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -21,7 +20,7 @@ public class YubiKeyAuthenticationWebflowAction extends BaseCasWebflowAction {
     protected final TenantExtractor tenantExtractor;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        return FunctionUtils.doUnchecked(() -> yubikeyAuthenticationWebflowEventResolver.resolveSingle(requestContext));
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        return yubikeyAuthenticationWebflowEventResolver.resolveSingle(requestContext);
     }
 }

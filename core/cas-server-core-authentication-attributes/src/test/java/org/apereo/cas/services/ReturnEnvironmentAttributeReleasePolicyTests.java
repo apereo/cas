@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 7.3.0
  */
-@Tag("Attributes")
+@Tag("AttributeRelease")
 @ActiveProfiles("production")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @ExtendWith(CasTestExtension.class)

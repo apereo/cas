@@ -1159,6 +1159,10 @@ public interface CasWebflowConstants {
      * State id 'saveRegistrationGoogle'.
      */
     String STATE_ID_GOOGLE_SAVE_REGISTRATION = "saveRegistrationGoogle";
+    /**
+     * State id 'authorizeTokenAttempt'.
+     */
+    String STATE_ID_AUTHORIZE_TOKEN_ATTEMPT = "authorizeTokenAttempt";
 
     /**
      * State id 'saveRegistrationYubiKey'.
@@ -2134,6 +2138,10 @@ public interface CasWebflowConstants {
      * Action id 'googleAccountCreateRegistrationAction'.
      */
     String ACTION_ID_GOOGLE_ACCOUNT_CREATE_REGISTRATION = "googleAccountCreateRegistrationAction";
+    /**
+     * Action id 'googleAccountAuthorizeTokenAttemptAction'.
+     */
+    String ACTION_ID_GOOGLE_ACCOUNT_AUTHORIZE_TOKEN_ATTEMPT = "googleAccountAuthorizeTokenAttemptAction";
 
     /**
      * Action id 'googleValidateSelectedRegistrationAction'.

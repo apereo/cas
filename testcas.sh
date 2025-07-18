@@ -240,10 +240,17 @@ while (( "$#" )); do
                 task+="testActuatorEndpoint "
                 ;;
             utility|utils|util)
+                isDockerOnLinux && ./ci/tests/httpbin/run-httpbin-server.sh || exit 1
                 task+="testUtility "
                 ;;
             wsfed|wsfederation)
                 task+="testWSFederation "
+                ;;
+            attributerepository|attrrepo|attrsrepo|attr-repo|attribute-repository)
+                task+="testAttributeRepository "
+                ;;
+            attributerelease|attrrelease|attrsrelease|attr-release|attribute-release)
+                task+="testAttributeRelease "
                 ;;
             attrs|attr|attributes)
                 task+="testAttributes "

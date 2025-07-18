@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.json[0].location=classpath:/json-attribute-repository.json",
         "cas.authn.attribute-repository.json[0].order=0"
     })
-@Tag("Attributes")
+@Tag("AttributeRepository")
 @ExtendWith(CasTestExtension.class)
 class JsonPersonAttributeDaoTests {
     @Autowired

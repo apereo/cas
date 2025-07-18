@@ -23,12 +23,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
-import org.apache.hc.core5.http.ProtocolException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.http.HttpMethod;
 import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -63,15 +61,23 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         if (result.isPresent()) {
             val user = result.get();
             LOGGER.debug("Received user object as [{}]", user);
+            if (user.has("suspended") && user.get("suspended").asBoolean()) {
+                throw new AccountDisabledException(
+                        "Could not authenticate forbidden account for " + credential.getUsername());
+            }
+            if (user.has("mustChangePassword") && user.get("mustChangePassword").asBoolean()) {
+                throw new AccountPasswordMustChangeException(
+                        "Account password must change for " + credential.getUsername());
+            }
             val principal = principalFactory.createPrincipal(user.get("username").asText(),
-                                                                   SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
+                                                             SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
             return createHandlerResult(credential, principal, new ArrayList<>());
         }
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
     }
 
     protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential)
-            throws AccountPasswordMustChangeException, AccountDisabledException {
+            throws Throwable {
         HttpResponse response = null;
         try {
             val syncopeRestUrl = StringUtils.appendIfMissing(
@@ -88,21 +94,25 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             response = SyncopeUtils.execute(exec);
             if (response != null) {
                 LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
-                if (response.getCode() == HttpStatus.SC_OK) {
+                if (response.getCode() == HttpStatus.SC_FORBIDDEN || response.getCode() == HttpStatus.SC_UNAUTHORIZED) {
+                    val appInfoHeader = response.getFirstHeader("X-Application-Error-Info");
+                    if (appInfoHeader != null && StringUtils.equalsIgnoreCase("Please change your password first", appInfoHeader.getValue())) {
+                        val user = MAPPER.createObjectNode();
+                        user.put("username", credential.getUsername());
+                        user.put("mustChangePassword", true);
+                        return Optional.of(user);
+                    } else if (appInfoHeader != null
+                            && StringUtils.equalsIgnoreCase("User" + credential.getUsername() + " is suspended", appInfoHeader.getValue())) {
+                        val user = MAPPER.createObjectNode();
+                        user.put("username", credential.getUsername());
+                        user.put("suspended", true);
+                        return Optional.of(user);
+                    }
+                } else if (response.getCode() == HttpStatus.SC_OK) {
                     return parseResponseResults((HttpEntityContainer) response);
-                }
-                val header = response.getHeader("x-application-error-info");
-                if (header != null && header.getValue().toLowerCase(Locale.ROOT).contains("change your password")) {
-                    throw new AccountPasswordMustChangeException(
-                            "Account password must change for " + credential.getUsername());
-                } else if (header != null && header.getValue().toLowerCase(Locale.ROOT).contains("is suspended")) {
-                    throw new AccountDisabledException(
-                            "Could not authenticate forbidden account for " + credential.getUsername());
                 }
             }
             LOGGER.debug("Received http response with null value");
-        } catch (final ProtocolException e) {
-            throw new RuntimeException(e);
         } finally {
             HttpUtils.close(response);
         }

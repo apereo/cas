@@ -38,10 +38,18 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -75,7 +83,21 @@ class RestPasswordManagementServiceTests {
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
+
+        @Autowired
+        @Qualifier("passwordChangeServiceRestTemplate")
+        void setRestTemplate(final RestTemplate restTemplate) {
+            restTemplate.getInterceptors().add(new ClientHttpRequestInterceptor() {
+                @Override
+                public ClientHttpResponse intercept(final HttpRequest request, final byte[] body, final ClientHttpRequestExecution execution) throws IOException {
+                    LAST_BODY = body;
+                    return execution.execute(request, body);
+                }
+            });
+        }
     }
+
+    private static byte[] LAST_BODY;
 
     @Nested
     @SpringBootTest(classes = SharedTestConfiguration.class)
@@ -121,6 +143,10 @@ class RestPasswordManagementServiceTests {
         @Autowired
         @Qualifier(PasswordHistoryService.BEAN_NAME)
         private PasswordHistoryService passwordHistoryService;
+
+        @Autowired
+        @Qualifier("passwordChangeServiceRestTemplate")
+        private RestTemplate passwordChangeServiceRestTemplate;
 
         @Test
         void verifyEmailFound() throws Throwable {
@@ -233,7 +259,7 @@ class RestPasswordManagementServiceTests {
             return new RestPasswordManagementService(
                 passwordManagementCipherExecutor,
                 props,
-                new RestTemplate(),
+                passwordChangeServiceRestTemplate,
                 passwordHistoryService);
         }
 
@@ -268,6 +294,8 @@ class RestPasswordManagementServiceTests {
 
                 val result = passwordService.change(request);
                 assertTrue(result);
+                assertThat(LAST_BODY).asString(StandardCharsets.UTF_8).startsWith("{");
+                assertThat(LAST_BODY).asString(StandardCharsets.UTF_8).doesNotContain("<", ">");
                 webServer.stop();
             }
 

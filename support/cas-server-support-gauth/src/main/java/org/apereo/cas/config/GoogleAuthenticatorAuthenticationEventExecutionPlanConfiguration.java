@@ -28,6 +28,7 @@ import org.apereo.cas.gauth.credential.RestGoogleAuthenticatorTokenCredentialRep
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorTokenRepositoryCleaner;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorAccountCheckRegistrationAction;
+import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorAuthorizeTokenAttemptAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorConfirmAccountRegistrationAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorDeleteAccountAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorPrepareLoginAction;
@@ -323,6 +324,22 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Configuration(value = "GoogleAuthenticatorMultifactorAuthenticationWebflowConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class GoogleAuthenticatorMultifactorAuthenticationWebflowConfiguration {
+
+        @Bean
+        @RefreshScope
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_ACCOUNT_AUTHORIZE_TOKEN_ATTEMPT)
+        public Action googleAccountAuthorizeTokenAttemptAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new GoogleAuthenticatorAuthorizeTokenAttemptAction(casProperties))
+                .withId(CasWebflowConstants.ACTION_ID_GOOGLE_ACCOUNT_AUTHORIZE_TOKEN_ATTEMPT)
+                .build()
+                .get();
+        }
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_VALIDATE_SELECTED_REGISTRATION)

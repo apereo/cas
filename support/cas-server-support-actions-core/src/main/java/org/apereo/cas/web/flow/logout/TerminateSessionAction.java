@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.logout;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
+import org.apereo.cas.logout.LogoutConfirmationResolver;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.SessionTerminationHandler;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
@@ -18,7 +19,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,8 +35,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class TerminateSessionAction extends BaseCasWebflowAction {
-    protected final EventFactorySupport eventFactorySupport = eventFactory;
-
     protected final CentralAuthenticationService centralAuthenticationService;
 
     protected final CasCookieBuilder ticketGrantingTicketCookieGenerator;
@@ -48,18 +46,16 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
     protected final LogoutManager logoutManager;
 
     protected final SingleLogoutRequestExecutor singleLogoutRequestExecutor;
+
+    protected final LogoutConfirmationResolver logoutConfirmationResolver;
     
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
-        val terminateSession = FunctionUtils.doIf(logoutProperties.isConfirmLogout(),
-                () -> WebUtils.isLogoutRequestConfirmed(requestContext),
-                () -> Boolean.TRUE)
-            .get();
-
+        val terminateSession = logoutConfirmationResolver.isLogoutRequestConfirmed(requestContext);
         if (terminateSession) {
             return terminate(requestContext);
         }
-        return eventFactorySupport.event(this, CasWebflowConstants.STATE_ID_WARN);
+        return eventFactory.event(this, CasWebflowConstants.STATE_ID_WARN);
     }
 
     protected String getTicketGrantingTicket(final RequestContext context) {
@@ -99,10 +95,10 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
 
         if (StringUtils.isNotBlank(logoutProperties.getRedirectUrl())) {
             WebUtils.putLogoutRedirectUrl(requestContext, logoutProperties.getRedirectUrl());
-            return eventFactorySupport.event(this, CasWebflowConstants.STATE_ID_REDIRECT);
+            return eventFactory.event(this, CasWebflowConstants.STATE_ID_REDIRECT);
         }
 
-        return eventFactorySupport.success(this);
+        return eventFactory.success(this);
     }
 
     protected void destroyApplicationContext(final List<SessionTerminationHandler> terminationHandlers,
