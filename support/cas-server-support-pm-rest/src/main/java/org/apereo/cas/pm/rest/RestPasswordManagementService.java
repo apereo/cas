@@ -10,8 +10,10 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -52,7 +54,9 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         if (bean.getCurrentPassword() != null) {
             body.put(rest.getFieldNamePasswordOld(), bean.toCurrentPassword());
         }
-        val entity = new HttpEntity<>(body);
+        val headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        val entity = new HttpEntity<>(body, headers);
         val result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);
         return result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()
             && Objects.requireNonNull(result.getBody());
