@@ -16,6 +16,7 @@ SOURCE_DIRECTORY="#{CURRENT_DIR}/gh-pages/_site"
 
 options = {
   :typhoeus => {
+    :method => :get,
     :followlocation => true,
     :connecttimeout => 20,
     :timeout => 60,
