@@ -1,10 +1,13 @@
 package org.apereo.cas.syncope;
 
+import java.util.Locale;
+import org.apache.hc.core5.http.ProtocolException;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationProperties;
 import org.apereo.cas.monitor.Monitorable;
@@ -64,14 +67,6 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         if (result.isPresent()) {
             val user = result.get();
             LOGGER.debug("Received user object as [{}]", user);
-            if (user.has("suspended") && user.get("suspended").asBoolean()) {
-                throw new AccountDisabledException(
-                        "Could not authenticate forbidden account for " + credential.getUsername());
-            }
-            if (user.has("mustChangePassword") && user.get("mustChangePassword").asBoolean()) {
-                throw new AccountPasswordMustChangeException(
-                        "Account password must change for " + credential.getUsername());
-            }
             val principal = principalFactory.createPrincipal(user.get("username").asText(),
                     SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
             return createHandlerResult(credential, principal, new ArrayList<>());
@@ -79,7 +74,8 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
     }
 
-    protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential) {
+    protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential)
+            throws AccountPasswordMustChangeException, AccountDisabledException {
         HttpResponse response = null;
         try {
             val syncopeRestUrl = StringUtils.appendIfMissing(
@@ -93,11 +89,23 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                     .headers(CollectionUtils.wrap("X-Syncope-Domain", syncopeDomain))
                     .maximumRetryAttempts(properties.getMaxRetryAttempts())
                     .build();
-            response = Objects.requireNonNull(HttpUtils.execute(exec));
+            response = SyncopeUtils.execute(exec);
             LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
-            if (response.getCode() == HttpStatus.SC_OK) {
-                return parseResponseResults((HttpEntityContainer) response);
+            if (response != null) {
+                if (response.getCode() == HttpStatus.SC_OK) {
+                    return parseResponseResults((HttpEntityContainer) response);
+                }
+                val header = response.getHeader("x-application-error-info");
+                if (header != null && header.getValue().toLowerCase(Locale.ROOT).contains("password")) {
+                    throw new AccountPasswordMustChangeException(
+                            "Account password must change for " + credential.getUsername());
+                } else if (header != null && header.getValue().toLowerCase(Locale.ROOT).contains("suspended")) {
+                    throw new AccountDisabledException(
+                            "Could not authenticate forbidden account for " + credential.getUsername());
+                }
             }
+        } catch (final ProtocolException e) {
+            throw new RuntimeException(e);
         } finally {
             HttpUtils.close(response);
         }

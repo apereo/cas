@@ -98,7 +98,13 @@ public class HttpUtils {
         return null;
     }
 
-    private static CloseableHttpClient getHttpClient(final HttpExecutionRequest execution) throws Exception {
+    /**
+     * Create http client.
+     *
+     * @param execution http execution request
+     * @return http execution request
+     */
+    public static CloseableHttpClient getHttpClient(final HttpExecutionRequest execution) throws Exception {
         val builder = getHttpClientBuilder(execution);
         if (StringUtils.isNotBlank(execution.getProxyUrl())) {
             val proxyEndpoint = new URI(execution.getProxyUrl()).toURL();
@@ -152,7 +158,15 @@ public class HttpUtils {
         return acceptHeaders;
     }
 
-    private HttpUriRequest getHttpRequestByMethod(final String method, final String entity, final URI uri) {
+    /**
+     * Create http request.
+     *
+     * @param method http request method
+     * @param entity http request body
+     * @param uri http request uri
+     * @return http request with get method
+     */
+    public static HttpUriRequest getHttpRequestByMethod(final String method, final String entity, final URI uri) {
         if ("post".equalsIgnoreCase(method)) {
             val request = new HttpPost(uri);
             if (StringUtils.isNotBlank(entity)) {
@@ -176,7 +190,7 @@ public class HttpUtils {
      * @param request   the request
      * @param execution the execution request
      */
-    private void prepareHttpRequest(final HttpUriRequest request,
+    public static void prepareHttpRequest(final HttpUriRequest request,
                                     final HttpExecutionRequest execution) {
         if (execution.isBasicAuthentication()) {
             val auth = EncodingUtils.encodeBase64(execution.getBasicAuthUsername() + ':' + execution.getBasicAuthPassword());
@@ -187,7 +201,14 @@ public class HttpUtils {
         }
     }
 
-    private URI buildHttpUri(final String url, final Map<String, String> parameters) {
+    /**
+     * Build URI for http request
+     *
+     * @param url used for URI
+     * @param parameters for URI
+     * @return URI for http request
+     */
+    public static URI buildHttpUri(final String url, final Map<String, String> parameters) {
         return FunctionUtils.doUnchecked(() -> {
             val uriBuilder = new URIBuilder(url);
             parameters.forEach(uriBuilder::addParameter);
