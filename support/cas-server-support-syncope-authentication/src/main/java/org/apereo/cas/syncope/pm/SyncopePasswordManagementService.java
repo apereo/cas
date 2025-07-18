@@ -1,18 +1,5 @@
 package org.apereo.cas.syncope.pm;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.hc.core5.http.HttpResponse;
-import org.apache.hc.core5.http.HttpStatus;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
@@ -26,8 +13,19 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link SyncopePasswordManagementService}.
@@ -50,23 +48,23 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
     @Override
     public boolean changeInternal(final PasswordChangeRequest bean) {
         return FunctionUtils.doAndHandle(() -> {
-            String syncopeRestPasswordResetUrl = StringUtils.appendIfMissing(
+            val syncopeRestPasswordResetUrl = StringUtils.appendIfMissing(
                     SpringExpressionLanguageValueResolver.getInstance().resolve(
                             casProperties.getAuthn().getPm().getSyncope().getUrl()),
                     "/rest/users/self/mustChangePassword");
             LOGGER.debug("Updating account password on syncope for user [{}]", bean.getUsername());
-            HttpExecutionRequest exec = HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                     .method(HttpMethod.POST)
                     .url(syncopeRestPasswordResetUrl)
                     .basicAuthUsername(bean.getUsername())
                     .basicAuthPassword(bean.toCurrentPassword())
                     .headers(Map.of("X-Syncope-Domain", casProperties.getAuthn().getSyncope().getDomain(),
-                            HttpHeaders.ACCEPT, "application/json",
-                            HttpHeaders.CONTENT_TYPE, "application/json"))
+                                    HttpHeaders.ACCEPT, "application/json",
+                                    HttpHeaders.CONTENT_TYPE, "application/json"))
                     .entity(MAPPER.writeValueAsString(getPasswordPatch(bean)))
                     .maximumRetryAttempts(1)
                     .build();
-            HttpResponse response = Objects.requireNonNull(HttpUtils.execute(exec));
+            val response = Objects.requireNonNull(HttpUtils.execute(exec));
             if (response.getCode() == HttpStatus.SC_OK) {
                 LOGGER.debug("Successfully updated the account password on Syncope for [{}]", bean.getUsername());
                 return true;
@@ -110,15 +108,15 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
 
     protected Optional<String> getUserAttribute(final PasswordManagementQuery query, final String attributeName) {
         return searchUser(query)
-            .stream()
-            .findFirst()
-            .map(syncopeUser -> {
-                val prefix = "%s_%s".formatted("syncopeUserAttr", attributeName);
-                return syncopeUser.getOrDefault(attributeName, syncopeUser.get(prefix));
-            })
-            .filter(Objects::nonNull)
-            .filter(values -> !values.isEmpty())
-            .map(values -> values.getFirst().toString());
+                .stream()
+                .findFirst()
+                .map(syncopeUser -> {
+                    val prefix = "%s_%s".formatted("syncopeUserAttr", attributeName);
+                    return syncopeUser.getOrDefault(attributeName, syncopeUser.get(prefix));
+                })
+                .filter(Objects::nonNull)
+                .filter(values -> !values.isEmpty())
+                .map(values -> values.getFirst().toString());
     }
 
     private List<Map<String, List<Object>>> searchUser(final PasswordManagementQuery query) {

@@ -202,7 +202,7 @@ public class HttpUtils {
     }
 
     /**
-     * Build URI for http request
+     * Build URI for http request.
      *
      * @param url used for URI
      * @param parameters for URI
