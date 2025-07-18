@@ -52,7 +52,7 @@ class GoogleAuthenticatorDeleteAccountActionTests {
     @Test
     void verifyDeleteWithoutVerify() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        var acct = GoogleAuthenticatorAccount
+        val acct = GoogleAuthenticatorAccount
             .builder()
             .username(UUID.randomUUID().toString())
             .name(UUID.randomUUID().toString())

@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.DelegatedClientAuthenticationCred
 import org.apereo.cas.authentication.principal.GroovyDelegatedClientAuthenticationCredentialResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.logout.LogoutConfirmationResolver;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.multitenancy.TenantExtractor;
@@ -517,6 +518,8 @@ class DelegatedAuthenticationWebflowConfiguration {
         public Action delegatedAuthenticationClientLogoutAction(
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
+            @Qualifier(LogoutConfirmationResolver.DEFAULT_BEAN_NAME)
+            final LogoutConfirmationResolver logoutConfirmationResolver,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
@@ -530,7 +533,8 @@ class DelegatedAuthenticationWebflowConfiguration {
                     .withApplicationContext(applicationContext)
                     .withProperties(casProperties)
                     .withAction(() -> new DelegatedAuthenticationClientLogoutAction(identityProviders,
-                        delegatedClientDistributedSessionStore, ticketRegistry, casProperties))
+                        delegatedClientDistributedSessionStore, ticketRegistry,
+                        casProperties, logoutConfirmationResolver))
                     .withId(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT)
                     .build()
                     .get())
