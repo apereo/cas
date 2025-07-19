@@ -66,10 +66,10 @@ function publish {
         exit 1
     fi
     printgreen "Publishing CAS releases. This might take a while..."
-    ./gradlew publishToSonatype closeAndReleaseStagingRepository \
+    ./gradlew publishToSonatype \
       --no-build-cache --no-daemon --no-parallel --no-watch-fs --no-configuration-cache \
-      -DskipAot=true -DpublishReleases=true \
-      -DrepositoryUsername="$1" -DrepositoryPassword="$2" -DpublishReleases=true \
+      -DskipAot=true -DpublishReleases=true --stacktrace \
+      -DrepositoryUsername="$1" -DrepositoryPassword="$2" \
       -Dorg.gradle.internal.http.socketTimeout=640000 \
       -Dorg.gradle.internal.http.connectionTimeout=640000 \
       -Dorg.gradle.internal.publish.checksums.insecure=true \
@@ -80,6 +80,24 @@ function publish {
         exit 1
     fi
 
+    SONATYPE_OSSRH_STAGING_API_URL="https://ossrh-staging-api.central.sonatype.com"
+
+    repositoryKey=$(curl -u "${1}:${2}" -H 'accept: application/json' -X 'GET' "${SONATYPE_OSSRH_STAGING_API_URL}/manual/search/repositories?state=open" | jq -r '.repositories[0].key')
+    if [[ -z $repositoryKey ]]; then
+      printred "Failed to locate uploaded repository key"
+      exit 1
+    fi
+    printgreen "Repository key: ${repositoryKey}"
+    read -s -p "Press Enter to upload this deployment to the Publisher Portal..." anykey
+    printgreen "Uploading this deployment to the Publisher Portal. This might take a while..."
+    curl -v -u "${1}:${2}" -H 'accept: */*' -X 'POST' "${SONATYPE_OSSRH_STAGING_API_URL}/manual/upload/repository/${repositoryKey}?publishing_type=user_managed"
+    if [ $? -ne 0 ]; then
+      printred "Failed to upload this deployment with repository key ${repositoryKey}"
+      exit 1
+    fi
+
+    printgreen "Navigate to https://central.sonatype.com/publishing/deployments and publish the deployment"
+    read -s -p "When you are ready, press ENTER to continue..." anykey
     createTag
 }
 
