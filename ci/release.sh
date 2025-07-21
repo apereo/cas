@@ -91,6 +91,9 @@ printgreen "Welcome to the release process for Apereo CAS ${casVersion}"
 echo -n $(java -version)
 echo "***************************************************************"
 
+username="$REPOSITORY_USER"
+password="$REPOSITORY_PWD"
+
 if [[ -z $username || -z $password ]]; then
   printred "Repository username and password are missing."
   printred "Make sure the following environment variables are defined: REPOSITORY_USER and REPOSITORY_PWD"
