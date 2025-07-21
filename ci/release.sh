@@ -56,7 +56,12 @@ function publish {
         printred "Publishing Apereo CAS failed."
         exit 1
     fi
-    
+
+    if [[ "$CI" == "true" ]]; then
+      git config --global user.email "cas@apereo.org"
+      git config --global user.name "Apereo CAS"
+    fi
+
     printgreen "Tagging the source tree for CAS version: ${casVersion}"
     releaseTag="v${casVersion}"
     if [[ $(git tag -l "${releaseTag}") ]]; then
