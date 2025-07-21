@@ -57,8 +57,8 @@ function publish {
     fi
 
     if [[ "$CI" == "true" ]]; then
-      git config --global user.email "cas@apereo.org"
-      git config --global user.name "Apereo CAS"
+        git config --global user.email "cas@apereo.org"
+        git config --global user.name "Apereo CAS"
     fi
 
     releaseTag="v${casVersion}"
@@ -140,9 +140,9 @@ if [[ "$CI" == "true" ]]; then
 else
   git diff --quiet
   if [ $? -ne 0 ]; then
-    printred "Git repository has modified or untracked files. Commit or discard all changes and try again."
-    git status && git diff
-    exit 1
+      printred "Git repository has modified or untracked files. Commit or discard all changes and try again."
+      git status && git diff
+      exit 1
   fi
 fi
 
