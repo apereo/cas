@@ -42,8 +42,7 @@ function snapshot() {
 }
 
 function publish {
-    if [[ "${casVersion}" == *SNAPSHOT* ]] ;
-    then
+    if [[ "${casVersion}" == *SNAPSHOT* ]]; then
         printred "CAS version ${casVersion} cannot be a SNAPSHOT version"
         exit 1
     fi
@@ -101,8 +100,7 @@ else
   fi
 fi
 
-if [[ "${casVersion}" == v* ]] ;
-then
+if [[ "${casVersion}" == v* ]]; then
     printred "CAS version ${casVersion} is incorrect and likely a tag."
     exit 1
 fi
