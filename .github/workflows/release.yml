@@ -16,14 +16,14 @@ env:
 ##########################################################################
 
 concurrency:
-  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}"
   cancel-in-progress: true
 
 on:
   workflow_dispatch:
 
 jobs:
-  release:
+  release-to-central:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,8 +37,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - name: Import PGP key (optional, for CLI tools)
-        if: always()
+      - name: Configure PGP
         run: echo "$PGP_PRIVATE_KEY" | gpg --batch --import
       - name: Release
         run: chmod +x ./ci/release.sh && ./ci/release.sh
