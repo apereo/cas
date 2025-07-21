@@ -42,8 +42,7 @@ function snapshot() {
 }
 
 function publish {
-    if [[ "${casVersion}" == *SNAPSHOT* ]] ;
-    then
+    if [[ "${casVersion}" == *SNAPSHOT* ]]; then
         printred "CAS version ${casVersion} cannot be a SNAPSHOT version"
         exit 1
     fi
@@ -56,7 +55,12 @@ function publish {
         printred "Publishing Apereo CAS failed."
         exit 1
     fi
-    
+
+    if [[ "$CI" == "true" ]]; then
+      git config --global user.email "cas@apereo.org"
+      git config --global user.name "Apereo CAS"
+    fi
+
     printgreen "Tagging the source tree for CAS version: ${casVersion}"
     releaseTag="v${casVersion}"
     if [[ $(git tag -l "${releaseTag}") ]]; then
@@ -96,8 +100,7 @@ else
   fi
 fi
 
-if [[ "${casVersion}" == v* ]] ;
-then
+if [[ "${casVersion}" == v* ]]; then
     printred "CAS version ${casVersion} is incorrect and likely a tag."
     exit 1
 fi
