@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ import java.util.Optional;
 public class SyncopePasswordManagementService extends BasePasswordManagementService {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-            .defaultTypingEnabled(false).build().toObjectMapper();
+                                                   .defaultTypingEnabled(false).build().toObjectMapper();
 
     public SyncopePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                             final CasConfigurationProperties casProperties,
@@ -49,21 +50,21 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
     public boolean changeInternal(final PasswordChangeRequest bean) {
         return FunctionUtils.doAndHandle(() -> {
             val syncopeRestPasswordResetUrl = StringUtils.appendIfMissing(
-                    SpringExpressionLanguageValueResolver.getInstance().resolve(
-                            casProperties.getAuthn().getPm().getSyncope().getUrl()),
-                    "/rest/users/self/mustChangePassword");
+                SpringExpressionLanguageValueResolver.getInstance().resolve(
+                    casProperties.getAuthn().getPm().getSyncope().getUrl()),
+                "/rest/users/self/mustChangePassword");
             LOGGER.debug("Updating account password on syncope for user [{}]", bean.getUsername());
             val exec = HttpExecutionRequest.builder()
-                    .method(HttpMethod.POST)
-                    .url(syncopeRestPasswordResetUrl)
-                    .basicAuthUsername(bean.getUsername())
-                    .basicAuthPassword(bean.toCurrentPassword())
-                    .headers(Map.of("X-Syncope-Domain", casProperties.getAuthn().getSyncope().getDomain(),
-                                    HttpHeaders.ACCEPT, "application/json",
-                                    HttpHeaders.CONTENT_TYPE, "application/json"))
-                    .entity(MAPPER.writeValueAsString(getPasswordPatch(bean)))
-                    .maximumRetryAttempts(1)
-                    .build();
+                           .method(HttpMethod.POST)
+                           .url(syncopeRestPasswordResetUrl)
+                           .basicAuthUsername(bean.getUsername())
+                           .basicAuthPassword(bean.toCurrentPassword())
+                           .headers(Map.of("X-Syncope-Domain", casProperties.getAuthn().getSyncope().getDomain(),
+                                           HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
+                                           HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                           .entity(MAPPER.writeValueAsString(getPasswordPatch(bean)))
+                           .maximumRetryAttempts(1)
+                           .build();
             val response = Objects.requireNonNull(HttpUtils.execute(exec));
             if (response.getCode() == HttpStatus.SC_OK) {
                 LOGGER.debug("Successfully updated the account password on Syncope for [{}]", bean.getUsername());
@@ -108,22 +109,22 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
 
     protected Optional<String> getUserAttribute(final PasswordManagementQuery query, final String attributeName) {
         return searchUser(query)
-                .stream()
-                .findFirst()
-                .map(syncopeUser -> {
-                    val prefix = "%s_%s".formatted("syncopeUserAttr", attributeName);
-                    return syncopeUser.getOrDefault(attributeName, syncopeUser.get(prefix));
-                })
-                .filter(Objects::nonNull)
-                .filter(values -> !values.isEmpty())
-                .map(values -> values.getFirst().toString());
+                   .stream()
+                   .findFirst()
+                   .map(syncopeUser -> {
+                       val prefix = "%s_%s".formatted("syncopeUserAttr", attributeName);
+                       return syncopeUser.getOrDefault(attributeName, syncopeUser.get(prefix));
+                   })
+                   .filter(Objects::nonNull)
+                   .filter(values -> !values.isEmpty())
+                   .map(values -> values.getFirst().toString());
     }
 
     private List<Map<String, List<Object>>> searchUser(final PasswordManagementQuery query) {
         return SyncopeUtils.syncopeUserSearch(casProperties.getAuthn().getPm().getSyncope(), query.getUsername());
     }
 
-    private JsonNode getPasswordPatch(final PasswordChangeRequest bean) {
+    private static JsonNode getPasswordPatch(final PasswordChangeRequest bean) {
         val passwordPatch = MAPPER.createObjectNode();
         passwordPatch.put("operation", "ADD_REPLACE");
         passwordPatch.put("value", bean.toConfirmedPassword());

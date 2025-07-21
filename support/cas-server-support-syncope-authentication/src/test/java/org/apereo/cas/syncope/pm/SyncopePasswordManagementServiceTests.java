@@ -32,7 +32,8 @@ import static org.mockito.Mockito.*;
 @Tag("Syncope")
 @ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 18080)
-@SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class, properties = {
+@SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class,
+    properties = {
         "cas.authn.syncope.url=http://localhost:18080/syncope",
 
         "cas.authn.pm.core.enabled=true",
@@ -44,7 +45,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.pm.syncope.attribute-mappings.syncopeUserAttr_email=email",
         "cas.authn.pm.syncope.attribute-mappings.syncopeUserAttr_phoneNumber=phoneNumber",
         "cas.authn.pm.syncope.attribute-mappings.username=username"
-})
+    })
 class SyncopePasswordManagementServiceTests {
 
     @Autowired
@@ -57,36 +58,32 @@ class SyncopePasswordManagementServiceTests {
 
     @Test
     void verifyFindEmail() throws Throwable {
-        val email =
-                passwordChangeService.findEmail(PasswordManagementQuery.builder().username("mustChangePasswordUser").build());
+        val email = passwordChangeService.findEmail(PasswordManagementQuery.builder().username("mustChangePasswordUser").build());
         assertEquals("mustChangePasswordUser@syncope.org", email);
     }
 
     @Test
     void verifyFindPhone() throws Throwable {
-        val ph =
-                passwordChangeService.findPhone(PasswordManagementQuery.builder().username("mustChangePasswordUser").build());
+        val ph = passwordChangeService.findPhone(PasswordManagementQuery.builder().username("mustChangePasswordUser").build());
         assertEquals("2345678901", ph);
     }
 
     @Test
     void verifyFindSecurityQuestions() {
-        assertThrows(UnsupportedOperationException.class,
-                     () -> passwordChangeService.getSecurityQuestions(
-                             PasswordManagementQuery.builder().username("mustChangePasswordUser").build()));
+        assertThrows(UnsupportedOperationException.class, () -> passwordChangeService.getSecurityQuestions(
+            PasswordManagementQuery.builder().username("mustChangePasswordUser").build()));
     }
 
     @Test
     void verifyUpdateSecurityQuestions() {
-        assertThrows(UnsupportedOperationException.class,
-                     () -> passwordChangeService.updateSecurityQuestions(
-                             PasswordManagementQuery.builder().username("mustChangePasswordUser").build()));
+        assertThrows(UnsupportedOperationException.class, () -> passwordChangeService.updateSecurityQuestions(
+            PasswordManagementQuery.builder().username("mustChangePasswordUser").build()));
     }
 
     @Test
     void verifyUnlockSecurityQuestions() {
-        assertThrows(UnsupportedOperationException.class,
-                     () -> passwordChangeService.unlockAccount(new BasicIdentifiableCredential("mustChangePasswordUser")));
+        assertThrows(UnsupportedOperationException.class, () -> passwordChangeService.unlockAccount(
+            new BasicIdentifiableCredential("mustChangePasswordUser")));
     }
 
     @Test
@@ -94,16 +91,16 @@ class SyncopePasswordManagementServiceTests {
         assertNotNull(syncopeAuthenticationHandlers);
         val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
         val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
-                "mustChangePasswordUser",
-                "ChangePassword");
+            "mustChangePasswordUser",
+            "ChangePassword");
         assertThrows(AccountPasswordMustChangeException.class,
                      () -> syncopeAuthenticationHandler.authenticate(credential, mock(Service.class)));
 
         val passwordChangeRequest = new PasswordChangeRequest(
-                "mustChangePasswordUser",
-                "ChangePassword".toCharArray(),
-                "Password123!".toCharArray(),
-                "Password123!".toCharArray());
+            "mustChangePasswordUser",
+            "ChangePassword".toCharArray(),
+            "Password123!".toCharArray(),
+            "Password123!".toCharArray());
 
         assertTrue(((SyncopePasswordManagementService) passwordChangeService).changeInternal(passwordChangeRequest));
         assertThrows(FailedLoginException.class,
