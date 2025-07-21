@@ -50,14 +50,14 @@ import java.util.UUID;
  */
 public abstract class BaseSyncopeTests {
     protected static final ObjectMapper MAPPER =
-            JacksonObjectMapperFactory.builder().defaultTypingEnabled(true).build().toObjectMapper();
+        JacksonObjectMapperFactory.builder().defaultTypingEnabled(true).build().toObjectMapper();
 
     protected static MockWebServer startMockSever(final JsonNode json, final HttpStatus status,
                                                   final int port) throws Exception {
         val data = MAPPER.writeValueAsString(json);
         val webServer = new MockWebServer(port,
-                new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
-                MediaType.APPLICATION_JSON_VALUE, status);
+                                          new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
+                                          MediaType.APPLICATION_JSON_VALUE, status);
         webServer.start();
         return webServer;
     }
@@ -69,12 +69,12 @@ public abstract class BaseSyncopeTests {
         user.putArray("roles").add("role1");
         user.putArray("dynRoles").add("DynRole1");
         user.putArray("dynRealms").add("Realm1");
-        user.putArray("memberships").add(MAPPER.createObjectNode()
-                .put("groupName", "G1"));
-        user.putArray("dynMemberships").add(MAPPER.createObjectNode()
-                .put("groupName", "G1"));
-        user.putArray("relationships").add(MAPPER.createObjectNode()
-                .put("type", "T1").put("otherEndName", "Other1"));
+        user.putArray("memberships")
+            .add(MAPPER.createObjectNode().put("groupName", "G1"));
+        user.putArray("dynMemberships")
+            .add(MAPPER.createObjectNode().put("groupName", "G1"));
+        user.putArray("relationships")
+            .add(MAPPER.createObjectNode().put("type", "T1").put("otherEndName", "Other1"));
 
         val plainAttrs = MAPPER.createObjectNode();
         plainAttrs.put("schema", "S1");
@@ -110,9 +110,9 @@ public abstract class BaseSyncopeTests {
         user.putArray("dynRoles").add("DynRole1");
         user.putArray("dynRealms").add("Realm1");
         user.putArray("dynMemberships").add(MAPPER.createObjectNode()
-                .put("groupName", "G1"));
+                                                .put("groupName", "G1"));
         user.putArray("relationships").add(MAPPER.createObjectNode()
-                .put("type", "T1").put("otherEndName", "Other1"));
+                                               .put("type", "T1").put("otherEndName", "Other1"));
 
         val memberships = user.putArray("memberships");
         val membershipsInfo = MAPPER.createObjectNode().put("groupName", "G1");
@@ -183,7 +183,7 @@ public abstract class BaseSyncopeTests {
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
     @SpringBootTestAutoConfigurations
-    @Import({CasRegisteredServicesTestConfiguration.class, CasAuthenticationEventExecutionPlanTestConfiguration.class})
+    @Import({ CasRegisteredServicesTestConfiguration.class, CasAuthenticationEventExecutionPlanTestConfiguration.class })
     public static class SharedTestConfiguration {
     }
 }

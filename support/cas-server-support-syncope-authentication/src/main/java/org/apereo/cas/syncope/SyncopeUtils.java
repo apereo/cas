@@ -15,7 +15,6 @@ import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalAttrib
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
@@ -31,18 +30,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.apache.hc.core5.http.message.BasicHttpResponse;
-import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import javax.net.ssl.SSLHandshakeException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -389,47 +384,6 @@ public class SyncopeUtils {
                 });
         entity.put("plainAttrs", plainAttrs);
         return entity;
-    }
-
-    /**
-     * Execute http request.
-     *
-     * @param execution http request
-     * @return http response
-     */
-    public static HttpResponse execute(final HttpExecutionRequest execution) {
-        val uri = HttpUtils.buildHttpUri(execution.getUrl().trim(), execution.getParameters());
-        val request = HttpUtils.getHttpRequestByMethod(execution.getMethod().name().toLowerCase(Locale.ENGLISH).trim(),
-                                                       execution.getEntity(), uri);
-        try {
-            val expressionResolver = SpringExpressionLanguageValueResolver.getInstance();
-            execution.getHeaders().forEach((key, value) -> {
-                val headerValue = expressionResolver.resolve(value);
-                val headerKey = expressionResolver.resolve(key);
-                request.addHeader(headerKey, headerValue);
-            });
-            HttpUtils.prepareHttpRequest(request, execution);
-            val client = HttpUtils.getHttpClient(execution);
-            return FunctionUtils.doAndRetry(retryContext -> {
-                LOGGER.trace("Sending HTTP request to [{}]. Attempt: [{}]", request.getUri(), retryContext.getRetryCount());
-                val res = client.execute(request);
-                if (res == null || org.springframework.http.HttpStatus.valueOf(res.getCode()).isError()) {
-                    val maxAttempts = (Integer) retryContext.getAttribute("retry.maxAttempts");
-                    if (maxAttempts != null && retryContext.getRetryCount() != maxAttempts - 1) {
-                        return res;
-                    }
-                }
-                return res;
-            }, execution.getMaximumRetryAttempts());
-        } catch (final SSLHandshakeException e) {
-            val sanitizedUrl = FunctionUtils.doUnchecked(
-                    () -> new URIBuilder(execution.getUrl()).removeQuery().clearParameters().build().toASCIIString());
-            LoggingUtils.error(LOGGER, "SSL error accessing: [" + sanitizedUrl + ']', e);
-            return new BasicHttpResponse(org.apache.hc.core5.http.HttpStatus.SC_INTERNAL_SERVER_ERROR, sanitizedUrl);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
     }
 
     /**

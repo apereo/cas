@@ -37,7 +37,7 @@ class SyncopePasswordManagementConfiguration {
             @Qualifier("passwordManagementCipherExecutor") final CipherExecutor passwordManagementCipherExecutor,
             @Qualifier(PasswordHistoryService.BEAN_NAME) final PasswordHistoryService passwordHistoryService) {
         val pm = casProperties.getAuthn().getPm();
-        if (pm.getCore().isEnabled() && pm.getSyncope().getDomain() != null && pm.getSyncope().getUrl() != null) {
+        if (pm.getCore().isEnabled() && pm.getSyncope().isDefined()) {
             return new SyncopePasswordManagementService(passwordManagementCipherExecutor, casProperties, passwordHistoryService);
         }
         return new NoOpPasswordManagementService(passwordManagementCipherExecutor, casProperties);
