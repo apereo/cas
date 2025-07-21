@@ -1,0 +1,46 @@
+name: Release
+
+env:
+  JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  TERM: xterm-256color
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  DEVELOCITY_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
+  PGP_PRIVATE_KEY: ${{ secrets.PGP_PRIVATE_KEY }}
+  PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+  REPOSITORY_USER: ${{ secrets.REPOSITORY_USER }}
+  REPOSITORY_PWD: ${{ secrets.REPOSITORY_PWD }}
+  JDK_CURRENT: 21
+  JDK_DISTRIBUTION: "corretto"
+
+##########################################################################
+
+concurrency:
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  tags:
+    - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Initialize
+        run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+      - name: Import PGP key (optional, for CLI tools)
+        if: always()
+        run: echo "$PGP_PRIVATE_KEY" | gpg --batch --import
+      - name: Release
+        run: chmod +x ./ci/release.sh && ./ci/release.sh

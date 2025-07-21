@@ -3,11 +3,12 @@ ext {
     mainClassName = "org.apereo.cas.CasCommandLineShellApplication"
     publishMetadata = true
     projectMetadata = [
-            category: "Developer",
-            title: "Command-line Shell",
-            aliases: ["shell"],
-            selectable: false
+        category: "Developer",
+        title: "Command-line Shell",
+        aliases: ["shell"],
+        selectable: false
     ]
+    publishable = false
 }
 
 apply from: rootProject.file("gradle/springboot.gradle")
