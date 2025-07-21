@@ -104,6 +104,10 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         }
     }
 
+    tasks.named("processBootRunResources") {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+    
     tasks.named('bootRun') {
         mainClass.set(project.ext.mainClassName)
 
