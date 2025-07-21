@@ -11,6 +11,10 @@ function printgreen() {
   printf "☘️  ${GREEN}$1${ENDCOLOR}\n"
 }
 
+function printyellow() {
+  printf "⚠️  ${YELLOW}$1${ENDCOLOR}\n"
+}
+
 function printred() {
   printf "🚨  ${RED}$1${ENDCOLOR}\n"
 }
@@ -28,13 +32,8 @@ function snapshot() {
   printgreen "Publishing CAS SNAPSHOT artifacts. This might take a while..."
   ./gradlew assemble publishAggregationToCentralPortalSnapshots \
     -x test -x javadoc -x check --no-daemon --parallel \
-    -DskipAot=true -DpublishSnapshots=true --no-build-cache \
+    -DskipAot=true -DpublishSnapshots=true \
     --no-configuration-cache --configure-on-demand \
-    -Dorg.gradle.internal.http.socketTimeout=640000 \
-    -Dorg.gradle.internal.http.connectionTimeout=640000 \
-    -Dorg.gradle.internal.publish.checksums.insecure=true \
-    -Dorg.gradle.internal.network.retry.max.attempts=5 \
-    -Dorg.gradle.internal.network.retry.initial.backOff=5000 \
     -DrepositoryUsername="$1" -DrepositoryPassword="$2"
   if [ $? -ne 0 ]; then
       printred "Publishing CAS SNAPSHOTs failed."
@@ -52,14 +51,32 @@ function publish {
     ./gradlew assemble publishAggregationToCentralPortal \
       --parallel --no-daemon --no-configuration-cache -x test -x check \
       -DskipAot=true -DpublishReleases=true --stacktrace \
-      -DrepositoryUsername="$1" -DrepositoryPassword="$2" \
-      -Dorg.gradle.internal.http.socketTimeout=640000 \
-      -Dorg.gradle.internal.http.connectionTimeout=640000 \
-      -Dorg.gradle.internal.publish.checksums.insecure=true \
-      -Dorg.gradle.internal.network.retry.max.attempts=5 \
-      -Dorg.gradle.internal.network.retry.initial.backOff=5000
+      -DrepositoryUsername="$1" -DrepositoryPassword="$2"
     if [ $? -ne 0 ]; then
         printred "Publishing Apereo CAS failed."
+        exit 1
+    fi
+    
+    printgreen "Tagging the source tree for CAS version: ${casVersion}"
+    releaseTag="v${casVersion}"
+    if [[ $(git tag -l "${releaseTag}") ]]; then
+        printyellow "Tag ${releaseTag} already exists. Deleting it and re-creating it."
+        git tag -d "${releaseTag}" && git push --delete origin "${releaseTag}"
+    fi
+    git tag "${releaseTag}" -m "Tagging CAS ${releaseTag} release" && git push origin "${releaseTag}"
+    if [ $? -ne 0 ]; then
+        printred "Tagging the source tree for CAS version ${casVersion} failed."
+        exit 1
+    fi
+    printgreen "Deleting previous GitHub Release for ${releaseTag}, if any"
+    gh release delete "${releaseTag}" --cleanup-tag -y
+
+    printgreen "Creating GitHub Release for: ${releaseTag}"
+    gh release create "${releaseTag}" \
+      --title "${releaseTag}" \
+      ./support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar
+    if [ $? -ne 0 ]; then
+        printred "Creating GitHub Release for CAS version ${casVersion} failed."
         exit 1
     fi
 }
@@ -89,7 +106,7 @@ echo -e "\n"
 echo "***************************************************************"
 printgreen "Welcome to the release process for Apereo CAS ${casVersion}"
 echo -n $(java -version)
-echo "***************************************************************"
+echo -e "***************************************************************\n"
 
 username="$REPOSITORY_USER"
 password="$REPOSITORY_PWD"
