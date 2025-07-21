@@ -100,6 +100,12 @@ if [[ -z $username || -z $password ]]; then
   exit 1
 fi
 
+if [[ "${casVersion}" == *SNAPSHOT* ]]; then
+  selection="2"
+else
+  selection="1"
+fi
+
 case "$selection" in
     1)
         clean
@@ -112,6 +118,7 @@ case "$selection" in
         ;;
     *)
         printred "Unable to recognize selection"
+        exit 1
         ;;
 esac
 exit 0
