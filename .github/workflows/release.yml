@@ -21,9 +21,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - '*'
 
 jobs:
   release:
@@ -39,9 +36,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Initialize
-        run: |
-          ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-          git checkout ${{ github.ref }}
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Import PGP key (optional, for CLI tools)
         if: always()
         run: echo "$PGP_PRIVATE_KEY" | gpg --batch --import
