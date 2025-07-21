@@ -61,24 +61,70 @@ function publish {
       git config --global user.name "Apereo CAS"
     fi
 
-    printgreen "Tagging the source tree for CAS version: ${casVersion}"
     releaseTag="v${casVersion}"
-    if [[ $(git tag -l "${releaseTag}") ]]; then
-        printyellow "Tag ${releaseTag} already exists. Deleting it and re-creating it."
-        git tag -d "${releaseTag}" && git push --delete origin "${releaseTag}"
-    fi
+
+    printgreen "Removing previous source tree tag ${releaseTag}, if any"
+    git tag -d "${releaseTag}" 2>/dev/null
+    git push --delete origin "${releaseTag}" 2>/dev/null
+
+    printgreen "Deleting previous GitHub Release for ${releaseTag}, if any"
+    gh release delete "${releaseTag}" --cleanup-tag -y --repo "apereo/cas" 2>/dev/null
+
+    printgreen "Tagging the source tree for CAS version ${casVersion}"
     git tag "${releaseTag}" -m "Tagging CAS ${releaseTag} release" && git push origin "${releaseTag}"
     if [ $? -ne 0 ]; then
         printred "Tagging the source tree for CAS version ${casVersion} failed."
         exit 1
     fi
-    printgreen "Deleting previous GitHub Release for ${releaseTag}, if any"
-    gh release delete "${releaseTag}" --cleanup-tag -y
 
-    printgreen "Creating GitHub Release for: ${releaseTag}"
-    gh release create "${releaseTag}" \
-      --title "${releaseTag}" \
-      ./support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar
+    printgreen "Creating GitHub Release for ${releaseTag}"
+
+    releaseFlags=""
+    if [[ "${casVersion}" == *-RC* ]]; then
+        releaseFlags="--prerelease"
+        printgreen "This is a release candidate, and will be marked as pre-release on GitHub."
+    else
+        releaseFlags="--latest"
+        printgreen "This is a final release, and will be marked as latest on GitHub."
+    fi
+
+    currentBranch=$(git branch --show-current)
+    if [[ ${currentBranch} == "master" ]]; then
+        documentationBranch="development"
+    else
+        documentationBranch=${currentBranch}
+    fi
+
+    previousTag=$(git describe --tags --abbrev=0 ${releaseTag}^)
+    printgreen "Previous tag is ${previousTag}"
+
+    previousTagCommit=$(git rev-list -n 1 "$previousTag")
+    currentCommit=$(git log -1 --format="%H")
+    echo "Parsing the commit log between ${previousTagCommit} and ${currentCommit}..."
+    contributors=$(git shortlog -sen "${previousTagCommit}".."${currentCommit}")
+
+    notes='
+# :star: Release Notes
+
+- [Documentation](https://apereo.github.io/cas/${documentationBranch})
+- [Commit Log](https://github.com/apereo/cas/commits/${currentBranch})
+- [Maintenance Policy](https://apereo.github.io/cas/developer/Maintenance-Policy.html)
+- [Release Policy](https://apereo.github.io/cas/developer/Release-Policy.html)
+- [Release Schedule](https://github.com/apereo/cas/milestones)
+- Changelog: [RC1](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC1.html), [RC2](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC2.html), [RC3](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC3.html), [RC4](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC4.html)
+
+# :couple: Contributions
+
+Special thanks to the following individuals for their excellent contributions:	
+
+- ${contributors}
+    '
+
+    releaseNotes=$(eval "cat <<EOF $notes")
+
+    gh release create "${releaseTag}" --notes "${releaseNotes}" \
+      --title "${releaseTag}" --draft --verify-tag --repo "apereo/cas" ${releaseFlags} \
+      "./support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar#CAS Command-line Shell" 
     if [ $? -ne 0 ]; then
         printred "Creating GitHub Release for CAS version ${casVersion} failed."
         exit 1
