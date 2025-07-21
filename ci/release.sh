@@ -95,14 +95,6 @@ function publish {
         documentationBranch=${currentBranch}
     fi
 
-    previousTag=$(git describe --tags --abbrev=0 ${releaseTag}^)
-    printgreen "Previous tag is ${previousTag}"
-
-    previousTagCommit=$(git rev-list -n 1 "$previousTag")
-    currentCommit=$(git log -1 --format="%H")
-    echo "Parsing the commit log between ${previousTagCommit} and ${currentCommit}..."
-    contributors=$(git shortlog -sen "${previousTagCommit}".."${currentCommit}")
-
     notes='
 # :star: Release Notes
 
@@ -117,7 +109,7 @@ function publish {
 
 Special thanks to the following individuals for their excellent contributions:	
 
-- ${contributors}
+-
     '
 
     releaseNotes=$(eval "cat <<EOF $notes")
