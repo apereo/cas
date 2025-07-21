@@ -12,11 +12,12 @@ import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.jooq.lambda.Unchecked;
+import org.springframework.core.io.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -83,16 +84,17 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
                 }
             }
 
-            val templateFile = determineEmailTemplateFile();
-            LOGGER.debug("Using email template file at [{}]", templateFile);
-            val contents = FileUtils.readFileToString(templateFile, StandardCharsets.UTF_8);
-            if (templateFile.getName().endsWith(".gtemplate") && scriptFactoryInstance.isPresent()) {
-                val templateParams = new LinkedHashMap<>(this.parameters);
-                locale.ifPresent(loc -> templateParams.put("locale", loc));
-                return scriptFactoryInstance.get().createTemplate(contents, templateParams);
+            val templateResource = determineEmailTemplate();
+            LOGGER.debug("Using email template resource at [{}]", templateResource);
+            try (val is = templateResource.getInputStream()) {
+                val contents = IOUtils.toString(is, StandardCharsets.UTF_8);
+                if (scriptFactoryInstance.isPresent() && templateResource.getFilename().endsWith(".gtemplate")) {
+                    val templateParams = new LinkedHashMap<>(this.parameters);
+                    locale.ifPresent(loc -> templateParams.put("locale", loc));
+                    return scriptFactoryInstance.get().createTemplate(contents, templateParams);
+                }
+                return formatEmailBody(contents);
             }
-
-            return formatEmailBody(contents);
         } catch (final Throwable e) {
             LOGGER.trace(e.getMessage(), e);
             return formatEmailBody(properties.getText());
@@ -103,8 +105,8 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
         val sub = new StringSubstitutor(this.parameters, "${", "}");
         return sub.replace(contents);
     }
-    
-    protected File determineEmailTemplateFile() {
+
+    protected Resource determineEmailTemplate() {
         return locale.map(Unchecked.function(loc -> {
             val originalFile = new File(properties.getText());
             val localizedName = String.format("%s_%s.%s", FilenameUtils.getBaseName(originalFile.getName()),
@@ -112,15 +114,13 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
             val localizedFile = new File(originalFile.getParentFile(), localizedName);
             LOGGER.trace("Checking for localized email template file at [{}]", localizedFile.getPath());
             if (ResourceUtils.doesResourceExist(localizedFile.getPath())) {
-                val templateResource = ResourceUtils.getRawResourceFrom(localizedFile.getPath());
-                return templateResource.getFile();
+                return ResourceUtils.getRawResourceFrom(localizedFile.getPath());
             }
-            return getDefaultEmailTemplateFile();
-        })).orElseGet(Unchecked.supplier(this::getDefaultEmailTemplateFile));
+            return getDefaultEmailTemplate();
+        })).orElseGet(Unchecked.supplier(this::getDefaultEmailTemplate));
     }
 
-    private File getDefaultEmailTemplateFile() throws IOException {
-        val templateResource = ResourceUtils.getResourceFrom(properties.getText());
-        return templateResource.getFile();
+    private Resource getDefaultEmailTemplate() throws IOException {
+        return ResourceUtils.getResourceFrom(properties.getText());
     }
 }
