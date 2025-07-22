@@ -95,14 +95,14 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             if (response != null) {
                 LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
                 if (response.getCode() == HttpStatus.SC_FORBIDDEN || response.getCode() == HttpStatus.SC_UNAUTHORIZED) {
-                    val appInfoHeader = response.getFirstHeader("X-Application-Error-Info");
+                    val appInfoHeader = response.getFirstHeader("x-application-error-info");
                     if (appInfoHeader != null && StringUtils.equalsIgnoreCase("Please change your password first", appInfoHeader.getValue())) {
                         val user = MAPPER.createObjectNode();
                         user.put("username", credential.getUsername());
                         user.put("mustChangePassword", true);
                         return Optional.of(user);
                     } else if (appInfoHeader != null
-                                   && StringUtils.equalsIgnoreCase("User" + credential.getUsername() + " is suspended", appInfoHeader.getValue())) {
+                                   && StringUtils.equalsIgnoreCase("User " + credential.getUsername() + " is suspended", appInfoHeader.getValue())) {
                         val user = MAPPER.createObjectNode();
                         user.put("username", credential.getUsername());
                         user.put("suspended", true);
