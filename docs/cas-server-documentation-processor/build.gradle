@@ -4,7 +4,9 @@ ext {
     mainClassName = "org.apereo.cas.documentation.CasDocumentationApplication"
     forceBootifulArtifact = true
     archiveFileName = "casdocsgen.jar"
+    publishable = false
 }
+
 apply from: rootProject.file("gradle/springboot.gradle")
 
 javadoc {
@@ -29,10 +31,13 @@ dependencies {
     }
 
     rootProject.subprojects.each {
-        if (it.publishable) {
-            implementation it
-        } else {
-            logger.debug("Skipping project for documentation processing: ${it.name}")
+        if (it != project) {
+            if (it.publishable) {
+                implementation it
+            } else {
+                logger.debug("Skipping project for documentation processing: ${it.name}")
+                compileOnly it
+            }
         }
     }
 }

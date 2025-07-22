@@ -10,7 +10,7 @@ function printgreen() {
 }
 
 
-export DOCKER_IMAGE="amazon/dynamodb-local:2.6.1"
+export DOCKER_IMAGE="amazon/dynamodb-local:3.0.0"
 printgreen "Running DynamoDb docker container..."
 docker stop dynamodb-server || true && docker rm dynamodb-server || true
 docker run --rm -d -p 8000:8000 --name "dynamodb-server" ${DOCKER_IMAGE}

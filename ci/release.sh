@@ -11,30 +11,16 @@ function printgreen() {
   printf "☘️  ${GREEN}$1${ENDCOLOR}\n"
 }
 
+function printyellow() {
+  printf "⚠️  ${YELLOW}$1${ENDCOLOR}\n"
+}
+
 function printred() {
   printf "🚨  ${RED}$1${ENDCOLOR}\n"
 }
 
 function clean {
   ./gradlew clean --parallel --no-configuration-cache --no-daemon
-}
-
-function build {
-    printgreen "Creating OpenRewrite recipe for ${casVersion}..."
-    ./gradlew createOpenRewriteRecipe --no-daemon
-        git diff --quiet
-        git status
-        git add "**/rewrite/*.yml" && git commit -m "Generated OpenRewrite recipe for ${casVersion}"
-
-    printgreen "Building CAS. Please be patient as this might take a while..."
-    ./gradlew assemble -x test -x check --no-daemon --parallel \
-        --no-watch-fs --no-configuration-cache \
-        -DskipAot=true -DpublishReleases=true \
-        -DrepositoryUsername="$1" -DrepositoryPassword="$2"
-    if [ $? -ne 0 ]; then
-        printred "Building CAS failed."
-        exit 1
-    fi
 }
 
 function snapshot() {
@@ -44,14 +30,10 @@ function snapshot() {
       exit 1
   fi
   printgreen "Publishing CAS SNAPSHOT artifacts. This might take a while..."
-  ./gradlew build publish -x test -x javadoc -x check --no-daemon --parallel \
-    -DskipAot=true -DpublishSnapshots=true --no-build-cache \
+  ./gradlew assemble publishAggregationToCentralPortalSnapshots \
+    -x test -x javadoc -x check --no-daemon --parallel \
+    -DskipAot=true -DpublishSnapshots=true \
     --no-configuration-cache --configure-on-demand \
-    -Dorg.gradle.internal.http.socketTimeout=640000 \
-    -Dorg.gradle.internal.http.connectionTimeout=640000 \
-    -Dorg.gradle.internal.publish.checksums.insecure=true \
-    -Dorg.gradle.internal.network.retry.max.attempts=5 \
-    -Dorg.gradle.internal.network.retry.initial.backOff=5000 \
     -DrepositoryUsername="$1" -DrepositoryPassword="$2"
   if [ $? -ne 0 ]; then
       printred "Publishing CAS SNAPSHOTs failed."
@@ -60,47 +42,85 @@ function snapshot() {
 }
 
 function publish {
-    if [[ "${casVersion}" == *SNAPSHOT* ]] ;
-    then
+    if [[ "${casVersion}" == *SNAPSHOT* ]]; then
         printred "CAS version ${casVersion} cannot be a SNAPSHOT version"
         exit 1
     fi
     printgreen "Publishing CAS releases. This might take a while..."
-    ./gradlew publishToSonatype closeAndReleaseStagingRepository \
-      --no-build-cache --no-daemon --no-parallel --no-watch-fs --no-configuration-cache \
-      -DskipAot=true -DpublishReleases=true \
-      -DrepositoryUsername="$1" -DrepositoryPassword="$2" -DpublishReleases=true \
-      -Dorg.gradle.internal.http.socketTimeout=640000 \
-      -Dorg.gradle.internal.http.connectionTimeout=640000 \
-      -Dorg.gradle.internal.publish.checksums.insecure=true \
-      -Dorg.gradle.internal.network.retry.max.attempts=5 \
-      -Dorg.gradle.internal.network.retry.initial.backOff=5000
+    ./gradlew assemble publishAggregationToCentralPortal \
+      --parallel --no-daemon --no-configuration-cache -x test -x check \
+      -DskipAot=true -DpublishReleases=true --stacktrace \
+      -DrepositoryUsername="$1" -DrepositoryPassword="$2"
     if [ $? -ne 0 ]; then
-        printred "Publishing CAS failed."
+        printred "Publishing Apereo CAS failed."
         exit 1
     fi
 
-    createTag
-}
+    if [[ "$CI" == "true" ]]; then
+        git config --global user.email "cas@apereo.org"
+        git config --global user.name "Apereo CAS"
+    fi
 
-function createTag {
-  printgreen "Tagging the source tree for CAS version: ${casVersion}"
-  read -p "CAS version to release (Leave blank for ${casVersion}): " releaseVersion
-  if [[ -z "${releaseVersion}" ]]; then
-    releaseVersion="${casVersion}"
-  fi
+    releaseTag="v${casVersion}"
 
-  releaseTag="v${releaseVersion}"
-  if [[ $(git tag -l "${releaseTag}") ]]; then
-    git tag -d "${releaseTag}" && git push --delete origin "${releaseTag}"
-  fi
-  git tag "${releaseTag}" -m "Tagging CAS ${releaseTag} release" && git push origin "${releaseTag}"
+    printgreen "Removing previous source tree tag ${releaseTag}, if any"
+    git tag -d "${releaseTag}" 2>/dev/null
+    git push --delete origin "${releaseTag}" 2>/dev/null
 
-  read -p "Current tag: ${releaseTag}. Enter the previous release tag (i.e. vA.B.C): " previousTag
-  previousTagCommit=$(git rev-list -n 1 "$previousTag")
-  currentCommit=$(git log -1 --format="%H")
-  echo "Parsing the commit log between ${previousTagCommit} and ${currentCommit}..."
-  git shortlog -sen "${previousTagCommit}".."${currentCommit}"
+    printgreen "Deleting previous GitHub Release for ${releaseTag}, if any"
+    gh release delete "${releaseTag}" --cleanup-tag -y --repo "apereo/cas" 2>/dev/null
+
+    printgreen "Tagging the source tree for CAS version ${casVersion}"
+    git tag "${releaseTag}" -m "Tagging CAS ${releaseTag} release" && git push origin "${releaseTag}"
+    if [ $? -ne 0 ]; then
+        printred "Tagging the source tree for CAS version ${casVersion} failed."
+        exit 1
+    fi
+
+    printgreen "Creating GitHub Release for ${releaseTag}"
+
+    releaseFlags=""
+    if [[ "${casVersion}" == *-RC* ]]; then
+        releaseFlags="--prerelease"
+        printgreen "This is a release candidate, and will be marked as pre-release on GitHub."
+    else
+        releaseFlags="--latest"
+        printgreen "This is a final release, and will be marked as latest on GitHub."
+    fi
+
+    currentBranch=$(git branch --show-current)
+    if [[ ${currentBranch} == "master" ]]; then
+        documentationBranch="development"
+    else
+        documentationBranch=${currentBranch}
+    fi
+
+    notes='
+# :star: Release Notes
+
+- [Documentation](https://apereo.github.io/cas/${documentationBranch})
+- [Commit Log](https://github.com/apereo/cas/commits/${currentBranch})
+- [Maintenance Policy](https://apereo.github.io/cas/developer/Maintenance-Policy.html)
+- [Release Policy](https://apereo.github.io/cas/developer/Release-Policy.html)
+- [Release Schedule](https://github.com/apereo/cas/milestones)
+- Changelog: [RC1](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC1.html), [RC2](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC2.html), [RC3](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC3.html), [RC4](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC4.html)
+
+# :couple: Contributions
+
+Special thanks to the following individuals for their excellent contributions:	
+
+-
+    '
+
+    releaseNotes=$(eval "cat <<EOF $notes")
+
+    gh release create "${releaseTag}" --notes "${releaseNotes}" \
+      --title "${releaseTag}" --draft --verify-tag --repo "apereo/cas" ${releaseFlags} \
+      "./support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar#CAS Command-line Shell" 
+    if [ $? -ne 0 ]; then
+        printred "Creating GitHub Release for CAS version ${casVersion} failed."
+        exit 1
+    fi
 }
 
 function finished {
@@ -112,14 +132,13 @@ if [[ "$CI" == "true" ]]; then
 else
   git diff --quiet
   if [ $? -ne 0 ]; then
-    printred "Git repository has modified or untracked files. Commit or discard all changes and try again."
-    git status && git diff
-    exit 1
+      printred "Git repository has modified or untracked files. Commit or discard all changes and try again."
+      git status && git diff
+      exit 1
   fi
 fi
 
-if [[ "${casVersion}" == v* ]] ;
-then
+if [[ "${casVersion}" == v* ]]; then
     printred "CAS version ${casVersion} is incorrect and likely a tag."
     exit 1
 fi
@@ -128,38 +147,10 @@ echo -e "\n"
 echo "***************************************************************"
 printgreen "Welcome to the release process for Apereo CAS ${casVersion}"
 echo -n $(java -version)
-echo "***************************************************************"
-echo -e "Make sure the following criteria is met for non-SNAPSHOT versions:\n"
-echo -e "\t- Your Sonatype account (username/password) must be authorized to publish releases to 'org.apereo'."
-echo -e "\t- Your PGP signatures must be configured via '~/.gradle/gradle.properties' to sign the release artifacts:"
-echo -e "\t\tsigning.keyId=YOUR_KEY_ID"
-echo -e "\t\tsigning.password=YOUR_KEY_PASSWORD"
-echo -e "\t\tsigning.secretKeyRingFile=/path/to/.gnupg/secring.gpg"
-echo -e "\nFor more information, please visit\n\thttps://apereo.github.io/cas/developer/Release-Process.html\n"
+echo -e "***************************************************************\n"
 
-if [[ -z $REPOSITORY_USER && -z $REPOSITORY_PWD ]]; then
-  read -s -p "If you are ready, press ENTER to continue..." anykey
-  echo
-  read -s -p "Repository Username: " username
-  echo
-  read -s -p "Repository Password: " password
-  echo
-  echo "1) Clean, Build and Publish"
-  echo "2) Publish"
-  echo "3) Publish SNAPSHOTs"
-  read -p "Choose (1, 2, 3, etc): " selection
-  echo
-  clear
-else
-  printgreen "Repository username and password are predefined."
-  username="$REPOSITORY_USER"
-  password="$REPOSITORY_PWD"
-  if [[ "${casVersion}" == *SNAPSHOT* ]]; then
-    selection="3"
-  else
-    selection="1"
-  fi
-fi
+username="$REPOSITORY_USER"
+password="$REPOSITORY_PWD"
 
 if [[ -z $username || -z $password ]]; then
   printred "Repository username and password are missing."
@@ -167,23 +158,25 @@ if [[ -z $username || -z $password ]]; then
   exit 1
 fi
 
+if [[ "${casVersion}" == *SNAPSHOT* ]]; then
+  selection="2"
+else
+  selection="1"
+fi
+
 case "$selection" in
     1)
         clean
-        build ${username} ${password}
         publish ${username} ${password}
         finished
         ;;
     2)
-        publish ${username} ${password}
-        finished
-        ;;
-    3)
         snapshot ${username} ${password}
         finished
         ;;
     *)
         printred "Unable to recognize selection"
+        exit 1
         ;;
 esac
 exit 0
