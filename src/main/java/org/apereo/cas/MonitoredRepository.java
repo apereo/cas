@@ -143,7 +143,7 @@ public class MonitoredRepository {
             return Optional.empty();
         }
 
-        var pattern = Pattern.compile("`(\\d+\\.\\d+\\.\\d+).*` \\-\\> `(\\d+\\.\\d+\\.\\d+).*`");
+        var pattern = Pattern.compile("`v*(\\d+\\.\\d+\\.\\d+).*` \\-\\> `v*(\\d+\\.\\d+\\.\\d+).*`");
         var matcher = pattern.matcher(pr.getBody());
         if (matcher.find()) {
             var startingVersion = new Semver(matcher.group(1));
@@ -343,7 +343,7 @@ public class MonitoredRepository {
             val properties = new Properties();
             properties.load(new StringReader(Objects.requireNonNull(entity.getBody())));
             var version = properties.get("version").toString();
-            log.info("Version found in CAS codebase is {}", version);
+            log.debug("Version found in CAS codebase is {}", version);
             currentVersionInMaster = Version.valueOf(version);
             log.info("Current master version is {}", currentVersionInMaster);
             return currentVersionInMaster;
@@ -361,7 +361,7 @@ public class MonitoredRepository {
                 branches.addAll(br.getContent());
                 br = br.next();
             }
-            log.info("Available branches are {}", branches.stream().map(Object::toString).collect(Collectors.joining(",")));
+            log.debug("Available branches are {}", branches.stream().map(Object::toString).collect(Collectors.joining(",")));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -395,7 +395,7 @@ public class MonitoredRepository {
                 milestones.addAll(page.getContent());
                 page = page.next();
             }
-            log.info("Available milestones are {}", milestones);
+            log.debug("Available milestones are {}", milestones);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -744,7 +744,7 @@ public class MonitoredRepository {
                         log.info("Removing Maven dependency submission workflow run {} @ {}", run, run.getUpdatedTime());
                         gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                     } else if (run.getName().equalsIgnoreCase(WorkflowRuns.DEPENDENCY_SUBMISSION_GRADLE.getName())) {
-                        log.info("Removing Gradle dependency submission workflow run {} @ {}", run, run.getUpdatedTime());
+                        log.debug("Removing Gradle dependency submission workflow run {} @ {}", run, run.getUpdatedTime());
                         gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                     } else if (run.isConcludedSuccessfully() || run.isSkipped()) {
                         val completedExp = run.getUpdatedTime().plusDays(gitHubProperties.getCompletedSuccessfulWorkflowRunInDays());
@@ -796,7 +796,7 @@ public class MonitoredRepository {
                 labels.addAll(lbl.getContent());
                 lbl = lbl.next();
             }
-            log.info("Available labels are {}", labels.stream().map(Object::toString).collect(Collectors.joining(",")));
+            log.debug("Available labels are {}", labels.stream().map(Object::toString).collect(Collectors.joining(",")));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
