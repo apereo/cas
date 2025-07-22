@@ -22,6 +22,7 @@ buildscript {
         classpath libs.gradle.plugin.errorprone
         classpath libs.gradle.plugin.sonarqube
         classpath libs.gradle.plugin.nexus
+        classpath libs.gradle.plugin.nmcp
     }
 }
 
@@ -77,21 +78,44 @@ def isArtifactSigningRequired = {
     publishReleases && !skipArtifactSigning
 }
 
-apply plugin: "com.gradleup.nmcp.aggregation"
+if (publishReleases) {
+    apply plugin: "com.gradleup.nmcp.aggregation"
+    nmcpAggregation {
+        centralPortal {
+            username = "${repositoryUsername}"
+            password = "${repositoryPassword}"
+            publicationName = "Apereo CAS Release ${project.version}"
+            publishingType = "USER_MANAGED"
+            validationTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
 
-nmcpAggregation {
-    centralPortal {
-        username = "${repositoryUsername}"
-        password = "${repositoryPassword}"
-        publicationName = "Apereo CAS Release ${project.version}"
-        publishingType = "USER_MANAGED"
-        validationTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
+            if (publishingType == "AUTOMATIC") {
+                publishingTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
+            }
+        }
+        publishAllProjectsProbablyBreakingProjectIsolation()
+    }
+}
 
-        if (publishingType == "AUTOMATIC") {
-            publishingTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
+if (publishSnapshots) {
+    apply plugin: "io.github.gradle-nexus.publish-plugin"
+    nexusPublishing {
+        packageGroup = "org.apereo"
+        repositories {
+            sonatype {
+                username = "${repositoryUsername}"
+                password = "${repositoryPassword}"
+                nexusUrl.set(uri("${releaseRepositoryUrl}"))
+                snapshotRepositoryUrl.set(uri("${snapshotsRepositoryUrl}"))
+            }
+        }
+
+        clientTimeout = java.time.Duration.ofSeconds(600)
+        connectTimeout = java.time.Duration.ofSeconds(600)
+        transitionCheckOptions {
+            maxRetries.set(100)
+            delayBetween.set(java.time.Duration.ofSeconds(60))
         }
     }
-    publishAllProjectsProbablyBreakingProjectIsolation()
 }
 
 apply from: rootProject.file("gradle/dependencies.gradle")
