@@ -148,15 +148,12 @@ The CAS release can be performed using the following options.
 - Commit and push the changes to the remote branch. Make sure the commit message includes the message `[skip ci]` to skip the CI build to save time.
 - Go to [GitHub Actions](https://github.com/apereo/cas/actions) and dispatch the `Release` workflow run on the right branch. This will trigger the release process.
 
-<img width="941" height="498" alt="image" src="https://github.com/user-attachments/assets/9933ee39-96e3-4df1-961f-7702313e5658" />
-
 The workflow will automatically build the project, sign the artifacts, stage them to central repository, 
 and create a tag for the released version. It will also create a GitHub release for the version, with
 appropriate release notes and artifacts attached to the release, which you will need to review and publish later to finalize the release.
 
 Once the release is staged and has passed validation, you should navigate to the [staged deployment](https://central.sonatype.com/publishing/deployments) 
 and publish the release to the central repository. **This step must be done manually for the time being**.
-
 
 <div class="alert alert-warning">:information_source: <strong>Remember</strong><p>
 If the deployment is stuck in a <code>PUBLISHING</code> state for a long time, contact Central support. 
