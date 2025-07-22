@@ -127,17 +127,6 @@ function finished {
     printgreen "Done! The release is now automatically published. There is nothing more for you to do. Thank you!"
 }
 
-if [[ "$CI" == "true" ]]; then
-  printgreen "Running in CI mode..."
-else
-  git diff --quiet
-  if [ $? -ne 0 ]; then
-      printred "Git repository has modified or untracked files. Commit or discard all changes and try again."
-      git status && git diff
-      exit 1
-  fi
-fi
-
 if [[ "${casVersion}" == v* ]]; then
     printred "CAS version ${casVersion} is incorrect and likely a tag."
     exit 1
