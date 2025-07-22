@@ -94,7 +94,7 @@ class SyncopePasswordManagementServiceTests {
             "mustChangePasswordUser",
             "ChangePassword");
         assertThrows(AccountPasswordMustChangeException.class,
-                     () -> syncopeAuthenticationHandler.authenticate(credential, mock(Service.class)));
+            () -> syncopeAuthenticationHandler.authenticate(credential, mock(Service.class)));
 
         val passwordChangeRequest = new PasswordChangeRequest(
             "mustChangePasswordUser",
@@ -102,10 +102,9 @@ class SyncopePasswordManagementServiceTests {
             "Password123!".toCharArray(),
             "Password123!".toCharArray());
 
-        assertTrue(((SyncopePasswordManagementService) passwordChangeService).changeInternal(passwordChangeRequest));
+        assertTrue(passwordChangeService.change(passwordChangeRequest));
         assertThrows(FailedLoginException.class,
-                     () -> syncopeAuthenticationHandler.authenticate(credential, mock(Service.class)));
-
+            () -> syncopeAuthenticationHandler.authenticate(credential, mock(Service.class)));
         credential.setPassword("Password123!".toCharArray());
         assertDoesNotThrow(() -> syncopeAuthenticationHandler.authenticate(credential, mock(Service.class)));
     }
