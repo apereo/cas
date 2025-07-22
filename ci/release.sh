@@ -30,11 +30,11 @@ function snapshot() {
       exit 1
   fi
   printgreen "Publishing CAS SNAPSHOT artifacts. This might take a while..."
-  ./gradlew assemble publishAggregationToCentralPortalSnapshots \
+  ./gradlew assemble publish \
     -x test -x javadoc -x check --no-daemon --parallel \
-    -DskipAot=true -DpublishSnapshots=true \
+    -DskipAot=true -DpublishSnapshots=true --stacktrace \
     --no-configuration-cache --configure-on-demand \
-    -DrepositoryUsername="$1" -DrepositoryPassword="$2"
+    -DrepositoryUsername="$REPOSITORY_USER" -DrepositoryPassword="$REPOSITORY_PWD"
   if [ $? -ne 0 ]; then
       printred "Publishing CAS SNAPSHOTs failed."
       exit 1
@@ -50,7 +50,7 @@ function publish {
     ./gradlew assemble publishAggregationToCentralPortal \
       --parallel --no-daemon --no-configuration-cache -x test -x check \
       -DskipAot=true -DpublishReleases=true --stacktrace \
-      -DrepositoryUsername="$1" -DrepositoryPassword="$2"
+      -DrepositoryUsername="$REPOSITORY_USER" -DrepositoryPassword="$REPOSITORY_PWD"
     if [ $? -ne 0 ]; then
         printred "Publishing Apereo CAS failed."
         exit 1
@@ -138,10 +138,7 @@ printgreen "Welcome to the release process for Apereo CAS ${casVersion}"
 echo -n $(java -version)
 echo -e "***************************************************************\n"
 
-username="$REPOSITORY_USER"
-password="$REPOSITORY_PWD"
-
-if [[ -z $username || -z $password ]]; then
+if [[ -z $REPOSITORY_USER || -z $REPOSITORY_PWD ]]; then
   printred "Repository username and password are missing."
   printred "Make sure the following environment variables are defined: REPOSITORY_USER and REPOSITORY_PWD"
   exit 1
@@ -156,11 +153,11 @@ fi
 case "$selection" in
     1)
         clean
-        publish ${username} ${password}
+        publish
         finished
         ;;
     2)
-        snapshot ${username} ${password}
+        snapshot
         finished
         ;;
     *)
