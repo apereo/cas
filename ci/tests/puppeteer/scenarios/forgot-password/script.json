@@ -5,7 +5,6 @@
   },
 
   "properties": [
-
     "--cas.authn.pm.core.enabled=true",
 
     "--spring.mail.host=localhost",
@@ -14,12 +13,14 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
     
+    "--cas.authn.pm.reset.mail.html=false",
     "--cas.authn.pm.reset.mail.from=cas@apereo.org",
-    "--cas.authn.pm.reset.mail.text=${url}",
+    "--cas.authn.pm.reset.mail.text=classpath:/reset-password.txt",
     "--cas.authn.pm.reset.mail.subject=Reset",
     "--cas.authn.pm.reset.mail.attribute-name=mail",
 
     "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
   ],
+  "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle",
   "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
 }
