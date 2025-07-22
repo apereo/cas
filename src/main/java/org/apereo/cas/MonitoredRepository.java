@@ -634,7 +634,7 @@ public class MonitoredRepository {
 
     public void removeCancelledWorkflowRuns() {
         var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(), Workflows.WorkflowRunStatus.CANCELLED);
-        if (!workflowRun.getRuns().isEmpty()) {
+        if (workflowRun != null && !workflowRun.getRuns().isEmpty()) {
             log.debug("Found {} cancelled workflow runs", workflowRun.getRuns().size());
             workflowRun.getRuns().forEach(run -> {
                 log.debug("Removing workflow run {}", run);
@@ -643,7 +643,7 @@ public class MonitoredRepository {
         }
 
         workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(), Workflows.WorkflowRunStatus.SKIPPED);
-        if (!workflowRun.getRuns().isEmpty()) {
+        if (workflowRun != null && !workflowRun.getRuns().isEmpty()) {
             log.debug("Found {} cancelled workflow runs", workflowRun.getRuns().size());
             workflowRun.getRuns().forEach(run -> {
                 log.debug("Removing workflow run {}", run);
@@ -652,7 +652,7 @@ public class MonitoredRepository {
         }
 
         workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(), Workflows.WorkflowRunEvent.DYNAMIC);
-        if (!workflowRun.getRuns().isEmpty()) {
+        if (workflowRun != null && !workflowRun.getRuns().isEmpty()) {
             workflowRun.getRuns().forEach(run -> {
                 var workflow = gitHub.getWorkflow(getOrganization(), getName(), run.getWorkflowId());
                 if (workflow != null && workflow.getName().equalsIgnoreCase(WorkflowRuns.CODEQL.getName())) {

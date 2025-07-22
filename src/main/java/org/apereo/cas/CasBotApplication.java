@@ -106,7 +106,7 @@ public class CasBotApplication {
         log.info("Apereo CAS GitHub Bot is now ready");
 
         val repository = event.getApplicationContext().getBean("monitoredRepository", MonitoredRepository.class);
-        log.info("Current version in master branch: {}", repository.getCurrentVersionInMaster());
+        log.debug("Current version in master branch: {}", repository.getCurrentVersionInMaster());
         repository.getMilestoneForMaster().ifPresentOrElse(ms ->
                 log.info("Current milestone for master branch: {}", ms),
             () -> log.warn("Unable to determine current milestone for master branch"));

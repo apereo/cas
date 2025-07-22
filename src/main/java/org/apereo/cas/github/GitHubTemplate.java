@@ -662,13 +662,18 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     private <T> Page<T> getPage(final String url, final Class<T[]> type, final Map params, final MultiValueMap headers) {
-        if (!StringUtils.hasText(url)) {
-            return null;
+        try {
+            if (!StringUtils.hasText(url)) {
+                return null;
+            }
+            var hd = new HttpHeaders(headers);
+            var contents = this.rest.exchange(url, HttpMethod.GET, new HttpEntity<>(hd), type, params);
+            var body = Arrays.asList(type.cast(contents.getBody()));
+            return new StandardPage<>(body, () -> getPage(getNextUrl(contents), type));
+        } catch (final HttpMessageNotReadableException ex) {
+            log.error(ex.getMessage(), ex);
         }
-        var hd = new HttpHeaders(headers);
-        var contents = this.rest.exchange(url, HttpMethod.GET, new HttpEntity<>(hd), type, params);
-        var body = Arrays.asList(type.cast(contents.getBody()));
-        return new StandardPage<T>(body, () -> getPage(getNextUrl(contents), type));
+        return new StandardPage<>(List.of(), () -> null);
     }
 
     private <T> Page<T> getPage(final String url, final Class<T[]> type) {
