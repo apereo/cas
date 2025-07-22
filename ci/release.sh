@@ -95,6 +95,21 @@ function publish {
         documentationBranch=${currentBranch}
     fi
 
+    changelog=""
+    if [[ $casVersion =~ -RC([0-9]+)$ ]]; then
+      rc_max=${BASH_REMATCH[1]}
+
+      links=()
+      for (( i=1; i<=rc_max; i++ )); do
+        links+=( "[RC$i](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC$i.html)" )
+      done
+      changelog=$(printf '%s\n' "${links[*]// /,}")
+    fi
+
+    if [[ -n "${changelog}" ]]; then
+      changelog="- Changelog: ${changelog}"
+    fi
+    
     notes='
 # :star: Release Notes
 
@@ -103,7 +118,7 @@ function publish {
 - [Maintenance Policy](https://apereo.github.io/cas/developer/Maintenance-Policy.html)
 - [Release Policy](https://apereo.github.io/cas/developer/Release-Policy.html)
 - [Release Schedule](https://github.com/apereo/cas/milestones)
-- Changelog: [RC1](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC1.html), [RC2](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC2.html), [RC3](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC3.html), [RC4](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC4.html)
+- Changelog: ${changelog}
 
 # :couple: Contributions
 
