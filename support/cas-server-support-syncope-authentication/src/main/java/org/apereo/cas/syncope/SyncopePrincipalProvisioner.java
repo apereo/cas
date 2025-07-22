@@ -57,7 +57,7 @@ public class SyncopePrincipalProvisioner implements PrincipalProvisioner {
         HttpResponse response = null;
         try {
             val syncopeRestUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users/" + principal.getId());
-            val headers = CollectionUtils.<String, String>wrap("X-Syncope-Domain", properties.getDomain(),
+            val headers = CollectionUtils.<String, String>wrap(SyncopeUtils.SYNCOPE_HEADER_DOMAIN, properties.getDomain(),
                 HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
                 HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
@@ -91,7 +91,7 @@ public class SyncopePrincipalProvisioner implements PrincipalProvisioner {
         HttpResponse response = null;
         try {
             val syncopeRestUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users");
-            val headers = CollectionUtils.<String, String>wrap("X-Syncope-Domain", properties.getDomain(),
+            val headers = CollectionUtils.<String, String>wrap(SyncopeUtils.SYNCOPE_HEADER_DOMAIN, properties.getDomain(),
                 HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
                 HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
