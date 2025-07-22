@@ -4,6 +4,7 @@ import org.apereo.cas.CasLabels;
 import org.apereo.cas.MonitoredRepository;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,10 @@ public class RepositoryController {
     @Autowired
     @Qualifier("monitoredRepository")
     private MonitoredRepository repository;
+
+    @Autowired
+    @Qualifier("stagingRepository")
+    private ObjectProvider<MonitoredRepository> stagingRepository;
 
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})
@@ -66,6 +71,12 @@ public class RepositoryController {
         repository.removeCancelledWorkflowRuns();
         repository.removePullRequestWorkflowRunsForMissingBranches();
         repository.removeOldWorkflowRuns();
+
+        stagingRepository.ifAvailable(repository -> {
+            repository.removeCancelledWorkflowRuns();
+            repository.removePullRequestWorkflowRunsForMissingBranches();
+            repository.removeOldWorkflowRuns();
+        });
         return ResponseEntity.ok().build();
     }
 
