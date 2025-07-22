@@ -110,11 +110,22 @@ function publish {
       changelog="- Changelog: ${changelog}"
     fi
     
+    currentCommit=$(git rev-parse HEAD)
+    printgreen "Current commit is ${currentCommit}"
+
+    previousTag=$(git describe --tags --abbrev=0 "${releaseTag}^")
+    echo "Looking at commits in range: $previousTag..$releaseTag" >&2
+
+    contributors=$(gh api repos/apereo/cas/compare/$previousTag...$releaseTag \
+      --jq '.commits[].author.login // .commits[].commit.author.name' \
+      | sort -u \
+      | sed 's/.*/- @&/')
+
     notes='
 # :star: Release Notes
 
 - [Documentation](https://apereo.github.io/cas/${documentationBranch})
-- [Commit Log](https://github.com/apereo/cas/commits/${currentBranch})
+- [Commit Log](https://github.com/apereo/cas/commits/${currentCommit})
 - [Maintenance Policy](https://apereo.github.io/cas/developer/Maintenance-Policy.html)
 - [Release Policy](https://apereo.github.io/cas/developer/Release-Policy.html)
 - [Release Schedule](https://github.com/apereo/cas/milestones)
@@ -124,7 +135,7 @@ function publish {
 
 Special thanks to the following individuals for their excellent contributions:	
 
--
+${contributors}
     '
 
     releaseNotes=$(eval "cat <<EOF $notes")
