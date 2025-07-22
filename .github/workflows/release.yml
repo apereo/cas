@@ -23,8 +23,28 @@ on:
   workflow_dispatch:
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      is_snapshot: ${{ steps.check.outputs.is_snapshot }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Determine version
+        id: check
+        run: |
+          casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
+          echo "Detected version: $casVersion"
+
+          # decide if it’s a SNAPSHOT
+          if [[ "$casVersion" == *-SNAPSHOT ]]; then
+            echo "is_snapshot=true"
+          else
+            echo "is_snapshot=false"
+          fi \
+          >> $GITHUB_OUTPUT
   release-to-central:
     runs-on: ubuntu-latest
+    if: needs.check.outputs.is_snapshot == 'false'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
