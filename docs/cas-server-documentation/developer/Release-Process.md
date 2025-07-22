@@ -8,17 +8,30 @@ category: Developer
 
 # CAS Release Process
 
-This page documents the steps that a release engineer should take for cutting a CAS server release. 
+This page documents the steps that a release engineer should take for cutting a CAS server release.
+
+There are two ways to run the release process:
+
+- **Locally**: You can run the release process locally on your machine, which requires you to have a few things set up in advance noted below.
+- **GitHub Actions**: You can run the release process via GitHub Actions, which is the preferred way to run the release process. This does not require you to have much set up in advance, and you can simply run the release process by dispatching a workflow run on GitHub after having updated versions, etc.
+                                                                                                                                                   
+As you go through this document, you will find that the steps are mostly the same for both approaches, with some minor differences.
 
 ## Sonatype Setup
 
-You will need to sign up for a [Sonatype account](https://central.sonatype.org/pages/ossrh-guide.html) and must ask 
-to be authorized to publish releases to the `org.apereo` package by creating a JIRA. Once you have, you may be asked to have one of the
-current project members *vouch* for you. 
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>
+This step is only relevant if you wish to run the release process locally.</p></div>
+
+You will need to sign up for an [account](https://central.sonatype.com/) and must ask 
+to be authorized to publish releases to the `org.apereo` namespace. You may be asked to have one of the
+current project members *vouch* for you.
 
 ## GPG Setup
 
-You will need to [generate your own PGP signatures](https://blog.sonatype.com/2010/01/how-to-generate-pgp-signatures-with-maven/) to 
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>
+This step is only relevant if you wish to run the release process locally.</p></div>
+
+You will need to generate your own PGP signatures to 
 sign the release artifacts prior to uploading them to a central repository. In order to create OpenPGP signatures, you will 
 need to generate a key pair. You need to provide the build with your key information, which means three things:
 
@@ -44,6 +57,9 @@ signing plugin are [available here](https://docs.gradle.org/current/userguide/si
 
 ## Environment Setup
 
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>
+This step is only relevant if you wish to run the release process locally.</p></div>
+
 - Load your SSH key and ensure this SSH key is also referenced in GitHub.
 - Adjust `$GRADLE_OPTS` to initialize the JVM heap size, if necessary.
 - Load your `~/.gradle/gradle.properties` file with the following *as an example*:
@@ -58,7 +74,8 @@ org.gradle.parallel=false
 
 ## Preparing the Release
 
-Apply the following steps to prepare the release environment. There are a few variations to take into account depending on whether
+Apply the following steps to prepare the release environment. There 
+are a few variations to take into account depending on whether
 a new release branch should be created. 
 
 ### Create Branch
@@ -123,31 +140,56 @@ Do not forget to commit all changes and push changes upstream, creating a new re
 
 ## Performing the Release 
 
-- In the project's `gradle.properties`, change the project version to the release version and remove the `-SNAPSHOT`. (i.e. `6.0.0-RC1`). 
+The CAS release can be performed using the following options.
+
+### GitHub Actions (Preferred)
+
+- Once you're on the right branch in the project's `gradle.properties`, change the project version to the release version and remove the `-SNAPSHOT`. (i.e. `6.0.0-RC1`).
+- Commit and push the changes to the remote branch. Make sure the commit message includes the message `[skip ci]` to skip the CI build to save time.
+- Go to [GitHub Actions](https://github.com/apereo/cas/actions) and dispatch the `Release` workflow run on the right branch. This will trigger the release process.
+
+<img width="941" height="498" alt="image" src="https://github.com/user-attachments/assets/9933ee39-96e3-4df1-961f-7702313e5658" />
+
+The workflow will automatically build the project, sign the artifacts, stage them to central repository, 
+and create a tag for the released version. It will also create a GitHub release for the version, with
+appropriate release notes and artifacts attached to the release, which you will need to review and publish later to finalize the release.
+
+Once the release is staged and has passed validation, you should navigate to the [staged deployment](https://central.sonatype.com/publishing/deployments) 
+and publish the release to the central repository. **This step must be done manually for the time being**.
+
+
+<div class="alert alert-warning">:information_source: <strong>Remember</strong><p>
+If the deployment is stuck in a <code>PUBLISHING</code> state for a long time, contact Central support. 
+In case ingesting one of the CAS artifacts fails, the release process fails to notify the Central publisher that the ingesting was completed
+and the deployment is left in a <code>PUBLISHING</code> state. This is a bug in the Central publisher process that requires manual intervention
+and support staff will have to update the state to <code>PUBLISHED</code> manually.
+</p></div>
+
+### Locally
+
+<div class="alert alert-warning">:information_source: <strong>Remember</strong><p>
+You should only do this if you <strong>REALLY</strong> know what you're doing. This step is reserved
+best for troubleshooting and diagnostics.</div>
+
+- In the project's `gradle.properties`, change the project version to the release version and remove the `-SNAPSHOT`. (i.e. `6.0.0-RC1`). Commit the change.
+- You need to specify the credentials beforehand as environment variables:
+
+```json
+# Credentials here are generated at https://central.sonatype.com/account
+# You will receive a userid and a user token.
+export REPOSITORY_USER="..."
+export REPOSITORY_PWD="..."
+```
+
 - Build and release the project using the following command:
 
 ```bash
 ./ci/release.sh
 ```
 
-The script will prompt for the appropriate Sonatype username and password (or user token). You can also run the script in non-interactive
-mode by specifying the credentials beforehand as environment variables:
-
-```json
-export REPOSITORY_USER="..."
-export REPOSITORY_PWD="..."
-```
-
-Do not use your actual password and instead create a user token. This is a form of credential for the user 
-it belongs to and is completely different and separate from the original password. User tokens can be easily 
-created and deleted, which is useful should security policies require credential updates, or 
-if credentials are lost accidentally or otherwise.
-
 ## Finalizing the Release
 
-- The script will automatically create a tag for the released version, commit the change and push the tag to the upstream repository. (i.e. `v5.0.0-RC1`).
-
-You should also switch back to the main development branch (i.e. `master`) and follow these steps:
+You should now switch back to the main development branch (i.e. `master`) and follow these steps:
 
 - In the project's `gradle.properties`, change the project version to the *next* development version (i.e. `5.0.0-SNAPSHOT`). 
 - Push your changes to the upstream repository. 
@@ -157,7 +199,8 @@ You should also switch back to the main development branch (i.e. `master`) and f
 <div class="alert alert-info">:information_source: <strong>Remember</strong><p>When updating the release description, try to be keep 
 consistent and follow the same layout as previous releases.</p></div>
 
-Remember to mark the release tag as pre-release, when releasing RC versions of the project on GitHub. 
+Remember to mark the release tag as pre-release if not done already, when releasing RC versions of the project on GitHub.
+If the GitHub release is already created, review the release description, edit details if needed and publish it.
 
 ## Update CAS Initializr
 
@@ -166,7 +209,8 @@ based on the newly-released version.
 
 ## Update Documentation
 
-<div class="alert alert-warning">:warning: <strong>Remember</strong><p>You should do this only for major or minor releases, when new branches are created.</p></div>
+<div class="alert alert-warning">:warning: <strong>Remember</strong><p>
+You should do this only for major or minor releases, when new branches are created.</p></div>
 
 - Configure docs to point `current` to the latest available version [here](https://github.com/apereo/cas/blob/gh-pages/current/index.html).
 - Modify [the configuration file](https://github.com/apereo/cas/blob/master/docs/cas-server-documentation/_config.yml) to exclude relevant branches and directories from the build. 
