@@ -39,7 +39,7 @@ import java.util.Optional;
 @Monitorable
 public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-                                                   .defaultTypingEnabled(false).build().toObjectMapper();
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final SyncopeAuthenticationProperties properties;
 
@@ -70,7 +70,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                     "Account password must change for " + credential.getUsername());
             }
             val principal = principalFactory.createPrincipal(user.get("username").asText(),
-                                                             SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
+                SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
             return createHandlerResult(credential, principal, new ArrayList<>());
         }
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
@@ -84,16 +84,16 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                 SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()),
                 "/rest/users/self");
             val exec = HttpExecutionRequest.builder()
-                           .method(HttpMethod.GET)
-                           .url(syncopeRestUrl)
-                           .basicAuthUsername(credential.getUsername())
-                           .basicAuthPassword(credential.toPassword())
-                           .headers(CollectionUtils.wrap("X-Syncope-Domain", syncopeDomain))
-                           .maximumRetryAttempts(properties.getMaxRetryAttempts())
-                           .build();
+                .method(HttpMethod.GET)
+                .url(syncopeRestUrl)
+                .basicAuthUsername(credential.getUsername())
+                .basicAuthPassword(credential.toPassword())
+                .headers(CollectionUtils.wrap(SyncopeUtils.SYNCOPE_HEADER_DOMAIN, syncopeDomain))
+                .maximumRetryAttempts(properties.getMaxRetryAttempts())
+                .build();
             response = HttpUtils.execute(exec);
             if (response != null) {
-                LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
+                LOGGER.debug("Received http response status as [{}]", response.getCode());
                 if (response.getCode() == HttpStatus.SC_FORBIDDEN || response.getCode() == HttpStatus.SC_UNAUTHORIZED) {
                     val appInfoHeader = response.getFirstHeader("X-Application-Error-Info");
                     if (appInfoHeader != null && StringUtils.equalsIgnoreCase("Please change your password first", appInfoHeader.getValue())) {
@@ -102,7 +102,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                         user.put("mustChangePassword", true);
                         return Optional.of(user);
                     } else if (appInfoHeader != null
-                                   && StringUtils.equalsIgnoreCase("User" + credential.getUsername() + " is suspended", appInfoHeader.getValue())) {
+                        && StringUtils.equalsIgnoreCase("User" + credential.getUsername() + " is suspended", appInfoHeader.getValue())) {
                         val user = MAPPER.createObjectNode();
                         user.put("username", credential.getUsername());
                         user.put("suspended", true);
@@ -112,7 +112,6 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                     return parseResponseResults((HttpEntityContainer) response);
                 }
             }
-            LOGGER.debug("Received http response with null value");
         } finally {
             HttpUtils.close(response);
         }

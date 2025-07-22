@@ -60,7 +60,7 @@ public class SyncopeAccountRegistrationProvisioner implements AccountRegistratio
         HttpResponse response = null;
         try {
             val syncopeRestUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users");
-            val headers = CollectionUtils.<String, String>wrap("X-Syncope-Domain", domain,
+            val headers = CollectionUtils.<String, String>wrap(SyncopeUtils.SYNCOPE_HEADER_DOMAIN, domain,
                 HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
                 HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
