@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * An implementation of {@link UniqueTicketIdGenerator} that is able auto-configure
@@ -45,7 +46,7 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
      * @since 4.1.0
      */
     private static String determineTicketSuffixByHostName(final String suffix) {
-        if (StringUtils.equalsIgnoreCase(suffix, "off")) {
+        if (Strings.CI.equals(suffix, "off")) {
             return StringUtils.EMPTY;
         }
         if (StringUtils.isNotBlank(suffix)) {

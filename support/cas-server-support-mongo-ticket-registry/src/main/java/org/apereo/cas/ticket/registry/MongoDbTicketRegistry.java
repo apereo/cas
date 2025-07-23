@@ -17,6 +17,7 @@ import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -289,7 +290,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 return mongoTemplate.stream(query.limit(limit), MongoDbTicketDocument.class, map);
             })
             .filter(document -> StringUtils.isBlank(criteria.getPrincipal())
-                || StringUtils.equalsIgnoreCase(criteria.getPrincipal(), document.getPrincipal()))
+                || Strings.CI.equals(criteria.getPrincipal(), document.getPrincipal()))
             .map(document -> {
                 if (criteria.isDecode()) {
                     val ticket = decodeTicket(deserializeTicket(document.getJson(), document.getType()));

@@ -17,6 +17,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hjson.JsonValue;
 import org.springframework.beans.factory.DisposableBean;
@@ -79,7 +80,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     private static String getAttributeDefinitionKey(final String key, final AttributeDefinition definition) {
-        if (StringUtils.isNotBlank(definition.getKey()) && !StringUtils.equalsIgnoreCase(definition.getKey(), key)) {
+        if (StringUtils.isNotBlank(definition.getKey()) && !Strings.CI.equals(definition.getKey(), key)) {
             LOGGER.warn("Attribute definition contains a key property [{}] that differs from its registering key [{}]. "
                 + "This is likely due to misconfiguration of the attribute definition, and CAS will use the key property [{}] "
                 + "to register the attribute definition in the attribute store", definition.getKey(), key, definition.getKey());

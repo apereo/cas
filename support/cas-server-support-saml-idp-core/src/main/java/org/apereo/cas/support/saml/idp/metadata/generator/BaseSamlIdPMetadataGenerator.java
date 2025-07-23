@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.velocity.VelocityContext;
 import org.jooq.lambda.Unchecked;
@@ -221,7 +221,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
                 .ssoServiceSoapBindingEnabled(metadataCore.isSsoServiceSoapBindingEnabled())
                 .sloServicePostBindingEnabled(metadataCore.isSloServicePostBindingEnabled())
                 .sloServiceRedirectBindingEnabled(metadataCore.isSloServiceRedirectBindingEnabled())
-                .errorUrl(StringUtils.appendIfMissing(getIdPEndpointUrl(), "/error"))
+                .errorUrl(Strings.CI.appendIfMissing(getIdPEndpointUrl(), "/error"))
                 .build();
 
             val template = configurationContext.getVelocityEngine()

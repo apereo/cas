@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
@@ -80,7 +80,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         throws Throwable {
         HttpResponse response = null;
         try {
-            val syncopeRestUrl = StringUtils.appendIfMissing(
+            val syncopeRestUrl = Strings.CI.appendIfMissing(
                 SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()),
                 "/rest/users/self");
             val exec = HttpExecutionRequest.builder()
@@ -96,13 +96,13 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                 LOGGER.debug("Received http response status as [{}]", response.getCode());
                 if (response.getCode() == HttpStatus.SC_FORBIDDEN || response.getCode() == HttpStatus.SC_UNAUTHORIZED) {
                     val appInfoHeader = response.getFirstHeader("X-Application-Error-Info");
-                    if (appInfoHeader != null && StringUtils.equalsIgnoreCase("Please change your password first", appInfoHeader.getValue())) {
+                    if (appInfoHeader != null && Strings.CI.equals("Please change your password first", appInfoHeader.getValue())) {
                         val user = MAPPER.createObjectNode();
                         user.put("username", credential.getUsername());
                         user.put("mustChangePassword", true);
                         return Optional.of(user);
                     } else if (appInfoHeader != null
-                        && StringUtils.equalsIgnoreCase("User" + credential.getUsername() + " is suspended", appInfoHeader.getValue())) {
+                        && Strings.CI.equals("User" + credential.getUsername() + " is suspended", appInfoHeader.getValue())) {
                         val user = MAPPER.createObjectNode();
                         user.put("username", credential.getUsername());
                         user.put("suspended", true);

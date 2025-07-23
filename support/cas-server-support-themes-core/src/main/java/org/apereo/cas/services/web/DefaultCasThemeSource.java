@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
@@ -34,7 +35,7 @@ public class DefaultCasThemeSource extends ResourceBundleThemeSource {
         @Nonnull final String basename) {
         return casProperties.getView().getTemplatePrefixes()
             .stream()
-            .map(prefix -> StringUtils.appendIfMissing(prefix, "/").concat(basename).concat(".properties"))
+            .map(prefix -> Strings.CI.appendIfMissing(prefix, "/").concat(basename).concat(".properties"))
             .filter(ResourceUtils::doesResourceExist)
             .findFirst()
             .map(Unchecked.function(this::loadMessageSourceFromPath))
@@ -43,7 +44,7 @@ public class DefaultCasThemeSource extends ResourceBundleThemeSource {
     }
 
     protected MessageSource createExtendedMessageSource(final String basename) {
-        if (StringUtils.equalsIgnoreCase(basename, ThemeProperties.DEFAULT_THEME_NAME)) {
+        if (Strings.CI.equals(basename, ThemeProperties.DEFAULT_THEME_NAME)) {
             val customTheme = StringUtils.replace(basename, "-default", "-custom");
             val source = (HierarchicalMessageSource) super.createMessageSource(customTheme);
             source.setParentMessageSource(super.createMessageSource(basename));

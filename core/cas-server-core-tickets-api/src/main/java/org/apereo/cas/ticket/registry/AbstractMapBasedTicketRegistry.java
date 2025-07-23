@@ -15,8 +15,8 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.context.ApplicationContext;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -153,7 +153,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
             .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
             .filter(ticket -> StringUtils.isBlank(criteria.getPrincipal())
                 || (ticket instanceof final AuthenticationAwareTicket aat
-                    && StringUtils.equalsIgnoreCase(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
+                    && Strings.CI.equals(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
             .limit(criteria.getCount() > 0 ? criteria.getCount() : Long.MAX_VALUE)
             .collect(Collectors.toList());
     }

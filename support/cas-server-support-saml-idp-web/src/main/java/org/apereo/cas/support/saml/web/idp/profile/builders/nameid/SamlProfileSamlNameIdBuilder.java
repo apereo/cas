@@ -11,10 +11,10 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -22,7 +22,6 @@ import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.NameIDType;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -127,7 +126,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                     final SamlProfileBuilderContext context) {
         if (nameid != null) {
             val registeredService = context.getRegisteredService();
-            if (!StringUtils.equalsIgnoreCase(registeredService.getNameIdQualifier(), "none")
+            if (!Strings.CI.equals(registeredService.getNameIdQualifier(), "none")
                 && !registeredService.isSkipGeneratingNameIdQualifier()) {
                 if (StringUtils.isNotBlank(registeredService.getNameIdQualifier())) {
                     nameid.setNameQualifier(registeredService.getNameIdQualifier());
@@ -136,7 +135,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                 }
             }
 
-            if (!StringUtils.equalsIgnoreCase(registeredService.getServiceProviderNameIdQualifier(), "none")
+            if (!Strings.CI.equals(registeredService.getServiceProviderNameIdQualifier(), "none")
                  && !registeredService.isSkipGeneratingServiceProviderNameIdQualifier()) {
                 FunctionUtils.doIf(StringUtils.isNotBlank(registeredService.getServiceProviderNameIdQualifier()),
                         value -> nameid.setSPNameQualifier(registeredService.getServiceProviderNameIdQualifier()),

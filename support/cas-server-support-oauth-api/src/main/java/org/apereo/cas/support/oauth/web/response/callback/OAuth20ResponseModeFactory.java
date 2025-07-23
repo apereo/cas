@@ -2,8 +2,7 @@ package org.apereo.cas.support.oauth.web.response.callback;
 
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * This is {@link OAuth20ResponseModeFactory}.
@@ -28,7 +27,7 @@ public interface OAuth20ResponseModeFactory {
                                               final OAuth20ResponseModeTypes responseType) {
         return responseType == OAuth20ResponseModeTypes.FORM_POST_JWT
                || (registeredService != null
-                   && StringUtils.equalsIgnoreCase(OAuth20ResponseModeTypes.FORM_POST_JWT.getType(), registeredService.getResponseMode()));
+                   && Strings.CI.equals(OAuth20ResponseModeTypes.FORM_POST_JWT.getType(), registeredService.getResponseMode()));
     }
 
     /**
@@ -42,8 +41,8 @@ public interface OAuth20ResponseModeFactory {
                                               final OAuth20ResponseModeTypes responseType) {
         return responseType == OAuth20ResponseModeTypes.FORM_POST
                || (registeredService != null
-                   && (StringUtils.equalsIgnoreCase("post", registeredService.getResponseMode())
-                       || StringUtils.equalsIgnoreCase(OAuth20ResponseModeTypes.FORM_POST.getType(), registeredService.getResponseMode())));
+                   && (Strings.CI.equals("post", registeredService.getResponseMode())
+                       || Strings.CI.equals(OAuth20ResponseModeTypes.FORM_POST.getType(), registeredService.getResponseMode())));
     }
 
     /**
@@ -56,7 +55,7 @@ public interface OAuth20ResponseModeFactory {
     static boolean isResponseModeTypeFragment(final OAuthRegisteredService registeredService,
                                               final OAuth20ResponseModeTypes responseType) {
         return responseType == OAuth20ResponseModeTypes.FRAGMENT
-               || (registeredService != null && StringUtils.equalsIgnoreCase(
+               || (registeredService != null && Strings.CI.equals(
             OAuth20ResponseModeTypes.FRAGMENT.getType(), registeredService.getResponseMode()));
     }
 
@@ -70,7 +69,7 @@ public interface OAuth20ResponseModeFactory {
     static boolean isResponseModeTypeFragmentJwt(final OAuthRegisteredService registeredService,
                                                  final OAuth20ResponseModeTypes responseType) {
         return responseType == OAuth20ResponseModeTypes.FRAGMENT_JWT
-               || (registeredService != null && StringUtils.equalsIgnoreCase(
+               || (registeredService != null && Strings.CI.equals(
             OAuth20ResponseModeTypes.FRAGMENT_JWT.getType(), registeredService.getResponseMode()));
     }
 
@@ -84,7 +83,7 @@ public interface OAuth20ResponseModeFactory {
     static boolean isResponseModeTypeQueryJwt(final OAuthRegisteredService registeredService,
                                               final OAuth20ResponseModeTypes responseType) {
         return responseType == OAuth20ResponseModeTypes.QUERY_JWT
-               || (registeredService != null && StringUtils.equalsIgnoreCase(
+               || (registeredService != null && Strings.CI.equals(
             OAuth20ResponseModeTypes.QUERY_JWT.getType(), registeredService.getResponseMode()));
     }
 

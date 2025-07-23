@@ -6,7 +6,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -59,7 +59,7 @@ public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigure
         createStateDefaultTransition(validate, CasWebflowConstants.STATE_ID_REDIRECT_TO_LOGIN);
 
         val loginFlow = getLoginFlow();
-        val serviceUrl = StringUtils.appendIfMissing(casProperties.getServer().getPrefix(), "/").concat(accountFlow.getId());
+        val serviceUrl = Strings.CI.appendIfMissing(casProperties.getServer().getPrefix(), "/").concat(accountFlow.getId());
         val view = createExternalRedirectViewFactory(String.format("'%s?%s=%s'",
             loginFlow.getId(), CasProtocolConstants.PARAMETER_SERVICE, serviceUrl));
         createEndState(accountFlow, CasWebflowConstants.STATE_ID_REDIRECT_TO_LOGIN, view);

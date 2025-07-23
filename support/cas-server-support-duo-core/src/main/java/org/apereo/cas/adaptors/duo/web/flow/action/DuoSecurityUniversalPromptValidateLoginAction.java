@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -74,7 +74,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
         val resultingEvent = processStateFromTicketRegistry(requestContext, duoState);
         if (resultingEvent != null) {
-            if (StringUtils.equalsIgnoreCase(resultingEvent.getId(), CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
+            if (Strings.CI.equals(resultingEvent.getId(), CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
                 try {
                     return super.doExecuteInternal(requestContext);
                 } finally {

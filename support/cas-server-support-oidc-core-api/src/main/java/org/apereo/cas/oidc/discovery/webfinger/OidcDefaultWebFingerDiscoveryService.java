@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponents;
@@ -57,7 +58,7 @@ public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscov
         }
 
         val issuer = discovery.getIssuer();
-        if (!StringUtils.equalsIgnoreCase(resource, issuer)) {
+        if (!Strings.CI.equals(resource, issuer)) {
             val resourceUri = normalize(resource);
             if (resourceUri == null) {
                 LOGGER.error("Unable to parse and normalize resource: [{}]", resource);
@@ -78,7 +79,7 @@ public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscov
                 return buildNotFoundResponseEntity("Unable to find resource");
             }
 
-            if (!StringUtils.equalsIgnoreCase(issuerUri.getHost(), resourceUri.getHost())) {
+            if (!Strings.CI.equals(issuerUri.getHost(), resourceUri.getHost())) {
                 LOGGER.info("Host mismatch for resource [{}]: expected [{}] and yet received [{}]", resource,
                     issuerUri.getHost(), resourceUri.getHost());
                 return buildNotFoundResponseEntity("Unable to match resource host");

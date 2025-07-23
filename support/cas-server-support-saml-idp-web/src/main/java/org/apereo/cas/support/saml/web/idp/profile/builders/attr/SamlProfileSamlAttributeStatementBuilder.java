@@ -16,16 +16,15 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDType;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -85,9 +84,9 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             return context.getRegisteredService().getAttributeFriendlyNames().get(name);
         }
         return attributeDefinitionStore.getAttributeDefinitionsBy(SamlIdPAttributeDefinition.class)
-            .filter(defn -> StringUtils.equalsIgnoreCase(name, defn.getKey())
-                            || StringUtils.equalsIgnoreCase(name, defn.getName())
-                            || StringUtils.equalsIgnoreCase(name, defn.getUrn()))
+            .filter(defn -> Strings.CI.equals(name, defn.getKey())
+                            || Strings.CI.equals(name, defn.getName())
+                            || Strings.CI.equals(name, defn.getUrn()))
             .findFirst()
             .map(SamlIdPAttributeDefinition::getFriendlyName)
             .filter(StringUtils::isNotBlank)

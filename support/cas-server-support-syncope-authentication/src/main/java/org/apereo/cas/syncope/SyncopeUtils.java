@@ -27,6 +27,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -217,7 +218,7 @@ public class SyncopeUtils {
         try {
             val filter = properties.getSearchFilter().replace("{user}", user).replace("{0}", user);
             val fiql = EncodingUtils.urlEncode(filter);
-            val syncopeRestUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/")
+            val syncopeRestUrl = Strings.CI.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/")
                 + "rest/users/?page=1&size=1&details=true&fiql=" + fiql;
             LOGGER.debug("Executing Syncope search via [{}]", syncopeRestUrl);
             val requestHeaders = new LinkedHashMap<String, String>();
@@ -266,7 +267,7 @@ public class SyncopeUtils {
         HttpResponse response = null;
         try {
             val fiql = EncodingUtils.urlEncode("$member==%s".formatted(user));
-            val syncopeRestUrl = StringUtils.appendIfMissing(
+            val syncopeRestUrl = Strings.CI.appendIfMissing(
                 SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/")
                 + "rest/groups/?page=1&size=50&details=true&fiql=" + fiql;
             LOGGER.debug("Executing Syncope user group search via [{}]", syncopeRestUrl);

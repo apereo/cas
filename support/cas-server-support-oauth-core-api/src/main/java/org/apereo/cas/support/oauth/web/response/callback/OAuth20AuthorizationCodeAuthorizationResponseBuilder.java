@@ -14,14 +14,12 @@ import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.springframework.web.servlet.ModelAndView;
-
 import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.Optional;
@@ -68,7 +66,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
 
     @Override
     public boolean supports(final OAuth20AuthorizationRequest context) {
-        return StringUtils.equalsIgnoreCase(context.getResponseType(), OAuth20ResponseTypes.CODE.getType());
+        return Strings.CI.equals(context.getResponseType(), OAuth20ResponseTypes.CODE.getType());
     }
 
     protected ModelAndView buildCallbackViewViaRedirectUri(final AccessTokenRequestContext holder,

@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -49,7 +49,7 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
     @Override
     public boolean changeInternal(final PasswordChangeRequest bean) {
         return FunctionUtils.doAndHandle(() -> {
-            val syncopeRestPasswordResetUrl = StringUtils.appendIfMissing(
+            val syncopeRestPasswordResetUrl = Strings.CI.appendIfMissing(
                 SpringExpressionLanguageValueResolver.getInstance().resolve(
                     casProperties.getAuthn().getPm().getSyncope().getUrl()),
                 "/rest/users/self/mustChangePassword");

@@ -15,6 +15,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.geode.cache.CacheFactory;
 import org.apache.geode.cache.ExpirationAction;
@@ -79,7 +80,7 @@ public class CasGeodeTicketRegistryAutoConfiguration {
             .setPdxReadSerialized(true)
             .setPdxSerializer(new ReflectionBasedAutoSerializer(GeodeTicketDocument.class.getName()));
         
-        if (StringUtils.isNotBlank(properties.getLocators()) && !StringUtils.equalsIgnoreCase("none", properties.getLocators())) {
+        if (StringUtils.isNotBlank(properties.getLocators()) && !Strings.CI.equals("none", properties.getLocators())) {
             cacheFactory.set("locators", properties.getLocators());
         }
         val cache = cacheFactory.create();

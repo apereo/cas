@@ -14,6 +14,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -199,7 +200,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
             if (!credentialHandlers.isEmpty()) {
                 LOGGER.debug("Authentication handlers resolved by credential source are [{}]", credentialHandlers);
                 resolvedHandlers.removeIf(handler -> !(handler instanceof MultifactorAuthenticationHandler)
-                    && credentialHandlers.stream().noneMatch(credHandler -> StringUtils.equalsIgnoreCase(credHandler.getName(), handler.getName())));
+                    && credentialHandlers.stream().noneMatch(credHandler -> Strings.CI.equals(credHandler.getName(), handler.getName())));
             }
         }
 

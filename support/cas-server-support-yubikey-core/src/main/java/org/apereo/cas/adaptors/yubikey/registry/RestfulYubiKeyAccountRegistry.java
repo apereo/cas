@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpHeaders;
@@ -89,7 +89,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public void delete(final String username, final long deviceId) {
         HttpResponse response = null;
         try {
-            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/")
+            val url = Strings.CI.appendIfMissing(restProperties.getUrl(), "/")
                 .concat(username).concat("/").concat(String.valueOf(deviceId));
 
             val exec = HttpExecutionRequest.builder()
@@ -110,7 +110,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public void delete(final String username) {
         HttpResponse response = null;
         try {
-            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/").concat(username);
+            val url = Strings.CI.appendIfMissing(restProperties.getUrl(), "/").concat(username);
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
@@ -145,7 +145,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     protected YubiKeyAccount getAccountInternal(final String username) {
         HttpResponse response = null;
         try {
-            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/").concat(username);
+            val url = Strings.CI.appendIfMissing(restProperties.getUrl(), "/").concat(username);
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())

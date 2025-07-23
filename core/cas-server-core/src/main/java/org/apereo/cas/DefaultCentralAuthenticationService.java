@@ -47,6 +47,7 @@ import org.apereo.cas.validation.DefaultAssertionBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
@@ -231,7 +232,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                         throw new UnrecognizableServiceForServiceTicketValidationException(selectedService);
                     }
                     if (StringUtils.isNotBlank(serviceTicket.getTenantId())) {
-                        if (!StringUtils.equalsIgnoreCase(resolvedService.getTenant(), serviceTicket.getTenantId())) {
+                        if (!Strings.CI.equals(resolvedService.getTenant(), serviceTicket.getTenantId())) {
                             LOGGER.warn("Service ticket [{}] is not assigned to the same tenant [{}] as the service [{}]",
                                 serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
                             throw new UnknownTenantException("Unknown tenant %s for service ticket %s"

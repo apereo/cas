@@ -12,7 +12,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +65,7 @@ class AccountProfilePreparePasswordManagementActionTests extends BasePasswordMan
         assertEquals(0, accountProfileServiceTicketGeneratorAuthority.getOrder());
         assertFalse(accountProfileServiceTicketGeneratorAuthority.shouldGenerate(
             mock(AuthenticationResult.class), mock(Service.class)));
-        val url = StringUtils.appendIfMissing(casProperties.getServer().getPrefix(), "/")
+        val url = Strings.CI.appendIfMissing(casProperties.getServer().getPrefix(), "/")
             .concat(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         val service = RegisteredServiceTestUtils.getService(url);
         assertTrue(accountProfileServiceTicketGeneratorAuthority.supports(

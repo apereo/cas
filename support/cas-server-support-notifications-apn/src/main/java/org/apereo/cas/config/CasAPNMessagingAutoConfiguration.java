@@ -10,7 +10,7 @@ import com.eatthepath.pushy.apns.ApnsClient;
 import com.eatthepath.pushy.apns.ApnsClientBuilder;
 import com.eatthepath.pushy.apns.auth.ApnsSigningKey;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,7 +46,7 @@ public class CasAPNMessagingAutoConfiguration {
         val apnMessaging = casProperties.getApnMessaging();
         try (val p8File = apnMessaging.getAuthenticationKey().getLocation().getInputStream()) {
             return new ApnsClientBuilder()
-                .setApnsServer(StringUtils.equalsIgnoreCase(apnMessaging.getServer(), "production")
+                .setApnsServer(Strings.CI.equals(apnMessaging.getServer(), "production")
                     ? ApnsClientBuilder.PRODUCTION_APNS_HOST
                     : ApnsClientBuilder.DEVELOPMENT_APNS_HOST)
                 .setSigningKey(ApnsSigningKey.loadFromInputStream(p8File, apnMessaging.getTeamId(), apnMessaging.getKeyId()))

@@ -5,11 +5,10 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.redirect.RedirectionActionBuilder;
@@ -18,7 +17,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Locale;
@@ -70,11 +68,11 @@ public class DefaultDelegatedClientAuthenticationWebflowStateContributor impleme
         val registeredService = configContext.getServicesManager().findServiceBy(service);
         webContext.getRequestParameter(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN)
             .or(() -> Optional.of(Boolean.toString(RegisteredServiceProperty.RegisteredServiceProperties.DELEGATED_AUTHN_FORCE_AUTHN.isAssignedTo(registeredService))))
-            .filter(value -> StringUtils.equalsIgnoreCase(value, "true"))
+            .filter(value -> Strings.CI.equals(value, "true"))
             .ifPresent(attr -> properties.put(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true));
         webContext.getRequestParameter(RedirectionActionBuilder.ATTRIBUTE_PASSIVE)
             .or(() -> Optional.of(Boolean.toString(RegisteredServiceProperty.RegisteredServiceProperties.DELEGATED_AUTHN_PASSIVE_AUTHN.isAssignedTo(registeredService))))
-            .filter(value -> StringUtils.equalsIgnoreCase(value, "true"))
+            .filter(value -> Strings.CI.equals(value, "true"))
             .ifPresent(attr -> properties.put(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true));
         if (registeredService != null && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso(registeredService)) {
             properties.put(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);

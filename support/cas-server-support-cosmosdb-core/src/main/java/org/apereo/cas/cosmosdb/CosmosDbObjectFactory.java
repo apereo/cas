@@ -22,7 +22,7 @@ import io.netty.handler.ssl.SslProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.data.util.ReflectionUtils;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -58,9 +58,9 @@ public class CosmosDbObjectFactory {
             .throttlingRetryOptions(throttlingRetryOptions)
             .endpointDiscoveryEnabled(properties.isEndpointDiscoveryEnabled());
 
-        if (StringUtils.equalsIgnoreCase(properties.getMode(), "gateway")) {
+        if (Strings.CI.equals(properties.getMode(), "gateway")) {
             builder = builder.gatewayMode();
-        } else if (StringUtils.equalsIgnoreCase(properties.getMode(), "direct")) {
+        } else if (Strings.CI.equals(properties.getMode(), "direct")) {
             builder = builder.directMode();
         }
         

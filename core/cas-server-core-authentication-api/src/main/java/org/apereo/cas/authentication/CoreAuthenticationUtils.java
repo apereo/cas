@@ -36,6 +36,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -351,7 +352,7 @@ public class CoreAuthenticationUtils {
      */
     public static PrincipalElectionStrategyConflictResolver newPrincipalElectionStrategyConflictResolver(
         final PersonDirectoryPrincipalResolverProperties properties) {
-        if (StringUtils.equalsIgnoreCase(properties.getPrincipalResolutionConflictStrategy(), "first")) {
+        if (Strings.CI.equals(properties.getPrincipalResolutionConflictStrategy(), "first")) {
             return PrincipalElectionStrategyConflictResolver.first();
         }
         return PrincipalElectionStrategyConflictResolver.last();

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import java.io.Serial;
 import java.lang.reflect.Modifier;
@@ -63,7 +64,7 @@ public class ConfigurationMetadataPropertyCreator {
             .filter(entry -> entry.getJavadoc().isPresent())
             .forEach(entry -> {
                 var text = entry.getJavadoc().get().getDescription().toText();
-                text = StringUtils.appendIfMissing(text, ".");
+                text = Strings.CI.appendIfMissing(text, ".");
                 val member = String.format("<li>{@code %s}: %s</li>", entry.getNameAsString(), text);
                 builder.append(member);
             });

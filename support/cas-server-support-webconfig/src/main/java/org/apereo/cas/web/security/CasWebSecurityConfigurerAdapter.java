@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
@@ -89,7 +90,7 @@ public class CasWebSecurityConfigurerAdapter {
 
     private static List<String> prepareProtocolEndpoint(final String endpoint) {
         val baseEndpoint = StringUtils.prependIfMissing(endpoint, "/");
-        return List.of(baseEndpoint.concat("**"), StringUtils.appendIfMissing(endpoint, "/").concat("**"));
+        return List.of(baseEndpoint.concat("**"), Strings.CI.appendIfMissing(endpoint, "/").concat("**"));
     }
 
     private static void configureJaasAuthenticationProvider(final HttpSecurity http,

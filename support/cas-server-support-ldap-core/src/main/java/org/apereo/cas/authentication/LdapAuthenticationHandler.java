@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -177,7 +178,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         principalAttributeMap
             .entrySet()
             .stream()
-            .filter(entry -> !StringUtils.equalsIgnoreCase(entry.getKey(), "*") && !StringUtils.equalsIgnoreCase(entry.getKey(), "+"))
+            .filter(entry -> !Strings.CI.equals(entry.getKey(), "*") && !Strings.CI.equals(entry.getKey(), "+"))
             .forEach(entry -> {
                 val attributeNames = CollectionUtils.toCollection(entry.getValue(), ArrayList.class);
                 if (attributeNames.size() == 1 && attributeNames.stream().allMatch(name -> !name.toString().isEmpty() && name.toString().charAt(name.toString().length() - 1) == ';')) {

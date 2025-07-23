@@ -3,15 +3,14 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.OrderComparator;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -43,7 +42,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
         return providersArray
             .stream()
             .filter(BeanSupplier::isNotProxy)
-            .filter(provider -> StringUtils.equalsIgnoreCase(provider.getId(), requestedProvider))
+            .filter(provider -> Strings.CI.equals(provider.getId(), requestedProvider))
             .findFirst();
     }
 
@@ -79,7 +78,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
             val contexts = CollectionUtils.toCollection(ctxAttr);
 
             LOGGER.debug("Requested context is [{}] and available contexts are [{}]", requestedContext, contexts);
-            if (contexts.stream().anyMatch(ctx -> StringUtils.equalsIgnoreCase(ctx.toString(), requestedContext))) {
+            if (contexts.stream().anyMatch(ctx -> Strings.CI.equals(ctx.toString(), requestedContext))) {
                 LOGGER.debug("Requested authentication context [{}] is satisfied", requestedContext);
                 return MultifactorAuthenticationContextValidationResult.builder()
                     .success(true).provider(requestedProvider).build();
