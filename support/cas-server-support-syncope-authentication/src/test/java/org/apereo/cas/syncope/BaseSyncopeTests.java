@@ -26,7 +26,6 @@ import org.apereo.cas.config.CasSyncopeAutoConfiguration;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -37,7 +36,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.UUID;
@@ -56,10 +54,9 @@ public abstract class BaseSyncopeTests {
                                                   final int port) throws Exception {
         val data = MAPPER.writeValueAsString(json);
         val webServer = new MockWebServer(port,
-                                          new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
-                                          MediaType.APPLICATION_JSON_VALUE, status);
-        webServer.start();
-        return webServer;
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
+            MediaType.APPLICATION_JSON_VALUE, status);
+        return webServer.start();
     }
 
     protected static ObjectNode user() {
@@ -110,9 +107,9 @@ public abstract class BaseSyncopeTests {
         user.putArray("dynRoles").add("DynRole1");
         user.putArray("dynRealms").add("Realm1");
         user.putArray("dynMemberships").add(MAPPER.createObjectNode()
-                                                .put("groupName", "G1"));
+            .put("groupName", "G1"));
         user.putArray("relationships").add(MAPPER.createObjectNode()
-                                               .put("type", "T1").put("otherEndName", "Other1"));
+            .put("type", "T1").put("otherEndName", "Other1"));
 
         val memberships = user.putArray("memberships");
         val membershipsInfo = MAPPER.createObjectNode().put("groupName", "G1");
@@ -183,7 +180,7 @@ public abstract class BaseSyncopeTests {
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
     @SpringBootTestAutoConfigurations
-    @Import({ CasRegisteredServicesTestConfiguration.class, CasAuthenticationEventExecutionPlanTestConfiguration.class })
+    @Import({CasRegisteredServicesTestConfiguration.class, CasAuthenticationEventExecutionPlanTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 }
