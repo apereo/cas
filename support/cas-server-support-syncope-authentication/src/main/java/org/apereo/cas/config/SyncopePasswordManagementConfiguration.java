@@ -33,11 +33,9 @@ class SyncopePasswordManagementConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "syncopePasswordChangeService")
     public PasswordManagementService passwordChangeService(
-        final CasConfigurationProperties casProperties,
-        @Qualifier("passwordManagementCipherExecutor")
-        final CipherExecutor passwordManagementCipherExecutor,
-        @Qualifier(PasswordHistoryService.BEAN_NAME)
-        final PasswordHistoryService passwordHistoryService) {
+            final CasConfigurationProperties casProperties,
+            @Qualifier("passwordManagementCipherExecutor") final CipherExecutor passwordManagementCipherExecutor,
+            @Qualifier(PasswordHistoryService.BEAN_NAME) final PasswordHistoryService passwordHistoryService) {
         val pm = casProperties.getAuthn().getPm();
         if (pm.getCore().isEnabled() && pm.getSyncope().isDefined()) {
             return new SyncopePasswordManagementService(passwordManagementCipherExecutor, casProperties, passwordHistoryService);
