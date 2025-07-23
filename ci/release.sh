@@ -30,11 +30,11 @@ function snapshot() {
       exit 1
   fi
   printgreen "Publishing CAS SNAPSHOT artifacts. This might take a while..."
-  ./gradlew assemble publishAggregationToCentralPortalSnapshots \
+  ./gradlew assemble publish \
     -x test -x javadoc -x check --no-daemon --parallel \
-    -DskipAot=true -DpublishSnapshots=true \
+    -DskipAot=true -DpublishSnapshots=true --stacktrace \
     --no-configuration-cache --configure-on-demand \
-    -DrepositoryUsername="$1" -DrepositoryPassword="$2"
+    -DrepositoryUsername="$REPOSITORY_USER" -DrepositoryPassword="$REPOSITORY_PWD"
   if [ $? -ne 0 ]; then
       printred "Publishing CAS SNAPSHOTs failed."
       exit 1
@@ -50,7 +50,7 @@ function publish {
     ./gradlew assemble publishAggregationToCentralPortal \
       --parallel --no-daemon --no-configuration-cache -x test -x check \
       -DskipAot=true -DpublishReleases=true --stacktrace \
-      -DrepositoryUsername="$1" -DrepositoryPassword="$2"
+      -DrepositoryUsername="$REPOSITORY_USER" -DrepositoryPassword="$REPOSITORY_PWD"
     if [ $? -ne 0 ]; then
         printred "Publishing Apereo CAS failed."
         exit 1
@@ -95,21 +95,47 @@ function publish {
         documentationBranch=${currentBranch}
     fi
 
+    changelog=""
+    if [[ $casVersion =~ -RC([0-9]+)$ ]]; then
+      rc_max=${BASH_REMATCH[1]}
+
+      links=()
+      for (( i=1; i<=rc_max; i++ )); do
+        links+=( "[RC$i](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC$i.html)" )
+      done
+      changelog=$(printf '%s\n' "${links[*]// /,}")
+    fi
+
+    if [[ -n "${changelog}" ]]; then
+      changelog="- Changelog: ${changelog}"
+    fi
+    
+    currentCommit=$(git rev-parse HEAD)
+    printgreen "Current commit is ${currentCommit}"
+
+    previousTag=$(git describe --tags --abbrev=0 "${releaseTag}^")
+    echo "Looking at commits in range: $previousTag..$releaseTag" >&2
+
+    contributors=$(gh api repos/apereo/cas/compare/$previousTag...$releaseTag \
+      --jq '.commits[].author.login // .commits[].commit.author.name' \
+      | sort -u \
+      | sed 's/.*/- @&/')
+
     notes='
 # :star: Release Notes
 
 - [Documentation](https://apereo.github.io/cas/${documentationBranch})
-- [Commit Log](https://github.com/apereo/cas/commits/${currentBranch})
+- [Commit Log](https://github.com/apereo/cas/commits/${currentCommit})
 - [Maintenance Policy](https://apereo.github.io/cas/developer/Maintenance-Policy.html)
 - [Release Policy](https://apereo.github.io/cas/developer/Release-Policy.html)
 - [Release Schedule](https://github.com/apereo/cas/milestones)
-- Changelog: [RC1](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC1.html), [RC2](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC2.html), [RC3](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC3.html), [RC4](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC4.html)
+- Changelog: ${changelog}
 
 # :couple: Contributions
 
 Special thanks to the following individuals for their excellent contributions:	
 
--
+${contributors}
     '
 
     releaseNotes=$(eval "cat <<EOF $notes")
@@ -127,17 +153,6 @@ function finished {
     printgreen "Done! The release is now automatically published. There is nothing more for you to do. Thank you!"
 }
 
-if [[ "$CI" == "true" ]]; then
-  printgreen "Running in CI mode..."
-else
-  git diff --quiet
-  if [ $? -ne 0 ]; then
-      printred "Git repository has modified or untracked files. Commit or discard all changes and try again."
-      git status && git diff
-      exit 1
-  fi
-fi
-
 if [[ "${casVersion}" == v* ]]; then
     printred "CAS version ${casVersion} is incorrect and likely a tag."
     exit 1
@@ -149,10 +164,7 @@ printgreen "Welcome to the release process for Apereo CAS ${casVersion}"
 echo -n $(java -version)
 echo -e "***************************************************************\n"
 
-username="$REPOSITORY_USER"
-password="$REPOSITORY_PWD"
-
-if [[ -z $username || -z $password ]]; then
+if [[ -z $REPOSITORY_USER || -z $REPOSITORY_PWD ]]; then
   printred "Repository username and password are missing."
   printred "Make sure the following environment variables are defined: REPOSITORY_USER and REPOSITORY_PWD"
   exit 1
@@ -167,11 +179,11 @@ fi
 case "$selection" in
     1)
         clean
-        publish ${username} ${password}
+        publish
         finished
         ;;
     2)
-        snapshot ${username} ${password}
+        snapshot
         finished
         ;;
     *)
