@@ -23,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
@@ -179,42 +180,42 @@ public class CasDocumentationApplication {
         });
 
         var thirdparty = cmd.getOptionValue("thirdparty", "true");
-        if (StringUtils.equalsIgnoreCase("true", thirdparty)) {
+        if (Strings.CI.equals("true", thirdparty)) {
             exportThirdPartyConfiguration(dataPath, propertyFilter);
         }
 
         var registeredServicesProps = cmd.getOptionValue("serviceproperties", "true");
-        if (StringUtils.equalsIgnoreCase("true", registeredServicesProps)) {
+        if (Strings.CI.equals("true", registeredServicesProps)) {
             exportRegisteredServiceProperties(dataPath);
         }
 
         var uiProps = cmd.getOptionValue("userinterface", "true");
-        if (StringUtils.equalsIgnoreCase("true", uiProps)) {
+        if (Strings.CI.equals("true", uiProps)) {
             exportTemplateViews(projectRootDirectory, dataPath);
             exportThemeProperties(projectRootDirectory, dataPath);
         }
         
         var actuators = cmd.getOptionValue("actuators", "true");
-        if (StringUtils.equalsIgnoreCase("true", actuators)) {
+        if (Strings.CI.equals("true", actuators)) {
             exportActuatorEndpoints(dataPath);
         }
 
         var features = cmd.getOptionValue("features", "true");
-        if (StringUtils.equalsIgnoreCase("true", features)) {
+        if (Strings.CI.equals("true", features)) {
             exportFeatureToggles(dataPath);
         }
 
         var shell = cmd.getOptionValue("shell", "true");
-        if (StringUtils.equalsIgnoreCase("true", shell)) {
+        if (Strings.CI.equals("true", shell)) {
             exportCommandlineShell(dataPath);
         }
 
         var audit = cmd.getOptionValue("audit", "true");
-        if (StringUtils.equalsIgnoreCase("true", audit)) {
+        if (Strings.CI.equals("true", audit)) {
             exportAuditableEvents(dataPath);
         }
         var dversions = cmd.getOptionValue("versions", "true");
-        if (StringUtils.equalsIgnoreCase("true", dversions)) {
+        if (Strings.CI.equals("true", dversions)) {
             exportDependencyVersions(projectRootDirectory, dataPath);
         }
     }
@@ -753,7 +754,7 @@ public class CasDocumentationApplication {
                         paramName = paramNames[i];
                     }
 
-                    path = StringUtils.appendIfMissing(path, "/")
+                    path = Strings.CI.appendIfMissing(path, "/")
                         .concat(String.format("{%s}", paramName));
                     map.put("path", path);
                 }
@@ -768,7 +769,7 @@ public class CasDocumentationApplication {
             if (!map.containsKey("deprecated") && operation.deprecated()) {
                 map.put("deprecated", true);
             }
-            map.put("summary", StringUtils.appendIfMissing(operation.summary(), "."));
+            map.put("summary", Strings.CI.appendIfMissing(operation.summary(), "."));
             var paramCount = Arrays.stream(method.getParameterTypes())
                 .filter(type -> !type.equals(HttpServletRequest.class) && !type.equals(HttpServletResponse.class)).count();
             
@@ -842,7 +843,7 @@ public class CasDocumentationApplication {
             if (StringUtils.isBlank(summary)) {
                 throw new RuntimeException("Unable to locate undocumented endpoint summary for: " + endpointId + " found in " + clazz.getName());
             }
-            map.put("summary", StringUtils.appendIfMissing(summary, "."));
+            map.put("summary", Strings.CI.appendIfMissing(summary, "."));
         }
 
         if (!parameters.isEmpty()) {

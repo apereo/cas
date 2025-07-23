@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -165,7 +166,7 @@ public class CasThymeleafAutoConfiguration {
                 val prefixPath = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
                     ? prefix
                     : ResourceUtils.getFile(prefix).getCanonicalPath();
-                val viewPath = StringUtils.appendIfMissing(prefixPath, "/");
+                val viewPath = Strings.CI.appendIfMissing(prefixPath, "/");
                 val theme = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)
                     ? new ThemeClassLoaderTemplateResolver(themeResolver)
                     : new ThemeFileTemplateResolver(casProperties, themeResolver);

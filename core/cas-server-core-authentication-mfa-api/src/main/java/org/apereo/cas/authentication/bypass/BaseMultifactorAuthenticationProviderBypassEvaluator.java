@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +18,11 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +121,7 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
                 val bypass = (Boolean) result.get();
                 if (bypass && providerRes.isPresent()) {
                     val provider = providerRes.get().toString();
-                    return StringUtils.equalsIgnoreCase(requestedContext, provider);
+                    return Strings.CI.equals(requestedContext, provider);
                 }
             }
         }

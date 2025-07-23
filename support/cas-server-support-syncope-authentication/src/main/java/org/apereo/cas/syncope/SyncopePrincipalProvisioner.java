@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -56,7 +56,7 @@ public class SyncopePrincipalProvisioner implements PrincipalProvisioner {
     protected boolean updateUserResource(final Principal principal) throws Exception {
         HttpResponse response = null;
         try {
-            val syncopeRestUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users/" + principal.getId());
+            val syncopeRestUrl = Strings.CI.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users/" + principal.getId());
             val headers = CollectionUtils.<String, String>wrap(SyncopeUtils.SYNCOPE_HEADER_DOMAIN, properties.getDomain(),
                 HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
                 HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
@@ -90,7 +90,7 @@ public class SyncopePrincipalProvisioner implements PrincipalProvisioner {
     protected boolean createUserResource(final Principal principal, final Credential credential) throws Exception {
         HttpResponse response = null;
         try {
-            val syncopeRestUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users");
+            val syncopeRestUrl = Strings.CI.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users");
             val headers = CollectionUtils.<String, String>wrap(SyncopeUtils.SYNCOPE_HEADER_DOMAIN, properties.getDomain(),
                 HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
                 HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);

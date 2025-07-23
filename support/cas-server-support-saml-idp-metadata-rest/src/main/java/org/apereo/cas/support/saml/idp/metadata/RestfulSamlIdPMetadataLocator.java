@@ -15,7 +15,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
@@ -50,7 +50,7 @@ public class RestfulSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
 
     @Override
     public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
-        val url = StringUtils.appendIfMissing(properties.getUrl(), "/").concat("idp");
+        val url = Strings.CI.appendIfMissing(properties.getUrl(), "/").concat("idp");
         HttpResponse response = null;
         try {
             val parameters = new HashMap<String, String>();

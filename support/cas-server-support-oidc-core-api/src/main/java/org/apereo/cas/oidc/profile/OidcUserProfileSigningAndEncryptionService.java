@@ -9,15 +9,14 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.jwt.JsonWebTokenEncryptor;
-
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jws.AlgorithmIdentifiers;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -68,7 +67,7 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
                 throw new IllegalArgumentException("Unable to use 'none' as user-info signing algorithm");
             }
             return StringUtils.isNotBlank(service.getUserInfoSigningAlg())
-                   && !StringUtils.equalsIgnoreCase(service.getUserInfoSigningAlg(), AlgorithmIdentifiers.NONE);
+                   && !Strings.CI.equals(service.getUserInfoSigningAlg(), AlgorithmIdentifiers.NONE);
         }
         return false;
     }
@@ -86,7 +85,7 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
                 throw new IllegalArgumentException("Unable to use 'none' as user-info encryption algorithm");
             }
             return StringUtils.isNotBlank(service.getUserInfoEncryptedResponseAlg())
-                   && !StringUtils.equalsIgnoreCase(service.getUserInfoEncryptedResponseAlg(), AlgorithmIdentifiers.NONE);
+                   && !Strings.CI.equals(service.getUserInfoEncryptedResponseAlg(), AlgorithmIdentifiers.NONE);
         }
         return false;
     }

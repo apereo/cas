@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
@@ -87,7 +87,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
         HttpResponse response = null;
         try {
             val rest = aupProperties.getRest();
-            val url = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("policy");
+            val url = Strings.CI.appendIfMissing(rest.getUrl(), "/").concat("policy");
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
 
@@ -127,7 +127,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             HttpResponse response = null;
             try {
                 val rest = aupProperties.getRest();
-                val url = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("status");
+                val url = Strings.CI.appendIfMissing(rest.getUrl(), "/").concat("status");
                 val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
 
                 val parameters = CollectionUtils.<String, String>wrap(
