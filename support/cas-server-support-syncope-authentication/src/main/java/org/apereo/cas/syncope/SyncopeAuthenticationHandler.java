@@ -39,7 +39,7 @@ import java.util.Optional;
 @Monitorable
 public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-                                                   .defaultTypingEnabled(false).build().toObjectMapper();
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final SyncopeAuthenticationProperties properties;
 
@@ -70,7 +70,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                     "Account password must change for " + credential.getUsername());
             }
             val principal = principalFactory.createPrincipal(user.get("username").asText(),
-                                                             SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
+                SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
             return createHandlerResult(credential, principal, new ArrayList<>());
         }
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
