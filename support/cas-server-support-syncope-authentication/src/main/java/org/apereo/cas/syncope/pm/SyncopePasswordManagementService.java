@@ -110,15 +110,15 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
 
     protected Optional<String> getUserAttribute(final PasswordManagementQuery query, final String attributeName) {
         return searchUser(query)
-            .stream()
-            .findFirst()
-            .map(syncopeUser -> {
-                val prefix = "%s_%s".formatted("syncopeUserAttr", attributeName);
-                return syncopeUser.getOrDefault(attributeName, syncopeUser.get(prefix));
-            })
-            .filter(Objects::nonNull)
-            .filter(values -> !values.isEmpty())
-            .map(values -> values.getFirst().toString());
+                   .stream()
+                   .findFirst()
+                   .map(syncopeUser -> {
+                       val prefix = "%s_%s".formatted("syncopeUserAttr", attributeName);
+                       return syncopeUser.getOrDefault(attributeName, syncopeUser.get(prefix));
+                   })
+                   .filter(Objects::nonNull)
+                   .filter(values -> !values.isEmpty())
+                   .map(values -> values.getFirst().toString());
     }
 
     private List<Map<String, List<Object>>> searchUser(final PasswordManagementQuery query) {

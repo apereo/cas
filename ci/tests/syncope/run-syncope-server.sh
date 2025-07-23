@@ -278,4 +278,65 @@ curl -X 'POST' \
     }
   ]
 }'
+
+echo -e "\n-----------------\n"
+
+echo -e "Creating sample user: syncopesuspend...\n"
+SYNCOPESUSPEND_KEY=$(curl -X 'POST' \
+  'http://localhost:18080/syncope/rest/users?storePassword=true' \
+  -H 'accept: application/json' \
+  -H 'Prefer: return-content' \
+  -H 'X-Syncope-Null-Priority-Async: false' \
+  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "_class": "org.apache.syncope.common.lib.request.UserCR",
+  "realm": "/",
+  "username": "syncopesuspend",
+  "password": "Sync0pe",
+  "plainAttrs": [
+    {
+      "schema": "email",
+      "values": [
+        "syncopesuspend@syncope.org"
+      ]
+    },
+    {
+      "schema": "phoneNumber",
+      "values": [
+        "311111111"
+      ]
+    }
+  ],
+  "derAttrs": [
+    {
+      "schema": "description"
+    }
+  ]
+}' | jq -r '.entity.key')
+
+echo -e "\n-----------------\n"
+
+echo -e "Syncope user key: ${SYNCOPESUSPEND_KEY}"
+
+echo -e "Suspending user: syncopesuspend...\n"
+
+curl -X 'POST' \
+  "http://localhost:18080/syncope/rest/users/${SYNCOPESUSPEND_KEY}/status" \
+  -H 'accept: application/json' \
+  -H 'Prefer: return-content' \
+  -H 'X-Syncope-Null-Priority-Async: false' \
+  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
+  -H 'X-Syncope-Domain: Master' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "operation": "ADD_REPLACE",
+  "value": "suspended",
+  "onSyncope": true,
+  "resources": [],
+  "key": "'"${SYNCOPESUSPEND_KEY}"'",
+  "type": "SUSPEND",
+  "token": null
+}'
+
 printgreen "Ready!\n"
