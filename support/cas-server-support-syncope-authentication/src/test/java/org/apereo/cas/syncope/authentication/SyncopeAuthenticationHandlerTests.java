@@ -66,6 +66,13 @@ class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
             val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("syncopepasschange", "Sync0pe");
             assertThrows(AccountPasswordMustChangeException.class, () -> syncopeAuthenticationHandler.authenticate(credential, mock(Service.class)));
         }
+
+        @Test
+        void verifyAccountSuspended() {
+            val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
+            val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("syncopesuspend", "Sync0pe");
+            assertThrows(AccountDisabledException.class, () -> syncopeAuthenticationHandler.authenticate(credential, mock(Service.class)));
+        }
     }
 
     @Nested
