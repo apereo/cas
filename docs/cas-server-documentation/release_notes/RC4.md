@@ -43,6 +43,11 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
+### Password Management via Apache Syncope
+
+[Apache Syncope](../password_management/Password-Management-ApacheSyncope.html) support is now 
+able to handle password management operations. [Syncope Authentication](../authentication/Syncope-Authentication.html) 
+is also improved to detect user account statuses that may be suspended or require password changes.
 
 ### OpenRewrite Recipes
 

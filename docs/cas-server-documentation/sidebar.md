@@ -449,6 +449,7 @@ layout: null
         *   [LDAP](/cas/{{ version }}/password_management/Password-Management-LDAP.html)
         *   [JDBC](/cas/{{ version }}/password_management/Password-Management-JDBC.html)
         *   [REST](/cas/{{ version }}/password_management/Password-Management-REST.html)
+        *   [Apache Syncope](/cas/{{ version }}/password_management/Password-Management-ApacheSyncope.html)
         *   [Custom](/cas/{{ version }}/password_management/Password-Management-Custom.html)
 
 * [Ticketing](#ticketingconfig)
