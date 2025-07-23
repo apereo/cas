@@ -141,13 +141,13 @@ public interface PasswordManagementService {
      *
      * @param query    the query
      * @param question the text of the question
-     * @param answer   stored answer
-     * @param input    user response to question
+     * @param knownAnswer   stored answer
+     * @param givenAnswer    user response to question
      * @return whether the answer is correct
      */
-    default boolean isValidSecurityQuestionAnswer(final PasswordManagementQuery query, final String question,
-                                                  final String answer, final String input) {
-        return StringUtils.isNotBlank(answer) && answer.equals(input);
+    default boolean isAnswerValidForSecurityQuestion(final PasswordManagementQuery query, final String question,
+                                                     final String knownAnswer, final String givenAnswer) {
+        return StringUtils.isNotBlank(knownAnswer) && knownAnswer.equals(givenAnswer);
     }
 
     /**

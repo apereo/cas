@@ -81,9 +81,8 @@ class SyncopePasswordManagementServiceTests {
     }
 
     @Test
-    void verifyUnlockSecurityQuestions() {
-        assertThrows(UnsupportedOperationException.class, () -> passwordChangeService.unlockAccount(
-            new BasicIdentifiableCredential("mustChangePasswordUser")));
+    void verifyUnlockAccount() throws Throwable {
+        assertTrue(passwordChangeService.unlockAccount(new BasicIdentifiableCredential("syncopesuspend4")));
     }
 
     @Test
