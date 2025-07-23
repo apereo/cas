@@ -39,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jooq.lambda.Unchecked;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -121,8 +122,10 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             return getErrorEvent("username.required", "No username is provided", requestContext);
         }
 
-        val email = passwordManagementService.findEmail(query);
-        val phone = passwordManagementService.findPhone(query);
+        
+        val email = locatePasswordResetRequestEmail(requestContext, query);
+        val phone = locatePasswordResetRequestPhone(requestContext, query);
+        
         if (StringUtils.isBlank(email) && StringUtils.isBlank(phone)) {
             LOGGER.warn("No recipient is provided with a valid email/phone");
             return getInvalidContactEvent(requestContext);
@@ -147,6 +150,28 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         }
         LOGGER.error("Failed to notify account [{}]", email);
         return getErrorEvent("contact.failed", "Failed to send the password reset link via email address or phone", requestContext);
+    }
+
+    protected String locatePasswordResetRequestPhone(final RequestContext requestContext, final PasswordManagementQuery query) throws Throwable {
+        val phoneAttributes = casProperties.getAuthn().getPm().getReset().getSms().getAttributeName();
+        val principal = authenticationSystemSupport.getPrincipalResolver().resolve(new BasicIdentifiableCredential(query.getUsername()));
+        return phoneAttributes
+            .stream()
+            .map(attribute -> principal.getSingleValuedAttribute(attribute, String.class))
+            .filter(StringUtils::isNotBlank)
+            .findFirst()
+            .orElseGet(Unchecked.supplier(() -> passwordManagementService.findPhone(query)));
+    }
+
+    protected String locatePasswordResetRequestEmail(final RequestContext requestContext, final PasswordManagementQuery query) throws Throwable {
+        val emailAttributes = casProperties.getAuthn().getPm().getReset().getMail().getAttributeName();
+        val principal = authenticationSystemSupport.getPrincipalResolver().resolve(new BasicIdentifiableCredential(query.getUsername()));
+        return emailAttributes
+            .stream()
+            .map(attribute -> principal.getSingleValuedAttribute(attribute, String.class))
+            .filter(StringUtils::isNotBlank)
+            .findFirst()
+            .orElseGet(Unchecked.supplier(() -> passwordManagementService.findEmail(query)));
     }
 
     protected boolean doesPasswordResetRequireMultifactorAuthentication(final RequestContext requestContext) throws Throwable {

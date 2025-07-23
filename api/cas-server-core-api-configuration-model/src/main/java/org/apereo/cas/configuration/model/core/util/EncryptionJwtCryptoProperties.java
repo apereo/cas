@@ -38,7 +38,7 @@ public class EncryptionJwtCryptoProperties implements Serializable {
     private static final long serialVersionUID = 616825635591169628L;
 
     /**
-     * The encryption key is a JWT whose length is defined by the encryption key size setting.
+     * The encryption key is a string whose length is defined by the encryption key size setting.
      */
     @RequiredProperty
     @ExpressionLanguageCapable

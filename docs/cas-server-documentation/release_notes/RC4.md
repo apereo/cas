@@ -49,6 +49,12 @@ The following items are new improvements and enhancements presented in this rele
 able to handle password management operations. [Syncope Authentication](../authentication/Syncope-Authentication.html) 
 is also improved to detect user account statuses that may be suspended or require password changes.
 
+### Password Management Principal Resolution
+
+Password management operations that require access to the user's email address, phone, etc
+will now attempt to resolve the user's attributes using the configured principal resolution strategy
+and defined attribute repositories before outsourcing that task to the password management interface.
+
 ### OpenRewrite Recipes
 
 CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
