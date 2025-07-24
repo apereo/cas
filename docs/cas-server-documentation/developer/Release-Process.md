@@ -17,7 +17,7 @@ There are two ways to run the release process:
                                                                                                                                                    
 As you go through this document, you will find that the steps are mostly the same for both approaches, with some minor differences.
 
-## Sonatype Setup
+## Maven Central Setup
 
 <div class="alert alert-info">:information_source: <strong>Remember</strong><p>
 This step is only relevant if you wish to run the release process locally.</p></div>
@@ -166,7 +166,7 @@ and support staff will have to update the state to <code>PUBLISHED</code> manual
 
 <div class="alert alert-warning">:information_source: <strong>Remember</strong><p>
 You should only do this if you <strong>REALLY</strong> know what you're doing. This step is reserved
-best for troubleshooting and diagnostics.</div>
+best for troubleshooting and diagnostics.</p></div>
 
 - In the project's `gradle.properties`, change the project version to the release version and remove the `-SNAPSHOT`. (i.e. `6.0.0-RC1`). Commit the change.
 - You need to specify the credentials beforehand as environment variables:
