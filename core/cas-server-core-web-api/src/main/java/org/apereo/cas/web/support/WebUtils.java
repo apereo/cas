@@ -37,6 +37,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.net.WWWFormCodec;
@@ -1858,7 +1859,7 @@ public class WebUtils {
      */
     public static Map<String, String> getHttpRequestParametersFromRequestBody(final HttpServletRequest httpServletRequest) {
         if (HttpMethod.POST.matches(httpServletRequest.getMethod())
-            && StringUtils.equalsIgnoreCase(httpServletRequest.getContentType(), MediaType.APPLICATION_FORM_URLENCODED_VALUE)) {
+            && Strings.CI.equals(httpServletRequest.getContentType(), MediaType.APPLICATION_FORM_URLENCODED_VALUE)) {
             try (val is = httpServletRequest.getInputStream()) {
                 if (!is.isFinished()) {
                     val requestBody = IOUtils.toString(is, StandardCharsets.UTF_8);

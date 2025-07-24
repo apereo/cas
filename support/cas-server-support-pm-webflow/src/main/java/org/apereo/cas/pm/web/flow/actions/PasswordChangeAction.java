@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jooq.lambda.Unchecked;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -93,7 +94,8 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
                 WebUtils.putCredential(requestContext, credential);
                 LOGGER.info("Password successfully changed for [{}]", bean.getUsername());
 
-                val email = passwordManagementService.findEmail(PasswordManagementQuery.builder().username(bean.getUsername()).build());
+                val query = PasswordManagementQuery.builder().username(bean.getUsername()).build();
+                val email = locatePasswordResetRequestEmail(requestContext, query);
                 if (StringUtils.isNotBlank(email)) {
                     val result = sendPasswordResetConfirmationEmailToAccount(bean.getUsername(), email, requestContext);
                     LOGGER.debug("Password reset confirmation email sent to [{}] with result [{}]", result.getTo(), result.isSuccess());
@@ -157,5 +159,16 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
             .body(text)
             .build();
         return communicationsManager.email(emailRequest);
+    }
+
+    protected String locatePasswordResetRequestEmail(final RequestContext requestContext, final PasswordManagementQuery query) throws Throwable {
+        val emailAttributes = casProperties.getAuthn().getPm().getReset().getMail().getAttributeName();
+        val principal = authenticationSystemSupport.getPrincipalResolver().resolve(new BasicIdentifiableCredential(query.getUsername()));
+        return emailAttributes
+            .stream()
+            .map(attribute -> principal.getSingleValuedAttribute(attribute, String.class))
+            .filter(StringUtils::isNotBlank)
+            .findFirst()
+            .orElseGet(Unchecked.supplier(() -> passwordManagementService.findEmail(query)));
     }
 }

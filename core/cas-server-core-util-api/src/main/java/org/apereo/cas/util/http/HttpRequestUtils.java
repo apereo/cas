@@ -9,6 +9,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -84,7 +85,7 @@ public class HttpRequestUtils {
      */
     public static GeoLocationRequest getHttpServletRequestGeoLocation(final String geoLocationParam) {
         val loc = new GeoLocationRequest();
-        if (StringUtils.isNotBlank(geoLocationParam) && !StringUtils.equalsIgnoreCase(geoLocationParam, "unknown")) {
+        if (StringUtils.isNotBlank(geoLocationParam) && !Strings.CI.equals(geoLocationParam, "unknown")) {
             val geoLocation = Splitter.on(",").splitToList(geoLocationParam);
             if (!geoLocation.isEmpty()) {
                 loc.setLatitude(geoLocation.getFirst());

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
@@ -43,7 +44,7 @@ public class DelegatedClientCasBuilder implements ConfigurableDelegatedClientBui
             .map(cas -> {
                 val cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
                 val prefix = PATTERN_LOGIN_URL.matcher(cas.getLoginUrl()).replaceFirst("/");
-                cfg.setPrefixUrl(StringUtils.appendIfMissing(prefix, "/"));
+                cfg.setPrefixUrl(Strings.CI.appendIfMissing(prefix, "/"));
                 cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
                 cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
                 return new ConfigurableDelegatedClient(new CasClient(cfg), cas);

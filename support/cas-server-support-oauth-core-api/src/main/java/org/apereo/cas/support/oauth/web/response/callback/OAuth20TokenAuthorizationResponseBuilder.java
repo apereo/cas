@@ -16,7 +16,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.servlet.ModelAndView;
@@ -55,7 +55,7 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
 
     @Override
     public boolean supports(final OAuth20AuthorizationRequest context) {
-        return StringUtils.equalsIgnoreCase(context.getResponseType(), OAuth20ResponseTypes.TOKEN.getType());
+        return Strings.CI.equals(context.getResponseType(), OAuth20ResponseTypes.TOKEN.getType());
     }
 
     protected ModelAndView buildCallbackUrlResponseType(final AccessTokenRequestContext tokenRequestContext,

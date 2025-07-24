@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -100,7 +101,7 @@ public class OidcLogoutEndpointController extends BaseOidcController {
             val clientIdInIdToken = OAuth20Utils.extractClientIdFromToken(idToken);
             LOGGER.debug("Client id retrieved from ID token is [{}]", clientIdInIdToken);
 
-            if (StringUtils.isNotBlank(givenClientId) && !StringUtils.equalsIgnoreCase(givenClientId, clientIdInIdToken)) {
+            if (StringUtils.isNotBlank(givenClientId) && !Strings.CI.equals(givenClientId, clientIdInIdToken)) {
                 LOGGER.warn("Client id [{}] in logout request does not match client id [{}] in ID token", givenClientId, clientIdInIdToken);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     configurationContext.getMessageSource().getMessage("screen.oidc.issuer.invalid", ArrayUtils.EMPTY_OBJECT_ARRAY, request.getLocale()));
