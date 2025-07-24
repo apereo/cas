@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.annotation.Nonnull;
@@ -158,12 +159,12 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     @Override
     public void removeAll(final HttpServletRequest request, final HttpServletResponse response) {
         Optional.ofNullable(request.getCookies()).ifPresent(cookies -> Arrays.stream(cookies)
-            .filter(cookie -> StringUtils.equalsIgnoreCase(cookie.getName(), getCookieName()))
+            .filter(cookie -> Strings.CI.equals(cookie.getName(), getCookieName()))
             .forEach(cookie ->
                 Stream
                     .of("/", getCookiePath(),
                         StringUtils.removeEndIgnoreCase(getCookiePath(), "/"),
-                        StringUtils.appendIfMissing(getCookiePath(), "/"))
+                        Strings.CI.appendIfMissing(getCookiePath(), "/"))
                     .distinct()
                     .filter(StringUtils::isNotBlank)
                     .forEach(path -> {
@@ -180,7 +181,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     @Override
     public boolean containsCookie(final HttpServletRequest request) {
         return request.getCookies() != null
-            && Arrays.stream(request.getCookies()).anyMatch(cookie -> StringUtils.equalsIgnoreCase(cookie.getName(), getCookieName()));
+            && Arrays.stream(request.getCookies()).anyMatch(cookie -> Strings.CI.equals(cookie.getName(), getCookieName()));
     }
 
     protected Cookie addCookieHeaderToResponse(final Cookie cookie,
@@ -201,7 +202,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         val sameSitePolicy = casCookieValueManager.getCookieSameSitePolicy();
         val sameSiteResult = sameSitePolicy.build(request, response, cookieGenerationContext);
         sameSiteResult.ifPresent(result -> builder.append(String.format(" %s", result)));
-        if (cookie.getSecure() || (sameSiteResult.isPresent() && StringUtils.equalsIgnoreCase(sameSiteResult.get(), "none"))) {
+        if (cookie.getSecure() || (sameSiteResult.isPresent() && Strings.CI.equals(sameSiteResult.get(), "none"))) {
             builder.append(" Secure;");
             LOGGER.trace("Marked cookie [{}] as secure as indicated by cookie configuration or the configured same-site policy", cookie.getName());
         }
@@ -230,7 +231,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     private Cookie createTenantCookie(final Cookie cookie, final HttpServletRequest request) {
         val tenantDefinition = casCookieValueManager.getTenantExtractor().extract(request);
         tenantDefinition.ifPresent(tenant -> cookie.setPath(
-            StringUtils.appendIfMissing(cookie.getPath(), "/") + "tenants/" + tenant.getId()));
+            Strings.CI.appendIfMissing(cookie.getPath(), "/") + "tenants/" + tenant.getId()));
         return cookie;
     }
 }

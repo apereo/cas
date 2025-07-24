@@ -5,10 +5,9 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * This is {@link AccountProfileServiceTicketGeneratorAuthority}.
@@ -22,7 +21,7 @@ public class AccountProfileServiceTicketGeneratorAuthority implements ServiceTic
 
     @Override
     public boolean supports(final AuthenticationResult authenticationResult, final Service service) {
-        val serviceUrl = StringUtils.appendIfMissing(casProperties.getServer().getPrefix(), "/")
+        val serviceUrl = Strings.CI.appendIfMissing(casProperties.getServer().getPrefix(), "/")
             .concat(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         return service != null && service.getId().equals(serviceUrl);
     }

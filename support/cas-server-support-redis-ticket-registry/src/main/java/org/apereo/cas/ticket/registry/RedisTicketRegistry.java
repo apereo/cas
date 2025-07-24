@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.springframework.beans.factory.ObjectProvider;
@@ -365,7 +366,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                     .map(this::decodeTicket)
                     .filter(ticket -> StringUtils.isBlank(queryCriteria.getPrincipal())
                         || (ticket instanceof final AuthenticationAwareTicket aat
-                        && StringUtils.equalsIgnoreCase(queryCriteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
+                        && Strings.CI.equals(queryCriteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
                     .filter(ticket -> !ticket.isExpired())
                     .peek(ticket -> {
                         val cacheKey = redisKeyGenerator.forPrefixAndId(ticket.getPrefix(), digestIdentifier(ticket.getId()));

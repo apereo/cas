@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.pac4j.core.context.WebContext;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +42,7 @@ public class OidcDefaultIssuerService implements OidcIssuerService {
                                   final OidcRegisteredService registeredService) {
         val requestUrl = webContext.getRequestURL();
         val definedIssuer = determineIssuer(Optional.ofNullable(registeredService));
-        val definedIssuerWithSlash = StringUtils.appendIfMissing(definedIssuer, "/");
+        val definedIssuerWithSlash = Strings.CI.appendIfMissing(definedIssuer, "/");
         
         val foundMatch = endpoints.stream().anyMatch(endpoint -> {
             val issuerFromRequestUrl = StringUtils.removeEnd(StringUtils.remove(requestUrl, '/' + endpoint), "/");

@@ -26,6 +26,7 @@ import lombok.With;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -338,7 +339,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
             .map(TicketGrantingTicket.class::cast)
             .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))
             .filter(tgt -> StringUtils.isBlank(ssoSessionsRequest.getUsername())
-                || StringUtils.equalsIgnoreCase(ssoSessionsRequest.getUsername(), tgt.getAuthentication().getPrincipal().getId()))
+                || Strings.CI.equals(ssoSessionsRequest.getUsername(), tgt.getAuthentication().getPrincipal().getId()))
             .sorted(Comparator.comparing(TicketGrantingTicket::getId))
             .map(tgt -> buildSingleSignOnSessionFromTicketGrantingTicket(option, tgt));
     }

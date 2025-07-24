@@ -31,7 +31,7 @@ public class SigningJwtCryptoProperties implements Serializable {
     private static final long serialVersionUID = -552544781333015532L;
 
     /**
-     * The signing key is a JWT whose length is defined by the signing key size setting.
+     * The signing key is a string whose length is defined by the signing key size setting.
      */
     @RequiredProperty
     @ExpressionLanguageCapable

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.jose4j.jwk.EcJwkGenerator;
 import org.jose4j.jwk.JsonWebKey;
@@ -113,7 +114,7 @@ public class OidcJsonWebKeyStoreUtils {
 
         var filter = (Predicate<JsonWebKey>) PublicJsonWebKey.class::isInstance;
         if (keyIdRequest.isPresent()) {
-            filter = filter.and(jsonWebKey -> StringUtils.equalsIgnoreCase(jsonWebKey.getKeyId(), keyIdRequest.get()));
+            filter = filter.and(jsonWebKey -> Strings.CI.equals(jsonWebKey.getKeyId(), keyIdRequest.get()));
         }
         if (usage.isPresent()) {
             filter = filter.and(jsonWebKey -> usage.get().is(jsonWebKey));

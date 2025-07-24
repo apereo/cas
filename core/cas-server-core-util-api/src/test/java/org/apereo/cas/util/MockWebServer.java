@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -281,9 +282,11 @@ public class MockWebServer implements Closeable {
     /**
      * Starts the Web server so it can accept requests on the listening port.
      */
-    public void start() {
+    @CanIgnoreReturnValue
+    public MockWebServer start() {
         this.workerThread = new Thread(this.worker, "MockWebServer.Worker");
         this.workerThread.start();
+        return this;
     }
 
     /**

@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
@@ -327,7 +327,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         try {
             val headers = CollectionUtils.<String, String>wrap(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(rest.getHeaders());
-            val countUrl = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("count");
+            val countUrl = Strings.CI.appendIfMissing(rest.getUrl(), "/").concat("count");
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
@@ -364,7 +364,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE, "username", username);
             headers.putAll(rest.getHeaders());
 
-            val countUrl = StringUtils.appendIfMissing(rest.getUrl(), "/").concat("count");
+            val countUrl = Strings.CI.appendIfMissing(rest.getUrl(), "/").concat("count");
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
