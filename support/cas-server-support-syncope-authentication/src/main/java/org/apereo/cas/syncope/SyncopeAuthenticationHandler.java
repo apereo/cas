@@ -76,8 +76,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
     }
 
-    protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential)
-        throws Throwable {
+    protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential) {
         HttpResponse response = null;
         try {
             val syncopeRestUrl = Strings.CI.appendIfMissing(
@@ -94,25 +93,27 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             response = HttpUtils.execute(exec);
             if (response != null) {
                 LOGGER.debug("Received http response status as [{}]", response.getCode());
-                if (response.getCode() == HttpStatus.SC_FORBIDDEN || response.getCode() == HttpStatus.SC_UNAUTHORIZED) {
-                    val appInfoHeader = response.getFirstHeader("X-Application-Error-Info");
-                    if (appInfoHeader != null && Strings.CI.equals("Please change your password first", appInfoHeader.getValue())) {
+                if (response.containsHeader("X-Application-Error-Info")
+                    && (response.getCode() == HttpStatus.SC_FORBIDDEN || response.getCode() == HttpStatus.SC_UNAUTHORIZED)) {
+                    val appInfoHeader = response.getFirstHeader("X-Application-Error-Info").getValue();
+                    if (Strings.CI.equals("Please change your password first", appInfoHeader)) {
                         val user = MAPPER.createObjectNode();
                         user.put("username", credential.getUsername());
                         user.put("mustChangePassword", true);
                         return Optional.of(user);
-                    } else if (appInfoHeader != null
-                        && Strings.CI.equals("User" + credential.getUsername() + " is suspended", appInfoHeader.getValue())) {
-                        val user = MAPPER.createObjectNode();
-                        user.put("username", credential.getUsername());
-                        user.put("suspended", true);
-                        return Optional.of(user);
+                    } else {
+                        val expectedHeader = "User " + credential.getUsername() + " is suspended";
+                        if (Strings.CI.equals(expectedHeader, appInfoHeader)) {
+                            val user = MAPPER.createObjectNode();
+                            user.put("username", credential.getUsername());
+                            user.put("suspended", true);
+                            return Optional.of(user);
+                        }
                     }
                 } else if (response.getCode() == HttpStatus.SC_OK) {
                     return parseResponseResults((HttpEntityContainer) response);
                 }
             }
-            LOGGER.debug("Received http response with null value");
         } finally {
             HttpUtils.close(response);
         }
