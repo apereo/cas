@@ -27,6 +27,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
@@ -393,7 +394,7 @@ public class OAuth20Utils {
                                                                   final OAuth20ClientAuthenticationMethods... authenticationMethod) {
         return !OAuth20Utils.isAccessTokenRequest(callContext.webContext())
             || StringUtils.isBlank(registeredService.getTokenEndpointAuthenticationMethod())
-            || Arrays.stream(authenticationMethod).anyMatch(method -> StringUtils.equalsIgnoreCase(registeredService.getTokenEndpointAuthenticationMethod(), method.getType()));
+            || Arrays.stream(authenticationMethod).anyMatch(method -> Strings.CI.equals(registeredService.getTokenEndpointAuthenticationMethod(), method.getType()));
     }
 
     /**

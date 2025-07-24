@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -38,7 +38,7 @@ import java.util.Optional;
 public class SyncopePasswordManagementService extends BasePasswordManagementService {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-                                                   .defaultTypingEnabled(false).build().toObjectMapper();
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     public SyncopePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                             final CasConfigurationProperties casProperties,
@@ -49,30 +49,31 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
     @Override
     public boolean changeInternal(final PasswordChangeRequest bean) {
         return FunctionUtils.doAndHandle(() -> {
-            val syncopeRestPasswordResetUrl = StringUtils.appendIfMissing(
+            val syncopeRestPasswordResetUrl = Strings.CI.appendIfMissing(
                 SpringExpressionLanguageValueResolver.getInstance().resolve(
                     casProperties.getAuthn().getPm().getSyncope().getUrl()),
                 "/rest/users/self/mustChangePassword");
-            LOGGER.debug("Updating account password on syncope for user [{}]", bean.getUsername());
+            LOGGER.debug("Updating account password on Appache Syncope for user [{}]", bean.getUsername());
             val exec = HttpExecutionRequest.builder()
-                           .method(HttpMethod.POST)
-                           .url(syncopeRestPasswordResetUrl)
-                           .basicAuthUsername(bean.getUsername())
-                           .basicAuthPassword(bean.toCurrentPassword())
-                           .headers(Map.of("X-Syncope-Domain", casProperties.getAuthn().getSyncope().getDomain(),
-                                           HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
-                                           HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
-                           .entity(MAPPER.writeValueAsString(getPasswordPatch(bean)))
-                           .maximumRetryAttempts(1)
-                           .build();
+                .method(HttpMethod.POST)
+                .url(syncopeRestPasswordResetUrl)
+                .basicAuthUsername(bean.getUsername())
+                .basicAuthPassword(bean.toCurrentPassword())
+                .headers(Map.of(
+                    SyncopeUtils.SYNCOPE_HEADER_DOMAIN, casProperties.getAuthn().getPm().getSyncope().getDomain(),
+                    HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
+                    HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                .entity(MAPPER.writeValueAsString(getPasswordPatch(bean)))
+                .maximumRetryAttempts(1)
+                .build();
             val response = Objects.requireNonNull(HttpUtils.execute(exec));
             if (response.getCode() == HttpStatus.SC_OK) {
-                LOGGER.debug("Successfully updated the account password on Syncope for [{}]", bean.getUsername());
+                LOGGER.debug("Successfully updated the account password on Apache Syncope for [{}]", bean.getUsername());
                 return true;
             }
             return false;
         }, e -> {
-            LOGGER.error("Error while update password on Syncope for user [{}]", bean.getUsername());
+            LOGGER.error("Error while update password on Apache Syncope for user [{}]", bean.getUsername());
             return false;
         }).get();
     }
@@ -104,20 +105,57 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
 
     @Override
     public boolean unlockAccount(final Credential credential) {
-        throw new UnsupportedOperationException("Password Management Service does not support unlocking of accounts");
+        return FunctionUtils.doAndHandle(() -> {
+            val userKey = searchUser(PasswordManagementQuery.builder().username(credential.getId()).build())
+                .stream()
+                .findFirst()
+                .map(syncopeUser -> syncopeUser.getOrDefault("key", syncopeUser.get("syncopeUserKey")))
+                .filter(Objects::nonNull)
+                .filter(values -> !values.isEmpty())
+                .map(values -> values.getFirst().toString())
+                .orElseThrow();
+
+            val userStatusUrl = Strings.CI.appendIfMissing(
+                SpringExpressionLanguageValueResolver.getInstance().resolve(
+                    casProperties.getAuthn().getPm().getSyncope().getUrl()),
+                "/rest/users/%s/status".formatted(userKey));
+
+            LOGGER.debug("Updating account status on Apache Syncope for user [{}]", credential.getId());
+            val exec = HttpExecutionRequest.builder()
+                .method(HttpMethod.POST)
+                .url(userStatusUrl)
+                .basicAuthUsername(casProperties.getAuthn().getPm().getSyncope().getBasicAuthUsername())
+                .basicAuthPassword(casProperties.getAuthn().getPm().getSyncope().getBasicAuthPassword())
+                .headers(Map.of(
+                    SyncopeUtils.SYNCOPE_HEADER_DOMAIN, casProperties.getAuthn().getPm().getSyncope().getDomain(),
+                    HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
+                    HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                .entity(MAPPER.writeValueAsString(getUserStatusUpdatePatch(userKey)))
+                .maximumRetryAttempts(1)
+                .build();
+            val response = Objects.requireNonNull(HttpUtils.execute(exec));
+            if (org.springframework.http.HttpStatus.resolve(response.getCode()).is2xxSuccessful()) {
+                LOGGER.debug("Successfully updated the account status on Apache Syncope for [{}]", credential.getId());
+                return true;
+            }
+            return false;
+        }, e -> {
+            LOGGER.error("Error while unlocking account on Apache Syncope for user [{}]", credential.getId());
+            return false;
+        }).get();
     }
 
     protected Optional<String> getUserAttribute(final PasswordManagementQuery query, final String attributeName) {
         return searchUser(query)
-                   .stream()
-                   .findFirst()
-                   .map(syncopeUser -> {
-                       val prefix = "%s_%s".formatted("syncopeUserAttr", attributeName);
-                       return syncopeUser.getOrDefault(attributeName, syncopeUser.get(prefix));
-                   })
-                   .filter(Objects::nonNull)
-                   .filter(values -> !values.isEmpty())
-                   .map(values -> values.getFirst().toString());
+            .stream()
+            .findFirst()
+            .map(syncopeUser -> {
+                val prefix = "%s_%s".formatted("syncopeUserAttr", attributeName);
+                return syncopeUser.getOrDefault(attributeName, syncopeUser.get(prefix));
+            })
+            .filter(Objects::nonNull)
+            .filter(values -> !values.isEmpty())
+            .map(values -> values.getFirst().toString());
     }
 
     private List<Map<String, List<Object>>> searchUser(final PasswordManagementQuery query) {
@@ -130,6 +168,18 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
         passwordPatch.put("value", bean.toConfirmedPassword());
         passwordPatch.put("onSyncope", true);
 
+        val resources = MAPPER.createArrayNode();
+        passwordPatch.set("resources", resources);
+
+        return passwordPatch;
+    }
+
+    private static JsonNode getUserStatusUpdatePatch(final String userKey) {
+        val passwordPatch = MAPPER.createObjectNode();
+        passwordPatch.put("operation", "ADD_REPLACE");
+        passwordPatch.put("key", userKey);
+        passwordPatch.put("type", "REACTIVATE");
+        passwordPatch.put("onSyncope", true);
         val resources = MAPPER.createArrayNode();
         passwordPatch.set("resources", resources);
 

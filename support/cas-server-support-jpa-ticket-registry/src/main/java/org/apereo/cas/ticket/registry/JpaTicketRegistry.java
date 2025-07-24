@@ -14,20 +14,18 @@ import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.support.TransactionOperations;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -226,7 +224,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
             .filter(ticket -> StringUtils.isBlank(criteria.getPrincipal())
                 || (ticket instanceof final AuthenticationAwareTicket aat
-                && StringUtils.equalsIgnoreCase(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
+                && Strings.CI.equals(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }

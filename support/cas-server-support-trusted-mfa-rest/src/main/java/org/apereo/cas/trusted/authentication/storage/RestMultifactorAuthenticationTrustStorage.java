@@ -7,6 +7,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -92,7 +93,7 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     private String getEndpointUrl(final String path) {
         val endpoint = getTrustedDevicesMultifactorProperties().getRest().getUrl();
-        return StringUtils.appendIfMissing(endpoint, "/").concat(StringUtils.defaultString(path));
+        return Strings.CI.appendIfMissing(endpoint, "/").concat(StringUtils.defaultString(path));
     }
 
     @Override

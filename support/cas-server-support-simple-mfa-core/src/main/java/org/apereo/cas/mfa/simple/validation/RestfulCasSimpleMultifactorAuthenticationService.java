@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
@@ -73,7 +73,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService extends BaseCasSim
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .headers(headers)
-                .url(StringUtils.appendIfMissing(properties.getUrl(), "/").concat("new"))
+                .url(Strings.CI.appendIfMissing(properties.getUrl(), "/").concat("new"))
                 .entity(writer.toString())
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
@@ -134,7 +134,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService extends BaseCasSim
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .headers(headers)
-                .url(StringUtils.appendIfMissing(properties.getUrl(), "/").concat(credential.getToken()))
+                .url(Strings.CI.appendIfMissing(properties.getUrl(), "/").concat(credential.getToken()))
                 .entity(writer.toString())
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
@@ -162,7 +162,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService extends BaseCasSim
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .headers(headers)
-                .url(StringUtils.appendIfMissing(properties.getUrl(), "/").concat(tokenCredential.getToken()))
+                .url(Strings.CI.appendIfMissing(properties.getUrl(), "/").concat(tokenCredential.getToken()))
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .build();

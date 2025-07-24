@@ -11,7 +11,7 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -89,7 +89,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
     public boolean delete(final RegisteredService registeredService) {
         HttpResponse response = null;
         try {
-            val completeUrl = StringUtils.appendIfMissing(
+            val completeUrl = Strings.CI.appendIfMissing(
                     SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/")
                 .concat(Long.toString(registeredService.getId()));
             invokeServiceRegistryListenerPreSave(registeredService);
@@ -164,7 +164,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
     public RegisteredService findServiceById(final long id) {
         HttpResponse response = null;
         try {
-            val completeUrl = StringUtils.appendIfMissing(
+            val completeUrl = Strings.CI.appendIfMissing(
                 SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/").concat(Long.toString(id));
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())

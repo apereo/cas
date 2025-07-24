@@ -7,16 +7,14 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
-
 import java.util.Objects;
 
 /**
@@ -69,7 +67,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
             return false;
         }
 
-        if (!StringUtils.equalsIgnoreCase(refreshToken.getClientId(), clientId)) {
+        if (!Strings.CI.equals(refreshToken.getClientId(), clientId)) {
             LOGGER.warn("Provided refresh token [{}] does not belong to client [{}]", refreshToken.getId(), clientId);
             return false;
         }
