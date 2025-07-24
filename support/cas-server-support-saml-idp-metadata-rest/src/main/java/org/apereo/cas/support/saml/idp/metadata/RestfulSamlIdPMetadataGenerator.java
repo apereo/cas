@@ -11,7 +11,7 @@ import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.beans.factory.InitializingBean;
@@ -55,7 +55,7 @@ public class RestfulSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
                                                                final Optional<SamlRegisteredService> registeredService) throws Exception {
         doc.setAppliesTo(getAppliesToFor(registeredService));
         val properties = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getMetadata().getRest();
-        val url = StringUtils.appendIfMissing(properties.getUrl(), "/").concat("idp");
+        val url = Strings.CI.appendIfMissing(properties.getUrl(), "/").concat("idp");
         HttpResponse response = null;
         try {
             val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);

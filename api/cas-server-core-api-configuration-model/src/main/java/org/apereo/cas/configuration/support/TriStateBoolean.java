@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import java.io.IOException;
 
 /**
@@ -87,10 +87,10 @@ public enum TriStateBoolean {
         public TriStateBoolean deserialize(final JsonParser jsonParser,
                                            final DeserializationContext deserializationContext) throws IOException {
             val value = jsonParser.getText();
-            if (StringUtils.equalsIgnoreCase(value, Boolean.TRUE.toString())) {
+            if (Strings.CI.equals(value, Boolean.TRUE.toString())) {
                 return TriStateBoolean.TRUE;
             }
-            if (StringUtils.equalsIgnoreCase(value, Boolean.FALSE.toString())) {
+            if (Strings.CI.equals(value, Boolean.FALSE.toString())) {
                 return TriStateBoolean.FALSE;
             }
             return TriStateBoolean.valueOf(value);

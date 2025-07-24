@@ -10,11 +10,10 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -68,7 +67,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                     LOGGER.debug("Code [{}] is invalid or expired. Attempting to revoke access tokens issued to the code", code.get());
                     val accessTokensByCode = configurationContext.getTicketRegistry().getTickets(ticket ->
                         ticket instanceof final OAuth20AccessToken accessToken
-                        && StringUtils.equalsIgnoreCase(accessToken.getToken(), code.get()));
+                        && Strings.CI.equals(accessToken.getToken(), code.get()));
                     accessTokensByCode.forEach(Unchecked.consumer(ticket -> {
                         LOGGER.debug("Removing access token [{}] issued via expired/unknown code [{}]", ticket.getId(), code.get());
                         configurationContext.getTicketRegistry().deleteTicket(ticket);

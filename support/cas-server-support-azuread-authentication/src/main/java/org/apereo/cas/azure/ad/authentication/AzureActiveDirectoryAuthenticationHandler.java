@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -56,7 +57,7 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
     }
 
     private String getUserInfoFromGraph(final IAuthenticationResult authenticationResult, final String username) throws Exception {
-        val url = new URI(StringUtils.appendIfMissing(properties.getResource(), "/") + "v1.0/users/" + username).toURL();
+        val url = new URI(Strings.CI.appendIfMissing(properties.getResource(), "/") + "v1.0/users/" + username).toURL();
         val conn = (HttpURLConnection) url.openConnection();
         try {
             conn.setRequestMethod("GET");
@@ -87,7 +88,7 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
                 .authority(properties.getLoginUrl())
                 .validateAuthority(true)
                 .build();
-            val resource = StringUtils.appendIfMissing(properties.getResource(), "/").concat(".default");
+            val resource = Strings.CI.appendIfMissing(properties.getResource(), "/").concat(".default");
             val parameters = ClientCredentialParameters.builder(Set.of(resource))
                 .tenant(properties.getTenant())
                 .build();
