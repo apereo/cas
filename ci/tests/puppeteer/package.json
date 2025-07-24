@@ -33,7 +33,7 @@
     "sockjs-client": "1.6.1",
     "speakeasy": "2.0.0",
     "unzipper": "0.12.3",
-    "wait-on": "8.0.3",
+    "wait-on": "8.0.4",
     "xml2js": "0.6.2",
     "yaml": "2.8.0"
   },
