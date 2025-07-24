@@ -8,16 +8,15 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,7 +55,7 @@ public class AccountProfileUpdateSecurityQuestionsAction extends BaseCasWebflowA
                 val question = questions.get(i).trim();
                 val answer = answers.get(i).trim();
                 if (StringUtils.isNotBlank(question) && StringUtils.isNotBlank(answer)
-                    && !StringUtils.equalsIgnoreCase(question, answer)
+                    && !Strings.CI.equals(question, answer)
                     && question.length() >= INPUT_LENGTH_MINIMUM
                     && answer.length() >= INPUT_LENGTH_MINIMUM) {
                     securityQuestions.put(question, List.of(answer));

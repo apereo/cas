@@ -58,6 +58,29 @@ class SendPasswordResetInstructionsActionTests {
     }
 
     @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.attribute-repository.stub.attributes.mail=cas@example.org",
+        "cas.authn.attribute-repository.stub.attributes.phone=1234567890",
+
+        "cas.authn.pm.reset.mail.attribute-name=mail",
+        "cas.authn.pm.reset.phone.attribute-name=phone"
+    })
+    class PrincipalResolutionTests extends BasePasswordManagementActionTests {
+        @Test
+        void verifyAction() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+
+            context.setParameter("username", "casuser");
+            WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
+            val tickets = ticketRegistry.getTickets();
+            assertEquals(1, tickets.size());
+            assertInstanceOf(HardTimeoutExpirationPolicy.class, tickets.iterator().next().getExpirationPolicy());
+        }
+    }
+    
+    @Nested
     class DefaultTests extends BasePasswordManagementActionTests {
 
         @BeforeEach

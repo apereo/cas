@@ -12,6 +12,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -62,7 +63,7 @@ public class OidcTokenIntrospectionSigningAndEncryptionService extends BaseOidcJ
             throw new IllegalArgumentException("Unable to use 'none' as introspection signing algorithm");
         }
         return StringUtils.isNotBlank(registeredService.getIntrospectionSignedResponseAlg())
-            && !StringUtils.equalsIgnoreCase(registeredService.getIntrospectionSignedResponseAlg(), AlgorithmIdentifiers.NONE);
+            && !Strings.CI.equals(registeredService.getIntrospectionSignedResponseAlg(), AlgorithmIdentifiers.NONE);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class OidcTokenIntrospectionSigningAndEncryptionService extends BaseOidcJ
             throw new IllegalArgumentException("Unable to use 'none' as introspection encryption algorithm");
         }
         return StringUtils.isNotBlank(registeredService.getIntrospectionEncryptedResponseAlg())
-            && !StringUtils.equalsIgnoreCase(registeredService.getIntrospectionEncryptedResponseAlg(), AlgorithmIdentifiers.NONE);
+            && !Strings.CI.equals(registeredService.getIntrospectionEncryptedResponseAlg(), AlgorithmIdentifiers.NONE);
     }
 
     @Override

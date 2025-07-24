@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serial;
 import java.io.Serializable;
@@ -65,7 +65,7 @@ public class CasServerProperties implements Serializable {
     private CasEmbeddedJettyProperties jetty = new CasEmbeddedJettyProperties();
 
     public CasServerProperties() {
-        setPrefix(StringUtils.appendIfMissing(getName(), "/").concat("cas"));
+        setPrefix(Strings.CI.appendIfMissing(getName(), "/").concat("cas"));
     }
 
     @JsonIgnore

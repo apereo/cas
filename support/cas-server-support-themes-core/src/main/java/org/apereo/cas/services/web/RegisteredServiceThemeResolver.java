@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
@@ -176,7 +177,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
         val theme = SpringExpressionLanguageValueResolver.getInstance().resolve(registeredService.getTheme());
         if (casProperties.getObject().getView().getTemplatePrefixes()
             .stream()
-            .map(prefix -> StringUtils.appendIfMissing(prefix, "/").concat(theme).concat(".properties"))
+            .map(prefix -> Strings.CI.appendIfMissing(prefix, "/").concat(theme).concat(".properties"))
             .anyMatch(ResourceUtils::doesResourceExist)) {
             LOGGER.trace("Found custom external theme [{}] for service [{}]", theme, registeredService.getName());
             return theme;

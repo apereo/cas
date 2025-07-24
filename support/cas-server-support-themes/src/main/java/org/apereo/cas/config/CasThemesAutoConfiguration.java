@@ -19,7 +19,7 @@ import org.apereo.cas.web.support.CookieUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -139,7 +139,7 @@ public class CasThemesAutoConfiguration {
 
                     val locations = templatePrefixes
                         .stream()
-                        .map(prefix -> StringUtils.appendIfMissing(prefix, "/"))
+                        .map(prefix -> Strings.CI.appendIfMissing(prefix, "/"))
                         .toArray(String[]::new);
                     registration.addResourceLocations(locations);
                     registration.addResourceLocations(webProperties.getResources().getStaticLocations());
@@ -153,7 +153,7 @@ public class CasThemesAutoConfiguration {
 
                     val resources = templatePrefixes
                         .stream()
-                        .map(prefix -> StringUtils.appendIfMissing(prefix, "/"))
+                        .map(prefix -> Strings.CI.appendIfMissing(prefix, "/"))
                         .map(Unchecked.function(ResourceUtils::getRawResourceFrom))
                         .toArray(Resource[]::new);
                     LOGGER.debug("Adding resource handler for resources [{}]", (Object[]) resources);

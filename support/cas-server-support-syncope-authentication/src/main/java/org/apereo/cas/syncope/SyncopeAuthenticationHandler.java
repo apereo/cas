@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
@@ -39,7 +39,7 @@ import java.util.Optional;
 @Monitorable
 public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-                                                   .defaultTypingEnabled(false).build().toObjectMapper();
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final SyncopeAuthenticationProperties properties;
 
@@ -70,49 +70,50 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
                     "Account password must change for " + credential.getUsername());
             }
             val principal = principalFactory.createPrincipal(user.get("username").asText(),
-                                                             SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
+                SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
             return createHandlerResult(credential, principal, new ArrayList<>());
         }
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
     }
 
-    protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential)
-        throws Throwable {
+    protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential) {
         HttpResponse response = null;
         try {
-            val syncopeRestUrl = StringUtils.appendIfMissing(
+            val syncopeRestUrl = Strings.CI.appendIfMissing(
                 SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()),
                 "/rest/users/self");
             val exec = HttpExecutionRequest.builder()
-                           .method(HttpMethod.GET)
-                           .url(syncopeRestUrl)
-                           .basicAuthUsername(credential.getUsername())
-                           .basicAuthPassword(credential.toPassword())
-                           .headers(CollectionUtils.wrap("X-Syncope-Domain", syncopeDomain))
-                           .maximumRetryAttempts(properties.getMaxRetryAttempts())
-                           .build();
+                .method(HttpMethod.GET)
+                .url(syncopeRestUrl)
+                .basicAuthUsername(credential.getUsername())
+                .basicAuthPassword(credential.toPassword())
+                .headers(CollectionUtils.wrap(SyncopeUtils.SYNCOPE_HEADER_DOMAIN, syncopeDomain))
+                .maximumRetryAttempts(properties.getMaxRetryAttempts())
+                .build();
             response = HttpUtils.execute(exec);
             if (response != null) {
-                LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
-                if (response.getCode() == HttpStatus.SC_FORBIDDEN || response.getCode() == HttpStatus.SC_UNAUTHORIZED) {
-                    val appInfoHeader = response.getFirstHeader("x-application-error-info");
-                    if (appInfoHeader != null && StringUtils.equalsIgnoreCase("Please change your password first", appInfoHeader.getValue())) {
+                LOGGER.debug("Received http response status as [{}]", response.getCode());
+                if (response.containsHeader("X-Application-Error-Info")
+                    && (response.getCode() == HttpStatus.SC_FORBIDDEN || response.getCode() == HttpStatus.SC_UNAUTHORIZED)) {
+                    val appInfoHeader = response.getFirstHeader("X-Application-Error-Info").getValue();
+                    if (Strings.CI.equals("Please change your password first", appInfoHeader)) {
                         val user = MAPPER.createObjectNode();
                         user.put("username", credential.getUsername());
                         user.put("mustChangePassword", true);
                         return Optional.of(user);
-                    } else if (appInfoHeader != null
-                                   && StringUtils.equalsIgnoreCase("User " + credential.getUsername() + " is suspended", appInfoHeader.getValue())) {
-                        val user = MAPPER.createObjectNode();
-                        user.put("username", credential.getUsername());
-                        user.put("suspended", true);
-                        return Optional.of(user);
+                    } else {
+                        val expectedHeader = "User " + credential.getUsername() + " is suspended";
+                        if (Strings.CI.equals(expectedHeader, appInfoHeader)) {
+                            val user = MAPPER.createObjectNode();
+                            user.put("username", credential.getUsername());
+                            user.put("suspended", true);
+                            return Optional.of(user);
+                        }
                     }
                 } else if (response.getCode() == HttpStatus.SC_OK) {
                     return parseResponseResults((HttpEntityContainer) response);
                 }
             }
-            LOGGER.debug("Received http response with null value");
         } finally {
             HttpUtils.close(response);
         }

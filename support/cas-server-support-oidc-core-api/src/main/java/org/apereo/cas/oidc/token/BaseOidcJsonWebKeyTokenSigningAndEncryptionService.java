@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
@@ -113,7 +114,7 @@ public abstract class BaseOidcJsonWebKeyTokenSigningAndEncryptionService extends
             .map(oidcService -> jsonWebKeys
                 .stream()
                 .filter(PublicJsonWebKey.class::isInstance)
-                .filter(key -> StringUtils.equalsIgnoreCase(key.getKeyId(), oidcService.getJwksKeyId()))
+                .filter(key -> Strings.CI.equals(key.getKeyId(), oidcService.getJwksKeyId()))
                 .map(PublicJsonWebKey.class::cast)
                 .findFirst())
             .flatMap(Optional::stream)
