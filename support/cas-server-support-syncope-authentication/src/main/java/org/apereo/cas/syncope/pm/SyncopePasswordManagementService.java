@@ -18,7 +18,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
+import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -27,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * This is {@link SyncopePasswordManagementService}.
@@ -53,7 +56,7 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
                 SpringExpressionLanguageValueResolver.getInstance().resolve(
                     casProperties.getAuthn().getPm().getSyncope().getUrl()),
                 "/rest/users/self/mustChangePassword");
-            LOGGER.debug("Updating account password on Appache Syncope for user [{}]", bean.getUsername());
+            LOGGER.debug("Updating account password on Apache Syncope for user [{}]", bean.getUsername());
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .url(syncopeRestPasswordResetUrl)
@@ -94,8 +97,39 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
     }
 
     @Override
-    public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
-        throw new UnsupportedOperationException("Password Management Service does not support security questions");
+    public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) throws Throwable {
+        val questionKey = searchUser(PasswordManagementQuery.builder().username(query.getUsername()).build())
+            .stream()
+            .findFirst()
+            .map(syncopeUser -> syncopeUser.getOrDefault("securityQuestion", syncopeUser.get("syncopeUserSecurityQuestion")))
+            .filter(Objects::nonNull)
+            .filter(values -> !values.isEmpty())
+            .map(values -> values.getFirst().toString())
+            .orElseThrow();
+
+        val securityQuestionUrl = Strings.CI.appendIfMissing(
+            SpringExpressionLanguageValueResolver.getInstance().resolve(
+                casProperties.getAuthn().getPm().getSyncope().getUrl()),
+            "/rest/securityQuestions/%s".formatted(questionKey));
+        val exec = HttpExecutionRequest.builder()
+            .method(HttpMethod.GET)
+            .url(securityQuestionUrl)
+            .basicAuthUsername(casProperties.getAuthn().getPm().getSyncope().getBasicAuthUsername())
+            .basicAuthPassword(casProperties.getAuthn().getPm().getSyncope().getBasicAuthPassword())
+            .headers(Map.of(
+                SyncopeUtils.SYNCOPE_HEADER_DOMAIN, casProperties.getAuthn().getPm().getSyncope().getDomain(),
+                HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
+                HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+            .build();
+        val response = Objects.requireNonNull(HttpUtils.execute(exec));
+        if (org.springframework.http.HttpStatus.resolve(response.getCode()).is2xxSuccessful()
+            && response instanceof final HttpEntityContainer container) {
+            val entity = container.getEntity();
+            val result = EntityUtils.toString(entity);
+            LOGGER.debug("Received security question entity as [{}]", result);
+            return Map.of(MAPPER.readTree(result).get("content").asText(), UUID.randomUUID().toString());
+        }
+        return Map.of();
     }
 
     @Override
