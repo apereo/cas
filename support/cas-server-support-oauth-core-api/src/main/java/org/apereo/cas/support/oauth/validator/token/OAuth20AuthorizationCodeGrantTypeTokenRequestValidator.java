@@ -47,7 +47,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
         val code = configurationContext.getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.CODE);
 
-        val clientId = ObjectUtils.defaultIfNull(uProfile.getAttribute(OAuth20Constants.CLIENT_ID), uProfile.getId()).toString();
+        val clientId = ObjectUtils.getIfNull(uProfile.getAttribute(OAuth20Constants.CLIENT_ID), uProfile.getId()).toString();
         LOGGER.debug("Locating registered service for client id [{}]", clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             configurationContext.getServicesManager(), clientId);

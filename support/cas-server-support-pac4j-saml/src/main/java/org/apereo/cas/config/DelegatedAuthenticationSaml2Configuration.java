@@ -33,7 +33,7 @@ import org.apereo.cas.web.saml2.DelegatedClientSaml2Builder;
 import org.apereo.cas.web.saml2.DelegatedClientSaml2SessionManager;
 import org.apereo.cas.web.saml2.DelegatedClientsSaml2EndpointContributor;
 import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataController;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -181,7 +181,7 @@ class DelegatedAuthenticationSaml2Configuration {
             return new CasWebSecurityConfigurer<>() {
                 @Override
                 public List<String> getIgnoredEndpoints() {
-                    return List.of(StringUtils.prependIfMissing(DelegatedSaml2ClientMetadataController.BASE_ENDPOINT_SERVICE_PROVIDER, "/"));
+                    return List.of(Strings.CI.prependIfMissing(DelegatedSaml2ClientMetadataController.BASE_ENDPOINT_SERVICE_PROVIDER, "/"));
                 }
             };
         }

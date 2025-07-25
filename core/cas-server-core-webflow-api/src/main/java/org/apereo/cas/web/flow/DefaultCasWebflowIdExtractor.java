@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -38,10 +38,10 @@ public class DefaultCasWebflowIdExtractor implements CasWebflowIdExtractor {
     }
 
     private static boolean isValidFlowId(final String flowId) {
-        return !StringUtils.startsWithIgnoreCase(flowId, "webjars/")
-            && !StringUtils.startsWithIgnoreCase(flowId, "css/")
-            && !StringUtils.startsWithIgnoreCase(flowId, "favicon")
-            && !StringUtils.startsWithIgnoreCase(flowId, "images/")
-            && !StringUtils.startsWithIgnoreCase(flowId, "js/");
+        return !Strings.CI.startsWith(flowId, "webjars/")
+            && !Strings.CI.startsWith(flowId, "css/")
+            && !Strings.CI.startsWith(flowId, "favicon")
+            && !Strings.CI.startsWith(flowId, "images/")
+            && !Strings.CI.startsWith(flowId, "js/");
     }
 }

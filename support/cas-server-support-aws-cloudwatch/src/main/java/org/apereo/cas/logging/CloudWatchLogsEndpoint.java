@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -76,7 +77,7 @@ public class CloudWatchLogsEndpoint extends BaseCasRestActuatorEndpoint {
                 var logLevel = "INFO";
                 if (matcher.find()) {
                     logLevel = matcher.group(2).toUpperCase(Locale.ENGLISH);
-                    message = StringUtils.remove(message, matcher.group(1)).trim();
+                    message = Strings.CI.remove(message, matcher.group(1)).trim();
                 }
                 return new LogEvent(message, DateTimeUtils.zonedDateTimeOf(event.timestamp()), logLevel);
             })

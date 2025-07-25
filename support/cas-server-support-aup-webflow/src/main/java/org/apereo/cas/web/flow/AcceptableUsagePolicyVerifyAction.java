@@ -10,7 +10,6 @@ import org.apereo.cas.aup.AcceptableUsagePolicyStatus;
 import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
@@ -47,7 +46,7 @@ public class AcceptableUsagePolicyVerifyAction extends BaseCasWebflowAction {
      */
     private Event verify(final RequestContext context) throws Throwable {
         val authentication = WebUtils.getAuthentication(context);
-        val res = ObjectUtils.defaultIfNull(repository.verify(context),
+        val res = ObjectUtils.getIfNull(repository.verify(context),
             AcceptableUsagePolicyStatus.skipped(authentication.getPrincipal()));
 
         WebUtils.putPrincipal(context, res.getPrincipal());

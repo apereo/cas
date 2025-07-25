@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
@@ -151,7 +151,7 @@ public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Upload CAS events and store them into the event repository")
     public ResponseEntity uploadEvents(final HttpServletRequest request) throws Throwable {
         val contentType = request.getContentType();
-        if (StringUtils.equalsAnyIgnoreCase(MediaType.APPLICATION_OCTET_STREAM_VALUE, contentType)) {
+        if (Strings.CI.equalsAny(MediaType.APPLICATION_OCTET_STREAM_VALUE, contentType)) {
             return importEventsAsStream(request);
         }
         return importSingleEvent(request);

@@ -219,7 +219,7 @@ public class MultifactorAuthenticationWebflowUtils {
      * @param accounts       the accounts
      */
     public static void putMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext, final Set accounts) {
-        val items = ObjectUtils.defaultIfNull(getMultifactorAuthenticationRegisteredDevices(requestContext), new HashSet<>());
+        val items = ObjectUtils.getIfNull(getMultifactorAuthenticationRegisteredDevices(requestContext), new HashSet<>());
         items.addAll(accounts);
         requestContext.getFlowScope().put("multifactorRegisteredAccounts", items);
     }

@@ -6,12 +6,9 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
 import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
 import org.apereo.cas.redis.core.CasRedisTemplate;
-
-
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.springframework.data.redis.core.ScanOptions;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -122,7 +119,7 @@ public class RedisYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     private Stream<String> getYubiKeyDevicesStream() {
         val cursor = Objects.requireNonNull(redisTemplate.getConnectionFactory()).getConnection()
-            .scan(ScanOptions.scanOptions().match(getPatternYubiKeyDevices()).build());
+            .keyCommands().scan(ScanOptions.scanOptions().match(getPatternYubiKeyDevices()).build());
         return StreamSupport
             .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
             .map(key -> (String) redisTemplate.getKeySerializer().deserialize(key))

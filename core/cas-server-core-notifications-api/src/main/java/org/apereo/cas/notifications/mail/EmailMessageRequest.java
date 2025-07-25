@@ -74,6 +74,6 @@ public class EmailMessageRequest {
     public List<String> getRecipients() {
         return hasAttributeValue()
             ? getAttributeValue()
-            : ObjectUtils.defaultIfNull(getTo(), List.of());
+            : ObjectUtils.getIfNull(getTo(), List.of());
     }
 }

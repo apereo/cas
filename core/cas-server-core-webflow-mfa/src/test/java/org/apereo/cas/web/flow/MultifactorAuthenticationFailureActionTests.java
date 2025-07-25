@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowMfaActions")
 @Execution(ExecutionMode.SAME_THREAD)
+@SuppressWarnings("EffectivelyPrivate")
 class MultifactorAuthenticationFailureActionTests {
 
     @TestConfiguration(value = "MultifactorAuthenticationTestConfiguration", proxyBeanMethods = false)
@@ -80,9 +81,6 @@ class MultifactorAuthenticationFailureActionTests {
     }
 
     private static class BaseMultifactorActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
-        @Autowired
-        @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_FAILURE)
-        protected Action mfaFailureAction;
 
         @Autowired
         @Qualifier("dummyProviderOpen")
@@ -91,7 +89,7 @@ class MultifactorAuthenticationFailureActionTests {
         @Autowired
         @Qualifier("dummyProviderClosed")
         protected MultifactorAuthenticationProvider dummyProviderClosed;
-        
+
         @Autowired
         @Qualifier("dummyProviderNone")
         protected MultifactorAuthenticationProvider dummyProviderNone;
@@ -99,6 +97,10 @@ class MultifactorAuthenticationFailureActionTests {
         @Autowired
         @Qualifier("dummyProviderUndefined")
         protected MultifactorAuthenticationProvider dummyProviderUndefined;
+
+        @Autowired
+        @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_FAILURE)
+        protected Action mfaFailureAction;
 
         protected void executeAction(final MultifactorAuthenticationProvider provider,
                                      final MultifactorAuthenticationProviderFailureModes serviceMode,

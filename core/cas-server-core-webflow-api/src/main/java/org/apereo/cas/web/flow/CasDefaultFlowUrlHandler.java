@@ -78,7 +78,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
     public String getFlowId(final HttpServletRequest request) {
         var flowId = super.getFlowId(request);
         if (flowId.contains("#")) {
-            flowId = RegExUtils.removePattern(flowId, "#.*");
+            flowId = RegExUtils.removePattern((CharSequence) flowId, "#.*");
         }
         for (val flowIdExtractor : flowIdExtractors) {
             flowId = flowIdExtractor.extract(request, flowId);

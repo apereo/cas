@@ -37,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.BindConnectionInitializer;
@@ -658,7 +659,7 @@ public class LdapUtils {
             }
             initializer.setBindSaslConfig(saslConfig);
             connectionConfig.setConnectionInitializers(initializer);
-        } else if (StringUtils.equals(properties.getBindCredential(), "*") && StringUtils.equals(properties.getBindDn(), "*")) {
+        } else if (Strings.CI.equals(properties.getBindCredential(), "*") && Strings.CI.equals(properties.getBindDn(), "*")) {
             LOGGER.debug("Creating LDAP fast-bind connection initializer");
             connectionConfig.setConnectionInitializers(new FastBindConnectionInitializer());
         } else if (StringUtils.isNotBlank(properties.getBindDn()) && StringUtils.isNotBlank(properties.getBindCredential())) {

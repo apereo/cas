@@ -73,28 +73,28 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         val fmt = StringUtils.defaultIfBlank(service.getRequiredNameIdFormat(), NameIDType.UNSPECIFIED).trim();
         LOGGER.debug("Required NameID format assigned to service [{}] is [{}]", service.getName(), fmt);
 
-        if (StringUtils.containsIgnoreCase(NameIDType.EMAIL, fmt)) {
+        if (Strings.CI.contains(NameIDType.EMAIL, fmt)) {
             return NameIDType.EMAIL;
         }
-        if (StringUtils.containsIgnoreCase(NameIDType.TRANSIENT, fmt)) {
+        if (Strings.CI.contains(NameIDType.TRANSIENT, fmt)) {
             return NameIDType.TRANSIENT;
         }
-        if (StringUtils.containsIgnoreCase(NameIDType.PERSISTENT, fmt)) {
+        if (Strings.CI.contains(NameIDType.PERSISTENT, fmt)) {
             return NameIDType.PERSISTENT;
         }
-        if (StringUtils.containsIgnoreCase(NameIDType.ENTITY, fmt)) {
+        if (Strings.CI.contains(NameIDType.ENTITY, fmt)) {
             return NameIDType.ENTITY;
         }
-        if (StringUtils.containsIgnoreCase(NameIDType.X509_SUBJECT, fmt)) {
+        if (Strings.CI.contains(NameIDType.X509_SUBJECT, fmt)) {
             return NameIDType.X509_SUBJECT;
         }
-        if (StringUtils.containsIgnoreCase(NameIDType.WIN_DOMAIN_QUALIFIED, fmt)) {
+        if (Strings.CI.contains(NameIDType.WIN_DOMAIN_QUALIFIED, fmt)) {
             return NameIDType.WIN_DOMAIN_QUALIFIED;
         }
-        if (StringUtils.containsIgnoreCase(NameIDType.KERBEROS, fmt)) {
+        if (Strings.CI.contains(NameIDType.KERBEROS, fmt)) {
             return NameIDType.KERBEROS;
         }
-        if (StringUtils.containsIgnoreCase(NameIDType.ENCRYPTED, fmt)) {
+        if (Strings.CI.contains(NameIDType.ENCRYPTED, fmt)) {
             return NameIDType.ENCRYPTED;
         }
         return NameIDType.UNSPECIFIED;

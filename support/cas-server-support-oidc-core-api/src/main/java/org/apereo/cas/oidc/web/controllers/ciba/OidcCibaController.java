@@ -35,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.net.URIBuilder;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.pac4j.core.context.WebContext;
@@ -207,7 +208,7 @@ public class OidcCibaController extends BaseOidcController {
             return badCibaRequest("Client notification token is required");
         }
         if (StringUtils.isBlank(registeredService.getBackchannelClientNotificationEndpoint())
-            || !StringUtils.startsWithIgnoreCase(registeredService.getBackchannelClientNotificationEndpoint(), "https://")) {
+            || !Strings.CI.startsWith(registeredService.getBackchannelClientNotificationEndpoint(), "https://")) {
             return badCibaRequest("Client backchannel notification endpoint is invalid");
         }
         val principal = determineCibaRequestPrincipal(cibaRequestContext, registeredService);

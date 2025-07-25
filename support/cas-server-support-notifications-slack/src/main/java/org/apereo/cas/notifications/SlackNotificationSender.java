@@ -13,7 +13,7 @@ import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +47,7 @@ public class SlackNotificationSender implements NotificationSender {
         return slackUsernames
             .stream()
             .allMatch(Unchecked.predicate(slackUsername -> {
-                val channel = StringUtils.prependIfMissing(slackUsername.toString(), "@");
+                val channel = Strings.CI.prependIfMissing(slackUsername.toString(), "@");
                 val messageRequest = ChatPostMessageRequest.builder()
                     .channel(channel)
                     .text(body)

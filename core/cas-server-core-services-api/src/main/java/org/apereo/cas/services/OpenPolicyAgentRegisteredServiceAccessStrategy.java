@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpHeaders;
@@ -75,8 +76,8 @@ public class OpenPolicyAgentRegisteredServiceAccessStrategy extends BaseRegister
             if (StringUtils.isNotBlank(token)) {
                 headers.put(HttpHeaders.AUTHORIZATION, "Bearer " + SpringExpressionLanguageValueResolver.getInstance().resolve(this.token));
             }
-            val url = StringUtils.removeEnd(SpringExpressionLanguageValueResolver.getInstance().resolve(this.apiUrl), "/");
-            val rule = StringUtils.removeEnd(SpringExpressionLanguageValueResolver.getInstance().resolve(this.decision), "/");
+            val url = Strings.CI.removeEnd(SpringExpressionLanguageValueResolver.getInstance().resolve(this.apiUrl), "/");
+            val rule = Strings.CI.removeEnd(SpringExpressionLanguageValueResolver.getInstance().resolve(this.decision), "/");
             val opaUrl = String.format("%s/v1/data/%s", url, rule);
 
             val checkEntity = AuthorizationRequestEntity.builder()
@@ -124,7 +125,7 @@ public class OpenPolicyAgentRegisteredServiceAccessStrategy extends BaseRegister
         private final Map<String, Object> context = new HashMap<>();
 
         @JsonIgnore
-        public String toJson() {
+        String toJson() {
             return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(Map.of("input", this)));
         }
     }

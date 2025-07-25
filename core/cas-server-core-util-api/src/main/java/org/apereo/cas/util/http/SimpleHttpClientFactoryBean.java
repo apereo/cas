@@ -230,8 +230,8 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
     private CloseableHttpClient buildHttpClient() {
         val sslFactory = Optional.ofNullable(this.sslSocketFactory)
             .orElseGet(() -> new SSLConnectionSocketFactory(
-                ObjectUtils.defaultIfNull(this.sslContext, SSLContexts.createDefault()),
-                ObjectUtils.defaultIfNull(this.hostnameVerifier, new DefaultHostnameVerifier())));
+                ObjectUtils.getIfNull(this.sslContext, SSLContexts.createDefault()),
+                ObjectUtils.getIfNull(this.hostnameVerifier, new DefaultHostnameVerifier())));
         
         val plainSocketFactory = PlainConnectionSocketFactory.getSocketFactory();
         val registry = RegistryBuilder.<ConnectionSocketFactory>create()

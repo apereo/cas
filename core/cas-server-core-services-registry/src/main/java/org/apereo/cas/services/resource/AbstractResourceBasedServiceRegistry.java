@@ -416,9 +416,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                     final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                     final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                     final WatcherService serviceRegistryConfigWatcher) {
-        this.registeredServiceReplicationStrategy = ObjectUtils.defaultIfNull(registeredServiceReplicationStrategy,
+        this.registeredServiceReplicationStrategy = ObjectUtils.getIfNull(registeredServiceReplicationStrategy,
             new NoOpRegisteredServiceReplicationStrategy());
-        this.resourceNamingStrategy = ObjectUtils.defaultIfNull(resourceNamingStrategy, new DefaultRegisteredServiceResourceNamingStrategy());
+        this.resourceNamingStrategy = ObjectUtils.getIfNull(resourceNamingStrategy, new DefaultRegisteredServiceResourceNamingStrategy());
         this.registeredServiceSerializers = serializers;
 
         this.serviceFileNamePattern = resourceNamingStrategy.buildNamingPattern(getExtensions());

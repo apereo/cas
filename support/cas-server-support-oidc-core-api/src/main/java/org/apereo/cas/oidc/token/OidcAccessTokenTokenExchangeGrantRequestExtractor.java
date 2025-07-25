@@ -16,7 +16,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.Assert;
@@ -97,7 +97,7 @@ public class OidcAccessTokenTokenExchangeGrantRequestExtractor extends AccessTok
             Assert.isTrue(claims.hasClaim(OidcConstants.CLAIM_SESSION_REF), "Subject token must contain the claim %s".formatted(OidcConstants.CLAIM_SESSION_REF));
 
             val deviceSecret = configurationContext.getDeviceSecretGenerator().hash(actorToken.orElseThrow());
-            Assert.isTrue(StringUtils.equals(deviceSecret, claims.getStringClaimValue(OidcConstants.DS_HASH)),
+            Assert.isTrue(Strings.CI.equals(deviceSecret, claims.getStringClaimValue(OidcConstants.DS_HASH)),
                 "Device secret hash does not match the subject token claim %s".formatted(OidcConstants.DS_HASH));
 
             val base64DecodedSessionId = EncodingUtils.decodeUrlSafeBase64(claims.getStringClaimValue(OidcConstants.CLAIM_SESSION_REF));

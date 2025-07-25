@@ -9,12 +9,10 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-
+import org.apache.commons.lang3.Strings;
 import java.time.Clock;
 import java.time.LocalDateTime;
 
@@ -64,7 +62,7 @@ public class DefaultQRAuthenticationTokenValidatorService implements QRAuthentic
         }
 
         val tokenDeviceId = FunctionUtils.doUnchecked(() -> claims.getStringClaim(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID));
-        if (!StringUtils.equals(tokenDeviceId, request.getDeviceId())) {
+        if (!Strings.CI.equals(tokenDeviceId, request.getDeviceId())) {
             LOGGER.warn("Request device identifier [{}] does not match the token's identifier: [{}]", request.getDeviceId(), tokenDeviceId);
             throw new AuthenticationException("Request is assigned an invalid device identifier");
         }

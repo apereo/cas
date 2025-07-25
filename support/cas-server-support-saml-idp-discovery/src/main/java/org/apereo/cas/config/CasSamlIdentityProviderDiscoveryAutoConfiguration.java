@@ -19,7 +19,7 @@ import org.apereo.cas.web.flow.DelegatedClientIdentityProviderAuthorizer;
 import org.apereo.cas.web.flow.SamlIdentityProviderDiscoveryWebflowConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,7 +56,7 @@ public class CasSamlIdentityProviderDiscoveryAutoConfiguration {
         return new CasWebSecurityConfigurer<>() {
             @Override
             public List<String> getIgnoredEndpoints() {
-                return List.of(StringUtils.prependIfMissing(SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY, "/"));
+                return List.of(Strings.CI.prependIfMissing(SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY, "/"));
             }
         };
     }

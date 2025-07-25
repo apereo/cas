@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * Default OAuth device token factory.
@@ -40,7 +41,7 @@ public class OAuth20DefaultDeviceUserCodeFactory implements OAuth20DeviceUserCod
 
     @Override
     public String normalizeUserCode(final String providedCode) {
-        return StringUtils.prependIfMissingIgnoreCase(providedCode, OAuth20DeviceUserCode.PREFIX + '-');
+        return Strings.CI.prependIfMissing(providedCode, OAuth20DeviceUserCode.PREFIX + '-');
     }
 
     @Override

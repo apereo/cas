@@ -24,6 +24,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpHeaders;
@@ -120,7 +121,7 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
 
             val givenUrl = StringUtils.defaultIfBlank(SpringExpressionLanguageValueResolver.getInstance()
                 .resolve(this.apiUrl), "http://localhost:3592");
-            val url = StringUtils.removeEnd(givenUrl, "/") + "/api/check/resources";
+            val url = Strings.CI.removeEnd(givenUrl, "/") + "/api/check/resources";
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .url(url)
@@ -135,7 +136,7 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
                 LOGGER.trace("Received response from endpoint [{}] as [{}]", url, results);
                 val payload = MAPPER.readValue(results, CerboseResponse.class);
                 if (HttpStatus.resolve(response.getCode()).is2xxSuccessful()
-                    && StringUtils.equals(cerbosRequest.getRequestId(), payload.getRequestId())) {
+                    && Strings.CI.equals(cerbosRequest.getRequestId(), payload.getRequestId())) {
                     return payload.getResults().isEmpty() || payload.getResults().stream().allMatch(result -> actions.stream().allMatch(action -> {
                         val actionResult = result.getActions().get(action);
                         return actionResult != Actions.EFFECT_DENY;
@@ -163,7 +164,7 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
         private final boolean includeMeta = true;
 
         @JsonIgnore
-        public String toJson() {
+        String toJson() {
             return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(this));
         }
     }

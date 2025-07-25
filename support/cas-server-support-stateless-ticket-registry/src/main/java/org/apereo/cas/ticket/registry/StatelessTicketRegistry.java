@@ -15,7 +15,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.time.Clock;
@@ -49,7 +49,7 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         return FunctionUtils.doAndHandle(() -> {
             val metadata = ticketCatalog.find(ticketId);
-            val withoutPrefix = StringUtils.removeStart(ticketId, metadata.getPrefix() + UniqueTicketIdGenerator.SEPARATOR);
+            val withoutPrefix = Strings.CI.removeStart(ticketId, metadata.getPrefix() + UniqueTicketIdGenerator.SEPARATOR);
             val decoded64 = EncodingUtils.decodeUrlSafeBase64(withoutPrefix);
             val decoded = (byte[]) cipherExecutor.decode(decoded64);
             val ticketContent = CompressionUtils.inflateToString(decoded);

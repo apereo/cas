@@ -34,7 +34,7 @@ public class OidcDefaultIssuerService implements OidcIssuerService {
             .orElseGet(() -> properties.getCore().getIssuer());
         LOGGER.trace("Determined issuer as [{}] for [{}]", issuer,
             registeredService.map(RegisteredService::getName).orElse("CAS"));
-        return StringUtils.removeEnd(issuer, "/");
+        return Strings.CI.removeEnd(issuer, "/");
     }
 
     @Override
@@ -45,7 +45,7 @@ public class OidcDefaultIssuerService implements OidcIssuerService {
         val definedIssuerWithSlash = Strings.CI.appendIfMissing(definedIssuer, "/");
         
         val foundMatch = endpoints.stream().anyMatch(endpoint -> {
-            val issuerFromRequestUrl = StringUtils.removeEnd(StringUtils.remove(requestUrl, '/' + endpoint), "/");
+            val issuerFromRequestUrl = Strings.CI.removeEnd(Strings.CI.remove(requestUrl, '/' + endpoint), "/");
             return definedIssuer.equalsIgnoreCase(issuerFromRequestUrl)
                 || issuerFromRequestUrl.startsWith(definedIssuerWithSlash)
                 || definedIssuer.startsWith(issuerFromRequestUrl)

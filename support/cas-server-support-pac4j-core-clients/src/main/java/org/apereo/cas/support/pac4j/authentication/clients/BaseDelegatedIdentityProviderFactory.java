@@ -75,7 +75,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
     @Override
     public List<BaseClient> retrieve(final String key) {
         val cachedClients = clientsCache.getIfPresent(key);
-        return ObjectUtils.defaultIfNull(cachedClients, new ArrayList<>());
+        return ObjectUtils.getIfNull(cachedClients, new ArrayList<>());
     }
 
     @Override

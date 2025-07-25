@@ -286,7 +286,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 queryAttributes.forEach((key, value) -> value.forEach(queryValue -> {
                     val escapedValue = isCipherExecutorEnabled()
                         ? digestIdentifier(queryValue.toString())
-                        : StringUtils.replace(queryValue.toString(), "-", "\\-");
+                        : Strings.CI.replace(queryValue.toString(), "-", "\\-");
                     criteria.add(String.format("(%s" + (isCipherExecutorEnabled() ? " " : "_") + "*%s)", digestIdentifier(key), escapedValue));
                 }));
                 val query = String.format("(%s) @%s:%s", String.join("|", criteria),

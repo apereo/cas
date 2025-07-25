@@ -125,7 +125,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
          * @return the string
          * @throws IllegalStateException if no values are remaining.
          */
-        public String nextValue() {
+        String nextValue() {
             if (this.currentIndex == this.values.length) {
                 throw new IllegalStateException("No values remaining for attribute");
             }

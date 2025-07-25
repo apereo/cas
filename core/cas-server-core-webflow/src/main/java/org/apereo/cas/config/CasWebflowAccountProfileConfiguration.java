@@ -18,7 +18,7 @@ import org.apereo.cas.web.flow.CasWebflowIdExtractor;
 import org.apereo.cas.web.flow.configurer.acct.AccountProfileWebflowConfigurer;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -139,7 +139,7 @@ class CasWebflowAccountProfileConfiguration {
         return new CasWebSecurityConfigurer<>() {
             @Override
             public List<String> getIgnoredEndpoints() {
-                return List.of(StringUtils.prependIfMissing(CasWebflowConfigurer.FLOW_ID_ACCOUNT, "/"));
+                return List.of(Strings.CI.prependIfMissing(CasWebflowConfigurer.FLOW_ID_ACCOUNT, "/"));
             }
         };
     }

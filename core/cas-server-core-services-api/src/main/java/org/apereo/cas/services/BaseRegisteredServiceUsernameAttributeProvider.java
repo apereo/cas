@@ -74,7 +74,7 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
     }
 
     protected String removePatternFromUsernameIfNecessary(final String username) {
-        return FunctionUtils.doIfNotNull(removePattern, () -> RegExUtils.removePattern(username, removePattern), () -> username).get();
+        return FunctionUtils.doIfNotNull(removePattern, () -> RegExUtils.removePattern((CharSequence) username, removePattern), () -> username).get();
     }
 
     protected String scopeUsernameIfNecessary(final String resolved) {

@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.WebContext;
@@ -98,7 +98,7 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
                                                               final OAuth20IntrospectionAccessTokenResponse introspect) {
         val responseEntity = super.buildIntrospectionEntityResponse(context, introspect);
         return context.getRequestHeader(HttpHeaders.ACCEPT)
-            .filter(headerValue -> StringUtils.equalsAnyIgnoreCase(headerValue, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE))
+            .filter(headerValue -> Strings.CI.equalsAny(headerValue, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE))
             .map(headerValue -> {
                 val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
                     getConfigurationContext().getServicesManager(), introspect.getClientId());

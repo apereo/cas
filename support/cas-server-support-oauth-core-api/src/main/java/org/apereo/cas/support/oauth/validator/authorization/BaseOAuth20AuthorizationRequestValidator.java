@@ -10,7 +10,6 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -96,7 +95,7 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
 
         if (accessResult.isExecutionFailure()) {
             LOGGER.warn("Registered service [{}] is not found or is not authorized for access.",
-                ObjectUtils.defaultIfNull(registeredService, clientId));
+                ObjectUtils.getIfNull(registeredService, clientId));
             setErrorDetails(context, OAuth20Constants.INVALID_REQUEST, StringUtils.EMPTY, false);
             return null;
         }

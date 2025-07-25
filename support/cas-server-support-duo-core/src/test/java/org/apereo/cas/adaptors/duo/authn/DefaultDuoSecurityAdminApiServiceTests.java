@@ -13,7 +13,7 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,7 +61,7 @@ class DefaultDuoSecurityAdminApiServiceTests {
     @Test
     void verifyCodesAndAccount() throws Throwable {
         val duoProps = casProperties.getAuthn().getMfa().getDuo().getFirst();
-        val port = Integer.parseInt(StringUtils.remove(duoProps.getDuoApiHost(), "localhost:"));
+        val port = Integer.parseInt(Strings.CI.remove(duoProps.getDuoApiHost(), "localhost:"));
 
         try (val webServer = new MockWebServer(true, port, new ClassPathResource("duoAdminApiResponse-bypassCodes.json"))) {
             webServer.start();

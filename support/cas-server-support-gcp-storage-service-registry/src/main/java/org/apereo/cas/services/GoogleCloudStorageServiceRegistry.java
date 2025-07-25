@@ -10,7 +10,7 @@ import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import java.io.ByteArrayOutputStream;
@@ -137,6 +137,6 @@ public class GoogleCloudStorageServiceRegistry extends AbstractServiceRegistry {
     }
 
     protected String determineBucketForRegisteredService(final RegisteredService registeredService) {
-        return BUCKET_PREFIX + StringUtils.replace(registeredService.getFriendlyName(), " ", "-").toLowerCase(Locale.ENGLISH);
+        return BUCKET_PREFIX + Strings.CI.replace(registeredService.getFriendlyName(), " ", "-").toLowerCase(Locale.ENGLISH);
     }
 }

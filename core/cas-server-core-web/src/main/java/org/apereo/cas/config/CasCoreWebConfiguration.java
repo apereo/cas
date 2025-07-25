@@ -23,7 +23,7 @@ import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.view.CasReloadableMessageBundle;
 import org.apereo.cas.web.view.DynamicHtmlView;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -196,14 +196,14 @@ class CasCoreWebConfiguration {
                 @Override
                 public List<String> getIgnoredEndpoints() {
                     return List.of(
-                        StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_LOGIN, "/"),
-                        StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_LOGOUT, "/"),
-                        StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_VALIDATE, "/"),
-                        StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE, "/"),
-                        StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3, "/"),
-                        StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_PROXY_VALIDATE, "/"),
-                        StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_PROXY_VALIDATE_V3, "/"),
-                        StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_PROXY, "/"));
+                        Strings.CI.prependIfMissing(CasProtocolConstants.ENDPOINT_LOGIN, "/"),
+                        Strings.CI.prependIfMissing(CasProtocolConstants.ENDPOINT_LOGOUT, "/"),
+                        Strings.CI.prependIfMissing(CasProtocolConstants.ENDPOINT_VALIDATE, "/"),
+                        Strings.CI.prependIfMissing(CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE, "/"),
+                        Strings.CI.prependIfMissing(CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3, "/"),
+                        Strings.CI.prependIfMissing(CasProtocolConstants.ENDPOINT_PROXY_VALIDATE, "/"),
+                        Strings.CI.prependIfMissing(CasProtocolConstants.ENDPOINT_PROXY_VALIDATE_V3, "/"),
+                        Strings.CI.prependIfMissing(CasProtocolConstants.ENDPOINT_PROXY, "/"));
                 }
             };
         }

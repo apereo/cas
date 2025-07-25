@@ -2,7 +2,6 @@ package org.apereo.cas.notifications.sms;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
@@ -10,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +60,7 @@ public class SmsRequest {
      * @return the recipients
      */
     public List<String> getRecipients() {
-        return hasAttributeValue() ? getAttributeValue() : ObjectUtils.defaultIfNull(getTo(), List.of());
+        return hasAttributeValue() ? getAttributeValue() : ObjectUtils.getIfNull(getTo(), List.of());
     }
 
     /**

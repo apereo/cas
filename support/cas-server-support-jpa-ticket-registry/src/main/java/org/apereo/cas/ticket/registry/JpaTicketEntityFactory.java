@@ -87,8 +87,8 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
                 .map(Principal::getId)
                 .orElse(null))
             .setExpirationTime(expirationTime)
-            .setLastUsedTime(ObjectUtils.defaultIfNull(encodedTicket.getLastTimeUsed(), ZonedDateTime.now(Clock.systemUTC())))
-            .setCreationTime(ObjectUtils.defaultIfNull(encodedTicket.getCreationTime(), ZonedDateTime.now(Clock.systemUTC())));
+            .setLastUsedTime(ObjectUtils.getIfNull(encodedTicket.getLastTimeUsed(), ZonedDateTime.now(Clock.systemUTC())))
+            .setCreationTime(ObjectUtils.getIfNull(encodedTicket.getCreationTime(), ZonedDateTime.now(Clock.systemUTC())));
     }
 
     @Override

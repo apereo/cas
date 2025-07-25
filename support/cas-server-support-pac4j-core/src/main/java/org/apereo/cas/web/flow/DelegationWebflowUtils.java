@@ -114,7 +114,7 @@ public class DelegationWebflowUtils {
     public static <T extends Serializable> List<T> getDelegatedClientAuthenticationResolvedCredentials(final RequestContext context,
                                                                                                        final Class<T> clazz) {
         val results = context.getFlowScope().get("delegatedAuthenticationCredentials", List.class);
-        return ObjectUtils.defaultIfNull(results, List.of());
+        return ObjectUtils.getIfNull(results, List.of());
     }
 
 

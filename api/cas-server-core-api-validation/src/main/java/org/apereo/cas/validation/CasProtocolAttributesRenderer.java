@@ -1,7 +1,6 @@
 package org.apereo.cas.validation;
 
-import org.apache.commons.lang3.StringUtils;
-
+import org.apache.commons.lang3.Strings;
 import java.util.Collection;
 import java.util.Map;
 
@@ -23,7 +22,7 @@ public interface CasProtocolAttributesRenderer {
      * @return the string
      */
     static String sanitizeAttributeName(final String name) {
-        return StringUtils.replace(name.trim(), " ", "_");
+        return Strings.CI.replace(name.trim(), " ", "_");
     }
 
     /**

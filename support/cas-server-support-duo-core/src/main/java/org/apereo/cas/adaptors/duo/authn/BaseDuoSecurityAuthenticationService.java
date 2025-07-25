@@ -24,6 +24,7 @@ import lombok.val;
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
@@ -169,7 +170,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private Http buildHttpRequest(final String format) throws Exception {
         val originalHost = SpringExpressionLanguageValueResolver.getInstance().resolve(getDuoClient().getDuoApiHost());
-        val host = new URI(StringUtils.prependIfMissing(originalHost, "https://"));
+        val host = new URI(Strings.CI.prependIfMissing(originalHost, "https://"));
         val request = new CasHttpBuilder(HttpMethod.POST.name(),
             host.getHost(), String.format(format, AUTH_API_VERSION)).build();
 

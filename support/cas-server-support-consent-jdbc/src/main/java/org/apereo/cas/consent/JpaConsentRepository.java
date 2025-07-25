@@ -4,14 +4,12 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.io.Serial;
@@ -67,7 +65,7 @@ public class JpaConsentRepository implements ConsentRepository {
 
     @Override
     public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
-        val account = ObjectUtils.defaultIfNull(
+        val account = ObjectUtils.getIfNull(
             this.entityManager.find(JpaConsentDecision.class, decision.getId()), new JpaConsentDecision());
         account.setAttributes(decision.getAttributes());
         account.setCreatedDate(decision.getCreatedDate());

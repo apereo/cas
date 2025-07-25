@@ -127,7 +127,7 @@ public class JacksonObjectMapperFactory {
             .filter(BeanSupplier::isNotProxy)
             .collect(Collectors.toList());
 
-        val effectiveContext = ObjectUtils.defaultIfNull(applicationContext, ApplicationContextProvider.getApplicationContext());
+        val effectiveContext = ObjectUtils.getIfNull(applicationContext, ApplicationContextProvider.getApplicationContext());
         if (effectiveContext != null) {
             val customizerBeans = effectiveContext.getBeansOfType(JacksonObjectMapperCustomizer.class).values();
             customizers.addAll(customizerBeans);

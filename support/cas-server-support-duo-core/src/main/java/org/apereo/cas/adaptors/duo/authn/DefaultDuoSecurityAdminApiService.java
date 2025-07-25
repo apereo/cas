@@ -10,19 +10,18 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.duosecurity.client.Http;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
-
 import javax.net.ssl.X509TrustManager;
 import java.net.URI;
 import java.util.ArrayList;
@@ -136,7 +135,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         val method = params.getOrDefault("method", HttpMethod.GET.name());
 
         val originalHost = resolver.resolve(duoProperties.getDuoApiHost());
-        val host = new URI(StringUtils.prependIfMissing(originalHost, "https://"));
+        val host = new URI(Strings.CI.prependIfMissing(originalHost, "https://"));
         val request = new CasHttpBuilder(method, host.getHost(), uri).build();
 
         val hostField = ReflectionUtils.findField(request.getClass(), "host");

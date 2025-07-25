@@ -78,6 +78,7 @@ import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
@@ -460,9 +461,9 @@ class SamlIdPEndpointsConfiguration {
                 @Override
                 public List<String> getIgnoredEndpoints() {
                     return List.of(
-                        StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_IDP, "/"),
-                        StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML1, "/"),
-                        StringUtils.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML2, "/"));
+                        Strings.CI.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_IDP, "/"),
+                        Strings.CI.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML1, "/"),
+                        Strings.CI.prependIfMissing(SamlIdPConstants.BASE_ENDPOINT_SAML2, "/"));
                 }
             };
         }

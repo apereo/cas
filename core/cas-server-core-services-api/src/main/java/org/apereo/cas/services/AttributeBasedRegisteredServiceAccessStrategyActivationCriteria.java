@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -13,7 +12,6 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-
 import java.io.Serial;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +54,7 @@ public class AttributeBasedRegisteredServiceAccessStrategyActivationCriteria imp
     protected boolean verifyRequiredAttribute(
         final Map.Entry<String, Object> entry,
         final RegisteredServiceAccessStrategyRequest request) {
-        val currentValues = ObjectUtils.defaultIfNull(request.getAttributes().get(entry.getKey()), List.of());
+        val currentValues = ObjectUtils.getIfNull(request.getAttributes().get(entry.getKey()), List.of());
         val requiredValues = CollectionUtils.toCollection(entry.getValue());
         val pattern = RegexUtils.concatenate(requiredValues, true);
         LOGGER.debug("Checking activation criteria [{}] against [{}] with pattern [{}] for attribute [{}]",

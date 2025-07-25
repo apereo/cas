@@ -26,7 +26,6 @@ import com.google.common.base.Splitter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
@@ -326,7 +325,7 @@ public class SyncopeUtils {
     public static Map<String, Object> convertToUserCreateEntity(final Principal principal, final String realm) {
         val entity = new LinkedHashMap<String, Object>();
         entity.put("_class", "org.apache.syncope.common.lib.request.UserCR");
-        entity.put("realm", StringUtils.prependIfMissing(realm, "/"));
+        entity.put("realm", Strings.CI.prependIfMissing(realm, "/"));
         entity.put("username", principal.getId());
 
         val plainAttrs = new ArrayList<Map<String, Object>>();
@@ -352,7 +351,7 @@ public class SyncopeUtils {
                                                                 final String realm) {
         val entity = new LinkedHashMap<String, Object>();
         entity.put("_class", "org.apache.syncope.common.lib.request.UserCR");
-        entity.put("realm", StringUtils.prependIfMissing(realm, "/"));
+        entity.put("realm", Strings.CI.prependIfMissing(realm, "/"));
         entity.put("username", credential.getUsername());
         entity.put("password", credential.getPassword());
 

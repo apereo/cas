@@ -1,12 +1,10 @@
 package org.apereo.cas.support.claims;
 
 import org.apereo.cas.ws.idp.WSFederationConstants;
-
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.cxf.rt.security.claims.Claim;
 import org.apache.cxf.sts.claims.ClaimsParameters;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +24,7 @@ public class NonWSFederationClaimsClaimsHandler extends WrappingSecurityTokenSer
     protected String createProcessedClaimType(final Claim requestClaim, final ClaimsParameters parameters) {
         val tokenType = parameters.getTokenRequirements().getTokenType();
         if (WSFederationConstants.WSS_SAML2_TOKEN_TYPE.equalsIgnoreCase(tokenType)) {
-            return StringUtils.remove(requestClaim.getClaimType(), WSFederationConstants.HTTP_SCHEMAS_APEREO_CAS);
+            return Strings.CI.remove(requestClaim.getClaimType(), WSFederationConstants.HTTP_SCHEMAS_APEREO_CAS);
         }
         return requestClaim.getClaimType();
     }

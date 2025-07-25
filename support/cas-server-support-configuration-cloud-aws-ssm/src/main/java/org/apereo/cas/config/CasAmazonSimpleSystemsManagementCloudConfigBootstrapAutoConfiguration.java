@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.env.Environment;
@@ -59,9 +60,9 @@ public class CasAmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurati
                         LOGGER.trace("Fetched [{}] parameters with next token as [{}]", result.parameters().size(), result.nextToken());
 
                         result.parameters().forEach(p -> {
-                            var propKey = StringUtils.removeStart(p.name(), prefix);
-                            propKey = StringUtils.removeStart(propKey, "/");
-                            val key = StringUtils.removeEnd(propKey, "/");
+                            var propKey = Strings.CI.removeStart(p.name(), prefix);
+                            propKey = Strings.CI.removeStart(propKey, "/");
+                            val key = Strings.CI.removeEnd(propKey, "/");
                             props.put(key, p.value());
                         });
                     } while (nextToken != null);

@@ -6,7 +6,6 @@ import org.apereo.cas.util.ResourceUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.HierarchicalMessageSource;
@@ -45,7 +44,7 @@ public class DefaultCasThemeSource extends ResourceBundleThemeSource {
 
     protected MessageSource createExtendedMessageSource(final String basename) {
         if (Strings.CI.equals(basename, ThemeProperties.DEFAULT_THEME_NAME)) {
-            val customTheme = StringUtils.replace(basename, "-default", "-custom");
+            val customTheme = Strings.CI.replace(basename, "-default", "-custom");
             val source = (HierarchicalMessageSource) super.createMessageSource(customTheme);
             source.setParentMessageSource(super.createMessageSource(basename));
             return source;

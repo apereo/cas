@@ -108,7 +108,7 @@ public class DuoSecurityUserAccount implements Serializable {
      */
     @CanIgnoreReturnValue
     public DuoSecurityUserAccount addAttribute(final String key, final String value) {
-        if (!StringUtils.equalsAnyIgnoreCase("null", value) && StringUtils.isNotBlank(value)) {
+        if (!Strings.CI.equalsAny("null", value) && StringUtils.isNotBlank(value)) {
             this.metadata.put(key, value);
         }
         return this;

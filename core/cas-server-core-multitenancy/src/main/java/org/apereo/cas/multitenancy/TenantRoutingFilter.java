@@ -6,7 +6,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -33,7 +32,7 @@ public class TenantRoutingFilter implements Filter {
     public void doFilter(final ServletRequest req, final ServletResponse res, final FilterChain chain) throws IOException, ServletException {
         val request = (HttpServletRequest) req;
         val response = (HttpServletResponse) res;
-        val servletPath = StringUtils.prependIfMissing(request.getServletPath(), "/");
+        val servletPath = Strings.CI.prependIfMissing(request.getServletPath(), "/");
         if (isValidServletPath(servletPath)) {
             val tenantDefinitions = tenantExtractor.getTenantsManager().findTenants();
             for (val tenantDefinition : tenantDefinitions) {
@@ -67,10 +66,10 @@ public class TenantRoutingFilter implements Filter {
     }
 
     private static boolean isValidServletPath(final String flowId) {
-        return !StringUtils.startsWithIgnoreCase(flowId, "/webjars/")
-            && !StringUtils.startsWithIgnoreCase(flowId, "/css/")
-            && !StringUtils.startsWithIgnoreCase(flowId, "/favicon")
-            && !StringUtils.startsWithIgnoreCase(flowId, "/images/")
-            && !StringUtils.startsWithIgnoreCase(flowId, "/js/");
+        return !Strings.CI.startsWith(flowId, "/webjars/")
+            && !Strings.CI.startsWith(flowId, "/css/")
+            && !Strings.CI.startsWith(flowId, "/favicon")
+            && !Strings.CI.startsWith(flowId, "/images/")
+            && !Strings.CI.startsWith(flowId, "/js/");
     }
 }

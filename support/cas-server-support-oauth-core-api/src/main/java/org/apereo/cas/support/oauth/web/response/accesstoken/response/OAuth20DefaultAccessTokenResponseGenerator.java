@@ -16,7 +16,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpStatus;
@@ -92,7 +92,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator<T extends OAuth20Configu
                 val accessToken = resolveToken(token, OAuth20AccessToken.class);
                 if (result.getResponseType() != OAuth20ResponseTypes.ID_TOKEN && accessToken.getExpiresIn() > 0) {
                     val encodedAccessTokenId = encodeOAuthToken(accessToken, result);
-                    if (StringUtils.equals(encodedAccessTokenId, accessToken.getId()) && token.isStateless()) {
+                    if (Strings.CI.equals(encodedAccessTokenId, accessToken.getId()) && token.isStateless()) {
                         model.put(OAuth20Constants.ACCESS_TOKEN, token.getId());
                     } else {
                         model.put(OAuth20Constants.ACCESS_TOKEN, encodedAccessTokenId);
@@ -117,7 +117,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator<T extends OAuth20Configu
             val refreshToken = resolveToken(ticket, OAuth20RefreshToken.class);
             val encodedRefreshToken = encodeOAuthToken(refreshToken, result);
 
-            if (StringUtils.equals(encodedRefreshToken, refreshToken.getId()) && ticket.isStateless()) {
+            if (Strings.CI.equals(encodedRefreshToken, refreshToken.getId()) && ticket.isStateless()) {
                 model.put(OAuth20Constants.REFRESH_TOKEN, ticket.getId());
             } else {
                 model.put(OAuth20Constants.REFRESH_TOKEN, encodedRefreshToken);

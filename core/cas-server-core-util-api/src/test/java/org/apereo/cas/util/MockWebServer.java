@@ -41,9 +41,10 @@ import java.util.function.Supplier;
 
 /**
  * Provides a simple HTTP Web server that can serve out a single resource for
- * all requests.  SSL/TLS is not supported.
+ * all requests.
  *
  * @author Marvin S. Addison
+ * @author Misagh Moayyed
  * @since 3.4.6
  */
 @Slf4j
@@ -393,7 +394,7 @@ public class MockWebServer implements Closeable {
             this.headers.putAll(headers);
         }
 
-        public int getPort() {
+        private int getPort() {
             return serverSocket.getLocalPort();
         }
 
@@ -438,7 +439,7 @@ public class MockWebServer implements Closeable {
             }
         }
 
-        public void stop() {
+        void stop() {
             try {
                 ALL_PORTS.remove(getPort());
                 serverSocket.close();

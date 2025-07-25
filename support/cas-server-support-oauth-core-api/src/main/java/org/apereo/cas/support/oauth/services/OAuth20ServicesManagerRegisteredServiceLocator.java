@@ -14,6 +14,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.Ordered;
 import java.util.List;
@@ -39,7 +40,7 @@ public class OAuth20ServicesManagerRegisteredServiceLocator extends BaseServices
         LOGGER.trace("Attempting to locate service [{}] via [{}]", service, registeredService);
         val clientIdAttribute = service.getAttributes().get(OAuth20Constants.CLIENT_ID);
         val clientId = CollectionUtils.firstElement(clientIdAttribute).map(Object::toString).orElse(StringUtils.EMPTY);
-        return StringUtils.isNotBlank(clientId) && StringUtils.equals(registeredService.getClientId(), clientId);
+        return StringUtils.isNotBlank(clientId) && Strings.CI.equals(registeredService.getClientId(), clientId);
     }
 
     @Override
@@ -69,7 +70,7 @@ public class OAuth20ServicesManagerRegisteredServiceLocator extends BaseServices
                 .map(String.class::cast)
                 .orElse(StringUtils.EMPTY);
             val callbackService = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
-            return StringUtils.isBlank(source) || StringUtils.startsWith(source, callbackService)
+            return StringUtils.isBlank(source) || Strings.CI.startsWith(source, callbackService)
                 || OAuth20Utils.checkCallbackValid(registeredService, source);
         }
         return false;

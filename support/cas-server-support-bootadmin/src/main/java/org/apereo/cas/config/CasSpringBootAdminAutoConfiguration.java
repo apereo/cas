@@ -19,7 +19,7 @@ import de.codecentric.boot.admin.server.web.client.InstanceWebClientCustomizer;
 import io.netty.handler.ssl.SslContextBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -113,7 +113,7 @@ public class CasSpringBootAdminAutoConfiguration {
 
                 @Override
                 public CasWebSecurityConfigurer<HttpSecurity> finish(final HttpSecurity http) throws Exception {
-                    val adminContextPath = StringUtils.prependIfMissing(properties.getContextPath(), "/");
+                    val adminContextPath = Strings.CI.prependIfMissing(properties.getContextPath(), "/");
                     val successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
                     successHandler.setTargetUrlParameter("redirectTo");
                     successHandler.setDefaultTargetUrl(adminContextPath);

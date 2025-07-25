@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.common.web.ClientInfoExtractionOptions;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
 import org.springframework.beans.factory.InitializingBean;
@@ -260,7 +260,7 @@ class CasWebSecurityConfiguration {
                     .map(user -> {
                         val authorities = user.getAuthorities()
                             .stream()
-                            .map(authority -> StringUtils.prependIfMissing(authority, "ROLE_"))
+                            .map(authority -> Strings.CI.prependIfMissing(authority, "ROLE_"))
                             .map(SimpleGrantedAuthority::new)
                             .toList();
                         var password = user.getPassword();

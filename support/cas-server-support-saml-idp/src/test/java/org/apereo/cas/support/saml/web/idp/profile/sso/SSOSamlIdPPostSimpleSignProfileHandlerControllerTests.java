@@ -8,7 +8,7 @@ import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPHttpRedirectDeflat
 import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
 import net.shibboleth.shared.net.URLBuilder;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -74,7 +74,7 @@ class SSOSamlIdPPostSimpleSignProfileHandlerControllerTests extends BaseSamlIdPC
 
         val encoder = new SamlIdPHttpRedirectDeflateEncoder("https://cas.example.org/login", authnRequest);
         encoder.doEncode();
-        val queryStrings = StringUtils.remove(encoder.getRedirectUrl(), "https://cas.example.org/login?");
+        val queryStrings = Strings.CI.remove(encoder.getRedirectUrl(), "https://cas.example.org/login?");
         new URLBuilder(encoder.getRedirectUrl())
             .getQueryParams().forEach(param -> request.addParameter(param.getFirst(), param.getSecond()));
         request.setQueryString(queryStrings);

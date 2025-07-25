@@ -411,7 +411,7 @@ public class WebUtils {
      * @return warning cookie value, if present.
      */
     public static boolean getWarningCookie(final RequestContext context) {
-        val val = ObjectUtils.defaultIfNull(context.getFlowScope().get("warnCookieValue"), Boolean.FALSE.toString()).toString();
+        val val = ObjectUtils.getIfNull(context.getFlowScope().get("warnCookieValue"), Boolean.FALSE.toString()).toString();
         return Boolean.parseBoolean(val);
     }
 

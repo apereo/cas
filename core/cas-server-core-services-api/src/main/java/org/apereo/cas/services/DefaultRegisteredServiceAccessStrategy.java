@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyEvaluator;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,9 +11,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-
 import jakarta.persistence.PostLoad;
-
 import java.io.Serial;
 import java.net.URI;
 import java.util.HashMap;
@@ -107,13 +104,13 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
     public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes,
                                                   final Map<String, Set<String>> rejectedAttributes) {
         this();
-        this.requiredAttributes = ObjectUtils.defaultIfNull(requiredAttributes, new HashMap<>());
-        this.rejectedAttributes = ObjectUtils.defaultIfNull(rejectedAttributes, new HashMap<>());
+        this.requiredAttributes = ObjectUtils.getIfNull(requiredAttributes, new HashMap<>());
+        this.rejectedAttributes = ObjectUtils.getIfNull(rejectedAttributes, new HashMap<>());
     }
 
     public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes) {
         this();
-        this.requiredAttributes = ObjectUtils.defaultIfNull(requiredAttributes, new HashMap<>());
+        this.requiredAttributes = ObjectUtils.getIfNull(requiredAttributes, new HashMap<>());
     }
 
     /**
@@ -121,10 +118,10 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
      */
     @PostLoad
     public void postLoad() {
-        this.delegatedAuthenticationPolicy = ObjectUtils.defaultIfNull(this.delegatedAuthenticationPolicy,
+        this.delegatedAuthenticationPolicy = ObjectUtils.getIfNull(this.delegatedAuthenticationPolicy,
             new DefaultRegisteredServiceDelegatedAuthenticationPolicy());
-        this.requiredAttributes = ObjectUtils.defaultIfNull(requiredAttributes, new HashMap<>());
-        this.rejectedAttributes = ObjectUtils.defaultIfNull(rejectedAttributes, new HashMap<>());
+        this.requiredAttributes = ObjectUtils.getIfNull(requiredAttributes, new HashMap<>());
+        this.rejectedAttributes = ObjectUtils.getIfNull(rejectedAttributes, new HashMap<>());
     }
 
     @Override

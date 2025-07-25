@@ -24,7 +24,7 @@ import com.nimbusds.jwt.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpHeaders;
@@ -62,11 +62,11 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
 
     protected JWTClaimsSet parseAuthorizationHeader(final String authorizationHeader) throws Throwable {
         if (authorizationHeader.startsWith("Basic ")) {
-            val token = StringUtils.removeStart(authorizationHeader, "Basic ");
+            val token = Strings.CI.removeStart(authorizationHeader, "Basic ");
             return buildClaimSetFromAuthentication(token);
         }
         if (authorizationHeader.startsWith("Bearer ")) {
-            val token = StringUtils.removeStart(authorizationHeader, "Bearer ");
+            val token = Strings.CI.removeStart(authorizationHeader, "Bearer ");
             val claims = parseOidcIdToken(token)
                 .or(() -> parseJwtAccessToken(token))
                 .or(() -> getJwtClaimsSetFromAccessToken(token))

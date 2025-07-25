@@ -6,15 +6,13 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.ServicesManager;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
+import org.apache.commons.lang3.Strings;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,7 +68,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
             LOGGER.debug("[{}] was not found in the map.", username);
             throw new AccountNotFoundException(username + " not found in backing map.");
         }
-        if (!StringUtils.equals(credential.toPassword(), cachedPassword)) {
+        if (!Strings.CS.equals(credential.toPassword(), cachedPassword)) {
             throw new FailedLoginException();
         }
         val strategy = getPasswordPolicyHandlingStrategy();

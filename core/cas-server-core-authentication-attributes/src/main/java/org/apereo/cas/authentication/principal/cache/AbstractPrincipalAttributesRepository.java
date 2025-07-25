@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
@@ -20,7 +19,6 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -95,7 +93,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
     }
 
     protected PrincipalAttributesCoreProperties.MergingStrategyTypes determineMergingStrategy() {
-        return ObjectUtils.defaultIfNull(getMergingStrategy(), PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
+        return ObjectUtils.getIfNull(getMergingStrategy(), PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
     }
 
     @JsonIgnore

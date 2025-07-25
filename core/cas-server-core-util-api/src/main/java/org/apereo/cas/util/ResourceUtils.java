@@ -9,6 +9,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
@@ -32,7 +33,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.jar.JarFile;
-import static org.springframework.util.ResourceUtils.*;
+import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
+import static org.springframework.util.ResourceUtils.FILE_URL_PREFIX;
+import static org.springframework.util.ResourceUtils.extractArchiveURL;
+import static org.springframework.util.ResourceUtils.getFile;
+import static org.springframework.util.ResourceUtils.isFileURL;
+import static org.springframework.util.ResourceUtils.toURL;
 
 /**
  * Utility class to assist with resource operations.
@@ -73,7 +79,7 @@ public class ResourceUtils {
         if (location.toLowerCase(Locale.ENGLISH).startsWith(CLASSPATH_URL_PREFIX)) {
             return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
         }
-        return new FileSystemResource(StringUtils.remove(location, FILE_URL_PREFIX));
+        return new FileSystemResource(Strings.CI.remove(location, FILE_URL_PREFIX));
     }
 
     /**
@@ -280,7 +286,7 @@ public class ResourceUtils {
     }
 
     private static URL extractUrlFromResource(final Resource resource) throws IOException {
-        val nestedUrl = StringUtils.replace(resource.getURL().toExternalForm(), "nested:", "file:");
+        val nestedUrl = Strings.CI.replace(resource.getURL().toExternalForm(), "nested:", "file:");
         return extractArchiveURL(toURL(nestedUrl));
     }
 

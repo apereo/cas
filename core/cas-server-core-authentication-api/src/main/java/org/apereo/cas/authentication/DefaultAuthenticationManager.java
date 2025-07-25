@@ -369,7 +369,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
          *
          * @return true/false
          */
-        public boolean isSuccess() {
+        boolean isSuccess() {
             return failures.isEmpty();
         }
     }

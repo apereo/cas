@@ -139,7 +139,7 @@ public class SamlRegisteredServiceMetadataAdaptor {
         val ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
         if (ssoDescriptor != null) {
             LOGGER.debug("Located SP SSODescriptor in metadata for [{}]. Metadata is valid until [{}]", entityID,
-                ObjectUtils.defaultIfNull(ssoDescriptor.getValidUntil(), "forever"));
+                ObjectUtils.getIfNull(ssoDescriptor.getValidUntil(), "forever"));
             if (ssoDescriptor.getValidUntil() != null) {
                 val validUntil = DateTimeUtils.zonedDateTimeOf(ssoDescriptor.getValidUntil());
                 val expired = validUntil.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
