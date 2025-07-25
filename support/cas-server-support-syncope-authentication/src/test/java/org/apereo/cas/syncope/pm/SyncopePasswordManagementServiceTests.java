@@ -69,9 +69,10 @@ class SyncopePasswordManagementServiceTests {
     }
 
     @Test
-    void verifyFindSecurityQuestions() {
-        assertThrows(UnsupportedOperationException.class, () -> passwordChangeService.getSecurityQuestions(
-            PasswordManagementQuery.builder().username("mustChangePasswordUser").build()));
+    void verifyFindSecurityQuestions() throws Throwable {
+        val questions = passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("syncopecas").build());
+        assertEquals(1, questions.size());
+        assertEquals("What is your favorite city?", questions.keySet().stream().toList().getFirst());
     }
 
     @Test
