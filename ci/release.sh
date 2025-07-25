@@ -21,6 +21,7 @@ function printred() {
 
 function clean {
   ./gradlew clean --parallel --no-configuration-cache --no-daemon
+  [ $? -ne 0 ] && { printred "Gradle clean task failed"; exit 1; }
 }
 
 function snapshot() {
@@ -78,7 +79,6 @@ function publish {
     fi
 
     printgreen "Creating GitHub Release for ${releaseTag}"
-
     releaseFlags=""
     if [[ "${casVersion}" == *-RC* ]]; then
         releaseFlags="--prerelease"
@@ -120,7 +120,11 @@ function publish {
       --jq '.commits[].author.login // .commits[].commit.author.name' \
       | sort -u \
       | sed 's/.*/- @&/')
-
+    printgreen "Contributors: ${contributors}"
+    if [[ -z "${contributors}" ]]; then
+      contributors="- No contributors found."
+    fi
+    
     notes='
 # :star: Release Notes
 
@@ -139,7 +143,8 @@ ${contributors}
     '
 
     releaseNotes=$(eval "cat <<EOF $notes")
-
+    echo -e "\nRelease Notes:\n${releaseNotes}\n"
+    
     gh release create "${releaseTag}" --notes "${releaseNotes}" \
       --title "${releaseTag}" --draft --verify-tag --repo "apereo/cas" ${releaseFlags} \
       "./support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar#CAS Command-line Shell" 
@@ -151,6 +156,25 @@ ${contributors}
 
 function finished {
     printgreen "Done! The release is now automatically published. There is nothing more for you to do. Thank you!"
+}
+
+function init {
+  case "$(uname -s)" in
+      Darwin)
+        printgreen "Upgrading gh using Homebrew on macOS..."
+        brew update
+        [ $? -ne 0 ] && { printred "Updating Homebrew failed"; exit 1; }
+        brew upgrade gh
+        [ $? -ne 0 ] && { printred "Updating gh failed"; exit 1; }
+        ;;
+      Linux)
+        printgreen "Upgrading gh on Debian/Ubuntu-based Linux..."
+        sudo apt update
+        [ $? -ne 0 ] && { printred "Updating Linux packages failed"; exit 1; }
+        sudo apt install --only-upgrade gh -y
+        [ $? -ne 0 ] && { printred "Updating gh failed"; exit 1; }
+        ;;
+  esac
 }
 
 if [[ "${casVersion}" == v* ]]; then
@@ -179,6 +203,7 @@ fi
 case "$selection" in
     1)
         clean
+        init
         publish
         finished
         ;;
