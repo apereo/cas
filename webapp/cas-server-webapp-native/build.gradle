@@ -5,7 +5,7 @@ apply plugin: "org.springframework.boot"
 apply plugin: "org.graalvm.buildtools.native"
 
 ext {
-    publishable = false
+    publishable = true
     publishMetadata = true
     projectMetadata = [
         facets: ["web"],
