@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.ObjectUtils;
-
 import java.io.Serial;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -56,6 +55,6 @@ public class CasRegisteredService extends BaseWebBasedRegisteredService implemen
     @Override
     public void initialize() {
         super.initialize();
-        this.proxyPolicy = ObjectUtils.defaultIfNull(this.proxyPolicy, new RefuseRegisteredServiceProxyPolicy());
+        this.proxyPolicy = ObjectUtils.getIfNull(this.proxyPolicy, new RefuseRegisteredServiceProxyPolicy());
     }
 }

@@ -163,7 +163,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
             .forEach(cookie ->
                 Stream
                     .of("/", getCookiePath(),
-                        StringUtils.removeEndIgnoreCase(getCookiePath(), "/"),
+                        Strings.CI.removeEnd(getCookiePath(), "/"),
                         Strings.CI.appendIfMissing(getCookiePath(), "/"))
                     .distinct()
                     .filter(StringUtils::isNotBlank)
@@ -209,7 +209,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         if (cookie.isHttpOnly()) {
             builder.append(" HttpOnly;");
         }
-        val value = StringUtils.removeEndIgnoreCase(builder.toString(), ";");
+        val value = Strings.CI.removeEnd(builder.toString(), ";");
         LOGGER.trace("Adding cookie header as [{}]", value);
         val setCookieHeaders = response.getHeaders("Set-Cookie");
         response.setHeader("Set-Cookie", value);
@@ -222,7 +222,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     private String cleanCookiePath(final String givenPath) {
         return FunctionUtils.doIf(StringUtils.isBlank(cookieGenerationContext.getPath()),
             () -> {
-                val path = StringUtils.removeEndIgnoreCase(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
+                val path = Strings.CI.removeEnd(StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH), "/");
                 return StringUtils.defaultIfBlank(path, "/");
             },
             () -> StringUtils.defaultIfBlank(givenPath, DEFAULT_COOKIE_PATH)).get();

@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.webflow.execution.RequestContext;
@@ -72,7 +73,7 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
                 default -> UNKNOWN_USER;
             };
         }
-        if (StringUtils.equals(currentPrincipal, UNKNOWN_USER) && returnValue != null) {
+        if (Strings.CI.equals(currentPrincipal, UNKNOWN_USER) && returnValue != null) {
             currentPrincipal = switch (returnValue) {
                 case final AuthenticationAwareTicket ticket -> getPrincipalFromTicket(auditTarget, returnValue, exception, ticket);
                 case final AuditableContext auditableContext -> getPrincipalFromAuditContext(auditTarget, returnValue, exception, auditableContext);

@@ -84,6 +84,6 @@ public class WsFederationNavigationController extends AbstractController {
     protected Service determineService(final HttpServletRequest request) {
         request.setAttribute(ServiceFactory.COLLECT_SERVICE_ATTRIBUTES, false);
         val defaultService = webApplicationServiceFactory.createService(casLoginEndpoint);
-        return ObjectUtils.defaultIfNull(argumentExtractor.extractService(request), defaultService);
+        return ObjectUtils.getIfNull(argumentExtractor.extractService(request), defaultService);
     }
 }

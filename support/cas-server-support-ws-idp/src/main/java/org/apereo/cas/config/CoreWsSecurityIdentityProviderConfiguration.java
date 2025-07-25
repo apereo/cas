@@ -37,10 +37,9 @@ import org.apereo.cas.ws.idp.services.WsFederationServicesManagerRegisteredServi
 import org.apereo.cas.ws.idp.web.WSFederationRequestConfigurationContext;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestCallbackController;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestController;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -51,7 +50,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
-
 import java.util.HashSet;
 import java.util.List;
 
@@ -78,7 +76,7 @@ class CoreWsSecurityIdentityProviderConfiguration {
 
                 @Override
                 public List<String> getIgnoredEndpoints() {
-                    return List.of(StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_IDP, "/"), StringUtils.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_STS, "/"));
+                    return List.of(Strings.CI.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_IDP, "/"), Strings.CI.prependIfMissing(WSFederationConstants.BASE_ENDPOINT_STS, "/"));
                 }
             };
         }

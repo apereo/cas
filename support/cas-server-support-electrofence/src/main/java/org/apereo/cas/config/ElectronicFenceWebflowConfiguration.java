@@ -35,7 +35,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -228,7 +228,7 @@ class ElectronicFenceWebflowConfiguration {
             return new CasWebSecurityConfigurer<>() {
                 @Override
                 public List<String> getIgnoredEndpoints() {
-                    return List.of(StringUtils.prependIfMissing(CasWebflowConfigurer.FLOW_ID_RISK_VERIFICATION, "/"));
+                    return List.of(Strings.CI.prependIfMissing(CasWebflowConfigurer.FLOW_ID_RISK_VERIFICATION, "/"));
                 }
             };
         }

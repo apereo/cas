@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpHeaders;
@@ -78,8 +79,8 @@ public class OpenFGARegisteredServiceAccessStrategy extends BaseRegisteredServic
             if (StringUtils.isNotBlank(token)) {
                 headers.put(HttpHeaders.AUTHORIZATION, "Bearer " + SpringExpressionLanguageValueResolver.getInstance().resolve(this.token));
             }
-            val url = StringUtils.removeEnd(SpringExpressionLanguageValueResolver.getInstance().resolve(this.apiUrl), "/");
-            val store = StringUtils.removeEnd(SpringExpressionLanguageValueResolver.getInstance().resolve(this.storeId), "/");
+            val url = Strings.CI.removeEnd(SpringExpressionLanguageValueResolver.getInstance().resolve(this.apiUrl), "/");
+            val store = Strings.CI.removeEnd(SpringExpressionLanguageValueResolver.getInstance().resolve(this.storeId), "/");
             val fgaApiUrl = String.format("%s/stores/%s/check", url, store);
 
             val checkEntity = AuthorizationRequestEntity.builder()
@@ -122,7 +123,7 @@ public class OpenFGARegisteredServiceAccessStrategy extends BaseRegisteredServic
         private final String object;
 
         @JsonIgnore
-        public String toJson() {
+        String toJson() {
             return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(Map.of("tuple_key", this)));
         }
     }

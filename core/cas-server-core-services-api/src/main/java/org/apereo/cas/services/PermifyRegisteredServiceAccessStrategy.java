@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpHeaders;
@@ -78,8 +79,8 @@ public class PermifyRegisteredServiceAccessStrategy extends BaseRegisteredServic
         val expressionResolver = SpringExpressionLanguageValueResolver.getInstance();
         val permifyRequest = buildPermifyRequest(request);
         
-        val url = StringUtils.removeEnd(expressionResolver.resolve(this.apiUrl), "/");
-        val tenant = StringUtils.removeEnd(expressionResolver.resolve(this.tenantId), "/");
+        val url = Strings.CI.removeEnd(expressionResolver.resolve(this.apiUrl), "/");
+        val tenant = Strings.CI.removeEnd(expressionResolver.resolve(this.tenantId), "/");
         val permifyUrl = String.format("%s/v1/tenants/%s/permissions/check", url, tenant);
 
         val headers = new HashMap<String, String>();

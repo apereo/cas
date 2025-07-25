@@ -7,15 +7,14 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.hjson.JsonValue;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -71,7 +70,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
         if (decision.getOptions() == ConsentReminderOptions.ATTRIBUTE_NAME) {
             val consentAttributesHash = sha512ConsentAttributeNames(consentAttributes);
             val currentAttributesHash = sha512ConsentAttributeNames(attributes);
-            return !StringUtils.equals(consentAttributesHash, currentAttributesHash);
+            return !Strings.CI.equals(consentAttributesHash, currentAttributesHash);
         }
 
         if (decision.getOptions() == ConsentReminderOptions.ATTRIBUTE_VALUE) {
@@ -81,8 +80,8 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
             val consentAttributeValuesHash = sha512ConsentAttributeValues(consentAttributes);
             val currentAttributeValuesHash = sha512ConsentAttributeValues(attributes);
 
-            return !StringUtils.equals(consentAttributesHash, currentAttributesHash)
-                || !StringUtils.equals(consentAttributeValuesHash, currentAttributeValuesHash);
+            return !Strings.CI.equals(consentAttributesHash, currentAttributesHash)
+                || !Strings.CI.equals(consentAttributeValuesHash, currentAttributeValuesHash);
         }
         return true;
     }

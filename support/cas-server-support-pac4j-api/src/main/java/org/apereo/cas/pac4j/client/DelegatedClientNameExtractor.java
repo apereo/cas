@@ -3,6 +3,7 @@ package org.apereo.cas.pac4j.client;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.net.URIBuilder;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.util.Pac4jConstants;
@@ -52,7 +53,7 @@ public interface DelegatedClientNameExtractor {
         return context -> {
             var clientName = context.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
             var relayState = context.getParameter("RelayState");
-            if (StringUtils.isBlank(clientName) && StringUtils.isNotBlank(relayState) && StringUtils.startsWithIgnoreCase(relayState, "http")) {
+            if (StringUtils.isBlank(clientName) && StringUtils.isNotBlank(relayState) && Strings.CI.startsWith(relayState, "http")) {
                 clientName = extractClientNameFromRelayStateUrl(relayState);
             }
             return Optional.ofNullable(clientName);

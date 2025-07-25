@@ -48,7 +48,7 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.FactoryBean;
@@ -188,8 +188,8 @@ class OidcEndpointsConfiguration {
         private static String getOidcBaseEndpoint(final OidcIssuerService issuerService,
                                                   final CasConfigurationProperties casProperties) {
             val issuer = issuerService.determineIssuer(Optional.empty());
-            val endpoint = StringUtils.remove(issuer, casProperties.getServer().getPrefix());
-            return StringUtils.prependIfMissing(endpoint, "/");
+            val endpoint = Strings.CI.remove(issuer, casProperties.getServer().getPrefix());
+            return Strings.CI.prependIfMissing(endpoint, "/");
         }
 
         @Bean

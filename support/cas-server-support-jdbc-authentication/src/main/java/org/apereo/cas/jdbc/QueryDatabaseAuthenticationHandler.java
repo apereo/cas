@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -62,7 +63,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                 val dbPassword = (String) dbFields.get(properties.getFieldPassword());
 
                 val originalPasswordMatchFails = StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword);
-                val originalPasswordEquals = StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword);
+                val originalPasswordEquals = StringUtils.isBlank(originalPassword) && !Strings.CI.equals(password, dbPassword);
                 if (originalPasswordMatchFails || originalPasswordEquals) {
                     throw new FailedLoginException("Password does not match value on record.");
                 }

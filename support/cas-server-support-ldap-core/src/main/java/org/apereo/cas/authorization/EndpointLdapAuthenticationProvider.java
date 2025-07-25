@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.Credential;
 import org.ldaptive.ReturnAttributes;
@@ -84,7 +85,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
                     .getUser()
                     .getRoles()
                     .stream()
-                    .map(role -> StringUtils.prependIfMissing(role, ldapProperties.getLdapAuthz().getRolePrefix()))
+                    .map(role -> Strings.CI.prependIfMissing(role, ldapProperties.getLdapAuthz().getRolePrefix()))
                     .map(String::toUpperCase)
                     .collect(Collectors.toList());
 
@@ -146,7 +147,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
         LOGGER.info("Authorization will generate static roles based on [{}]", roles);
         return principal -> roles.stream()
             .map(String::toUpperCase)
-            .map(role -> StringUtils.prependIfMissing(role, "ROLE_"))
+            .map(role -> Strings.CI.prependIfMissing(role, "ROLE_"))
             .map(SimpleGrantedAuthority::new)
             .collect(Collectors.toList());
     }

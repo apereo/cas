@@ -89,7 +89,7 @@ public class CasWebSecurityConfigurerAdapter {
     private final WebProperties webProperties;
 
     private static List<String> prepareProtocolEndpoint(final String endpoint) {
-        val baseEndpoint = StringUtils.prependIfMissing(endpoint, "/");
+        val baseEndpoint = Strings.CI.prependIfMissing(endpoint, "/");
         return List.of(baseEndpoint.concat("**"), Strings.CI.appendIfMissing(endpoint, "/").concat("**"));
     }
 
@@ -229,7 +229,7 @@ public class CasWebSecurityConfigurerAdapter {
             Arrays.stream(webProperties.getResources().getStaticLocations())
                 .forEach(location -> {
                     if (location.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
-                        val file = new File(StringUtils.remove(location, ResourceUtils.FILE_URL_PREFIX));
+                        val file = new File(Strings.CI.remove(location, ResourceUtils.FILE_URL_PREFIX));
                         if (file.exists() && file.isDirectory()) {
                             val directories = Arrays.stream(file.listFiles(File::isDirectory)).toList();
                             LOGGER.info("Directories to authorize for static public resources are [{}]", directories);

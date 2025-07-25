@@ -4,7 +4,6 @@ import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -113,7 +112,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
          * @param value the value
          * @return the string
          */
-        public abstract String apply(String value);
+        abstract String apply(String value);
 
     }
 

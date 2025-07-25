@@ -302,11 +302,11 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
             }
         }
 
-        if (StringUtils.equalsAnyIgnoreCase(registeredService.getBackchannelTokenDeliveryMode(),
+        if (Strings.CI.equalsAny(registeredService.getBackchannelTokenDeliveryMode(),
             OidcBackchannelTokenDeliveryModes.PUSH.getMode(), OidcBackchannelTokenDeliveryModes.PING.getMode())) {
             Assert.hasText(registeredService.getBackchannelClientNotificationEndpoint(),
                 "Backchannel client notification endpoint must be specified");
-            Assert.isTrue(StringUtils.startsWith(registeredService.getBackchannelClientNotificationEndpoint(), "https://"),
+            Assert.isTrue(Strings.CI.startsWith(registeredService.getBackchannelClientNotificationEndpoint(), "https://"),
                 "Backchannel client notification endpoint MUST be an HTTPS url");
         }
         

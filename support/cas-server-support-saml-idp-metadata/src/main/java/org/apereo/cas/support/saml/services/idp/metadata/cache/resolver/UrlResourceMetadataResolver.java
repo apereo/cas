@@ -34,6 +34,7 @@ import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -164,7 +165,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
                 .stream()
                 .anyMatch(metadataLocation ->
                     StringUtils.isNotBlank(metadataLocation)
-                        && StringUtils.startsWith(metadataLocation, "http")
+                        && Strings.CI.startsWith(metadataLocation, "http")
                         && !SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation));
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);

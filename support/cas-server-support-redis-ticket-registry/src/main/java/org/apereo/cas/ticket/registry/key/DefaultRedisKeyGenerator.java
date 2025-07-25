@@ -4,7 +4,7 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * This is {@link DefaultRedisKeyGenerator}.
@@ -41,12 +41,12 @@ public class DefaultRedisKeyGenerator implements RedisKeyGenerator {
 
     @Override
     public String rawKey(final String type) {
-        var withoutNamespace = StringUtils.remove(type, this.namespace + ':');
+        var withoutNamespace = Strings.CI.remove(type, this.namespace + ':');
         return ticketCatalog.findAll()
             .stream()
             .filter(ticketDefinition -> withoutNamespace.startsWith(ticketDefinition.getPrefix() + ':'))
             .findFirst()
-            .map(ticketDefinition -> StringUtils.removeStart(withoutNamespace, ticketDefinition.getPrefix() + ':'))
+            .map(ticketDefinition -> Strings.CI.removeStart(withoutNamespace, ticketDefinition.getPrefix() + ':'))
             .orElse(withoutNamespace);
     }
 

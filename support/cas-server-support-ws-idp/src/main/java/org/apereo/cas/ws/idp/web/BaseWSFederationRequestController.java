@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.hc.core5.net.URIBuilder;
@@ -126,12 +127,12 @@ public abstract class BaseWSFederationRequestController extends AbstractControll
     protected WSFederationRegisteredService findAndValidateFederationRequestForRegisteredService(final Service targetService,
                                                                                                  final WSFederationRequest fedRequest) {
         val svc = getWsFederationRegisteredService(targetService);
-        if (StringUtils.isBlank(fedRequest.wtrealm()) || !StringUtils.equals(fedRequest.wtrealm(), svc.getRealm())) {
+        if (StringUtils.isBlank(fedRequest.wtrealm()) || !Strings.CI.equals(fedRequest.wtrealm(), svc.getRealm())) {
             LOGGER.warn("Realm [{}] is not authorized for matching service [{}]", fedRequest.wtrealm(), svc);
             throw UnauthorizedServiceException.denied("Rejected: %s".formatted(svc.getRealm()));
         }
         val idp = configContext.getCasProperties().getAuthn().getWsfedIdp().getIdp();
-        if (!StringUtils.equals(idp.getRealm(), svc.getRealm())) {
+        if (!Strings.CI.equals(idp.getRealm(), svc.getRealm())) {
             LOGGER.warn("Realm [{}] is not authorized for the identity provider realm [{}]", fedRequest.wtrealm(), idp.getRealm());
             throw UnauthorizedServiceException.denied("Rejected: %s".formatted(svc.getRealm()));
         }

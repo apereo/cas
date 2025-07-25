@@ -60,7 +60,7 @@ public class AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria i
 
     protected boolean verifyRequiredAttribute(final Map.Entry<String, Object> entry,
                                               final Map<String, List<Object>> attributes) {
-        val currentValues = ObjectUtils.defaultIfNull(attributes.get(entry.getKey()), List.of());
+        val currentValues = ObjectUtils.getIfNull(attributes.get(entry.getKey()), List.of());
         val requiredValues = CollectionUtils.toCollection(entry.getValue());
         val pattern = RegexUtils.concatenate(requiredValues, true);
         LOGGER.debug("Checking activation criteria [{}] against [{}] with pattern [{}] for attribute [{}]",

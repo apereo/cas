@@ -59,6 +59,7 @@ import static org.mockito.Mockito.*;
 
 @Tag("DuoSecurity")
 @ExtendWith(CasTestExtension.class)
+@SuppressWarnings("EffectivelyPrivate")
 class DuoSecurityUniversalPromptValidateLoginActionTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).minimal(false).build().toObjectMapper();
@@ -74,7 +75,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests {
             "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
         })
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    abstract static class BaseTests extends BaseCasWebflowMultifactorAuthenticationTests {
+    private abstract static class BaseTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
         @Qualifier("duoUniversalPromptSessionStore")
         protected BrowserWebStorageSessionStore duoUniversalPromptSessionStore;

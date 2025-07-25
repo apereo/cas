@@ -132,7 +132,7 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
     protected MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
         val redisKey = buildRedisKeyForRecord(record);
         val valueOps = redisTemplate.boundValueOps(redisKey);
-        val results = ObjectUtils.defaultIfNull(valueOps.get(), new ArrayList<MultifactorAuthenticationTrustRecord>());
+        val results = ObjectUtils.getIfNull(valueOps.get(), new ArrayList<MultifactorAuthenticationTrustRecord>());
         results.add(record);
         valueOps.set(results);
         valueOps.expireAt(record.getExpirationDate().toInstant());

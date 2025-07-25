@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
-
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class X509ExtractorUtils {
                 tempCommonName = token;
             }
         }
-        return StringUtils.remove(tempCommonName, COMMON_NAME_VAR + '=');
+        return Strings.CI.remove(tempCommonName, COMMON_NAME_VAR + '=');
     }
 
     /**

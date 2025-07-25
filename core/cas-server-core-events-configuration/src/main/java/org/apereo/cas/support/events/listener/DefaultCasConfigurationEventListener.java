@@ -3,7 +3,6 @@ package org.apereo.cas.support.events.listener;
 import org.apereo.cas.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -14,7 +13,6 @@ import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -56,7 +54,7 @@ public class DefaultCasConfigurationEventListener implements CasConfigurationEve
             LOGGER.info("Refreshed the following settings: [{}].", keys);
             rebind();
             LOGGER.info("CAS finished rebinding configuration with new settings [{}]",
-                ObjectUtils.defaultIfNull(keys, new ArrayList<>()));
+                ObjectUtils.getIfNull(keys, new ArrayList<>()));
         }
     }
 

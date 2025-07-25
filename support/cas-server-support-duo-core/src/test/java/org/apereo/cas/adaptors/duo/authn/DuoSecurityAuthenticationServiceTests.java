@@ -198,11 +198,11 @@ class DuoSecurityAuthenticationServiceTests {
 
     private static class MockDuoSecurityAuthenticationService extends BaseDuoSecurityAuthenticationService {
 
-        protected MockDuoSecurityAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties properties,
-                                                       final HttpClient httpClient,
-                                                       final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
-                                                       final Cache<String, DuoSecurityUserAccount> userAccountCache,
-                                                       final TenantExtractor tenantExtractor) {
+        MockDuoSecurityAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties properties,
+                                             final HttpClient httpClient,
+                                             final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
+                                             final Cache<String, DuoSecurityUserAccount> userAccountCache,
+                                             final TenantExtractor tenantExtractor) {
             super(properties, httpClient, tenantExtractor, multifactorAuthenticationPrincipalResolver, userAccountCache);
         }
 

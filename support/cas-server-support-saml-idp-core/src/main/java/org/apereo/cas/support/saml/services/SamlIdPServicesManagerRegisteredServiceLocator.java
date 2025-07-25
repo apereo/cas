@@ -128,7 +128,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends BaseServices
          *
          * @return the list
          */
-        public static List<SamlProtocolServiceAttribute> values() {
+        static List<SamlProtocolServiceAttribute> values() {
             return List.of(ENTITY_ID, PROVIDER_ID, SAML_REQUEST);
         }
 
@@ -140,7 +140,7 @@ public class SamlIdPServicesManagerRegisteredServiceLocator extends BaseServices
          * @return the entity id from
          */
         @SuppressWarnings("UnusedVariable")
-        public String getEntityIdFrom(final SamlRegisteredServiceCachingMetadataResolver resolver, final String attributeValue) {
+        String getEntityIdFrom(final SamlRegisteredServiceCachingMetadataResolver resolver, final String attributeValue) {
             return attributeValue;
         }
     }

@@ -171,12 +171,12 @@ public class CasThymeleafAutoConfiguration {
                     ? new ThemeClassLoaderTemplateResolver(themeResolver)
                     : new ThemeFileTemplateResolver(casProperties, themeResolver);
                 configureTemplateViewResolver(theme, thymeleafProperties);
-                theme.setPrefix(StringUtils.removeStart(viewPath, ResourceUtils.CLASSPATH_URL_PREFIX) + "themes/%s/");
+                theme.setPrefix(Strings.CI.removeStart(viewPath, ResourceUtils.CLASSPATH_URL_PREFIX) + "themes/%s/");
                 chain.addResolver(theme);
 
                 val template = prefix.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX) ? new ClassLoaderTemplateResolver() : new FileTemplateResolver();
                 configureTemplateViewResolver(template, thymeleafProperties);
-                template.setPrefix(StringUtils.removeStart(viewPath, ResourceUtils.CLASSPATH_URL_PREFIX));
+                template.setPrefix(Strings.CI.removeStart(viewPath, ResourceUtils.CLASSPATH_URL_PREFIX));
                 chain.addResolver(template);
             } catch (final Exception e) {
                 LoggingUtils.warn(LOGGER,

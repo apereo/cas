@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("DuoSecurity")
 @ExtendWith(CasTestExtension.class)
+@SuppressWarnings("EffectivelyPrivate")
 class DuoSecurityUniversalPromptPrepareLoginActionTests {
 
     @SpringBootTest(classes = BaseDuoSecurityTests.SharedTestConfiguration.class,

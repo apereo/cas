@@ -10,7 +10,6 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,6 @@ import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
-
 import java.io.Serializable;
 import java.security.Key;
 import java.util.Objects;
@@ -82,7 +80,7 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
                  * that can only verify signed objects, which would be useful when processing signed
                  * request objects that are sent by the RP, which has the only copy of the private key.
                  */
-                cipher.setSigningKey(ObjectUtils.defaultIfNull(jsonWebKey.getPrivateKey(), jsonWebKey.getKey()));
+                cipher.setSigningKey(ObjectUtils.getIfNull(jsonWebKey.getPrivateKey(), jsonWebKey.getKey()));
                 cipher.setSigningWebKey(jsonWebKey);
             }
         }).accept(cipher);

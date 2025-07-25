@@ -2,18 +2,15 @@ package org.apereo.cas.shell.commands.util;
 
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.shell.Input;
 import org.springframework.shell.InputProvider;
-
 import java.util.Arrays;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -44,7 +41,7 @@ class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests {
         val input = new Input() {
             @Override
             public String rawText() {
-                return StringUtils.replace(cmd, "_", " ");
+                return Strings.CI.replace(cmd, "_", " ");
             }
 
             @Override

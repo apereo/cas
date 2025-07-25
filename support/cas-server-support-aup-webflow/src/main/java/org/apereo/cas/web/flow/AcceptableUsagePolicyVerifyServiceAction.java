@@ -10,7 +10,6 @@ import org.apereo.cas.aup.AcceptableUsagePolicyStatus;
 import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
@@ -55,7 +54,7 @@ public class AcceptableUsagePolicyVerifyServiceAction extends BaseCasWebflowActi
 
             val aupEnabled = registeredService.getAcceptableUsagePolicy() != null
                              && registeredService.getAcceptableUsagePolicy().isEnabled();
-            val res = ObjectUtils.defaultIfNull(aupEnabled ? repository.verify(context) : null,
+            val res = ObjectUtils.getIfNull(aupEnabled ? repository.verify(context) : null,
                 AcceptableUsagePolicyStatus.skipped(authentication.getPrincipal()));
             if (res.isDenied()) {
                 return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT);

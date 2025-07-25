@@ -1,13 +1,13 @@
 package org.apereo.cas.util.crypto;
 
 import org.apereo.cas.util.gen.HexRandomStringGenerator;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.codec.digest.Crypt;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
@@ -70,7 +70,7 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
             LOGGER.debug("Encoded password uses algorithm [{}]", providedSalt.charAt(1));
         }
         var encodedRawPassword = Crypt.crypt(rawPassword.toString(), providedSalt);
-        var matched = StringUtils.equals(encodedRawPassword, encodedPassword);
+        var matched = Strings.CI.equals(encodedRawPassword, encodedPassword);
         val msg = String.format("Provided password does %smatch the encoded password",
             BooleanUtils.toString(matched, StringUtils.EMPTY, "not "));
         LOGGER.debug(msg);

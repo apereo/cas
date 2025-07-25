@@ -3,14 +3,12 @@ package org.apereo.cas.support.oauth.services;
 import org.apereo.cas.configuration.model.support.oauth.OAuthCoreProperties;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
-
 import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
@@ -128,7 +126,7 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
     @Override
     public void initialize() {
         super.initialize();
-        this.scopes = ObjectUtils.defaultIfNull(this.scopes, new HashSet<>());
-        this.audience = ObjectUtils.defaultIfNull(this.audience, new HashSet<>());
+        this.scopes = ObjectUtils.getIfNull(this.scopes, new HashSet<>());
+        this.audience = ObjectUtils.getIfNull(this.audience, new HashSet<>());
     }
 }

@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.Deprecation;
@@ -319,7 +320,7 @@ public class ConfigurationMetadataGenerator {
                 TypeDeclaration<?> primaryType = null;
                 if (typePath.contains("$")) {
                     val innerClass = StringUtils.substringBetween(typePath, "$", ".");
-                    typePath = StringUtils.remove(typePath, '$' + innerClass);
+                    typePath = Strings.CI.remove(typePath, '$' + innerClass);
                     val cu = StaticJavaParser.parse(new File(typePath));
                     for (val type : cu.getTypes()) {
                         for (val member : type.getMembers()) {

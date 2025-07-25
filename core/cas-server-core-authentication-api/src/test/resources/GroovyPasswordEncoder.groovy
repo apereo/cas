@@ -1,4 +1,3 @@
-import java.util.*
 import org.apache.commons.codec.binary.Hex
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.lang3.BooleanUtils
@@ -36,7 +35,7 @@ Boolean matches(final Object... args) {
     def casApplicationContext = args[3]
 
     encodedRawPassword = StringUtils.isNotBlank(rawPassword) ? encode(rawPassword.toString()) : null
-    matched = StringUtils.equals(encodedRawPassword, encodedPassword)
+    matched = Strings.CI.equals(encodedRawPassword, encodedPassword)
     logger.debug("Provided password does{}match the encoded password", BooleanUtils.toString(matched, StringUtils.EMPTY, " not "))
     return matched
 }

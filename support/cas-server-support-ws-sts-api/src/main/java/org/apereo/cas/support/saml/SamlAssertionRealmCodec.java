@@ -1,14 +1,12 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.util.RegexUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.cxf.sts.token.realm.SAMLRealmCodec;
 import org.apache.wss4j.common.saml.SamlAssertionWrapper;
-
 import java.util.Locale;
 
 /**
@@ -30,7 +28,7 @@ public class SamlAssertionRealmCodec implements SAMLRealmCodec {
         val certs = ki.getCerts();
         val parsed = parseCNValue(certs[0].getSubjectX500Principal().getName());
         LOGGER.debug("Realm parsed from certificate CN of the SAML assertion: [{}]", parsed);
-        if (StringUtils.equals(parsed, realm)) {
+        if (Strings.CI.equals(parsed, realm)) {
             return parsed;
         }
         LOGGER.warn("Retrieved realm from CN of SAML assertion certificate [{}] does not match the CAS realm [{}]. "

@@ -320,13 +320,10 @@ public class CasDocumentationApplication {
 
     @Getter
     private static final class ShellCommand {
-        public String name;
-
-        public String description;
-
-        public List parameters;
-
-        public String group;
+        String name;
+        String description;
+        List parameters;
+        String group;
     }
 
     private static String cleanDescription(final CasReferenceProperty property) {
@@ -524,7 +521,7 @@ public class CasDocumentationApplication {
                 var paths = Arrays.stream(get.path())
                     .map(path -> StringUtils.isBlank(path)
                         ? endpointId
-                        : endpointId + StringUtils.prependIfMissing(path, "/"))
+                        : endpointId + Strings.CI.prependIfMissing(path, "/"))
                     .findFirst()
                     .orElse(null);
                 map.put("method", RequestMethod.GET.name());
@@ -558,7 +555,7 @@ public class CasDocumentationApplication {
                 var map = new LinkedHashMap<>();
                 var paths = Arrays.stream(delete.path())
                     .map(path -> StringUtils.isBlank(path) ? endpointId : endpointId
-                        + StringUtils.prependIfMissing(path, "/"))
+                        + Strings.CI.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.DELETE.name());
                 map.put("path", Optional.ofNullable(paths).orElse(endpointId));
@@ -591,7 +588,7 @@ public class CasDocumentationApplication {
                 var paths = Arrays.stream(post.path())
                     .map(path -> StringUtils.isBlank(path)
                         ? endpointId
-                        : endpointId + StringUtils.prependIfMissing(path, "/"))
+                        : endpointId + Strings.CI.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.POST.name());
                 map.put("path", Optional.ofNullable(paths).orElse(endpointId));
@@ -624,7 +621,7 @@ public class CasDocumentationApplication {
                 var paths = Arrays.stream(patch.path())
                     .map(path -> StringUtils.isBlank(path)
                         ? endpointId
-                        : endpointId + StringUtils.prependIfMissing(path, "/"))
+                        : endpointId + Strings.CI.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.PATCH.name());
                 map.put("path", Optional.ofNullable(paths).orElse(endpointId));
@@ -657,7 +654,7 @@ public class CasDocumentationApplication {
                 var paths = Arrays.stream(put.path())
                     .map(path -> StringUtils.isBlank(path)
                         ? endpointId
-                        : endpointId + StringUtils.prependIfMissing(path, "/"))
+                        : endpointId + Strings.CI.prependIfMissing(path, "/"))
                     .findFirst().orElse(null);
                 map.put("method", RequestMethod.PUT.name());
                 map.put("path", Optional.ofNullable(paths).orElse(endpointId));
@@ -713,12 +710,12 @@ public class CasDocumentationApplication {
 
         var signature = method.toGenericString();
         signature = signature.substring(signature.lastIndexOf(method.getDeclaringClass().getSimpleName()));
-        signature = RegExUtils.removePattern(signature, "throws.+");
+        signature = RegExUtils.removePattern((CharSequence) signature, "throws.+");
         map.put("signature", signature);
         map.put("owner", clazz.getName());
 
         var returnType = method.getReturnType().getSimpleName();
-        if (!StringUtils.equalsAnyIgnoreCase(returnType, "void")) {
+        if (!Strings.CI.equalsAny(returnType, "void")) {
             map.put("returnType", returnType);
         }
         map.put("casEndpoint", isCasEndpoint(clazz));
@@ -914,7 +911,7 @@ public class CasDocumentationApplication {
             .sorted()
             .forEach(file -> {
                 var map = new LinkedHashMap<String, Object>();
-                var path = StringUtils.remove(file.getAbsolutePath(), root.getAbsolutePath());
+                var path = Strings.CI.remove(file.getAbsolutePath(), root.getAbsolutePath());
                 map.put("name", path);
                 properties.add(map);
             });

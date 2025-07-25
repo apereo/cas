@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.util.Assert;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -149,8 +149,8 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
         Assert.hasText(userAgent, "User-agent cannot be null or empty");
         Assert.hasText(clientIpAddress, "Client IP address cannot be null or empty");
 
-        if (!StringUtils.equals(currentClientInfo.getUserAgent(), userAgent)
-            || !StringUtils.equals(currentClientInfo.getClientIpAddress(), clientIpAddress)) {
+        if (!Strings.CI.equals(currentClientInfo.getUserAgent(), userAgent)
+            || !Strings.CI.equals(currentClientInfo.getClientIpAddress(), clientIpAddress)) {
             LOGGER.error("User-agent attached to the webflow [{}] does not match the current user-agent [{}] or "
                     + "client IP address attached to the webflow [{}] does not match the current client IP address [{}]. "
                     + "The flow execution key is invalid or likely tampered with.",

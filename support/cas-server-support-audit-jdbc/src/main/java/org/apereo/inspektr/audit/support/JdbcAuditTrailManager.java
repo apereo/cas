@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
 import org.apereo.cas.jpa.JpaEntityFactory;
@@ -133,7 +134,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
         + ") VALUES ("
         + Arrays.stream(AuditTableColumns.values())
         .map(AuditTableColumns::getColumnName)
-        .map(name -> StringUtils.prependIfMissing(name, ":"))
+        .map(name -> Strings.CI.prependIfMissing(name, ":"))
         .collect(Collectors.joining(","))
         + ')';
 
@@ -276,7 +277,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
                 if (jpaAuditTrailEntityFactory.isOracle()) {
                     sql += " FETCH FIRST %s ROWS ONLY".formatted(count);
                 } else if (jpaAuditTrailEntityFactory.isMsSqlServer()) {
-                    sql = StringUtils.replace(sql, "SELECT ", "SELECT TOP %s ".formatted(count));
+                    sql = Strings.CI.replace(sql, "SELECT ", "SELECT TOP %s ".formatted(count));
                 } else {
                     sql += " LIMIT %s".formatted(count);
                 }

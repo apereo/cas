@@ -4,7 +4,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,8 +12,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -133,7 +132,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
      * @return the string
      */
     protected String digestAndEncodeWithSalt(final MessageDigest md) {
-        val sanitizedSalt = StringUtils.replace(salt, "\n", " ");
+        val sanitizedSalt = Strings.CI.replace(salt, "\n", " ");
         val digested = md.digest(sanitizedSalt.getBytes(StandardCharsets.UTF_8));
         return EncodingUtils.encodeBase64(digested, false);
     }

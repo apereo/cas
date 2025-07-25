@@ -11,10 +11,9 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMe
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPHttpRedirectDeflateEncoder;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.val;
 import net.shibboleth.shared.net.URLBuilder;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -33,13 +32,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Map;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -92,7 +88,7 @@ class SSOSamlIdPPostProfileHandlerControllerTests extends BaseSamlIdPConfigurati
 
         val encoder = new SamlIdPHttpRedirectDeflateEncoder("https://cas.example.org/login", authnRequest);
         encoder.doEncode();
-        val queryStrings = StringUtils.remove(encoder.getRedirectUrl(), "https://cas.example.org/login?");
+        val queryStrings = Strings.CI.remove(encoder.getRedirectUrl(), "https://cas.example.org/login?");
         new URLBuilder(encoder.getRedirectUrl())
             .getQueryParams().forEach(param -> request.addParameter(param.getFirst(), param.getSecond()));
         request.setQueryString(queryStrings);

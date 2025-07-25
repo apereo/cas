@@ -8,7 +8,6 @@ import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
@@ -16,9 +15,9 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
-
 import java.io.InputStreamReader;
 import java.io.Serial;
 import java.io.Serializable;
@@ -57,7 +56,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
             LOGGER.error("Password cannot be blank");
             return false;
         }
-        if (!StringUtils.equals(bean.toPassword(), bean.toConfirmedPassword())) {
+        if (!Strings.CI.equals(bean.toPassword(), bean.toConfirmedPassword())) {
             LOGGER.error("Password does not match and cannot be confirmed");
             return false;
         }

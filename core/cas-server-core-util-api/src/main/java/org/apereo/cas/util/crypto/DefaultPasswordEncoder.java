@@ -1,7 +1,6 @@
 package org.apereo.cas.util.crypto;
 
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -9,8 +8,8 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.nio.charset.Charset;
 
 /**
@@ -57,7 +56,7 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
     @Override
     public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
         val encodedRawPassword = StringUtils.isNotBlank(rawPassword) ? encode(rawPassword.toString()) : null;
-        val matched = StringUtils.equals(encodedRawPassword, encodedPassword);
+        val matched = Strings.CS.equals(encodedRawPassword, encodedPassword);
         val msg = String.format("Provided password does%smatch the encoded password",
             BooleanUtils.toString(matched, StringUtils.EMPTY, " not "));
         LOGGER.debug(msg);

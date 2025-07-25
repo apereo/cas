@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.minidev.json.JSONObject;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +34,7 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
 
     @Override
     public Optional<OidcRegisteredService> resolveTrustChains(final String id) throws Exception {
-        if (StringUtils.startsWithIgnoreCase(id, "http")) {
+        if (Strings.CI.startsWith(id, "http")) {
             val entityId = new EntityID(id);
             for (val trustChainResolver : trustChainResolvers) {
                 val rpMetadataResult = fetchRelyingPartyMetadata(trustChainResolver, entityId);

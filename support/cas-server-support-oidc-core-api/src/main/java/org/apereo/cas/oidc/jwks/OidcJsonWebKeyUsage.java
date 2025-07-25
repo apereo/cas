@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.jwks;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.Use;
 
@@ -46,7 +47,7 @@ public enum OidcJsonWebKeyUsage {
      * @return true/false
      */
     public boolean is(final String use) {
-        return StringUtils.isNotBlank(use) && StringUtils.equals(use.trim(), getValue());
+        return StringUtils.isNotBlank(use) && Strings.CI.equals(use.trim(), getValue());
     }
 
     /**

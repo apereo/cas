@@ -84,17 +84,17 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
         if (StringUtils.isNotBlank(description)) {
             var matcher = PATTERN_DESCRIPTION_CODE.matcher(description);
             if (matcher.find()) {
-                description = RegExUtils.replacePattern(description, PATTERN_DESCRIPTION_CODE.pattern(), String.format(format, matcher.group(1)));
+                description = RegExUtils.replacePattern((CharSequence) description, PATTERN_DESCRIPTION_CODE.pattern(), String.format(format, matcher.group(1)));
             }
             matcher = PATTERN_DESCRIPTION_LINK.matcher(description);
             if (matcher.find()) {
                 val replacement = "See ".concat(String.format(format, matcher.group(1)));
-                description = RegExUtils.replacePattern(description, PATTERN_DESCRIPTION_LINK.pattern(), replacement);
+                description = RegExUtils.replacePattern((CharSequence) description, PATTERN_DESCRIPTION_LINK.pattern(), replacement);
             }
             matcher = PATTERN_DESCRIPTION_SEE.matcher(description);
             if (matcher.find()) {
                 val replacement = "See ".concat(String.format(format, matcher.group(1)));
-                description = RegExUtils.replacePattern(description, PATTERN_DESCRIPTION_SEE.pattern(), replacement);
+                description = RegExUtils.replacePattern((CharSequence) description, PATTERN_DESCRIPTION_SEE.pattern(), replacement);
             }
             return description;
         }

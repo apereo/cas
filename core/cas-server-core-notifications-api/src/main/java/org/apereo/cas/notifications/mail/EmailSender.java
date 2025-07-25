@@ -61,7 +61,7 @@ public interface EmailSender {
                 args.add(emailRequest.getPrincipal().getId());
             }
             return messageSource.getMessage(matcher.group(1), args.toArray(),
-                "Email Subject", ObjectUtils.defaultIfNull(emailRequest.getLocale(), Locale.getDefault()));
+                "Email Subject", ObjectUtils.getIfNull(emailRequest.getLocale(), Locale.getDefault()));
         }
         return SpringExpressionLanguageValueResolver.getInstance().resolve(subject);
     }

@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import java.util.Arrays;
 
 /**
@@ -35,8 +35,8 @@ final class PrincipalAttributeRepositoryFilter implements PersonAttributeDaoFilt
         LOGGER.trace("Active attribute repository identifiers [{}] to compare with [{}]",
             activeAttributeRepositoryIdentifiers, repository.getId());
         val result = Arrays.stream(repository.getId()).anyMatch(daoId -> daoId.equalsIgnoreCase(PersonAttributeDao.WILDCARD)
-            || StringUtils.equalsAnyIgnoreCase(daoId, repoIdsArray)
-            || StringUtils.equalsAnyIgnoreCase(PersonAttributeDao.WILDCARD, repoIdsArray));
+            || Strings.CI.equalsAny(daoId, repoIdsArray)
+            || Strings.CI.equalsAny(PersonAttributeDao.WILDCARD, repoIdsArray));
         LOGGER.debug("Selecting attribute repository [{}]", ArrayUtils.toString(repository.getId()));
         return result;
     }

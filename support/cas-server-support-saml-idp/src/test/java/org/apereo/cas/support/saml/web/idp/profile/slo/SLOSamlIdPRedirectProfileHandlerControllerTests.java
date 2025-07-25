@@ -4,10 +4,9 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import net.shibboleth.shared.net.URLBuilder;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -26,11 +25,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -108,7 +104,7 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
         encoder.doEncode();
 
         assertTrue(encoder.getRedirectUrl().contains("CasRelayState"));
-        val queryStrings = StringUtils.remove(encoder.getRedirectUrl(), "https://cas.example.org/logout?");
+        val queryStrings = Strings.CI.remove(encoder.getRedirectUrl(), "https://cas.example.org/logout?");
         new URLBuilder(encoder.getRedirectUrl())
             .getQueryParams().forEach(param -> request.addParameter(param.getFirst(), param.getSecond()));
         request.setQueryString(queryStrings);
@@ -136,7 +132,7 @@ class SLOSamlIdPRedirectProfileHandlerControllerTests extends BaseSamlIdPConfigu
 
         val encoder = new SamlIdPHttpRedirectDeflateEncoder("https://cas.example.org/logout", logoutRequest);
         encoder.doEncode();
-        val queryStrings = StringUtils.remove(encoder.getRedirectUrl(), "https://cas.example.org/logout?");
+        val queryStrings = Strings.CI.remove(encoder.getRedirectUrl(), "https://cas.example.org/logout?");
         new URLBuilder(encoder.getRedirectUrl())
             .getQueryParams().forEach(param -> request.addParameter(param.getFirst(), param.getSecond()));
         request.setQueryString(queryStrings);
