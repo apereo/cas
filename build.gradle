@@ -26,6 +26,7 @@ buildscript {
         classpath libs.gradle.plugin.errorprone
         classpath libs.gradle.plugin.sonarqube
         classpath libs.gradle.plugin.nexus
+        classpath libs.gradle.plugin.nmcp
     }
 }
 
@@ -81,25 +82,46 @@ def isArtifactSigningRequired = {
     publishReleases && !skipArtifactSigning
 }
 
-apply plugin: "io.github.gradle-nexus.publish-plugin"
-nexusPublishing {
-    packageGroup = "org.apereo"
-    repositories {
-        sonatype {
+if (publishReleases) {
+    apply plugin: "com.gradleup.nmcp.aggregation"
+    nmcpAggregation {
+        centralPortal {
             username = "${repositoryUsername}"
             password = "${repositoryPassword}"
-            nexusUrl.set(uri("${releaseRepositoryUrl}"))
-            snapshotRepositoryUrl.set(uri("${snapshotsRepositoryUrl}"))
-        }
-    }
+            publicationName = "Apereo CAS Release ${project.version}"
+            publishingType = "USER_MANAGED"
+            validationTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
 
-    clientTimeout = java.time.Duration.ofSeconds(120)
-    connectTimeout = java.time.Duration.ofSeconds(120)
-    transitionCheckOptions {
-        maxRetries.set(100)
-        delayBetween.set(java.time.Duration.ofSeconds(60))
+            if (publishingType == "AUTOMATIC") {
+                publishingTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
+            }
+        }
+        publishAllProjectsProbablyBreakingProjectIsolation()
     }
 }
+
+if (publishSnapshots) {
+    apply plugin: "io.github.gradle-nexus.publish-plugin"
+    nexusPublishing {
+        packageGroup = "org.apereo"
+        repositories {
+            sonatype {
+                username = "${repositoryUsername}"
+                password = "${repositoryPassword}"
+                nexusUrl.set(uri("${releaseRepositoryUrl}"))
+                snapshotRepositoryUrl.set(uri("${snapshotsRepositoryUrl}"))
+            }
+        }
+
+        clientTimeout = java.time.Duration.ofSeconds(600)
+        connectTimeout = java.time.Duration.ofSeconds(600)
+        transitionCheckOptions {
+            maxRetries.set(100)
+            delayBetween.set(java.time.Duration.ofSeconds(60))
+        }
+    }
+}
+
 
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply from: rootProject.file("gradle/dependencyUpdates.gradle")
@@ -569,13 +591,10 @@ tasks.register('generateProjectModulesMetadata') {
 }
 
 boolean projectShouldBePublished(Project project) {
-    def publishable = !["api", "core", "docs", "support", "webapp"].contains(project.name)
-            && !project.getPath().contains("cas-server-documentation")
-    if ("${releaseRepositoryUrl}".contains("github.com") && project.getPath().contains("cas-server-support-shell")) {
-        // shell is too big for github
-        publishable = false
-    }
+    def publishable = project.hasProperty("publishable") ? project.publishable : true
     project.ext.publishable = publishable
+    logger.info "Project ${project.name} is publishable: ${publishable}"
+    return publishable
 }
 
 boolean projectRequiresLombok(Project project) {

@@ -8,6 +8,7 @@ ext {
             aliases: ["shell"],
             selectable: false
     ]
+    publishable = false
 }
 
 apply from: rootProject.file("gradle/springboot.gradle")

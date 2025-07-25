@@ -263,6 +263,7 @@ gradleErrorProne = "4.1.0"
 gradleGraalVmNative = "0.10.6"
 gradleSonarqube = "6.0.1.5171"
 gradleNexusPublishing = "2.0.0"
+gradleNmcpPublishing = "1.0.2"
 gradleJib = "3.4.5"
 
 [libraries]
@@ -752,3 +753,4 @@ gradle-plugin-errorprone = { module = "net.ltgt.gradle:gradle-errorprone-plugin"
 gradle-plugin-sonarqube = { module = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin", version.ref = "gradleSonarqube" }
 gradle-plugin-nexus = { module = "io.github.gradle-nexus:publish-plugin", version.ref = "gradleNexusPublishing" }
 gradle-plugin-jib = { module = "com.google.cloud.tools.jib:com.google.cloud.tools.jib.gradle.plugin", version.ref = "gradleJib" }
+gradle-plugin-nmcp = { module = "com.gradleup.nmcp.aggregation:com.gradleup.nmcp.aggregation.gradle.plugin", version.ref = "gradleNmcpPublishing" }
