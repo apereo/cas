@@ -28,7 +28,8 @@ public class OidcDefaultCibaRequestFactory implements OidcCibaRequestFactory {
     /**
      * Default instance for the ticket id generator.
      */
-    protected final UniqueTicketIdGenerator idGenerator;
+    @Getter
+    protected final UniqueTicketIdGenerator ticketIdGenerator;
 
     @Getter
     protected final ExpirationPolicyBuilder<OidcCibaRequest> expirationPolicyBuilder;
@@ -42,7 +43,7 @@ public class OidcDefaultCibaRequestFactory implements OidcCibaRequestFactory {
 
     @Override
     public OidcCibaRequest create(final CibaRequestContext holder) throws Throwable {
-        val id = idGenerator.getNewTicketId(OidcCibaRequest.PREFIX);
+        val id = ticketIdGenerator.getNewTicketId(OidcCibaRequest.PREFIX);
         val expirationPolicy = holder.getRequestedExpiry() > 0
             ? new HardTimeoutExpirationPolicy(holder.getRequestedExpiry())
             : expirationPolicyBuilder.buildTicketExpirationPolicy();

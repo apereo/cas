@@ -32,7 +32,8 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultProxyTicketFactory implements ProxyTicketFactory<ProxyTicket> {
-    private final UniqueTicketIdGenerator defaultTicketIdGenerator = new HostNameBasedUniqueTicketIdGenerator();
+    @Getter
+    private final UniqueTicketIdGenerator ticketIdGenerator = new HostNameBasedUniqueTicketIdGenerator();
 
     @Getter
     private final ExpirationPolicyBuilder<ProxyTicket> expirationPolicyBuilder;
@@ -71,7 +72,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory<ProxyTicket
         LOGGER.debug("Looking up ticket id generator for [{}]", uniqueTicketIdGenKey);
         var generator = this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
         if (generator == null) {
-            generator = this.defaultTicketIdGenerator;
+            generator = this.ticketIdGenerator;
             LOGGER.debug("Ticket id generator not found for [{}]. Using the default generator...", uniqueTicketIdGenKey);
         }
 

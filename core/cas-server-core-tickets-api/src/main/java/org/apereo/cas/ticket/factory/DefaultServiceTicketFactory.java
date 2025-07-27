@@ -44,7 +44,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
     private final CipherExecutor<String, String> cipherExecutor;
 
-    private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator = new HostNameBasedUniqueTicketIdGenerator();
+    private final UniqueTicketIdGenerator ticketIdGenerator = new HostNameBasedUniqueTicketIdGenerator();
 
     private final ServicesManager servicesManager;
 
@@ -109,7 +109,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
             serviceTicketUniqueTicketIdGenerator = uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
         }
         if (serviceTicketUniqueTicketIdGenerator == null) {
-            serviceTicketUniqueTicketIdGenerator = defaultServiceTicketIdGenerator;
+            serviceTicketUniqueTicketIdGenerator = ticketIdGenerator;
             LOGGER.debug("Service ticket id generator not found for [{}]. Using the default generator.", uniqueTicketIdGenKey);
         }
 

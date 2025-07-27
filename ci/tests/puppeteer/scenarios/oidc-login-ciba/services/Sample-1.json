@@ -2,7 +2,7 @@
   "@class": "org.apereo.cas.services.OidcRegisteredService",
   "clientId": "clientpush",
   "clientSecret": "secret",
-  "serviceId": "https://localhost:9859/anything/clientpush",
+  "serviceId": "^https://localhost:9859/anything/clientpush",
   "name": "Sample",
   "description": "This application is registered with CAS for CIBA PUSH requests",
   "id": 1,

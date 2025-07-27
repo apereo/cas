@@ -1,0 +1,39 @@
+{
+  "dependencies": "session-ticket-registry,reports,jpa-ticket-registry,webauthn",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443,https://localhost:8444",
+    "--cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
+    "--cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",
+    "--cas.authn.mfa.web-authn.core.relying-party-id=cas.example.org",
+
+    "--cas.ticket.registry.jpa.ddl-auto=create",
+    "--cas.ticket.registry.jpa.user=root",
+    "--cas.ticket.registry.jpa.password=password",
+    "--cas.ticket.registry.jpa.driver-class=com.mysql.cj.jdbc.Driver",
+    "--cas.ticket.registry.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "--cas.ticket.registry.jpa.dialect=org.hibernate.dialect.MySQLDialect",
+
+    "--spring.datasource.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "--spring.datasource.username=root",
+    "--spring.datasource.password=password",
+    "--spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver",
+
+    "--spring.integration.jdbc.initialize-schema=always",
+    "--spring.sql.init.platform=mysql",
+    
+    "--cas.webflow.session.storage=true"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/mysql/run-mysql-server.sh,"
+}

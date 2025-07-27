@@ -1,6 +1,6 @@
 {
   "@class": "org.apereo.cas.services.CasRegisteredService",
-  "serviceId": "https://credtype.userpswd.example.com",
+  "serviceId": "^https://credtype.userpswd.example.com",
   "name": "Sample",
   "id": 2,
   "description": "Sample Service",

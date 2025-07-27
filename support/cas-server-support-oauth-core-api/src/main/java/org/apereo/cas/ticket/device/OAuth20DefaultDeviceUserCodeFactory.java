@@ -21,7 +21,8 @@ import org.apache.commons.lang3.Strings;
  */
 @RequiredArgsConstructor
 public class OAuth20DefaultDeviceUserCodeFactory implements OAuth20DeviceUserCodeFactory {
-    protected final UniqueTicketIdGenerator deviceTokenIdGenerator;
+    @Getter
+    protected final UniqueTicketIdGenerator ticketIdGenerator;
 
     @Getter
     protected final ExpirationPolicyBuilder<OAuth20DeviceToken> expirationPolicyBuilder;

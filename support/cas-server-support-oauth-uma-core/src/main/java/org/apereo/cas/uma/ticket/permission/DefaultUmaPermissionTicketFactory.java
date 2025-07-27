@@ -21,14 +21,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Getter
 public class DefaultUmaPermissionTicketFactory implements UmaPermissionTicketFactory {
-    protected final UniqueTicketIdGenerator idGenerator;
+    @Getter
+    protected final UniqueTicketIdGenerator ticketIdGenerator;
     protected final ExpirationPolicyBuilder expirationPolicyBuilder;
 
     @Override
     public UmaPermissionTicket create(final ResourceSet resourceSet, final Collection<String> scopes,
                                       final Map<String, Object> claims) throws Throwable {
-        val codeId = this.idGenerator.getNewTicketId(UmaPermissionTicket.PREFIX);
-        return new DefaultUmaPermissionTicket(codeId, resourceSet, this.expirationPolicyBuilder.buildTicketExpirationPolicy(), scopes, claims);
+        val codeId = ticketIdGenerator.getNewTicketId(UmaPermissionTicket.PREFIX);
+        return new DefaultUmaPermissionTicket(codeId, resourceSet, expirationPolicyBuilder.buildTicketExpirationPolicy(), scopes, claims);
     }
 
     @Override

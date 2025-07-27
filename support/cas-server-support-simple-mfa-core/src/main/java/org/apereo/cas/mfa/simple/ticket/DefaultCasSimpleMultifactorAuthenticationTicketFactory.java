@@ -23,6 +23,7 @@ public class DefaultCasSimpleMultifactorAuthenticationTicketFactory implements C
     @Getter
     private final ExpirationPolicyBuilder expirationPolicyBuilder;
 
+    @Getter
     private final UniqueTicketIdGenerator ticketIdGenerator;
 
     @Override

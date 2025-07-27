@@ -28,4 +28,14 @@ public interface UniqueTicketIdGenerator {
      * @throws Throwable the throwable
      */
     String getNewTicketId(String prefix) throws Throwable;
+
+    /**
+     * Simple ticket id generator.
+     *
+     * @return the unique ticket id generator
+     */
+    static UniqueTicketIdGenerator prefixedTicketIdGenerator() {
+        return prefix -> prefix;
+        
+    }
 }

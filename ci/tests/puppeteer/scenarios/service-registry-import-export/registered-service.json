@@ -1,6 +1,6 @@
 {
   "@class": "org.apereo.cas.services.CasRegisteredService",
-  "serviceId": "https://.+",
+  "serviceId": "^https://.+",
   "name": "Sample",
   "id": ${id},
   "description": "CAS",

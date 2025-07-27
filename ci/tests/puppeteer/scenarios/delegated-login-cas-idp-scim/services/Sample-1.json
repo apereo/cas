@@ -1,7 +1,7 @@
 {
   "@class": "org.apereo.cas.services.OidcRegisteredService",
   "clientId": "client",
-  "serviceId": "https://localhost:9859/post",
+  "serviceId": "^https://localhost:9859/post",
   "name": "Sample",
   "id": 1,
   "description": "Sample Service",

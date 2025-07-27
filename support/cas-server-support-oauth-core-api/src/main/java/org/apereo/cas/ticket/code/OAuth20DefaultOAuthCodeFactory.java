@@ -37,7 +37,7 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
     /**
      * Default instance for the ticket id generator.
      */
-    protected final UniqueTicketIdGenerator oAuthCodeIdGenerator;
+    protected final UniqueTicketIdGenerator ticketIdGenerator;
 
     @Getter
     protected final ExpirationPolicyBuilder<OAuth20Code> expirationPolicyBuilder;
@@ -67,7 +67,7 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
                               final OAuth20GrantTypes grantType) throws Throwable {
 
         val expirationPolicyToUse = determineExpirationPolicyForService(clientId);
-        val codeId = oAuthCodeIdGenerator.getNewTicketId(OAuth20Code.PREFIX);
+        val codeId = ticketIdGenerator.getNewTicketId(OAuth20Code.PREFIX);
 
         val codeIdToUse = FunctionUtils.doIf(cipherExecutor.isEnabled(), () -> {
             LOGGER.trace("Attempting to encode OAuth code [{}]", codeId);
