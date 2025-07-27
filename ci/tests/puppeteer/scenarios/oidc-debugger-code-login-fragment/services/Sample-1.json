@@ -1,7 +1,7 @@
 {
   "@class": "org.apereo.cas.services.OidcRegisteredService",
   "clientId": "client",
-  "serviceId": "https://oidcdebugger.com/debug",
+  "serviceId": "^https://oidcdebugger.com/debug",
   "name": "Sample",
   "id": 1,
   "description": "Sample Service",

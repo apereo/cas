@@ -34,7 +34,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFactory {
 
-    protected final UniqueTicketIdGenerator refreshTokenIdGenerator;
+    @Getter
+    protected final UniqueTicketIdGenerator ticketIdGenerator;
 
     protected final TicketRegistry ticketRegistry;
 
@@ -77,7 +78,7 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
             }
             FunctionUtils.throwIf(limitReached, () -> new IllegalArgumentException("Refresh token limit for %s is reached".formatted(service.getId())));
         }
-        val codeId = refreshTokenIdGenerator.getNewTicketId(OAuth20RefreshToken.PREFIX);
+        val codeId = ticketIdGenerator.getNewTicketId(OAuth20RefreshToken.PREFIX);
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
         val refreshToken = new OAuth20DefaultRefreshToken(codeId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket,

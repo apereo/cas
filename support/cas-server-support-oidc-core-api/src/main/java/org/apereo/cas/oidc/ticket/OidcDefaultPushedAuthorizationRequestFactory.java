@@ -27,7 +27,8 @@ public class OidcDefaultPushedAuthorizationRequestFactory implements OidcPushedA
     /**
      * Default instance for the ticket id generator.
      */
-    protected final UniqueTicketIdGenerator idGenerator;
+    @Getter
+    protected final UniqueTicketIdGenerator ticketIdGenerator;
 
     @Getter
     protected final ExpirationPolicyBuilder<OAuth20AccessToken> expirationPolicyBuilder;
@@ -40,7 +41,7 @@ public class OidcDefaultPushedAuthorizationRequestFactory implements OidcPushedA
     @Override
     public OidcPushedAuthorizationRequest create(final AccessTokenRequestContext holder) throws Throwable {
         val request = SerializationUtils.serialize(holder);
-        val id = idGenerator.getNewTicketId(OidcPushedAuthorizationRequest.PREFIX);
+        val id = ticketIdGenerator.getNewTicketId(OidcPushedAuthorizationRequest.PREFIX);
         val expirationPolicy = determineExpirationPolicyForService(holder.getRegisteredService());
         val par = new OidcDefaultPushedAuthorizationRequest(id, expirationPolicy,
             holder.getAuthentication(), holder.getService(), holder.getRegisteredService(),
