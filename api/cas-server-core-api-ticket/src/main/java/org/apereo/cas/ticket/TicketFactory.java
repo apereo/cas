@@ -41,4 +41,13 @@ public interface TicketFactory extends NamedObject {
      * @return the expiration policy builder
      */
     ExpirationPolicyBuilder getExpirationPolicyBuilder();
+
+    /**
+     * Gets ticket id generator.
+     *
+     * @return the ticket id generator
+     */
+    default UniqueTicketIdGenerator getTicketIdGenerator() {
+        return UniqueTicketIdGenerator.prefixedTicketIdGenerator();
+    }
 }

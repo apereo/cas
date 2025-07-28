@@ -47,13 +47,32 @@ The following items are new improvements and enhancements presented in this rele
 
 [Apache Syncope](../password_management/Password-Management-ApacheSyncope.html) support is now 
 able to handle password management operations. [Syncope Authentication](../authentication/Syncope-Authentication.html) 
-is also improved to detect user account statuses that may be suspended or require password changes.
+is also improved to detect user account statuses that may be suspended or require password changes. Furthermore,
+Apache Syncope is now able to supply configured security questions to CAS, and exposes the ability to validate
+the security answers provided by the user during password management operations.
 
 ### Password Management Principal Resolution
 
 Password management operations that require access to the user's email address, phone, etc
 will now attempt to resolve the user's attributes using the configured principal resolution strategy
 and defined attribute repositories before outsourcing that task to the password management interface.
+  
+### Session Management via Ticket Registry
+
+HTTP session replication may be required for clustered deployments that take advantage of specific CAS
+modules and features that store data into the container's HTTP session. As of this writing, one such example
+would be [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html).
+
+In addition to the usual direct options provided by [Spring Session](../webflow/Webflow-Customization-Sessions-ServerSide.html), CAS now 
+supports the ability to store HTTP sessions in the [Ticket Registry](../webflow/Webflow-Customization-Sessions-ServerSide-TicketRegistry.html).
+Doing so allows you to take advantage of the existing ticket registry storage backends and removes the need to configure
+sticky sessions in your load balancer or application server, etc.
+
+<div class="alert alert-info">:information_source: <strong>Pay Attention!</strong><p>
+Some CAS features and modules at the moment define and provide their own options and settings to
+replicate HTTP sessions in a clustered environment. Future CAS releases will likely remove such
+options and you will be asked to use the above session replication strategies instead, backed by Spring Session.
+</p></div>
 
 ### OpenRewrite Recipes
 
@@ -70,8 +89,10 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `519` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `523` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
 ## Other Stuff
+
+- A large number of deprecated APIs are now internally removed and reworked in the CAS codebase.

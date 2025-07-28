@@ -1,14 +1,13 @@
 package org.apereo.cas.util.serialization;
 
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.DecodableCipher;
 import org.apereo.cas.util.crypto.EncodableCipher;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jooq.lambda.Unchecked;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -28,6 +27,21 @@ import java.io.Serializable;
 @UtilityClass
 @SuppressWarnings("BanSerializableRead")
 public class SerializationUtils {
+
+    /**
+     * Serialize as base64 .
+     *
+     * @param object the object
+     * @return the string
+     */
+    public static String serializeBase64(final Serializable object) {
+        return FunctionUtils.doUnchecked(() -> {
+            try (val outBytes = new ByteArrayOutputStream()) {
+                serialize(object, outBytes);
+                return EncodingUtils.encodeBase64(outBytes.toByteArray());
+            }
+        });
+    }
 
     /**
      * Serialize an object.
@@ -90,8 +104,8 @@ public class SerializationUtils {
 
                 if (!clazz.isAssignableFrom(obj.getClass())) {
                     throw new ClassCastException("Result [" + obj
-                                                 + " is of type " + obj.getClass()
-                                                 + " when we were expecting " + clazz);
+                        + " is of type " + obj.getClass()
+                        + " when we were expecting " + clazz);
                 }
                 return (T) obj;
             }

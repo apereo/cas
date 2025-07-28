@@ -39,7 +39,8 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
     /**
      * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s created.
      */
-    protected final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
+    @Getter
+    protected final UniqueTicketIdGenerator ticketIdGenerator;
 
     @Getter
     protected final ExpirationPolicyBuilder<TicketGrantingTicket> expirationPolicyBuilder;
@@ -97,7 +98,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
     }
 
     protected String produceTicketIdentifier(final Authentication authentication) throws Throwable {
-        var tgtId = ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
+        var tgtId = ticketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
         if (cipherExecutor != null && cipherExecutor.isEnabled()) {
             LOGGER.trace("Attempting to encode ticket-granting ticket [{}]", tgtId);
             tgtId = cipherExecutor.encode(tgtId);

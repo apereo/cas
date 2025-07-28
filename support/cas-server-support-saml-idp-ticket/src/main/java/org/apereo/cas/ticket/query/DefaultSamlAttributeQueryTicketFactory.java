@@ -8,16 +8,14 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.opensaml.saml.common.SAMLObject;
-
 import java.util.Objects;
-
 
 /**
  * Factory to create OAuth access tokens.
@@ -31,22 +29,20 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
     @Getter
     protected final ExpirationPolicyBuilder expirationPolicyBuilder;
 
-    /**
-     * The Web application service factory.
-     */
     protected final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
-    /**
-     * The opensaml config bean.
-     */
     protected final OpenSamlConfigBean configBean;
 
+    @Getter
+    protected final UniqueTicketIdGenerator ticketIdGenerator = UniqueTicketIdGenerator.prefixedTicketIdGenerator();
+
     @Override
-    public SamlAttributeQueryTicket create(final String id, final SAMLObject samlObject,
+    public SamlAttributeQueryTicket create(final String id,
+                                           final SAMLObject samlObject,
                                            final String relyingParty,
                                            final TicketGrantingTicket ticketGrantingTicket) {
         return FunctionUtils.doUnchecked(() -> {
-            try (val w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
+            try (val transformSamlObject = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
                 val codeId = createTicketIdFor(id, relyingParty);
                 val service = webApplicationServiceFactory.createService(relyingParty);
                 service.getAttributes().put(TicketGrantingTicket.class.getSimpleName(), CollectionUtils.wrapList(ticketGrantingTicket.getId()));
@@ -54,7 +50,9 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
                 service.getAttributes().put("owner", CollectionUtils.wrapList(getTicketType().getName()));
                 return new SamlAttributeQueryTicketImpl(codeId, service,
                     expirationPolicyBuilder.buildTicketExpirationPolicy(),
-                    relyingParty, w.toString(), Objects.requireNonNull(ticketGrantingTicket).getAuthentication());
+                    relyingParty,
+                    transformSamlObject.toString(),
+                    Objects.requireNonNull(ticketGrantingTicket).getAuthentication());
             }
         });
     }

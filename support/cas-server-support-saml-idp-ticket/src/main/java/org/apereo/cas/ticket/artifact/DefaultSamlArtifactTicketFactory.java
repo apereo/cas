@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -40,6 +41,9 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
 
     protected final TicketTrackingPolicy descendantTicketsTrackingPolicy;
 
+    @Getter
+    protected final UniqueTicketIdGenerator ticketIdGenerator = UniqueTicketIdGenerator.prefixedTicketIdGenerator();
+    
     @Override
     public SamlArtifactTicket create(final String artifactId,
                                      final Authentication authentication,
@@ -49,7 +53,7 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
             try (val w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
                 val codeId = createTicketIdFor(artifactId);
 
-                val service = this.webApplicationServiceFactory.createService(relyingParty);
+                val service = webApplicationServiceFactory.createService(relyingParty);
                 val at = new SamlArtifactTicketImpl(codeId, service, authentication,
                     this.expirationPolicyBuilder.buildTicketExpirationPolicy(), ticketGrantingTicket, issuer, relyingParty, w.toString());
 

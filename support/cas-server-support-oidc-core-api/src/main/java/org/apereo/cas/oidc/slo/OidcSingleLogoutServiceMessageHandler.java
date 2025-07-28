@@ -53,8 +53,9 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
         final boolean asynchronous,
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
         final OidcIssuerService issuerService) {
-        super(httpClient, logoutMessageBuilder, servicesManager, singleLogoutServiceLogoutUrlBuilder,
-            asynchronous, authenticationRequestServiceSelectionStrategies);
+        super(httpClient, logoutMessageBuilder, servicesManager,
+            singleLogoutServiceLogoutUrlBuilder, asynchronous,
+            authenticationRequestServiceSelectionStrategies);
         this.issuerService = issuerService;
     }
 
@@ -64,7 +65,8 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
     }
 
     @Override
-    protected boolean supportsInternal(final WebApplicationService singleLogoutService, final RegisteredService registeredService,
+    protected boolean supportsInternal(final WebApplicationService singleLogoutService,
+                                       final RegisteredService registeredService,
                                        final SingleLogoutExecutionRequest context) {
         return registeredService instanceof OidcRegisteredService;
     }
@@ -85,7 +87,7 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
                         issuerService.determineIssuer(Optional.empty()));
                     newUrl = CommonHelper.addParameter(newUrl, OidcConstants.CLAIM_SESSION_ID,
                         DigestUtils.sha(context.getTicketGrantingTicket().getId()));
-                    newSloUrl = new SingleLogoutUrl(newUrl, logoutType);
+                    newSloUrl = new SingleLogoutUrl(newUrl, RegisteredServiceLogoutType.FRONT_CHANNEL);
                 }
                 return createLogoutRequest(ticketId, selectedService, registeredService, newSloUrl, context);
             })
@@ -94,8 +96,8 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
     }
 
     @Override
-    protected boolean sendMessageToEndpoint(final HttpMessage msg, final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
-
+    protected boolean sendMessageToEndpoint(final HttpMessage msg, final SingleLogoutRequestContext request,
+                                            final SingleLogoutMessage logoutMessage) {
         val payload = logoutMessage.getPayload();
         HttpResponse response = null;
         try {
@@ -107,7 +109,7 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && !Objects.requireNonNull(HttpStatus.resolve(response.getCode())).isError()) {
-                LOGGER.trace("Received OK logout response");
+                LOGGER.trace("Received logout response [{}]", response.getCode());
                 return true;
             }
         } finally {
