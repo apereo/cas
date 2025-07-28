@@ -28,7 +28,8 @@ import lombok.val;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFactory<ProxyGrantingTicket> {
-    protected final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
+    @Getter
+    protected final UniqueTicketIdGenerator ticketIdGenerator;
 
     @Getter
     protected final ExpirationPolicyBuilder<ProxyGrantingTicket> expirationPolicyBuilder;
@@ -83,7 +84,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     }
 
     protected String produceTicketIdentifier() throws Throwable {
-        val pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
+        val pgtId = this.ticketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
         if (cipherExecutor == null || !cipherExecutor.isEnabled()) {
             return pgtId;
         }

@@ -3,7 +3,7 @@ package org.apereo.cas.ticket.artifact;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.opensaml.saml.common.SAMLObject;
 
 /**
@@ -37,7 +37,7 @@ public interface SamlArtifactTicketFactory extends TicketFactory {
      * @param artifactId the artifact id
      * @return the string
      */
-    default String createTicketIdFor(final String artifactId) {
-        return SamlArtifactTicket.PREFIX + '-' + artifactId;
+    default String createTicketIdFor(final String artifactId) throws Throwable {
+        return getTicketIdGenerator().getNewTicketId(SamlArtifactTicket.PREFIX + UniqueTicketIdGenerator.SEPARATOR + artifactId);
     }
 }

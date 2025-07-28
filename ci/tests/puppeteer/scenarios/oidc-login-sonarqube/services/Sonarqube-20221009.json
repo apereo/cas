@@ -3,7 +3,7 @@
   "clientId": "sonarqube",
   "clientSecret": "S0n@rq#b3S3cr3t",
   "bypassApprovalPrompt": true,
-  "serviceId": "https://host.k3d.internal/.*",
+  "serviceId": "^https://host.k3d.internal/.*",
   "name": "Sonarqube",
   "id": 20221009,
   "description": "Sonarqube Service",

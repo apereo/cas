@@ -2,9 +2,8 @@ package org.apereo.cas.ticket.query;
 
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.opensaml.saml.common.SAMLObject;
-
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -39,7 +38,8 @@ public interface SamlAttributeQueryTicketFactory extends TicketFactory {
      * @param relyingParty the relying party
      * @return the string
      */
-    default String createTicketIdFor(final String id, final String relyingParty) {
-        return SamlAttributeQueryTicket.PREFIX + '-' + id + '-' + relyingParty;
+    default String createTicketIdFor(final String id, final String relyingParty) throws Throwable {
+        return getTicketIdGenerator().getNewTicketId(SamlAttributeQueryTicket.PREFIX
+            + UniqueTicketIdGenerator.SEPARATOR + id + UniqueTicketIdGenerator.SEPARATOR + relyingParty);
     }
 }

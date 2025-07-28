@@ -96,7 +96,7 @@ public class CasX509AuthenticationAutoConfiguration {
         resolver.setX509AttributeExtractor(x509AttributeExtractor);
         if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
             if (radix == HEX) {
-                resolver.setRadix(radix);
+                resolver.setRadix(HEX);
                 resolver.setZeroPadding(serialNoProperties.isPrincipalHexSNZeroPadding());
                 return resolver;
             }
