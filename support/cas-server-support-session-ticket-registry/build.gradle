@@ -38,7 +38,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-logout")
-    testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-util")
