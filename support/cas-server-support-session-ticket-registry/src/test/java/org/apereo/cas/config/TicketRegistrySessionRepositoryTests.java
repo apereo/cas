@@ -1,10 +1,13 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import lombok.val;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -52,6 +55,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @SpringBootTestAutoConfigurations
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ExtendWith(CasTestExtension.class)
+@Tag("Web")
 class TicketRegistrySessionRepositoryTests {
 
     @Autowired
@@ -88,7 +93,7 @@ class TicketRegistrySessionRepositoryTests {
         mapSession.setId(UUID.randomUUID().toString());
         sessionRepository.save(mapSession);
     }
-    
+
     @TestConfiguration(proxyBeanMethods = false)
     static class TicketRegistrySessionRepositoryTestConfiguration {
         @Bean
