@@ -4,7 +4,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -39,10 +38,9 @@ public class OracleSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
     private static final long serialVersionUID = 7087889980353544793L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @SuppressWarnings("UnusedVariable")
-    private long id = -1;
+    private long id;
 
     @Override
     public void setId(final long id) {

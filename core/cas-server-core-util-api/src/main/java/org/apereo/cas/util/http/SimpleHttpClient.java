@@ -65,7 +65,7 @@ public record SimpleHttpClient(List<Integer> acceptableCodes, CloseableHttpClien
 
     @Override
     public HttpMessage sendMessageToEndPoint(final URL url) {
-        try (val response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
+        try (val response = wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
             val responseCode = response.getCode();
 
             for (val acceptableCode : this.acceptableCodes) {
@@ -107,7 +107,7 @@ public record SimpleHttpClient(List<Integer> acceptableCodes, CloseableHttpClien
 
     @Override
     public boolean isValidEndPoint(final URL url) {
-        try (val response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
+        try (val response = wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
             val responseCode = response.getCode();
             val idx = Collections.binarySearch(this.acceptableCodes, responseCode);
             if (idx >= 0) {

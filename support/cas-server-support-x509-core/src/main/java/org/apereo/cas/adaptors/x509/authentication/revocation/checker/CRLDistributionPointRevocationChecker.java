@@ -7,7 +7,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -17,10 +16,8 @@ import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.cryptacular.x509.ExtensionReader;
 import org.springframework.core.io.ByteArrayResource;
-
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509CRL;
@@ -119,12 +116,10 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      */
     private static void addURL(final List<URI> list, final String uriString) {
         try {
-            try {
-                val url = new URL(URLDecoder.decode(uriString, StandardCharsets.UTF_8));
-                list.add(new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null));
-            } catch (final MalformedURLException e) {
-                list.add(new URI(uriString));
-            }
+            val url = URI.create(URLDecoder.decode(uriString, StandardCharsets.UTF_8)).toURL();
+            list.add(new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null));
+        } catch (final MalformedURLException e) {
+            list.add(URI.create(uriString));
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
         }
