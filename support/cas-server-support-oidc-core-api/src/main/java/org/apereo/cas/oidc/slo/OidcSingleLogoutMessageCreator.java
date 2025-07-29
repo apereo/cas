@@ -27,7 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OidcSingleLogoutMessageCreator implements SingleLogoutMessageCreator {
 
-    private final ObjectProvider<OidcConfigurationContext> configurationProvider;
+    protected final ObjectProvider<OidcConfigurationContext> configurationProvider;
 
     @Override
     public SingleLogoutMessage create(final SingleLogoutRequestContext request) throws Throwable {

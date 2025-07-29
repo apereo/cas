@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
-import java.net.URL;
+import java.net.URI;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,9 +47,9 @@ class BlackDotIPAddressIntelligenceServiceTests {
         @Autowired
         protected ConfigurableApplicationContext applicationContext;
 
-        protected int resolvePort() throws Exception {
+        protected int resolvePort() {
             val url = casProperties.getAuthn().getAdaptive().getIpIntel().getBlackDot().getUrl();
-            return new URL(SpringExpressionLanguageValueResolver.getInstance().resolve(url)).getPort();
+            return URI.create(SpringExpressionLanguageValueResolver.getInstance().resolve(url)).getPort();
         }
     }
 
