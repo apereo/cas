@@ -10,17 +10,14 @@ import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DigestUtils;
-
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -37,16 +34,17 @@ class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
     @Qualifier("oidcSingleLogoutMessageCreator")
     private SingleLogoutMessageCreator oidcSingleLogoutMessageCreator;
 
-    @Test
-    void verifyBackChannelLogout() throws Throwable {
+    @ParameterizedTest
+    @EnumSource(RegisteredServiceLogoutType.class)
+    void verifyBackChannelLogout(final RegisteredServiceLogoutType logoutType) throws Throwable {
         val service = getOidcRegisteredService(true, false);
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser");
-        var authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TGT_ID);
         when(tgt.getAuthentication()).thenReturn(authentication);
         val logoutRequest = DefaultSingleLogoutRequestContext.builder()
-            .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
+            .logoutType(logoutType)
             .registeredService(service)
             .executionRequest(SingleLogoutExecutionRequest.builder().ticketGrantingTicket(tgt).build())
             .build();
@@ -65,15 +63,5 @@ class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
         val events = (Map<String, Object>) claims.getClaim("events");
         assertNotNull(events.get("http://schemas.openid.net/event/backchannel-logout"));
         assertEquals(DigestUtils.sha(DigestUtils.sha512(TGT_ID)), claims.getClaim(OidcConstants.CLAIM_SESSION_ID));
-    }
-
-    @Test
-    void verifyFrontChannelLogout() throws Throwable {
-        val logoutRequest = DefaultSingleLogoutRequestContext.builder()
-            .logoutType(RegisteredServiceLogoutType.FRONT_CHANNEL)
-            .build();
-        val message = oidcSingleLogoutMessageCreator.create(logoutRequest);
-        assertEquals(StringUtils.EMPTY, message.getPayload());
-        assertNull(message.getMessage());
     }
 }

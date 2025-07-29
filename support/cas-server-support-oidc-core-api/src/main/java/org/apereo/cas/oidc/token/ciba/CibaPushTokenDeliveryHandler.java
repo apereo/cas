@@ -81,7 +81,7 @@ public class CibaPushTokenDeliveryHandler implements CibaTokenDeliveryHandler {
                         .build();
                     LOGGER.debug("Sending a POST request to [{}] with payload [{}]", exec.getUrl(), exec.getEntity());
                     response = HttpUtils.execute(exec);
-                    if (!HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
+                    if (response == null || !HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
                         LOGGER.error("Unable to deliver tokens to client application [{}]", registeredService.getName());
                         configurationContext.getTicketRegistry().deleteTicket(cibaRequest);
                     }

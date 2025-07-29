@@ -70,7 +70,7 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
                 .maximumRetryAttempts(1)
                 .build();
             response = HttpUtils.execute(exec);
-            if (response.getCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
+            if (response == null || response.getCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
                 LOGGER.error("Exceeded the number of allowed queries");
                 return bannedResponse;
             }
