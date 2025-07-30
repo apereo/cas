@@ -8,7 +8,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.web.util.WebUtils;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
