@@ -48,7 +48,7 @@ class BlackDotIPAddressIntelligenceServiceTests {
         protected ConfigurableApplicationContext applicationContext;
 
         protected int resolvePort() {
-            val url = casProperties.getAuthn().getAdaptive().getIpIntel().getBlackDot().getUrl();
+            val url = casProperties.getAuthn().getAdaptive().getIpIntel().getBlackDot().getUrl().formatted("1.2.3.4");
             return URI.create(SpringExpressionLanguageValueResolver.getInstance().resolve(url)).getPort();
         }
     }

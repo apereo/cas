@@ -47,7 +47,8 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
         HttpResponse response = null;
         try {
             val properties = adaptiveAuthenticationProperties.getIpIntel().getBlackDot();
-            val builder = new StringBuilder(String.format(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), clientIpAddress));
+            val resolvedUrl = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl());
+            val builder = new StringBuilder(String.format(resolvedUrl, clientIpAddress));
             builder.append("&format=json");
 
             if (StringUtils.isNotBlank(properties.getEmailAddress())) {

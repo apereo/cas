@@ -181,7 +181,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Stream<Ticket> stream(final TicketRegistryStreamCriteria criteria) {
+    public Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
         return ticketCatalog
             .findAll()
             .stream()

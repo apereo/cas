@@ -10,9 +10,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * This is {@link DefaultTicketRegistryCleaner}.
@@ -67,8 +70,14 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     }
 
     protected int cleanInternal() {
-        try (val expiredTickets = ticketRegistry.stream().filter(Objects::nonNull).filter(Ticket::isExpired)) {
-            val ticketsDeleted = expiredTickets.mapToInt(this::cleanTicket).sum();
+        try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            val ticketsDeleted = ticketRegistry.stream()
+                .unordered()
+                .filter(Objects::nonNull)
+                .filter(Ticket::isExpired)
+                .map(ticket -> executor.submit(() -> cleanTicket(ticket)))
+                .mapToInt(Unchecked.toIntFunction(Future::get))
+                .sum();
             LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
             return ticketsDeleted;
         }

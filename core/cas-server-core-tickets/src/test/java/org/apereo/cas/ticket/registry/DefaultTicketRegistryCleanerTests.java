@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -46,6 +46,22 @@ class DefaultTicketRegistryCleanerTests {
     }
 
     @Test
+    void verifyLargeBatch() throws Throwable {
+        val applicationContext = mock(ConfigurableApplicationContext.class);
+        val ticketRegistry = newTicketRegistry();
+        for (var i = 0; i < 10_000; i++) {
+            val tgt = new MockTicketGrantingTicket(i + "-" + UUID.randomUUID());
+            tgt.setExpirationPolicy(new HardTimeoutExpirationPolicy(1));
+            ticketRegistry.addTicket(tgt);
+            tgt.markTicketExpired();
+        }
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry);
+        val cleaned = cleaner.clean();
+        assertEquals(10_000, cleaned);
+        assertEquals(0, ticketRegistry.sessionCount());
+    }
+
+    @Test
     void verifyCleanFail() {
         val applicationContext = mock(ConfigurableApplicationContext.class);
         val ticketRegistry = mock(TicketRegistry.class);
@@ -68,8 +84,10 @@ class DefaultTicketRegistryCleanerTests {
     }
 
     private static TicketRegistry newTicketRegistry() {
-        return new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog(),
-                mock(ConfigurableApplicationContext.class));
+        return new DefaultTicketRegistry(
+            mock(TicketSerializationManager.class),
+            new DefaultTicketCatalog(),
+            mock(ConfigurableApplicationContext.class));
     }
 
 }
