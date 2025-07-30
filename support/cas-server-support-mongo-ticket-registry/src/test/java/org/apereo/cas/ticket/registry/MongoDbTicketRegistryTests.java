@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
@@ -63,10 +62,7 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("mongoDbTicketRegistryTemplate")
     private MongoOperations mongoDbTicketRegistryTemplate;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
+    
     @BeforeEach
     void before() {
         newTicketRegistry.deleteAll();

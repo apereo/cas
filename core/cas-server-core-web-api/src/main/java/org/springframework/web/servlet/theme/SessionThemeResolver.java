@@ -2,7 +2,6 @@ package org.springframework.web.servlet.theme;
 
 import org.springframework.web.util.WebUtils;
 import lombok.val;
-import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

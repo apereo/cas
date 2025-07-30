@@ -34,7 +34,6 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 import software.amazon.awssdk.core.SdkSystemSetting;
 import java.util.HashMap;
@@ -74,9 +73,6 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
         System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");
     }
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
