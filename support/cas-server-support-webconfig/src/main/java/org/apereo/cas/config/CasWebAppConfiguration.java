@@ -62,18 +62,15 @@ class CasWebAppConfiguration {
             val localeProps = casProperties.getLocale();
             val localeCookie = localeProps.getCookie();
 
-            val resolver = new CookieLocaleResolver() {
-                @Nonnull
-                @Override
-                protected Locale determineDefaultLocale(final HttpServletRequest request) {
-                    val locale = request.getLocale();
-                    if (StringUtils.isBlank(localeProps.getDefaultValue())
-                        || !locale.getLanguage().equals(localeProps.getDefaultValue())) {
-                        return locale;
-                    }
-                    return Locale.forLanguageTag(localeProps.getDefaultValue());
+            val resolver = new CookieLocaleResolver();
+            resolver.setDefaultLocaleFunction(request -> {
+                val locale = request.getLocale();
+                if (StringUtils.isBlank(localeProps.getDefaultValue())
+                    || !locale.getLanguage().equals(localeProps.getDefaultValue())) {
+                    return locale;
                 }
-            };
+                return Locale.forLanguageTag(localeProps.getDefaultValue());
+            });
             resolver.setCookieDomain(localeCookie.getDomain());
             resolver.setCookiePath(StringUtils.defaultIfBlank(localeCookie.getPath(), CookieGenerator.DEFAULT_COOKIE_PATH));
             resolver.setCookieHttpOnly(localeCookie.isHttpOnly());
@@ -87,11 +84,13 @@ class CasWebAppConfiguration {
 
         @Bean
         public WebMvcConfigurer casWebAppWebMvcConfigurer(
-            @Qualifier("localeChangeInterceptor") final ObjectProvider<HandlerInterceptor> localeChangeInterceptor) {
+            @Qualifier("localeChangeInterceptor")
+            final ObjectProvider<HandlerInterceptor> localeChangeInterceptor) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(
-                    @Nonnull final InterceptorRegistry registry) {
+                    @Nonnull
+                    final InterceptorRegistry registry) {
                     registry.addInterceptor(new RefreshableHandlerInterceptor(localeChangeInterceptor)).addPathPatterns("/**");
                 }
             };
@@ -122,8 +121,10 @@ class CasWebAppConfiguration {
         private static final class RootController extends ParameterizableViewController {
             @Override
             protected ModelAndView handleRequestInternal(
-                @Nonnull final HttpServletRequest request,
-                @Nonnull final HttpServletResponse response) {
+                @Nonnull
+                final HttpServletRequest request,
+                @Nonnull
+                final HttpServletResponse response) {
                 val queryString = request.getQueryString();
                 val url = request.getContextPath() + CasProtocolConstants.ENDPOINT_LOGIN
                     + Optional.ofNullable(queryString).map(value -> '?' + value).orElse(StringUtils.EMPTY);

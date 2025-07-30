@@ -5,11 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
-
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -21,7 +18,7 @@ import java.util.Set;
  */
 @Slf4j
 public class ChainingThemeResolver extends AbstractThemeResolver {
-    
+
     private final Set<ThemeResolver> chain = new LinkedHashSet<>();
 
     /**
@@ -39,7 +36,6 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
     @Nonnull
     @Override
     public String resolveThemeName(
-        @Nonnull
         final HttpServletRequest httpServletRequest) {
         for (val themeResolver : chain) {
             LOGGER.trace("Attempting to resolve theme via [{}]", themeResolver.getClass().getSimpleName());
@@ -51,13 +47,5 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
         }
         LOGGER.trace("No specific theme could be found. Using default theme [{}]", getDefaultThemeName());
         return getDefaultThemeName();
-    }
-
-    @Override
-    public void setThemeName(
-        @Nonnull
-        final HttpServletRequest httpServletRequest,
-        final HttpServletResponse httpServletResponse,
-        final String s) {
     }
 }

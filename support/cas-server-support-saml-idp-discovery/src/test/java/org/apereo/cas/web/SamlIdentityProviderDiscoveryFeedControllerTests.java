@@ -86,9 +86,10 @@ class SamlIdentityProviderDiscoveryFeedControllerTests {
                 .accept(MediaType.APPLICATION_JSON)
                 .queryParam("entityID", "https://cas.example.org/idp")
             )
-            .andExpect(status().isMovedTemporarily())
+            .andExpect(status().isFound())
             .andReturn()
             .getModelAndView();
+        assertNotNull(mv);
         assertNotNull(mv.getView());
 
         val accessStrategy = new DefaultRegisteredServiceAccessStrategy();

@@ -56,7 +56,7 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
             headers.put("theme", themeName);
         }
         val queryParams = UriComponentsBuilder
-            .fromHttpUrl(HttpRequestUtils.getFullRequestUrl(request))
+            .fromUriString(HttpRequestUtils.getFullRequestUrl(request))
             .build()
             .getQueryParams();
         

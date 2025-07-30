@@ -6,18 +6,15 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.HashSet;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -49,9 +46,9 @@ class RejectUsersAuthenticationHandlerTests {
     @Test
     void verifyDoesntSupportBadUserCredentials() {
         try {
-            assertFalse(authenticationHandler
-                .supports(new HttpBasedServiceCredential(new URL(
-                    "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService())));
+            assertFalse(authenticationHandler.supports(new HttpBasedServiceCredential(
+                URI.create("http://www.rutgers.edu").toURL(),
+                CoreAuthenticationTestUtils.getRegisteredService())));
         } catch (final MalformedURLException e) {
             throw new AssertionError("Could not resolve URL.");
         }

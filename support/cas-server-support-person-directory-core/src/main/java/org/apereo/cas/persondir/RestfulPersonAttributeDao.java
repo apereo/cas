@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.UsernameAttributeProvider;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
@@ -74,8 +75,8 @@ public class RestfulPersonAttributeDao extends BasePersonAttributeDao {
             val uri = uriBuilder.build();
             val request = method.equalsIgnoreCase(HttpMethod.GET.name()) ? new HttpGet(uri) : new HttpPost(uri);
             this.headers.forEach(request::addHeader);
-
-            try (val client = builder.build(); val response = client.execute(request)) {
+            
+            try (val client = builder.build(); val response = client.execute(request, HttpRequestUtils.HTTP_CLIENT_RESPONSE_HANDLER)) {
                 val attributes = MAPPER.readValue(response.getEntity().getContent(), Map.class);
                 return new SimplePersonAttributes(uid, PersonAttributeDao.stuffAttributesIntoList(attributes));
             }
