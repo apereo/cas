@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -34,6 +36,12 @@ import java.util.Optional;
 @UtilityClass
 @Slf4j
 public class HttpRequestUtils {
+    /**
+     * HTTP client response handler that simply returns the classic HTTP response.
+     * This is useful for cases where you want to handle the response without any additional processing.
+     */
+    public static final HttpClientResponseHandler<ClassicHttpResponse> HTTP_CLIENT_RESPONSE_HANDLER = response -> response;
+    
     private static final int GEO_LOC_LONG_INDEX = 1;
 
     private static final int GEO_LOC_ACCURACY_INDEX = 2;
