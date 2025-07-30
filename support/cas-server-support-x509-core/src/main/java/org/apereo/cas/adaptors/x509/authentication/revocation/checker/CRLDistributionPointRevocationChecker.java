@@ -18,6 +18,7 @@ import org.cryptacular.x509.ExtensionReader;
 import org.springframework.core.io.ByteArrayResource;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509CRL;
@@ -104,22 +105,14 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         }
     }
 
-    /**
-     * Adds the url to the list.
-     * Build URI by components to facilitate proper encoding of querystring.
-     * e.g. {@code http://example.com:8085/ca?action=crl&issuer=CN=CAS} Test User CA
-     * <p>If {@code uriString} is encoded, it will be decoded with {@code UTF-8}
-     * first before it's added to the list.</p>
-     *
-     * @param list      the list
-     * @param uriString the uri string
-     */
     private static void addURL(final List<URI> list, final String uriString) {
         try {
-            val url = URI.create(URLDecoder.decode(uriString, StandardCharsets.UTF_8)).toURL();
-            list.add(new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null));
-        } catch (final MalformedURLException e) {
-            list.add(URI.create(uriString));
+            try {
+                val url = new URL(URLDecoder.decode(uriString, StandardCharsets.UTF_8));
+                list.add(new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null));
+            } catch (final MalformedURLException e) {
+                list.add(new URI(uriString));
+            }
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
         }
