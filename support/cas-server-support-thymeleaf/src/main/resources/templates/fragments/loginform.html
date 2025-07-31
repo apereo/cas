@@ -78,6 +78,7 @@
                                    th:accesskey="#{screen.welcome.label.netid.accesskey}"
                                    autocapitalize="none"
                                    spellcheck="false"
+                                   aria-describedby="usernameValidationMessage"
                                    autocomplete="username" required/>
                         </label>
 
@@ -121,6 +122,7 @@
                                        required
                                        th:accesskey="#{screen.welcome.label.password.accesskey}"
                                        th:field="*{password}"
+                                       aria-describedby="passwordValidationMessage"
                                        autocomplete="current-password"/>
                                 <button
                                         class="reveal-password mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button btn btn-primary"
