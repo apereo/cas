@@ -72,7 +72,6 @@
                                 <span class="mdc-notched-outline__trailing"></span>
                             </span>
                             <input class="mdc-text-field__input form-control" id="username"
-                                   size="25"
                                    type="text"
                                    th:readonly="!${#cas.isLoginFormUsernameInputVisible(#vars)}"
                                    th:field="*{username}"
@@ -119,7 +118,6 @@
                                 <input class="mdc-text-field__input form-control pwd"
                                        type="password"
                                        id="password"
-                                       size="25"
                                        required
                                        th:accesskey="#{screen.welcome.label.password.accesskey}"
                                        th:field="*{password}"
@@ -208,7 +206,7 @@
                             <label class="mdc-text-field mdc-text-field--outlined control-label">
                                 <input class="mdc-text-field__input form-control"
                                        th:id="${entry.key + '-customField'}" th:name="${entry.key + '-customField'}"
-                                       size="25" type="text" th:field="*{customFields[__${entry.key}__]}"
+                                       type="text" th:field="*{customFields[__${entry.key}__]}"
                                        autocomplete="off"/>
                                 <span class="mdc-notched-outline">
                                     <span class="mdc-notched-outline__leading"></span>
