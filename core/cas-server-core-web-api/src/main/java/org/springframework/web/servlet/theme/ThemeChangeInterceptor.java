@@ -1,10 +1,9 @@
 package org.springframework.web.servlet.theme;
 
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.servlet.ThemeResolver;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,16 +15,16 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 7.3.0
  */
-@Slf4j
+@RequiredArgsConstructor
+@Getter
 public class ThemeChangeInterceptor implements HandlerInterceptor {
     /**
      * Default parameter name to use for theme change requests.
      */
     public static final String DEFAULT_PARAM_NAME = "theme";
-    
-    @Getter
-    @Setter
-    private String paramName = "theme";
+
+    private final ThemeResolver themeResolver;
+    private final String paramName;
 
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
@@ -33,11 +32,7 @@ public class ThemeChangeInterceptor implements HandlerInterceptor {
 
         val newTheme = request.getParameter(this.paramName);
         if (newTheme != null) {
-            val themeResolver = RequestContextUtils.getThemeResolver(request);
-            if (themeResolver != null) {
-                LOGGER.trace("Changing theme to [{}]", newTheme);
-                themeResolver.setThemeName(request, response, newTheme);
-            }
+            themeResolver.setThemeName(request, response, newTheme);
         }
         return true;
     }

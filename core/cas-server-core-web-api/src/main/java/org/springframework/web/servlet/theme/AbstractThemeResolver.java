@@ -1,8 +1,8 @@
 package org.springframework.web.servlet.theme;
 
+import org.springframework.web.servlet.ThemeResolver;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.servlet.ThemeResolver;
 
 /**
  * This is {@link AbstractThemeResolver}.
