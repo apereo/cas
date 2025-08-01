@@ -621,9 +621,3 @@ boolean projectShouldBePublished(Project project) {
 boolean projectRequiresLombok(Project project) {
     return !["api", "core", "docs", "support", "webapp"].contains(project.name) && project.name != "cas-server-documentation"
 }
-
-ansi.yellow("""
-The compilation task is temporarily set to ignore deprecated APIs that are scheduled for removal. \
-This is to allow the build to complete successfully while we work on addressing these deprecations. \
-Please note that this is a temporary measure and we will remove this flag in the next major CAS release.
-""".stripIndent())
