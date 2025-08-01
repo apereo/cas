@@ -13,7 +13,6 @@ import org.thymeleaf.engine.IterationStatusVar;
 import org.thymeleaf.engine.StandardModelFactory;
 import org.thymeleaf.model.ICloseElementTag;
 import org.thymeleaf.model.IOpenElementTag;
-import org.thymeleaf.spring6.expression.Themes;
 import org.thymeleaf.standard.expression.FragmentExpression;
 import org.thymeleaf.standard.processor.StandardTextTagProcessor;
 import org.thymeleaf.standard.processor.StandardXmlNsTagProcessor;
@@ -40,7 +39,6 @@ public class CasThymeleafRuntimeHints implements CasRuntimeHintsRegistrar {
             CasMustacheView.class,
             TemplateMode.class,
             StandardXmlNsTagProcessor.class,
-            Themes.class,
             IterationStatusVar.class,
             FragmentExpression.class,
             StandardTextTagProcessor.class,

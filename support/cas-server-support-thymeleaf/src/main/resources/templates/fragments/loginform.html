@@ -14,16 +14,16 @@
 <main class="container mt-3 mb-3">
 
     <div th:fragment="loginform" class="d-flex flex-column justify-content-between m-auto"
-         th:with="loginFormEnabled=${#cas.isTrue(#themes.code('cas.login-form.enabled'))},
+         th:with="loginFormEnabled=${#cas.isTrue(#cas.theme('cas.login-form.enabled'))},
                 loginFormViewable=${#cas.isLoginFormViewable(#vars)}">
 
         <div th:if="${delegatedAuthenticationProviderPrimary == null}">
-            <div th:if="${!#strings.isEmpty(#themes.code('cas.hero-banner.file'))}">
+            <div th:if="${!#strings.isEmpty(#cas.theme('cas.hero-banner.file'))}">
                 <p>
                     <img id="heroimg"
-                         th:title="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
-                         th:alt="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
-                         th:src="@{${#themes.code('cas.hero-banner.file')}}"/>
+                         th:title="${#strings.defaultString(#cas.theme('cas.theme.name'), 'CAS')}"
+                         th:alt="${#strings.defaultString(#cas.theme('cas.theme.name'), 'CAS')}"
+                         th:src="@{${#cas.theme('cas.hero-banner.file')}}"/>
                 </p>
             </div>
             <div class="service-ui" th:replace="~{fragments/serviceui :: serviceUI}">
@@ -223,7 +223,7 @@
                     </section>
 
                     <section class="cas-field form-check"
-                             th:if="${#cas.isTrue(#themes.code('cas.warn-on-redirect.enabled'))}">
+                             th:if="${#cas.isTrue(#cas.theme('cas.warn-on-redirect.enabled'))}">
                         <div class="mdc-form-field ">
                             <div th:replace="~{fragments/switchbutton :: switchbutton (id='warn', label='screen.welcome.label.warn')}"/>
                         </div>
@@ -231,7 +231,7 @@
                     </section>
 
                     <section class="cas-field form-check"
-                             th:if="${#cas.isTrue(#themes.code('cas.public-workstation.enabled'))}">
+                             th:if="${#cas.isTrue(#cas.theme('cas.public-workstation.enabled'))}">
                         <div class="mdc-form-field ">
                             <div th:replace="~{fragments/switchbutton :: switchbutton (id='publicWorkstation', label='screen.welcome.label.publicstation')}"/>
                         </div>
@@ -272,14 +272,14 @@
 
                     <p id="fieldsLegend"
                        class="text-muted mb-3"
-                       th:if="${#cas.isTrue(#themes.code('cas.login-form.legend.enabled'))}"
+                       th:if="${#cas.isTrue(#cas.theme('cas.login-form.legend.enabled'))}"
                        th:utext="#{screen.welcome.fields.legend}">
                         * Indicates required fields
                     </p>
 
                     <div id="termsOfUse"
                          class="text-muted mb-3"
-                         th:if="${#cas.isTrue(#themes.code('cas.login-form.terms-of-use.enabled'))}"
+                         th:if="${#cas.isTrue(#cas.theme('cas.login-form.terms-of-use.enabled'))}"
                          th:utext="#{screen.welcome.termsofuse}">
                         You agree to the terms of use by logging in.
                     </div>
@@ -337,7 +337,7 @@
 
             <div th:if="${loginFormViewable and loginFormEnabled}">
                 <span th:remove="tag"
-                      th:if="${#cas.isTrue(#themes.code('cas.pm-links.enabled'))}">
+                      th:if="${#cas.isTrue(#cas.theme('cas.pm-links.enabled'))}">
                     <div th:replace="~{fragments/pmlinks :: pmlinks}"/>
                 </span>
             </div>

@@ -61,6 +61,9 @@ class CasThymeleafTemplatesDirectorTests {
     void verifyOperation() throws Throwable {
         MockRequestContext.create(applicationContext);
 
+        val themeMessage = director.theme("cas.theme.description");
+        assertEquals("Central Authentication Service", themeMessage);
+        
         assertNotNull(director.getExceptionClassSimpleName(new AuthenticationException()));
         assertEquals(LOGIN_URL + '?', director.getUrlExternalForm(new URI(LOGIN_URL).toURL()));
         assertEquals(LOGIN_URL_WITH_CLIENT_NAME + '&', director.getUrlExternalForm(new URI(LOGIN_URL_WITH_CLIENT_NAME).toURL()));

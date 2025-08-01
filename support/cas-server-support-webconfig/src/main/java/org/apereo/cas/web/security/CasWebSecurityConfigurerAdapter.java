@@ -124,7 +124,7 @@ public class CasWebSecurityConfigurerAdapter {
             .csrf(AbstractHttpConfigurer::disable)
             .headers(AbstractHttpConfigurer::disable)
             .logout(AbstractHttpConfigurer::disable)
-            .requiresChannel(customizer -> customizer.requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null).requiresSecure());
+            .redirectToHttps(customizer -> customizer.requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null));
 
         val patterns = getAllowedPatternsToIgnore();
         LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from http security", patterns);
