@@ -4,6 +4,7 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.mock.MockValidationSpecification;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -22,6 +23,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -39,6 +41,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @ExtendWith(CasTestExtension.class)
+@ImportAutoConfiguration(CasThemesAutoConfiguration.class)
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
     protected static final String SUCCESS = "Success";
 

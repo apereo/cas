@@ -68,10 +68,13 @@ public class SamlIdPCoreProperties implements Serializable {
 
     /**
      * Control settings for session replication.
+     * @deprecated Since 7.3.0.
      */
     @NestedConfigurationProperty
+    @Deprecated(since = "7.3.0", forRemoval = true)
     private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
 
+    @Deprecated(since = "7.3.0", forRemoval = true)
     public SamlIdPCoreProperties() {
         if (StringUtils.isBlank(getSessionReplication().getCookie().getName())) {
             getSessionReplication().getCookie().setName("%s%s".formatted(

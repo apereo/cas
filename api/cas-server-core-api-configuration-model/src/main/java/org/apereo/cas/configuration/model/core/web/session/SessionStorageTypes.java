@@ -23,14 +23,18 @@ public enum SessionStorageTypes {
      * are tracked as CAS tickets in the registry and replicated across the entire cluster
      * as tickets. This state is tied to the user's agent/browser using a special cookie that would be used
      * to locate and restore that state. The cookie content may be signed and encrypted.
+     * @deprecated Since 7.3.0; use {@link #HTTP} with session replication instead.
      */
+    @Deprecated(since = "7.3.0", forRemoval = true)
     TICKET_REGISTRY;
 
     /**
      * Is ticket registry?.
      *
      * @return true/false
+     * @deprecated Since 7.3.0; use {@link #HTTP} with session replication instead.
      */
+    @Deprecated(since = "7.3.0", forRemoval = true)
     public boolean isTicketRegistry() {
         return this == TICKET_REGISTRY;
     }

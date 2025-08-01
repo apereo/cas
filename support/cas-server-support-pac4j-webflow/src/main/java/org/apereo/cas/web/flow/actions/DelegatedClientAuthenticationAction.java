@@ -224,6 +224,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     @Override
+    @Deprecated(since = "7.3.0", forRemoval = true)
     protected Event doPreExecute(final RequestContext context) throws Exception {
         val replicationProps = configContext.getCasProperties().getAuthn().getPac4j().getCore().getSessionReplication();
         if (replicationProps.isReplicateSessions() && replicationProps.getCookie().isAutoConfigureCookiePath()) {

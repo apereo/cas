@@ -471,6 +471,7 @@ class SamlIdPEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPDistributedSessionCookieCipherExecutor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
+        @Deprecated(since = "7.3.0", forRemoval = true)
         public CipherExecutor samlIdPDistributedSessionCookieCipherExecutor(final CasConfigurationProperties casProperties) {
             val type = casProperties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
             return FunctionUtils.doIf(type.isTicketRegistry(),
@@ -494,6 +495,7 @@ class SamlIdPEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "samlIdPDistributedSessionCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Deprecated(since = "7.3.0", forRemoval = true)
         public CasCookieBuilder samlIdPDistributedSessionCookieGenerator(
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,

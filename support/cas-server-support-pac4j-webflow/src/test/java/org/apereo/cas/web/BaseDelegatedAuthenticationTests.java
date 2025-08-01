@@ -19,6 +19,7 @@ import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasDelegatedAuthenticationCasAutoConfiguration;
 import org.apereo.cas.config.CasDelegatedAuthenticationOidcAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
@@ -58,6 +59,7 @@ public abstract class BaseDelegatedAuthenticationTests {
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasThymeleafAutoConfiguration.class,
+        CasThemesAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreEnvironmentBootstrapAutoConfiguration.class,
