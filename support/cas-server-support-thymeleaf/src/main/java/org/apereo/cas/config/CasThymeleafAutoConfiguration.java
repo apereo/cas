@@ -80,6 +80,7 @@ import java.util.Set;
 @ConditionalOnClass(SpringTemplateEngine.class)
 @AutoConfigureBefore(WebMvcAutoConfiguration.class)
 @ImportAutoConfiguration({
+    CasThemesAutoConfiguration.class,
     MustacheAutoConfiguration.class,
     ThymeleafAutoConfiguration.class
 })
