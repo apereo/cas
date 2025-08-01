@@ -87,19 +87,11 @@ let cas = {
 
     },
     checkCaps: (ev) => {
-        let s = String.fromCharCode(ev.which);
-        if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
-            for (let el of document.getElementsByClassName("caps-warn")) {
-                el.classList.remove("caps-warn");
-                el.classList.add('caps-on');
-            }
+        if (ev.getModifierState("CapsLock")) {
+            $(".caps-warn").removeClass('caps-warn').addClass('caps-on');
         } else {
-            for (let el of document.getElementsByClassName("caps-on")) {
-                el.classList.remove("caps-on");
-                el.classList.add('caps-warn');
-            }
+            $(".caps-on").removeClass('caps-on').addClass('caps-warn');
         }
-
     },
     openDialog: (id) => {
         const dialog = new mdc.dialog.MDCDialog(document.getElementById(id));
