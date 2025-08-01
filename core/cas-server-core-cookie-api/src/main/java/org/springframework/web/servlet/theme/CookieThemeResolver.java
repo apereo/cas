@@ -1,13 +1,15 @@
 package org.springframework.web.servlet.theme;
 
+import org.springframework.web.servlet.ThemeResolver;
+import org.springframework.web.util.WebUtils;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
-import org.springframework.lang.Nullable;
-import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.ThemeResolver;
-import org.springframework.web.util.CookieGenerator;
-import org.springframework.web.util.WebUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
+import org.apereo.cas.web.support.CookieUtils;
+import org.springframework.http.HttpHeaders;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -17,13 +19,14 @@ import jakarta.servlet.http.HttpServletResponse;
  * This is particularly useful for stateless applications without user sessions.
  *
  * <p>Custom controllers can thus override the user's theme by calling
- * {@code setThemeName}, for example, responding to a certain theme change request.
+ * {@link #setThemeName}, for example, responding to a certain theme change request.
  *
  * @author Jean-Pierre Pawlak
  * @author Juergen Hoeller
- * @see #setThemeName
+ * @since 7.3.0
  */
-public class CookieThemeResolver extends CookieGenerator implements ThemeResolver {
+@RequiredArgsConstructor
+public class CookieThemeResolver implements ThemeResolver {
 
     /**
      * The default theme name used if no alternative is provided.
@@ -47,30 +50,23 @@ public class CookieThemeResolver extends CookieGenerator implements ThemeResolve
     @Getter
     private String defaultThemeName = ORIGINAL_DEFAULT_THEME_NAME;
 
-
-    public CookieThemeResolver() {
-        setCookieName(DEFAULT_COOKIE_NAME);
-    }
+    private final CookieProperties cookieProperties;
 
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
         var themeName = (String) request.getAttribute(THEME_REQUEST_ATTRIBUTE_NAME);
-        if (themeName != null) {
+        if (StringUtils.isNotBlank(themeName)) {
             return themeName;
         }
 
-        val cookieName = getCookieName();
-        if (cookieName != null) {
-            val cookie = WebUtils.getCookie(request, cookieName);
-            if (cookie != null) {
-                val value = cookie.getValue();
-                if (StringUtils.hasText(value)) {
-                    themeName = value;
-                }
+        val cookie = WebUtils.getCookie(request, DEFAULT_COOKIE_NAME);
+        if (cookie != null) {
+            val value = cookie.getValue();
+            if (StringUtils.isNotBlank(value)) {
+                themeName = value;
             }
         }
-
-        if (themeName == null) {
+        if (StringUtils.isBlank(themeName)) {
             themeName = getDefaultThemeName();
         }
         request.setAttribute(THEME_REQUEST_ATTRIBUTE_NAME, themeName);
@@ -80,19 +76,20 @@ public class CookieThemeResolver extends CookieGenerator implements ThemeResolve
     @Override
     public void setThemeName(
         final HttpServletRequest request,
-        @Nullable
         final HttpServletResponse response,
-        @Nullable
         final String themeName) {
 
-        if (StringUtils.hasText(themeName)) {
+        if (StringUtils.isNotBlank(themeName)) {
             request.setAttribute(THEME_REQUEST_ATTRIBUTE_NAME, themeName);
-            addCookie(response, themeName);
+            val cookie = CookieUtils.createSetCookieHeader(themeName,
+                cookieProperties.withName(DEFAULT_COOKIE_NAME));
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie);
         } else {
             request.setAttribute(THEME_REQUEST_ATTRIBUTE_NAME, getDefaultThemeName());
-            removeCookie(response);
+            val cookie = CookieUtils.createSetCookieHeader(StringUtils.EMPTY,
+                cookieProperties.withName(DEFAULT_COOKIE_NAME).withMaxAge("0"));
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie);
         }
     }
-
 }
 

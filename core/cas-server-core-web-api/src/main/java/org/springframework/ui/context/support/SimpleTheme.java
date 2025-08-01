@@ -1,9 +1,9 @@
 package org.springframework.ui.context.support;
 
+import org.springframework.ui.context.Theme;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
-import org.springframework.ui.context.Theme;
 
 /**
  * This is {@link SimpleTheme}.

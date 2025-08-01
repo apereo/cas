@@ -202,10 +202,23 @@ class CookieRetrievingCookieGeneratorTests {
     }
 
     @Test
+    void verifyCookieValueByParam() {
+        val context = getCookieGenerationContext();
+        val cookieValueManager = new NoOpCookieValueManager(tenantExtractor);
+        val gen = CookieUtils.buildCookieRetrievingGenerator(cookieValueManager, context);
+        val request = new MockHttpServletRequest();
+        request.setParameter(context.getName(), "CAS-Cookie-Value");
+        val cookie = gen.retrieveCookieValue(request);
+        assertNotNull(cookie);
+        assertEquals("CAS-Cookie-Value", cookie);
+    }
+
+    @Test
     void verifyCookieForRememberMeByAuthnRequest() throws Throwable {
         val ctx = getCookieGenerationContext();
         val cookieValueManager = new NoOpCookieValueManager(tenantExtractor);
         val gen = CookieUtils.buildCookieRetrievingGenerator(cookieValueManager, ctx);
+        gen.setCookiePath("/cas");
         val context = MockRequestContext.create(applicationContext);
         context.setParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, "true");
         WebUtils.putRememberMeAuthenticationEnabled(context, Boolean.TRUE);
@@ -215,6 +228,17 @@ class CookieRetrievingCookieGeneratorTests {
         val cookie = context.getHttpServletResponse().getCookie(ctx.getName());
         assertNotNull(cookie);
         assertEquals(ctx.getRememberMeMaxAge(), cookie.getMaxAge());
+
+
+        context.getHttpServletResponse().reset();
+        gen.removeCookie(context.getHttpServletResponse());
+        val deletedCookie = context.getHttpServletResponse().getCookie(ctx.getName());
+        assertNotNull(deletedCookie);
+        assertEquals(0, deletedCookie.getMaxAge());
+        assertTrue(deletedCookie.getValue().isEmpty());
+
+        context.setRequestCookiesFromResponse();
+        assertTrue(gen.containsCookie(context.getHttpServletRequest()));
     }
 
     @Test

@@ -15,7 +15,6 @@ import org.apereo.cas.services.web.RequestHeaderThemeResolver;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.apereo.cas.web.support.CookieUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -89,14 +88,9 @@ public class CasThemesAutoConfiguration {
         sessionThemeResolver.setDefaultThemeName(defaultThemeName);
 
         val tgc = casProperties.getObject().getTgc();
-        val cookieThemeResolver = new CookieThemeResolver();
+        val cookieThemeResolver = new CookieThemeResolver(tgc);
         cookieThemeResolver.setDefaultThemeName(defaultThemeName);
-        cookieThemeResolver.setCookieDomain(tgc.getDomain());
-        cookieThemeResolver.setCookieHttpOnly(tgc.isHttpOnly());
-        cookieThemeResolver.setCookieMaxAge(CookieUtils.getCookieMaxAge(tgc.getMaxAge()));
-        cookieThemeResolver.setCookiePath(tgc.getPath());
-        cookieThemeResolver.setCookieSecure(tgc.isSecure());
-
+        
         val serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager,
             authenticationRequestServiceSelectionStrategies, casProperties);
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);

@@ -19,7 +19,8 @@ public interface ThemeResolver {
      * @param request the request to be used for resolution
      * @return the current theme name
      */
-    String resolveThemeName(@Nullable HttpServletRequest request);
+    String resolveThemeName(
+        @Nullable HttpServletRequest request);
 
     /**
      * Set the current theme name to the given one.
@@ -31,11 +32,8 @@ public interface ThemeResolver {
      *                                       does not support dynamic changing of the theme
      */
     default void setThemeName(
-        @Nullable
         final HttpServletRequest request,
-        @Nullable
         final HttpServletResponse response,
-        @Nullable
         final String themeName) {
     }
 }

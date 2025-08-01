@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.http.ResponseCookie;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -151,5 +152,46 @@ public class CookieUtils {
     public static void configureCookiePath(final RequestContext context, final CasCookieBuilder cookieBuilder) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         configureCookiePath(request, cookieBuilder);
+    }
+
+    /**
+     * Create set cookie header string.
+     *
+     * @param cookieValue      the cookie value
+     * @param cookieProperties the cookie properties
+     * @return the cookie header string
+     */
+    public static String createSetCookieHeader(final String cookieValue,
+                                               final CookieProperties cookieProperties) {
+        return ResponseCookie.from(cookieProperties.getName(), StringUtils.trimToNull(cookieValue))
+            .domain(StringUtils.trimToNull(cookieProperties.getDomain()))
+            .httpOnly(cookieProperties.isHttpOnly())
+            .maxAge(CookieUtils.getCookieMaxAge(cookieProperties.getMaxAge()))
+            .path(cookieProperties.getPath())
+            .secure(cookieProperties.isSecure())
+            .sameSite(cookieProperties.getSameSitePolicy())
+            .build()
+            .toString();
+    }
+
+    /**
+     * Create set cookie header string.
+     *
+     * @param cookieValue             the cookie value
+     * @param cookieGenerationContext the cookie generation context
+     * @return the string
+     */
+    public static String createSetCookieHeader(
+        final String cookieValue,
+        final CookieGenerationContext cookieGenerationContext) {
+        return ResponseCookie.from(cookieGenerationContext.getName(), StringUtils.trimToNull(cookieValue))
+            .domain(StringUtils.trimToNull(cookieGenerationContext.getDomain()))
+            .httpOnly(cookieGenerationContext.isHttpOnly())
+            .maxAge(cookieGenerationContext.getMaxAge())
+            .path(cookieGenerationContext.getPath())
+            .secure(cookieGenerationContext.isSecure())
+            .sameSite(cookieGenerationContext.getSameSitePolicy())
+            .build()
+            .toString();
     }
 }
