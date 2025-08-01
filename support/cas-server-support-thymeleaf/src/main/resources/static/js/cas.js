@@ -303,13 +303,14 @@ function resourceLoadedSuccessfully() {
             const pwd  = $(".pwd");
             const icon = $(".reveal-password-icon");
 
-            btn.attr("aria-checked", (i, val) => val === "true" ? "false" : "true");
             if (pwd.attr("type") === "text") {
                 pwd.attr("type", "password");
                 icon.removeClass("mdi-eye-off").addClass("mdi-eye");
+                btn.attr('aria-pressed', false);
             } else {
                 pwd.attr("type", "text");
                 icon.removeClass("mdi-eye").addClass("mdi-eye-off");
+                btn.attr('aria-pressed', true);
             }
         });
         
