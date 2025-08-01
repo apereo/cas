@@ -149,7 +149,7 @@ public class CookieRetrievingCookieGenerator implements Serializable, CasCookieB
 
     @Override
     public void setCookiePath(final String path) {
-        cookieGenerationContext.setPath(cleanCookiePath(path));
+        cookieGenerationContext.setPath(path);
     }
 
     @Override
@@ -241,9 +241,7 @@ public class CookieRetrievingCookieGenerator implements Serializable, CasCookieB
         return cookie;
     }
 
-    protected Cookie createCookie(
-        @NonNull
-        final String cookieValue) {
+    protected Cookie createCookie(@NonNull final String cookieValue) {
         val cookie = new Cookie(getCookieName(), cookieValue);
         if (StringUtils.isNotBlank(getCookieDomain())) {
             cookie.setDomain(getCookieDomain());
