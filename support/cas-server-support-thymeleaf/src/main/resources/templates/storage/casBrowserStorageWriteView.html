@@ -3,7 +3,7 @@
 <body id="cas">
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" id="login">
-        <span th:remove="tag" th:if="${#cas.isTrue(#themes.code('cas.browser-storage.show-progress'))}">
+        <span th:remove="tag" th:if="${#cas.isTrue(#cas.theme('cas.browser-storage.show-progress'))}">
             <div id="mainPanel" class="mdc-card p-4 m-auto w-lg-50">
                 <h2 id="processingTitle" th:utext="#{screen.processing.title}"></h2>
                 <p id="processingText" th:utext="#{screen.processing.text}"></p>
@@ -22,7 +22,7 @@
             </div>
         </span>
         <div id="errorPanel" class="my-2 banner banner-danger alert alert-warning hide"></div>
-        <span th:remove="tag" th:if="${'false' == #strings.defaultString(#themes.code('cas.browser-storage.show-progress'), 'true')}">
+        <span th:remove="tag" th:if="${'false' == #strings.defaultString(#cas.theme('cas.browser-storage.show-progress'), 'true')}">
            <style type="text/css">body {display:none;}</style>
         </span>
         
