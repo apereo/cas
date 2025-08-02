@@ -752,6 +752,7 @@ class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthDistributedSessionCookieCipherExecutor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
+        @Deprecated(since = "7.3.0", forRemoval = true)
         public CipherExecutor oauthDistributedSessionCookieCipherExecutor(final CasConfigurationProperties casProperties) {
             val replication = casProperties.getAuthn().getOauth().getSessionReplication();
             return FunctionUtils.doIf(replication.isReplicateSessions(),
@@ -775,6 +776,7 @@ class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthDistributedSessionCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Deprecated(since = "7.3.0", forRemoval = true)
         public CasCookieBuilder oauthDistributedSessionCookieGenerator(
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,
