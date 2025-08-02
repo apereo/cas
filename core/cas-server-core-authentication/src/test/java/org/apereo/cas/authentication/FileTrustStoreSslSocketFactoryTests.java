@@ -21,7 +21,7 @@ import org.springframework.core.io.Resource;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,7 +40,7 @@ class FileTrustStoreSslSocketFactoryTests {
 
     static {
         try {
-            val url = new URL("https://self-signed.badssl.com");
+            val url = URI.create("https://self-signed.badssl.com").toURL();
             val conn = (HttpsURLConnection) url.openConnection();
             conn.setSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());
             conn.connect();

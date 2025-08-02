@@ -24,10 +24,10 @@ class DefaultPasswordEncoderTests {
 
     @Test
     void verifyPasswordEncoderByCustomClassName() {
-        val p = new PasswordEncoderProperties();
-        p.setType(StandardPasswordEncoder.class.getName());
-        p.setSecret("SECRET");
-        val e = PasswordEncoderUtils.newPasswordEncoder(p, mock(ApplicationContext.class));
+        val properties = new PasswordEncoderProperties();
+        properties.setType(StandardPasswordEncoder.class.getName());
+        properties.setSecret("SECRET");
+        val e = PasswordEncoderUtils.newPasswordEncoder(properties, mock(ApplicationContext.class));
         assertNotNull(e);
     }
 
