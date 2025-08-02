@@ -5,6 +5,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
@@ -41,12 +42,20 @@ public class SimpleInterruptTrackingEngine implements InterruptTrackingEngine {
         authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT, Boolean.TRUE);
         val cookieValue = EncodingUtils.encodeBase64(MAPPER.writeValueAsString(response));
         LOGGER.debug("Storing interrupt response as base64 cookie [{}]", cookieValue);
+
+        if (casProperties.getInterrupt().getCookie().isAutoConfigureCookiePath()) {
+            CookieUtils.configureCookiePath(httpRequest, casCookieBuilder);
+        }
         val cookie = casCookieBuilder.addCookie(httpRequest, httpResponse, cookieValue);
         LOGGER.debug("Added interrupt cookie [{}] with value [{}]", cookie.getName(), cookie.getValue());
     }
 
     @Override
     public void removeInterrupt(final RequestContext requestContext) {
+        val httpRequest = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        if (casProperties.getInterrupt().getCookie().isAutoConfigureCookiePath()) {
+            CookieUtils.configureCookiePath(httpRequest, casCookieBuilder);
+        }
         val httpResponse = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         casCookieBuilder.removeCookie(httpResponse);
     }

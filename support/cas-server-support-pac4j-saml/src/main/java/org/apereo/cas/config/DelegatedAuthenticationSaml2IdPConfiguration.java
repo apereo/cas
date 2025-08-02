@@ -94,6 +94,7 @@ class DelegatedAuthenticationSaml2IdPConfiguration {
     @ConditionalOnMissingBean(name = "delegatedSaml2IdPSloRequestCookieGenerator")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Deprecated(since = "7.3.0", forRemoval = true)
     public CasCookieBuilder delegatedSaml2IdPSloRequestCookieGenerator(
         @Qualifier(TenantExtractor.BEAN_NAME)
         final TenantExtractor tenantExtractor,

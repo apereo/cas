@@ -5,7 +5,6 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
@@ -38,9 +37,8 @@ public class OracleJpaMultifactorAuthenticationTrustRecord extends MultifactorAu
     private static final long serialVersionUID = 653723293231219680L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    private long id = -1;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
     @Override
     public void setId(final long id) {

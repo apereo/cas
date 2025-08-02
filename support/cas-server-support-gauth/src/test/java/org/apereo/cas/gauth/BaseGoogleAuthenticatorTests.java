@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasGoogleAuthenticatorAutoConfiguration;
 import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.config.CasOneTimeTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -44,6 +45,7 @@ public abstract class BaseGoogleAuthenticatorTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
+        CasThemesAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,

@@ -1,0 +1,10 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "^https://localhost:9859/anything/oidc.*",
+  "name": "OIDC",
+  "id": 1,
+  "logoutUrl" : "http://localhost:56789/cas",
+  "logoutType" : "BACK_CHANNEL"
+}
