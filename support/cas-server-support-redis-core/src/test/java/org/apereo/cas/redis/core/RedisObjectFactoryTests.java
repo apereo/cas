@@ -30,6 +30,7 @@ class RedisObjectFactoryTests {
         props.setHost("localhost");
         props.setPort(6379);
         props.getPool().setMinEvictableIdleTimeMillis(2000);
+        props.getPool().setTimeBetweenEvictionRunsMillis(30000);
         props.getPool().setNumTestsPerEvictionRun(1);
         props.getPool().setSoftMinEvictableIdleTimeMillis(1);
         props.getPool().setEnabled(true);
