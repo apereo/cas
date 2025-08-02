@@ -46,8 +46,10 @@ import java.util.stream.StreamSupport;
 public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
     private final Firestore firestore;
 
-    public GoogleCloudFirestoreTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
-                                              final TicketCatalog ticketCatalog, final ConfigurableApplicationContext applicationContext,
+    public GoogleCloudFirestoreTicketRegistry(final CipherExecutor cipherExecutor,
+                                              final TicketSerializationManager ticketSerializationManager,
+                                              final TicketCatalog ticketCatalog,
+                                              final ConfigurableApplicationContext applicationContext,
                                               final Firestore firestore) {
         super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.firestore = firestore;
@@ -101,7 +103,9 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<? extends Ticket> getTickets() {
-        return ticketCatalog.findAll().stream()
+        return ticketCatalog
+            .findAll()
+            .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .flatMap(collectionName -> {
                 val references = firestore.collection(collectionName).listDocuments();
@@ -117,6 +121,26 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
             .collect(Collectors.toSet());
     }
 
+    @Override
+    public Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
+        return ticketCatalog
+            .findAll()
+            .stream()
+            .map(this::getTicketCollectionInstanceByMetadata)
+            .flatMap(collectionName -> {
+                val references = firestore.collection(collectionName).listDocuments();
+                return StreamSupport.stream(references.spliterator(), false)
+                    .map(doc -> FunctionUtils.doUnchecked(() -> doc.get().get()))
+                    .map(doc -> doc.toObject(GoogleCloudFirestoreTicketDocument.class));
+            })
+            .map(doc -> {
+                val ticket = deserializeTicket(doc.getJson(), doc.getType());
+                return decodeTicket(ticket);
+            })
+            .skip(criteria.getFrom())
+            .limit(criteria.getCount());
+    }
+    
     @Override
     public Ticket updateTicket(final Ticket ticket) {
         FunctionUtils.doAndHandle(__ -> {
