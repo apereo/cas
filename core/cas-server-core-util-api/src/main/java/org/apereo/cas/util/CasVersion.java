@@ -5,7 +5,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.net.URL;
+import java.net.URI;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.jar.Manifest;
@@ -61,7 +61,7 @@ public class CasVersion {
                 val className = CasVersion.class.getSimpleName() + ".class";
                 val classPath = CasVersion.class.getResource(className).toString();
                 val manifestPath = classPath.substring(0, classPath.lastIndexOf('!') + 1) + "/META-INF/MANIFEST.MF";
-                try (val url = new URL(manifestPath).openStream()) {
+                try (val url = URI.create(manifestPath).toURL().openStream()) {
                     val manifest = new Manifest(url);
                     val attributes = manifest.getMainAttributes();
                     return StringUtils.defaultIfBlank(attributes.getValue("Implementation-Date"), ZonedDateTime.now(Clock.systemUTC()).toString());
