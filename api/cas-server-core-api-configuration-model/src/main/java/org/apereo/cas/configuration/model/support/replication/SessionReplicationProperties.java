@@ -15,11 +15,13 @@ import java.io.Serializable;
  *
  * @author Jerome LELEU
  * @since 6.1.2
+ * @deprecated Since 7.3.0.
  */
 @RequiresModule(name = "cas-server-core-api", automated = true)
 @Getter
 @Setter
 @Accessors(chain = true)
+@Deprecated(since = "7.3.0", forRemoval = true)
 public class SessionReplicationProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -3839399712674610962L;

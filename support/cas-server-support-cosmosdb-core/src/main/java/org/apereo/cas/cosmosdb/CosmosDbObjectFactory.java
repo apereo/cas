@@ -53,7 +53,6 @@ public class CosmosDbObjectFactory {
             .preferredRegions(properties.getPreferredRegions())
             .consistencyLevel(ConsistencyLevel.valueOf(properties.getConsistencyLevel()))
             .contentResponseOnWriteEnabled(false)
-            .clientTelemetryEnabled(properties.isAllowTelemetry())
             .userAgentSuffix(properties.getUserAgentSuffix())
             .throttlingRetryOptions(throttlingRetryOptions)
             .endpointDiscoveryEnabled(properties.isEndpointDiscoveryEnabled());
