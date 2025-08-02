@@ -47,6 +47,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
+import org.springframework.ui.context.ThemeSource;
 import org.springframework.util.MimeType;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.servlet.ThemeResolver;
@@ -79,6 +80,7 @@ import java.util.Set;
 @ConditionalOnClass(SpringTemplateEngine.class)
 @AutoConfigureBefore(WebMvcAutoConfiguration.class)
 @ImportAutoConfiguration({
+    CasThemesAutoConfiguration.class,
     MustacheAutoConfiguration.class,
     ThymeleafAutoConfiguration.class
 })
@@ -227,8 +229,10 @@ public class CasThymeleafAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasThymeleafTemplatesDirector casThymeleafTemplatesDirector(
+            @Qualifier("themeSource") final ThemeSource themeSource,
+            @Qualifier("themeResolver") final ThemeResolver themeResolver,
             @Qualifier(CasWebflowExecutionPlan.BEAN_NAME) final CasWebflowExecutionPlan webflowExecutionPlan) {
-            return new CasThymeleafTemplatesDirector(webflowExecutionPlan);
+            return new CasThymeleafTemplatesDirector(webflowExecutionPlan, themeResolver, themeSource);
         }
     }
 

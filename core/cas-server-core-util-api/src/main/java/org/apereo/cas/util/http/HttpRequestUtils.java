@@ -8,8 +8,15 @@ import com.google.common.base.Splitter;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpVersion;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -17,10 +24,12 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,6 +43,23 @@ import java.util.Optional;
 @UtilityClass
 @Slf4j
 public class HttpRequestUtils {
+    /**
+     * HTTP client response handler that simply returns the classic HTTP response.
+     * This is useful for cases where you want to handle the response without any additional processing.
+     */
+    public static final HttpClientResponseHandler<ClassicHttpResponse> HTTP_CLIENT_RESPONSE_HANDLER = response -> {
+        val result = new BasicClassicHttpResponse(response.getCode(), response.getReasonPhrase());
+        result.setHeaders(response.getHeaders());
+        result.setLocale(ObjectUtils.getIfNull(response.getLocale(), Locale.getDefault()));
+        result.setVersion(ObjectUtils.getIfNull(response.getVersion(), HttpVersion.HTTP_1_1));
+        val output = new ByteArrayOutputStream();
+        response.getEntity().writeTo(output);
+        val contentTypeHeader = response.getFirstHeader(HttpHeaders.CONTENT_TYPE);
+        val contentType = contentTypeHeader != null ? contentTypeHeader.getValue() : ContentType.APPLICATION_JSON.getMimeType();
+        result.setEntity(new ByteArrayEntity(output.toByteArray(), ContentType.parseLenient(contentType)));
+        return result;
+    };
+    
     private static final int GEO_LOC_LONG_INDEX = 1;
 
     private static final int GEO_LOC_ACCURACY_INDEX = 2;

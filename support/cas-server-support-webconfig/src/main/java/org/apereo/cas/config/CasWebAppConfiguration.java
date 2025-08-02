@@ -19,6 +19,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
@@ -27,10 +28,10 @@ import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.web.util.CookieGenerator;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Optional;
@@ -47,10 +48,11 @@ import java.util.Optional;
 class CasWebAppConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public ThemeChangeInterceptor themeChangeInterceptor(final CasConfigurationProperties casProperties) {
-        val bean = new ThemeChangeInterceptor();
-        bean.setParamName(casProperties.getTheme().getParamName());
-        return bean;
+    @ConditionalOnMissingBean(name = "casThemeChangeInterceptor")
+    public ThemeChangeInterceptor themeChangeInterceptor(
+        @Qualifier("themeResolver") final ThemeResolver themeResolver,
+        final CasConfigurationProperties casProperties) {
+        return new ThemeChangeInterceptor(themeResolver, casProperties.getTheme().getParamName());
     }
 
     @Configuration(value = "CasWebAppLocaleConfiguration", proxyBeanMethods = false)
@@ -62,24 +64,21 @@ class CasWebAppConfiguration {
             val localeProps = casProperties.getLocale();
             val localeCookie = localeProps.getCookie();
 
-            val resolver = new CookieLocaleResolver() {
-                @Nonnull
-                @Override
-                protected Locale determineDefaultLocale(final HttpServletRequest request) {
-                    val locale = request.getLocale();
-                    if (StringUtils.isBlank(localeProps.getDefaultValue())
-                        || !locale.getLanguage().equals(localeProps.getDefaultValue())) {
-                        return locale;
-                    }
-                    return Locale.forLanguageTag(localeProps.getDefaultValue());
+            val cookieName = StringUtils.defaultIfBlank(localeCookie.getName(), CookieLocaleResolver.DEFAULT_COOKIE_NAME);
+            val resolver = new CookieLocaleResolver(cookieName);
+            resolver.setDefaultLocaleFunction(request -> {
+                val locale = request.getLocale();
+                if (StringUtils.isBlank(localeProps.getDefaultValue())
+                    || !locale.getLanguage().equals(localeProps.getDefaultValue())) {
+                    return locale;
                 }
-            };
+                return Locale.forLanguageTag(localeProps.getDefaultValue());
+            });
             resolver.setCookieDomain(localeCookie.getDomain());
-            resolver.setCookiePath(StringUtils.defaultIfBlank(localeCookie.getPath(), CookieGenerator.DEFAULT_COOKIE_PATH));
+            resolver.setCookiePath(StringUtils.defaultIfBlank(localeCookie.getPath(), "/"));
             resolver.setCookieHttpOnly(localeCookie.isHttpOnly());
             resolver.setCookieSecure(localeCookie.isSecure());
-            resolver.setCookieName(StringUtils.defaultIfBlank(localeCookie.getName(), CookieLocaleResolver.DEFAULT_COOKIE_NAME));
-            resolver.setCookieMaxAge(CookieUtils.getCookieMaxAge(localeCookie.getMaxAge()));
+            resolver.setCookieMaxAge(Duration.ofSeconds(CookieUtils.getCookieMaxAge(localeCookie.getMaxAge())));
             resolver.setLanguageTagCompliant(true);
             resolver.setRejectInvalidCookies(true);
             return resolver;
@@ -87,12 +86,13 @@ class CasWebAppConfiguration {
 
         @Bean
         public WebMvcConfigurer casWebAppWebMvcConfigurer(
-            @Qualifier("localeChangeInterceptor") final ObjectProvider<HandlerInterceptor> localeChangeInterceptor) {
+            @Qualifier("localeChangeInterceptor")
+            final ObjectProvider<HandlerInterceptor> localeChangeInterceptor) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addInterceptors(
-                    @Nonnull final InterceptorRegistry registry) {
-                    registry.addInterceptor(new RefreshableHandlerInterceptor(localeChangeInterceptor)).addPathPatterns("/**");
+                public void addInterceptors(@Nonnull final InterceptorRegistry registry) {
+                    val interceptor = new RefreshableHandlerInterceptor(localeChangeInterceptor);
+                    registry.addInterceptor(interceptor).addPathPatterns("/**");
                 }
             };
         }
@@ -122,8 +122,10 @@ class CasWebAppConfiguration {
         private static final class RootController extends ParameterizableViewController {
             @Override
             protected ModelAndView handleRequestInternal(
-                @Nonnull final HttpServletRequest request,
-                @Nonnull final HttpServletResponse response) {
+                @Nonnull
+                final HttpServletRequest request,
+                @Nonnull
+                final HttpServletResponse response) {
                 val queryString = request.getQueryString();
                 val url = request.getContextPath() + CasProtocolConstants.ENDPOINT_LOGIN
                     + Optional.ofNullable(queryString).map(value -> '?' + value).orElse(StringUtils.EMPTY);
