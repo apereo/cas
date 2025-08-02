@@ -33,8 +33,10 @@ public class OAuthProperties implements Serializable {
 
     /**
      * Control settings for session replication.
+     * @deprecated Since 7.3.0.
      */
     @NestedConfigurationProperty
+    @Deprecated(since = "7.3.0", forRemoval = true)
     private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
 
     /**

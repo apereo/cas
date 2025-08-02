@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.Id;
 
 import jakarta.persistence.Entity;
@@ -31,8 +30,7 @@ public class JpaGoogleAuthenticatorToken extends GoogleAuthenticatorToken {
     @jakarta.persistence.Id
     @Id
     @JsonProperty("id")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @SuppressWarnings("UnusedVariable")
     private long id;
 

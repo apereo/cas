@@ -55,16 +55,19 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.util.AopTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.Serial;
@@ -95,6 +98,7 @@ import static org.junit.jupiter.api.Assumptions.*;
         "cas.ticket.registry.cleaner.schedule.enabled=false"
     })
 @ExtendWith(CasTestExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public abstract class BaseTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 1;
@@ -123,6 +127,9 @@ public abstract class BaseTicketRegistryTests {
     @Autowired
     @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
     
     protected boolean useEncryption;
     

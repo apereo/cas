@@ -14,13 +14,13 @@
 <main class="container mt-3 mb-3">
     <div th:fragment="logindrawer" id="logindrawer">
         <aside id="app-drawer"
-               th:if="${#cas.isTrue(#themes.code('cas.drawer-menu.enabled'))}"
+               th:if="${#cas.isTrue(#cas.theme('cas.drawer-menu.enabled'))}"
                class="mdc-drawer mdc-drawer--dismissible mdc-drawer--modal offcanvas offcanvas-start">
             
             <div class="mdc-drawer__header offcanvas-header flex-column">
-                <h2 class="mdc-drawer__title offcanvas-title" th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</h2>
+                <h2 class="mdc-drawer__title offcanvas-title" th:text="${#strings.defaultString(#cas.theme('cas.theme.name'), 'CAS')}">CAS</h2>
                 <div class="mdc-drawer__subtitle offcanvas-title"
-                    th:text="${#strings.defaultString(#themes.code('cas.theme.description'), 'Central Authentication Service')}">
+                    th:text="${#strings.defaultString(#cas.theme('cas.theme.description'), 'Central Authentication Service')}">
                     Central Authentication Service</div>
             </div>
             <div class="mdc-drawer__content offcanvas-body">
