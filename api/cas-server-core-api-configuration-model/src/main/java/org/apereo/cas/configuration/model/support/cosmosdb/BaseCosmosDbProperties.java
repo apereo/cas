@@ -81,14 +81,6 @@ public abstract class BaseCosmosDbProperties implements Serializable {
     private int databaseThroughput = 4000;
 
     /**
-     * Whether telemetry should be enabled by default.
-     * Sets the flag to enable client telemetry which will periodically collect
-     * database operations aggregation statistics, system information like cpu/memory and send
-     * it to cosmos monitoring service, which will be helpful during debugging.
-     */
-    private boolean allowTelemetry;
-
-    /**
      * Sets the preferred regions for geo-replicated database accounts. For example, "East US" as the preferred region.
      * When EnableEndpointDiscovery is true and PreferredRegions is
      * non-empty, the SDK will prefer to use the regions in the container in the

@@ -34,7 +34,7 @@ dependencies {
     compileOnly project(":support:cas-server-support-trusted-mfa")
 
     testImplementation libraries.springboottomcat
-    
+
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-rest")
 
@@ -44,6 +44,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-webconfig")
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(":support:cas-server-support-themes")
 
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-audit")

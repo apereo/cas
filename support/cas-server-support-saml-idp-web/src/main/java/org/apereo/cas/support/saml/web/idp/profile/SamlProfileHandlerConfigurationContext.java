@@ -83,6 +83,7 @@ public class SamlProfileHandlerConfigurationContext {
     private final Service callbackService;
 
     @Nonnull
+    @Deprecated(since = "7.3.0", forRemoval = true)
     private final CasCookieBuilder samlDistributedSessionCookieGenerator;
 
     @Nonnull
