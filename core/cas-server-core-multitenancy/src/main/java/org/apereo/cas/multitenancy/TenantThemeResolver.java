@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.annotation.Nonnull;
 
 /**
  * This is {@link TenantThemeResolver}.
@@ -26,6 +26,7 @@ public class TenantThemeResolver extends AbstractThemeResolver {
 
     protected final ObjectProvider<CasConfigurationProperties> casProperties;
 
+    @Nonnull
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
         return tenantExtractor.getObject()
@@ -34,11 +35,5 @@ public class TenantThemeResolver extends AbstractThemeResolver {
             .filter(policy -> StringUtils.isNotBlank(policy.getThemeName()))
             .map(TenantUserInterfacePolicy::getThemeName)
             .orElseGet(this::getDefaultThemeName);
-    }
-
-    @Override
-    public void setThemeName(final HttpServletRequest request,
-                             final HttpServletResponse response,
-                             final String themeName) {
     }
 }

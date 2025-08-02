@@ -35,11 +35,13 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.1.0
+ * @deprecated Since 7.3.0
  */
 @SpringBootTest(classes = BaseSessionStoreTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Web")
 @ExtendWith(CasTestExtension.class)
+@Deprecated(since = "7.3.0", forRemoval = true)
 class TicketRegistrySessionStoreTests {
 
     @Autowired
