@@ -76,7 +76,6 @@ class OidcCibaControllerTests extends AbstractOidcTests {
             .apply(springSecurity())
             .defaultRequest(post("/")
                 .contextPath("/cas")
-                .header("X-Forwarded-Proto", "https")
                 .header("Host", "sso.example.org")
                 .accept(MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN)
                 .contentType(MediaType.APPLICATION_JSON)

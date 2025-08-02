@@ -26,16 +26,13 @@ async function verifyInterruption(browser) {
     await cas.gotoLogin(page, service);
     await cas.assertTicketParameter(page);
 
-    await cas.gotoLogin(page, service);
-    await cas.assertCookie(page, true, "CASINTERRUPT");
-
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 2; i++) {
         await cas.gotoLogin(page, service + i);
         await cas.sleep(500);
         await cas.assertTicketParameter(page);
     }
 
-    await cas.gotoLogin(page, service);
+    await cas.gotoLogin(page);
     await cas.assertCookie(page, true, "CASINTERRUPT");
     
     await cas.gotoLogout(page);

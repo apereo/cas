@@ -152,6 +152,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "delegatedClientDistributedSessionCookieGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Deprecated(since = "7.3.0", forRemoval = true)
         public CasCookieBuilder delegatedClientDistributedSessionCookieGenerator(
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,

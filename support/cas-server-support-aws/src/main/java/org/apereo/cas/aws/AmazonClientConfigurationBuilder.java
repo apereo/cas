@@ -66,7 +66,7 @@ public class AmazonClientConfigurationBuilder {
         val clientBuilder = builder.httpClientBuilder(httpClientBuilder);
         if (clientBuilder instanceof final AwsClientBuilder awsClientBuilder) {
             val overrideConfig = ClientOverrideConfiguration.builder()
-                .retryPolicy(RetryMode.valueOf(props.getRetryMode()))
+                .retryStrategy(RetryMode.valueOf(props.getRetryMode()))
                 .build();
             awsClientBuilder.overrideConfiguration(overrideConfig);
             awsClientBuilder.credentialsProvider(credentialsProvider);
