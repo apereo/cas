@@ -40,6 +40,7 @@ public class DelegatedAuthenticationSamlIdPSingleLogoutRequestProcessor implemen
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).minimal(true).build().toObjectMapper();
 
+    @Deprecated(since = "7.3.0", forRemoval = true)
     private final CasCookieBuilder delegatedSaml2IdPSloRequestCookieGenerator;
     private final ServiceFactory serviceFactory;
     private final ServicesManager servicesManager;
@@ -95,6 +96,7 @@ public class DelegatedAuthenticationSamlIdPSingleLogoutRequestProcessor implemen
         delegatedSaml2IdPSloRequestCookieGenerator.addCookie(request, response, cookieValue);
     }
 
+    @Deprecated(since = "7.3.0", forRemoval = true)
     protected void autoConfigureCookieIfNecessary(final HttpServletRequest request) {
         val cookieProps = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
         if (cookieProps.isAutoConfigureCookiePath()) {

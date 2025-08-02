@@ -77,6 +77,6 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
                 HttpUtils.close(response);
             }
         }
-        return ClosedInputStream.CLOSED_INPUT_STREAM;
+        return ClosedInputStream.INSTANCE;
     }
 }

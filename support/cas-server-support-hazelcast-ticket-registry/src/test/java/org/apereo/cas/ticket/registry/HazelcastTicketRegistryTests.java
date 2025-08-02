@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import java.util.UUID;
@@ -83,10 +82,7 @@ class HazelcastTicketRegistryTests {
 
         @Autowired
         private CasConfigurationProperties casProperties;
-
-        @Autowired
-        private ConfigurableApplicationContext applicationContext;
-
+        
         @RepeatedTest(1)
         void verifyBadExpPolicyValue() {
             val ticket = new MockTicketGrantingTicket("casuser");

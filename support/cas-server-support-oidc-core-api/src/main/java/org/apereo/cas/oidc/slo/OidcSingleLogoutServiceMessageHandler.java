@@ -106,6 +106,7 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
                 .url(msg.getUrl().toExternalForm())
                 .entity("logout_token=" + payload)
                 .headers(CollectionUtils.wrap(HttpHeaders.CONTENT_TYPE, msg.getContentType()))
+                .httpClient(getHttpClient())
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && !Objects.requireNonNull(HttpStatus.resolve(response.getCode())).isError()) {
