@@ -47,7 +47,8 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
         HttpResponse response = null;
         try {
             val properties = adaptiveAuthenticationProperties.getIpIntel().getBlackDot();
-            val builder = new StringBuilder(String.format(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), clientIpAddress));
+            val resolvedUrl = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl());
+            val builder = new StringBuilder(String.format(resolvedUrl, clientIpAddress));
             builder.append("&format=json");
 
             if (StringUtils.isNotBlank(properties.getEmailAddress())) {
@@ -70,7 +71,7 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
                 .maximumRetryAttempts(1)
                 .build();
             response = HttpUtils.execute(exec);
-            if (response.getCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
+            if (response == null || response.getCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
                 LOGGER.error("Exceeded the number of allowed queries");
                 return bannedResponse;
             }
