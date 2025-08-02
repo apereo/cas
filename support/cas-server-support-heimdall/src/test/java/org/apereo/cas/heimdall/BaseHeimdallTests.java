@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasHeimdallAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20WebflowAutoConfiguration;
 import org.apereo.cas.config.CasOidcAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -48,6 +49,7 @@ abstract class BaseHeimdallTests {
         CasCoreScriptingAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasThymeleafAutoConfiguration.class,
+        CasThemesAutoConfiguration.class,
         CasOAuth20WebflowAutoConfiguration.class,
         CasOidcAutoConfiguration.class,
 

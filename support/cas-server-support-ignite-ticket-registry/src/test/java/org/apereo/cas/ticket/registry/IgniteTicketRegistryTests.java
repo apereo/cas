@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -61,10 +60,7 @@ class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("igniteConfiguration")
     private IgniteConfiguration igniteConfiguration;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
+    
     @BeforeAll
     public static void beforeAll() throws Exception {
         val ks = KeyStore.getInstance("pkcs12");
