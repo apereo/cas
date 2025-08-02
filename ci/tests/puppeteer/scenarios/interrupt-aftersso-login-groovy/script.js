@@ -16,6 +16,7 @@ const cas = require("../../cas.js");
     await cas.click(page, "#continue");
     await cas.sleep(1000);
     await cas.assertTicketParameter(page);
+    await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.assertCookie(page, true, "CASINTERRUPT");
     await browser.close();

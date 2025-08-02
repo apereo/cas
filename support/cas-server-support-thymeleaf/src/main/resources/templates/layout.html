@@ -7,22 +7,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
     <title layout:title-pattern="$LAYOUT_TITLE $CONTENT_TITLE"
-        th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS - Central Authentication Service')}">
+        th:text="${#strings.defaultString(#cas.theme('cas.theme.name'), 'CAS - Central Authentication Service')}">
     </title>
 
     <!--/* Core CAS CSS */-->
-    <span th:remove="tag" th:if="${#cas.isTrue(#themes.code('cas.css.core.enabled'))}">
+    <span th:remove="tag" th:if="${#cas.isTrue(#cas.theme('cas.css.core.enabled'))}">
         <span th:replace="~{fragments/includes :: stylesheets}">
             <a href="fragments/includes.html">Theme</a> stylesheet fragment will go here
         </span>
     </span>
 
-    <span th:remove="tag" th:each="file : ${#strings.setSplit(#themes.code('cas.standard.css.file'), ',')}">
+    <span th:remove="tag" th:each="file : ${#strings.setSplit(#cas.theme('cas.standard.css.file'), ',')}">
         <link rel="stylesheet" type="text/css" href="../static/css/cas.css" th:href="@{${file}}" />
     </span>
-    <link rel="shortcut icon" th:href="@{${#strings.defaultString(#themes.code('cas.favicon.file'), '/favicon.ico')}}" />
+    <link rel="shortcut icon" th:href="@{${#strings.defaultString(#cas.theme('cas.favicon.file'), '/favicon.ico')}}" />
 
-    <span th:remove="tag" th:each="name : ${#strings.setSplit(#themes.code('cas.standard.fragments.head'), ',')}">
+    <span th:remove="tag" th:each="name : ${#strings.setSplit(#cas.theme('cas.standard.fragments.head'), ',')}">
         <span th:replace="~{fragments/custom :: ${name}}" th:remove="tag" />
     </span>
 
