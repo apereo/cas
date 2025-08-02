@@ -68,11 +68,30 @@ supports the ability to store HTTP sessions in the [Ticket Registry](../webflow/
 Doing so allows you to take advantage of the existing ticket registry storage backends and removes the need to configure
 sticky sessions in your load balancer or application server, etc.
 
-<div class="alert alert-info">:information_source: <strong>Pay Attention!</strong><p>
-Some CAS features and modules at the moment define and provide their own options and settings to
-replicate HTTP sessions in a clustered environment. Future CAS releases will likely remove such
-options and you will be asked to use the above session replication strategies instead, backed by Spring Session.
-</p></div>
+
+### Deprecations & Removals
+
+Per the above note, some CAS features and modules at the moment define and provide their own options and settings to
+replicate HTTP sessions in a clustered environment. All such options, features and settings are now deprecated
+and will be removed in future CAS releases. A few examples of such options and features include:
+
+- `cas.authn.saml-idp.core.session-storage-type=TICKET_REGISTRY`
+- `cas.authn.saml-idp.core.session-replication.cookie.*`
+- `cas.authn.oauth.session-replication.replicate-sessions`
+- `cas.authn.oauth.session-replication.cookie.*`
+- `cas.authn.pac4j.core.session-replication.replicate-sessions`
+- `cas.authn.pac4j.core.session-replication.cookie.*`
+- `cas.session-replication.cookie.*`
+- `cas.authn.pac4j.core.session-replication.cookie.*`
+- ...more...
+    
+As noted above, session replication can still be handled via the 
+[Ticket Registry](../webflow/Webflow-Customization-Sessions-ServerSide-TicketRegistry.html)
+which is done as a direct and native integration with the Spring Session library. 
+        
+It is recommended that you start using the above session replication strategy
+and remove any existing configuration that uses the above options. Future CAS releases will
+**remove such options**.
 
 ### OpenRewrite Recipes
 
