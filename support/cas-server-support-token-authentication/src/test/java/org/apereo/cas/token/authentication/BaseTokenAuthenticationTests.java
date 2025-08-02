@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
@@ -53,6 +54,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     CasCoreEnvironmentBootstrapAutoConfiguration.class,
     CasCoreMultitenancyAutoConfiguration.class,
     CasThymeleafAutoConfiguration.class,
+    CasThemesAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasTokenCoreAutoConfiguration.class,
     CasTokenAuthenticationAutoConfiguration.class
