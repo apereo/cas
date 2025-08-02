@@ -58,6 +58,17 @@ public class RedisPoolProperties implements CasFeatureModule, Serializable {
     private long minEvictableIdleTimeMillis;
 
     /**
+     * Sets the amount of time (in milliseconds) between runs of the idle object
+     * evictor thread. When non-positive, no idle object evictor thread will be run.
+     * If positive, the idle object evictor thread will run at least once every
+     * timeBetweenEvictionRunsMillis milliseconds, and will attempt to evict
+     * objects from the pool that are idle longer than
+     * getMinEvictableIdleTimeMillis() (if positive) or
+     * getSoftMinEvictableIdleTimeMillis() (if positive).
+     */
+    private long timeBetweenEvictionRunsMillis = -1;
+
+    /**
      * Returns whether the pool has LIFO (last in, first out) behaviour with respect
      * to idle objects - always returning the most recently used object from the
      * pool, or as a FIFO (first in, first out) queue, where the pool always returns
