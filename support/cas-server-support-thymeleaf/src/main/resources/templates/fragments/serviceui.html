@@ -13,8 +13,8 @@
 <body>
 <main class="container mt-3 mb-3">
     <div th:fragment="serviceUI"
-         th:if="${registeredService != null and #cas.isTrue(#themes.code('cas.service-ui.show'))}"
-         th:with="showServiceUIDetails=${#cas.isTrue(#themes.code('cas.service-ui.show-details'))}"
+         th:if="${registeredService != null and #cas.isTrue(#cas.theme('cas.service-ui.show'))}"
+         th:with="showServiceUIDetails=${#cas.isTrue(#cas.theme('cas.service-ui.show-details'))}"
          id="serviceui" class="banner banner-info mb-4 text-justify">
 
         <div th:if="${serviceUIMetadata}" class="d-flex align-items-center pr-2">
