@@ -209,6 +209,9 @@ public class RedisObjectFactory {
             config.setTestOnBorrow(pool.isTestOnBorrow());
             config.setTestOnReturn(pool.isTestOnReturn());
             config.setTestOnCreate(pool.isTestOnCreate());
+            if (pool.getTimeBetweenEvictionRunsMillis() > 0) {
+                config.setTimeBetweenEvictionRuns(Duration.ofMillis(pool.getTimeBetweenEvictionRunsMillis()));
+            }
             if (pool.getMinEvictableIdleTimeMillis() > 0) {
                 config.setMinEvictableIdleTime(Duration.ofMillis(pool.getMinEvictableIdleTimeMillis()));
             }
