@@ -69,7 +69,7 @@ Doing so allows you to take advantage of the existing ticket registry storage ba
 sticky sessions in your load balancer or application server, etc.
 
 
-### Deprecations & Removals
+### Session Management Deprecations
 
 Per the above note, some CAS features and modules at the moment define and provide their own options and settings to
 replicate HTTP sessions in a clustered environment. All such options, features and settings are now deprecated
@@ -89,7 +89,7 @@ As noted above, session replication can still be handled via the
 [Ticket Registry](../webflow/Webflow-Customization-Sessions-ServerSide-TicketRegistry.html)
 which is done as a direct and native integration with the Spring Session library. 
         
-It is recommended that you start using the above session replication strategy
+If you're using the above options and features, it is recommended that you start using the above session replication strategy
 and remove any existing configuration that uses the above options. Future CAS releases will
 **remove such options**.
 
