@@ -3,6 +3,7 @@ package org.springframework.web.servlet.theme;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.util.WebUtils;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
@@ -12,6 +13,7 @@ import org.apereo.cas.web.support.CookieUtils;
 import org.springframework.http.HttpHeaders;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 /**
  * {@link ThemeResolver} implementation that uses a cookie sent back to the user
@@ -26,6 +28,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 7.3.0
  */
 @RequiredArgsConstructor
+@NoArgsConstructor(force = true)
 public class CookieThemeResolver implements ThemeResolver {
 
     /**
@@ -79,6 +82,7 @@ public class CookieThemeResolver implements ThemeResolver {
         final HttpServletResponse response,
         final String themeName) {
 
+        Objects.requireNonNull(cookieProperties, "CookieProperties must not be null");
         if (StringUtils.isNotBlank(themeName)) {
             request.setAttribute(THEME_REQUEST_ATTRIBUTE_NAME, themeName);
             val cookie = CookieUtils.createSetCookieHeader(themeName,
