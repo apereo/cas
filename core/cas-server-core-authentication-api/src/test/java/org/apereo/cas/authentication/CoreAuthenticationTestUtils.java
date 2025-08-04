@@ -11,6 +11,8 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.merger.AttributeMerger;
+import org.apereo.cas.authentication.principal.merger.ReplacingAttributeAdder;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.multitenancy.DefaultTenantsManager;
 import org.apereo.cas.multitenancy.TenantExtractor;
@@ -261,16 +263,27 @@ public class CoreAuthenticationTestUtils {
         return builder;
     }
 
+    public static AuthenticationSystemSupport getAuthenticationSystemSupport(final AttributeMerger attributeMerger) {
+        return getAuthenticationSystemSupport(mock(AuthenticationManager.class), mock(ServicesManager.class), attributeMerger);
+    }
+    
     public static AuthenticationSystemSupport getAuthenticationSystemSupport() {
         return getAuthenticationSystemSupport(mock(AuthenticationManager.class), mock(ServicesManager.class));
     }
 
     public static AuthenticationSystemSupport getAuthenticationSystemSupport(final AuthenticationManager authenticationManager,
                                                                              final ServicesManager servicesManager) {
+        return getAuthenticationSystemSupport(authenticationManager, servicesManager, new ReplacingAttributeAdder());
+    }
+    
+    public static AuthenticationSystemSupport getAuthenticationSystemSupport(final AuthenticationManager authenticationManager,
+                                                                             final ServicesManager servicesManager,
+                                                                             final AttributeMerger attributeMerger) {
         val staticApplicationContext = new StaticApplicationContext();
         staticApplicationContext.refresh();
         
         val principalElectionStrategy = new DefaultPrincipalElectionStrategy();
+        principalElectionStrategy.setAttributeMerger(attributeMerger);
         val tenantsManager = new DefaultTenantsManager();
         return new DefaultAuthenticationSystemSupport(
             new DefaultAuthenticationTransactionManager(staticApplicationContext, authenticationManager),
@@ -280,7 +293,8 @@ public class CoreAuthenticationTestUtils {
             servicesManager,
             new EchoingPrincipalResolver(),
             PrincipalFactoryUtils.newPrincipalFactory(),
-            mock(TenantExtractor.class), tenantsManager);
+            mock(TenantExtractor.class),
+            tenantsManager);
     }
 
     public static AuthenticationTransactionFactory getAuthenticationTransactionFactory(final ServicesManager servicesManager) {

@@ -68,7 +68,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
             LOGGER.debug("Validated OTP token [{}] successfully for [{}]", validatedToken, principal);
             validator.store(validatedToken);
             LOGGER.debug("Creating authentication result and building principal for [{}]", principal);
-            return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(principal));
+            return createHandlerResult(tokenCredential, principalFactory.createPrincipal(principal));
         }
         LOGGER.warn("Authorization of OTP token [{}] has failed", credential);
         throw new FailedLoginException("Failed to authenticate code " + credential);
