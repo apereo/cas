@@ -6,7 +6,7 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-    "--management.endpoints.web.exposure.include=gauthCredentialRepository",
+    "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.access.default=UNRESTRICTED",
 
     "--cas.authn.mfa.gauth.core.maximum-authentication-attempts=3",

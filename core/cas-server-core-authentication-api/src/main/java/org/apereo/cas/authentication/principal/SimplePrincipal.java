@@ -67,4 +67,9 @@ public class SimplePrincipal implements Principal {
         }
         return false;
     }
+
+    @Override
+    public Principal withAttributes(final Map<String, List<Object>> attributes) {
+        return new SimplePrincipal(id, attributes);
+    }
 }
