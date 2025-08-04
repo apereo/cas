@@ -77,10 +77,7 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val clientInfo = ClientInfoHolder.getClientInfo();
-
         val bean = getPasswordChangeRequest(requestContext);
-        Optional.ofNullable(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class))
-            .ifPresent(credential -> bean.setCurrentPassword(credential.getPassword()));
 
         try {
 
