@@ -108,4 +108,15 @@ class SyncopePasswordManagementServiceTests {
         credential.setPassword("Password123!".toCharArray());
         assertDoesNotThrow(() -> syncopeAuthenticationHandler.authenticate(credential, mock(Service.class)));
     }
+
+    @Test
+    void verifyForgottenPasswordChange() throws Throwable {
+        val passwordChangeRequest = new PasswordChangeRequest(
+            "syncopepasschange3",
+            null,
+            "Password123!".toCharArray(),
+            "Password123!".toCharArray()
+        );
+        assertTrue(passwordChangeService.change(passwordChangeRequest));
+    }
 }

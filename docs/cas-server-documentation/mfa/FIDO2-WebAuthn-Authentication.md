@@ -16,7 +16,8 @@ such as security keys or built-in platform authenticators such as biometric read
 
 <div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>To use WebAuthn support in a cluster,
 you must either enable session affinity (so that the same user always connects to the same node),
-or share the web session across all nodes in the cluster.</p></div>
+or <a href="../webflow/Webflow-Customization-Sessions-ServerSide.html">replicate the web session</a> 
+across all nodes in the cluster.</p></div>
 
 Support is enabled by including the following module in the WAR overlay:
 
