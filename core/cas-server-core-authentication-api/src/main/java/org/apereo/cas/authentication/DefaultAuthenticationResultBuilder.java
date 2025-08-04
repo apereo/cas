@@ -171,8 +171,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
         authenticationBuilder.setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC));
 
-        val auth = authenticationBuilder.build();
-        LOGGER.trace("Authentication result commenced at [{}]", auth.getAuthenticationDate());
-        return auth;
+        val authentication = authenticationBuilder.build();
+        LOGGER.trace("Authentication result commenced at [{}]", authentication.getAuthenticationDate());
+        return authentication;
     }
 }

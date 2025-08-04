@@ -29,7 +29,7 @@ async function executeRequest(url, method, statusCode, contentType = "applicatio
     return cas.doRequest(url, method,
         {
             "Accept": "application/json",
-            "Content-Length": requestBody !== undefined ? Buffer.byteLength(requestBody) : 0,
+            "Content-Length": requestBody === undefined ? 0 : Buffer.byteLength(requestBody),
             "Content-Type": contentType
         },
         statusCode, requestBody);

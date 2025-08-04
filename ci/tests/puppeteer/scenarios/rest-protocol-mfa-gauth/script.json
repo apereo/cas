@@ -1,0 +1,25 @@
+{
+  "dependencies": "gauth,rest",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
+    "--cas.authn.attribute-repository.stub.attributes.lastname=User",
+    "--cas.authn.attribute-repository.stub.attributes.firstname=CAS",
+    
+    "--cas.authn.mfa.gauth.crypto.enabled=false",
+    "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.mfa.gauth.core.issuer=CASIssuer",
+    "--cas.authn.mfa.gauth.core.label=CASLabel",
+
+    "--management.endpoints.access.default=UNRESTRICTED",
+    "--management.endpoints.web.exposure.include=*",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    
+    "--cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}

@@ -167,7 +167,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             authenticationBuilder.addSuccess(authenticationHandlerName, handlerExecutionResult);
             LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", authenticationHandlerName, credential);
             publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential, clientInfo));
-            val principal = principalResolver != null
+            var principal = principalResolver != null
                 ? resolvePrincipal(handler, principalResolver, credential, handlerExecutionResult.getPrincipal(), service)
                 : handlerExecutionResult.getPrincipal();
             if (principal == null) {
@@ -181,6 +181,14 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                     + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
                     + "produced by the authentication handler, if any.", resolverName);
             } else {
+                val currentPrincipal = authenticationBuilder.getPrincipal();
+                if (!(currentPrincipal instanceof NullPrincipal)) {
+                    val merger = authenticationSystemSupport.getObject().getPrincipalElectionStrategy().getAttributeMerger();
+                    LOGGER.trace("Merging attributes from [{}] into principal [{}]", principal, currentPrincipal);
+                    val mergedAttributes = CoreAuthenticationUtils.mergeAttributes(currentPrincipal.getAttributes(), principal.getAttributes(), merger);
+                    principal = principal.withAttributes(mergedAttributes);
+                    LOGGER.debug("Merged attributes into principal [{}]", principal);
+                }
                 authenticationBuilder.setPrincipal(principal);
             }
             LOGGER.debug("Final principal resolved for this authentication event is [{}]", principal);

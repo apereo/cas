@@ -1,0 +1,11 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://example.org",
+  "name": "Sample",
+  "id": 1,
+  "description": "Sample Service",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
+    "authorizedToReleaseAuthenticationAttributes": false
+  }
+}

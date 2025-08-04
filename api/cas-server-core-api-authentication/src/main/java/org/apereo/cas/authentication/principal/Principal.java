@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -74,7 +75,7 @@ public interface Principal extends Serializable {
     default Object getSingleValuedAttribute(final String name) {
         return getSingleValuedAttribute(name, Object.class);
     }
-    
+
     /**
      * Contains attribute by name.
      *
@@ -83,5 +84,17 @@ public interface Principal extends Serializable {
      */
     default boolean containsAttribute(final String name) {
         return getAttributes().containsKey(name);
+    }
+
+    /**
+     * Create a new principal with this and new attributes.
+     *
+     * @param attributes the attributes
+     * @return the principal
+     */
+    @CanIgnoreReturnValue
+    @JsonIgnore
+    default Principal withAttributes(final Map<String, List<Object>> attributes) {
+        return this;
     }
 }
