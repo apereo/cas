@@ -1,0 +1,45 @@
+{
+  "dependencies": "syncope-authentication",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.accept.enabled=false",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.authn.syncope.url=http://localhost:18080/syncope",
+    
+    "--cas.authn.attribute-repository.syncope.url=http://localhost:18080/syncope",
+    "--cas.authn.attribute-repository.syncope.basic-auth-username=admin",
+    "--cas.authn.attribute-repository.syncope.basic-auth-password=password",
+    "--cas.authn.attribute-repository.syncope.search-filter=username=={user}",
+    
+    "--cas.authn.pm.core.enabled=true",
+    "--cas.authn.pm.core.password-policy-pattern=.+",
+
+    "--cas.authn.pm.reset.mail.from=cas@apereo.org",
+    "--cas.authn.pm.reset.mail.text=${url}",
+    "--cas.authn.pm.reset.mail.subject=Reset",
+    "--cas.authn.pm.reset.mail.attribute-name=mail",
+    "--cas.authn.pm.reset.security-questions-enabled=false",
+
+    "--cas.authn.pm.syncope.basic-auth-username=admin",
+    "--cas.authn.pm.syncope.basic-auth-password=password",
+    "--cas.authn.pm.syncope.url=http://localhost:18080/syncope",
+    "--cas.authn.pm.syncope.attribute-mappings.syncopeUserAttr_givenName=name",
+    "--cas.authn.pm.syncope.attribute-mappings.syncopeUserAttr_email=email",
+    "--cas.authn.pm.syncope.attribute-mappings.syncopeUserAttr_phoneNumber=phoneNumber",
+    "--cas.authn.pm.syncope.attribute-mappings.username=username",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000"
+  ],
+  "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true",
+  "initScript": "${PWD}/ci/tests/syncope/run-syncope-server.sh,${PWD}/ci/tests/mail/run-mail-server.sh"
+}
