@@ -21,6 +21,7 @@ import org.apereo.cas.pm.event.PasswordChangeSuccessEvent;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -77,7 +78,12 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val clientInfo = ClientInfoHolder.getClientInfo();
+
         val bean = getPasswordChangeRequest(requestContext);
+        if (CasWebflowConfigurer.FLOW_ID_PASSWORD_RESET.equals(requestContext.getActiveFlow().getId())) {
+            Optional.ofNullable(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class))
+                .ifPresent(credential -> bean.setCurrentPassword(credential.getPassword()));
+        }
 
         try {
 
