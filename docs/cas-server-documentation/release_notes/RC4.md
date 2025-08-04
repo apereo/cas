@@ -68,7 +68,6 @@ supports the ability to store HTTP sessions in the [Ticket Registry](../webflow/
 Doing so allows you to take advantage of the existing ticket registry storage backends and removes the need to configure
 sticky sessions in your load balancer or application server, etc.
 
-
 ### Session Management Deprecations
 
 Per the above note, some CAS features and modules at the moment define and provide their own options and settings to
@@ -92,6 +91,15 @@ which is done as a direct and native integration with the Spring Session library
 If you're using the above options and features, it is recommended that you start using the above session replication strategy
 and remove any existing configuration that uses the above options. Future CAS releases will
 **remove such options**.
+  
+### Theme Changes
+
+In anticipation of Spring Framework v7 and Spring Boot v4, a large number of deprecated APIs are now 
+internally removed and reworked in the CAS codebase. A significant number of such changes deal with theme management
+and the way themes are defined, loaded and processed in the CAS user interface views backed by Thymeleaf. 
+While such changes are not expected to impact existing themes yet, we recommend that you review your current HTML pages
+and specifically replace anything that references `#themes.code(...)` with `#cas.theme(...)`. This change will 
+put you in a better position to upgrade to future CAS releases that will remove the deprecated APIs and references.
 
 ### OpenRewrite Recipes
 
@@ -114,4 +122,3 @@ are now configured to run with parallelism enabled.
 
 ## Other Stuff
 
-- A large number of deprecated APIs are now internally removed and reworked in the CAS codebase.
