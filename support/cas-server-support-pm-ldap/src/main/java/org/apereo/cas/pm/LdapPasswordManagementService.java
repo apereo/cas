@@ -9,7 +9,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -157,24 +156,22 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public boolean changeInternal(final PasswordChangeRequest bean) {
-        return FunctionUtils.doAndHandle(() -> {
-            val results = findEntries(CollectionUtils.wrap(bean.getUsername()), true)
-                .entrySet()
-                .stream()
-                .map(entry -> {
-                    val dn = entry.getKey().getDn();
-                    LOGGER.debug("Updating account password for [{}]", dn);
-                    val ldapConnectionFactory = new LdapConnectionFactory(connectionFactoryMap.get(entry.getValue().getLdapUrl()));
-                    if (ldapConnectionFactory.executePasswordModifyOperation(dn, bean.getCurrentPassword(),
-                        bean.getPassword(), entry.getValue().getType())) {
-                        LOGGER.debug("Successfully updated the account password for [{}]", dn);
-                        return Boolean.TRUE;
-                    }
-                    LOGGER.error("Could not update the LDAP entry's password for [{}]", dn);
-                    return Boolean.FALSE;
-                }).toList();
-            return !results.isEmpty() && results.stream().allMatch(BooleanUtils::isTrue);
-        }, e -> false).get();
+        val results = findEntries(CollectionUtils.wrap(bean.getUsername()), true)
+            .entrySet()
+            .stream()
+            .map(entry -> {
+                val dn = entry.getKey().getDn();
+                LOGGER.debug("Updating account password for [{}]", dn);
+                val ldapConnectionFactory = new LdapConnectionFactory(connectionFactoryMap.get(entry.getValue().getLdapUrl()));
+                if (ldapConnectionFactory.executePasswordModifyOperation(dn, bean.getCurrentPassword(),
+                    bean.getPassword(), entry.getValue().getType())) {
+                    LOGGER.debug("Successfully updated the account password for [{}]", dn);
+                    return Boolean.TRUE;
+                }
+                LOGGER.error("Could not update the LDAP entry's password for [{}]", dn);
+                return Boolean.FALSE;
+            }).toList();
+        return !results.isEmpty() && results.stream().allMatch(BooleanUtils::isTrue);
     }
 
     /**

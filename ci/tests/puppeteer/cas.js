@@ -1,4 +1,3 @@
-
 const assert = require("assert");
 const axios = require("axios");
 const http = require("http");
@@ -121,7 +120,7 @@ exports.log = async (text, ...args) => {
     await LOGGER.debug(`🔷 ${colors.blue(toLog)}`, args);
 };
 
-exports.separator = async() => console.log("*".repeat(100));
+exports.separator = async () => console.log("*".repeat(100));
 
 exports.logy = async (text) => {
     const toLog = inspect(text);
@@ -176,7 +175,7 @@ exports.asciiart = (text) => {
     console.log(`🔷 Puppeteer: ${colors.blue(require("puppeteer/package.json").version)}`);
 };
 
-exports.assertTextMatches = async(text, regExp) =>
+exports.assertTextMatches = async (text, regExp) =>
     assert(regExp.test(text), `Text ${text} does not match pattern ${regExp}`);
 
 exports.clickLast = async (page, button) =>
@@ -232,7 +231,7 @@ exports.inputValue = async (page, selector) => {
     return text;
 };
 
-exports.assertInputValue = async(page, selector, value) => {
+exports.assertInputValue = async (page, selector, value) => {
     const inputValue = await this.inputValue(page, selector);
     await this.log(`Checking input value for selector [${selector}] to be: [${value}]`);
     assert(inputValue === value);
@@ -242,7 +241,7 @@ exports.waitForElement = async (page, selector, timeout = 10000) => page.waitFor
 
 exports.submitLoginCredentials = async (page, user = "casuser", password = "Mellon",
     usernameField = "#username", passwordField = "#password") => {
-    await this.log(`Logging in with ${user} and ${password}`);
+    await this.log(`Logging in with ${user} and ******`);
     await page.waitForSelector(usernameField, {visible: true});
     await this.type(page, usernameField, user);
     await page.waitForSelector(passwordField, {visible: true});
@@ -306,20 +305,20 @@ exports.assertInvisibility = async (page, selector) => {
     assert(result, `The element ${selector} must be invisible but it's not.`);
 };
 
-exports.deleteCookies = async(page, cookieName = undefined) => {
+exports.deleteCookies = async (page, cookieName = undefined) => {
     const allCookies = await page.cookies();
     for (const cookie of allCookies) {
         if (cookieName === undefined || cookie.name === cookieName) {
             await this.logb(`Deleting cookie ${cookie.name}`);
             await page.deleteCookie({
-                name : cookie.name,
-                domain : cookie.domain
+                name: cookie.name,
+                domain: cookie.domain
             });
         }
     }
 };
 
-exports.containsCookie = async(page, cookieName = "TGC") => {
+exports.containsCookie = async (page, cookieName = "TGC") => {
     const cookies = (await page.cookies()).filter((c) => {
         this.log(`Checking cookie ${c.name}:${c.value}`);
         return c.name === cookieName;
@@ -461,7 +460,7 @@ exports.newPage = async (browser) => {
             })
             .on("pageerror", ({message}) => this.logr(`Console: ${message}`));
     }
-    
+
     try {
         await page.bringToFront();
     } catch (e) {
@@ -559,7 +558,7 @@ exports.doRequest = async (url, method = "GET",
             keepAlive: true,
             protocol: protocol
         };
-        
+
         const handler = async (res) => {
             await this.logg(`Response status: ${res.statusCode}`);
             if (statusCode > 0) {
@@ -573,13 +572,13 @@ exports.doRequest = async (url, method = "GET",
                 await callback(res);
             }
         };
-        
+
         let client = https;
         if (protocol === "http:") {
             client = http;
         }
         options.agent = new client.Agent(options);
-        
+
         if (requestBody === undefined) {
             this.logg(`Sending ${method} request to ${url} without a body`);
             client.get(url, options, (res) => handler(res)).on("error", reject);
@@ -642,7 +641,7 @@ exports.doDelete = async (url, statusCode = 0, successHandler = undefined,
 };
 
 exports.doPost = async (url, params = "", headers = {},
-    successHandler, failureHandler, verbose=true) => {
+    successHandler, failureHandler, verbose = true) => {
     const instance = axios.create({
         timeout: 12000,
         httpsAgent: new https.Agent({
@@ -650,7 +649,7 @@ exports.doPost = async (url, params = "", headers = {},
         })
     });
     const urlParams = params instanceof URLSearchParams ? params : new URLSearchParams(params);
-    if (verbose){
+    if (verbose) {
         await this.logg(`Posting to URL ${url}`);
     }
     return instance
@@ -869,7 +868,12 @@ exports.screenshot = async (page) => {
             await this.log(`Page URL when capturing screenshot: ${url}`);
             await this.log(`Attempting to take a screenshot and save at ${filePath}`);
             await page.setViewport({width: 1920, height: 1080});
-            await page.screenshot({path: filePath, captureBeyondViewport: true, fullPage: true, optimizeForSpeed: true});
+            await page.screenshot({
+                path: filePath,
+                captureBeyondViewport: true,
+                fullPage: true,
+                optimizeForSpeed: true
+            });
             this.logg(`Screenshot saved at ${filePath}`);
         } catch (e) {
             this.logr(`Unable to capture screenshot ${filePath}: ${e}`);
@@ -930,6 +934,16 @@ exports.httpServer = async (root,
 
 exports.randomNumber = async (min = 1, max = 100) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
+
+exports.randomWord = async (length = 12) => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*[]{};:<>|";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+        const idx = Math.floor(Math.random() * chars.length);
+        result += chars.charAt(idx);
+    }
+    return result;
+};
 
 exports.killProcess = async (command, args) =>
     ps.lookup({
@@ -1068,12 +1082,12 @@ exports.loginDuoSecurityBypassCode = async (page, username = "casuser", currentC
     } else {
         await this.log(`Using Duo Security ${bypassCodes.length} bypass codes ${bypassCodes}`);
     }
-    
+
     let i = 0;
     const error = false;
     let accepted = false;
     const usedBypassCodes = [];
-    
+
     while (!accepted && !error && i < bypassCodes.length) {
         usedBypassCodes.push(bypassCodes[i]);
         const bypassCode = `${String(bypassCodes[i])}`;
@@ -1145,13 +1159,13 @@ exports.generateOtp = async (otpConfig) => {
     return otp;
 };
 
-exports.removeWebAuthnVirtualAuthenticator = async(device) => {
+exports.removeWebAuthnVirtualAuthenticator = async (device) => {
     await device.client.send("WebAuthn.removeVirtualAuthenticator", {
         authenticatorId: device.authenticator.authenticatorId
     });
 };
 
-exports.createWebAuthnVirtualAuthenticator = async(page, protocol = "u2f", hasResidentKey = false) => {
+exports.createWebAuthnVirtualAuthenticator = async (page, protocol = "u2f", hasResidentKey = false) => {
     const client = await page.target().createCDPSession();
     await client.send("WebAuthn.enable");
     const authenticator = await client.send("WebAuthn.addVirtualAuthenticator", {

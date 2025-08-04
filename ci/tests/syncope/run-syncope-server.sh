@@ -244,42 +244,46 @@ fi
 
 echo -e "\n-----------------\n"
 
-echo -e "Creating sample user: syncopepasschange...\n"
-curl -X 'POST' \
-  'http://localhost:18080/syncope/rest/users?storePassword=true' \
-  -H 'accept: application/json' \
-  -H 'Prefer: return-content' \
-  -H 'X-Syncope-Null-Priority-Async: false' \
-  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "_class": "org.apache.syncope.common.lib.request.UserCR",
-  "realm": "/",
-  "username": "syncopepasschange",
-  "password": "Sync0pe",
-  "mustChangePassword": true,
-  "plainAttrs": [
-    {
-      "schema": "email",
-      "values": [
-        "casuser@syncope.org"
-      ]
-    },
-    {
-      "schema": "phoneNumber",
-      "values": [
-        "3477464523"
-      ]
-    }
-  ],
-  "derAttrs": [
-    {
-      "schema": "description"
-    }
-  ]
-}'
+for i in {0..4}; do
+  suffix=$([ "$i" -eq 0 ] && echo "" || echo "$i")
+  echo -e "Creating sample user: syncopepasschange${suffix}...\n"
+  
+  curl -X 'POST' \
+    'http://localhost:18080/syncope/rest/users?storePassword=true' \
+    -H 'accept: application/json' \
+    -H 'Prefer: return-content' \
+    -H 'X-Syncope-Null-Priority-Async: false' \
+    -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
+    -H 'Content-Type: application/json' \
+    -d '{
+    "_class": "org.apache.syncope.common.lib.request.UserCR",
+    "realm": "/",
+    "username": '\""syncopepasschange${suffix}\""',
+    "password": "Sync0pe",
+    "mustChangePassword": true,
+    "plainAttrs": [
+      {
+        "schema": "email",
+        "values": [
+          "syncopepasschange@syncope.org"
+        ]
+      },
+      {
+        "schema": "phoneNumber",
+        "values": [
+          "3477464523"
+        ]
+      }
+    ],
+    "derAttrs": [
+      {
+        "schema": "description"
+      }
+    ]
+  }'
 
-echo -e "\n-----------------\n"
+  echo -e "\n-----------------\n"
+done
 
 for i in {0..4}; do
   suffix=$([ "$i" -eq 0 ] && echo "" || echo "$i")
