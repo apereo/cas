@@ -1,6 +1,6 @@
 services:
   redis-master:
-    image: redis:8.0.3
+    image: redis:8.2.0
     container_name: redis_server_master
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
@@ -9,7 +9,7 @@ services:
     ports:
       - "6379:6379"
   redis-ssl:
-    image: redis:8.0.3
+    image: redis:8.2.0
     container_name: redis_server_ssl
     command: >
       redis-server
@@ -24,7 +24,7 @@ services:
     volumes:
       - ./certs:/etc/ssl/certs
   redis-master2:
-    image: redis:8.0.3
+    image: redis:8.2.0
     container_name: redis_server_master2
     environment:
       - REDIS_PASSWORD=pAssw0rd123
