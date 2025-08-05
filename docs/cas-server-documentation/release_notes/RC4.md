@@ -59,7 +59,7 @@ and defined attribute repositories before outsourcing that task to the password 
   
 ### Session Management via Ticket Registry
 
-HTTP session replication may be required for clustered deployments that take advantage of specific CAS
+You may already know that HTTP session replication may be required for clustered deployments that take advantage of specific CAS
 modules and features that store data into the container's HTTP session. As of this writing, one such example
 would be [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html).
 
@@ -90,14 +90,14 @@ which is done as a direct and native integration with the Spring Session library
         
 If you're using the above options and features, it is recommended that you start using the above session replication strategy
 and remove any existing configuration that uses the above options. Future CAS releases will
-**remove such options**.
+**remove such options** and all components and features that make use of the listed options.
   
 ### Theme Changes
 
-In anticipation of Spring Framework v7 and Spring Boot v4, a large number of deprecated APIs are now 
+In anticipation of Spring Framework `v7` and Spring Boot `v4`, a large number of deprecated APIs are now 
 internally removed and reworked in the CAS codebase. A significant number of such changes deal with theme management
 and the way themes are defined, loaded and processed in the CAS user interface views backed by Thymeleaf. 
-While such changes are not expected to impact existing themes yet, we recommend that you review your current HTML pages
+While such changes are not expected to impact existing themes and pages yet, we recommend that you review your current HTML pages
 and specifically replace anything that references `#themes.code(...)` with `#cas.theme(...)`. This change will 
 put you in a better position to upgrade to future CAS releases that will remove the deprecated APIs and references.
 
@@ -121,4 +121,5 @@ test coverage of the CAS codebase is approximately `94%`. Furthermore, a large n
 are now configured to run with parallelism enabled.
 
 ## Other Stuff
-
+     
+- Integration tests have switched to use Redis `v8.2`.
