@@ -32,7 +32,6 @@ import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
 import org.apereo.cas.web.flow.resolver.CasMvcViewFactoryCreator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
-import org.apereo.cas.web.support.ThemeChangeInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -327,7 +326,7 @@ class CasWebflowContextConfiguration {
             @Qualifier("resourceUrlProviderExposingInterceptor")
             final HandlerInterceptor resourceUrlProviderExposingInterceptor,
             @Qualifier("themeChangeInterceptor")
-            final ObjectProvider<ThemeChangeInterceptor> themeChangeInterceptor,
+            final ObjectProvider<HandlerInterceptor> themeChangeInterceptor,
             @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
             final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return plan -> {
