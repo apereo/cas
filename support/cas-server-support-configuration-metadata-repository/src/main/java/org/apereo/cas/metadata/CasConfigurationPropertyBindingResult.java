@@ -23,7 +23,13 @@ public record CasConfigurationPropertyBindingResult(ConfigurationProperty proper
     @RequiredArgsConstructor
     @Getter
     public enum BindingStatus {
+        /**
+         * Unknown binding status.
+         */
         UNKNOWN("Unknown"),
+        /**
+         * Deprecated binding status.
+         */
         DEPRECATED("Deprecated");
 
         private final String label;
