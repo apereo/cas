@@ -3,6 +3,7 @@ package org.springframework.web.servlet.theme;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
+import org.apereo.cas.web.support.CookieThemeResolver;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Cookie")
 class CookieThemeResolverTests {
     @Test
-    void verifyThemeResolution() throws Exception {
+    void verifyThemeResolution() {
         val cookieProperties = new CookieProperties().withMaxAge("PT1H");
         val resolver = new CookieThemeResolver(cookieProperties);
 
@@ -49,6 +50,5 @@ class CookieThemeResolverTests {
         assertEquals(0, cookie.getMaxAge());
         assertEquals(resolver.getDefaultThemeName(),
             request.getAttribute(CookieThemeResolver.THEME_REQUEST_ATTRIBUTE_NAME));
-
     }
 }

@@ -34,13 +34,17 @@ public class SessionReplicationProperties implements Serializable {
      * Without this option, profile data and other related
      * pieces of information should be manually replicated
      * via means and libraries outside of CAS.
+     * @deprecated since 7.3.0
      */
+    @Deprecated(since = "7.3.0", forRemoval = true)
     private boolean replicateSessions = true;
 
     /**
      * Cookie setting for session replication.
+     * @deprecated since 7.3.0
      */
     @NestedConfigurationProperty
+    @Deprecated(since = "7.3.0", forRemoval = true)
     private CookieSessionReplicationProperties cookie = new CookieSessionReplicationProperties();
 
 }
