@@ -49,7 +49,7 @@ class CasWebAppConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "casThemeChangeInterceptor")
-    public ThemeChangeInterceptor themeChangeInterceptor(
+    public HandlerInterceptor themeChangeInterceptor(
         @Qualifier("themeResolver") final ThemeResolver themeResolver,
         final CasConfigurationProperties casProperties) {
         return new ThemeChangeInterceptor(themeResolver, casProperties.getTheme().getParamName());

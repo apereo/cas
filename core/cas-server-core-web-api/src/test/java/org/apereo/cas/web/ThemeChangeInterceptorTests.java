@@ -21,7 +21,7 @@ class ThemeChangeInterceptorTests {
     @Test
     void verifyOperation() throws Exception {
         val themeResolver = new SessionThemeResolver();
-        val interceptor = new org.apereo.cas.web.support.ThemeChangeInterceptor(themeResolver, "theme");
+        val interceptor = new ThemeChangeInterceptor(themeResolver, "theme");
         val request = new MockHttpServletRequest();
         request.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, "cas");
         assertTrue(interceptor.preHandle(request, new MockHttpServletResponse(), new Object()));
