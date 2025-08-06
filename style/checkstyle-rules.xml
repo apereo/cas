@@ -735,7 +735,7 @@
         <metadata name="net.sf.eclipsecs.core.comment" value="Use @TestConfiguration"/>
         <property name="severity" value="error"/>
         <property name="id" value="useTestConfiguration"/>
-        <property name="format" value="@Configuration"/>
+        <property name="format" value="@Configuration\b"/>
         <property name="message" value="Configuration classes for tests must be marked with @TestConfiguration"/>
     </module>
 
