@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -37,6 +38,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class CasConfigurationPropertiesValidator {
+    /**
+     * System property to enable/disable config validation.
+     */
+    public static final String SYSTEM_PROPERTY_CONFIG_VALIDATION_ENABLED = "VALIDATE_CONFIGURATION_ENABLED";
+
     private final ConfigurableApplicationContext applicationContext;
 
     @Setter
@@ -50,29 +56,35 @@ public class CasConfigurationPropertiesValidator {
      * @return the list
      */
     public List<CasConfigurationPropertyBindingResult> validate() {
-        LOGGER.info("Validating CAS property sources and configuration for active profiles [{}]. Please wait...",
-            Arrays.toString(applicationContext.getEnvironment().getActiveProfiles()));
-        val validationResults = validateCasConfiguration();
-        if (validationResults.isEmpty()) {
-            LOGGER.info("Validated CAS property sources and configuration successfully.");
-        } else {
-            val unknownProperties = validationResults
-                .stream()
-                .filter(result -> result.status() == CasConfigurationPropertyBindingResult.BindingStatus.UNKNOWN)
-                .map(CasConfigurationPropertyBindingResult::toString)
-                .collect(Collectors.joining("\n"));
-            if (!unknownProperties.isEmpty()) {
-                val message = """
-                    The following settings are not recognized by CAS {}. They may have been renamed, removed, or relocated \
-                    to a new namespace in the CAS configuration schema. CAS will ignore such settings to proceed with its normal initialization sequence. \
-                    Please consult the CAS documentation to review and adjust each setting to find an alternative or remove the \
-                    definition from the property source. Failure to do so puts the server stability in danger and complicates future upgrades.
-                    {}
-                    """.stripIndent().stripLeading();
-                LOGGER.error(message, CasVersion.getVersion(), unknownProperties);
+        val propertyValue = System.getProperty(SYSTEM_PROPERTY_CONFIG_VALIDATION_ENABLED);
+        val validate = StringUtils.isBlank(propertyValue) || BooleanUtils.toBoolean(propertyValue);
+        if (validate) {
+            LOGGER.info("Validating CAS property sources and configuration for active profiles [{}]. Please wait...",
+                Arrays.toString(applicationContext.getEnvironment().getActiveProfiles()));
+            val validationResults = validateCasConfiguration();
+            if (validationResults.isEmpty()) {
+                LOGGER.info("Validated CAS property sources and configuration successfully.");
+            } else {
+                val unknownProperties = validationResults
+                    .stream()
+                    .filter(result -> result.status() == CasConfigurationPropertyBindingResult.BindingStatus.UNKNOWN)
+                    .map(CasConfigurationPropertyBindingResult::toString)
+                    .collect(Collectors.joining("\n"));
+                if (!unknownProperties.isEmpty()) {
+                    val message = """
+                        The following settings are not recognized by CAS {}. They may have been renamed, removed, or relocated \
+                        to a new namespace in the CAS configuration schema. CAS will ignore such settings to proceed with its normal initialization sequence. \
+                        Please consult the CAS documentation to review and adjust each setting to find an alternative or remove the \
+                        definition from the property source. Failure to do so puts the server stability in danger and complicates future upgrades.
+                        {}
+                        """.stripIndent().stripLeading();
+                    LOGGER.error(message, CasVersion.getVersion(), unknownProperties);
+                }
             }
+            return validationResults;
         }
-        return validationResults;
+        LOGGER.info("CAS configuration validation is explicitly disabled. No validation will be performed.");
+        return List.of();
     }
 
     private List<CasConfigurationPropertyBindingResult> validateCasConfiguration() {

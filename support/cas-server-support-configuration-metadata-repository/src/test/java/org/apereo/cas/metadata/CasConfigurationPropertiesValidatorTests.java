@@ -52,12 +52,20 @@ class CasConfigurationPropertiesValidatorTests {
 
     @Test
     void verifyOperation() {
+        System.setProperty(CasConfigurationPropertiesValidator.SYSTEM_PROPERTY_CONFIG_VALIDATION_ENABLED, "true");
         val validator = new CasConfigurationPropertiesValidator(applicationContext);
         validator.setConfigurationPropertyClasses(List.of(CasConfigurationProperties.class, TestCustomProperties.class));
         val results = validator.validate();
         assertFalse(results.isEmpty());
         validator.printReport(results);
         assertEquals(CustomTypes.TYPE2, customProperties.getType());
+    }
+
+    @Test
+    void verifyValidationDisabled() {
+        System.setProperty(CasConfigurationPropertiesValidator.SYSTEM_PROPERTY_CONFIG_VALIDATION_ENABLED, "false");
+        val validator = new CasConfigurationPropertiesValidator(applicationContext);
+        assertTrue(validator.validate().isEmpty());
     }
 
     @TestConfiguration(value = "CasConfigurationPropertiesTestConfiguration", proxyBeanMethods = false)
