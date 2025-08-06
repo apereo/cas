@@ -23,7 +23,7 @@ public class NoOpPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public boolean changeInternal(final PasswordChangeRequest bean) throws InvalidPasswordException {
+    public boolean changeInternal(final PasswordChangeRequest bean) {
         LOGGER.warn("Using no-op password change implementation. Appropriate password management service is not configured.");
         return false;
     }
