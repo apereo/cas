@@ -1,10 +1,10 @@
-package org.springframework.web.servlet.theme;
+package org.apereo.cas.web.support;
 
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ThemeResolver;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ThemeResolver;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
