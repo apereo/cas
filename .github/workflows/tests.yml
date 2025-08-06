@@ -199,7 +199,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Download coverage files
-        uses: "actions/download-artifact@v4"
+        uses: "actions/download-artifact@v5"
         with:
           path: "reports"
       - name: Collect Coverage Files
