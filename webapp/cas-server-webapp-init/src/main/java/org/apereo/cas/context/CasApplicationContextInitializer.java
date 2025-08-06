@@ -1,12 +1,11 @@
 package org.apereo.cas.context;
 
-import org.apereo.cas.configuration.CasConfigurationPropertiesValidator;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
+import org.apereo.cas.metadata.CasConfigurationPropertiesValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import jakarta.annotation.Nonnull;
 import java.util.List;
 

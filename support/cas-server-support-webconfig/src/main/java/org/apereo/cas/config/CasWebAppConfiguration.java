@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.support.CookieUtils;
+import org.apereo.cas.web.support.ThemeChangeInterceptor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -26,7 +27,6 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
-import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.servlet.view.RedirectView;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,7 +49,7 @@ class CasWebAppConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "casThemeChangeInterceptor")
-    public ThemeChangeInterceptor themeChangeInterceptor(
+    public HandlerInterceptor themeChangeInterceptor(
         @Qualifier("themeResolver") final ThemeResolver themeResolver,
         final CasConfigurationProperties casProperties) {
         return new ThemeChangeInterceptor(themeResolver, casProperties.getTheme().getParamName());
