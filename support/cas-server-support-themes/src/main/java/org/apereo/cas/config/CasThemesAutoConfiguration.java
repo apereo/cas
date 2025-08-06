@@ -40,7 +40,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.ContentVersionStrategy;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
-import org.springframework.web.servlet.theme.CookieThemeResolver;
+import org.apereo.cas.web.support.CookieThemeResolver;
 import org.springframework.web.servlet.theme.FixedThemeResolver;
 import org.springframework.web.servlet.theme.SessionThemeResolver;
 import jakarta.annotation.Nonnull;

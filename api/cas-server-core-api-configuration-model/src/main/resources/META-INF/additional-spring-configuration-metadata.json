@@ -1,6 +1,46 @@
 {
   "properties": [
     {
+      "name": "cas.authn.saml-idp.core.session-storage-type",
+      "type": "org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes",
+      "deprecation": {
+        "reason": "Use org.apereo.cas:cas-server-support-session-ticket-registry for handling session replication via ticket registry.",
+        "level": "warning"
+      }
+    },
+    {
+      "name": "cas.authn.oauth.session-replication.cookie.name",
+      "type": "java.lang.String",
+      "deprecation": {
+        "reason": "Use org.apereo.cas:cas-server-support-session-ticket-registry for handling session replication via ticket registry.",
+        "level": "warning"
+      }
+    },
+    {
+      "name": "cas.authn.oauth.session-replication.replicate-sessions",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "reason": "Use org.apereo.cas:cas-server-support-session-ticket-registry for handling session replication via ticket registry.",
+        "level": "warning"
+      }
+    },
+    {
+      "name": "cas.authn.pac4j.core.session-replication.replicate-sessions",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "reason": "Use org.apereo.cas:cas-server-support-session-ticket-registry for handling session replication via ticket registry.",
+        "level": "warning"
+      }
+    },
+    {
+      "name": "cas.authn.pac4j.core.session-replication.cookie.name",
+      "type": "java.lang.String",
+      "deprecation": {
+        "reason": "Use the dedicated module for handling session replication via ticket registry.",
+        "level": "warning"
+      }
+    },
+    {
       "name": "cas.authn.pac4j.oidc[0].azure.principal-attribute-id",
       "type": "java.lang.String",
       "deprecation": {
