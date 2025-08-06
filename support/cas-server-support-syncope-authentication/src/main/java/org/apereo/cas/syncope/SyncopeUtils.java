@@ -76,8 +76,10 @@ public class SyncopeUtils {
         val attributes = new HashMap<String, List<Object>>();
 
         if (user.has("securityQuestion") && !user.get("securityQuestion").isNull()) {
-            val name = attributeMappings.getOrDefault("securityQuestion", "syncopeUserSecurityQuestion");
+            var name = attributeMappings.getOrDefault("securityQuestion", "syncopeUserSecurityQuestion");
             attributes.put(name, CollectionUtils.wrapList(user.get("securityQuestion").asText()));
+            name = attributeMappings.getOrDefault("securityAnswer", "syncopeUserSecurityAnswer");
+            attributes.put(name, CollectionUtils.wrapList(user.get("securityAnswer").asText()));
         }
         var name = attributeMappings.getOrDefault("key", "syncopeUserKey");
         attributes.put(name, CollectionUtils.wrapList(user.get("key").asText()));

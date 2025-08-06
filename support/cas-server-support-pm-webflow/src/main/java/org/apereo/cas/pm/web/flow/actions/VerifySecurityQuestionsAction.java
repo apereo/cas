@@ -34,15 +34,15 @@ public class VerifySecurityQuestionsAction extends BasePasswordManagementAction 
 
         val index = new AtomicInteger(0);
         val count = canonicalQuestions
-            .stream()
-            .filter(question -> {
-                val answer = request.getParameter("q%d".formatted(index.getAndIncrement()));
-                val answerOnRecord = questions.get(question);
-                LOGGER.trace("Validating security question [{}] with answer [{}] against provided answer [{}] by username [{}]",
-                    question, answerOnRecord, answer, username);
-                return passwordManagementService.isAnswerValidForSecurityQuestion(query, question, answerOnRecord, answer);
-            })
-            .count();
+                        .stream()
+                        .filter(question -> {
+                            val answer = request.getParameter("q%d".formatted(index.getAndIncrement()));
+                            val answerOnRecord = questions.get(question);
+                            LOGGER.trace("Validating security question [{}] with answer [{}] against provided answer [{}] by username [{}]",
+                                         question, answerOnRecord, answer, username);
+                            return passwordManagementService.isAnswerValidForSecurityQuestion(query, question, answerOnRecord, answer);
+                        })
+                        .count();
         if (count == questions.size()) {
             return success();
         }
