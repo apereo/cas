@@ -55,7 +55,6 @@ import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.resource.ResourceUrlProvider;
 import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
-import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.webflow.config.FlowBuilderServicesBuilder;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.context.servlet.FlowUrlHandler;
@@ -327,7 +326,7 @@ class CasWebflowContextConfiguration {
             @Qualifier("resourceUrlProviderExposingInterceptor")
             final HandlerInterceptor resourceUrlProviderExposingInterceptor,
             @Qualifier("themeChangeInterceptor")
-            final ObjectProvider<ThemeChangeInterceptor> themeChangeInterceptor,
+            final ObjectProvider<HandlerInterceptor> themeChangeInterceptor,
             @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
             final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return plan -> {
