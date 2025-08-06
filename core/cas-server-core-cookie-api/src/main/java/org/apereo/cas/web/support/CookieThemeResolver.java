@@ -1,16 +1,14 @@
-package org.springframework.web.servlet.theme;
+package org.apereo.cas.web.support;
 
-import org.springframework.web.servlet.ThemeResolver;
-import org.springframework.web.util.WebUtils;
+import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
-import org.apereo.cas.web.support.CookieUtils;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.servlet.ThemeResolver;
+import org.springframework.web.util.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
@@ -25,10 +23,10 @@ import java.util.Objects;
  *
  * @author Jean-Pierre Pawlak
  * @author Juergen Hoeller
+ * @author Misagh Moayyed
  * @since 7.3.0
  */
 @RequiredArgsConstructor
-@NoArgsConstructor(force = true)
 public class CookieThemeResolver implements ThemeResolver {
 
     /**

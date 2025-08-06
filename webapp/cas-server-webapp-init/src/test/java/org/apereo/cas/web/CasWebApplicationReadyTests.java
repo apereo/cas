@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.config.CasCoreConfigurationMetadataAutoConfiguration;
 import org.apereo.cas.config.CasWebApplicationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -20,11 +21,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = CasWebApplicationAutoConfiguration.class, properties = {
+@SpringBootTest(classes = {
+    CasCoreConfigurationMetadataAutoConfiguration.class,
+    CasWebApplicationAutoConfiguration.class
+}, properties = {
     "server.port=8588",
     "server.ssl.enabled=false",
+    "cas.authn.mfa.gauth.issuer=CAS",
     "cas.server.unknown.property=false"
-}, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+},
+    webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebApp")
 @ExtendWith(CasTestExtension.class)

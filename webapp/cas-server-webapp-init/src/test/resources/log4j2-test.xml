@@ -6,9 +6,10 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="error" />
+        <Logger name="org.apereo.cas" level="error" />
+        <Logger name="org.apereo.cas.metadata" level="warn" />
         <Logger name="org.springframework.boot" level="warn" />
-        <Root level="off">
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

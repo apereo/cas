@@ -23,6 +23,7 @@ import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
+import org.springframework.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.InputStreamReader;
@@ -169,7 +170,7 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
                             entity.getDescriptions().add(SamlIdentityProviderBasicEntity.builder().lang(value.getXMLLang()).value(value.getValue()).build()));
                         uiInfo.getKeywords().forEach(value ->
                             entity.getKeywords().add(SamlIdentityProviderBasicEntity.builder().lang(value.getXMLLang())
-                                .value(org.springframework.util.StringUtils.collectionToCommaDelimitedString(value.getKeywords())).build()));
+                                .value(StringUtils.collectionToCommaDelimitedString(value.getKeywords())).build()));
                         uiInfo.getInformationURLs().forEach(value ->
                             entity.getInformationUrls().add(SamlIdentityProviderBasicEntity.builder().lang(value.getXMLLang()).value(value.getURI()).build()));
                         uiInfo.getPrivacyStatementURLs().forEach(value ->

@@ -26,18 +26,26 @@ import java.util.stream.Collectors;
  */
 @Getter
 public class CasConfigurationMetadataRepository {
+    /**
+     * Bean name for the CAS configuration metadata repository.
+     */
+    public static final String BEAN_NAME = "casConfigurationMetadataRepository";
+
     private static final String CONFIGURATION_METADATA_RESOURCE_PATTERN = "classpath*:META-INF/spring-configuration-metadata.json";
 
     private final ConfigurationMetadataRepository repository;
 
     public CasConfigurationMetadataRepository() {
+        this(collectConfigurationMetadata());
+    }
+
+    public CasConfigurationMetadataRepository(final List<byte[]> sources) {
         val builder = CasConfigurationMetadataRepositoryJsonBuilder.create();
-        collectConfigurationMetadata()
-            .forEach(Unchecked.consumer(buffer -> {
-                try (val stream = new ByteArrayInputStream(buffer)) {
-                    builder.withJsonResource(stream, StandardCharsets.UTF_8);
-                }
-            }));
+        sources.forEach(Unchecked.consumer(buffer -> {
+            try (val stream = new ByteArrayInputStream(buffer)) {
+                builder.withJsonResource(stream, StandardCharsets.UTF_8);
+            }
+        }));
         repository = builder.build();
     }
 
