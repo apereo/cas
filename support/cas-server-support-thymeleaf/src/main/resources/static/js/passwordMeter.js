@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         password.addEventListener('input', validate);
         confirmed.addEventListener('input', validate);
 
-        if(current !== undefined && current !== null){
+        if (current !== undefined && current !== null) {
             current.addEventListener('keyup', event => validate());
             current.addEventListener('input', validate);
         }
