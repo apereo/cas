@@ -2,7 +2,7 @@
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await cas.newBrowser(cas.browserOptions({ args: ["--lang=de"] }));
+    const browser = await cas.newBrowser(cas.browserOptions({ options: ["--lang=de"] }));
     const page = await cas.newPage(browser);
     await page.setExtraHTTPHeaders({
         "Accept-Language": "de"

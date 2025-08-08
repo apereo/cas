@@ -21,7 +21,7 @@ async function authenticate(page, casServer) {
 }
 
 (async () => {
-    const browser = await cas.newBrowser(cas.browserOptions({ args: [
+    const browser = await cas.newBrowser(cas.browserOptions({ options: [
         "--host-resolver-rules=MAP shire.localhost 127.0.0.1, MAP london.localhost 127.0.0.1"
     ] }));
     const page = await cas.newPage(browser);
