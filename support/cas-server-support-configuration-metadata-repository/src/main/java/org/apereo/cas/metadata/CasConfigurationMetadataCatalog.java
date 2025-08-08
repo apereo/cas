@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -194,8 +195,16 @@ public class CasConfigurationMetadataCatalog {
     }
 
     /**
-     * The type Cas properties container.
+     * Container for properties.
      */
-    public record CasPropertiesContainer(TreeSet<CasReferenceProperty> properties) {
+    public record CasPropertiesContainer(Set<CasReferenceProperty> properties) {
+        /**
+         * Does this container have properties?
+         *
+         * @return true/false
+         */
+        public boolean hasProperties() {
+            return properties != null && !properties.isEmpty();
+        }
     }
 }

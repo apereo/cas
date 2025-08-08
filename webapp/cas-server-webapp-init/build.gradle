@@ -1,12 +1,17 @@
 description = "Apereo CAS Web Application Initializer"
 dependencies {
+    api project(":api:cas-server-core-api-configuration-model")
+    
     implementation libraries.hibernatevalidator
+    implementation libraries.springbootconfigmetadata
 
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration")
 
+    implementation project(":support:cas-server-support-configuration-metadata-repository")
+    
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-themes")
 
@@ -20,7 +25,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-validation-api")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
-
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-webflow-api")

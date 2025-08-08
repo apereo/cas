@@ -22,11 +22,11 @@
     "node-static-auth": "1.0.6",
     "p-limit": "6.2.0",
     "perf_hooks": "0.0.1",
-    "pino": "9.7.0",
+    "pino": "9.8.0",
     "pino-pretty": "13.1.1",
     "properties-reader": "2.3.0",
     "ps-node": "0.1.6",
-    "puppeteer": "24.15.0",
+    "puppeteer": "24.16.0",
     "puppeteer-loadtest": "2.2.1",
     "request": "2.88.2",
     "@napi-rs/canvas": "0.1.76",
@@ -35,7 +35,7 @@
     "unzipper": "0.12.3",
     "wait-on": "8.0.4",
     "xml2js": "0.6.2",
-    "yaml": "2.8.0"
+    "yaml": "2.8.1"
   },
   "devDependencies": {
     "@eslint/js": "9.32.0",

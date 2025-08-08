@@ -59,7 +59,7 @@ and defined attribute repositories before outsourcing that task to the password 
   
 ### Session Management via Ticket Registry
 
-HTTP session replication may be required for clustered deployments that take advantage of specific CAS
+You may already know that HTTP session replication may be required for clustered deployments that take advantage of specific CAS
 modules and features that store data into the container's HTTP session. As of this writing, one such example
 would be [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html).
 
@@ -67,7 +67,6 @@ In addition to the usual direct options provided by [Spring Session](../webflow/
 supports the ability to store HTTP sessions in the [Ticket Registry](../webflow/Webflow-Customization-Sessions-ServerSide-TicketRegistry.html).
 Doing so allows you to take advantage of the existing ticket registry storage backends and removes the need to configure
 sticky sessions in your load balancer or application server, etc.
-
 
 ### Session Management Deprecations
 
@@ -91,7 +90,23 @@ which is done as a direct and native integration with the Spring Session library
         
 If you're using the above options and features, it is recommended that you start using the above session replication strategy
 and remove any existing configuration that uses the above options. Future CAS releases will
-**remove such options**.
+**remove such options** and all components and features that make use of the listed options.
+  
+### Theme Changes
+
+In anticipation of Spring Framework `v7` and Spring Boot `v4`, a large number of deprecated APIs are now 
+internally removed and reworked in the CAS codebase. A significant number of such changes deal with theme management
+and the way themes are defined, loaded and processed in the CAS user interface views backed by Thymeleaf. 
+While such changes are not expected to impact existing themes and pages yet, we recommend that you review your current HTML pages
+and specifically replace anything that references `#themes.code(...)` with `#cas.theme(...)`. This change will 
+put you in a better position to upgrade to future CAS releases that will remove the deprecated APIs and references.
+ 
+### Configuration Properties Validation
+
+On startup, CAS will now validate the configuration properties somewhat more aggressively and in particular
+will output warnings and messages for properties that are either removed or marked as deprecated and scheduled for removal.
+Where applicable, replacements will be suggested to help you migrate your configuration to the closest alternative.
+The changes here extend and enhance the functionality offered by Spring Boot configuration metadata and migration process.
 
 ### OpenRewrite Recipes
 
@@ -108,10 +123,10 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `523` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `526` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
 ## Other Stuff
-
-- A large number of deprecated APIs are now internally removed and reworked in the CAS codebase.
+     
+- Integration tests have switched to use Redis `v8.2`.

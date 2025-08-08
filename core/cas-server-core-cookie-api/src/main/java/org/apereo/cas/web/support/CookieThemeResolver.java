@@ -1,17 +1,17 @@
-package org.springframework.web.servlet.theme;
+package org.apereo.cas.web.support;
 
-import org.springframework.web.servlet.ThemeResolver;
-import org.springframework.web.util.WebUtils;
+import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
-import org.apereo.cas.web.support.CookieUtils;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.servlet.ThemeResolver;
+import org.springframework.web.util.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 /**
  * {@link ThemeResolver} implementation that uses a cookie sent back to the user
@@ -23,6 +23,7 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Jean-Pierre Pawlak
  * @author Juergen Hoeller
+ * @author Misagh Moayyed
  * @since 7.3.0
  */
 @RequiredArgsConstructor
@@ -79,6 +80,7 @@ public class CookieThemeResolver implements ThemeResolver {
         final HttpServletResponse response,
         final String themeName) {
 
+        Objects.requireNonNull(cookieProperties, "CookieProperties must not be null");
         if (StringUtils.isNotBlank(themeName)) {
             request.setAttribute(THEME_REQUEST_ATTRIBUTE_NAME, themeName);
             val cookie = CookieUtils.createSetCookieHeader(themeName,

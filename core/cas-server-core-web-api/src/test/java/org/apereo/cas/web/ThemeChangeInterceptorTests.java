@@ -1,10 +1,12 @@
-package org.springframework.web.servlet.theme;
+package org.apereo.cas.web;
 
+import org.apereo.cas.web.support.ThemeChangeInterceptor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.servlet.theme.SessionThemeResolver;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
