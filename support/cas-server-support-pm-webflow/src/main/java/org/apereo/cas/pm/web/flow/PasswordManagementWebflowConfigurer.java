@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.web.flow;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -344,7 +345,8 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
 
         val propertiesToBind = Map.of(
             FLOW_VAR_ID_PASSWORD, Map.of("converter", StringToCharArrayConverter.ID),
-            "confirmedPassword", Map.of("converter", StringToCharArrayConverter.ID));
+            "confirmedPassword", Map.of("converter", StringToCharArrayConverter.ID),
+            "currentPassword", Map.of("converter", StringToCharArrayConverter.ID));
         val binder = createStateBinderConfiguration(propertiesToBind);
         val viewState = createViewState(flow, id, viewId, binder);
         createStateModelBinding(viewState, FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);

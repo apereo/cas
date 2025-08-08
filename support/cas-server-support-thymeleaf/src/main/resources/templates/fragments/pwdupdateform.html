@@ -53,6 +53,31 @@
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">Error text</span>
             </div>
 
+            <div class="cas-field form-group mdc-input-group my-3"
+                 th:if="${activeFlowId} == 'login'">
+                <div class="d-flex caps-check">
+                    <label for="currentPassword" class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label">
+                        <input class="mdc-text-field__input form-control pwd"
+                               type="password"
+                               autocapitalize="none"
+                               spellcheck="false"
+                               name="currentPassword"
+                               id="currentPassword"
+                               th:field="*{currentPassword}"
+                               autocomplete="off" required/>
+
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label" th:utext="#{screen.pm.currentpsw}">Current Password:</span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+                    </label>
+                    <i class="mdi mdi-alert mdc-text-field__icon bs-hide text-danger caps-warn" aria-hidden="true"></i>
+                </div>
+            </div>
+
             <div class="cas-field my-3 mdc-input-group form-group d-flex">
                 <div class="mdc-input-group-field mdc-input-group-field-append flex-grow-1">
                     <div class="d-flex caps-check">
