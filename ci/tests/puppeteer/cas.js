@@ -993,13 +993,17 @@ exports.goto = async (page, url, retryCount = 5) => {
     let attempts = 0;
     const timeout = 2000;
 
+    let navigated = false;
     while (response === null && attempts < retryCount) {
         attempts += 1;
         try {
-            await this.logg(`Navigating to: ${url}`);
-            response = await page.goto(url, {
-                waitUntil: "domcontentloaded"
-            });
+            if (!navigated) {
+                await this.logg(`Navigating to: ${url}`);
+                response = await page.goto(url, {
+                    waitUntil: "domcontentloaded"
+                });
+            }
+            navigated = true;
             await this.sleep(500);
             assert(page.mainFrame() && !page.isClosed(), "Page is closed or the main frame has detached itself");
             assert(await page.evaluate(() => document.title) !== null);
