@@ -7,15 +7,13 @@ import org.apereo.cas.redis.core.RedisObjectFactory;
 import com.redis.lettucemod.RedisModulesClient;
 import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import com.redis.lettucemod.search.CreateOptions;
-import com.redis.lettucemod.search.Document;
 import com.redis.lettucemod.search.Field;
-import com.redis.lettucemod.search.SearchResults;
 import io.lettuce.core.RedisCommandExecutionException;
 import io.lettuce.core.RedisURI;
+import io.lettuce.core.search.SearchReply;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.util.StringUtils;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -47,12 +45,9 @@ public class LettuceRedisModulesOperations implements RedisModulesOperations {
 
     @Override
     public Stream<Map<String, String>> search(final String searchIndexName, final String query) {
-        val results = (SearchResults<String, Document>) commands.ftSearch(searchIndexName, query);
-        return results
-            .parallelStream()
-            .map(Document.class::cast)
-            .filter(document -> !document.isEmpty())
-            .map(LinkedHashMap.class::cast);
+        val results = (List<SearchReply.SearchResult>) commands.ftSearch(searchIndexName, query).getResults();
+        return results.parallelStream().map(SearchReply.SearchResult::getFields);
+
     }
 
     /**
