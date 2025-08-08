@@ -38,7 +38,8 @@
     "--cas.authn.pm.syncope.attribute-mappings.username=username",
 
     "--spring.mail.host=localhost",
-    "--spring.mail.port=25000"
+    "--spring.mail.port=25000",
+    "--logging.level.org.springframework.webflow=debug"
   ],
   "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true",
   "initScript": "${PWD}/ci/tests/syncope/run-syncope-server.sh,${PWD}/ci/tests/mail/run-mail-server.sh"

@@ -16,7 +16,10 @@ const NodeStaticAuth = require("node-static-auth");
 const operativeSystemModule = require("os");
 const figlet = require("figlet");
 const CryptoJS = require("crypto-js");
-const jose = require("jose");
+const jose = async () => {
+               return await import("jose");
+             };
+
 const pino = require("pino");
 const xml2js = require("xml2js");
 const {Docker} = require("node-docker-api");
