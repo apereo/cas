@@ -38,6 +38,7 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -123,9 +124,11 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
                 new LocalAttributeMap<>("passwordChangeRequest", bean));
     }
 
-    protected Event getErrorEvent(final RequestContext ctx, final String code, final String message, final Object... params) {
-        WebUtils.addErrorMessageToContext(ctx, code, message, params);
-        return error();
+    protected Event getErrorEvent(final RequestContext requestContext, final String code, final String message, final Object... params) {
+        WebUtils.addErrorMessageToContext(requestContext, code, message, params);
+        val viewStateId = requestContext.getCurrentTransition().getAttributes().get(CasWebflowConstants.ATTRIBUTE_CURRENT_EVENT_VIEW);
+        Objects.requireNonNull(viewStateId, "Original view state id cannot be undefined");
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.ATTRIBUTE_CURRENT_EVENT_VIEW, viewStateId);
     }
 
     protected Principal resolvedPrincipal(final String username) throws Throwable {
