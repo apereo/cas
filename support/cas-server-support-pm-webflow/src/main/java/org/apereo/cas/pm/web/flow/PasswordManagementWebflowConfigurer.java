@@ -95,7 +95,6 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
     private void configurePasswordManagementWebflow(final Flow flow) {
         configurePasswordResetFlow(flow, CasWebflowConstants.STATE_ID_EXPIRED_PASSWORD, "login-error/casExpiredPassView");
         configurePasswordResetFlow(flow, CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD, "login-error/casMustChangePassView");
-        createPasswordChangeAction(flow);
         configurePasswordMustChangeForAuthnWarnings(flow);
         configurePasswordExpirationWarning(flow);
         createPasswordResetFlow();
@@ -315,6 +314,8 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             "password-reset/casPasswordUpdateSuccessView");
         configurePasswordResetFlow(pswdFlow, CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD,
             "login-error/casMustChangePassView");
+        createPasswordChangeAction(pswdFlow);
+
         pswdFlow.setStartState(verifyRequest);
         flowDefinitionRegistry.registerFlowDefinition(pswdFlow);
 
