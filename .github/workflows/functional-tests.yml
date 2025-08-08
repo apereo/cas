@@ -32,7 +32,7 @@ env:
   NODE_CURRENT: '24.5.0'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 20
-  SCENARIO_REGEX: ".*stepup.*"
+  SCENARIO_REGEX: ".*"
 
 on:
   workflow_dispatch:

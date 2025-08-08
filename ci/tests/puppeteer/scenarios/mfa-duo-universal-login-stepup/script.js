@@ -2,7 +2,7 @@
 const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await cas.newBrowser(cas.browserOptions({ args: [ "--accept-lang=de", "--lang=de"] }));
+    const browser = await cas.newBrowser(cas.browserOptions({ options: [ "--accept-lang=de", "--lang=de"] }));
     const page = await cas.newPage(browser);
 
     const service = "https://localhost:9859/anything/1";

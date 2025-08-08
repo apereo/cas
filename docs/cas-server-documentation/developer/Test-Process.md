@@ -133,11 +133,13 @@ All functional and browser test scenarios are executed by the [continuous integr
 To install Puppeteer once:
 
 ```bash
-npm i -g puppeteer
+cd ./ci/tests/puppeteer
+npm install
 ```
 
 <div class="alert alert-info">:information_source: <strong>Usage</strong><p>
-The above step is not strictly necessary. CAS will automatically attempt to install Puppeteer when necessary when you run test scenarios.</p></div>
+The above step is not strictly necessary. CAS will automatically attempt to install 
+Puppeteer when necessary when you run test scenarios. See the parameger list below for details. </p></div>
 
 To help simplify the testing process, you may use the following bash function in your `~/.profile`:
 
