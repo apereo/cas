@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         }, options);
 
         $(settings.passwordInput).keyup(event => UpdateProgressBar());
-        
+
         return this.each(function () {
             settings.progressBar = this;
             UpdateProgressBar();
@@ -76,6 +76,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     let policyPatternRegex = new RegExp(policyPattern);
     let password = document.getElementById('password');
     let confirmed = document.getElementById('confirmedPassword');
+    let current = document.getElementById('currentPassword');
     let barElement = document.getElementById('strengthProgressBar');
     let bar;
 
@@ -87,6 +88,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
         password.addEventListener('keyup', event => validate());
         password.addEventListener('input', validate);
         confirmed.addEventListener('input', validate);
+
+        if (current !== undefined && current !== null) {
+            current.addEventListener('keyup', event => validate());
+            current.addEventListener('input', validate);
+        }
     }
 
     let alertSettings = {
@@ -100,6 +106,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     function validate() {
         let val = password.value;
         let cnf = confirmed.value;
+        let crt = current !== null ? current.value : null;
 
         $('#password-strength-msg').hide();
         $('#password-policy-violation-msg').hide();
@@ -109,7 +116,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
         let passwordMismatch = val !== '' && val !== cnf;
         let result = zxcvbn(val);
         let passwordTooWeak = passwordMinimumStrength > result.score;
-        let disableSubmit = passwordPolicyViolated || passwordMismatch || passwordTooWeak;
+        let currentPasswordEmpty = crt !== null && crt === '';
+        let disableSubmit = passwordPolicyViolated || passwordMismatch || passwordTooWeak || currentPasswordEmpty;
         $('#submit').prop('disabled', disableSubmit);
 
         $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: 'password', bar: bar });
