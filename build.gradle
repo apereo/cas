@@ -348,7 +348,7 @@ subprojects {
 
         def casCompilerArgs = ["-parameters", '-Xlint:-removal']
         if (rootProject.ext.terminateCompilerOnWarning) {
-//            casCompilerArgs.add("-Werror")
+            casCompilerArgs.add("-Werror")
         }
 
         if (!rootProject.skipErrorProneCompiler) {
