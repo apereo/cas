@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.resolver.CurrentEventViewTargetStateResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -14,7 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.engine.State;
+import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -36,7 +41,7 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
 
     @Test
     void verifyFailNoCredentials() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
+        val context = createFailingRequestContext();
         val changeReq = new PasswordChangeRequest();
         changeReq.setUsername("casuser");
         changeReq.setPassword("123456".toCharArray());
@@ -46,8 +51,7 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
 
     @Test
     void verifyFailsValidation() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-
+        val context = createFailingRequestContext();
         WebUtils.putCredential(context, RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
         val changeReq = new PasswordChangeRequest();
@@ -55,6 +59,11 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
         changeReq.setPassword("123456".toCharArray());
         context.getFlowScope().put(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, changeReq);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, passwordChangeAction.execute(context).getId());
+
+        val targetStateResolver = ((Transition) context.getCurrentTransition()).getTargetStateResolver();
+        assertNotNull(targetStateResolver.resolveTargetState(
+            (Transition) context.getCurrentTransition(),
+            (State) context.getCurrentState(), context));
     }
 
     @Test
@@ -75,7 +84,7 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
 
     @Test
     void verifyChangeFails() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
+        val context = createFailingRequestContext();
 
         val credential = RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("bad-credential", "P@ssword");
         WebUtils.putCredential(context, credential);
@@ -90,7 +99,7 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
 
     @Test
     void verifyPasswordRejected() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
+        val context = createFailingRequestContext();
 
         val credential = RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("error-credential", "P@ssword");
         WebUtils.putCredential(context, credential);
@@ -102,6 +111,17 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
         context.getFlowScope().put(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, changeReq);
         PasswordManagementWebflowUtils.putPasswordResetUsername(context, changeReq.getUsername());
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, passwordChangeAction.execute(context).getId());
+    }
+
+    private MockRequestContext createFailingRequestContext() throws Exception {
+        val context = MockRequestContext.create(applicationContext);
+        val transition = new Transition(new CurrentEventViewTargetStateResolver(context.getRootFlow()));
+        transition.getAttributes().put(CasWebflowConstants.ATTRIBUTE_CURRENT_EVENT_VIEW, "mockState");
+        context.setCurrentTransition(transition);
+        val currentEvent = new Event(this, CasWebflowConstants.TRANSITION_ID_SUBMIT,
+            new LocalAttributeMap<>(CasWebflowConstants.ATTRIBUTE_CURRENT_EVENT_VIEW, "mockState"));
+        context.setCurrentEvent(currentEvent);
+        return context;
     }
 
 }
