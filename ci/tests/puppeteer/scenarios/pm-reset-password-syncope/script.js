@@ -20,7 +20,7 @@ const cas = require("../../cas.js");
     await cas.type(page, "#confirmedPassword", newPassword);
     await cas.pressEnter(page);
     await cas.sleep(2000);
-    await cas.assertInnerText(page, "#pwdmain h3", `Hello, ${username}. Your password has expired.`);
+    await cas.assertInnerText(page, "#pwdmain h3", `Hello, ${username}. You must change your password.`);
     await cas.type(page, "#currentPassword", currentPassword);
     await cas.type(page, "#password", newPassword);
     await cas.type(page, "#confirmedPassword", newPassword);
