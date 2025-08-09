@@ -113,6 +113,23 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, passwordChangeAction.execute(context).getId());
     }
 
+    @Test
+    void verifyCurrentPasswordWrong() throws Throwable {
+        val context = createFailingRequestContext();
+
+        val credential = RegisteredServiceTestUtils.getCredentialsWithDifferentUsernameAndPassword("error-credential", "P@ssword");
+        WebUtils.putCredential(context, credential);
+
+        val changeReq = new PasswordChangeRequest();
+        changeReq.setUsername("bad-credential");
+        changeReq.setPassword("P@ssword".toCharArray());
+        changeReq.setConfirmedPassword("P@ssword".toCharArray());
+        changeReq.setCurrentPassword("B@dP@ssword".toCharArray());
+        context.getFlowScope().put(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, changeReq);
+        PasswordManagementWebflowUtils.putPasswordResetUsername(context, changeReq.getUsername());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, passwordChangeAction.execute(context).getId());
+    }
+
     private MockRequestContext createFailingRequestContext() throws Exception {
         val context = MockRequestContext.create(applicationContext);
         val transition = new Transition(new CurrentEventViewTargetStateResolver(context.getRootFlow()));
@@ -123,5 +140,4 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
         context.setCurrentEvent(currentEvent);
         return context;
     }
-
 }

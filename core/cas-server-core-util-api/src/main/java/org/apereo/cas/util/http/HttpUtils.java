@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPatch;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 import org.apache.hc.client5.http.config.ConnectionConfig;
@@ -187,8 +188,14 @@ public class HttpUtils {
                 request.setEntity(stringEntity);
             }
             return request;
-        }
-        if ("delete".equalsIgnoreCase(method)) {
+        } else if ("patch".equalsIgnoreCase(method)) {
+            val request = new HttpPatch(uri);
+            if (StringUtils.isNotBlank(entity)) {
+                val stringEntity = new StringEntity(entity, StandardCharsets.UTF_8);
+                request.setEntity(stringEntity);
+            }
+            return request;
+        } else if ("delete".equalsIgnoreCase(method)) {
             return new HttpDelete(uri);
         }
 

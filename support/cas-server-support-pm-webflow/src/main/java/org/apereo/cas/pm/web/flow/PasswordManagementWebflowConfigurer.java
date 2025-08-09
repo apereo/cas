@@ -353,7 +353,8 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
 
         val propertiesToBind = Map.of(
             FLOW_VAR_ID_PASSWORD, Map.of("converter", StringToCharArrayConverter.ID),
-            "confirmedPassword", Map.of("converter", StringToCharArrayConverter.ID));
+            "confirmedPassword", Map.of("converter", StringToCharArrayConverter.ID),
+            "currentPassword", Map.of("converter", StringToCharArrayConverter.ID));
         val binder = createStateBinderConfiguration(propertiesToBind);
         val viewState = createViewState(flow, id, viewId, binder);
         createStateModelBinding(viewState, FLOW_VAR_ID_PASSWORD, PasswordChangeRequest.class);
