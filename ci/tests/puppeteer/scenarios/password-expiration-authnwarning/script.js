@@ -5,7 +5,6 @@ const cas = require("../../cas.js");
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
-
     await cas.loginWith(page);
 
     await cas.sleep(1000);
@@ -50,6 +49,7 @@ const cas = require("../../cas.js");
 })();
 
 async function typePassword(page, pswd, confirm) {
+    await cas.type(page,"#currentPassword", "Mellon");
     await cas.type(page,"#password", pswd);
     await cas.type(page,"#confirmedPassword", confirm);
 }
