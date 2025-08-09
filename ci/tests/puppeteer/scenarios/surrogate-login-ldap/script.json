@@ -38,8 +38,50 @@
     "--cas.authn.surrogate.ldap[0].search-filter=(uid={user})",
     "--cas.authn.surrogate.ldap[0].surrogate-search-filter=uid={surrogate}",
     "--cas.authn.surrogate.ldap[0].member-attribute-name=mail",
-    "--cas.authn.surrogate.ldap[0].member-attribute-value-regex=.*@example.*"
+    "--cas.authn.surrogate.ldap[0].member-attribute-value-regex=.*@example.*",
 
+    "--cas.authn.ldap[1].type=AUTHENTICATED",
+    "--cas.authn.ldap[1].ldap-url=ldap://localhost:10389",
+    "--cas.authn.ldap[1].base-dn=ou=affiliate,dc=example,dc=org",
+    "--cas.authn.ldap[1].search-filter=uid={user}",
+    "--cas.authn.ldap[1].bind-credential=password",
+    "--cas.authn.ldap[1].bind-dn=${CAS_LDAP_BIND_DN}",
+
+    "--cas.authn.attribute-repository.ldap[1].ldap-url=ldap://localhost:10389",
+    "--cas.authn.attribute-repository.ldap[1].base-dn=ou=affiliate,dc=example,dc=org",
+    "--cas.authn.attribute-repository.ldap[1].search-filter=uid={user}",
+    "--cas.authn.attribute-repository.ldap[1].bind-dn=${CAS_LDAP_BIND_DN}",
+    "--cas.authn.attribute-repository.ldap[1].bind-credential=password",
+    "--cas.authn.attribute-repository.ldap[1].attributes.uid=uid",
+    "--cas.authn.attribute-repository.ldap[1].attributes.cn=cn",
+    "--cas.authn.attribute-repository.ldap[1].attributes.telephoneNumber=telephoneNumber",
+    "--cas.authn.attribute-repository.ldap[1].attributes.mail=mail",
+
+    "--cas.authn.surrogate.ldap[1].base-dn=ou=affiliate,dc=example,dc=org",
+    "--cas.authn.surrogate.ldap[1].bind-dn=${CAS_LDAP_BIND_DN}",
+    "--cas.authn.surrogate.ldap[1].bind-credential=password",
+    "--cas.authn.surrogate.ldap[1].ldap-url=ldap://localhost:10389",
+    "--cas.authn.surrogate.ldap[1].search-filter=(uid={user})",
+    "--cas.authn.surrogate.ldap[1].surrogate-search-filter=uid={surrogate}",
+    "--cas.authn.surrogate.ldap[1].member-attribute-name=mail",
+    "--cas.authn.surrogate.ldap[1].member-attribute-value-regex=.*@example.*",
+
+    "--cas.authn.ldap[2].type=AUTHENTICATED",
+    "--cas.authn.ldap[2].ldap-url=ldap://localhost:10389",
+    "--cas.authn.ldap[2].base-dn=ou=admin,dc=example,dc=org",
+    "--cas.authn.ldap[2].search-filter=uid={user}",
+    "--cas.authn.ldap[2].bind-credential=password",
+    "--cas.authn.ldap[2].bind-dn=${CAS_LDAP_BIND_DN}",
+
+    "--cas.authn.attribute-repository.ldap[2].ldap-url=ldap://localhost:10389",
+    "--cas.authn.attribute-repository.ldap[2].base-dn=ou=admin,dc=example,dc=org",
+    "--cas.authn.attribute-repository.ldap[2].search-filter=uid={user}",
+    "--cas.authn.attribute-repository.ldap[2].bind-dn=${CAS_LDAP_BIND_DN}",
+    "--cas.authn.attribute-repository.ldap[2].bind-credential=password",
+    "--cas.authn.attribute-repository.ldap[2].attributes.uid=uid",
+    "--cas.authn.attribute-repository.ldap[2].attributes.cn=cn",
+    "--cas.authn.attribute-repository.ldap[2].attributes.telephoneNumber=telephoneNumber",
+    "--cas.authn.attribute-repository.ldap[2].attributes.mail=mail"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }
