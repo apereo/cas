@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import javax.security.auth.login.FailedLoginException;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -70,15 +71,12 @@ class SyncopePasswordManagementServiceTests {
 
     @Test
     void verifyFindSecurityQuestions() throws Throwable {
-        val questions = passwordChangeService.getSecurityQuestions(PasswordManagementQuery.builder().username("syncopecas").build());
+        val query = PasswordManagementQuery.builder().username("syncopecas").build();
+        val questions = passwordChangeService.getSecurityQuestions(query);
         assertEquals(1, questions.size());
-        assertEquals("What is your favorite city?", questions.keySet().stream().toList().getFirst());
-    }
-
-    @Test
-    void verifyUpdateSecurityQuestions() {
-        assertThrows(UnsupportedOperationException.class, () -> passwordChangeService.updateSecurityQuestions(
-            PasswordManagementQuery.builder().username("mustChangePasswordUser").build()));
+        val question = questions.keySet().stream().toList().getFirst();
+        assertEquals("What is your favorite city?", question);
+        assertTrue(passwordChangeService.isAnswerValidForSecurityQuestion(query, question, UUID.randomUUID().toString(), "Paris"));
     }
 
     @Test
