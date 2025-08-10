@@ -4,9 +4,16 @@ const cas = require("../../cas.js");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
-    const page = await cas.newPage(browser);
-    const service = "https://localhost:9859/anything/cas";
+    const context = await browser.createBrowserContext();
+    const page = await cas.newPage(context);
+    await cas.gotoLogout(page);
+
+    const azureLogoutUrl = `https://login.microsoftonline.com/${process.env.AZURE_AD_TENANT}/oauth2/logout`;
+    await cas.goto(page, azureLogoutUrl);
+    await cas.sleep(1000);
     
+    await cas.log("Starting delegated login with CAS RP OIDC Azure AD...");
+    const service = "https://localhost:9859/anything/cas";
     const url = `https://localhost:8443/cas/login?service=${service}`;
     await cas.goto(page, url);
 
@@ -38,5 +45,6 @@ const cas = require("../../cas.js");
     assert(authenticationSuccess.attributes.name[0] === "CAS Test");
     assert(authenticationSuccess.attributes.preferred_username[0] === username);
 
+    await context.close();
     await browser.close();
 })();
