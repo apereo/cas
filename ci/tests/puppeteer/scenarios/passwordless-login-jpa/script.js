@@ -27,5 +27,5 @@ const cas = require("../../cas.js");
     await cas.submitForm(page, "#fm1");
     await cas.sleep(3000);
     await cas.assertCookie(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

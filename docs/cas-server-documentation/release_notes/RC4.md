@@ -49,7 +49,9 @@ The following items are new improvements and enhancements presented in this rele
 able to handle password management operations. [Syncope Authentication](../authentication/Syncope-Authentication.html) 
 is also improved to detect user account statuses that may be suspended or require password changes. Furthermore,
 Apache Syncope is now able to supply configured security questions to CAS, and exposes the ability to validate
-the security answers provided by the user during password management operations.
+the security answers provided by the user during password management operations. Finally, this integration
+is now allowed to fetch security questions from Apache Syncope and have them be validated against the user's
+profile defined in Apache Syncope.
 
 ### Password Management Principal Resolution
 
@@ -107,6 +109,15 @@ On startup, CAS will now validate the configuration properties somewhat more agg
 will output warnings and messages for properties that are either removed or marked as deprecated and scheduled for removal.
 Where applicable, replacements will be suggested to help you migrate your configuration to the closest alternative.
 The changes here extend and enhance the functionality offered by Spring Boot configuration metadata and migration process.
+ 
+### OpenID Connect Attribute Definitions
+
+If you have configured [attribute definitions](../integration/Attribute-Definitions.html) 
+that are used to map OpenID Connect claims or OAuth attributes, you need to
+adjust your configuration to use more dedicated types. In particular, OAuth attribute definitions now gain their own
+dedicated type via `org.apereo.cas.support.oauth.profile.OAuth20AttributeDefinition` and just as before, OpenID Connect
+attribute definitions are defined under `org.apereo.cas.oidc.claims.OidcAttributeDefinition`. This separation is done to avoid
+conflicts and not mix concerns, allowing CAS to process the same attribute definition for different protocols.
 
 ### OpenRewrite Recipes
 

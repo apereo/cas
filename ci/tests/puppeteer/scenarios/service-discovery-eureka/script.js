@@ -15,5 +15,5 @@ const assert = require("assert");
         return btn.querySelectorAll(":scope > tbody tr td")[0].innerText;
     }, "table#instances");
     assert(app === "CAS");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

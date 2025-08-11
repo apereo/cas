@@ -30,5 +30,5 @@ async function loginAndValidate(page) {
     await mysql.restart();
     await cas.sleep(2000);
     await loginAndValidate(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

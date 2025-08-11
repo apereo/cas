@@ -27,5 +27,5 @@ const cas = require("../../cas.js");
         await cas.assertVisibility(page, "#existingSsoMsg");
     }
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

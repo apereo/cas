@@ -78,13 +78,13 @@ async function verifyWithoutRememberMe() {
     await cas.sleep(1000);
     const tgc = await cas.assertCookie(page);
     assert(tgc.expires === -1);
-    await browser.close();
+    await cas.closeBrowser(browser);
     browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.sleep(1000);
     await cas.assertCookie(page, false);
-    await browser.close();
+    await cas.closeBrowser(browser);
 }
 
 (async () => {
@@ -92,7 +92,7 @@ async function verifyWithoutRememberMe() {
     await loginAndVerify(browser);
     await cas.refreshContext();
     await loginAndVerify(browser);
-    await browser.close();
+    await cas.closeBrowser(browser);
     await fetchSsoSessions();
     await verifyWithoutRememberMe();
 })();

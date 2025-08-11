@@ -36,6 +36,6 @@ const cas = require("../../cas.js");
         "Content-Type": "application/json"
     });
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

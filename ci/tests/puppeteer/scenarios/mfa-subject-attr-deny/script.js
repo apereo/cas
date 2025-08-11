@@ -10,5 +10,5 @@ const cas = require("../../cas.js");
     await cas.sleep(3000);
     await cas.assertInnerTextStartsWith(page, "#loginErrorsPanel p", "Authentication attempt for your account is denied");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
