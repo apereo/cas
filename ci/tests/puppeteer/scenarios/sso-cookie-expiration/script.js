@@ -7,12 +7,12 @@ const cas = require("../../cas.js");
     await cas.loginWith(page);
     await cas.sleep(1000);
     await cas.assertCookie(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 
     const browser2 = await cas.newBrowser(cas.browserOptions());
     const page2 = await cas.newPage(browser2);
     await cas.gotoLogin(page2);
     await cas.sleep(1000);
     await cas.assertCookie(page2);
-    await browser2.close();
+    await cas.closeBrowser(browser2);
 })();

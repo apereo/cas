@@ -65,6 +65,6 @@ const assert = require("assert");
     await cas.log(title);
     assert(title === "Enter your username and password");
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

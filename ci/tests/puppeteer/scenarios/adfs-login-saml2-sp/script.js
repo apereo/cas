@@ -27,5 +27,5 @@ const cas = require("../../cas.js");
     await cas.log(authData);
     await cas.sleep(1000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

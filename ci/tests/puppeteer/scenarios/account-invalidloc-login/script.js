@@ -8,5 +8,5 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.loginWith(page, "invalidlocation", "invalidlocation");
     await cas.assertInnerText(page, "#content h2", "You cannot log in from this workstation.");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

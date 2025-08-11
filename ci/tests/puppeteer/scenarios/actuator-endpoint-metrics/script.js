@@ -15,7 +15,7 @@ const cas = require("../../cas.js");
         await cas.goto(page, "https://localhost:8443/cas/actuator/registeredServices");
         await cas.sleep(1500);
     }
-    await browser.close();
+    await cas.closeBrowser(browser);
     const baseUrl = "https://localhost:8443/cas/actuator";
     await cas.doRequest(`${baseUrl}/metrics`, "GET", {
         "Accept": "application/json", "Content-Type": "application/json"

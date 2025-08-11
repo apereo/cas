@@ -6,5 +6,5 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.assertVisibility(page, "#phone-customField");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

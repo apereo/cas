@@ -47,5 +47,5 @@ async function loginWithAccessToken(page, service, token) {
 
     await loginWithAccessToken(page, service, payload.access_token);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

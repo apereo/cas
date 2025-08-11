@@ -23,5 +23,5 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.assertVisibility(page, "#imageQRCode");
     await cas.assertVisibility(page, "#confirm");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

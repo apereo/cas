@@ -3,7 +3,6 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -41,6 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -86,9 +86,8 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
             if (CasWebflowConfigurer.FLOW_ID_LOGIN.equals(WebUtils.getActiveFlow(requestContext))) {
                 LOGGER.debug("Attempting to validate current password for username [{}]", bean.getUsername());
                 val credential = WebUtils.getCredential(requestContext, UsernamePasswordCredential.class);
-                if (bean.getCurrentPassword() != null &&
-                        !Arrays.equals(bean.getCurrentPassword(), credential.getPassword())) {
-                    LOGGER.error("Current password is not correct");
+                if (bean.getCurrentPassword() == null || bean.getCurrentPassword().length == 0 || !Arrays.equals(bean.getCurrentPassword(), credential.getPassword())) {
+                    LOGGER.error("Current password is not correct or is undefined");
                     return getErrorEvent(requestContext, PASSWORD_VALIDATION_FAILURE_CODE, DEFAULT_MESSAGE);
                 }
             }
@@ -132,9 +131,11 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
                 new LocalAttributeMap<>("passwordChangeRequest", bean));
     }
 
-    protected Event getErrorEvent(final RequestContext ctx, final String code, final String message, final Object... params) {
-        WebUtils.addErrorMessageToContext(ctx, code, message, params);
-        return error();
+    protected Event getErrorEvent(final RequestContext requestContext, final String code, final String message, final Object... params) {
+        WebUtils.addErrorMessageToContext(requestContext, code, message, params);
+        val viewStateId = requestContext.getCurrentTransition().getAttributes().get(CasWebflowConstants.ATTRIBUTE_CURRENT_EVENT_VIEW);
+        Objects.requireNonNull(viewStateId, "Original view state id cannot be undefined");
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.ATTRIBUTE_CURRENT_EVENT_VIEW, viewStateId);
     }
 
     protected Principal resolvedPrincipal(final String username) throws Throwable {

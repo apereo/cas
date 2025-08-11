@@ -26,5 +26,5 @@ const assert = require("assert");
             throw error;
         }, {"Content-Type": "application/json"});
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

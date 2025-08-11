@@ -69,7 +69,7 @@ async function verifyWebAuthnQRCode(browser) {
     
     const qrCode = await cas.parseQRCode(page, "#imageQRCode");
     if (qrCode) {
-        console.log("Decoded QR Code:", qrCode.data);
+        await cas.logb("Decoded QR Code:", qrCode.data);
         const page2 = await cas.newPage(browser);
         await cas.goto(page2, qrCode.data);
         await cas.sleep(1000);
@@ -91,5 +91,5 @@ async function verifyWebAuthnQRCode(browser) {
     await verifyWebAuthnQRCode(context);
     await context.close();
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

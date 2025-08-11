@@ -57,5 +57,5 @@ const cas = require("../../cas.js");
             throw error;
         });
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

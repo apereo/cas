@@ -11,6 +11,6 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content h2", "This account has been locked.");
     await cas.assertCookie(page, false);
     await cas.gotoLogout(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

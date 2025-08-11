@@ -49,5 +49,5 @@ const path = require("path");
     assert(payload.form.code !== undefined);
     assert(payload.form.nonce !== undefined);
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -13,5 +13,5 @@ const cas = require("../../cas.js");
     await cas.goto(page, "https://localhost:8443/cas");
     await cas.assertCookie(page);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

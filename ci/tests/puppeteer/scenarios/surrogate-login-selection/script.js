@@ -55,5 +55,5 @@ async function verifyImpersonationByPrincipalAttributesDisabled(browser) {
     await verifyImpersonationByPrincipalAttributes(browser);
     await verifyImpersonationByPrincipalAttributesDisabled(browser);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

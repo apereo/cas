@@ -11,5 +11,5 @@ const cas = require("../../cas.js");
 
     await cas.assertVisibility(page, "#vaContainer");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

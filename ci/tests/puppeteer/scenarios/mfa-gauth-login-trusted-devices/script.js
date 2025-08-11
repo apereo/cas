@@ -61,5 +61,5 @@ async function loginFromPublicWorkstation(browser) {
     const browser = await cas.newBrowser(cas.browserOptions());
     await loginAndRegisterTrustedDevice(browser);
     await loginFromPublicWorkstation(browser);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

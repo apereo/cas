@@ -106,5 +106,5 @@ async function exchangeCode(page, code, successHandler) {
         assert(idToken.acr === "https://refeds.org/profile/mfa");
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"));
     });
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
