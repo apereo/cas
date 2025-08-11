@@ -114,6 +114,6 @@ IssueInstant="2021-06-19T17:03:44.022Z">
     await context.close();
     
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

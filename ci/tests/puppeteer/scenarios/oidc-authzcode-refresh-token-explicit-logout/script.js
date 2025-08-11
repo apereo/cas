@@ -107,5 +107,5 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
             throw "Operation should not fail";
         });
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -64,5 +64,5 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.assertInnerText(page, "#login div h2", "Blocked Multifactor Authentication Attempt");
     await cas.assertInnerTextStartsWith(page, "#login div p", "Your multifactor authentication attempt is blocked");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

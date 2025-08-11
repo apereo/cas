@@ -12,7 +12,7 @@ const cas = require("../../cas.js");
     await cas.loginWith(page);
     await cas.goto(page, "https://localhost:8443/cas/actuator/health");
     await cas.sleep(1000);
-    await browser.close();
+    await cas.closeBrowser(browser);
 
     await cas.doGet("https://localhost:8443/cas/actuator/health",
         async (res) => {

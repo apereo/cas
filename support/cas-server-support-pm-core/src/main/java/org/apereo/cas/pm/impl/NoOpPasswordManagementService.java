@@ -1,7 +1,6 @@
 package org.apereo.cas.pm.impl;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.pm.InvalidPasswordException;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.impl.history.InMemoryPasswordHistoryService;
 import org.apereo.cas.util.crypto.CipherExecutor;

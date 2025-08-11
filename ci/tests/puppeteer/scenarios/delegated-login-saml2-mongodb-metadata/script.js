@@ -32,6 +32,6 @@ const path = require("path");
     await cas.sleep(3000);
     await cas.assertPageUrlStartsWith(page, "http://localhost:9443/simplesaml/");
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

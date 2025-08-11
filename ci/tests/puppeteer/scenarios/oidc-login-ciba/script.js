@@ -74,7 +74,7 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
     await cas.assertInvisibility(page, "#error");
     await cas.assertInvisibility(page, "#cibaContainer");
     await cas.assertVisibility(page, "#confirmation");
-    await browser.close();
+    await cas.closeBrowser(browser);
 
     if (deliveryMode === "ping" || deliveryMode === "poll") {
         const accessTokenUrl = `https://localhost:8443/cas/oidc/token?scope=${scopes}&grant_type=urn:openid:params:grant-type:ciba&auth_req_id=${authRequestId}`;

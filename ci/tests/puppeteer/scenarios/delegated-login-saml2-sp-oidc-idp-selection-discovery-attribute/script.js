@@ -6,7 +6,7 @@ const assert = require("assert");
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await startWithCasSp(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function startWithCasSp(page) {

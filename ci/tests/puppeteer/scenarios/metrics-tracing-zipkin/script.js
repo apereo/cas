@@ -20,5 +20,5 @@ const cas = require("../../cas.js");
     }
     await cas.goto(page, "http://localhost:9411/zipkin");
     await cas.sleep(4000);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

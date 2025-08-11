@@ -15,5 +15,5 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page, "https://google.com");
     await cas.assertTicketParameter(page);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

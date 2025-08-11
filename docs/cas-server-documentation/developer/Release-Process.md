@@ -117,7 +117,7 @@ on:
     branches: [ $NEW_BRANCH, pr-* ]
 ```
 
-<div class="alert alert-warning">:information_source: <strong>Remember</strong><p>Make sure nothing else in these workflows
+<div class="alert alert-warning">:warning: <strong>Remember</strong><p>Make sure nothing else in these workflows
 points to the <code>master</code> branch</p></div>
 
 Then disable the following workflows:
@@ -155,7 +155,7 @@ appropriate release notes and artifacts attached to the release, which you will 
 Once the release is staged and has passed validation, you should navigate to the [staged deployment](https://central.sonatype.com/publishing/deployments) 
 and publish the release to the central repository. **This step must be done manually for the time being**.
 
-<div class="alert alert-warning">:information_source: <strong>Remember</strong><p>
+<div class="alert alert-warning">:warning: <strong>Remember</strong><p>
 If the deployment is stuck in a <code>PUBLISHING</code> state for a long time, contact Central support. 
 In case ingesting one of the CAS artifacts fails, the release process fails to notify the Central publisher that the ingesting was completed
 and the deployment is left in a <code>PUBLISHING</code> state. This is a bug in the Central publisher process that requires manual intervention
@@ -164,7 +164,7 @@ and support staff will have to update the state to <code>PUBLISHED</code> manual
 
 ### Locally
 
-<div class="alert alert-warning">:information_source: <strong>Remember</strong><p>
+<div class="alert alert-warning">:warning: <strong>Remember</strong><p>
 You should only do this if you <strong>REALLY</strong> know what you're doing. This step is reserved
 best for troubleshooting and diagnostics.</p></div>
 

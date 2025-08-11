@@ -35,7 +35,7 @@ const assert = require("assert");
         await cas.goto(page, "http://localhost:8080");
         await cas.loginWith(page);
 
-        await browser.close();
+        await cas.closeBrowser(browser);
     } catch (e) {
         failed = true;
         throw e;

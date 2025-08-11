@@ -168,5 +168,5 @@ async function passwordResetFlowWithAccountProfileWithTrustedDeviceIgnored(brows
     await passwordResetFlowWithAccountProfileWithoutTrustedDevice(browser);
     await passwordResetFlowWithAccountProfileWithTrustedDeviceIgnored(browser);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -43,5 +43,5 @@ const cas = require("../../cas.js");
     assert(surrogateUser === null);
     await cas.sleep(1000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

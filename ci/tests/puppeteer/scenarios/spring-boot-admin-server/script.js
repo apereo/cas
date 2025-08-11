@@ -32,5 +32,5 @@ async function gotoPage(page, instanceId, pageId) {
     await gotoPage(page, instanceId, "beans");
     await gotoPage(page, instanceId, "configProps");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

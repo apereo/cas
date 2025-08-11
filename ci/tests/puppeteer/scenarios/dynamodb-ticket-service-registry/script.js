@@ -14,5 +14,5 @@ const cas = require("../../cas.js");
         }, (error) => {
             throw error;
         }, { "Content-Type": "application/json" });
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

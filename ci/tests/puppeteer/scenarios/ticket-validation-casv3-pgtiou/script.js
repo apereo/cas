@@ -50,7 +50,6 @@ async function requestProxyTicket(service, ticket) {
 
     await cas.doGet("http://localhost:56789/api/baskets/cas/requests?max=1",
         async (res) => {
-            console.log(res.data);
             const query = res.data.requests[0].query;
             const params = new URLSearchParams(query);
             const pgtId = params.get("pgtId");
@@ -81,5 +80,5 @@ async function requestProxyTicket(service, ticket) {
     assert(xmlBody.includes("<cas:proxyGrantingTicket>"));
     assert(xmlBody.includes("<cas:user>casuser</cas:user>"));
     await cas.sleep(1000);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

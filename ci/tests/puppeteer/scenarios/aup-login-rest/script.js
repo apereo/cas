@@ -61,7 +61,7 @@ const express = require("express");
 
         server.close(() => {
             cas.log("Exiting server...");
-            browser.close();
+            cas.closeBrowser(browser);
         });
     });
 })();
