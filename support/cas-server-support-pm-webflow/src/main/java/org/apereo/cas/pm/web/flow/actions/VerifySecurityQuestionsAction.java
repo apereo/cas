@@ -39,7 +39,7 @@ public class VerifySecurityQuestionsAction extends BasePasswordManagementAction 
                 val answer = request.getParameter("q%d".formatted(index.getAndIncrement()));
                 val answerOnRecord = questions.get(question);
                 LOGGER.trace("Validating security question [{}] with answer [{}] against provided answer [{}] by username [{}]",
-                             question, answerOnRecord, answer, username);
+                    question, answerOnRecord, answer, username);
                 return passwordManagementService.isAnswerValidForSecurityQuestion(query, question, answerOnRecord, answer);
             })
             .count();
