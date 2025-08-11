@@ -131,31 +131,31 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
     @Override
     public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) throws Throwable {
         val questionKey = searchUser(PasswordManagementQuery.builder().username(query.getUsername()).build())
-                              .stream()
-                              .findFirst()
-                              .map(syncopeUser -> syncopeUser.getOrDefault("securityQuestion", syncopeUser.get("syncopeUserSecurityQuestion")))
-                              .filter(Objects::nonNull)
-                              .filter(values -> !values.isEmpty())
-                              .map(values -> values.getFirst().toString())
-                              .orElseThrow();
+            .stream()
+            .findFirst()
+            .map(syncopeUser -> syncopeUser.getOrDefault("securityQuestion", syncopeUser.get("syncopeUserSecurityQuestion")))
+            .filter(Objects::nonNull)
+            .filter(values -> !values.isEmpty())
+            .map(values -> values.getFirst().toString())
+            .orElseThrow();
 
         val securityQuestionUrl = Strings.CI.appendIfMissing(
             SpringExpressionLanguageValueResolver.getInstance().resolve(
                 casProperties.getAuthn().getPm().getSyncope().getUrl()),
             "/rest/securityQuestions/%s".formatted(questionKey));
         val exec = HttpExecutionRequest.builder()
-                       .method(HttpMethod.GET)
-                       .url(securityQuestionUrl)
-                       .basicAuthUsername(casProperties.getAuthn().getPm().getSyncope().getBasicAuthUsername())
-                       .basicAuthPassword(casProperties.getAuthn().getPm().getSyncope().getBasicAuthPassword())
-                       .headers(Map.of(
-                           SyncopeUtils.SYNCOPE_HEADER_DOMAIN, casProperties.getAuthn().getPm().getSyncope().getDomain(),
-                           HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
-                           HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
-                       .build();
+            .method(HttpMethod.GET)
+            .url(securityQuestionUrl)
+            .basicAuthUsername(casProperties.getAuthn().getPm().getSyncope().getBasicAuthUsername())
+            .basicAuthPassword(casProperties.getAuthn().getPm().getSyncope().getBasicAuthPassword())
+            .headers(Map.of(
+                SyncopeUtils.SYNCOPE_HEADER_DOMAIN, casProperties.getAuthn().getPm().getSyncope().getDomain(),
+                HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
+                HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+            .build();
         val response = Objects.requireNonNull(HttpUtils.execute(exec));
         if (org.springframework.http.HttpStatus.resolve(response.getCode()).is2xxSuccessful()
-                && response instanceof final HttpEntityContainer container) {
+            && response instanceof final HttpEntityContainer container) {
             val entity = container.getEntity();
             val result = EntityUtils.toString(entity);
             LOGGER.debug("Received security question entity as [{}]", result);
