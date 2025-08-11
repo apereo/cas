@@ -10,7 +10,7 @@ services:
   syncope:
     depends_on:
       - db
-    image: apache/syncope:4.0.0
+    image: apache/syncope:4.1.0-SNAPSHOT
     ports:
       - "18080:8080"
     restart: always
@@ -31,7 +31,7 @@ services:
   syncope-console:
     depends_on:
       - syncope
-    image: apache/syncope-console:4.0.0
+    image: apache/syncope-console:4.1.0-SNAPSHOT
     ports:
       - "28080:8080"
     restart: always
