@@ -48,7 +48,6 @@ let cas = {
             if (switchInputs.length === 1) {
                 el.addEventListener('click', () => {
                     const switchInput = switchInputs[0];
-                    console.log(`Clicked switch element "${switchInput.id}": ${switchElement.selected}`);
                     switchInput.value = switchElement.selected;
                 });
             }

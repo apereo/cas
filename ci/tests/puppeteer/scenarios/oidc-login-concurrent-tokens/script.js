@@ -75,13 +75,13 @@ const fetchIdToken = async (refreshToken) =>
             }, false);
         }));
 
-function printSummary(durations) {
+async function printSummary(durations) {
     const minDuration = Math.min(...durations);
     const maxDuration = Math.max(...durations);
     const avgDuration = durations.reduce((acc, cur) => acc + cur, 0) / durations.length;
-    console.log(`Min Duration: \t\t${minDuration.toFixed(2)} ms`);
-    console.log(`Max Duration: \t\t${maxDuration.toFixed(2)} ms`);
-    console.log(`Average Duration: \t${avgDuration.toFixed(2)} ms`);
+    await cas.logb(`Min Duration: \t\t${minDuration.toFixed(2)} ms`);
+    await cas.logb(`Max Duration: \t\t${maxDuration.toFixed(2)} ms`);
+    await cas.logb(`Average Duration: \t${avgDuration.toFixed(2)} ms`);
 }
 
 (async () => {
@@ -96,9 +96,7 @@ function printSummary(durations) {
     const results = await Promise.all(refreshTokenPromises);
 
     await cas.separator();
-    console.log("Refresh Token Summary");
-    await cas.separator();
-    printSummary(refreshTokenDurations);
+    await printSummary(refreshTokenDurations);
     
     const idTokenPromises = Array.from({length: results.length},
         (_, index) => threadControl(async () => {
@@ -106,10 +104,8 @@ function printSummary(durations) {
             await fetchIdToken(refreshToken);
         })
     );
-    await Promise.all(idTokenPromises).then(() => {
-        cas.separator();
-        console.log("ID Token Summary");
-        cas.separator();
-        printSummary(idTokenDurations);
+    await Promise.all(idTokenPromises).then(async () => {
+        await cas.separator();
+        await printSummary(idTokenDurations);
     });
 })();

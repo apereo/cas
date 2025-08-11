@@ -23,7 +23,7 @@ const request = require("request");
             return;
         }
 
-        console.log(`Intercepting request for ${url}`);
+        cas.logb(`Intercepting request for ${url}`);
         const options = {
             uri: interceptedRequest.url(),
             method: interceptedRequest.method(),

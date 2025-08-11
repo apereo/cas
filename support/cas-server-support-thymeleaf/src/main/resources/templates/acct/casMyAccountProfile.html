@@ -19,11 +19,9 @@
         <script type="text/javascript">
             document.addEventListener("DOMContentLoaded", (event) => {
                 if (window.location.hash) {
-                    console.log(`Fragment ${window.location.hash}`);
                     showPanel(window.location.hash);
                 } else {
                     let selectedTab = window.localStorage.getItem("AccountProfileSelectedTab");
-                    console.log(`Selected tab: ${selectedTab}`);
                     showPanel(selectedTab);
                 }
             });

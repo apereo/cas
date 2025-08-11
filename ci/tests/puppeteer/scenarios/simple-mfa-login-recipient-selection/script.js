@@ -14,11 +14,7 @@ const cas = require("../../cas.js");
     await cas.log("Checking all emails");
     await page.evaluate(() => {
         const emails = document.querySelectorAll("input[type=checkbox]");
-        emails.forEach((lnk) => {
-            const id = lnk.getAttribute("id");
-            console.log(id);
-            lnk.click();
-        });
+        emails.forEach((lnk) => lnk.click());
     });
     await cas.sleep(1000);
     await cas.screenshot(page);
