@@ -11,5 +11,5 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content h2", "Invalid/Unknown Webflow Configuration");
     await cas.assertInnerTextStartsWith(page, "#content p", "You are seeing this error because");
     await cas.assertInnerTextStartsWith(page, "#exceptionMessage", "No transition found");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

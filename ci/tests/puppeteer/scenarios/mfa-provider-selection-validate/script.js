@@ -40,5 +40,5 @@ const cas = require("../../cas.js");
     assert(body.includes("<cas:successfulAuthenticationHandlers>Accept</cas:successfulAuthenticationHandlers>"));
     assert(body.includes("<cas:successfulAuthenticationHandlers>GoogleAuth</cas:successfulAuthenticationHandlers>"));
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

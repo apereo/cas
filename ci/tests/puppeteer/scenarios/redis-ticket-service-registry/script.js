@@ -20,7 +20,7 @@ const querystring = require("querystring");
         }, (error) => {
             throw error;
         }, {"Content-Type": "application/json"});
-    await browser.close();
+    await cas.closeBrowser(browser);
 
     const baseUrl = "https://localhost:8443/cas/actuator";
     await cas.logg("Removing all SSO Sessions");

@@ -8,5 +8,5 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.loginWith(page, "invalidtime", "invalidtime");
     await cas.assertInnerText(page, "#content h2", "Your account is forbidden to log in at this time.");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

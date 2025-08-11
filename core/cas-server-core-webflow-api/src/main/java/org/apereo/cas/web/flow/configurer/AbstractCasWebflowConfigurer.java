@@ -979,7 +979,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     protected Map<String, Object> createTransitionAttributes(final boolean bind, final boolean validate) {
-        return Map.of("bind", bind, "validate", validate, "history", History.INVALIDATE);
+        return CollectionUtils.wrap("bind", bind, "validate", validate, "history", History.INVALIDATE);
     }
     
     protected void doInitialize() {

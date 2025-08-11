@@ -70,7 +70,10 @@ const BROWSER_OPTIONS = {
         "--disable-web-security",
         "--start-maximized",
         "--password-store=basic",
-        "--window-size=1920,1080"
+        "--window-size=1920,1080",
+        "--disable-features=BlockInsecurePrivateNetworkRequests",
+        "--disable-features=PrivateNetworkAccessPreflight",
+        "--allow-insecure-localhost"
     ]
 };
 
@@ -100,7 +103,7 @@ exports.newBrowser = async (options) => {
     const maxRetries = 5;
     while (retry < maxRetries) {
         try {
-            await this.logg(`Attempt #${retry} to launch browser...`);
+            await this.logg(`Attempt #${retry} to launch browser with options: ${JSON.stringify(options)}...`);
             const browser = await puppeteer.launch(options);
             await this.sleep();
             await this.logg(`Browser ${await browser.version()} / ${await browser.userAgent()} is launched...`);
@@ -113,6 +116,15 @@ exports.newBrowser = async (options) => {
         }
     }
     throw "Failed to launch browser after multiple attempts";
+};
+
+exports.closeBrowser = async (browser, preClose = () => {}, postClose = () => {}) => {
+    try {
+        preClose(browser);
+        await browser.close();
+    } finally {
+        postClose(browser);
+    }
 };
 
 exports.log = async (text, ...args) => {
@@ -165,7 +177,6 @@ exports.click = async (page, button) =>
         if (buttonNode === null || button === undefined) {
             throw `Button element not found with id ${button}`;
         }
-        console.log(`Clicking element ${button} with href ${buttonNode.href}`);
         buttonNode.click();
     }, button);
 
@@ -881,6 +892,21 @@ exports.screenshot = async (page) => {
     }
 };
 
+exports.recordPage = async (page) => {
+    const screenshotsDir = path.join(__dirname, "screenshots");
+    if (!fs.existsSync(screenshotsDir)) {
+        fs.mkdirSync(screenshotsDir);
+        await this.log(`Created screenshots directory: ${screenshotsDir}`);
+    }
+    const index = Date.now();
+    const filePath = path.join(screenshotsDir, `${process.env.SCENARIO}-${index}.mp4`);
+    await this.logg(`Recording page at ${filePath}`);
+    return page.screencast({
+        path: filePath,
+        format: "mp4"
+    });
+};
+
 exports.isCiEnvironment = async () => process.env.CI !== undefined && process.env.CI === "true";
 
 exports.isNotCiEnvironment = async () => !this.isCiEnvironment();
@@ -993,13 +1019,17 @@ exports.goto = async (page, url, retryCount = 5) => {
     let attempts = 0;
     const timeout = 2000;
 
+    let navigated = false;
     while (response === null && attempts < retryCount) {
         attempts += 1;
         try {
-            await this.logg(`Navigating to: ${url}`);
-            response = await page.goto(url, {
-                waitUntil: "domcontentloaded"
-            });
+            if (!navigated) {
+                await this.logg(`Navigating to: ${url}`);
+                response = await page.goto(url, {
+                    waitUntil: "domcontentloaded"
+                });
+            }
+            navigated = true;
             await this.sleep(500);
             assert(page.mainFrame() && !page.isClosed(), "Page is closed or the main frame has detached itself");
             assert(await page.evaluate(() => document.title) !== null);

@@ -32,5 +32,5 @@ const cas = require("../../cas.js");
     console.dir(record, {depth: null, colors: true});
     assert(record.id > 0);
     assert(record.name !== undefined);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

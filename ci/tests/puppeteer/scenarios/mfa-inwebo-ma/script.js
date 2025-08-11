@@ -12,5 +12,5 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#code");
     await cas.assertVisibility(page, "#pin");
     await cas.assertVisibility(page, "#enrollButton");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

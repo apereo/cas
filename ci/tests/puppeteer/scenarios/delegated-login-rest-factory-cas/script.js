@@ -45,5 +45,5 @@ async function fetchIdentityProviders() {
     await cas.doDelete("https://localhost:8443/cas/actuator/delegatedClients");
     await fetchIdentityProviders();
     mockServer.stop();
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

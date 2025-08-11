@@ -25,7 +25,7 @@ const path = require("path");
         await cas.assertCookie(page);
     } finally {
         await updateConfig(configFile, configFilePath, users);
-        await browser.close();
+        await cas.closeBrowser(browser);
     }
 })();
 

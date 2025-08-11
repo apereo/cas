@@ -47,5 +47,5 @@ const assert = require("assert");
     assert(decoded["aud"].includes(decoded.client_id));
     assert(decoded["aud"].includes("apereo"));
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

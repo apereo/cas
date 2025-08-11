@@ -34,7 +34,7 @@ const cas = require("../../cas.js");
         } else {
             assert(body.includes("<cas:authenticationFailure code=\"INVALID_TICKET\">"));
         }
-        await browser.close();
+        await cas.closeBrowser(browser);
     }
 })();
 

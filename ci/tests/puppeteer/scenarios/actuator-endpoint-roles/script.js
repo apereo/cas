@@ -31,6 +31,6 @@ const cas = require("../../cas.js");
     }
     
     await context.close();
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

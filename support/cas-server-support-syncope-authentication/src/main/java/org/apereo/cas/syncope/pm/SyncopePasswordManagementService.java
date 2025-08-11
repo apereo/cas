@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
@@ -165,11 +164,6 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
     }
 
     @Override
-    public void updateSecurityQuestions(final PasswordManagementQuery query) {
-        throw new UnsupportedOperationException("Password Management Service does not support updating security questions");
-    }
-
-    @Override
     public boolean unlockAccount(final Credential credential) throws Throwable {
         val userKey = fetchSyncopeUserKey(credential.getId());
         val userStatusUrl = Strings.CI.appendIfMissing(
@@ -203,8 +197,8 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
         HttpResponse response = null;
         try {
             val userSecurityAnswerUrl = Strings.CI.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance()
-                .resolve(casProperties.getAuthn().getPm().getSyncope().getUrl()),
-            "/rest/users/verifySecurityAnswer");
+                    .resolve(casProperties.getAuthn().getPm().getSyncope().getUrl()),
+                "/rest/users/verifySecurityAnswer");
 
             LOGGER.debug("Check security answer validity for user [{}]", query.getUsername());
             val exec = HttpExecutionRequest.builder().method(HttpMethod.POST).url(userSecurityAnswerUrl)
