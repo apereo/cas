@@ -57,12 +57,10 @@ public class HttpRequestUtils {
         if (entity != null) {
             val output = new ByteArrayOutputStream();
             entity.writeTo(output);
-
             val contentTypeHeader = response.getFirstHeader(HttpHeaders.CONTENT_TYPE);
             val contentType = contentTypeHeader != null
                                   ? contentTypeHeader.getValue()
                                   : ContentType.APPLICATION_JSON.getMimeType();
-
             result.setEntity(new ByteArrayEntity(output.toByteArray(), ContentType.parseLenient(contentType)));
         }
 
