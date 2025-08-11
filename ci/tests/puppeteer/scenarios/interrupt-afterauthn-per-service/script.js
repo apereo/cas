@@ -18,5 +18,5 @@ const cas = require("../../cas.js");
     await cas.assertTextContentStartsWith(page, "#content p", "The authentication flow has been interrupted");
     await cas.assertCookie(page, false);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -64,5 +64,5 @@ async function fetchIdToken(page, maxAge, successHandler) {
     await cas.log(`Second attempt with max_age=1; ID token auth_time: ${time2}`);
     assert(time1 !== time2);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

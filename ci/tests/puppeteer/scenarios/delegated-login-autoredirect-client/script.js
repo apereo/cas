@@ -14,5 +14,5 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page, "https://localhost:9859/anything/sample");
     await cas.log("Checking for page URL...");
     await cas.assertPageUrlStartsWith(page, "https://localhost:8444/cas/login");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

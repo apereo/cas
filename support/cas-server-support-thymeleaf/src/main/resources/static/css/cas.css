@@ -152,6 +152,13 @@ header > nav .cas-brand .cas-logo {
     }
 }
 
+@media (max-width: 960px) {
+    #casFooter {
+        display: none !important;
+    }
+}
+
+
 .log-trace {
     color: whitesmoke;
     font-weight: bold;
@@ -957,6 +964,11 @@ select.palantir {
     margin-left: 10px;
     margin-top: 2px;
 }
+
+main:has(.d-flex > section:only-of-type) {
+    max-width: 610px;
+}
+
 
 @media all and (min-width: 768px) {
     .login-section {

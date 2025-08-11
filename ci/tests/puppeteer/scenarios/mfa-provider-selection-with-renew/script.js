@@ -21,5 +21,5 @@ const cas = require("../../cas.js");
     await cas.submitForm(page, "#yubiKeyForm", (response) => response.status() === 200);
     await cas.sleep(2000);
     await cas.assertTextContentStartsWith(page, "div .banner-danger span", "Authentication attempt has failed");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

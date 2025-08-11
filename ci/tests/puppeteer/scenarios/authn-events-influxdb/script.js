@@ -65,5 +65,5 @@ async function getAllAggregatedEvents() {
     const aggregated = await getAllAggregatedEvents();
     await cas.log(`Aggregated events: ${aggregated}`);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

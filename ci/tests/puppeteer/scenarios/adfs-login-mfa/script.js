@@ -39,5 +39,5 @@ const cas = require("../../cas.js");
     assert(authenticationSuccess.attributes.username !== undefined);
     assert(authenticationSuccess.attributes.surname !== undefined);
     assert(authenticationSuccess.attributes.email !== undefined);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

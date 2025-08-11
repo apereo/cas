@@ -8,7 +8,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
     await startWithSamlSp(page);
     await startWithCasSp(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
 })();
 

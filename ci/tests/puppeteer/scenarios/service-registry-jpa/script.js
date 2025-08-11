@@ -77,7 +77,7 @@ async function importServices() {
         const authenticationSuccess = json.serviceResponse.authenticationSuccess;
         assert(authenticationSuccess.user === "casuser");
         await cas.gotoLogout(page);
-        await browser.close();
+        await cas.closeBrowser(browser);
 
         await cas.log("Unpausing MySQL docker container");
         await mysql.unpause();
