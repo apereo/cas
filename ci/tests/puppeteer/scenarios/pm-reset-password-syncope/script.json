@@ -27,7 +27,6 @@
     "--cas.authn.pm.reset.mail.text=${url}",
     "--cas.authn.pm.reset.mail.subject=Reset",
     "--cas.authn.pm.reset.mail.attribute-name=mail",
-    "--cas.authn.pm.reset.security-questions-enabled=false",
 
     "--cas.authn.pm.syncope.basic-auth-username=admin",
     "--cas.authn.pm.syncope.basic-auth-password=password",

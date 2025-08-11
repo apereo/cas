@@ -261,6 +261,8 @@ for i in {0..4}; do
     "username": '\""syncopepasschange${suffix}\""',
     "password": "Sync0pe",
     "mustChangePassword": true,
+    "securityQuestion": "'"${SECURITY_QUESTION_KEY}"'",
+    "securityAnswer": "Rome",
     "plainAttrs": [
       {
         "schema": "email",
