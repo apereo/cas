@@ -17,7 +17,7 @@ const assert = require("assert");
     assert(decoded["givenName"] !== undefined);
     assert(decoded["mail"] !== undefined);
     assert(decoded["sn"] !== undefined);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function getPayload(page, redirectUri, clientId, clientSecret) {

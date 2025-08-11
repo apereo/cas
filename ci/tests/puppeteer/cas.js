@@ -118,6 +118,15 @@ exports.newBrowser = async (options) => {
     throw "Failed to launch browser after multiple attempts";
 };
 
+exports.closeBrowser = async (browser, preClose = () => {}, postClose = () => {}) => {
+    try {
+        preClose(browser);
+        await browser.close();
+    } finally {
+        postClose(browser);
+    }
+};
+
 exports.log = async (text, ...args) => {
     const toLog = inspect(text);
     await LOGGER.debug(`🔷 ${colors.blue(toLog)}`, args);
@@ -168,7 +177,6 @@ exports.click = async (page, button) =>
         if (buttonNode === null || button === undefined) {
             throw `Button element not found with id ${button}`;
         }
-        this.logb(`Clicking element ${button} with href ${buttonNode.href}`);
         buttonNode.click();
     }, button);
 

@@ -28,5 +28,5 @@ const cas = require("../../cas.js");
     await cas.log(`password input type is ${pwdType}`);
     assert(pwdType === "password");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

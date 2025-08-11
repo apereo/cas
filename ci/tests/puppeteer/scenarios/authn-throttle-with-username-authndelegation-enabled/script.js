@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content p", "You've entered the wrong password for the user too many times. You've been throttled.");
     await cas.sleep(2000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function submitLoginFailure(page) {

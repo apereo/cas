@@ -15,5 +15,5 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#token");
     await cas.sleep(1000);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

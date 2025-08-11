@@ -20,5 +20,5 @@ const colors = require("colors");
     await cas.sleep(1000);
     await cas.assertCookie(page, false);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

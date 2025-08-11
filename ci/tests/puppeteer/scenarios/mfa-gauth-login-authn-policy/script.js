@@ -14,5 +14,5 @@ const cas = require("../../cas.js");
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

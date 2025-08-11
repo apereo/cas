@@ -28,5 +28,5 @@ const assert = require("assert");
     await cas.goto(page, link);
     await cas.sleep(2000);
     await cas.assertTextContent(page, "#pwdmain h3", "Hello, casuser. You must change your password.");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

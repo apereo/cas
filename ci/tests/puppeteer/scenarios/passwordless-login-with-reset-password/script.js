@@ -34,5 +34,5 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content h3", "Hello, casuser. You must change your password.");
     await cas.sleep(2000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

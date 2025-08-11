@@ -46,5 +46,5 @@ const cas = require("../../cas.js");
     assert(authenticationSuccess.attributes.preferred_username[0] === username);
 
     await context.close();
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

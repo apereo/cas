@@ -89,5 +89,5 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     const browser = await cas.newBrowser(cas.browserOptions());
     await executeFlow(browser, "http://localhost:9889/anything/app1","client", process.env.OAUTH_ACCESS_TOKEN_SIGNING_KEY);
     await executeFlow(browser, "http://localhost:9889/anything/app2","client2", process.env.OAUTH_ACCESS_TOKEN_ENCRYPTION_KEY);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

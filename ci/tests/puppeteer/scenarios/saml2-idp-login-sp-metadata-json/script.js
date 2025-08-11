@@ -17,6 +17,6 @@ const assert = require("assert");
     const content = JSON.parse(await cas.innerText(page, "body"));
     await cas.log(content);
     assert(content.form.SAMLResponse !== undefined);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

@@ -49,5 +49,5 @@ const assert = require("assert");
     await cas.assertVisibility(page, "#mfa-gauth");
     await cas.assertVisibility(page, "#mfa-yubikey");
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

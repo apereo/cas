@@ -66,5 +66,5 @@ const fs = require("fs");
             throw error;
         }, {"Content-Type": "application/json"});
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

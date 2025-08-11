@@ -80,5 +80,5 @@ async function requestProxyTicket(service, ticket) {
     assert(xmlBody.includes("<cas:proxyGrantingTicket>"));
     assert(xmlBody.includes("<cas:user>casuser</cas:user>"));
     await cas.sleep(1000);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
