@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -75,7 +75,7 @@ jobs:
       scenarios766: ${{ steps.get-scenarios766.outputs.scenarios766 }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -106,7 +106,7 @@ jobs:
     name: ${{matrix.scenario}}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
@@ -162,7 +162,7 @@ jobs:
     name: ${{matrix.scenario}}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
@@ -219,7 +219,7 @@ jobs:
     name: ${{matrix.scenario}}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure CI
