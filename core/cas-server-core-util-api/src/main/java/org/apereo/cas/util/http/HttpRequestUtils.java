@@ -52,11 +52,17 @@ public class HttpRequestUtils {
         result.setHeaders(response.getHeaders());
         result.setLocale(ObjectUtils.getIfNull(response.getLocale(), Locale.getDefault()));
         result.setVersion(ObjectUtils.getIfNull(response.getVersion(), HttpVersion.HTTP_1_1));
-        val output = new ByteArrayOutputStream();
-        response.getEntity().writeTo(output);
-        val contentTypeHeader = response.getFirstHeader(HttpHeaders.CONTENT_TYPE);
-        val contentType = contentTypeHeader != null ? contentTypeHeader.getValue() : ContentType.APPLICATION_JSON.getMimeType();
-        result.setEntity(new ByteArrayEntity(output.toByteArray(), ContentType.parseLenient(contentType)));
+
+        val entity = response.getEntity();
+        if (entity != null) {
+            try (val output = new ByteArrayOutputStream()) {
+                entity.writeTo(output);
+                val contentTypeHeader = response.getFirstHeader(HttpHeaders.CONTENT_TYPE);
+                val contentType = contentTypeHeader != null ? contentTypeHeader.getValue() : ContentType.APPLICATION_JSON.getMimeType();
+                result.setEntity(new ByteArrayEntity(output.toByteArray(), ContentType.parseLenient(contentType)));
+            }
+        }
+
         return result;
     };
     
