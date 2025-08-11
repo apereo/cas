@@ -135,14 +135,14 @@ const contextPath = pathSegments[1] ? `/${pathSegments[1]}` : '';
     /**
      * Perform a WebAuthn assertion.
      *
-     * @param request: object - A PublicKeyCredentialRequestOptions object,
      *   except where binary values are base64url encoded strings instead of byte
      *   arrays
      *
      * @return the Promise returned by `navigator.credentials.get`
+     * @param request
      */
     function getAssertion(request) {
-        console.log('Get assertion', request);
+        // console.log('Get assertion', request);
         return navigator.credentials.get({
             publicKey: decodePublicKeyCredentialRequestOptions(request),
         });
@@ -345,7 +345,7 @@ function getWebAuthnUrls() {
         authenticate: `${window.location.origin}${contextPath}/webauthn/authenticate`,
         register: `${window.location.origin}${contextPath}/webauthn/register`,
     };
-    console.log(endpoints);
+    // console.log(endpoints);
     return new Promise((resolve, reject) => resolve(endpoints)).then(data => data);
 }
 
@@ -487,7 +487,7 @@ function register(username, displayName, credentialNickname, csrfToken,
         }
     })
         .then(data => {
-            console.log(`data: ${JSON.stringify(data)}`);
+            // console.log(`data: ${JSON.stringify(data)}`);
             clearMessages();
             if (data.registration) {
                 const nicknameInfo = {nickname: data.registration.credentialNickname};
@@ -506,7 +506,7 @@ function register(username, displayName, credentialNickname, csrfToken,
                 } else {
                     setTimeout(() => {
                         $('#sessionToken').val(session.sessionToken);
-                        console.log("Submitting registration form");
+                        // console.log("Submitting registration form");
                         $('#form').submit();
                     }, 2500);
                 }
@@ -552,7 +552,7 @@ function getAuthenticateRequest(urls, username) {
 }
 
 function executeAuthenticateRequest(request) {
-    console.log('Sending authentication request', request);
+    // console.log('Sending authentication request', request);
     return webauthn.getAssertion(request.publicKeyCredentialRequestOptions);
 }
 
@@ -568,7 +568,7 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
         return rejected('Unsupported browser');
     }
 
-    console.log(`Starting authentication for username ${username}`);
+    // console.log(`Starting authentication for username ${username}`);
     return performCeremony({
         getWebAuthnUrls,
         getRequest: urls => getRequest(urls, username),
@@ -580,7 +580,7 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
         executeRequest: executeAuthenticateRequest,
     }).then(data => {
         clearMessages();
-        console.log(`Received: ${JSON.stringify(data, undefined, 2)}`);
+        // console.log(`Received: ${JSON.stringify(data, undefined, 2)}`);
         if (data.registrations) {
             $('#divDeviceInfo').show();
             data.registrations.forEach(reg => {
@@ -617,7 +617,7 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
             setTimeout(() => {
                 $('#token').val(data.sessionToken);
                 const form = QRCodeAuthentication ? $("#webauthnQRCodeVerifyForm") : $('#webauthnLoginForm');
-                console.log(`Submitting authentication form ${form.serialize()}`);
+                // console.log(`Submitting authentication form ${form.serialize()}`);
                 clearMessages();
                 hideDeviceInfo();
                 Swal.close();

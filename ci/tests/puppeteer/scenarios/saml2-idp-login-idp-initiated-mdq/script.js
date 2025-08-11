@@ -50,6 +50,6 @@ async function tryServiceProviders(entityIds, page, timeout) {
     await tryServiceProviders(entityIds, page, 5);
 
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

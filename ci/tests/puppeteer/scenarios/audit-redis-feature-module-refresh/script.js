@@ -41,7 +41,7 @@ const fs = require("fs");
     } finally {
         await updateConfig(configFile, configFilePath, false);
     }
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function updateConfig(configFile, configFilePath, data) {

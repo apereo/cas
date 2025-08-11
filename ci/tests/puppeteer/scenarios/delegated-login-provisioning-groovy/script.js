@@ -20,5 +20,5 @@ const path = require("path");
     await cas.log(`Target file should be at ${result}`);
     assert(fs.existsSync(result) === true);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

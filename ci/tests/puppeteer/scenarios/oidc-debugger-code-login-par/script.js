@@ -61,6 +61,6 @@ const assert = require("assert");
     await cas.log(`Status: ${response.status()} ${response.statusText()}`);
     assert(response.status() === 403);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

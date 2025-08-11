@@ -38,5 +38,5 @@ const cas = require("../../cas.js");
     await cas.assertPageUrlContains(page, "https://localhost:9859/anything/cas");
     await cas.gotoLogout(page);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -11,5 +11,5 @@ const cas = require("../../cas.js");
     await cas.goto(page, url);
 
     await cas.assertInputValue(page, "#username", "casuser@localhost");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

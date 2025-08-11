@@ -26,5 +26,5 @@ async function loginWith(page, user, password) {
     await cas.logPage(page);
     await cas.loginWith(page);
     await cas.assertCookie(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

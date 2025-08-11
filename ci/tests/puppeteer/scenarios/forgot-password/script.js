@@ -47,7 +47,7 @@ const cas = require("../../cas.js");
 
     await cas.assertInnerText(page, "#content h2", "Password Change Successful");
     await cas.assertInnerText(page, "#content p", "Your account password is successfully updated.");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function typePassword(page, pswd, confirm) {

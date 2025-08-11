@@ -40,7 +40,7 @@ async function callAuditLog() {
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.gotoLogout(page);
     await cas.sleep(6000);
-    await browser.close();
+    await cas.closeBrowser(browser);
 
     await callAuditLog();
 
@@ -66,7 +66,7 @@ async function callAuditLog() {
     await cas.log("Waiting for audit log cleaner to resume...");
     await cas.sleep(5000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 
 })();
 

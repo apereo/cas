@@ -39,5 +39,5 @@ const cas = require("../../cas.js");
 
     await cas.removeWebAuthnVirtualAuthenticator(virtualAuthenticator);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -7,7 +7,7 @@ async function verifyWithoutService() {
     await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.sleep(2000);
-    await browser1.close();
+    await cas.closeBrowser(browser1);
 
     const browser2 = await cas.newBrowser(cas.browserOptions());
     const page2 = await cas.newPage(browser2);
@@ -16,7 +16,7 @@ async function verifyWithoutService() {
     await cas.sleep(2000);
     await cas.assertInnerTextStartsWith(page2, "#loginErrorsPanel p",
         "You cannot log in at this time, since you have another active single sign-on session in progress");
-    await browser2.close();
+    await cas.closeBrowser(browser2);
 }
 
 async function verifyWithService() {
@@ -25,7 +25,7 @@ async function verifyWithService() {
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.loginWith(page);
     await cas.sleep(2000);
-    await browser1.close();
+    await cas.closeBrowser(browser1);
 
     const browser2 = await cas.newBrowser(cas.browserOptions());
     const page2 = await cas.newPage(browser2);
@@ -34,7 +34,7 @@ async function verifyWithService() {
     await cas.sleep(2000);
     await cas.assertInnerTextStartsWith(page2, "#loginErrorsPanel p",
         "You cannot log in at this time, since you have another active single sign-on session in progress");
-    await browser2.close();
+    await cas.closeBrowser(browser2);
 }
 
 (async () => {
