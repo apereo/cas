@@ -64,6 +64,6 @@ async function verifyJwtAccessToken(page) {
         await verifyJwtAccessToken(page);
         await context.close();
     } finally {
-        await browser.close();
+        await cas.closeBrowser(browser);
     }
 })();

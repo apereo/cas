@@ -182,5 +182,5 @@ async function verifyPasswordManagementFlow(browser) {
     await verifyAccountManagementFlow(browser);
     await verifyPasswordManagementFlow(browser);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

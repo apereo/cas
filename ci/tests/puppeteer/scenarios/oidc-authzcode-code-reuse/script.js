@@ -84,5 +84,5 @@ const assert = require("assert");
         assert(error.response.data.error === "expired_accessToken");
     });
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -71,5 +71,5 @@ const querystring = require("querystring");
     await cas.log(restResult);
     assert(restResult.authentication.principal.id === "casuser");
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

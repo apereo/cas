@@ -9,7 +9,7 @@ const cas = require("../../cas.js");
     const execution = await cas.elementValue(page, "input[name=execution]");
     const geolocation = await cas.elementValue(page, "input[name=geolocation]");
     await cas.log(`Event ID: ${eventId}, Execution: ${execution}, GeoLocation: ${geolocation}`);
-    await browser.close();
+    await cas.closeBrowser(browser);
 
     browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
@@ -21,5 +21,5 @@ const cas = require("../../cas.js");
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -46,7 +46,7 @@ const auth = require("basic-auth");
 
             server.close(() => {
                 cas.log("Exiting server...");
-                browser.close();
+                cas.closeBrowser(browser);
             });
         } catch (e) {
             failed = true;

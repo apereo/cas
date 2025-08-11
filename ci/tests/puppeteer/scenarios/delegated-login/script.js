@@ -21,5 +21,5 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#loginLink");
     await cas.assertVisibility(page, "#appLink");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

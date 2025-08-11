@@ -29,7 +29,7 @@ const cas = require("../../cas.js");
     }
 
     await cas.log("Closing browser and trying again with bad credentials...");
-    await browser.close();
+    await cas.closeBrowser(browser);
 
     browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
@@ -42,7 +42,7 @@ const cas = require("../../cas.js");
         await cas.assertInnerText(page, "#content h2", "Access Denied");
         await cas.assertInnerText(page, "#content p", "You've entered the wrong password for the user too many times. You've been throttled.");
     }
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function submitLogin(page, user = "casuser", password = "BadPassword1") {

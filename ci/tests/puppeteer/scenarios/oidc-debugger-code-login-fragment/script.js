@@ -27,6 +27,6 @@ const assert = require("assert");
     await cas.sleep(1000);
     await cas.assertTextContent(page, "h1.green-text", "Success!");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

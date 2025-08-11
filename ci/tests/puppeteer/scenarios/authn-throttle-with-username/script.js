@@ -17,7 +17,7 @@ const cas = require("../../cas.js");
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function submitLoginFailure(page) {

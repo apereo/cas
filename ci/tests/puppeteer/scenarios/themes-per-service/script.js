@@ -34,5 +34,5 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#twitter-link");
     await cas.assertVisibility(page, "#youtube-link");
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
