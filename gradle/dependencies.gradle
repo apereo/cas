@@ -1636,8 +1636,6 @@ ext.libraries = [
                 },
                 dependencies.create(libs.junit.platform.launcher.get()) {
                 },
-                dependencies.create(libs.junit.platform.runner.get()) {
-                },
                 dependencies.create(libs.awaitility.get()) {
                     exclude(group: "org.hamcrest", module: "hamcrest")
                     exclude(group: "junit", module: "junit")

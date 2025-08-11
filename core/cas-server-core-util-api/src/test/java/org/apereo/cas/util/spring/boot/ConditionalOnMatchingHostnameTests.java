@@ -1,11 +1,13 @@
 package org.apereo.cas.util.spring.boot;
 
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.InetAddressUtils;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -25,6 +27,7 @@ import static org.assertj.core.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Simple")
+@ExtendWith(CasTestExtension.class)
 class ConditionalOnMatchingHostnameTests {
 
     private static String HOSTNAME;

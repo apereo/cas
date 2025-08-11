@@ -476,7 +476,6 @@ junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", vers
 junit-pioneer = { module = "org.junit-pioneer:junit-pioneer", version.ref = "junitPioneer" }
 junit-platform-engine = { module = "org.junit.platform:junit-platform-engine", version.ref = "junitPlatform" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junitPlatform" }
-junit-platform-runner = { module = "org.junit.platform:junit-platform-runner", version.ref = "junitPlatform" }
 junit-platform-suite-api = { module = "org.junit.platform:junit-platform-suite-api", version.ref = "junitPlatform" }
 kafka-clients = { module = "org.apache.kafka:kafka-clients", version.ref = "kafka" }
 kafka-streams = { module = "org.apache.kafka:kafka-streams", version.ref = "kafka" }
