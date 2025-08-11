@@ -281,12 +281,7 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
         val userPatch = MAPPER.createObjectNode();
         userPatch.put("_class", "org.apache.syncope.common.lib.request.UserUR");
         userPatch.put("key", userKey);
-        val passwordPatch = MAPPER.createObjectNode();
-        passwordPatch.put("value", bean.toConfirmedPassword());
-        passwordPatch.put("onSyncope", true);
-        passwordPatch.put("operation", "ADD_REPLACE");
-        passwordPatch.set("resources", MAPPER.createArrayNode());
-        userPatch.set("password", passwordPatch);
+        userPatch.set("password", getPasswordPatch(bean));
         return userPatch;
     }
 

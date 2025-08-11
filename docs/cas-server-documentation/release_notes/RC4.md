@@ -100,6 +100,13 @@ and the way themes are defined, loaded and processed in the CAS user interface v
 While such changes are not expected to impact existing themes and pages yet, we recommend that you review your current HTML pages
 and specifically replace anything that references `#themes.code(...)` with `#cas.theme(...)`. This change will 
 put you in a better position to upgrade to future CAS releases that will remove the deprecated APIs and references.
+ 
+### Configuration Properties Validation
+
+On startup, CAS will now validate the configuration properties somewhat more aggressively and in particular
+will output warnings and messages for properties that are either removed or marked as deprecated and scheduled for removal.
+Where applicable, replacements will be suggested to help you migrate your configuration to the closest alternative.
+The changes here extend and enhance the functionality offered by Spring Boot configuration metadata and migration process.
 
 ### OpenRewrite Recipes
 

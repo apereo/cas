@@ -43,6 +43,7 @@
         </module>
         <module name="JavadocMethod">
             <property name="accessModifiers" value="protected"/>
+            <property name="allowInlineReturn" value="true"/>
             <property name="severity" value="error"/>
             <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF"/>
         </module>
@@ -86,9 +87,9 @@
         <module name="UnusedLocalVariable">
             <property name="severity" value="error"/>
         </module>
-<!--        <module name="UnusedCatchParameterShouldBeUnnamed">-->
-<!--            <property name="severity" value="error"/>-->
-<!--        </module>-->
+        <module name="UnnecessaryNullCheckWithInstanceOf">
+            <property name="severity" value="error"/>
+        </module>
         <module name="UnnecessarySemicolonInEnumeration">
             <property name="severity" value="error"/>
         </module>
@@ -314,12 +315,9 @@
             <property name="forceStrictCondition" value="false"/>
             <property name="severity" value="error"/>
         </module>
-        <!--
-        <module name="MissingCtor">
+        <module name="PatternVariableAssignment">
             <property name="severity" value="error" />
         </module>
-        -->
-
         <module name="OuterTypeFilename">
             <property name="severity" value="error"/>
         </module>
@@ -735,7 +733,7 @@
         <metadata name="net.sf.eclipsecs.core.comment" value="Use @TestConfiguration"/>
         <property name="severity" value="error"/>
         <property name="id" value="useTestConfiguration"/>
-        <property name="format" value="@Configuration"/>
+        <property name="format" value="@Configuration\b"/>
         <property name="message" value="Configuration classes for tests must be marked with @TestConfiguration"/>
     </module>
 
