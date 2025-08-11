@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
@@ -465,6 +466,70 @@ class RedisServerTicketRegistryTests {
                 val ticketGenerator = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY);
                 for (var i = 0; i < max; i++) {
                     val tgtId = ticketGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
+                    val tgt = new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+                    FunctionUtils.doUnchecked(__ -> ticketRegistry.addTicket(tgt));
+                }
+            }
+        }
+    }
+
+    @Nested
+    @SpringBootTest(
+            classes = {
+                    CasRedisCoreAutoConfiguration.class,
+                    CasRedisTicketRegistryAutoConfiguration.class,
+                    BaseTicketRegistryTests.SharedTestConfiguration.class
+            }, properties = {
+            "cas.ticket.tgt.core.only-track-most-recent-session=true",
+            "cas.ticket.registry.redis.host=localhost",
+            "cas.ticket.registry.redis.port=6379"
+    })
+    @ExtendWith(CasTestExtension.class)
+    class ConcurrentUpdateTicketGrantingTicketTests {
+        @Autowired
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        private TicketRegistry ticketRegistry;
+
+        @Test
+        void verifyConcurrentUpdateTicket() {
+            val principalId = UUID.randomUUID().toString();
+            val testHasFailed = new AtomicBoolean();
+            val threads = new ArrayList<Thread>();
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
+            val ticketGenerator = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY);
+            val tgtId = ticketGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
+            for (var i = 1; i <= 100; i++) {
+                val runnable = new RunnableUpdateTicketGrantingTicket(ticketRegistry, authentication, tgtId, 100);
+                val thread = Thread.ofVirtual();
+                thread.name("Thread-" + i);
+                thread.uncaughtExceptionHandler((t, e) -> {
+                    LOGGER.error(e.getMessage(), e);
+                    testHasFailed.set(true);
+                });
+                threads.add(thread.start(runnable));
+            }
+            for (val thread : threads) {
+                try {
+                    thread.join();
+                } catch (final Throwable e) {
+                    fail(e);
+                }
+            }
+            if (testHasFailed.get()) {
+                fail("Test failed");
+            }
+        }
+
+        @RequiredArgsConstructor
+        private static final class RunnableUpdateTicketGrantingTicket implements Runnable {
+            private final TicketRegistry ticketRegistry;
+            private final Authentication authentication;
+            private final String tgtId;
+            private final int max;
+
+            @Override
+            public void run() {
+                for (var i = 0; i < max; i++) {
                     val tgt = new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
                     FunctionUtils.doUnchecked(__ -> ticketRegistry.addTicket(tgt));
                 }
