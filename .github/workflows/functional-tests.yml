@@ -167,7 +167,7 @@ jobs:
         if: ${{ always() }}
         with:
           name: screenshots-${{matrix.scenario}}
-          path: ./ci/tests/puppeteer/screenshots/*.png
+          path: ./ci/tests/puppeteer/screenshots/*.*
           if-no-files-found: ignore
           retention-days: 2
   ##########################################################################
@@ -222,7 +222,7 @@ jobs:
         if: ${{ always() }}
         with:
           name: screenshots-${{matrix.scenario}}
-          path: ./ci/tests/puppeteer/screenshots/*.png
+          path: ./ci/tests/puppeteer/screenshots/*.*
           if-no-files-found: ignore
           retention-days: 2
 ##########################################################################
@@ -277,7 +277,7 @@ jobs:
         if: ${{ always() }}
         with:
           name: screenshots-${{matrix.scenario}}
-          path: ./ci/tests/puppeteer/screenshots/*.png
+          path: ./ci/tests/puppeteer/screenshots/*.*
           if-no-files-found: ignore
           retention-days: 2
 ##########################################################################

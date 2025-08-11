@@ -892,6 +892,21 @@ exports.screenshot = async (page) => {
     }
 };
 
+exports.recordPage = async (page) => {
+    const screenshotsDir = path.join(__dirname, "screenshots");
+    if (!fs.existsSync(screenshotsDir)) {
+        fs.mkdirSync(screenshotsDir);
+        await this.log(`Created screenshots directory: ${screenshotsDir}`);
+    }
+    const index = Date.now();
+    const filePath = path.join(screenshotsDir, `${process.env.SCENARIO}-${index}.mp4`);
+    await this.logg(`Recording page at ${filePath}`);
+    return page.screencast({
+        path: filePath,
+        format: "mp4"
+    });
+};
+
 exports.isCiEnvironment = async () => process.env.CI !== undefined && process.env.CI === "true";
 
 exports.isNotCiEnvironment = async () => !this.isCiEnvironment();
