@@ -35,7 +35,7 @@ async function cleanUp() {
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");
         await cas.sleep(1000);
         
-        await browser.close();
+        await cas.closeBrowser(browser);
         await cleanUp();
     }, async (error) => {
         await cas.log(error);

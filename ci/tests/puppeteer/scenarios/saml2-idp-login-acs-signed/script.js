@@ -51,7 +51,7 @@ async function cleanUp() {
         await cas.log(payload);
         assert(payload.form.SAMLResponse !== undefined);
 
-        await browser.close();
+        await cas.closeBrowser(browser);
         await cleanUp();
         process.exit();
     }, async (error) => {

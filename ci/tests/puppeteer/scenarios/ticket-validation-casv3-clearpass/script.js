@@ -17,5 +17,5 @@ const cas = require("../../cas.js");
     assert(authenticationSuccess.attributes.credentialType !== undefined);
     assert(authenticationSuccess.attributes.credential !== undefined);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

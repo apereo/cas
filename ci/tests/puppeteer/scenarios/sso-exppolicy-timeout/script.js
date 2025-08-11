@@ -19,5 +19,5 @@ const cas = require("../../cas.js");
     await cas.sleep(10000);
     await cas.gotoLogin(page);
     await cas.assertCookie(page, false);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

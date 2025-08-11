@@ -20,7 +20,7 @@ const assert = require("assert");
     await cas.sleep(2000);
     await validateTicketFor(service3, ticket, "AlternativeDuoSecurity", "mfa-duo-alt");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function login(page, service, providerId) {

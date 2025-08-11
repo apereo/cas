@@ -32,6 +32,6 @@ async function updateProperty(properties, propertiesFile, value) {
         await cas.assertInnerText(page, "#sidebar div p", "Hello World!");
     } finally {
         await updateProperty(properties, propertiesFile, "Stay safe!");
-        await browser.close();
+        await cas.closeBrowser(browser);
     }
 })();

@@ -20,6 +20,5 @@ const colors = require("colors");
     await cas.sleep(1000);
     await cas.assertCookie(page, false);
 
-    await browser.close();
-    console.log(colors.green("Login test complete."));
+    await cas.closeBrowser(browser);
 })();

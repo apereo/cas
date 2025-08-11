@@ -25,5 +25,5 @@ const assert = require("assert");
             throw error;
         }, { "Authorization": "Basic c2NpbS11c2VyOmNoYW5nZWl0" });
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

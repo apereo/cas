@@ -26,6 +26,6 @@ const cas = require("../../cas.js");
     await cas.screenshot(page);
     await cas.assertInnerText(page, "#content h2", "Unauthorized Access");
     await cas.assertTextContentStartsWith(page, "#content div p", "Either the authentication request was rejected/cancelled");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

@@ -16,7 +16,7 @@ const express = require("express");
         await cas.assertTextContent(page, "#content h2", "Authentication attempt is blocked.");
         server.close(() => {
             cas.log("Exiting server...");
-            browser.close();
+            cas.closeBrowser(browser);
         });
     });
 

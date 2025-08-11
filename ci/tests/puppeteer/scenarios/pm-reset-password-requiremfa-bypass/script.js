@@ -29,5 +29,5 @@ const assert = require("assert");
     await cas.waitForNavigation(page);
     await cas.assertInnerText(page, "#content h2", "Password Change Successful");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

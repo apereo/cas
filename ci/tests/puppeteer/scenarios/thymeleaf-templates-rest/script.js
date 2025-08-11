@@ -16,7 +16,7 @@ const assert = require("assert");
         const title = await cas.innerText(page, "#title");
         assert(title === "Hello, World!");
 
-        await browser.close();
+        await cas.closeBrowser(browser);
     } catch (e) {
         failed = true;
         throw e;

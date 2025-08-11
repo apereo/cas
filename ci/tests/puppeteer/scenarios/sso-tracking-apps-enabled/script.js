@@ -35,6 +35,6 @@ async function login(service) {
         }
         await cas.assertTicketParameter(page);
     }
-    await browser.close();
+    await cas.closeBrowser(browser);
 }
 

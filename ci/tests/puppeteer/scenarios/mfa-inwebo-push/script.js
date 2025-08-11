@@ -10,5 +10,5 @@ const cas = require("../../cas.js");
     const pendingForm = await page.$("#pendingCheckResultForm");
     const retryForm = await page.$("#retryForm");
     assert(retryForm !== null || pendingForm !== null);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

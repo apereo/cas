@@ -21,7 +21,7 @@ async function authenticate(page, casServer) {
 }
 
 (async () => {
-    const browser = await cas.newBrowser(cas.browserOptions({ args: [
+    const browser = await cas.newBrowser(cas.browserOptions({ options: [
         "--host-resolver-rules=MAP shire.localhost 127.0.0.1, MAP london.localhost 127.0.0.1"
     ] }));
     const page = await cas.newPage(browser);
@@ -37,5 +37,5 @@ async function authenticate(page, casServer) {
     assert(payload.attributes["city"][0] === "London");
     assert(payload.attributes["username"][0] === "casuser");
     assert(payload.attributes["country"][0] === "UK");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

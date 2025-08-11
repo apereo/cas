@@ -15,5 +15,5 @@ const assert = require("assert");
     await cas.log(`Number of instances: ${count}`);
     assert(count === 2);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

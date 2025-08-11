@@ -42,6 +42,6 @@ async function assertFailure(page) {
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.sleep(5000);
     await assertFailure(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
