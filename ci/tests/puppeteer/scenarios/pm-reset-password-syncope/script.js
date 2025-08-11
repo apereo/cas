@@ -51,6 +51,12 @@ const cas = require("../../cas.js");
     await cas.goto(page, link);
     await cas.sleep(2000);
 
+    await cas.assertInnerText(page, "#content h2", "Answer Security Questions");
+
+    await cas.type(page, "#q0", "Rome", true);
+    await cas.pressEnter(page);
+    await cas.waitForNavigation(page);
+    await cas.sleep(2000);
     await cas.assertInnerText(page, "#pwdmain h3", `Hello, ${username}. You must change your password.`);
 
     newPassword = await cas.randomWord();

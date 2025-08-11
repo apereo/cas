@@ -120,5 +120,4 @@ class PasswordChangeActionTests extends BasePasswordManagementActionTests {
         PasswordManagementWebflowUtils.putPasswordResetUsername(context, changeReq.getUsername());
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, passwordChangeAction.execute(context).getId());
     }
-
 }
