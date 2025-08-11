@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     await executeRequest(page, "https://localhost:9859/anything/4", "groupMembership4", "COURSE-H101");
     await executeRequest(page, "https://localhost:9859/anything/5", "COURSE", "CHEMISTRY-101");
     await executeRequest(page, "https://localhost:9859/anything/6", "COURSE", "SOFTENG-101");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function executeRequest(page, service, attribute, attributeValue) {

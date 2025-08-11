@@ -64,5 +64,5 @@ async function testService(page, clientId, oidc = true, redirectUrl = "https://l
     assert(payload.accessToken.firstname === undefined);
     assert(payload.accessToken.phone === undefined);
     await cas.gotoLogout(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

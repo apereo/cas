@@ -44,5 +44,5 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#username");
     await cas.assertVisibility(page, "#password");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

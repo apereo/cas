@@ -13,5 +13,5 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#allow", "ERLAUBEN");
     await cas.assertInnerText(page, "#cancel", "VERBIETEN");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

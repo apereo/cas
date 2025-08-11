@@ -66,5 +66,5 @@ const assert = require("assert");
     assert(decoded.acr === "mfa-simple");
     assert(decoded.amr.includes("CasSimpleMultifactorAuthenticationHandler"));
     assert(decoded.amr.includes("Static Credentials"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

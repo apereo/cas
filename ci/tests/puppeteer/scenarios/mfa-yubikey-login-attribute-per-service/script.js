@@ -25,5 +25,5 @@ const cas = require("../../cas.js");
         assert(response.ok());
     }
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

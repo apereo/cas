@@ -37,5 +37,5 @@ async function authenticate(page, casServer) {
     assert(payload.attributes["city"][0] === "London");
     assert(payload.attributes["username"][0] === "casuser");
     assert(payload.attributes["country"][0] === "UK");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -50,5 +50,5 @@ const request = require("request");
     await cas.sleep(1000);
     await cas.assertCookie(page, false);
     await cas.assertVisibility(page, "#username");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -121,7 +121,7 @@ async function checkSessionsAreSynced(browser) {
         await checkSessionsAreSynced(browser);
         await testBasicLoginLogout(browser);
         await checkTicketValidationAcrossNodes(browser);
-        await browser.close();
+        await cas.closeBrowser(browser);
     } catch (e) {
         failed = true;
         throw e;

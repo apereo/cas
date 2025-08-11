@@ -53,5 +53,5 @@ async function verifyTenant(browser, tenantId) {
     await verifyTenant(browser, "shire");
     await cas.separator();
     await verifyTenant(browser, "moria");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

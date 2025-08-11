@@ -28,6 +28,6 @@ const cas = require("../../cas.js");
         fs.rmSync(pt, { force: true });
     });
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

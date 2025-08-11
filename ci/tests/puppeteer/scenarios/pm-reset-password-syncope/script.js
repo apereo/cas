@@ -62,6 +62,6 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content h2", "Password Change Successful");
     await cas.gotoLogout(page);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

@@ -81,7 +81,7 @@ const assert = require("assert");
         throw e;
     } finally {
         await context.close();
-        await browser.close();
+        await cas.closeBrowser(browser);
         if (!failed) {
             await process.exit(0);
         }

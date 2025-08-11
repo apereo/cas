@@ -35,7 +35,7 @@ async function cleanUp() {
         await cas.sleep(9000);
         await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
 
-        await browser.close();
+        await cas.closeBrowser(browser);
         await cleanUp();
     }, async (error) => {
         await cas.log(error);

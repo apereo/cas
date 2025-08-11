@@ -23,5 +23,5 @@ const cas = require("../../cas.js");
     } finally {
         await cas.screenshot(page);
     }
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

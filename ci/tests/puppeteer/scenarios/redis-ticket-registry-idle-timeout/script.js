@@ -46,7 +46,7 @@ async function testCasApplication() {
     await cas.log("The SSO session should be gone now");
     await cas.gotoLogin(page);
     await cas.assertCookie(page, false);
-    await browser.close();
+    await cas.closeBrowser(browser);
     await verifyTicketGrantingTicketCount();
     await removeAllSessions();
 }
@@ -130,7 +130,7 @@ async function testOidcApplication() {
     await cas.log("The SSO session should be gone now");
     await cas.gotoLogin(page);
     await cas.assertCookie(page, false);
-    await browser.close();
+    await cas.closeBrowser(browser);
     await verifyTicketGrantingTicketCount();
     await removeAllSessions();
 }

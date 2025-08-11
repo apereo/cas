@@ -32,5 +32,5 @@ const cas = require("../../cas.js");
     await cas.logPage(page);
     await cas.assertTicketParameter(page, true);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

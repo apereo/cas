@@ -46,5 +46,5 @@ const cas = require("../../cas.js");
     await cas.assertPageUrlStartsWith(page, "https://localhost:8444/cas/logout");
     await cas.sleep(2000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

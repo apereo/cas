@@ -24,5 +24,5 @@ const assert = require("assert");
     assert(payload.form.id_token !== undefined);
     assert(payload.form.token_type !== undefined);
     assert(payload.form.expires_in !== undefined);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -18,7 +18,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content h2", "Access Denied");
     await cas.assertInnerTextContains(page, "#content p", "You've been throttled.");
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function submitLoginFailure(page) {

@@ -15,7 +15,7 @@ const request = require("request");
     assert(attributesldap.includes("aburr"));
     assert(attributesldap.includes("someattribute"));
     assert(attributesldap.includes("ldap-dn"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 
     browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
@@ -67,5 +67,5 @@ const request = require("request");
     await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "user-account-control");
     await cas.assertInnerTextDoesNotContain(page, "#attribute-tab-0 table#attributesTable tbody", "shouldntbehere");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

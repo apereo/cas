@@ -48,6 +48,6 @@ const path = require("path");
     attributes = json.serviceResponse.authenticationSuccess.attributes;
     assert(attributes.firstName[0] === newFirstName);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
     await fs.unlinkSync(configFilePath);
 })();

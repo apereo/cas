@@ -43,5 +43,5 @@ const assert = require("assert");
     await cas.screenshot(page);
     await cas.assertInnerTextStartsWith(page, "#triggeredRiskBasedAuthentication td code kbd", "[true]");
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

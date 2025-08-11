@@ -18,5 +18,5 @@ const assert = require("assert");
     const url = `${page.url()}`;
     await cas.logPage(page);
     assert(url.includes("https://www.google.com"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

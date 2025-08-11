@@ -8,5 +8,5 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.loginWith(page, "disabled", "disabled");
     await cas.assertInnerText(page, "#content h2", "This account has been disabled.");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -241,5 +241,5 @@ async function introspect(token, scopes, client) {
             throw "Operation should not fail";
         });
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

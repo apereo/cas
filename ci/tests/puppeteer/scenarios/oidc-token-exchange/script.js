@@ -216,7 +216,7 @@ async function verifyTokenExchangeNativeSso() {
         assert(decoded.aud === "client2");
 
     } finally {
-        await browser.close();
+        await cas.closeBrowser(browser);
     }
 }
 

@@ -42,7 +42,7 @@ const REQUEST_BASKET_AUTHZ_TOKEN = "SV00cPIKRdWjGkN1vkbEbPdhtvV5vIJ0ajygcdnZVBgl
             "Authorization": REQUEST_BASKET_AUTHZ_TOKEN
         });
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function getPayload(page, redirectUri, clientId, clientSecret, scopes) {

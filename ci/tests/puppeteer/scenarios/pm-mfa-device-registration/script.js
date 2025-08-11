@@ -88,6 +88,6 @@ async function passwordResetFlowMfaWithoutRegisteredDevice(browser) {
         await passwordResetFlowMfaWithoutRegisteredDevice(browser);
     } finally {
         await deleteGoogleAuthenticatorAccounts();
-        await browser.close();
+        await cas.closeBrowser(browser);
     }
 })();

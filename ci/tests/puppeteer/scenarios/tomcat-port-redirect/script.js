@@ -9,5 +9,5 @@ const cas = require("../../cas.js");
     await cas.assertPageUrl(page, "https://localhost:8443/cas/login");
     await cas.assertVisibility(page, "#username");
     await cas.assertVisibility(page, "#password");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

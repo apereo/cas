@@ -15,7 +15,7 @@ const fs = require("fs");
     assert(attributesldap.includes("aburr"));
     assert(attributesldap.includes("someattribute"));
     assert(attributesldap.includes("uid"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 
     browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
@@ -52,7 +52,7 @@ const fs = require("fs");
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.sleep(5000);
     await assertFailure(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function assertFailure(page) {

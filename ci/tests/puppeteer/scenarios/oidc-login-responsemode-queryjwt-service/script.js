@@ -29,6 +29,6 @@ const path = require("path");
         assert(verified.payload.nonce === "vn4qulthnx");
         assert(verified.payload.code !== undefined);
     });
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

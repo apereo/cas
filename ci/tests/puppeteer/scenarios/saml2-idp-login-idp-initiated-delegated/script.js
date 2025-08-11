@@ -41,6 +41,6 @@ async function startFlow(context, clientName) {
         await context.close();
     }
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

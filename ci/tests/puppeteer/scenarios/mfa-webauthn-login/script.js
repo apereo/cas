@@ -91,5 +91,5 @@ async function verifyWebAuthnQRCode(browser) {
     await verifyWebAuthnQRCode(context);
     await context.close();
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

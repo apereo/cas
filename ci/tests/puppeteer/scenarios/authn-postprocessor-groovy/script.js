@@ -8,5 +8,5 @@ const cas = require("../../cas.js");
     await cas.loginWith(page);
     await cas.assertInnerText(page, "#content h1", "Authentication Succeeded with Warnings");
     await cas.assertInnerTextContains(page, "#content ul li span", "Your password is commonly used");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

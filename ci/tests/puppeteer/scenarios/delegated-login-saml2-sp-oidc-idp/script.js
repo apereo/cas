@@ -24,5 +24,5 @@ const path = require("path");
     await cas.gotoLogin(page);
     await cas.assertCookie(page);
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

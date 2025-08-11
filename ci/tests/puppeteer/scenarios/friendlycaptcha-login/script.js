@@ -8,5 +8,5 @@ const cas = require("../../cas.js");
 
     await cas.assertVisibility(page, "#friendlyCaptchaSection");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

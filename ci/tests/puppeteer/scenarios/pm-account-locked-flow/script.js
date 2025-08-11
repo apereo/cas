@@ -26,5 +26,5 @@ async function loginWith(page, user, password) {
     await cas.sleep(1000);
     await cas.click(page, "#loginbtn");
     await cas.sleep(1000);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

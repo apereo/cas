@@ -16,5 +16,5 @@ const assert = require("assert");
             throw err;
         });
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

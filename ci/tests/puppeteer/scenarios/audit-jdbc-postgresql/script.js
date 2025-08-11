@@ -17,7 +17,7 @@ const path = require("path");
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.gotoLogout(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 
     await cas.doGet("https://localhost:8443/cas/actuator/auditLog",
         (res) => {
@@ -63,7 +63,7 @@ const path = require("path");
     await cas.loginWith(page);
     await cas.assertCookie(page);
     await page.close();
-    await browser.close();
+    await cas.closeBrowser(browser);
 
 })();
 

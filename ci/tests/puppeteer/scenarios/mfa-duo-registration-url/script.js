@@ -26,6 +26,6 @@ const assert = require("assert");
     assert(decoded.sub === "unknown");
     assert(decoded.aud === "localhost");
     assert(decoded.iss === "https://localhost:8443");
-    await browser.close();
+    await cas.closeBrowser(browser);
 
 })();

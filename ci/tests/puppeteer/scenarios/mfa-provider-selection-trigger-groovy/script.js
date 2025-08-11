@@ -9,5 +9,5 @@ const cas = require("../../cas.js");
     await cas.sleep(2000);
     await cas.assertVisibility(page, "#mfa-gauth");
     await cas.assertVisibility(page, "#mfa-webauthn");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

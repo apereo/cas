@@ -16,5 +16,5 @@ const assert = require("assert");
     assert(success.attributes.givenName[0] === "CAS");
     assert(success.attributes.displayName[0] === "CAS Test");
     assert(success.attributes.jobTitle[0] === "Tester");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

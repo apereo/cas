@@ -11,7 +11,7 @@ async function verifyWithoutService() {
     await cas.sleep(2000);
     await cas.assertCookie(page2);
     await cas.screenshot(page2);
-    await browser2.close();
+    await cas.closeBrowser(browser2);
 }
 
 async function verifyWithService() {
@@ -21,7 +21,7 @@ async function verifyWithService() {
     await cas.gotoLogin(page2, "https://localhost:9859/anything/1");
     await cas.sleep(2000);
     await cas.assertTicketParameter(page2);
-    await browser2.close();
+    await cas.closeBrowser(browser2);
 }
 
 async function buildCookie(page, value, path, name) {

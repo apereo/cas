@@ -18,5 +18,5 @@ const cas = require("../../cas.js");
     await cas.screenshot(page);
     assert(response.status() === 200);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

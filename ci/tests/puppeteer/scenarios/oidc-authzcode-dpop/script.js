@@ -110,7 +110,7 @@ const jose = require("jose");
     });
 
     await introspect(accessToken);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function introspect(token) {

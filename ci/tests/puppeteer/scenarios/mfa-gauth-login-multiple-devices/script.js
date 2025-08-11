@@ -49,5 +49,5 @@ const assert = require("assert");
     await cas.assertVisibility(page, "#scratchcodes");
     assert((await page.$$("#scratchcodes div.mdc-chip")).length === 5);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -17,5 +17,5 @@ const cas = require("../../cas.js");
     await cas.assertPageUrl(page, "https://localhost:8443/cas/account");
     await cas.assertTicketParameter(page, false);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

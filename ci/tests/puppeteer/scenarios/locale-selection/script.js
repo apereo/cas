@@ -11,5 +11,5 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "ANMELDEN");
     await cas.attributeValue(page, "html", "lang", "de");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

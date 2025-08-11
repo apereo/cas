@@ -23,6 +23,6 @@ const assert = require("assert");
     assert(entries.find((entry) => entry === "DefaultAuthenticationManager") !== undefined);
     assert(entries.find((entry) => entry === "AcceptUsersAuthenticationHandler") !== undefined);
     assert(entries.find((entry) => entry === "DefaultTicketRegistry") !== undefined);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

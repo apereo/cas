@@ -288,5 +288,5 @@ async function verifyMissingOpenIdScope(context) {
     await verifyMissingTicketGrantingCookie(context);
     await context.close();
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

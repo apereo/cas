@@ -31,7 +31,7 @@ const assert = require("assert");
         
         server.close(() => {
             cas.log("Exiting server...");
-            browser.close();
+            cas.closeBrowser(browser);
         });
     });
 })();

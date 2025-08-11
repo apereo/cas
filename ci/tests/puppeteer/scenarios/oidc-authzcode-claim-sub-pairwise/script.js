@@ -11,7 +11,7 @@ const assert = require("assert");
     const payload = await getPayload(page, url1, "client", "secret");
     const decoded = await cas.decodeJwt(payload.id_token);
     assert(decoded.sub === "H93BJUD2wLReU5cflwSI4Flle/U=");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function getPayload(page, redirectUri, clientId, clientSecret) {

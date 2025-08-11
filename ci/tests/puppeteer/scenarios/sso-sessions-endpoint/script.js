@@ -56,7 +56,7 @@ async function login() {
         await cas.loginWith(page, `casuser${i}`, "Mellon");
         await cas.assertCookie(page);
         await context.close();
-        await browser.close();
+        await cas.closeBrowser(browser);
     }
 }
 

@@ -22,7 +22,7 @@ const assert = require("assert");
         const browserStorage = JSON.parse(localStorageData["CAS"]);
         assert(browserStorage.CasBrowserStorageContext !== undefined);
         assert(browserStorage.DuoSecuritySessionContext !== undefined);
-        await browser.close();
+        await cas.closeBrowser(browser);
 
         const json = await cas.validateTicket(service, ticket);
         const attributes = json.serviceResponse.authenticationSuccess.attributes;
@@ -32,7 +32,7 @@ const assert = require("assert");
         failed = true;
         throw e;
     } finally {
-        await browser.close();
+        await cas.closeBrowser(browser);
         if (!failed) {
             await process.exit(0);
         }

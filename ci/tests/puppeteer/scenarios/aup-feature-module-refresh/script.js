@@ -40,7 +40,7 @@ const path = require("path");
     await cas.log(page);
     await cas.assertPageUrlHost(page, "localhost:9859");
     await updateConfig(configFile, configFilePath, false);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function updateConfig(configFile, configFilePath, data) {

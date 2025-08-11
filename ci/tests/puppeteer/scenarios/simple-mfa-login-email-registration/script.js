@@ -36,5 +36,5 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertCookie(page);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

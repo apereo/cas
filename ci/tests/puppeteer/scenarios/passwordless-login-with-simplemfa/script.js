@@ -26,5 +26,5 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "firstname");
     await cas.sleep(2000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

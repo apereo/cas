@@ -50,5 +50,5 @@ const assert = require("assert");
     await cas.assertCookie(page);
     await cas.log("Resuming postgres server...");
     await postgres.unpause();
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -15,5 +15,5 @@ const cas = require("../../cas.js");
     await cas.log(title);
     assert(title === "CAS Bootstrap Theme Log In Successful");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

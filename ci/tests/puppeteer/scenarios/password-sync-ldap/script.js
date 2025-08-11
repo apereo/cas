@@ -10,6 +10,6 @@ const cas = require("../../cas.js");
     await cas.assertCookie(page);
     await cas.gotoLogout(page);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

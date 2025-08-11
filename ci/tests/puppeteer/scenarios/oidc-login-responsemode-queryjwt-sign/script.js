@@ -39,6 +39,6 @@ const assert = require("assert");
             throw error;
         });
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

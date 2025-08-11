@@ -74,5 +74,5 @@ const fs = require("fs");
     await cas.assertCookie(page);
     await cas.gotoLogout(page);
     await cas.sleep(1000);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

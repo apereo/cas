@@ -86,5 +86,6 @@ async function verifyInterruptionBlocked(context) {
     await verifyInterruptionBlocked(context);
     await context.close();
 
-    await browser.close();
+    await cas.closeBrowser(browser);
+    await cas.closeBrowser(browser);
 })();

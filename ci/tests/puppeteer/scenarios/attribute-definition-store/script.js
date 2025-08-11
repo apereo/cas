@@ -16,7 +16,7 @@ const cas = require("../../cas.js");
         assert(success.attributes.mail !== undefined);
         assert(success.attributes["external-groups"] !== undefined);
     } finally {
-        await browser.close();
+        await cas.closeBrowser(browser);
     }
 })();
 

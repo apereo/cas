@@ -38,6 +38,6 @@ const assert = require("assert");
         "Content-Type": "application/json"
     });
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 
 })();

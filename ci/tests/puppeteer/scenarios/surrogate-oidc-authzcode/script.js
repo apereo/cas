@@ -133,5 +133,5 @@ async function verifyImpersonationUserChoice(browser) {
     await verifyImpersonationUserChoice(context2);
     await context2.close();
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -45,5 +45,5 @@ async function startAuthFlow(page, username) {
     await startAuthFlow(page, "user3+casuser-none");
     await startAuthFlow(page, "user3+casuser-client");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

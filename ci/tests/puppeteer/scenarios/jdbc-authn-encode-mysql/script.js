@@ -18,5 +18,5 @@ const assert = require("assert");
     assert(authenticationSuccess.attributes["last-name"] !== undefined);
     assert(authenticationSuccess.attributes["phonenumber"] !== undefined);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

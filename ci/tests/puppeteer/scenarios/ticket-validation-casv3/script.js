@@ -26,5 +26,5 @@ const cas = require("../../cas.js");
     const json = await cas.validateTicket(service2, ticket);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "CAS_USER_APEREO@APEREO.ORG");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

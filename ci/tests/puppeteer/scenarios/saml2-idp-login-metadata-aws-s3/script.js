@@ -25,7 +25,7 @@ async function getActuatorEndpoint(entityId, password = "Mellon") {
     await cas.sleep(2000);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-    await browser.close();
+    await cas.closeBrowser(browser);
 
     let endpoint = await getActuatorEndpoint(entityId);
     await cas.log("===================================");

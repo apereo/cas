@@ -20,5 +20,5 @@ const cas = require("../../cas.js");
     assert(authenticationSuccess.attributes.authenticationMethod !== undefined);
     assert(authenticationSuccess.attributes.successfulAuthenticationHandlers !== undefined);
     assert(authenticationSuccess.attributes.longTermAuthenticationRequestTokenUsed !== undefined);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

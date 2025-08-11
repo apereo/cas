@@ -10,5 +10,5 @@ const cas = require("../../cas.js");
     await cas.assertCookie(page);
     await cas.assertCookie(page, true, "CASWebflowCookie");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

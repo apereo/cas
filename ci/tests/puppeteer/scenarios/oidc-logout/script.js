@@ -58,5 +58,5 @@ async function verifyLogoutWithIdTokenHint(clientId, casService, page) {
     
     const customIssuerService = "https://localhost:9859/anything/customissuer";
     await verifyLogoutWithIdTokenHint("customclient", customIssuerService, page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

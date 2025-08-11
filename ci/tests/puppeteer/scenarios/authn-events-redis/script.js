@@ -61,5 +61,5 @@ async function getAllEvents() {
     await cas.log(`Total event records found ${count}`);
     assert(count === totalAttempts + 1);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

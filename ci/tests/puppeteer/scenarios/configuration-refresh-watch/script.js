@@ -33,7 +33,7 @@ const path = require("path");
     await cas.assertCookie(page);
 
     await updateConfig(configFile, configFilePath, users);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function updateConfig(configFile, configFilePath, data) {

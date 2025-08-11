@@ -9,7 +9,7 @@ const assert = require("assert");
     await cas.loginWith(page);
     await cas.logPage(page);
     await cas.assertTicketParameter(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 
     const baseUrl = "https://localhost:8443/cas/actuator/registeredServices";
     await cas.doGet(baseUrl, (res) => {

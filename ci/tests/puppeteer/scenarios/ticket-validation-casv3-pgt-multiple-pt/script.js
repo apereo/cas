@@ -71,5 +71,5 @@ const createProxyTicket = async (proxyGrantingTicket) => {
     };
     await sendConcurrentRequests();
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

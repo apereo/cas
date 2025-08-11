@@ -25,6 +25,6 @@ async function normalAuthenticationFlow(context) {
     await normalAuthenticationFlow(context);
     await context.close();
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

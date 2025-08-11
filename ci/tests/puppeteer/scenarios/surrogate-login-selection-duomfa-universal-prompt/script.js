@@ -82,5 +82,5 @@ async function verifyNoImpersonationWithMfa(page) {
     await verifyImpersonationWithMfa(page);
     await verifyNoImpersonationWithMfa(page);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

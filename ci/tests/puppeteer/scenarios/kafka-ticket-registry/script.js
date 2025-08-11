@@ -31,6 +31,6 @@ const assert = require("assert");
         await cas.sleep(1000);
         await cas.assertCookie(page, false);
     } finally {
-        await browser.close();
+        await cas.closeBrowser(browser);
     }
 })();

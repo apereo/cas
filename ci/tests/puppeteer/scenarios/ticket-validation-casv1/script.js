@@ -14,5 +14,5 @@ const cas = require("../../cas.js");
     const body = await cas.doRequest(`https://localhost:8443/cas/validate?service=${service}&ticket=${ticket}`);
     await cas.log(body);
     assert(body === "yes\ncasuser\n");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

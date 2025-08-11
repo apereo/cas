@@ -18,5 +18,5 @@ const cas = require("../../cas.js");
     //await cas.goto(page, "https://host.k3d.internal");
     await cas.sleep(3000);
     await cas.assertInnerTextContains(page, "ul.global-navbar-menu","Projects");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -39,7 +39,7 @@ const cas = require("../../cas.js");
         await cas.assertInnerText(page, "#claim1", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname:casuser");
         await cas.assertInnerText(page, "#claim2", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress:CAS@example.org");
 
-        await browser.close();
+        await cas.closeBrowser(browser);
     } catch (e) {
         failed = true;
         throw e;

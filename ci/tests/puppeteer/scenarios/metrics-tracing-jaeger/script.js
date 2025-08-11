@@ -13,5 +13,5 @@ const assert = require("assert");
     await cas.sleep(2000);
     const count = await cas.innerText(page, ".SearchResults--headerOverview h2");
     assert(count === "1 Trace");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

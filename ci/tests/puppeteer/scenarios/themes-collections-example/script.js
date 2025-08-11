@@ -19,5 +19,5 @@ const cas = require("../../cas.js");
     await cas.gotoLogout(page);
     await cas.sleep(2000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

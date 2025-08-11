@@ -119,5 +119,5 @@ async function authenticateWithMfa(browser) {
     await authenticateWithDelegation(browser);
     await authenticateWithPasswordlessToken(browser);
     await authenticateWithMfa(browser);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

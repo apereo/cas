@@ -38,5 +38,5 @@ const assert = require("assert");
     assert(decoded["given_name"] !== undefined);
     assert(decoded["name"] !== undefined);
     assert(decoded["org"]["apereo"]["cas"]["entity"] !== undefined);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

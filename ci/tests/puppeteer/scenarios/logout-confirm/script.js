@@ -44,5 +44,5 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
     await cas.logPage(page);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

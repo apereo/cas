@@ -21,7 +21,7 @@ const path = require("path");
     } finally {
         await updateConfig(configFile, configFilePath, "");
     }
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function doLogin(page, uid, psw, email) {

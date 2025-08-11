@@ -10,5 +10,5 @@ const cas = require("../../cas.js");
 
     await cas.assertVisibility(page, "button.g-recaptcha");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

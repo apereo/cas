@@ -12,5 +12,5 @@ const cas = require("../../cas.js");
     await cas.sleep(2000);
     const id_token = await cas.assertParameter(page, "id_token");
     await cas.log(id_token);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -12,5 +12,5 @@ const assert = require("assert");
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
     await cas.assertCookie(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

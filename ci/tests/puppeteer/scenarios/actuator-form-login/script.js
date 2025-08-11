@@ -33,5 +33,5 @@ const cas = require("../../cas.js");
     const payload = JSON.parse(json);
     await cas.log(payload);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -17,7 +17,7 @@ const assert = require("assert");
         await cas.loginWith(page, userid, "Mellon");
         ticket = await cas.assertParameter(page, "SAMLart");
     } finally {
-        await browser.close();
+        await cas.closeBrowser(browser);
     }
 
     const request = `<?xml version="1.0" encoding="UTF-8"?>

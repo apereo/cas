@@ -54,5 +54,5 @@ async function startAuthFlow(page, username) {
         await startAuthFlow(page, user);
         await context.close();
     }
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

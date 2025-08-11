@@ -64,5 +64,5 @@ const cas = require("../../cas.js");
     assert(authenticationSuccess.attributes.bypassedMultifactorAuthenticationProviderId[0] === "mfa-yubikey");
     assert(authenticationSuccess.attributes.authenticationContext[0] === "mfa-yubikey");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

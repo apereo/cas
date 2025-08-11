@@ -32,6 +32,6 @@ const cas = require("../../cas.js");
         if (mockServer !== null) {
             mockServer.stop();
         }
-        await browser.close();
+        await cas.closeBrowser(browser);
     }
 })();

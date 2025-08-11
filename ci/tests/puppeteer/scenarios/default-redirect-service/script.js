@@ -13,5 +13,5 @@ const cas = require("../../cas.js");
     
     await cas.logPage(page);
     await cas.assertPageUrl(page, "https://github.com/");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

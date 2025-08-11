@@ -18,5 +18,5 @@ const assert = require("assert");
     const result = new URL(url);
     await cas.logg(`URL hash is ${result.hash}`);
     assert(result.hash.startsWith("#hello-world"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

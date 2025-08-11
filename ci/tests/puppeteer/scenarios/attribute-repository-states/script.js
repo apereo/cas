@@ -43,5 +43,5 @@ async function returnCasResponse(page, appId) {
     count = Object.keys(response.attributes).length;
     assert(count === 2);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

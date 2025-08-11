@@ -24,5 +24,5 @@ const cas = require("../../cas.js");
     await cas.assertPageUrlStartsWith(page, "https://localhost:8444/protected");
     await cas.assertInnerTextContains(page, "div.starter-template h2 span", "admin");
     await cas.sleep(1000);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

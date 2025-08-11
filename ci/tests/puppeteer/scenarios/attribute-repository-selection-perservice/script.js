@@ -33,5 +33,5 @@ const cas = require("../../cas.js");
     assert(attributes.displayName[0] === "Apereo");
     assert(attributes.cn[0] === "cas");
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

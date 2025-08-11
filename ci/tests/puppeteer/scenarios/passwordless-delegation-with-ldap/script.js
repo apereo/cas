@@ -41,5 +41,5 @@ async function verifyPasswordRequestFlow(page) {
     await verifyDelegatedAuthenticationFlow(page);
     await verifyPasswordRequestFlow(page);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

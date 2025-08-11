@@ -21,5 +21,5 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "INICIAR SESIÓN");
     await cas.attributeValue(page, "html", "lang", "es");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

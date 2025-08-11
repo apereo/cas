@@ -92,5 +92,5 @@ const request = require("request");
     assert(decoded["txn"] !== undefined);
     assert(decoded["amr"][0] === "X509");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

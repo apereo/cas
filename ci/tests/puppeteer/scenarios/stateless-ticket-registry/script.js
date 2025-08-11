@@ -95,6 +95,6 @@ async function verifyExistingSsoSession(context, service) {
         await cas.log("=======================================");
     }
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 
 })();

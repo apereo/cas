@@ -45,7 +45,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertCookie(page);
     await cas.sleep(2000);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function typePassword(page, pswd, confirm) {

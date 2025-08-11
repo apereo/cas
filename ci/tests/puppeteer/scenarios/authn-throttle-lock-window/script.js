@@ -24,7 +24,7 @@ const cas = require("../../cas.js");
     await cas.loginWith(page);
     await cas.assertCookie(page);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function submitLoginFailure(page) {

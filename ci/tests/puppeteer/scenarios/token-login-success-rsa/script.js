@@ -41,5 +41,5 @@ async function loginWithToken(page, service, token) {
     await cas.log(`SSO Token ${token}`);
     await loginWithToken(page, service, token);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

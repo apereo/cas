@@ -28,5 +28,5 @@ const cas = require("../../cas.js");
     await cas.sleep(2000);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Login");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

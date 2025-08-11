@@ -7,5 +7,5 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.sleep(1000);
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

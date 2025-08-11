@@ -52,7 +52,7 @@ async function verifyDeviceCode(data) {
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
     await cas.sleep(2000);
-    await browser.close();
+    await cas.closeBrowser(browser);
     
     await cas.doPost(url, "", {
         "Content-Type": "application/json"

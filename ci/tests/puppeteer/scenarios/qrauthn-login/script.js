@@ -17,7 +17,7 @@ const querystring = require("querystring");
     await cas.logg(`QR channel code is ${channelId}`);
     await connectAndLogin(channelId, page);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function connectAndLogin(channelId, page) {

@@ -41,6 +41,6 @@ const assert = require("assert");
     assert(nextAuthData !== initialAuthData);
 
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

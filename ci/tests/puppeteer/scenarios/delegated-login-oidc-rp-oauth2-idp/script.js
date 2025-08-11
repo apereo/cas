@@ -50,7 +50,7 @@ const cas = require("../../cas.js");
         failure = true;
         throw e;
     } finally {
-        await browser.close();
+        await cas.closeBrowser(browser);
         if (!failure) {
             await process.exit(0);
         }

@@ -10,5 +10,5 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "[CAS, sys_CAS]");
     await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "[User, sys_User]");
     await cas.assertCookie(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
