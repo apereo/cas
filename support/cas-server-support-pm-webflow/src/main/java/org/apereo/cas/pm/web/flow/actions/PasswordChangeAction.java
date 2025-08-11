@@ -3,6 +3,7 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -21,6 +22,7 @@ import org.apereo.cas.pm.event.PasswordChangeSuccessEvent;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -35,6 +37,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -77,12 +80,18 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val clientInfo = ClientInfoHolder.getClientInfo();
-
         val bean = getPasswordChangeRequest(requestContext);
-        Optional.ofNullable(WebUtils.getCredential(requestContext, UsernamePasswordCredential.class))
-            .ifPresent(credential -> bean.setCurrentPassword(credential.getPassword()));
 
         try {
+            if (CasWebflowConfigurer.FLOW_ID_LOGIN.equals(WebUtils.getActiveFlow(requestContext))) {
+                LOGGER.debug("Attempting to validate current password for username [{}]", bean.getUsername());
+                val credential = WebUtils.getCredential(requestContext, UsernamePasswordCredential.class);
+                if (bean.getCurrentPassword() != null &&
+                        !Arrays.equals(bean.getCurrentPassword(), credential.getPassword())) {
+                    LOGGER.error("Current password is not correct");
+                    return getErrorEvent(requestContext, PASSWORD_VALIDATION_FAILURE_CODE, DEFAULT_MESSAGE);
+                }
+            }
 
             LOGGER.debug("Attempting to validate the password change bean for username [{}]", bean.getUsername());
             if (StringUtils.isBlank(bean.getUsername()) || !passwordValidationService.isValid(bean)) {

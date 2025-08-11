@@ -29,6 +29,7 @@ public class InitPasswordChangeAction extends BaseCasWebflowAction {
         WebUtils.putPasswordPolicyPattern(requestContext, core.getPasswordPolicyPattern());
         requestContext.getFlowScope().put("passwordPolicyCharacterSet", core.getPasswordPolicyCharacterSet());
         requestContext.getFlowScope().put("passwordPolicyPasswordLength", core.getPasswordPolicyPasswordLength());
+
         val upc = getCredentialFromWebflow(requestContext);
         if (upc != null) {
             LOGGER.debug("Restoring credential [{}] for password management", upc);
