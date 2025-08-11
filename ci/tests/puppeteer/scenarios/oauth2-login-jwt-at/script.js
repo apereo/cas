@@ -75,8 +75,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
 
     await cas.log(`Calling profile endpoint with a bad access token: ${badAccessToken}`);
     await cas.doPost("https://localhost:8443/cas/oauth2.0/profile", badParams, {},
-        (res) => {
-            console.log(res.data);
+        () => {
             throw "Operation must fail to get the profile with a bad access token";
         }, (error) => {
             assert(error.response.status === 401);

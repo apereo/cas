@@ -1266,7 +1266,6 @@ async function initializeCasSpringWebflowOperations() {
         if (selectedState && selectedState !== "all") {
             url += `&stateId=${selectedState}`;
         }
-        console.log(url);
         $.ajax({
             url: url,
             type: "GET",

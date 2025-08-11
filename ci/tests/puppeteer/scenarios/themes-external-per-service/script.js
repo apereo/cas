@@ -13,7 +13,7 @@ const cas = require("../../cas.js");
     await cas.log("Listing all stylesheet links for first app");
     await page.evaluate(() => {
         const links = document.querySelectorAll("link[rel=stylesheet]");
-        links.forEach((lnk) => console.log(lnk.getAttribute("href")));
+        links.forEach((lnk) => lnk.getAttribute("href") !== null);
     });
 
     await cas.assertInvisibility(page, "#username");
@@ -27,7 +27,7 @@ const cas = require("../../cas.js");
     await cas.log("Listing all stylesheet links for second app");
     await page.evaluate(() => {
         const links = document.querySelectorAll("link[rel=stylesheet]");
-        links.forEach((lnk) => console.log(lnk.getAttribute("href")));
+        links.forEach((lnk) => lnk.getAttribute("href") !== null);
     });
     await cas.assertInvisibility(page, "#username");
     await cas.assertInvisibility(page, "#password");
@@ -39,7 +39,7 @@ const cas = require("../../cas.js");
     await cas.log("Listing all stylesheet links for third app");
     await page.evaluate(() => {
         const links = document.querySelectorAll("link[rel=stylesheet]");
-        links.forEach((lnk) => console.log(lnk.getAttribute("href")));
+        links.forEach((lnk) => lnk.getAttribute("href") !== null);
     });
     await cas.assertVisibility(page, "#username");
     await cas.assertVisibility(page, "#password");

@@ -168,7 +168,7 @@ exports.click = async (page, button) =>
         if (buttonNode === null || button === undefined) {
             throw `Button element not found with id ${button}`;
         }
-        console.log(`Clicking element ${button} with href ${buttonNode.href}`);
+        this.logb(`Clicking element ${button} with href ${buttonNode.href}`);
         buttonNode.click();
     }, button);
 
