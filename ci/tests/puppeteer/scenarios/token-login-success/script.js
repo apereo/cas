@@ -38,5 +38,5 @@ async function loginWithToken(page, service, token) {
     body = JSON.parse(response);
     assert(body.registeredService.id === 1);
     await loginWithToken(page, service, body.token);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

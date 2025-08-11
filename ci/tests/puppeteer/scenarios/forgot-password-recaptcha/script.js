@@ -19,5 +19,5 @@ const cas = require("../../cas.js");
     await cas.waitForNavigation(page);
     await cas.sleep(1000);
     await cas.assertTextContent(page, "div .banner-danger p", "reCAPTCHA’s validation failed.");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

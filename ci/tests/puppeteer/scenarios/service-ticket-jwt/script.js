@@ -20,5 +20,5 @@ const assert = require("assert");
     assert(payload.sub === "casuser");
     assert(payload.jti.startsWith("ST-"));
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

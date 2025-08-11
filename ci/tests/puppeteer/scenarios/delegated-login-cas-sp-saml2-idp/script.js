@@ -42,5 +42,5 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page, service);
     await cas.click(page, "li #keycloak");
     await cas.sleep(3000);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

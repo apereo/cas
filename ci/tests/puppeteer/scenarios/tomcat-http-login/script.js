@@ -11,5 +11,5 @@ const cas = require("../../cas.js");
     await cas.goto(page, "http://localhost:8080/cas/logout");
     await cas.assertCookie(page, false);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

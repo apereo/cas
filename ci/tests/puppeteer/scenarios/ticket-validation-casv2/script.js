@@ -21,5 +21,5 @@ const cas = require("../../cas.js");
     assert(body.includes("<cas:authenticationMethod>STATIC</cas:authenticationMethod>"));
     assert(body.includes("<cas:successfulAuthenticationHandlers>STATIC</cas:successfulAuthenticationHandlers>"));
     assert(body.includes("<cas:longTermAuthenticationRequestTokenUsed>false</cas:longTermAuthenticationRequestTokenUsed>"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

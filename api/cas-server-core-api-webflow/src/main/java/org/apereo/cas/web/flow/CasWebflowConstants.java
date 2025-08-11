@@ -70,6 +70,12 @@ public interface CasWebflowConstants {
     String ATTRIBUTE_TARGET_TRANSITION = "targetTransitionToActivate";
 
     /**
+     * Transition attribute that indicates the original view state
+     * attached to the current event.
+     */
+    String ATTRIBUTE_CURRENT_EVENT_VIEW = "originalViewState";
+
+    /**
      * Attribute to track service in the flow.
      */
     String ATTRIBUTE_SERVICE = "service";

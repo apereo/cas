@@ -44,5 +44,5 @@ async function impersonateWithMenu(page, browser) {
     const page = await cas.newPage(browser);
     await impersonatePreSelected(page, browser);
     await impersonateWithMenu(page, browser);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

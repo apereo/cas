@@ -8,7 +8,7 @@ const assert = require("assert");
     await login(page, "mfa-duo", "https://localhost:9859/anything/cas");
     await cas.sleep(1000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function login(page, providerId, service = undefined) {

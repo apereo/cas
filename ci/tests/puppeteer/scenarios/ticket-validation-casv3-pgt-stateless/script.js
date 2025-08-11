@@ -71,5 +71,5 @@ async function getProxyTicket(service, ticket) {
     assert(authenticationSuccess.attributes.proxyGrantingTicket === undefined);
     assert(authenticationSuccess.attributes.mail[0] === "casuser@example.org");
     assert(authenticationSuccess.attributes.username[0] === "casuser");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

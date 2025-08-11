@@ -62,5 +62,5 @@ const cas = require("../../cas.js");
     await cas.assertInvisibility(page, "#username");
     await cas.assertTicketParameter(page);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

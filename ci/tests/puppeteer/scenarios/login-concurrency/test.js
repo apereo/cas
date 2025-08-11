@@ -12,12 +12,12 @@ const assert = require("assert");
         const page = await cas.newPage(browser);
         const availableUsers = ["casuser", "casadmin"];
         userid = availableUsers[Math.floor(Math.random() * availableUsers.length)];
-        console.log(`Selected user: ${userid}`);
+        await cas.logb(`Selected user: ${userid}`);
         await cas.goto(page, `https://localhost:8443/cas/login?TARGET=${service}`);
         await cas.loginWith(page, userid, "Mellon");
         ticket = await cas.assertParameter(page, "SAMLart");
     } finally {
-        await browser.close();
+        await cas.closeBrowser(browser);
     }
 
     const request = `<?xml version="1.0" encoding="UTF-8"?>
@@ -57,8 +57,7 @@ IssueInstant="2023-03-19T17:03:44.022Z">
             req.write(request);
         });
     const body = await post(options);
-    console.log(body);
-
+    await cas.logb(body);
     if (userid === "casuser") {
         assert(body.includes("<saml1:AttributeValue>USER-ACCOUNT</saml1:AttributeValue>"));
     } else {

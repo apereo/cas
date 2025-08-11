@@ -9,5 +9,5 @@ const cas = require("../../cas.js");
     await cas.loginWith(page, "mustchangepswd", "mustchangepswd");
     await cas.assertInnerText(page, "#pwdmain h3", "Hello, mustchangepswd. You must change your password.");
     await cas.assertInnerText(page, "#pwddesc", "Please change your password.");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

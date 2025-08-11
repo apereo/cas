@@ -39,5 +39,5 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextStartsWith(page, "#surrogateUser td code kbd", "[user3]");
     await cas.sleep(1000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

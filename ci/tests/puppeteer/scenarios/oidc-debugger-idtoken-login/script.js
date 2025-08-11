@@ -30,6 +30,6 @@ const assert = require("assert");
     assert(fragment.includes("nonce="));
     assert(fragment.includes("state="));
     assert(!fragment.includes("access_token="));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

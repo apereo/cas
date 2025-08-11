@@ -7,7 +7,7 @@ const assert = require("assert");
     await cas.gotoLogin(page);
     await cas.loginWith(page);
     await cas.assertCookie(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 
     const count = 10;
     await cas.doGet(`https://localhost:8443/cas/actuator/cloudWatchLogs/stream?count=${count}`,

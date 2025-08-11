@@ -1,6 +1,6 @@
 package org.apereo.cas.oidc.claims;
 
-import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
+import org.apereo.cas.support.oauth.profile.OAuth20AttributeDefinition;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -25,7 +25,7 @@ import java.io.Serial;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OidcAttributeDefinition extends DefaultAttributeDefinition {
+public class OidcAttributeDefinition extends OAuth20AttributeDefinition {
     @Serial
     private static final long serialVersionUID = -144152663366303322L;
 
