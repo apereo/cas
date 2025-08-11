@@ -28,7 +28,7 @@ jobs:
     outputs:
       is_snapshot: ${{ steps.check.outputs.is_snapshot }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Determine version
         id: check
         run: |
@@ -47,7 +47,7 @@ jobs:
     if: needs.check.outputs.is_snapshot == 'false'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
