@@ -1,3 +1,21 @@
+configurations {
+    configureEach {
+        withDependencies { deps ->
+            def hasLogback = deps.any { it.group == 'org.apereo.cas' && it.name == 'cas-server-support-logback' }
+            if (hasLogback) {
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-api")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-jakarta-web")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-web")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j2-impl")
+                it.exclude(group: "org.apereo.cas", module: "cas-server-core-logging")
+            }
+        }
+    }
+}
+
+
 dependencies {
     implementation project(":core:cas-server-core")
     implementation project(":core:cas-server-core-audit")

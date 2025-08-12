@@ -23,17 +23,18 @@ ext {
 
 configurations {
     configureEach {
-        /*
-            Log4j does not support Graal VM and leads to com.oracle.svm.core.jdk.UnsupportedFeatureError:
-            Defining hidden classes at runtime is not supported. We use logback instead.
-         */
-//        exclude(group: "org.apache.logging.log4j", module: "log4j-api")
-//        exclude(group: "org.apache.logging.log4j", module: "log4j-jakarta-web")
-//        exclude(group: "org.apache.logging.log4j", module: "log4j-web")
-//        exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
-//        exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
-//        exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j2-impl")
-//        exclude(group: "org.apereo.cas", module: "cas-server-core-logging")
+        withDependencies { deps ->
+            def hasLogback = deps.any { it.group == 'org.apereo.cas' && it.name == 'cas-server-support-logback' }
+            if (hasLogback) {
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-api")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-jakarta-web")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-web")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j2-impl")
+                it.exclude(group: "org.apereo.cas", module: "cas-server-core-logging")
+            }
+        }
         /*
          * Micrometer support for Java 21's virtual threads is disabled,
          * because: java.lang.IllegalArgumentException:

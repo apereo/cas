@@ -10,6 +10,5 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
 
     "--logging.config=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/logback.xml"
-  ],
-  "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle"
+  ]
 }
