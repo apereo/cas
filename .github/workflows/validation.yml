@@ -48,7 +48,7 @@ jobs:
       JDK_LATEST: ${{ env.JDK_LATEST }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -67,7 +67,7 @@ jobs:
     continue-on-error: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up JDK ${{ env.JDK_CURRENT }}
         uses: actions/setup-java@v4
         with:
@@ -95,7 +95,7 @@ jobs:
     name: commandline shell - JDK ${{ matrix.jdk }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v4
         with:
@@ -133,7 +133,7 @@ jobs:
     name: embedded - JDK ${{ matrix.jdk }} - ${{ matrix.category }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v4
         with:
@@ -170,7 +170,7 @@ jobs:
     name: ${{ matrix.category }} with external tomcat - JDK ${{ matrix.jdk }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v4
         with:
@@ -204,7 +204,7 @@ jobs:
     name: spring cloud config server - JDK ${{ matrix.jdk }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v4
         with:
