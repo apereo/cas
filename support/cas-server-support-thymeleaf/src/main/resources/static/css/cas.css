@@ -966,7 +966,7 @@ select.palantir {
 }
 
 main:has(.d-flex > section:only-of-type) {
-    max-width: 610px;
+    max-width: 560px;
 }
 
 
