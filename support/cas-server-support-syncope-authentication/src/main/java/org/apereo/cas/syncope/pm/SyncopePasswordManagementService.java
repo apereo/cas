@@ -200,7 +200,7 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
                     .resolve(casProperties.getAuthn().getPm().getSyncope().getUrl()),
                 "/rest/users/verifySecurityAnswer");
 
-            LOGGER.debug("Check security answer validity for user [{}]", query.getUsername());
+            LOGGER.debug("Checking security answer validity for user [{}]", query.getUsername());
             val exec = HttpExecutionRequest.builder().method(HttpMethod.POST).url(userSecurityAnswerUrl)
                 .basicAuthUsername(casProperties.getAuthn().getPm().getSyncope().getBasicAuthUsername())
                 .basicAuthPassword(casProperties.getAuthn().getPm().getSyncope().getBasicAuthPassword())
