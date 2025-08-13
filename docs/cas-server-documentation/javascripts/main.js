@@ -337,12 +337,12 @@ function enableBootstrapTooltips() {
 function generateOverlay(artifactId, type) {
   let id = artifactId.replace("cas-server-", "");
   $("#overlayform").remove();
-  $('body').append(" \
-  <form id='overlayform' action='https://getcas.apereo.org/starter.zip' method='post'> \
-    <input type='submit' value='submit' /> \
-    <input type='hidden' name='dependencies' value='" + id + "' /> \
-    <input type='hidden' name='type' value='" + type + "' /> \
-  </form>");
+  $('body').append(` 
+  <form id='overlayform' action='https://getcas.apereo.org/starter.zip' method='post'> 
+    <input type='submit' value='submit' /> 
+    <input type='hidden' name='dependencies' value='${id}' /> 
+    <input type='hidden' name='type' value='${type}' /> 
+  </form>`);
   $("#overlayform").submit();
 }
 
