@@ -241,6 +241,8 @@ function generateToolbarIcons() {
   let historyLink = "";
   let deleteLink = "";
 
+    https://github.com/apereo/cas/edit/7.2.x/docs/cas-server-documentation/release_notes/RC3.md
+    
   if (activeVersion === "") {
     editLink = `${baseLink}/edit/gh-pages/`;
     historyLink = `${baseLink}/commits/gh-pages/`;
@@ -249,14 +251,10 @@ function generateToolbarIcons() {
     editLink = `${baseLink}/edit/master/docs/cas-server-documentation/`;
     historyLink = `${baseLink}/commits/master/docs/cas-server-documentation/`;
     deleteLink = `${baseLink}/delete/master/docs/cas-server-documentation/`;
-  } else if (activeVersion.indexOf("5.") !== -1 || activeVersion.indexOf("6.") !== -1) {
+  } else {
     editLink = `${baseLink}/edit/${activeVersion}/docs/cas-server-documentation/`;
     historyLink = `${baseLink}/commits/${activeVersion}/docs/cas-server-documentation/`;
     deleteLink = `${baseLink}/delete/${activeVersion}/docs/cas-server-documentation/`;
-  } else if (activeVersion !== CONST_CURRENT_VER) {
-    editLink = `${baseLink}/edit/${activeVersion}/cas-server-documentation/`;
-    historyLink = `${baseLink}/commits/${activeVersion}/cas-server-documentation/`;
-    deleteLink = `${baseLink}/delete/${activeVersion}/cas-server-documentation/`;
   }
 
   editLink += editablePage;
