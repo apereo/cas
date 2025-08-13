@@ -108,6 +108,7 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Filt
 
     @Override
     protected FilterTemplate finalizeQueryBuilder(final FilterTemplate filterTemplate, final Map<String, List<Object>> query) {
+        Objects.requireNonNull(filterTemplate, "Filter template cannot be null");
         if (filterTemplate.getParameters().isEmpty()) {
             val username = getUsernameAttributeProvider().getUsernameFromQuery(query);
             if (searchFilter.contains("{0}")) {
