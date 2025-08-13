@@ -304,14 +304,16 @@ subprojects {
         }
     }
 
+    tasks.named("assemble") {
+        if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
+            dependsOn(sourcesJar, javadocJar, resourcesJar, testJar)
+        } else {
+            dependsOn(testJar)
+        }
+    }
+    
     artifacts {
         tests testJar
-        if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
-            archives sourcesJar
-            archives javadocJar
-            archives resourcesJar
-        }
-        archives testJar
     }
 
     sourceSets {
