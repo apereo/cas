@@ -241,8 +241,6 @@ function generateToolbarIcons() {
   let historyLink = "";
   let deleteLink = "";
 
-    https://github.com/apereo/cas/edit/7.2.x/docs/cas-server-documentation/release_notes/RC3.md
-    
   if (activeVersion === "") {
     editLink = `${baseLink}/edit/gh-pages/`;
     historyLink = `${baseLink}/commits/gh-pages/`;
