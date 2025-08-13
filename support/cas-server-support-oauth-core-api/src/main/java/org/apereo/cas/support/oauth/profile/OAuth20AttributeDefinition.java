@@ -1,22 +1,20 @@
-package org.apereo.cas.oidc.claims;
+package org.apereo.cas.support.oauth.profile;
 
-import org.apereo.cas.support.oauth.profile.OAuth20AttributeDefinition;
+import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
 import java.io.Serial;
 
 /**
- * This is {@link OidcAttributeDefinition}.
+ * This is {@link OAuth20AttributeDefinition}.
  *
  * @author Misagh Moayyed
- * @since 7.0.0
+ * @since 7.3.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString(callSuper = true)
@@ -24,13 +22,8 @@ import java.io.Serial;
 @Getter
 @Setter
 @SuperBuilder
-@AllArgsConstructor
 @NoArgsConstructor
-public class OidcAttributeDefinition extends OAuth20AttributeDefinition {
+public class OAuth20AttributeDefinition extends DefaultAttributeDefinition {
     @Serial
-    private static final long serialVersionUID = -144152663366303322L;
-
-    private boolean structured;
-
-    private String trustFramework;
+    private static final long serialVersionUID = -122152663366303322L;
 }
