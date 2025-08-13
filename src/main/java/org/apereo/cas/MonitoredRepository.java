@@ -846,4 +846,18 @@ public class MonitoredRepository {
         }
         return false;
     }
+
+    public void closeStalePullRequest(final PullRequest pr) {
+        try {
+            log.info("Closing stale pull request {}", pr);
+            labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
+            var classPathResource = new ClassPathResource("template-pr-stale.md");
+            var template = IOUtils.toString(classPathResource.getInputStream(), StandardCharsets.UTF_8);
+            removeAllApereoCasBotCommentsFrom(pr);
+            addComment(pr, template);
+            close(pr);
+        } catch (final Exception e) {
+            log.error("Unable to close stale pull request {}", pr, e);
+        }
+    }
 }

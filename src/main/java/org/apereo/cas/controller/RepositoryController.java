@@ -190,4 +190,21 @@ public class RepositoryController {
         repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_CI);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping(value = "/repo/pulls/{prNumber}/stale", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity stalePullRequest(@PathVariable final String prNumber) {
+        val pullRequest = repository.getPullRequest(prNumber);
+        if (pullRequest == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (pullRequest.isLocked()) {
+            return ResponseEntity.status(HttpStatus.LOCKED).build();
+        }
+        if (pullRequest.isLabeledAs(CasLabels.LABEL_CI)) {
+            repository.removeLabelFrom(pullRequest, CasLabels.LABEL_CI);
+        }
+        repository.closeStalePullRequest(pullRequest);
+        return ResponseEntity.ok().build();
+    }
 }
