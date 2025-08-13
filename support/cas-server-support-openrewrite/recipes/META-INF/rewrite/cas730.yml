@@ -29,7 +29,7 @@ recipeList:
       overwrite: true
       filePattern: 'gradle.properties'
   - org.openrewrite.gradle.UpdateGradleWrapper:
-      version: 9.0.0
+      version: 9.1.0-rc-1
       addIfMissing: true
   - org.openrewrite.gradle.AddProperty:
       key: tomcatVersion
