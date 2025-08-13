@@ -66,7 +66,7 @@ CAS now supports [OpenID Connect Native SSO](../authentication/OIDC-Authenticati
 
 Basic support for [OpenID Connect AuthZEN](../authorization/Heimdall-Authorization-Overview.html) is now available.
  
-### Gradle 9
+### Gradle 9.0
 
 CAS is now built with Gradle 9 and the build process has been updated to
 use the latest Gradle features and capabilities. 

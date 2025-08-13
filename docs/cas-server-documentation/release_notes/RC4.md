@@ -112,12 +112,22 @@ The changes here extend and enhance the functionality offered by Spring Boot con
  
 ### OpenID Connect Attribute Definitions
 
+<div class="alert alert-warning">:warning: <strong>Breaking Change</strong><p>
+This may be a breaking change. You will need to adjust your configuration based on the notes below.</p></div>
+
 If you have configured [attribute definitions](../integration/Attribute-Definitions.html) 
 that are used to map OpenID Connect claims or OAuth attributes, you need to
 adjust your configuration to use more dedicated types. In particular, OAuth attribute definitions now gain their own
 dedicated type via `org.apereo.cas.support.oauth.profile.OAuth20AttributeDefinition` and just as before, OpenID Connect
 attribute definitions are defined under `org.apereo.cas.oidc.claims.OidcAttributeDefinition`. This separation is done to avoid
 conflicts and not mix concerns, allowing CAS to process the same attribute definition for different protocols.
+
+### Gradle 9.1
+
+CAS is now built with Gradle `9.1` and the build process has been updated to
+use the latest Gradle features and capabilities. This is a preparatory step to ensure CAS 
+is ready for Java `25`. Once more, remember that the baseline requirement 
+will remain unchanged and this is only a proactive measure.
 
 ### OpenRewrite Recipes
 
@@ -141,3 +151,4 @@ are now configured to run with parallelism enabled.
 ## Other Stuff
      
 - Integration tests have switched to use Redis `v8.2`.
+- Throttling OpenID Connect endpoints is now corrected to account for all relevant URLs. 
