@@ -161,10 +161,11 @@ if [ -z "$GH_PAGES_TOKEN" ] && [ "${GITHUB_REPOSITORY}" != "${REPOSITORY_NAME}" 
 fi
 
 if [[ "${CI}" == "true" ]]; then
-  echo "Configuring git settings..."
+  printgreen "Configuring git settings..."
   git config --global http.postbuffer 524288000
   git config --global credential.helper "cache --timeout=86400"
   git config --global pack.threads "8"
+  git config --global init.defaultBranch master
 fi
 
 echo "-------------------------------------------------------"
@@ -462,7 +463,7 @@ elif [[ "${publishDocs}" == "true" ]]; then
   fi
   git status
 
-  echo "Pushing changes to upstream..."
+  printgreen "Pushing changes to upstream..."
   git push -fq origin gh-pages
   retVal=$?
   if [[ ${retVal} -eq 1 ]]; then
