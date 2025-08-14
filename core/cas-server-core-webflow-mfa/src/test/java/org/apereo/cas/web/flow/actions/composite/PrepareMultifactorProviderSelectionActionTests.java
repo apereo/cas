@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.engine.Flow;
@@ -35,6 +36,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
+@TestPropertySource(properties = {
+    "cas.authn.mfa.core.provider-selection.provider-selection-enabled=true",
+    "cas.authn.mfa.core.provider-selection.provider-selection-optional=true"
+})
 class PrepareMultifactorProviderSelectionActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("prepareMultifactorProviderSelectionAction")
@@ -65,5 +70,6 @@ class PrepareMultifactorProviderSelectionActionTests extends BaseCasWebflowMulti
         context.setCurrentEvent(event);
         assertNull(action.execute(context));
         assertNotNull(MultifactorAuthenticationWebflowUtils.getSelectableMultifactorAuthenticationProviders(context));
+        assertTrue(MultifactorAuthenticationWebflowUtils.isMultifactorAuthenticationOptional(context));
     }
 }

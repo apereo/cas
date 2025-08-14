@@ -36,6 +36,18 @@ public class CompositeProviderSelectionMultifactorWebflowConfigurer extends Abst
             .forEach(this::configureFlow);
     }
 
+    @Override
+    public void postInitialization(final ConfigurableApplicationContext applicationContext) {
+        val mfaOptional = casProperties.getAuthn().getMfa().getCore().getProviderSelection().isProviderSelectionOptional();
+        if (mfaOptional) {
+            val flow = getLoginFlow();
+            val realSubmit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
+            val targetSuccess = realSubmit.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+            val selectedState = createActionState(flow, CasWebflowConstants.STATE_ID_MFA_PROVIDER_SELECTED);
+            createTransitionForState(selectedState, CasWebflowConstants.TRANSITION_ID_SKIP, targetSuccess.getTargetStateId());
+        }
+    }
+
     private void configureFlow(final Flow flow) {
         val compositeCheckAction = createActionState(flow, CasWebflowConstants.STATE_ID_MFA_COMPOSITE_SELECTION, CasWebflowConstants.ACTION_ID_MFA_COMPOSITE_SELECTION);
         createTransitionForState(compositeCheckAction, CasWebflowConstants.TRANSITION_ID_PROCEED, CasWebflowConstants.STATE_ID_MFA_COMPOSITE);
@@ -55,8 +67,7 @@ public class CompositeProviderSelectionMultifactorWebflowConfigurer extends Abst
 
         val initialAuthn = getState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
         createTransitionForState(initialAuthn, CasWebflowConstants.TRANSITION_ID_MFA_COMPOSITE, CasWebflowConstants.STATE_ID_MFA_COMPOSITE);
-
-
+        
         val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_MFA_COMPOSITE, "mfa/casCompositeMfaProviderSelectionView");
         viewState.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_PREPARE_MULTIFACTOR_PROVIDER_SELECTION));
 
