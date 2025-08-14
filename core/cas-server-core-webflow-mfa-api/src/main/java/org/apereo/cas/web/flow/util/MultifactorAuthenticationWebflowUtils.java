@@ -130,6 +130,26 @@ public class MultifactorAuthenticationWebflowUtils {
     }
 
     /**
+     * Put multifactor authentication is optional.
+     *
+     * @param requestContext the request context
+     * @param optional       true/false
+     */
+    public static void putMultifactorAuthenticationOptional(final RequestContext requestContext, final boolean optional) {
+        requestContext.getFlowScope().put("mfaProviderSelectionOptional", optional);
+    }
+
+    /**
+     * Is multifactor authentication optional?
+     *
+     * @param requestContext the request context
+     * @return true/false
+     */
+    public static boolean isMultifactorAuthenticationOptional(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("mfaProviderSelectionOptional", Boolean.class);
+    }
+
+    /**
      * Put google authenticator multiple device registration enabled.
      *
      * @param requestContext the request context

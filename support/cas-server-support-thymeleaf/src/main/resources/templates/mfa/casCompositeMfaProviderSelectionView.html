@@ -12,27 +12,42 @@
 <body>
     <main class="container mt-3 mb-3">
         <div layout:fragment="content" class="mdc-card card mdc-card-content w-lg-66 p-4 m-auto">
-            <h2 class="card-title">Multifactor Authentication Provider Selection</h2>
+            <h2 class="card-title" th:utext="#{cas.mfa.providerselection.title}">
+                Multifactor Authentication Provider Selection</h2>
             <hr>
             <div class="card-text">
                 <div th:id="${provider}" th:each="provider: ${mfaSelectableProviders}" class="border-bottom py-4">
                     <form th:name="${'fm-' + provider}" th:id="${'fm-' + provider}" method="post" th:action="@{/login}">
                         <h3 class="d-flex align-items-center">
                             <i class="mdi mdi-laptop fas fa-laptop me-2" aria-hidden="true"></i>
-                            <span th:utext="#{'cas.mfa.providerselection.' + ${provider}}">Provider name goes here</span>
+                            <span th:utext="#{'cas.mfa.providerselection.' + ${provider}}">Provider name</span>
                         </h3>
-                        <p th:utext="#{'cas.mfa.providerselection.' + ${provider} + '.notes'}">Provider description goes here</p>
+                        <p th:utext="#{'cas.mfa.providerselection.' + ${provider} + '.notes'}">Provider description</p>
                         <button th:id="${'btn-' + provider}" class="mdc-button mdc-button--raised btn btn-primary" value="Use">
-                            <span class="mdc-button__label" th:text="Use">Use</span>
+                            <span class="mdc-button__label" th:utext="#{cas.mfa.providerselection.button.label.use}">Use</span>
                         </button>
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                         <input type="hidden" name="mfaProvider" th:value="${provider}" />
                         <input type="hidden" name="_eventId" value="submit" />
                     </form>
                 </div>
+
+                <div id="mfaOptional" class="py-4" th:if="${#cas.isTrue(mfaProviderSelectionOptional)}">
+                    <h3 th:utext="#{cas.mfa.providerselection.optional.header}">Optional Multifactor Authentication</h3>
+                    <p th:utext="#{cas.mfa.providerselection.optional.description}"></p>
+                    <form th:name="fmMfaOptional" th:id="fmMfaOptional" method="post" th:action="@{/login}">
+                        <button th:id="btnMfaOptional" class="mdc-button mdc-button--raised btn btn-primary" value="Use">
+                            <span class="mdc-button__label" th:utext="#{cas.mfa.providerselection.button.label.skip}">Skip</span>
+                        </button>
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                        <input type="hidden" name="mfaProvider" th:value="none" />
+                        <input type="hidden" name="_eventId" value="submit" />
+                    </form>
+                </div>
+                
                 <a class="mdc-button mdc-button--outline btn btn-outline-secondary mt-4 button-cancel" id="cancel" name="cancel"
                     onclick="location.href = location.href;">
-                    <span class="mdc-button__label" th:text="Cancel">Cancel</span>
+                    <span class="mdc-button__label" th:utext="#{cas.mfa.providerselection.button.label.cancel}">Cancel</span>
                 </a>
             </div>
         </div>

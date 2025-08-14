@@ -637,7 +637,7 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(PrepareMultifactorProviderSelectionAction::new)
+                .withAction(() -> new PrepareMultifactorProviderSelectionAction(casProperties))
                 .withId(CasWebflowConstants.ACTION_ID_PREPARE_MULTIFACTOR_PROVIDER_SELECTION)
                 .build()
                 .get();
