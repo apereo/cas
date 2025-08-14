@@ -24,6 +24,9 @@ import java.util.Optional;
  */
 @Slf4j
 public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSimpleMultifactorAuthenticationService {
+
+    private static final int MAX_ATTEMPTS = 5;
+
     protected final TicketFactory ticketFactory;
     protected final ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider;
 
@@ -38,9 +41,15 @@ public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSim
     @Override
     public CasSimpleMultifactorAuthenticationTicket generate(final Principal principal, final Service service) throws Throwable {
         val mfaFactory = (CasSimpleMultifactorAuthenticationTicketFactory) ticketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
-        val token = mfaFactory.create(service, CollectionUtils.wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
-        LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token.getId(), service);
-        return token;
+        for (var i = 0; i < MAX_ATTEMPTS; i++) {
+            val token = mfaFactory.create(service, CollectionUtils.wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
+            val trackingToken = ticketRegistry.getTicket(token.getId());
+            if (trackingToken == null) {
+                LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token.getId(), service);
+                return token;
+            }
+        }
+        throw new IllegalArgumentException("Unable to create multifactor authentication token for principal: " + principal);
     }
 
     @Override
