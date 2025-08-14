@@ -1,6 +1,8 @@
 {
   "dependencies": "yubikey,gauth",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -11,6 +13,8 @@
     "--cas.authn.mfa.yubikey.client-id=18420",
     "--cas.authn.mfa.yubikey.secret-key=iBIehjui22aK8x82oe6qzGeb0As=",
     
-    "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true"
-  ]
+    "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true",
+    "--cas.authn.mfa.core.provider-selection.provider-selection-optional=true"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

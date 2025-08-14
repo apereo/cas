@@ -11,6 +11,7 @@ import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -54,31 +55,36 @@ public class SyncopePrincipalProvisioner implements PrincipalProvisioner {
     }
 
     protected boolean updateUserResource(final Principal principal) throws Exception {
-        HttpResponse response = null;
-        try {
-            val syncopeRestUrl = Strings.CI.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users/" + principal.getId());
-            val headers = CollectionUtils.<String, String>wrap(SyncopeUtils.SYNCOPE_HEADER_DOMAIN, properties.getDomain(),
-                HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
-                HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-            headers.putAll(properties.getHeaders());
+        return Splitter.on(",").splitToList(properties.getDomain())
+            .stream()
+            .allMatch(Unchecked.predicate(domain -> {
+                HttpResponse response = null;
+                try {
+                    val syncopeRestUrl = Strings.CI.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance()
+                        .resolve(properties.getUrl()), "/rest/users/" + principal.getId());
+                    val headers = CollectionUtils.<String, String>wrap(SyncopeUtils.SYNCOPE_HEADER_DOMAIN, domain,
+                        HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
+                        HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+                    headers.putAll(properties.getHeaders());
 
-            val entity = MAPPER.writeValueAsString(SyncopeUtils.convertToUserUpdateEntity(principal, getSyncopeRealm(principal)));
-            val exec = HttpExecutionRequest.builder()
-                .method(HttpMethod.PATCH)
-                .url(syncopeRestUrl)
-                .basicAuthUsername(properties.getBasicAuthUsername())
-                .basicAuthPassword(properties.getBasicAuthPassword())
-                .headers(headers)
-                .entity(entity)
-                .build();
-            response = Objects.requireNonNull(HttpUtils.execute(exec));
-            LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
-            val result = EntityUtils.toString(((HttpEntityContainer) response).getEntity());
-            LOGGER.debug("Received response payload as [{}]", result);
-            return HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
-        } finally {
-            HttpUtils.close(response);
-        }
+                    val entity = MAPPER.writeValueAsString(SyncopeUtils.convertToUserUpdateEntity(principal, getSyncopeRealm(principal)));
+                    val exec = HttpExecutionRequest.builder()
+                        .method(HttpMethod.PATCH)
+                        .url(syncopeRestUrl)
+                        .basicAuthUsername(properties.getBasicAuthUsername())
+                        .basicAuthPassword(properties.getBasicAuthPassword())
+                        .headers(headers)
+                        .entity(entity)
+                        .build();
+                    response = Objects.requireNonNull(HttpUtils.execute(exec));
+                    LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
+                    val result = EntityUtils.toString(((HttpEntityContainer) response).getEntity());
+                    LOGGER.debug("Received response payload as [{}]", result);
+                    return HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
+                } finally {
+                    HttpUtils.close(response);
+                }
+            }));
     }
 
     protected String getSyncopeRealm(final Principal principal) {
@@ -88,33 +94,35 @@ public class SyncopePrincipalProvisioner implements PrincipalProvisioner {
     }
 
     protected boolean createUserResource(final Principal principal, final Credential credential) throws Exception {
-        HttpResponse response = null;
-        try {
-            val syncopeRestUrl = Strings.CI.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users");
-            val headers = CollectionUtils.<String, String>wrap(SyncopeUtils.SYNCOPE_HEADER_DOMAIN, properties.getDomain(),
-                HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
-                HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-            headers.putAll(properties.getHeaders());
-
-            val entity = MAPPER.writeValueAsString(SyncopeUtils.convertToUserCreateEntity(principal, getSyncopeRealm(principal)));
-
-            val exec = HttpExecutionRequest.builder()
-                .method(HttpMethod.POST)
-                .url(syncopeRestUrl)
-                .basicAuthUsername(properties.getBasicAuthUsername())
-                .basicAuthPassword(properties.getBasicAuthPassword())
-                .headers(headers)
-                .entity(entity)
-                .build();
-            response = Objects.requireNonNull(HttpUtils.execute(exec));
-            LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
-            val result = EntityUtils.toString(((HttpEntityContainer) response).getEntity());
-            LOGGER.debug("Received response payload as [{}]", result);
-
-            return HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
-        } finally {
-            HttpUtils.close(response);
-        }
+        return Splitter.on(",").splitToList(properties.getDomain())
+            .stream()
+            .allMatch(Unchecked.predicate(domain -> {
+                HttpResponse response = null;
+                try {
+                    val syncopeRestUrl = Strings.CI.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance()
+                        .resolve(properties.getUrl()), "/rest/users");
+                    val headers = CollectionUtils.<String, String>wrap(SyncopeUtils.SYNCOPE_HEADER_DOMAIN, domain,
+                        HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
+                        HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+                    headers.putAll(properties.getHeaders());
+                    val entity = MAPPER.writeValueAsString(SyncopeUtils.convertToUserCreateEntity(principal, getSyncopeRealm(principal)));
+                    val exec = HttpExecutionRequest.builder()
+                        .method(HttpMethod.POST)
+                        .url(syncopeRestUrl)
+                        .basicAuthUsername(properties.getBasicAuthUsername())
+                        .basicAuthPassword(properties.getBasicAuthPassword())
+                        .headers(headers)
+                        .entity(entity)
+                        .build();
+                    response = Objects.requireNonNull(HttpUtils.execute(exec));
+                    LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
+                    val result = EntityUtils.toString(((HttpEntityContainer) response).getEntity());
+                    LOGGER.debug("Received response payload as [{}]", result);
+                    return HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
+                } finally {
+                    HttpUtils.close(response);
+                }
+            }));
     }
 
 }

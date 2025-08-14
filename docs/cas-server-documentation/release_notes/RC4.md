@@ -152,3 +152,4 @@ are now configured to run with parallelism enabled.
      
 - Integration tests have switched to use Redis `v8.2`.
 - Throttling OpenID Connect endpoints is now corrected to account for all relevant URLs. 
+- When using a [selection menu](../mfa/Multifactor-Authentication-ProviderSelection.html) for multifactor authentication, it is possible to make multifactor authentication optional.
