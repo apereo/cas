@@ -53,7 +53,7 @@ The following example should serve as an outline of how to select multifactor pr
 import java.util.*
 
 class SampleGroovyProviderSelection {
-    String run(final Object... args) {
+    def run(final Object... args) {
         def (service,principal,providersCollection,logger) = args
         ...
         return "mfa-duo"
@@ -77,3 +77,6 @@ To prepare CAS to support and integrate with Apache Groovy, please [review this 
 When multifactor provider selection is enabled via CAS settings, the user will be presented with a list of providers
 that are candidates to carry out the multifactor authentication request. Enabling the selection menu of course only
 makes sense if there are in fact multiple multifactor authentication providers available and configured in CAS.
+
+This capability also presents the option to make multifactor authentication *optional*, where the user may choose
+to skip the multifactor authentication step altogether. This behavior needs to be explicitly enabled in CAS settings.
