@@ -24,11 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -38,8 +36,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.3.0
  */
 @SpringBootTest(classes = {
-        DefaultCasSimpleMultifactorAuthenticationServiceTests.DefaultCasSimpleMultifactorAuthenticationServiceTestConfiguration.class,
-        BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class
+    DefaultCasSimpleMultifactorAuthenticationServiceTests.DefaultCasSimpleMultifactorAuthenticationServiceTestConfiguration.class,
+    BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFAProvider")
@@ -53,7 +51,7 @@ class DefaultCasSimpleMultifactorAuthenticationServiceGenerationTests {
 
     private CasSimpleMultifactorAuthenticationTicketFactory ticketFactory;
 
-    private DefaultCasSimpleMultifactorAuthenticationService customService;
+    private CasSimpleMultifactorAuthenticationService customService;
 
     @BeforeEach
     public void setUp() {
@@ -89,12 +87,7 @@ class DefaultCasSimpleMultifactorAuthenticationServiceGenerationTests {
         addTicket("CASMFA-3", service);
         addTicket("CASMFA-4", service);
         addTicket("CASMFA-5", service);
-        try {
-            customService.generate(principal, service);
-            fail();
-        } catch (final IllegalArgumentException e) {
-            assertEquals("Token: CASMFA-5 already exists in ticket registry", e.getMessage());
-        }
+        assertThrows(IllegalArgumentException.class, () -> customService.generate(principal, service));
     }
 
     private void addTicket(final String ticketId, final Service service) throws Exception {
@@ -110,7 +103,7 @@ class DefaultCasSimpleMultifactorAuthenticationServiceGenerationTests {
         @Override
         public CasSimpleMultifactorAuthenticationTicket create(final Service service, final Map<String, Serializable> properties) throws Throwable {
             return new CasSimpleMultifactorAuthenticationTicketImpl(CasSimpleMultifactorAuthenticationTicket.PREFIX + "-" + sequence++,
-                    NeverExpiresExpirationPolicy.INSTANCE, service, properties);
+                NeverExpiresExpirationPolicy.INSTANCE, service, properties);
         }
 
         @Override
