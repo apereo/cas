@@ -49,9 +49,7 @@ The following items are new improvements and enhancements presented in this rele
 able to handle password management operations. [Syncope Authentication](../authentication/Syncope-Authentication.html) 
 is also improved to detect user account statuses that may be suspended or require password changes. Furthermore,
 Apache Syncope is now able to supply configured security questions to CAS, and exposes the ability to validate
-the security answers provided by the user during password management operations. Finally, this integration
-is now allowed to fetch security questions from Apache Syncope and have them be validated against the user's
-profile defined in Apache Syncope.
+the security answers provided by the user during password management operations. 
 
 ### Password Management Principal Resolution
 
@@ -84,7 +82,7 @@ and will be removed in future CAS releases. A few examples of such options and f
 - `cas.authn.pac4j.core.session-replication.cookie.*`
 - `cas.session-replication.cookie.*`
 - `cas.authn.pac4j.core.session-replication.cookie.*`
-- ...more...
+- ...there may be more...
     
 As noted above, session replication can still be handled via the 
 [Ticket Registry](../webflow/Webflow-Customization-Sessions-ServerSide-TicketRegistry.html)
@@ -153,3 +151,4 @@ are now configured to run with parallelism enabled.
 - Integration tests have switched to use Redis `v8.2`.
 - Throttling OpenID Connect endpoints is now corrected to account for all relevant URLs. 
 - When using a [selection menu](../mfa/Multifactor-Authentication-ProviderSelection.html) for multifactor authentication, it is possible to make multifactor authentication optional.
+- [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication-TokenManagement.html) gains an option to control the character set used to generate tokens. Furthermore, additional improvements are place to ensure generated tokens are unique and do not collide with each other, particularly when using a smaller token length.
