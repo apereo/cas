@@ -46,6 +46,12 @@ public class MultifactorAuthenticationProviderSelectionProperties implements Ser
     private boolean providerSelectionEnabled;
 
     /**
+     * If provider selection is enabled, this setting will allow the user to skip the provider selection step
+     * and proceed with authentication without having to select an MFA provider.
+     */
+    private boolean providerSelectionOptional;
+
+    /**
      * Cookie settings that control how the selected mfa provider should be remembered.
      */
     @NestedConfigurationProperty
