@@ -13,6 +13,8 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
+
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
 
@@ -41,15 +43,17 @@ public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSim
     @Override
     public CasSimpleMultifactorAuthenticationTicket generate(final Principal principal, final Service service) throws Throwable {
         val mfaFactory = (CasSimpleMultifactorAuthenticationTicketFactory) ticketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
-        for (var i = 0; i < MAX_ATTEMPTS; i++) {
-            val token = mfaFactory.create(service, CollectionUtils.wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
-            val trackingToken = ticketRegistry.getTicket(token.getId());
-            if (trackingToken == null) {
-                LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token.getId(), service);
-                return token;
+        val properties = CollectionUtils.<String, Serializable>wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal);
+        return FunctionUtils.doAndRetry(retryContext -> {
+            val token = FunctionUtils.doAndThrow(() -> mfaFactory.create(service, properties), t -> new RuntimeException(t));
+            val tokenId = token.getId();
+            val trackingToken = ticketRegistry.getTicket(tokenId);
+            if (trackingToken != null) {
+                throw new IllegalArgumentException("Token: " + tokenId + " already exists in ticket registry");
             }
-        }
-        throw new IllegalArgumentException("Unable to create multifactor authentication token for principal: " + principal);
+            LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", tokenId, service);
+            return token;
+        }, MAX_ATTEMPTS);
     }
 
     @Override

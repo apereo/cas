@@ -70,7 +70,7 @@ class DefaultCasSimpleMultifactorAuthenticationServiceGenerationTests {
             service.generate(mock(Principal.class), mock(Service.class));
             fail();
         } catch (final IllegalArgumentException e) {
-            assertTrue(e.getMessage().startsWith("Unable to create multifactor authentication token for principal: "));
+            assertEquals("Token: CASMFA-5 already exists in ticket registry", e.getMessage());
         }
     }
 
