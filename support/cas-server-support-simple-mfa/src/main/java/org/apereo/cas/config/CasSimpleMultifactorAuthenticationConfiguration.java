@@ -224,9 +224,9 @@ class CasSimpleMultifactorAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationUniqueTicketIdGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public UniqueTicketIdGenerator casSimpleMultifactorAuthenticationUniqueTicketIdGenerator(final CasConfigurationProperties casProperties) {
-            val simple = casProperties.getAuthn().getMfa().getSimple().getToken().getCore();
-            return new CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator(simple.getTokenLength());
+        public UniqueTicketIdGenerator casSimpleMultifactorAuthenticationUniqueTicketIdGenerator(
+            final CasConfigurationProperties casProperties) {
+            return new CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator(casProperties);
         }
     }
 

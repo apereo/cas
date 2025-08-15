@@ -45,13 +45,12 @@ public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSim
         val mfaFactory = (CasSimpleMultifactorAuthenticationTicketFactory) ticketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
         val properties = CollectionUtils.<String, Serializable>wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal);
         return FunctionUtils.doAndRetry(retryContext -> {
-            val token = FunctionUtils.doAndThrow(() -> mfaFactory.create(service, properties), t -> new RuntimeException(t));
-            val tokenId = token.getId();
-            val trackingToken = ticketRegistry.getTicket(tokenId);
+            val token = FunctionUtils.doAndThrow(() -> mfaFactory.create(service, properties), RuntimeException::new);
+            val trackingToken = ticketRegistry.getTicket(token.getId());
             if (trackingToken != null) {
-                throw new IllegalArgumentException("Token: " + tokenId + " already exists in ticket registry");
+                throw new IllegalArgumentException("Token: " + trackingToken.getId() + " already exists in ticket registry");
             }
-            LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", tokenId, service);
+            LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token.getId(), service);
             return token;
         }, MAX_ATTEMPTS);
     }
