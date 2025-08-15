@@ -102,8 +102,8 @@ public class CheckRedundantTestConfigurationInheritance {
         var failBuild = new AtomicBoolean(false);
         var parentClasses = new TreeMap<String, File>();
 
-        var abstractClazzPattern1 = Pattern.compile("public abstract class (\\w+)");
-        var abstractClazzPattern2 = Pattern.compile("public abstract static class (\\w+)");
+        var abstractClazzPattern1 = Pattern.compile("(public)* abstract class (\\w+)");
+        var abstractClazzPattern2 = Pattern.compile("(public)* abstract static class (\\w+)");
         Files.walk(Paths.get(arg))
             .filter(file -> Files.isRegularFile(file) && file.toFile().getName().endsWith("Tests.java"))
             .forEach(file -> {
@@ -111,12 +111,12 @@ public class CheckRedundantTestConfigurationInheritance {
 
                 var matcher = abstractClazzPattern1.matcher(text);
                 while (matcher.find()) {
-                    parentClasses.put(matcher.group(1), file.toFile());
+                    parentClasses.put(matcher.group(2), file.toFile());
                 }
 
                 matcher = abstractClazzPattern2.matcher(text);
                 while (matcher.find()) {
-                    parentClasses.put(matcher.group(1), file.toFile());
+                    parentClasses.put(matcher.group(2), file.toFile());
                 }
             });
 
@@ -131,7 +131,7 @@ public class CheckRedundantTestConfigurationInheritance {
                     if (matcher.find() && text.contains("@SpringBootTest")) {
                         var group = matcher.group(2);
                         if (!parentClasses.containsKey(group)) {
-                            print("Unable to find %s as a parent class", group);
+                            print("Unable to find %s as a parent class in %s", group, file);
                             System.exit(1);
                         }
                         var parent = parentClasses.get(group);
