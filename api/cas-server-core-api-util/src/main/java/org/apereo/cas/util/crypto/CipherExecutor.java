@@ -30,6 +30,11 @@ public interface CipherExecutor<I, O> extends EncodableCipher<I, O>, DecodableCi
     String BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR = "webflowCipherExecutor";
 
     /**
+     * Default cipher bean name for ticket granting cookie.
+     */
+    String BEAN_NAME_TGC_CIPHER_EXECUTOR = "cookieCipherExecutor";
+
+    /**
      * Factory method.
      *
      * @return Strongly -typed Noop {@code CipherExecutor Serializable -> Serializable}

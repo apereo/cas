@@ -54,7 +54,7 @@ public class CasCoreCookieAutoConfiguration {
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
-            @Qualifier("cookieCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_TGC_CIPHER_EXECUTOR)
             final CipherExecutor cookieCipherExecutor) {
             if (casProperties.getTgc().getCrypto().isEnabled()) {
                 val cipherExecutorResolver = new DefaultCipherExecutorResolver(cookieCipherExecutor, tenantExtractor,
@@ -69,7 +69,7 @@ public class CasCoreCookieAutoConfiguration {
             return new NoOpCookieValueManager(tenantExtractor);
         }
 
-        @ConditionalOnMissingBean(name = "cookieCipherExecutor")
+        @ConditionalOnMissingBean(name = CipherExecutor.BEAN_NAME_TGC_CIPHER_EXECUTOR)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public CipherExecutor cookieCipherExecutor(final CasConfigurationProperties casProperties) {

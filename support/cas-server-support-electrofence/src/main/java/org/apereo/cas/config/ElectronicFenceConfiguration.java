@@ -168,7 +168,7 @@ class ElectronicFenceConfiguration {
             final TenantExtractor tenantExtractor,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver principalResolver,
-            @Qualifier("cookieCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_TGC_CIPHER_EXECUTOR)
             final CipherExecutor cookieCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -191,7 +191,7 @@ class ElectronicFenceConfiguration {
             final TenantExtractor tenantExtractor,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver,
-            @Qualifier("cookieCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_TGC_CIPHER_EXECUTOR)
             final CipherExecutor cookieCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,

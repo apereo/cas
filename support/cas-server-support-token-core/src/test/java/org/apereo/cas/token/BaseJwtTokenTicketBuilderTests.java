@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -74,6 +75,9 @@ public abstract class BaseJwtTokenTicketBuilderTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
+
+    @Autowired
+    protected CasConfigurationProperties casProperties;
 
     @TestConfiguration(value = "TokenTicketBuilderTestConfiguration", proxyBeanMethods = false)
     static class TokenTicketBuilderTestConfiguration implements InitializingBean {

@@ -36,6 +36,7 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -193,11 +194,12 @@ public class JwtBuilder {
      * @throws Throwable the throwable
      */
     public String build(final JwtRequest payload) throws Throwable {
-        val serviceAudience = payload.getServiceAudience();
         Objects.requireNonNull(payload.getIssuer(), "Issuer cannot be undefined");
-        Objects.requireNonNull(serviceAudience, "Audience cannot be undefined");
+        val targetAudience = new ArrayList<>(payload.getServiceAudience());
+        FunctionUtils.throwIf(targetAudience.isEmpty() && payload.getRegisteredService().isEmpty(),
+            () -> new IllegalArgumentException("Service audience cannot be empty"));
         val claims = new JWTClaimsSet.Builder()
-            .audience(new ArrayList<>(serviceAudience))
+            .audience(targetAudience)
             .issuer(payload.getIssuer())
             .jwtID(payload.getJwtId())
             .issueTime(payload.getIssueDate())
@@ -220,16 +222,19 @@ public class JwtBuilder {
         claims.expirationTime(payload.getValidUntilDate());
         val claimsSet = finalizeClaims(claims.build(), payload);
 
-        LOGGER.trace("Locating service [{}] in service registry", serviceAudience);
+        LOGGER.trace("Locating service [{}] in service registry", targetAudience);
+        if (targetAudience.size() == 1 && targetAudience.getFirst().equals(casProperties.getServer().getPrefix())) {
+            return build(null, claimsSet);
+        }
         val registeredService = payload.getRegisteredService()
-            .orElseGet(() -> serviceAudience.stream()
+            .orElseGet(() -> targetAudience.stream()
                 .map(this::locateRegisteredService)
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> {
                     val formatted = "There is no application record registered with the CAS service registry that would match %s. "
-                        + "Review the applications registered with the CAS service registry and make sure a matching record exists for %s.";
-                    return UnauthorizedServiceException.denied(formatted.formatted(serviceAudience, serviceAudience));
+                        + "Review the applications registered with the CAS service registry and make sure a matching record exists.";
+                    return UnauthorizedServiceException.denied(formatted.formatted(targetAudience));
                 }));
         return build(registeredService, claimsSet);
     }
@@ -244,23 +249,20 @@ public class JwtBuilder {
      */
     public String build(final RegisteredService registeredService,
                         final JWTClaimsSet claimsSet) {
-
-        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-
         val jwtJson = claimsSet.toString();
         LOGGER.debug("Generated JWT [{}]", jwtJson);
 
-        LOGGER.trace("Locating service specific signing and encryption keys for service [{}]", registeredService.getName());
-        if (registeredServiceCipherExecutor.supports(registeredService)) {
+        if (registeredServiceCipherExecutor.isEnabled() && registeredServiceCipherExecutor.supports(registeredService)) {
             LOGGER.trace("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
             return registeredServiceCipherExecutor.encode(jwtJson, Optional.of(registeredService));
         }
 
         if (defaultTokenCipherExecutor.isEnabled()) {
-            LOGGER.trace("Encoding JWT based on default global keys for service [{}]", registeredService.getName());
+            LOGGER.trace("Encoding JWT based on default global keys");
             return defaultTokenCipherExecutor.encode(jwtJson);
         }
-        val token = buildPlain(claimsSet, Optional.of(registeredService));
+        val token = buildPlain(claimsSet, Optional.ofNullable(registeredService));
         LOGGER.trace("Generating plain JWT as the ticket: [{}]", token);
         return token;
     }
@@ -289,7 +291,8 @@ public class JwtBuilder {
     public static class JwtRequest {
         private final String jwtId;
 
-        private final Set<String> serviceAudience;
+        @Builder.Default
+        private final Set<String> serviceAudience = new HashSet<>();
 
         @Builder.Default
         private final Date issueDate = new Date();

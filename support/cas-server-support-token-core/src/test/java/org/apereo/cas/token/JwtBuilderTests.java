@@ -11,6 +11,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,6 +30,17 @@ class JwtBuilderTests {
         void verifyZonedDateTimeWorks() throws Throwable {
             val tgt = new MockTicketGrantingTicket("casuser");
             val jwt = tokenTicketBuilder.build(tgt, Map.of("date-time", List.of(ZonedDateTime.now(Clock.systemUTC()))));
+            assertNotNull(jwt);
+        }
+
+        @Test
+        void verifyServerPrefixAsAud() throws Throwable {
+            val jwt = tokenTicketJwtBuilder.build(JwtBuilder.JwtRequest.builder()
+                .serviceAudience(Set.of(casProperties.getServer().getPrefix()))
+                .jwtId(UUID.randomUUID().toString())
+                .subject("casuser")
+                .issuer(casProperties.getServer().getPrefix())
+                .build());
             assertNotNull(jwt);
         }
     }
