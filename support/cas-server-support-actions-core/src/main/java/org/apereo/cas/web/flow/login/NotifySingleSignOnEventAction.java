@@ -8,6 +8,8 @@ import org.apereo.cas.notifications.sms.SmsBodyBuilder;
 import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -17,7 +19,11 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link NotifySingleSignOnEventAction}.
@@ -31,6 +37,8 @@ public class NotifySingleSignOnEventAction extends BaseCasWebflowAction {
     private final TicketRegistry ticketRegistry;
 
     private final CommunicationsManager communicationsManager;
+
+    private final JwtBuilder jwtBuilder;
 
     private final CasConfigurationProperties casProperties;
 
@@ -56,7 +64,8 @@ public class NotifySingleSignOnEventAction extends BaseCasWebflowAction {
         return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 
-    protected void sendSingleSignOnEventSms(final RequestContext context, final AuthenticationAwareTicket aat) {
+    protected void sendSingleSignOnEventSms(
+        final RequestContext context, final AuthenticationAwareTicket aat) throws Throwable {
         val message = SmsBodyBuilder.builder()
             .properties(casProperties.getSso().getSms())
             .parameters(buildCommunicationParameters(context, aat))
@@ -76,7 +85,8 @@ public class NotifySingleSignOnEventAction extends BaseCasWebflowAction {
             });
     }
 
-    protected void sendSingleSignOnEventEmail(final RequestContext context, final AuthenticationAwareTicket aat) {
+    protected void sendSingleSignOnEventEmail(
+        final RequestContext context, final AuthenticationAwareTicket aat) throws Throwable {
         val clientInfo = ClientInfoHolder.getClientInfo();
         val body = EmailMessageBodyBuilder.builder()
             .properties(casProperties.getSso().getMail())
@@ -97,15 +107,31 @@ public class NotifySingleSignOnEventAction extends BaseCasWebflowAction {
             });
     }
 
-    protected Map<String, Object> buildCommunicationParameters(final RequestContext context,
-                                                               final AuthenticationAwareTicket aat) {
+    protected Map<String, Object> buildCommunicationParameters(
+        final RequestContext context, final AuthenticationAwareTicket aat) throws Throwable {
+        val principal = aat.getAuthentication().getPrincipal();
+        val expiration = DateTimeUtils.dateOf(LocalDateTime.now(Clock.systemUTC())
+            .plusSeconds(aat.getExpirationPolicy().getTimeToLive()));
+        val builder = JwtBuilder.JwtRequest.builder();
+        val request = builder
+            .serviceAudience(Set.of(casProperties.getServer().getPrefix()))
+            .issueDate(new Date())
+            .jwtId(aat.getId())
+            .subject(principal.getId())
+            .validUntilDate(expiration)
+            .issuer(casProperties.getServer().getPrefix())
+            .build();
+        LOGGER.debug("Building JWT using [{}]", request);
+        val token = jwtBuilder.build(request);
+
         return Map.of(
-            "context", context,
+            "requestContext", context,
+            "token", token,
             "ticketGrantingTicket", aat.getId(),
             "clientInfo", ClientInfoHolder.getClientInfo(),
             "authentication", aat.getAuthentication(),
-            "principal", aat.getAuthentication().getPrincipal(),
-            "principalId", aat.getAuthentication().getPrincipal().getId()
+            "principal", principal,
+            "principalId", principal.getId()
         );
     }
 

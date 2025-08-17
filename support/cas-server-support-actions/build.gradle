@@ -24,7 +24,8 @@ dependencies {
 
     implementation project(":support:cas-server-support-geolocation")
     implementation project(":support:cas-server-support-actions-core")
-
+    implementation project(":support:cas-server-support-token-core-api")
+    
     testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(":core:cas-server-core-notifications")

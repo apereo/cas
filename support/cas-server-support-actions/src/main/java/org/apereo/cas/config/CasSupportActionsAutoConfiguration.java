@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -21,7 +22,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
@@ -202,11 +205,32 @@ public class CasSupportActionsAutoConfiguration {
                 .build()
                 .get();
         }
-
+        
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @ConditionalOnMissingBean(name = "singleSignOnNotificationLogoutTicketJwtBuilder")
+        public JwtBuilder singleSignOnNotificationLogoutTicketJwtBuilder(
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier(CipherExecutor.BEAN_NAME_TGC_CIPHER_EXECUTOR)
+            final CipherExecutor cookieCipherExecutor,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new JwtBuilder(cookieCipherExecutor, applicationContext,
+                servicesManager, defaultPrincipalResolver,
+                casProperties, webApplicationServiceFactory);
+        }
+        
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_NOTIFY_SINGLE_SIGNON_EVENT)
         @Bean
         public Action notifySingleSignOnEventAction(
+            @Qualifier("singleSignOnNotificationLogoutTicketJwtBuilder")
+            final JwtBuilder singleSignOnNotificationLogoutTicketJwtBuilder,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationManager,
             final CasConfigurationProperties casProperties,
@@ -216,7 +240,8 @@ public class CasSupportActionsAutoConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new NotifySingleSignOnEventAction(ticketRegistry, communicationManager, casProperties))
+                .withAction(() -> new NotifySingleSignOnEventAction(ticketRegistry,
+                    communicationManager, singleSignOnNotificationLogoutTicketJwtBuilder, casProperties))
                 .withId(CasWebflowConstants.ACTION_ID_NOTIFY_SINGLE_SIGNON_EVENT)
                 .build()
                 .get();

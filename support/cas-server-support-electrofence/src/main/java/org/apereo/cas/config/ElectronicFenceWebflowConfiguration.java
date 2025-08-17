@@ -137,7 +137,7 @@ class ElectronicFenceWebflowConfiguration {
             final ObjectProvider<GeoLocationService> geoLocationService,
             @Qualifier(CasEventRepository.BEAN_NAME)
             final CasEventRepository casEventRepository,
-            @Qualifier("cookieCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_TGC_CIPHER_EXECUTOR)
             final CipherExecutor cookieCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
