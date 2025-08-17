@@ -96,6 +96,7 @@ public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val clientInfo = ClientInfoHolder.getClientInfo();
         applicationContext.publishEvent(new CasSingleSignOnSessionCreatedEvent(this, ticketGrantingTicket, clientInfo));
+
         return success();
     }
 }

@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +16,6 @@ import lombok.val;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringSubstitutor;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
 import java.io.File;
@@ -68,7 +68,6 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
         }
         try {
             val scriptFactoryInstance = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
-
             if (scriptFactoryInstance.isPresent()) {
                 val scriptFactory = scriptFactoryInstance.get();
                 if (scriptFactory.isScript(properties.getText())) {
@@ -102,8 +101,7 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
     }
 
     protected String formatEmailBody(final String contents) {
-        val sub = new StringSubstitutor(this.parameters, "${", "}");
-        return sub.replace(contents);
+        return SpringExpressionLanguageValueResolver.getInstance().format(contents, parameters);
     }
 
     protected Resource determineEmailTemplate() {

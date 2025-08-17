@@ -31,6 +31,9 @@ const fs = require("fs");
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 
+    const message = await cas.extractFromEmail(browser);
+    assert(message === "casuser @ 127.0.0.1");
+    
     await cas.sleep(2000);
     assert (await cas.pageVariable(page, "googleAnalyticsTrackingId") !== null);
 

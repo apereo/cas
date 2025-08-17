@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.sso;
 
+import org.apereo.cas.configuration.model.support.email.EmailProperties;
+import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -53,4 +55,10 @@ public class SingleSignOnProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SingleSignOnServicesProperties services = new SingleSignOnServicesProperties();
+
+    @NestedConfigurationProperty
+    private EmailProperties mail = new EmailProperties();
+
+    @NestedConfigurationProperty
+    private SmsProperties sms = new SmsProperties();
 }

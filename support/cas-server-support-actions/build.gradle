@@ -16,6 +16,7 @@ dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-notifications-api")
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-webflow-mfa-api")
@@ -43,6 +44,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-scripting")
     
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
