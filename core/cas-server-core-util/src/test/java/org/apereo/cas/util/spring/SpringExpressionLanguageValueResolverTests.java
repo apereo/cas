@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,6 +22,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = CasCoreUtilAutoConfiguration.class)
 @ExtendWith(CasTestExtension.class)
 class SpringExpressionLanguageValueResolverTests {
+    @Test
+    void verifyFormatOperation() {
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
+        assertEquals("Hello World!", resolver.format("Hello ${name}!", Map.of("name", "World")));
+        assertEquals("Hello World!", resolver.format("Hello ${#attributes['name']}!", Map.of("attributes", Map.of("name", "World"))));
+        assertEquals("Hello ${#unknown}!", resolver.format("Hello ${#unknown}!", Map.of()));
+    }
+
     @Test
     void verifyOperation() {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();

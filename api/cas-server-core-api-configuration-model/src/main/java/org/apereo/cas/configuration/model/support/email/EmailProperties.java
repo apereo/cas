@@ -1,13 +1,12 @@
 package org.apereo.cas.configuration.model.support.email;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang3.StringUtils;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ import java.util.stream.Stream;
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
-public class EmailProperties implements Serializable {
+public class EmailProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 7367120636536230761L;
 
@@ -120,24 +119,4 @@ public class EmailProperties implements Serializable {
      * {@link org.springframework.mail.javamail.JavaMailSender}.
      */
     private int priority = 1;
-
-    /**
-     * Indicate whether email settings are defined.
-     *
-     * @return true if undefined, false otherwise.
-     */
-    @JsonIgnore
-    public boolean isUndefined() {
-        return StringUtils.isBlank(text) || StringUtils.isBlank(from) || StringUtils.isBlank(subject);
-    }
-
-    /**
-     * Is text/from/subject defined.
-     *
-     * @return true/false
-     */
-    @JsonIgnore
-    public boolean isDefined() {
-        return !isUndefined();
-    }
 }

@@ -15,6 +15,7 @@ import org.apereo.cas.logout.LogoutConfirmationResolver;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
@@ -43,6 +44,7 @@ import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
 import org.apereo.cas.web.flow.login.InitialAuthenticationRequestValidationAction;
 import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
 import org.apereo.cas.web.flow.login.InitializeLoginAction;
+import org.apereo.cas.web.flow.login.NotifySingleSignOnEventAction;
 import org.apereo.cas.web.flow.login.RedirectUnauthorizedServiceUrlAction;
 import org.apereo.cas.web.flow.login.SendTicketGrantingTicketAction;
 import org.apereo.cas.web.flow.login.ServiceWarningAction;
@@ -164,7 +166,7 @@ public class CasSupportActionsAutoConfiguration {
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SINGLE_SIGNON_SESSION_CREATED)
         @Bean
         public Action singleSignOnSessionCreated(
             final ConfigurableApplicationContext applicationContext,
@@ -173,7 +175,7 @@ public class CasSupportActionsAutoConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> ConsumerExecutionAction.NONE)
-                .withId(CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED)
+                .withId(CasWebflowConstants.ACTION_ID_SINGLE_SIGNON_SESSION_CREATED)
                 .build()
                 .get();
         }
@@ -201,6 +203,25 @@ public class CasSupportActionsAutoConfiguration {
                 .get();
         }
 
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_NOTIFY_SINGLE_SIGNON_EVENT)
+        @Bean
+        public Action notifySingleSignOnEventAction(
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final CommunicationsManager communicationManager,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            final ConfigurableApplicationContext applicationContext) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new NotifySingleSignOnEventAction(ticketRegistry, communicationManager, casProperties))
+                .withId(CasWebflowConstants.ACTION_ID_NOTIFY_SINGLE_SIGNON_EVENT)
+                .build()
+                .get();
+        }
+        
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET)
         @Bean

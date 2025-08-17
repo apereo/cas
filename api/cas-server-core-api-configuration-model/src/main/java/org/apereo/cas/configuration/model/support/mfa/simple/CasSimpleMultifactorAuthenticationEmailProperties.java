@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.mfa.simple;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
-import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -34,7 +33,6 @@ public class CasSimpleMultifactorAuthenticationEmailProperties extends EmailProp
      * be {@code ^[a-zA-Z0-9._%+-]+@example\.org$}.
      */
     @RegularExpressionCapable
-    @RequiredProperty
     private Pattern acceptedEmailPattern;
 
     @JsonIgnore

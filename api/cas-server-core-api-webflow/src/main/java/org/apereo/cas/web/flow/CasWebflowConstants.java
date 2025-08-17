@@ -1723,9 +1723,14 @@ public interface CasWebflowConstants {
     String ACTION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicketAction";
 
     /**
+     * Action id 'notifySingleSignOnEventAction'.
+     */
+    String ACTION_ID_NOTIFY_SINGLE_SIGNON_EVENT = "notifySingleSignOnEventAction";
+
+    /**
      * Action id 'singleSignOnSessionCreated'.
      */
-    String ACTION_ID_SINGLE_SIGON_SESSION_CREATED = "singleSignOnSessionCreated";
+    String ACTION_ID_SINGLE_SIGNON_SESSION_CREATED = "singleSignOnSessionCreated";
 
     /**
      * Action id 'createTicketGrantingTicketAction'.

@@ -183,8 +183,8 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     protected void createSendTicketGrantingTicketAction(final Flow flow) {
         val action = createActionState(flow, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET,
             CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET);
-        action.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED));
-
+        action.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SINGLE_SIGNON_SESSION_CREATED));
+        action.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_NOTIFY_SINGLE_SIGNON_EVENT));
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_WRITE_BROWSER_STORAGE,
             CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS,

@@ -22,11 +22,11 @@ class SingleSignOnSessionCreatedActionTests {
 
     @Nested
     @TestPropertySource(properties = "cas.webflow.groovy.actions."
-        + CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED
+        + CasWebflowConstants.ACTION_ID_SINGLE_SIGNON_SESSION_CREATED
         + "=classpath:/SingleSignOnSessionCreated.groovy")
     class DefaultTests extends AbstractWebflowActionsTests {
         @Autowired
-        @Qualifier(CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED)
+        @Qualifier(CasWebflowConstants.ACTION_ID_SINGLE_SIGNON_SESSION_CREATED)
         private Action action;
 
         @Test
@@ -39,11 +39,11 @@ class SingleSignOnSessionCreatedActionTests {
 
     @Nested
     @TestPropertySource(properties = "cas.webflow.groovy.actions."
-        + CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED
+        + CasWebflowConstants.ACTION_ID_SINGLE_SIGNON_SESSION_CREATED
         + "=classpath:/Unknown12345.groovy")
     class UnknownScriptTests extends AbstractWebflowActionsTests {
         @Autowired
-        @Qualifier(CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED)
+        @Qualifier(CasWebflowConstants.ACTION_ID_SINGLE_SIGNON_SESSION_CREATED)
         private Action action;
 
         @Test

@@ -432,6 +432,7 @@ layout: null
         *   [SSO Warning Cookie](/cas/{{ version }}/authentication/Configuring-SSO-Warning-Cookie.html)
         *   [Public Workstations](/cas/{{ version }}/authentication/Configuring-SSO-Public-Workstations.html)
         *   [SSO & Services](/cas/{{ version }}/authentication/Configuring-SSO-Services.html)
+        *   [SSO Notifications](/cas/{{ version }}/authentication/Configuring-SSO-Notifications.html)
     *   [Remember Me](/cas/{{ version }}/authentication/Configuring-LongTerm-Authentication.html)
     *   [Logout & SLO](/cas/{{ version }}/installation/Logout-Single-Signout.html)
 
