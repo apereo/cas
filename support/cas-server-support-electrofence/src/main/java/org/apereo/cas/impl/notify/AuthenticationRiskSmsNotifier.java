@@ -59,7 +59,12 @@ public class AuthenticationRiskSmsNotifier extends BaseAuthenticationRiskNotifie
                 val values = principal.getAttributes().get(SpringExpressionLanguageValueResolver.getInstance().resolve(attribute));
                 return CollectionUtils.firstElement(values).orElse(StringUtils.EMPTY).toString();
             }).toList();
-            val smsRequest = SmsRequest.builder().from(sms.getFrom()).to(recipients).text(text).build();
+            val smsRequest = SmsRequest.builder()
+                .principal(principal)
+                .from(sms.getFrom())
+                .to(recipients)
+                .text(text)
+                .build();
             communicationsManager.sms(smsRequest);
         }
     }

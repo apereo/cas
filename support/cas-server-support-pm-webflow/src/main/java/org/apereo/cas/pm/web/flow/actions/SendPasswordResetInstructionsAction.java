@@ -15,6 +15,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
@@ -141,7 +142,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         val url = buildPasswordResetUrl(query.getUsername(), service);
         if (url != null) {
             val sendEmail = sendPasswordResetEmailToAccount(query.getUsername(), email, url, requestContext);
-            val sendSms = sendPasswordResetSmsToAccount(phone, url);
+            val sendSms = sendPasswordResetSmsToAccount(requestContext, phone, url);
             if (sendEmail.isSuccess() || sendSms) {
                 return success(url);
             }
@@ -242,12 +243,18 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         return getErrorEvent("contact.invalid", "Provided email address or phone number is invalid", requestContext);
     }
 
-    protected boolean sendPasswordResetSmsToAccount(final String to, final URL url) throws Throwable {
+    protected boolean sendPasswordResetSmsToAccount(final RequestContext requestContext, final String to, final URL url) throws Throwable {
         if (StringUtils.isNotBlank(to)) {
             LOGGER.debug("Sending password reset URL [{}] via SMS to [{}]", url.toExternalForm(), to);
             val reset = casProperties.getAuthn().getPm().getReset().getSms();
             val message = SmsBodyBuilder.builder().properties(reset).parameters(Map.of("url", url.toExternalForm())).build().get();
-            val smsRequest = SmsRequest.builder().from(reset.getFrom()).to(List.of(to)).text(message).build();
+            val smsRequest = SmsRequest.builder()
+                .from(reset.getFrom())
+                .to(List.of(to))
+                .text(message)
+                .tenant(communicationsManager.getTenantExtractor().extract(requestContext)
+                    .map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
+                .build();
             return communicationsManager.sms(smsRequest);
         }
         return false;
@@ -279,6 +286,8 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
                 .to(List.of(to))
                 .locale(locale.orElseGet(Locale::getDefault))
                 .body(text)
+                .tenant(communicationsManager.getTenantExtractor().extract(requestContext)
+                    .map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
                 .build();
             return communicationsManager.email(emailRequest);
         }

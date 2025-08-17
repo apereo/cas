@@ -101,6 +101,7 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
                         .from(sms.getFrom())
                         .to(recipients)
                         .text(message)
+                        .tenant(event.getClientInfo().getTenant())
                         .build();
                     communicationsManager.sms(smsRequest);
                 }));
