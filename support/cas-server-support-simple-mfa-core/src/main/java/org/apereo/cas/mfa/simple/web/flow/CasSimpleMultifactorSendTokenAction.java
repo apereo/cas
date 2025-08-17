@@ -210,7 +210,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
                                  final CasSimpleMultifactorAuthenticationTicket token) {
         if (communicationStrategy.contains(TokenSharingStrategyOptions.SMS) && communicationsManager.isSmsSenderDefined()) {
             val cmd = CasSimpleMultifactorSendSms.of(communicationsManager, properties);
-            val recipients = cmd.getSmsRecipients(principal);
+            val recipients = cmd.getSmsRecipients(requestContext, principal);
             if (!recipients.isEmpty()) {
                 mapOfAllRecipients.put(TokenSharingStrategyOptions.SMS, recipients);
             }

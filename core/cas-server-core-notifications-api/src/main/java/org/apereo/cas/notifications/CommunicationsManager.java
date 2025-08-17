@@ -1,6 +1,7 @@
 package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.call.PhoneCallRequest;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
@@ -108,4 +109,11 @@ public interface CommunicationsManager {
     default boolean isCommunicationChannelAvailable() {
         return isMailSenderDefined() || isSmsSenderDefined() || isPhoneOperatorDefined() || isNotificationSenderDefined();
     }
+
+    /**
+     * Gets tenant extractor.
+     *
+     * @return the tenant extractor
+     */
+    TenantExtractor getTenantExtractor();
 }

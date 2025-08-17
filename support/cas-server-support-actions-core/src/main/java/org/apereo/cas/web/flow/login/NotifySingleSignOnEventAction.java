@@ -69,6 +69,7 @@ public class NotifySingleSignOnEventAction extends BaseCasWebflowAction {
                     .text(message)
                     .principal(aat.getAuthentication().getPrincipal())
                     .attribute(attribute)
+                    .tenant(ClientInfoHolder.getClientInfo().getTenant())
                     .build();
                 LOGGER.debug("Attempting to send SMS [{}] to [{}]", message, smsRequest.getRecipients());
                 communicationsManager.sms(smsRequest);

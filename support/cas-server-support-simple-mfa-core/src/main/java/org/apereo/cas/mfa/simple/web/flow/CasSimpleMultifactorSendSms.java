@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
+import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.sms.SmsBodyBuilder;
 import org.apereo.cas.notifications.sms.SmsRequest;
@@ -13,6 +14,7 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.List;
@@ -43,6 +45,9 @@ public class CasSimpleMultifactorSendSms {
                     .principal(principal)
                     .to(recipients)
                     .text(smsText)
+                    .tenant(communicationsManager.getTenantExtractor()
+                        .extract(requestContext).map(TenantDefinition::getId)
+                        .orElse(StringUtils.EMPTY))
                     .build();
                 return communicationsManager.sms(smsRequest);
             }), () -> false).get();
@@ -50,16 +55,19 @@ public class CasSimpleMultifactorSendSms {
     
     protected boolean send(final Principal principal, final Ticket tokenTicket,
                            final RequestContext requestContext) {
-        return send(principal, tokenTicket, requestContext, getSmsRecipients(principal));
+        return send(principal, tokenTicket, requestContext, getSmsRecipients(requestContext, principal));
     }
 
-    protected List<String> getSmsRecipients(final Principal principal) {
+    protected List<String> getSmsRecipients(final RequestContext requestContext, final Principal principal) {
         val smsProperties = properties.getSms();
         return smsProperties.getAttributeName()
             .stream()
             .map(attribute -> SmsRequest.builder()
                 .from(smsProperties.getFrom())
                 .principal(principal)
+                .tenant(communicationsManager.getTenantExtractor()
+                    .extract(requestContext).map(TenantDefinition::getId)
+                    .orElse(StringUtils.EMPTY))
                 .attribute(SpringExpressionLanguageValueResolver.getInstance().resolve(attribute))
                 .build()
                 .getRecipients())

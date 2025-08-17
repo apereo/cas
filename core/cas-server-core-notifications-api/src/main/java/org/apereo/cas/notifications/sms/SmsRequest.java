@@ -33,6 +33,8 @@ public class SmsRequest {
 
     private final List<String> to;
 
+    private final String tenant;
+    
     /**
      * Has attribute value for the principal?
      *

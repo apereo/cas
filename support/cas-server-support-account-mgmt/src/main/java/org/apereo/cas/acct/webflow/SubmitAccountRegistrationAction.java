@@ -66,7 +66,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
 
             val url = createAccountRegistrationActivationUrl(registrationRequest);
             val sendEmail = sendAccountRegistrationActivationEmail(registrationRequest, url, requestContext);
-            val sendSms = sendAccountRegistrationActivationSms(registrationRequest, url);
+            val sendSms = sendAccountRegistrationActivationSms(requestContext, registrationRequest, url);
             if (sendEmail.isSuccess() || sendSms) {
                 return success(url);
             }
@@ -90,29 +90,25 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
         return registrationRequest;
     }
 
-    protected boolean sendAccountRegistrationActivationSms(final AccountRegistrationRequest registrationRequest,
-                                                           final String url) throws Throwable {
+    protected boolean sendAccountRegistrationActivationSms(
+        final RequestContext requestContext, final AccountRegistrationRequest registrationRequest,
+        final String url) throws Throwable {
         if (StringUtils.isNotBlank(registrationRequest.getPhone())) {
             val smsProps = casProperties.getAccountRegistration().getSms();
             val message = SmsBodyBuilder.builder().properties(smsProps).parameters(Map.of("url", url)).build().get();
             val smsRequest = SmsRequest.builder()
                 .from(smsProps.getFrom())
                 .to(List.of(registrationRequest.getPhone()))
-                .text(message).build();
+                .tenant(tenantExtractor.extract(requestContext)
+                    .map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
+                .text(message)
+                .build();
             return communicationsManager.sms(smsRequest);
         }
         return false;
     }
 
 
-    /**
-     * Send account registration activation email.
-     *
-     * @param registrationRequest the registration request
-     * @param url                 the url
-     * @param requestContext      the request context
-     * @return true/false
-     */
     protected EmailCommunicationResult sendAccountRegistrationActivationEmail(final AccountRegistrationRequest registrationRequest,
                                                                               final String url,
                                                                               final RequestContext requestContext) {

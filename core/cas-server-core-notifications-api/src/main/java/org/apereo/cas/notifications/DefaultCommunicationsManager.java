@@ -1,6 +1,7 @@
 package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.call.PhoneCallOperator;
 import org.apereo.cas.notifications.call.PhoneCallRequest;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
@@ -10,6 +11,7 @@ import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.function.FunctionUtils;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,6 +35,9 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
     private final NotificationSender notificationSender;
 
     private final PhoneCallOperator phoneCallOperator;
+
+    @Getter
+    private final TenantExtractor tenantExtractor;
 
     @Override
     public boolean isPhoneOperatorDefined() {

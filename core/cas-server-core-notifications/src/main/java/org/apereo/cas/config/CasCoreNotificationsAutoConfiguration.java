@@ -58,6 +58,8 @@ public class CasCoreNotificationsAutoConfiguration {
     @ConditionalOnMissingBean(name = CommunicationsManager.BEAN_NAME)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CommunicationsManager communicationsManager(
+        @Qualifier(TenantExtractor.BEAN_NAME)
+        final TenantExtractor tenantExtractor,
         @Qualifier(SmsSender.BEAN_NAME)
         final SmsSender smsSender,
         @Qualifier(EmailSender.BEAN_NAME)
@@ -66,7 +68,8 @@ public class CasCoreNotificationsAutoConfiguration {
         final PhoneCallOperator phoneCallOperator,
         @Qualifier(NotificationSender.BEAN_NAME)
         final NotificationSender notificationSender) {
-        return new DefaultCommunicationsManager(smsSender, emailSender, notificationSender, phoneCallOperator);
+        return new DefaultCommunicationsManager(smsSender, emailSender,
+            notificationSender, phoneCallOperator, tenantExtractor);
     }
 
     @Bean
