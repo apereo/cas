@@ -13,6 +13,8 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
+
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
 
@@ -24,6 +26,9 @@ import java.util.Optional;
  */
 @Slf4j
 public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSimpleMultifactorAuthenticationService {
+
+    private static final int MAX_ATTEMPTS = 5;
+
     protected final TicketFactory ticketFactory;
     protected final ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider;
 
@@ -38,9 +43,17 @@ public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSim
     @Override
     public CasSimpleMultifactorAuthenticationTicket generate(final Principal principal, final Service service) throws Throwable {
         val mfaFactory = (CasSimpleMultifactorAuthenticationTicketFactory) ticketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
-        val token = mfaFactory.create(service, CollectionUtils.wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
-        LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token.getId(), service);
-        return token;
+        val properties = CollectionUtils.<String, Serializable>wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal);
+        return FunctionUtils.doAndRetry(retryContext -> {
+            val token = FunctionUtils.doAndThrow(() -> mfaFactory.create(service, properties), t -> new RuntimeException(t));
+            val tokenId = token.getId();
+            val trackingToken = ticketRegistry.getTicket(tokenId);
+            if (trackingToken != null) {
+                throw new IllegalArgumentException("Token: " + tokenId + " already exists in ticket registry");
+            }
+            LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", tokenId, service);
+            return token;
+        }, MAX_ATTEMPTS);
     }
 
     @Override
