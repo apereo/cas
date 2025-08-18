@@ -133,10 +133,10 @@ class OAuth20JwtAccessTokenEncodableCipher implements EncodableCipher<String, St
     }
 
     protected Set<String> determineServiceAudience() {
-        val oauthRegisteredService = (OAuthRegisteredService) registeredService;
         if (StringUtils.isNotBlank(tokenAudience)) {
             return Set.of(tokenAudience);
         }
+        val oauthRegisteredService = (OAuthRegisteredService) registeredService;
         if (oauthRegisteredService.getAudience().isEmpty()) {
             return Set.of(token.getClientId());
         }
