@@ -1,6 +1,7 @@
 package org.apereo.cas.mfa.simple;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationHolder;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailedException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -86,6 +87,19 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
         assertThrows(MultifactorAuthenticationFailedException.class, () -> casSimpleMultifactorAuthenticationHandler.authenticate(credential, mock(Service.class)));
         assertFalse(casSimpleMultifactorAuthenticationHandler.supports(new UsernamePasswordCredential()));
         assertFalse(casSimpleMultifactorAuthenticationHandler.supports(UsernamePasswordCredential.class));
+    }
+
+    @Test
+    void verifyMismatchedPrincipal() throws Throwable {
+        val principal = RegisteredServiceTestUtils.getPrincipal();
+        val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
+        val ticket = factory.create(RegisteredServiceTestUtils.getService(),
+            Map.of(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
+        ticketRegistry.addTicket(ticket);
+        AuthenticationHolder.setCurrentAuthentication(RegisteredServiceTestUtils.getAuthentication("principal2"));
+        val credential = new CasSimpleMultifactorTokenCredential(ticket.getId());
+        assertThrows(MultifactorAuthenticationFailedException.class, () -> casSimpleMultifactorAuthenticationHandler.authenticate(credential, mock(Service.class)));
+        AuthenticationHolder.clear();
     }
 
     @Test
