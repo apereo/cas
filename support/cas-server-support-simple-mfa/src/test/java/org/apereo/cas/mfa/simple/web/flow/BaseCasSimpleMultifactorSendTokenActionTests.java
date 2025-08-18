@@ -8,6 +8,7 @@ import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
 import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationAccountService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
@@ -59,6 +60,10 @@ public abstract class BaseCasSimpleMultifactorSendTokenActionTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
+
+    @Autowired
+    @Qualifier(TicketFactory.BEAN_NAME)
+    protected TicketFactory defaultTicketFactory;
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;

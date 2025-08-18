@@ -15,7 +15,8 @@
     <div layout:fragment="content" id="login" class="mdc-card mdc-card-content card w-lg-50 p-4 m-auto">
         <form method="post" id="fm1" th:object="${credential}" th:action="@{/login}">
 
-            <div class="banner banner-danger alert alert-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+            <div id="errorPanel" class="banner banner-danger alert alert-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+                <h2 th:utext="#{screen.account.failure}">Failure</h2>
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
                    th:utext="${message.text}">Message Text</p>
             </div>

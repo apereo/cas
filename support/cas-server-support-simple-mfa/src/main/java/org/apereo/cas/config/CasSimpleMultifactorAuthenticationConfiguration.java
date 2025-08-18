@@ -17,6 +17,7 @@ import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationSe
 import org.apereo.cas.mfa.simple.web.CasSimpleMultifactorAuthenticationEndpoint;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorSendTokenAction;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorUpdateEmailAction;
+import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorValidateTokenAction;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorVerifyEmailAction;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -98,6 +99,23 @@ class CasSimpleMultifactorAuthenticationConfiguration {
                         mfaSimpleMultifactorBucketConsumer, tenantExtractor);
                 })
                 .withId(CasWebflowConstants.ACTION_ID_MFA_SIMPLE_SEND_TOKEN)
+                .build()
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_SIMPLE_VALIDATE_TOKEN)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action mfaSimpleMultifactorValidateTokenAction(
+            @Qualifier(CasSimpleMultifactorAuthenticationService.BEAN_NAME)
+            final CasSimpleMultifactorAuthenticationService casSimpleMultifactorAuthenticationService,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new CasSimpleMultifactorValidateTokenAction(casSimpleMultifactorAuthenticationService))
+                .withId(CasWebflowConstants.ACTION_ID_MFA_SIMPLE_VALIDATE_TOKEN)
                 .build()
                 .get();
         }

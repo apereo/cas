@@ -15,6 +15,9 @@
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",
 
+    "--cas.authn.mfa.simple.token.core.time-to-kill-in-seconds=120",
+    "--cas.authn.accept.users=casuser::Mellon,testcas::password",
+    
     "--cas.authn.mfa.simple.trusted-device-enabled=true",
 
     "--cas.authn.mfa.simple.mail.html=false",
