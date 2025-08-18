@@ -252,7 +252,7 @@ public class JwtBuilder {
         val jwtJson = claimsSet.toString();
         LOGGER.debug("Generated JWT [{}]", jwtJson);
 
-        if (registeredServiceCipherExecutor.isEnabled() && registeredServiceCipherExecutor.supports(registeredService)) {
+        if (registeredServiceCipherExecutor.supports(registeredService)) {
             LOGGER.trace("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
             return registeredServiceCipherExecutor.encode(jwtJson, Optional.of(registeredService));
