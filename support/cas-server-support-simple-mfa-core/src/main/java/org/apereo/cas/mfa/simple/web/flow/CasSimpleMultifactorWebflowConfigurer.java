@@ -81,7 +81,7 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
                 createTransitionAttributes(false, false));
 
             val realSubmitState = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT,
-                createEvaluateAction(CasWebflowConstants.ACTION_ID_OTP_AUTHENTICATION_ACTION));
+                CasWebflowConstants.ACTION_ID_MFA_SIMPLE_VALIDATE_TOKEN, CasWebflowConstants.ACTION_ID_OTP_AUTHENTICATION_ACTION);
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
         });
