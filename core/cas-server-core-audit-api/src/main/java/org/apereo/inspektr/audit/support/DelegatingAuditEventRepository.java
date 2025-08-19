@@ -25,8 +25,6 @@ import java.util.function.Function;
  */
 @RequiredArgsConstructor
 public class DelegatingAuditEventRepository implements AuditEventRepository {
-    public static final Function<CasEvent, AuditEvent> AUDIT_EVENT_MAPPER = event ->
-        new AuditEvent(event.getCreationTime(), event.getPrincipalId(), event.getType(), event.getProperties());
     private final CasEventRepository casEventRepository;
     private final AuditEventRepository auditEventRepository = new InMemoryAuditEventRepository();
 
@@ -57,22 +55,32 @@ public class DelegatingAuditEventRepository implements AuditEventRepository {
     public List<AuditEvent> find(final String principal, final Instant after, final String type) {
         val results = new ArrayList<AuditEvent>();
         if (StringUtils.isNotBlank(principal) && after != null && StringUtils.isNotBlank(type)) {
-            results.addAll(casEventRepository.getEventsOfTypeForPrincipal(type, principal, after.atZone(ZoneOffset.UTC)).map(AUDIT_EVENT_MAPPER).toList());
+            results.addAll(casEventRepository.getEventsOfTypeForPrincipal(type, principal, after.atZone(ZoneOffset.UTC))
+                .map(DelegatingAuditEventRepository::auditEventMapper).toList());
         } else if (StringUtils.isNotBlank(principal) && after != null) {
-            results.addAll(casEventRepository.getEventsForPrincipal(principal, after.atZone(ZoneOffset.UTC)).map(AUDIT_EVENT_MAPPER).toList());
+            results.addAll(casEventRepository.getEventsForPrincipal(principal, after.atZone(ZoneOffset.UTC))
+                .map(DelegatingAuditEventRepository::auditEventMapper).toList());
         } else if (StringUtils.isNotBlank(principal) && StringUtils.isNotBlank(type)) {
-            results.addAll(casEventRepository.getEventsOfTypeForPrincipal(type, principal).map(AUDIT_EVENT_MAPPER).toList());
+            results.addAll(casEventRepository.getEventsOfTypeForPrincipal(type, principal)
+                .map(DelegatingAuditEventRepository::auditEventMapper).toList());
         } else if (StringUtils.isNotBlank(type) && after != null) {
-            results.addAll(casEventRepository.getEventsOfType(type, after.atZone(ZoneOffset.UTC)).map(AUDIT_EVENT_MAPPER).toList());
+            results.addAll(casEventRepository.getEventsOfType(type, after.atZone(ZoneOffset.UTC))
+                .map(DelegatingAuditEventRepository::auditEventMapper).toList());
         } else if (StringUtils.isNotBlank(principal)) {
-            results.addAll(casEventRepository.getEventsForPrincipal(principal).map(AUDIT_EVENT_MAPPER).toList());
+            results.addAll(casEventRepository.getEventsForPrincipal(principal)
+                .map(DelegatingAuditEventRepository::auditEventMapper).toList());
         } else if (StringUtils.isNotBlank(type)) {
-            results.addAll(casEventRepository.getEventsOfType(type).map(AUDIT_EVENT_MAPPER).toList());
+            results.addAll(casEventRepository.getEventsOfType(type)
+                .map(DelegatingAuditEventRepository::auditEventMapper).toList());
         }
 
         if (results.isEmpty()) {
             results.addAll(auditEventRepository.find(principal, after, type));
         }
         return results;
+    }
+
+    private static AuditEvent auditEventMapper(final CasEvent event) {
+        return new AuditEvent(event.getCreationTime(), event.getPrincipalId(), event.getType(), event.getProperties());
     }
 }
