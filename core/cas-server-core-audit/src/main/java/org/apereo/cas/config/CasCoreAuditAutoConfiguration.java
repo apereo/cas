@@ -51,6 +51,7 @@ import org.apereo.inspektr.common.spi.AuditActionDateProvider;
 import org.apereo.inspektr.common.spi.ClientInfoResolver;
 import org.apereo.inspektr.common.spi.DefaultClientInfoResolver;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -293,7 +294,7 @@ public class CasCoreAuditAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditEventRepository auditEventRepository(
             @Qualifier(CasEventRepository.BEAN_NAME)
-            final CasEventRepository casEventRepository,
+            final ObjectProvider<CasEventRepository> casEventRepository,
             final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(AuditEventRepository.class)
                 .when(CONDITION_AUDIT.given(applicationContext.getEnvironment()))
