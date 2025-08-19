@@ -15,8 +15,12 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.cas.web.support.WebUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
+
+import javax.security.auth.login.FailedLoginException;
+import java.util.Objects;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationHandler}.
@@ -65,6 +69,12 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
             val credentialPrincipal = multifactorAuthenticationService.fetch(tokenCredential);
             val resolvedPrincipal = resolvePrincipal(applicationContext, credentialPrincipal);
             val principal = multifactorAuthenticationService.validate(resolvedPrincipal, tokenCredential);
+            val authentication = Objects.requireNonNull(WebUtils.getInProgressAuthentication());
+            if (!principal.equals(authentication.getPrincipal())) {
+                LOGGER.warn("Credential principal [{}] does not match authentication principal [{}]",
+                        principal.getId(), authentication.getPrincipal().getId());
+                throw new FailedLoginException("Failed to authenticate code " + tokenCredential.getId());
+            }
             return createHandlerResult(tokenCredential, principal);
         }, MultifactorAuthenticationFailedException::new);
     }
