@@ -16,7 +16,8 @@ public interface CasEventRepositoryFilter {
      * @return the cas event repository filter
      */
     static CasEventRepositoryFilter noOp() {
-        return new NoOpCasEventRepositoryFilter();
+        return new CasEventRepositoryFilter() {
+        };
     }
 
     /**
@@ -28,12 +29,5 @@ public interface CasEventRepositoryFilter {
      */
     default boolean shouldSaveEvent(final CasEvent event) throws Throwable {
         return true;
-    }
-
-    /**
-     * The type No op cas event repository filter.
-     */
-    class NoOpCasEventRepositoryFilter implements CasEventRepositoryFilter {
-
     }
 }

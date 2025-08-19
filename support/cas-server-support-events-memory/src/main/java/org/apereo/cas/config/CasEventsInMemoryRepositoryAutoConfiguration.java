@@ -8,8 +8,8 @@ import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.InMemoryCasEventRepository;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,12 +42,12 @@ public class CasEventsInMemoryRepositoryAutoConfiguration {
     public CasEventRepository casEventRepository(
         @Qualifier("casEventRepositoryFilter")
         final CasEventRepositoryFilter casEventRepositoryFilter) {
-        final LoadingCache<String, CasEvent> storage = Caffeine.newBuilder()
+        val storage = Caffeine.newBuilder()
             .initialCapacity(INITIAL_CACHE_SIZE)
             .maximumSize(MAX_CACHE_SIZE)
             .recordStats()
             .expireAfterWrite(Duration.ofHours(EXPIRATION_TIME))
-            .build(s -> {
+            .<String, CasEvent>build(s -> {
                 LOGGER.error("Load operation of the cache is not supported.");
                 return null;
             });
