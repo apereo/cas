@@ -22,6 +22,7 @@ import org.apereo.cas.audit.spi.resource.TicketValidationResourceResolver;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -43,6 +44,7 @@ import org.apereo.inspektr.audit.spi.support.MessageBundleAwareResourceResolver;
 import org.apereo.inspektr.audit.spi.support.NullableReturnValueAuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.ObjectCreationAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ShortenedReturnValueAsStringAuditResourceResolver;
+import org.apereo.inspektr.audit.support.DelegatingAuditEventRepository;
 import org.apereo.inspektr.audit.support.GroovyAuditTrailManager;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.AuditActionDateProvider;
@@ -51,7 +53,6 @@ import org.apereo.inspektr.common.spi.DefaultClientInfoResolver;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
-import org.springframework.boot.actuate.audit.InMemoryAuditEventRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -65,7 +66,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.StringUtils;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -289,13 +289,15 @@ public class CasCoreAuditAutoConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasCoreAuditEventsConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "inMemoryAuditEventRepository")
+        @ConditionalOnMissingBean(name = "auditEventRepository")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditEventRepository inMemoryAuditEventRepository(
+        public AuditEventRepository auditEventRepository(
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository casEventRepository,
             final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(AuditEventRepository.class)
                 .when(CONDITION_AUDIT.given(applicationContext.getEnvironment()))
-                .supply(InMemoryAuditEventRepository::new)
+                .supply(() -> new DelegatingAuditEventRepository(casEventRepository))
                 .otherwiseProxy()
                 .get();
         }

@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.support.events.CasEventRepository;
-import org.apereo.cas.support.events.dao.NoOpCasEventRepository;
 import org.apereo.cas.support.events.listener.CasAuthenticationAuthenticationEventListener;
 import org.apereo.cas.support.events.listener.CasAuthenticationEventListener;
 import org.apereo.cas.support.events.web.CasEventsReportEndpoint;
@@ -92,7 +91,7 @@ public class CasCoreEventsAutoConfiguration {
             final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(CasEventRepository.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> NoOpCasEventRepository.INSTANCE)
+                .supply(CasEventRepository::noOp)
                 .otherwiseProxy()
                 .get();
         }
