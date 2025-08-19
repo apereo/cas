@@ -85,18 +85,15 @@ if (publishReleases) {
             username = "${repositoryUsername}"
             password = "${repositoryPassword}"
             publicationName = "Apereo CAS Release ${project.version}"
-            publishingType = "USER_MANAGED"
+            publishingType = "AUTOMATIC"
             validationTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
-
-            if (publishingType == "AUTOMATIC") {
-                publishingTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
-            }
+            publishingTimeout = java.time.Duration.of(60, java.time.temporal.ChronoUnit.MINUTES)
         }
         publishAllProjectsProbablyBreakingProjectIsolation()
     }
 }
 
-if (publishSnapshots) {
+if (publishSnapshots && !publishReleases) {
     apply plugin: "io.github.gradle-nexus.publish-plugin"
     nexusPublishing {
         packageGroup = "org.apereo"

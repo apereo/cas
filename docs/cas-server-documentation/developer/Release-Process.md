@@ -152,14 +152,12 @@ The workflow will automatically build the project, sign the artifacts, stage the
 and create a tag for the released version. It will also create a GitHub release for the version, with
 appropriate release notes and artifacts attached to the release, which you will need to review and publish later to finalize the release.
 
-Once the release is staged and has passed validation, you should navigate to the [staged deployment](https://central.sonatype.com/publishing/deployments) 
-and publish the release to the central repository. **This step must be done manually for the time being**.
+Once the release is staged and has passed validation, it will be published automatically.
 
 <div class="alert alert-warning">:warning: <strong>Remember</strong><p>
-If the deployment is stuck in a <code>PUBLISHING</code> state for a long time, contact Central support. 
+If the deployment is stuck in a <code>PUBLISHING</code> state for a long time (i.e. more than 1 hour), contact Central support. 
 In case ingesting one of the CAS artifacts fails, the release process fails to notify the Central publisher that the ingesting was completed
-and the deployment is left in a <code>PUBLISHING</code> state. This is a bug in the Central publisher process that requires manual intervention
-and support staff will have to update the state to <code>PUBLISHED</code> manually.
+and the deployment is left in a <code>PUBLISHING</code> state.
 </p></div>
 
 ### Locally
