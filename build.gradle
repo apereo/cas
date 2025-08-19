@@ -26,6 +26,7 @@ buildscript {
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:$gradleErrorProneVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
         classpath "io.github.gradle-nexus:publish-plugin:$gradleNexusPublishingVersion"
+        classpath "com.gradleup.nmcp.aggregation:com.gradleup.nmcp.aggregation.gradle.plugin:1.0.3"
     }
 }
 
@@ -81,24 +82,21 @@ def isArtifactSigningRequired = {
     publishReleases && !skipArtifactSigning
 }
 
-if ("${releaseRepositoryUrl}".contains("oss.sonatype.org")) {
-    apply plugin: "io.github.gradle-nexus.publish-plugin"
-    nexusPublishing {
-        packageGroup = "org.apereo"
-        repositories {
-            sonatype {
-                stagingProfileId = "${rootProject.sonatypeStagingProfileId}"
-                username = "${repositoryUsername}"
-                password = "${repositoryPassword}"
+if (publishReleases) {
+    apply plugin: "com.gradleup.nmcp.aggregation"
+    nmcpAggregation {
+        centralPortal {
+            username = "${repositoryUsername}"
+            password = "${repositoryPassword}"
+            publicationName = "Apereo CAS Release ${project.version}"
+            publishingType = "USER_MANAGED"
+            validationTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
+
+            if (publishingType == "AUTOMATIC") {
+                publishingTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
             }
         }
-
-        clientTimeout = java.time.Duration.ofSeconds(120)
-        connectTimeout = java.time.Duration.ofSeconds(120)
-        transitionCheckOptions {
-            maxRetries.set(100)
-            delayBetween.set(java.time.Duration.ofSeconds(60))
-        }
+        publishAllProjectsProbablyBreakingProjectIsolation()
     }
 }
 
@@ -267,32 +265,30 @@ subprojects {
                     }
                 }
 
-                if (!"${releaseRepositoryUrl}".contains("oss.sonatype.org")) {
-                    repositories {
-                        if (rootProject.publishReleases) {
-                            maven {
-                                name "CAS-Releases"
-                                url "${releaseRepositoryUrl}"
-                                mavenContent {
-                                    releasesOnly()
-                                }
-                                credentials {
-                                    username "${repositoryUsername}"
-                                    password "${repositoryPassword}"
-                                }
+                repositories {
+                    if (rootProject.publishReleases) {
+                        maven {
+                            name "CAS-Releases"
+                            url "${releaseRepositoryUrl}"
+                            mavenContent {
+                                releasesOnly()
+                            }
+                            credentials {
+                                username "${repositoryUsername}"
+                                password "${repositoryPassword}"
                             }
                         }
-                        if (rootProject.publishSnapshots) {
-                            maven {
-                                name "CAS-Snapshots"
-                                url "${snapshotsRepositoryUrl}"
-                                mavenContent {
-                                    snapshotsOnly()
-                                }
-                                credentials {
-                                    username "${repositoryUsername}"
-                                    password "${repositoryPassword}"
-                                }
+                    }
+                    if (rootProject.publishSnapshots) {
+                        maven {
+                            name "CAS-Snapshots"
+                            url "${snapshotsRepositoryUrl}"
+                            mavenContent {
+                                snapshotsOnly()
+                            }
+                            credentials {
+                                username "${repositoryUsername}"
+                                password "${repositoryPassword}"
                             }
                         }
                     }
@@ -590,13 +586,10 @@ tasks.register('publishProjectModules') {
 }
 
 boolean projectShouldBePublished(Project project) {
-    def publishable = !["api", "core", "docs", "support", "webapp"].contains(project.name)
-            && !project.getPath().contains("cas-server-documentation")
-    if ("${releaseRepositoryUrl}".contains("github.com") && project.getPath().contains("cas-server-support-shell")) {
-        // shell is too big for github
-        publishable = false
-    }
+    def publishable = project.hasProperty("publishable") ? project.publishable : true
     project.ext.publishable = publishable
+    logger.info "Project ${project.name} is publishable: ${publishable}"
+    return publishable
 }
 
 boolean projectRequiresLombok(Project project) {

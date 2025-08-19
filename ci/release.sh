@@ -35,26 +35,26 @@ function build {
     fi
 }
 
-function snapshot() {
-  if [[ "${casVersion}" != *SNAPSHOT* ]] ;
-  then
-      printred "CAS version ${casVersion} MUST be a SNAPSHOT version"
-      exit 1
-  fi
-  printgreen "Publishing CAS SNAPSHOT artifacts. This might take a while..."
-  ./gradlew build publish -x test -x javadoc -x check --no-daemon --parallel \
-    -DskipAot=true -DpublishSnapshots=true --no-build-cache --no-configuration-cache --configure-on-demand \
-    -Dorg.gradle.internal.http.socketTimeout=640000 \
-    -Dorg.gradle.internal.http.connectionTimeout=640000 \
-    -Dorg.gradle.internal.publish.checksums.insecure=true \
-    -Dorg.gradle.internal.network.retry.max.attempts=5 \
-    -Dorg.gradle.internal.network.retry.initial.backOff=5000 \
-    -DrepositoryUsername="$1" -DrepositoryPassword="$2"
-  if [ $? -ne 0 ]; then
-      printred "Publishing CAS SNAPSHOTs failed."
-      exit 1
-  fi
-}
+#function snapshot() {
+#  if [[ "${casVersion}" != *SNAPSHOT* ]] ;
+#  then
+#      printred "CAS version ${casVersion} MUST be a SNAPSHOT version"
+#      exit 1
+#  fi
+#  printgreen "Publishing CAS SNAPSHOT artifacts. This might take a while..."
+#  ./gradlew build publish -x test -x javadoc -x check --no-daemon --parallel \
+#    -DskipAot=true -DpublishSnapshots=true --no-build-cache --no-configuration-cache --configure-on-demand \
+#    -Dorg.gradle.internal.http.socketTimeout=640000 \
+#    -Dorg.gradle.internal.http.connectionTimeout=640000 \
+#    -Dorg.gradle.internal.publish.checksums.insecure=true \
+#    -Dorg.gradle.internal.network.retry.max.attempts=5 \
+#    -Dorg.gradle.internal.network.retry.initial.backOff=5000 \
+#    -DrepositoryUsername="$1" -DrepositoryPassword="$2"
+#  if [ $? -ne 0 ]; then
+#      printred "Publishing CAS SNAPSHOTs failed."
+#      exit 1
+#  fi
+#}
 
 function publish {
     if [[ "${casVersion}" == *SNAPSHOT* ]] ;
@@ -63,8 +63,8 @@ function publish {
         exit 1
     fi
     printgreen "Publishing CAS releases. This might take a while..."
-    ./gradlew publishToSonatype closeAndReleaseStagingRepository \
-      --no-build-cache --no-daemon --no-parallel --no-watch-fs --no-configuration-cache -DskipAot=true -DpublishReleases=true \
+    ./gradlew assemble publishAggregationToCentralPortal \
+      --no-build-cache --no-daemon --no-parallel --no-watch-fs --no-configuration-cache -DskipAot=true \
       -DrepositoryUsername="$1" -DrepositoryPassword="$2" -DpublishReleases=true \
       -Dorg.gradle.internal.http.socketTimeout=640000 \
       -Dorg.gradle.internal.http.connectionTimeout=640000 \
@@ -76,43 +76,43 @@ function publish {
         exit 1
     fi
 
-    createTag
+    #createTag
 }
 
-function createTag {
-  printgreen "Tagging the source tree for CAS version: ${casVersion}"
-  read -p "CAS version to release (Leave blank for ${casVersion}): " releaseVersion
-  if [[ -z "${releaseVersion}" ]]; then
-    releaseVersion="${casVersion}"
-  fi
-
-  releaseTag="v${releaseVersion}"
-  if [[ $(git tag -l "${releaseTag}") ]]; then
-    git tag -d "${releaseTag}" && git push --delete origin "${releaseTag}"
-  fi
-  git tag "${releaseTag}" -m "Tagging CAS ${releaseTag} release" && git push origin "${releaseTag}"
-
-  read -p "Current tag: ${releaseTag}. Enter the previous release tag (i.e. vA.B.C): " previousTag
-  previousTagCommit=$(git rev-list -n 1 "$previousTag")
-  currentCommit=$(git log -1 --format="%H")
-  echo "Parsing the commit log between ${previousTagCommit} and ${currentCommit}..."
-  git shortlog -sen "${previousTagCommit}".."${currentCommit}"
-}
+#function createTag {
+#  printgreen "Tagging the source tree for CAS version: ${casVersion}"
+#  read -p "CAS version to release (Leave blank for ${casVersion}): " releaseVersion
+#  if [[ -z "${releaseVersion}" ]]; then
+#    releaseVersion="${casVersion}"
+#  fi
+#
+#  releaseTag="v${releaseVersion}"
+#  if [[ $(git tag -l "${releaseTag}") ]]; then
+#    git tag -d "${releaseTag}" && git push --delete origin "${releaseTag}"
+#  fi
+#  git tag "${releaseTag}" -m "Tagging CAS ${releaseTag} release" && git push origin "${releaseTag}"
+#
+#  read -p "Current tag: ${releaseTag}. Enter the previous release tag (i.e. vA.B.C): " previousTag
+#  previousTagCommit=$(git rev-list -n 1 "$previousTag")
+#  currentCommit=$(git log -1 --format="%H")
+#  echo "Parsing the commit log between ${previousTagCommit} and ${currentCommit}..."
+#  git shortlog -sen "${previousTagCommit}".."${currentCommit}"
+#}
 
 function finished {
     printgreen "Done! The release is now automatically published. There is nothing more for you to do. Thank you!"
 }
 
-if [[ "$CI" == "true" ]]; then
-  printgreen "Running in CI mode..."
-else
-  git diff --quiet
-  if [ $? -ne 0 ]; then
-    printred "Git repository has modified or untracked files. Commit or discard all changes and try again."
-    git status && git diff
-    exit 1
-  fi
-fi
+#if [[ "$CI" == "true" ]]; then
+#  printgreen "Running in CI mode..."
+#else
+#  git diff --quiet
+#  if [ $? -ne 0 ]; then
+#    printred "Git repository has modified or untracked files. Commit or discard all changes and try again."
+#    git status && git diff
+#    exit 1
+#  fi
+#fi
 
 if [[ "${casVersion}" == v* ]] ;
 then
@@ -168,7 +168,6 @@ fi
 
 case "$selection" in
     1)
-        clean
         build ${username} ${password}
         publish ${username} ${password}
         finished
@@ -177,10 +176,10 @@ case "$selection" in
         publish ${username} ${password}
         finished
         ;;
-    3)
-        snapshot ${username} ${password}
-        finished
-        ;;
+   3)
+       snapshot ${username} ${password}
+       finished
+       ;;
     *)
         printred "Unable to recognize selection"
         ;;

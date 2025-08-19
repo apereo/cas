@@ -2,6 +2,7 @@ ext {
     forceBootifulArtifact = true
     mainClassName = "org.apereo.cas.CasCommandLineShellApplication"
     publishMetadata = true
+    publishable = false
     projectMetadata = [
             category: "Developer",
             title: "Command-line Shell",
