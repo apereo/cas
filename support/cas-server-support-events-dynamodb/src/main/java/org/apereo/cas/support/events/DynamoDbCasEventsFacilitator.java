@@ -62,7 +62,7 @@ public class DynamoDbCasEventsFacilitator {
         val type = item.get(ColumnNames.TYPE.getColumnName()).s();
         val creationTime = Long.parseLong(item.get(ColumnNames.CREATION_TIME.getColumnName()).n());
         val properties = MAPPER.readValue(item.get(ColumnNames.PROPERTIES.getColumnName()).s(),
-            new TypeReference<Map<String, String>>() {
+            new TypeReference<Map<String, Object>>() {
             });
         return new CasEvent(id, type, principal, Instant.ofEpochMilli(creationTime), properties);
     }
