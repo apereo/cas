@@ -266,7 +266,7 @@ gradleErrorProne = "4.3.0"
 gradleGraalVmNative = "0.11.0"
 gradleSonarqube = "6.2.0.5505"
 gradleNexusPublishing = "2.0.0"
-gradleNmcpPublishing = "1.0.3"
+gradleNmcpPublishing = "1.1.0"
 gradleJib = "3.4.6"
 
 [libraries]
