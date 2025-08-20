@@ -1,12 +1,12 @@
 package org.apereo.inspektr.audit.support;
 
-import org.apereo.cas.support.events.CasEventRepository;
-import org.apereo.cas.support.events.dao.CasEvent;
-import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.dao.CasEvent;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.audit.AuditEvent;
@@ -17,7 +17,6 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link DelegatingAuditEventRepository}.
