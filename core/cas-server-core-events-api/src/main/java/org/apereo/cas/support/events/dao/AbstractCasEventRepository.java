@@ -13,6 +13,7 @@ import org.springframework.boot.actuate.audit.listener.AuditApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -56,7 +57,9 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
         if (getEventRepositoryFilter().shouldSaveEvent(event)) {
             val result = saveInternal(event);
             Optional.ofNullable(applicationEventPublisher).ifPresent(publisher -> {
-                val auditEvent = new AuditEvent(event.getPrincipalId(), event.getType(), (Map) event.getProperties());
+                val properties = new HashMap(event.getProperties());
+                properties.put(CasEventRepository.PARAM_SOURCE, "CAS");
+                val auditEvent = new AuditEvent(event.getPrincipalId(), event.getType(), properties);
                 publisher.publishEvent(new AuditApplicationEvent(auditEvent));
             });
             return result;
