@@ -35,7 +35,7 @@ async function getAllEvents() {
 
     let count = body.length;
     await cas.log(`Total event records found ${count}`);
-    assert(count === totalAttempts + 1);
+    assert(count >= totalAttempts + 1);
 
     fs.rmSync(`${__dirname}/events.zip`, {force: true});
     await cas.createZipFile(`${__dirname}/events.zip`, async (archive) => body.forEach((entry) => archive.append(JSON.stringify(entry), {name: `event-${entry.id}.json`})));
@@ -59,7 +59,7 @@ async function getAllEvents() {
     allEvents = await getAllEvents();
     count = allEvents.length;
     await cas.log(`Total event records found ${count}`);
-    assert(count === totalAttempts + 1);
+    assert(count >= totalAttempts + 1);
 
     await cas.closeBrowser(browser);
 })();

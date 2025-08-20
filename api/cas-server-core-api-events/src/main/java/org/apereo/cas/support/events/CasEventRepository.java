@@ -14,6 +14,12 @@ import java.util.stream.Stream;
  */
 @FunctionalInterface
 public interface CasEventRepository {
+
+    /**
+     * The event source.
+     */
+    String PARAM_SOURCE = "source";
+
     /**
      * Name of the events transaction manager.
      */

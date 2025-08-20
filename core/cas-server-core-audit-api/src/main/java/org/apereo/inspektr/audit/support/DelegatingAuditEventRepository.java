@@ -1,13 +1,13 @@
 package org.apereo.inspektr.audit.support;
 
-import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.dao.CasEvent;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.support.events.CasEventRepository;
-import org.apereo.cas.support.events.dao.CasEvent;
-import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
@@ -17,6 +17,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link DelegatingAuditEventRepository}.
@@ -31,8 +32,11 @@ public class DelegatingAuditEventRepository implements AuditEventRepository {
 
     @Override
     public void add(final AuditEvent event) {
-        casEventRepository.ifAvailable(repo ->
-            FunctionUtils.doUnchecked(__ -> {
+        val eventData = event.getData();
+        if (eventData != null && (!eventData.containsKey(CasEventRepository.PARAM_SOURCE)
+            || !"CAS".equalsIgnoreCase(eventData.get(CasEventRepository.PARAM_SOURCE).toString()))) {
+
+            casEventRepository.ifAvailable(Unchecked.consumer(repo -> {
                 val clientInfo = ClientInfoHolder.getClientInfo();
                 val casEvent = new CasEvent();
                 casEvent.setPrincipalId(event.getPrincipal());
@@ -50,6 +54,7 @@ public class DelegatingAuditEventRepository implements AuditEventRepository {
                 }
                 repo.save(casEvent);
             }));
+        }
         auditEventRepository.add(event);
     }
 

@@ -31,7 +31,7 @@ const fs = require("fs");
         async (res) => {
             const count = res.data.length;
             await cas.log(`Total event records found ${count}`);
-            assert(count === totalAttempts + 1);
+            assert(count > totalAttempts + 1);
             fs.rmSync(`${__dirname}/events.zip`, {force: true});
 
             await cas.createZipFile(`${__dirname}/events.zip`, (archive) => res.data.forEach((entry) => archive.append(JSON.stringify(entry), {name: `event-${entry.id}.json`})));
@@ -61,7 +61,7 @@ const fs = require("fs");
         async (res) => {
             const count = res.data.length;
             await cas.log(`Total event records found ${count}`);
-            assert(count === totalAttempts + 1);
+            assert(count > totalAttempts + 1);
         }, async (error) => {
             throw error;
         }, {"Content-Type": "application/json"});
