@@ -123,7 +123,7 @@ public class CasEvent implements Serializable {
     @MapKeyColumn(name = "name")
     @Column(name = "value", length = 4_000)
     @CollectionTable(name = "events_properties", joinColumns = @JoinColumn(name = "eventId"))
-    private Map<String, Object> properties = new HashMap<>();
+    private Map<String, String> properties = new HashMap<>();
 
     /**
      * Put timestamp.
@@ -187,32 +187,32 @@ public class CasEvent implements Serializable {
 
     @JsonIgnore
     public Long getTimestamp() {
-        return Long.valueOf((String) get(FIELD_TIMESTAMP));
+        return Long.valueOf(get(FIELD_TIMESTAMP));
     }
 
     @JsonIgnore
     public String getAgent() {
-        return (String) get(FIELD_AGENT);
+        return get(FIELD_AGENT);
     }
 
     @JsonIgnore
     public String getEventId() {
-        return (String) get(FIELD_EVENT_ID);
+        return get(FIELD_EVENT_ID);
     }
 
     @JsonIgnore
     public String getClientIpAddress() {
-        return (String) get(FIELD_CLIENT_IP);
+        return get(FIELD_CLIENT_IP);
     }
 
     @JsonIgnore
     public String getServerIpAddress() {
-        return (String) get(FIELD_SERVER_IP);
+        return get(FIELD_SERVER_IP);
     }
 
     @JsonIgnore
     public String getTenant() {
-        return (String) get(FIELD_TENANT);
+        return get(FIELD_TENANT);
     }
 
     /**
@@ -238,7 +238,7 @@ public class CasEvent implements Serializable {
      * @param key the key
      * @return the string
      */
-    public Object get(final String key) {
+    public String get(final String key) {
         return this.properties.get(key);
     }
 
@@ -285,7 +285,7 @@ public class CasEvent implements Serializable {
      * @return the device fingerprint
      */
     public String getDeviceFingerprint() {
-        return (String) get(FIELD_DEVICE_FINGERPRINT);
+        return get(FIELD_DEVICE_FINGERPRINT);
     }
 
     /**
@@ -296,10 +296,10 @@ public class CasEvent implements Serializable {
     @JsonIgnore
     public GeoLocationRequest getGeoLocation() {
         val request = new GeoLocationRequest();
-        request.setAccuracy((String) get(FIELD_GEO_ACCURACY));
-        request.setTimestamp((String) get(FIELD_GEO_TIMESTAMP));
-        request.setLongitude((String) get(FIELD_GEO_LONGITUDE));
-        request.setLatitude((String) get(FIELD_GEO_LATITUDE));
+        request.setAccuracy(get(FIELD_GEO_ACCURACY));
+        request.setTimestamp(get(FIELD_GEO_TIMESTAMP));
+        request.setLongitude(get(FIELD_GEO_LONGITUDE));
+        request.setLatitude(get(FIELD_GEO_LATITUDE));
         return request;
     }
 

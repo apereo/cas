@@ -15,6 +15,7 @@ import org.springframework.boot.actuate.audit.InMemoryAuditEventRepository;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -84,6 +85,7 @@ public class DelegatingAuditEventRepository implements AuditEventRepository {
     }
 
     private static AuditEvent auditEventMapper(final CasEvent event) {
-        return new AuditEvent(event.getCreationTime(), event.getPrincipalId(), event.getType(), event.getProperties());
+        return new AuditEvent(event.getCreationTime(), event.getPrincipalId(),
+            event.getType(), new HashMap<>(event.getProperties()));
     }
 }
