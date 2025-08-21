@@ -4,7 +4,8 @@ dependencies {
     api project(":api:cas-server-core-api-util")
 
     compileOnly project(":support:cas-server-support-surrogate-api")
-    
+    compileOnly project(":support:cas-server-support-surrogate-core")
+
     implementation project(":support:cas-server-support-otp-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")
     implementation project(":support:cas-server-support-otp-mfa-core")

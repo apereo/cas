@@ -97,4 +97,10 @@ public interface Principal extends Serializable {
     default Principal withAttributes(final Map<String, List<Object>> attributes) {
         return this;
     }
+
+    @CanIgnoreReturnValue
+    @JsonIgnore
+    default Principal getOwner() {
+        return this;
+    }
 }
