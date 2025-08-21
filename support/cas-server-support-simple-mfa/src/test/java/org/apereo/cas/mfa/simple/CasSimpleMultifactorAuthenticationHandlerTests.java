@@ -130,6 +130,8 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
         ticketRegistry.addTicket(ticket);
         val ticketIdWithoutPrefix = ticket.getId().substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
         val credential = new CasSimpleMultifactorTokenCredential(ticketIdWithoutPrefix);
+        AuthenticationHolder.setCurrentAuthentication(RegisteredServiceTestUtils.getAuthentication(principal));
         assertNotNull(casSimpleMultifactorAuthenticationHandler.authenticate(credential, mock(Service.class)).getPrincipal());
+        AuthenticationHolder.clear();
     }
 }
