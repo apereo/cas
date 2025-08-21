@@ -25,7 +25,7 @@ class ProxyAuthenticationHandlerTests {
 
     @BeforeEach
     void initialize() {
-        authenticationHandler = new ProxyAuthenticationHandler(StringUtils.EMPTY, null, null, 0, new SimpleHttpClientFactoryBean().getObject());
+        authenticationHandler = new ProxyAuthenticationHandler(StringUtils.EMPTY, null, 0, new SimpleHttpClientFactoryBean().getObject());
     }
 
     @Test
@@ -74,7 +74,7 @@ class ProxyAuthenticationHandlerTests {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(900));
         val httpClient = clientFactory.getObject();
-        authenticationHandler = new ProxyAuthenticationHandler(StringUtils.EMPTY, null, null, null, httpClient);
+        authenticationHandler = new ProxyAuthenticationHandler(StringUtils.EMPTY, null, null, httpClient);
         assertThrows(FailedLoginException.class,
             () -> authenticationHandler.authenticate(
                 RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org"),

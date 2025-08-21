@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
 
@@ -32,10 +31,10 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      */
     private final Set<String> users;
 
-    public RejectUsersAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public RejectUsersAuthenticationHandler(final String name,
                                             final PrincipalFactory principalFactory,
                                             final Set<String> rejectedUsers) {
-        super(name, servicesManager, principalFactory, null);
+        super(name, principalFactory, null);
         this.users = rejectedUsers;
     }
 

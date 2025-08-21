@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationProperties;
 import org.apereo.cas.monitor.Monitorable;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
@@ -46,10 +45,10 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     private final String syncopeDomain;
 
     public SyncopeAuthenticationHandler(final SyncopeAuthenticationProperties properties,
-                                        final ServicesManager servicesManager,
+
                                         final PrincipalFactory principalFactory,
                                         final String syncopeDomain) {
-        super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
+        super(properties.getName(), principalFactory, properties.getOrder());
         this.properties = properties;
         this.syncopeDomain = syncopeDomain;
     }

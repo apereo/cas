@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.twilio.CasTwilioMultifactorAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -39,10 +38,10 @@ public class CasTwilioMultifactorAuthenticationHandler extends AbstractPreAndPos
         final CasTwilioMultifactorAuthenticationService casTwilioMultifactorAuthenticationService,
         final CasTwilioMultifactorAuthenticationProperties properties,
         final ConfigurableApplicationContext applicationContext,
-        final ServicesManager servicesManager,
+
         final PrincipalFactory principalFactory,
         final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
-        super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
+        super(properties.getName(), principalFactory, properties.getOrder());
         this.casTwilioMultifactorAuthenticationService = casTwilioMultifactorAuthenticationService;
         this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;
         this.applicationContext = applicationContext;

@@ -58,7 +58,7 @@ public class CasCloudDirectoryAuthenticationAutoConfiguration {
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val cloud = casProperties.getAuthn().getCloudDirectory();
-        val handler = new AmazonCloudDirectoryAuthenticationHandler(cloud.getName(), servicesManager, cloudDirectoryPrincipalFactory, cloudDirectoryRepository, cloud);
+        val handler = new AmazonCloudDirectoryAuthenticationHandler(cloud.getName(), cloudDirectoryPrincipalFactory, cloudDirectoryRepository, cloud);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cloud.getPrincipalTransformation()));
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(cloud.getPasswordEncoder(), applicationContext));
         return handler;

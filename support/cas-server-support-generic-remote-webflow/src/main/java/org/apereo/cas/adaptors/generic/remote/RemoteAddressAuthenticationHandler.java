@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.generic.RemoteAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.google.common.base.Splitter;
 import lombok.Getter;
@@ -44,9 +43,9 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
     private InetAddress inetNetworkRange;
 
     public RemoteAddressAuthenticationHandler(final RemoteAuthenticationProperties props,
-                                              final ServicesManager servicesManager,
+
                                               final PrincipalFactory principalFactory) {
-        super(props.getName(), servicesManager, principalFactory, props.getOrder());
+        super(props.getName(), principalFactory, props.getOrder());
     }
 
     /**

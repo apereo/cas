@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class PrincipalBearingCredentialsAuthenticationHandlerTests {
 
     private final PrincipalBearingCredentialsAuthenticationHandler handler =
-        new PrincipalBearingCredentialsAuthenticationHandler(StringUtils.EMPTY, null,
+        new PrincipalBearingCredentialsAuthenticationHandler(StringUtils.EMPTY,
             PrincipalFactoryUtils.newPrincipalFactory(), null);
 
     /**

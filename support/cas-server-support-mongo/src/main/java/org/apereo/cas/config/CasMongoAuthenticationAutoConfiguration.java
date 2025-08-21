@@ -58,7 +58,7 @@ public class CasMongoAuthenticationAutoConfiguration {
         val mongo = casProperties.getAuthn().getMongo();
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
-        val handler = new MongoDbAuthenticationHandler(mongo.getName(), servicesManager, mongoPrincipalFactory, mongo, mongoTemplate);
+        val handler = new MongoDbAuthenticationHandler(mongo.getName(), mongoPrincipalFactory, mongo, mongoTemplate);
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(mongo.getPasswordEncoder(), applicationContext));
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(mongo.getPrincipalTransformation()));
         return handler;

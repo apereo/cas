@@ -107,7 +107,7 @@ public class CasRedisAuthenticationAutoConfiguration {
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val redis = casProperties.getAuthn().getRedis();
-                val handler = new RedisAuthenticationHandler(redis.getName(), servicesManager,
+                val handler = new RedisAuthenticationHandler(redis.getName(),
                     redisPrincipalFactory, redis.getOrder(), authenticationRedisTemplate);
                 handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(redis.getPrincipalTransformation()));
                 handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(redis.getPasswordEncoder(), applicationContext));

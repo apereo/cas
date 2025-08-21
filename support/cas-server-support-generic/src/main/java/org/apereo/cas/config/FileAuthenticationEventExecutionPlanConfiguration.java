@@ -63,7 +63,7 @@ class FileAuthenticationEventExecutionPlanConfiguration {
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val fileProperties = casProperties.getAuthn().getFile();
-                val h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager, filePrincipalFactory,
+                val h = new FileAuthenticationHandler(fileProperties.getName(), filePrincipalFactory,
                     fileProperties.getFilename(), fileProperties.getSeparator());
                 h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(fileProperties.getPasswordEncoder(), applicationContext));
                 h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration);

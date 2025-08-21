@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.monitor.Monitorable;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.Getter;
@@ -40,12 +39,12 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
     private final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver;
 
     public DuoSecurityAuthenticationHandler(final String name,
-                                            final ServicesManager servicesManager,
+
                                             final PrincipalFactory principalFactory,
                                             final ObjectProvider<DuoSecurityMultifactorAuthenticationProvider> multifactorAuthenticationProvider,
                                             final Integer order,
                                             final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;
         this.multifactorAuthenticationPrincipalResolver = multifactorAuthenticationPrincipalResolver;
     }
@@ -66,7 +65,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
      * return a blank String or null.
      *
      * @param credential Credential to authenticate.
-     * @param service the requesting service, if any.
+     * @param service    the requesting service, if any.
      * @return the result of this handler
      * @throws GeneralSecurityException general security exception for errors
      */
@@ -101,7 +100,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             .map(resolver -> resolver.resolve(principal))
             .orElseThrow(() -> new IllegalStateException("Unable to resolve principal for Duo Security multifactor authentication"));
     }
-    
+
     private AuthenticationHandlerExecutionResult authenticateDuoPasscodeCredential(
         final DuoSecurityPasscodeCredential credential) throws Exception {
         try {

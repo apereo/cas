@@ -48,8 +48,10 @@ class OktaAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer oktaAuthenticationEventExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver,
-            @Qualifier("oktaAuthenticationHandler") final AuthenticationHandler oktaAuthenticationHandler) {
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier("oktaAuthenticationHandler")
+            final AuthenticationHandler oktaAuthenticationHandler) {
             return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(
@@ -73,16 +75,19 @@ class OktaAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationHandler oktaAuthenticationHandler(
-            @Qualifier("oktaPrincipalFactory") final PrincipalFactory oktaPrincipalFactory,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier("oktaAuthenticationClient") final AuthenticationClient oktaAuthenticationClient,
+            @Qualifier("oktaPrincipalFactory")
+            final PrincipalFactory oktaPrincipalFactory,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("oktaAuthenticationClient")
+            final AuthenticationClient oktaAuthenticationClient,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(AuthenticationHandler.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val okta = casProperties.getAuthn().getOkta();
-                    val handler = new OktaAuthenticationHandler(okta.getName(), servicesManager,
+                    val handler = new OktaAuthenticationHandler(okta.getName(),
                         oktaPrincipalFactory, okta, oktaAuthenticationClient);
                     handler.setState(okta.getState());
                     handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(okta.getPrincipalTransformation()));

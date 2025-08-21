@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProf
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.clients.DefaultDelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -68,15 +67,16 @@ class DelegatedClientAuthenticationHandlerTests {
 
         fbClient = new FacebookClient();
         fbClient.setCallbackUrl(CALLBACK_URL);
-        
+
         val factory = mock(DelegatedIdentityProviderFactory.class);
         when(factory.build()).thenReturn(List.of(fbClient));
         when(factory.rebuild()).thenReturn(List.of(fbClient));
         val clients = new DefaultDelegatedIdentityProviders(factory, mock(TenantExtractor.class));
 
         handler = new DelegatedClientAuthenticationHandler(new Pac4jDelegatedAuthenticationCoreProperties(),
-            mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(), clients,
-            DelegatedClientUserProfileProvisioner.noOp(), new JEESessionStore(), applicationContext);
+            PrincipalFactoryUtils.newPrincipalFactory(), clients,
+            DelegatedClientUserProfileProvisioner.noOp(),
+            new JEESessionStore(), applicationContext);
         handler.setTypedIdUsed(true);
 
         val credentials = new OAuth20Credentials(null);

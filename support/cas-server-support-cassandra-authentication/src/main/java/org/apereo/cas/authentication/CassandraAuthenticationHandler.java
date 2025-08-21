@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,11 +25,11 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
     private final CassandraAuthenticationProperties cassandraAuthenticationProperties;
     private final CassandraRepository cassandraRepository;
 
-    public CassandraAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public CassandraAuthenticationHandler(final String name,
                                           final PrincipalFactory principalFactory, final Integer order,
                                           final CassandraAuthenticationProperties cassandraAuthenticationProperties,
                                           final CassandraRepository cassandraRepository) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         this.cassandraAuthenticationProperties = cassandraAuthenticationProperties;
         this.cassandraRepository = cassandraRepository;
     }

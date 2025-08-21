@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationService;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
@@ -40,11 +39,11 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
     public CasSimpleMultifactorAuthenticationHandler(
         final CasSimpleMultifactorAuthenticationProperties properties,
         final ConfigurableApplicationContext applicationContext,
-        final ServicesManager servicesManager,
+
         final PrincipalFactory principalFactory,
         final CasSimpleMultifactorAuthenticationService mfaService,
         final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
-        super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
+        super(properties.getName(), principalFactory, properties.getOrder());
         this.multifactorAuthenticationService = mfaService;
         this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;
         this.applicationContext = applicationContext;

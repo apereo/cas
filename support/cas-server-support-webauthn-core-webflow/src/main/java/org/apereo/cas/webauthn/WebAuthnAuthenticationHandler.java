@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.monitor.Monitorable;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 
 import com.yubico.core.RegistrationStorage;
@@ -37,13 +36,13 @@ public class WebAuthnAuthenticationHandler extends AbstractPreAndPostProcessingA
     private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
     public WebAuthnAuthenticationHandler(final String name,
-                                         final ServicesManager servicesManager,
+
                                          final PrincipalFactory principalFactory,
                                          final RegistrationStorage webAuthnCredentialRepository,
                                          final SessionManager sessionManager,
                                          final Integer order,
                                          final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         this.webAuthnCredentialRepository = webAuthnCredentialRepository;
         this.sessionManager = sessionManager;
         this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;

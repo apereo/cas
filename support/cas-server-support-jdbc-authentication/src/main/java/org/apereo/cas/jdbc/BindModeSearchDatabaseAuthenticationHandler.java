@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.jdbc.authn.BindJdbcAuthenticationProperties;
 import org.apereo.cas.monitor.Monitorable;
-import org.apereo.cas.services.ServicesManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import javax.security.auth.login.FailedLoginException;
@@ -28,9 +27,9 @@ import java.util.ArrayList;
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler<BindJdbcAuthenticationProperties> {
 
     public BindModeSearchDatabaseAuthenticationHandler(
-        final BindJdbcAuthenticationProperties properties, final ServicesManager servicesManager,
+        final BindJdbcAuthenticationProperties properties,
         final PrincipalFactory principalFactory, final DataSource dataSource) {
-        super(properties, servicesManager, principalFactory, dataSource);
+        super(properties, principalFactory, dataSource);
     }
 
     @Override

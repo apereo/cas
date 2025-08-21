@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.support.inwebo.service.response.InweboDeviceNameResponse;
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
@@ -36,7 +35,7 @@ class InweboAuthenticationHandlerTests {
         response.setResult(InweboResult.OK);
 
         when(inweboService.authenticateExtended(anyString(), anyString())).thenReturn(response);
-        val handler = new InweboAuthenticationHandler(mock(ServicesManager.class),
+        val handler = new InweboAuthenticationHandler(
             PrincipalFactoryUtils.newPrincipalFactory(),
             new InweboMultifactorAuthenticationProperties(),
             inweboService, new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
@@ -58,7 +57,7 @@ class InweboAuthenticationHandlerTests {
         response.setResult(InweboResult.OK);
 
         when(inweboService.authenticateExtended(anyString(), anyString())).thenReturn(response);
-        val handler = new InweboAuthenticationHandler(mock(ServicesManager.class),
+        val handler = new InweboAuthenticationHandler(
             PrincipalFactoryUtils.newPrincipalFactory(),
             new InweboMultifactorAuthenticationProperties(), inweboService,
             new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));

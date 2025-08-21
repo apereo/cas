@@ -13,7 +13,6 @@ import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthentica
 import org.apereo.cas.configuration.model.support.jdbc.authn.SearchJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.multitenancy.TenantDefinition;
-import org.apereo.cas.services.ServicesManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,7 +32,6 @@ public class TenantJdbcAuthenticationHandlerBuilder implements TenantAuthenticat
     private final PasswordPolicyContext passwordPolicyConfiguration;
     private final PrincipalFactory jdbcPrincipalFactory;
     private final ConfigurableApplicationContext applicationContext;
-    private final ServicesManager servicesManager;
 
     @Override
     public List<AuthenticationHandler> buildInternal(final TenantDefinition tenantDefinition,
@@ -63,7 +61,7 @@ public class TenantJdbcAuthenticationHandlerBuilder implements TenantAuthenticat
         final List<AuthenticationHandler> finalHandlers) {
         container.forEach(properties -> {
             val handler = JdbcAuthenticationUtils.newAuthenticationHandler(properties, applicationContext,
-                jdbcPrincipalFactory, servicesManager, passwordPolicyConfiguration);
+                jdbcPrincipalFactory, passwordPolicyConfiguration);
             finalHandlers.add(handler.markDisposable());
         });
     }

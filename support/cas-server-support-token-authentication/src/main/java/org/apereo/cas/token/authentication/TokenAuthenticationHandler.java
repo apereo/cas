@@ -27,12 +27,13 @@ import java.util.ArrayList;
  */
 @Slf4j
 public class TokenAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-
+    private final ServicesManager servicesManager;
 
     public TokenAuthenticationHandler(final ServicesManager servicesManager,
                                       final PrincipalFactory principalFactory,
                                       final TokenAuthenticationProperties properties) {
-        super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
+        super(properties.getName(), principalFactory, properties.getOrder());
+        this.servicesManager = servicesManager;
     }
 
     @Override
@@ -40,7 +41,7 @@ public class TokenAuthenticationHandler extends AbstractPreAndPostProcessingAuth
         final Credential credential, final Service service) throws PreventedException {
         try {
             val tokenCredential = (BasicIdentifiableCredential) credential;
-            val registeredService = getServicesManager().findServiceBy(service);
+            val registeredService = servicesManager.findServiceBy(service);
             val profile = TokenAuthenticationSecurity.forRegisteredService(registeredService).validateToken(tokenCredential.getId());
             Assert.notNull(profile, "Authentication attempt failed to produce an authenticated profile");
             val attributes = CollectionUtils.toMultiValuedMap(profile.getAttributes());

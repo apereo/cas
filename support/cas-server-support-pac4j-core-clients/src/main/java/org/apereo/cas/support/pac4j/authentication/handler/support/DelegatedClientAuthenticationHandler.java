@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProf
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.support.WebUtils;
@@ -47,13 +46,13 @@ public class DelegatedClientAuthenticationHandler extends BaseDelegatedClientAut
     private final ConfigurableApplicationContext applicationContext;
 
     public DelegatedClientAuthenticationHandler(final Pac4jDelegatedAuthenticationCoreProperties properties,
-                                                final ServicesManager servicesManager,
+
                                                 final PrincipalFactory principalFactory,
                                                 final DelegatedIdentityProviders identityProviders,
                                                 final DelegatedClientUserProfileProvisioner profileProvisioner,
                                                 final SessionStore sessionStore,
                                                 final ConfigurableApplicationContext applicationContext) {
-        super(properties.getName(), servicesManager, principalFactory, properties.getOrder(), sessionStore);
+        super(properties.getName(), principalFactory, properties.getOrder(), sessionStore);
         this.identityProviders = identityProviders;
         this.profileProvisioner = profileProvisioner;
         this.applicationContext = applicationContext;

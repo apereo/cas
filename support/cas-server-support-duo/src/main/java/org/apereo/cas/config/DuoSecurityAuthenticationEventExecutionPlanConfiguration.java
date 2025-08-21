@@ -148,7 +148,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                                 .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
                                 .orElseThrow(() -> new IllegalArgumentException("Unable to locate multifactor authentication provider by id " + props.getId()));
                             return new DuoSecurityAuthenticationHandler(props.getName(),
-                                servicesManager, duoPrincipalFactory,
+                                duoPrincipalFactory,
                                 new DirectObjectProvider<>(provider),
                                 props.getOrder(), resolvers);
                         })

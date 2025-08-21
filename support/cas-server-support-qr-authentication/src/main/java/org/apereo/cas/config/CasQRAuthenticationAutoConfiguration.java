@@ -165,7 +165,7 @@ public class CasQRAuthenticationAutoConfiguration {
             final QRAuthenticationTokenValidatorService qrAuthenticationTokenValidatorService,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
-            return new QRAuthenticationTokenAuthenticationHandler(servicesManager, qrAuthenticationPrincipalFactory, qrAuthenticationTokenValidatorService);
+            return new QRAuthenticationTokenAuthenticationHandler(qrAuthenticationPrincipalFactory, qrAuthenticationTokenValidatorService);
         }
 
     }

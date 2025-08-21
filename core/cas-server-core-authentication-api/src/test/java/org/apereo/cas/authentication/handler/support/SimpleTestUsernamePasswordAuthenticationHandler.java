@@ -62,7 +62,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
     }
 
     public SimpleTestUsernamePasswordAuthenticationHandler(final String name) {
-        super(name, null, PrincipalFactoryUtils.newPrincipalFactory(), null);
+        super(name, PrincipalFactoryUtils.newPrincipalFactory(), null);
     }
 
     public void addMessageDescriptor(final MessageDescriptor msg) {
