@@ -42,6 +42,7 @@ public class DelegatingAuditEventRepository implements AuditEventRepository {
                 casEvent.setType(event.getType());
                 casEvent.putTimestamp(event.getTimestamp().toEpochMilli());
                 casEvent.setCreationTime(event.getTimestamp());
+                casEvent.putEventId(event.getType());
 
                 if (clientInfo != null) {
                     casEvent.putClientIpAddress(clientInfo.getClientIpAddress());
