@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
 import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.multitenancy.TenantDefinition;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +25,6 @@ import java.util.List;
 public class TenantRestAuthenticationHandlerBuilder implements TenantAuthenticationHandlerBuilder {
     private final ConfigurableApplicationContext applicationContext;
     private final PrincipalFactory principalFactory;
-    private final ServicesManager servicesManager;
     private final HttpClient httpClient;
 
     @Override
@@ -40,7 +38,7 @@ public class TenantRestAuthenticationHandlerBuilder implements TenantAuthenticat
                 .getRest()
                 .stream()
                 .map(prop -> {
-                    val handler = new RestAuthenticationHandler(servicesManager,
+                    val handler = new RestAuthenticationHandler(
                         principalFactory, prop, applicationContext, httpClient);
                     return handler.markDisposable();
                 })

@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,9 +23,9 @@ import lombok.val;
  */
 @Slf4j
 public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
-    public PrincipalBearingCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public PrincipalBearingCredentialsAuthenticationHandler(final String name,
                                                             final PrincipalFactory principalFactory, final Integer order) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
     }
 
     @Override

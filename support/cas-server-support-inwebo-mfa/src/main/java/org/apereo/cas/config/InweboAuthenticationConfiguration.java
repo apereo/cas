@@ -89,7 +89,7 @@ class InweboAuthenticationConfiguration {
             final ServicesManager servicesManager,
             @Qualifier("inweboService")
             final InweboService inweboService) {
-            return new InweboAuthenticationHandler(servicesManager,
+            return new InweboAuthenticationHandler(
                 inweboPrincipalFactory, casProperties.getAuthn().getMfa().getInwebo(),
                 inweboService, multifactorAuthenticationProvider);
         }

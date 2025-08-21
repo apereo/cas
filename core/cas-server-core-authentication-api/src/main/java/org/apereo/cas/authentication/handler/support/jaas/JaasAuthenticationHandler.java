@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.services.ServicesManager;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -95,18 +94,9 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     private File loginConfigurationFile;
 
-    /**
-     * Instantiates a new Jaas authentication handler,
-     * and attempts to load/verify the configuration.
-     *
-     * @param name             the name
-     * @param servicesManager  the services manager
-     * @param principalFactory the principal factory
-     * @param order            the order
-     */
-    public JaasAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public JaasAuthenticationHandler(final String name, final PrincipalFactory principalFactory,
                                      final Integer order) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
     }
 
     @Override

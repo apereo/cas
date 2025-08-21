@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.qr.validation.QRAuthenticationTokenValidationRequest;
 import org.apereo.cas.qr.validation.QRAuthenticationTokenValidatorService;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -29,11 +28,11 @@ public class QRAuthenticationTokenAuthenticationHandler extends AbstractPreAndPo
 
     private final QRAuthenticationTokenValidatorService tokenValidatorService;
 
-    public QRAuthenticationTokenAuthenticationHandler(final ServicesManager servicesManager,
+    public QRAuthenticationTokenAuthenticationHandler(
         final PrincipalFactory principalFactory,
         final QRAuthenticationTokenValidatorService tokenValidatorService) {
-        
-        super(StringUtils.EMPTY, servicesManager, principalFactory, 0);
+
+        super(StringUtils.EMPTY, principalFactory, 0);
         this.tokenValidatorService = tokenValidatorService;
     }
 

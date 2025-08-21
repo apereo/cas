@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryEncodeJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import lombok.val;
@@ -209,7 +208,7 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
 
     private QueryAndEncodeDatabaseAuthenticationHandler getAuthenticationHandler(final QueryEncodeJdbcAuthenticationProperties properties) {
         return (QueryAndEncodeDatabaseAuthenticationHandler) JdbcAuthenticationUtils.newAuthenticationHandler(properties, applicationContext,
-            PrincipalFactoryUtils.newPrincipalFactory(), mock(ServicesManager.class), new PasswordPolicyContext(), dataSource);
+            PrincipalFactoryUtils.newPrincipalFactory(), new PasswordPolicyContext(), dataSource);
     }
 
     @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)

@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.generic.RemoteAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +25,10 @@ public class RemoteCookieAuthenticationHandler extends AbstractAuthenticationHan
     private final CipherExecutor<Serializable, String> remoteCookieCipherExecutor;
 
     public RemoteCookieAuthenticationHandler(final RemoteAuthenticationProperties props,
-                                             final ServicesManager servicesManager,
+
                                              final PrincipalFactory principalFactory,
                                              final CipherExecutor remoteCookieCipherExecutor) {
-        super(props.getName(), servicesManager, principalFactory, props.getOrder());
+        super(props.getName(), principalFactory, props.getOrder());
         this.remoteCookieCipherExecutor = remoteCookieCipherExecutor;
     }
 

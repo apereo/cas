@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 
 import com.google.common.base.Splitter;
@@ -48,9 +47,9 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
 
     private final long poolTimeoutInMilliseconds;
 
-    public JcifsSpnegoAuthenticationHandler(final SpnegoProperties spnegoProperties, final ServicesManager servicesManager,
+    public JcifsSpnegoAuthenticationHandler(final SpnegoProperties spnegoProperties,
                                             final PrincipalFactory principalFactory, final BlockingQueue<List<Authentication>> authenticationsPool) {
-        super(spnegoProperties.getName(), servicesManager, principalFactory, spnegoProperties.getOrder());
+        super(spnegoProperties.getName(), principalFactory, spnegoProperties.getOrder());
         this.authenticationsPool = authenticationsPool;
         this.principalWithDomainName = spnegoProperties.isPrincipalWithDomainName();
         this.ntlmAllowed = spnegoProperties.isNtlmAllowed();
@@ -82,7 +81,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
     }
 
     protected AuthenticationHandlerExecutionResult doInternalAuthentication(final List<Authentication> authentications,
-                             final SpnegoCredential spnegoCredential, final Service service) throws Throwable {
+                                                                            final SpnegoCredential spnegoCredential, final Service service) throws Throwable {
         var principal = (java.security.Principal) null;
         var nextToken = (byte[]) null;
         val it = authentications.iterator();

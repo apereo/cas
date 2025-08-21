@@ -53,7 +53,7 @@ class CasJdbcStoredProcedureAuthenticationConfiguration {
         val jdbc = casProperties.getAuthn().getJdbc();
         jdbc.getProcedure().forEach(properties -> {
             val handler = JdbcAuthenticationUtils.newAuthenticationHandler(properties, applicationContext,
-                jdbcPrincipalFactory, servicesManager, storedProcedurePasswordPolicyConfiguration);
+                jdbcPrincipalFactory, storedProcedurePasswordPolicyConfiguration);
             handlers.add(handler);
         });
         return handlers;

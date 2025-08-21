@@ -55,7 +55,7 @@ class YubiKeyAuthenticationHandlerTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
+
     @BeforeEach
     void before() throws Exception {
         val context = MockRequestContext.create(applicationContext);
@@ -116,7 +116,7 @@ class YubiKeyAuthenticationHandlerTests {
             new DefaultYubiKeyAccountValidator(YubicoClient.getClient(CLIENT_ID, SECRET_KEY)));
         registry.setCipherExecutor(CipherExecutor.noOpOfSerializableToString());
         val handler = new YubiKeyAuthenticationHandler(StringUtils.EMPTY,
-            null, PrincipalFactoryUtils.newPrincipalFactory(),
+            PrincipalFactoryUtils.newPrincipalFactory(),
             YubicoClient.getClient(CLIENT_ID, SECRET_KEY),
             registry, null, new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
         assertThrows(AccountNotFoundException.class, () -> handler.authenticate(new YubiKeyCredential(OTP), mock(Service.class)));

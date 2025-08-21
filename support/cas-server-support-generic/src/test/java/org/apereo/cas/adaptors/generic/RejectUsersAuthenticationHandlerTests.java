@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.ServicesManager;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -31,7 +30,7 @@ class RejectUsersAuthenticationHandlerTests {
         users.add("scott");
         users.add("dima");
         users.add("bill");
-        authenticationHandler = new RejectUsersAuthenticationHandler(StringUtils.EMPTY, mock(ServicesManager.class),
+        authenticationHandler = new RejectUsersAuthenticationHandler(StringUtils.EMPTY,
             PrincipalFactoryUtils.newPrincipalFactory(), users);
     }
 

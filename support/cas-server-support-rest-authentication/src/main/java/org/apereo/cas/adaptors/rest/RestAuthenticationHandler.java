@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
@@ -71,12 +70,12 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     private final HttpClient httpClient;
 
-    public RestAuthenticationHandler(final ServicesManager servicesManager,
-                                     final PrincipalFactory principalFactory,
-                                     final RestAuthenticationProperties properties,
-                                     final ConfigurableApplicationContext applicationContext,
-                                     final HttpClient httpClient) {
-        super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
+    public RestAuthenticationHandler(
+        final PrincipalFactory principalFactory,
+        final RestAuthenticationProperties properties,
+        final ConfigurableApplicationContext applicationContext,
+        final HttpClient httpClient) {
+        super(properties.getName(), principalFactory, properties.getOrder());
         this.properties = properties;
         this.httpClient = httpClient;
         setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(properties.getPasswordEncoder(), applicationContext));

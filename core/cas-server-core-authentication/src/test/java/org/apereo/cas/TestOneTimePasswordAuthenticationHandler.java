@@ -24,9 +24,9 @@ import java.util.Map;
 public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private final Map<String, String> credentialMap;
-    
+
     public TestOneTimePasswordAuthenticationHandler(final Map<String, String> credentialMap) {
-        super(StringUtils.EMPTY, null, PrincipalFactoryUtils.newPrincipalFactory(), null);
+        super(StringUtils.EMPTY, PrincipalFactoryUtils.newPrincipalFactory(), null);
         this.credentialMap = credentialMap;
     }
 

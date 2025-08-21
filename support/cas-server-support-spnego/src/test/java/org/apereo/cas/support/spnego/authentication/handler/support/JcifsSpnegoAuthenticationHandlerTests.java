@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.MockJcifsAuthentication;
 import org.apereo.cas.support.spnego.MockUnsuccessfulJcifsAuthentication;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
@@ -40,7 +39,8 @@ class JcifsSpnegoAuthenticationHandlerTests {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
-        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true), null, null, queue);
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true),
+            PrincipalFactoryUtils.newPrincipalFactory(), queue);
         assertNotNull(authenticationHandler.authenticate(credentials, mock(Service.class)));
         assertEquals("test", credentials.getPrincipal().getId());
         assertNotNull(credentials.getNextToken());
@@ -52,7 +52,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
-        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(false, true), null, null, queue);
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(false, true), null, queue);
         assertNotNull(authenticationHandler.authenticate(credentials, mock(Service.class)));
         assertEquals("test", credentials.getPrincipal().getId());
         assertNotNull(credentials.getNextToken());
@@ -63,7 +63,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockUnsuccessfulJcifsAuthentication(true)));
-        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true), null, null, queue);
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true), null, queue);
 
         authenticate(credentials, authenticationHandler);
     }
@@ -83,7 +83,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
         val credentials = new SpnegoCredential(new byte[]{0, 1, 2});
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockUnsuccessfulJcifsAuthentication(false)));
-        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true), null, null, queue);
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true), null, queue);
 
         authenticate(credentials, authenticationHandler);
     }
@@ -92,7 +92,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
     void verifySupports() {
         val queue = new ArrayBlockingQueue<List<Authentication>>(POOL_SIZE);
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
-        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true), null, null, queue);
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true), null, queue);
 
         assertFalse(authenticationHandler.supports((Credential) null));
         assertTrue(authenticationHandler.supports(new SpnegoCredential(new byte[]{0, 1, 2})));
@@ -109,13 +109,13 @@ class JcifsSpnegoAuthenticationHandlerTests {
         queue.add(CollectionUtils.wrapList(new MockJcifsAuthentication()));
 
         val factory = PrincipalFactoryUtils.newPrincipalFactory();
-        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true), null, null, queue);
+        val authenticationHandler = new JcifsSpnegoAuthenticationHandler(getProperties(true, true), null, queue);
 
         assertEquals(factory.createPrincipal(myNtlmUser), authenticationHandler.getPrincipal(myNtlmUser, true));
         assertEquals(factory.createPrincipal(myNtlmUserWithNoDomain), authenticationHandler.getPrincipal(myNtlmUserWithNoDomain, false));
         assertEquals(factory.createPrincipal(myKerberosUser), authenticationHandler.getPrincipal(myKerberosUser, false));
 
-        val handlerNoDomain = new JcifsSpnegoAuthenticationHandler(getProperties(false, true), mock(ServicesManager.class),
+        val handlerNoDomain = new JcifsSpnegoAuthenticationHandler(getProperties(false, true),
             PrincipalFactoryUtils.newPrincipalFactory(), queue);
         assertEquals(factory.createPrincipal(USERNAME), handlerNoDomain.getPrincipal(myNtlmUser, true));
         assertEquals(factory.createPrincipal(USERNAME), handlerNoDomain.getPrincipal(myNtlmUserWithNoDomain, true));

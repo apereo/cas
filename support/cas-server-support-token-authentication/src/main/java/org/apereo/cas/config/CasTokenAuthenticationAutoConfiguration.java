@@ -117,7 +117,7 @@ public class CasTokenAuthenticationAutoConfiguration {
             @Qualifier("tokenPrincipalFactory")
             final PrincipalFactory tokenPrincipalFactory) {
             val token = casProperties.getAuthn().getToken();
-            val handler = new OAuth20AccessTokenAuthenticationHandler(servicesManager, tokenPrincipalFactory, applicationContext, token);
+            val handler = new OAuth20AccessTokenAuthenticationHandler(tokenPrincipalFactory, applicationContext, token);
             handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(token.getCredentialCriteria()));
             handler.setState(token.getState());
             return handler;

@@ -82,7 +82,7 @@ class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabaseAuthent
     void verifySuccess() throws Throwable {
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD).setFieldDisabled("disabled");
         properties.setPrincipalAttributeList(List.of("location"));
-        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
+        val q = new QueryDatabaseAuthenticationHandler(properties, PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
         val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val result = q.authenticate(credential, mock(Service.class));
         assertNotNull(result);

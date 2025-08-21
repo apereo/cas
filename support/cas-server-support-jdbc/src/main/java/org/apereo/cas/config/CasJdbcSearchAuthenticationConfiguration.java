@@ -52,8 +52,9 @@ class CasJdbcSearchAuthenticationConfiguration {
         val handlers = new HashSet<AuthenticationHandler>();
         val jdbc = casProperties.getAuthn().getJdbc();
         jdbc.getSearch().forEach(properties -> {
-            val handler = JdbcAuthenticationUtils.newAuthenticationHandler(properties, applicationContext, jdbcPrincipalFactory,
-                servicesManager, searchModePasswordPolicyConfiguration);
+            val handler = JdbcAuthenticationUtils.newAuthenticationHandler(properties,
+                applicationContext, jdbcPrincipalFactory,
+                searchModePasswordPolicyConfiguration);
             handlers.add(handler);
         });
         return handlers;

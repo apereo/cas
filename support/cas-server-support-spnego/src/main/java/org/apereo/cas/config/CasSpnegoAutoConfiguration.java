@@ -50,8 +50,8 @@ import java.util.stream.IntStream;
 public class CasSpnegoAutoConfiguration {
 
     private static BeanContainer<Authentication> buildSpnegoAuthentications(
-            final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) {
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext) {
         val spnegoSystem = casProperties.getAuthn().getSpnego().getSystem();
 
         JcifsConfig.SystemSettings.initialize(applicationContext, spnegoSystem.getLoginConf());
@@ -68,29 +68,29 @@ public class CasSpnegoAutoConfiguration {
 
         val props = casProperties.getAuthn().getSpnego().getProperties();
         return BeanContainer.of(props.stream()
-                .map(p -> {
-                    val c = new JcifsConfig();
-                    val jcifsSettings = c.getJcifsSettings();
-                    jcifsSettings.setJcifsDomain(p.getJcifsDomain());
-                    jcifsSettings.setJcifsDomainController(p.getJcifsDomainController());
-                    jcifsSettings.setJcifsNetbiosCachePolicy(p.getCachePolicy());
-                    jcifsSettings.setJcifsNetbiosWins(p.getJcifsNetbiosWins());
-                    jcifsSettings.setJcifsPassword(p.getJcifsPassword());
-                    jcifsSettings.setJcifsServicePassword(p.getJcifsServicePassword());
-                    jcifsSettings.setJcifsServicePrincipal(p.getJcifsServicePrincipal());
-                    jcifsSettings.setJcifsSocketTimeout(Beans.newDuration(p.getTimeout()).toMillis());
-                    jcifsSettings.setJcifsUsername(p.getJcifsUsername());
-                    return new Authentication(jcifsSettings.getProperties());
-                })
-                .collect(Collectors.toList()));
+            .map(p -> {
+                val c = new JcifsConfig();
+                val jcifsSettings = c.getJcifsSettings();
+                jcifsSettings.setJcifsDomain(p.getJcifsDomain());
+                jcifsSettings.setJcifsDomainController(p.getJcifsDomainController());
+                jcifsSettings.setJcifsNetbiosCachePolicy(p.getCachePolicy());
+                jcifsSettings.setJcifsNetbiosWins(p.getJcifsNetbiosWins());
+                jcifsSettings.setJcifsPassword(p.getJcifsPassword());
+                jcifsSettings.setJcifsServicePassword(p.getJcifsServicePassword());
+                jcifsSettings.setJcifsServicePrincipal(p.getJcifsServicePrincipal());
+                jcifsSettings.setJcifsSocketTimeout(Beans.newDuration(p.getTimeout()).toMillis());
+                jcifsSettings.setJcifsUsername(p.getJcifsUsername());
+                return new Authentication(jcifsSettings.getProperties());
+            })
+            .collect(Collectors.toList()));
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "spnegoAuthenticationsPool")
     public BlockingQueue<List<Authentication>> spnegoAuthenticationsPool(
-            final CasConfigurationProperties casProperties,
-            final ConfigurableApplicationContext applicationContext) {
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         val poolSize = spnegoProperties.getPoolSize();
         return IntStream.range(0, poolSize).mapToObj(i -> buildSpnegoAuthentications(casProperties, applicationContext).toList())
@@ -110,7 +110,7 @@ public class CasSpnegoAutoConfiguration {
         final CasConfigurationProperties casProperties) {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         return new JcifsSpnegoAuthenticationHandler(spnegoProperties,
-            servicesManager, spnegoPrincipalFactory, spnegoAuthenticationsPool);
+            spnegoPrincipalFactory, spnegoAuthenticationsPool);
     }
 
     @Bean

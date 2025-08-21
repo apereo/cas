@@ -86,7 +86,7 @@ public class CasRemoteAuthenticationAutoConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new RemoteAuthenticationNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
-                            serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, casProperties.getAuthn().getRemote()))
+                    serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy, casProperties.getAuthn().getRemote()))
                 .withId(CasWebflowConstants.ACTION_ID_REMOTE_AUTHENTICATION_ADDRESS_CHECK)
                 .build()
                 .get();
@@ -127,7 +127,7 @@ public class CasRemoteAuthenticationAutoConfiguration {
                 .supply(() -> {
                     val remoteAddress = casProperties.getAuthn().getRemote();
                     val bean = new RemoteAddressAuthenticationHandler(remoteAddress,
-                        servicesManager, remoteAddressPrincipalFactory);
+                        remoteAddressPrincipalFactory);
                     bean.configureIpNetworkRange(remoteAddress.getIpAddressRange());
                     return bean;
                 })
@@ -152,7 +152,7 @@ public class CasRemoteAuthenticationAutoConfiguration {
                     .given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val remote = casProperties.getAuthn().getRemote();
-                    return new RemoteCookieAuthenticationHandler(remote, servicesManager,
+                    return new RemoteCookieAuthenticationHandler(remote,
                         remoteAddressPrincipalFactory, remoteCookieCipherExecutor);
                 })
                 .otherwiseProxy()

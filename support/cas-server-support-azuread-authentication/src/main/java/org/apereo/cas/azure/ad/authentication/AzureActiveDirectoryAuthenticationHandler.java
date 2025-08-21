@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -49,10 +48,10 @@ public class AzureActiveDirectoryAuthenticationHandler extends AbstractUsernameP
 
     private final AzureActiveDirectoryAuthenticationProperties properties;
 
-    public AzureActiveDirectoryAuthenticationHandler(final ServicesManager servicesManager,
-                                                     final PrincipalFactory principalFactory,
-                                                     final AzureActiveDirectoryAuthenticationProperties properties) {
-        super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
+    public AzureActiveDirectoryAuthenticationHandler(
+        final PrincipalFactory principalFactory,
+        final AzureActiveDirectoryAuthenticationProperties properties) {
+        super(properties.getName(), principalFactory, properties.getOrder());
         this.properties = properties;
     }
 

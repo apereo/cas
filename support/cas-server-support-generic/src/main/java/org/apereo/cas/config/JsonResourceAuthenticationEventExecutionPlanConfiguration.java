@@ -55,7 +55,7 @@ class JsonResourceAuthenticationEventExecutionPlanConfiguration {
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val jsonProps = casProperties.getAuthn().getJson();
-        val h = new JsonResourceAuthenticationHandler(jsonProps.getName(), servicesManager, jsonPrincipalFactory, null, jsonProps.getLocation());
+        val h = new JsonResourceAuthenticationHandler(jsonProps.getName(), jsonPrincipalFactory, null, jsonProps.getLocation());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jsonProps.getPasswordEncoder(), applicationContext));
         if (jsonProps.getPasswordPolicy().isEnabled()) {
             h.setPasswordPolicyConfiguration(new PasswordPolicyContext(jsonProps.getPasswordPolicy()));

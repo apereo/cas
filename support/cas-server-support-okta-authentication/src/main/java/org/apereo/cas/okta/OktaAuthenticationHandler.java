@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.okta.OktaAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
 
 import com.okta.authn.sdk.client.AuthenticationClient;
@@ -30,11 +29,11 @@ public class OktaAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     private final AuthenticationClient oktaAuthenticationClient;
 
-    public OktaAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public OktaAuthenticationHandler(final String name,
                                      final PrincipalFactory principalFactory,
                                      final OktaAuthenticationProperties properties,
                                      final AuthenticationClient oktaAuthenticationClient) {
-        super(name, servicesManager, principalFactory, properties.getOrder());
+        super(name, principalFactory, properties.getOrder());
         this.properties = properties;
         this.oktaAuthenticationClient = oktaAuthenticationClient;
     }

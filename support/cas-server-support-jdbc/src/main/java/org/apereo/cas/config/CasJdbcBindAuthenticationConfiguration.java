@@ -53,7 +53,7 @@ class CasJdbcBindAuthenticationConfiguration {
         val jdbc = casProperties.getAuthn().getJdbc();
         jdbc.getBind().forEach(properties -> {
             val handler = JdbcAuthenticationUtils.newAuthenticationHandler(properties, applicationContext,
-                jdbcPrincipalFactory, servicesManager, bindSearchPasswordPolicyConfiguration);
+                jdbcPrincipalFactory, bindSearchPasswordPolicyConfiguration);
             handlers.add(handler);
         });
         return handlers;
@@ -72,7 +72,7 @@ class CasJdbcBindAuthenticationConfiguration {
     public PasswordPolicyContext bindModePasswordPolicyConfiguration() {
         return new PasswordPolicyContext();
     }
-    
+
     @ConditionalOnMissingBean(name = "bindModeAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

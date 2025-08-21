@@ -14,7 +14,6 @@ import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket
 import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationAccountService;
 import org.apereo.cas.mfa.simple.validation.DefaultCasSimpleMultifactorAuthenticationService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -62,10 +61,6 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier(ServicesManager.BEAN_NAME)
-    private ServicesManager servicesManager;
 
     @Autowired
     @Qualifier(CasSimpleMultifactorAuthenticationAccountService.BEAN_NAME)
@@ -116,7 +111,7 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
 
         val mfaService = new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry, defaultTicketFactory, accountService);
         val handler = new CasSimpleMultifactorAuthenticationHandler(casProperties.getAuthn().getMfa().getSimple(),
-            applicationContext, servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), mfaService,
+            applicationContext, PrincipalFactoryUtils.newPrincipalFactory(), mfaService,
             new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
         assertThrows(MultifactorAuthenticationFailedException.class, () -> handler.authenticate(credential, mock(Service.class)));
     }

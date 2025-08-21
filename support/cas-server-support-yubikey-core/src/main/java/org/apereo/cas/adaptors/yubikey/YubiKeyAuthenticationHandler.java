@@ -8,10 +8,8 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import com.yubico.client.v2.ResponseStatus;
 import com.yubico.client.v2.YubicoClient;
 import lombok.Getter;
@@ -19,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -47,13 +44,13 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
     private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
     public YubiKeyAuthenticationHandler(final String name,
-                                        final ServicesManager servicesManager,
+
                                         final PrincipalFactory principalFactory,
                                         final YubicoClient client,
                                         final YubiKeyAccountRegistry registry,
                                         final Integer order,
                                         final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         this.registry = registry;
         this.client = client;
         this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;
@@ -61,7 +58,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
 
     public YubiKeyAuthenticationHandler(final YubicoClient client,
                                         final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
-        this(StringUtils.EMPTY, null, null,
+        this(StringUtils.EMPTY, null,
             client, new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()), null,
             multifactorAuthenticationProvider);
     }

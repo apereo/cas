@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.inwebo.service.InweboService;
 
 import lombok.Getter;
@@ -33,15 +32,12 @@ public class InweboAuthenticationHandler extends AbstractPreAndPostProcessingAut
 
     private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
-    public InweboAuthenticationHandler(final ServicesManager servicesManager,
-                                       final PrincipalFactory principalFactory,
-                                       final InweboMultifactorAuthenticationProperties inweboProperties,
-                                       final InweboService service,
-                                       final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
-        super(inweboProperties.getName(),
-              servicesManager,
-              principalFactory,
-              inweboProperties.getOrder());
+    public InweboAuthenticationHandler(
+        final PrincipalFactory principalFactory,
+        final InweboMultifactorAuthenticationProperties inweboProperties,
+        final InweboService service,
+        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
+        super(inweboProperties.getName(), principalFactory, inweboProperties.getOrder());
         this.service = service;
         this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;
     }

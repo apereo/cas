@@ -21,6 +21,7 @@ import org.springframework.core.io.Resource;
  */
 @Slf4j
 public class GroovyAuthenticationHandler extends AbstractAuthenticationHandler {
+    private final ServicesManager servicesManager;
     private final ExecutableCompiledScript watchableScript;
 
     public GroovyAuthenticationHandler(final String name,
@@ -28,14 +29,15 @@ public class GroovyAuthenticationHandler extends AbstractAuthenticationHandler {
                                        final PrincipalFactory principalFactory,
                                        final Resource groovyResource,
                                        final Integer order) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
         this.watchableScript = scriptFactory.fromResource(groovyResource);
+        this.servicesManager = servicesManager;
     }
 
     @Override
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) throws Throwable {
-        val args = new Object[]{this, credential, getServicesManager(), getPrincipalFactory(), LOGGER};
+        val args = new Object[]{this, credential, servicesManager, getPrincipalFactory(), LOGGER};
         return watchableScript.execute("authenticate", AuthenticationHandlerExecutionResult.class, args);
     }
 

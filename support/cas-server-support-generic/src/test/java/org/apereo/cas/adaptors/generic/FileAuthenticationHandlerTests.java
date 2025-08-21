@@ -34,7 +34,8 @@ class FileAuthenticationHandlerTests {
 
     @BeforeEach
     void initialize() {
-        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null, null, new ClassPathResource("authentication.txt"),
+        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY,
+            PrincipalFactoryUtils.newPrincipalFactory(), new ClassPathResource("authentication.txt"),
             FileAuthenticationHandler.DEFAULT_SEPARATOR);
         val p = new PasswordEncoderProperties();
         p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
@@ -105,7 +106,7 @@ class FileAuthenticationHandlerTests {
     @Test
     void verifyAuthenticatesUserInFileWithCommaSeparator() throws Throwable {
         val credential = new UsernamePasswordCredential();
-        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null,
+        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY,
             PrincipalFactoryUtils.newPrincipalFactory(), new ClassPathResource("authentication2.txt"), ",");
         credential.setUsername("scott");
         credential.assignPassword("rutgers");
@@ -116,7 +117,7 @@ class FileAuthenticationHandlerTests {
     void verifyFailsUserNotInFileWithCommaSeparator() {
         val credential = new UsernamePasswordCredential();
 
-        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null,
+        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY,
             PrincipalFactoryUtils.newPrincipalFactory(),
             new ClassPathResource("authentication2.txt"), ",");
         credential.setUsername("fds");
@@ -127,7 +128,7 @@ class FileAuthenticationHandlerTests {
     @Test
     void verifyFailsGoodUsernameBadPassword() {
         val credential = new UsernamePasswordCredential();
-        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null,
+        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY,
             PrincipalFactoryUtils.newPrincipalFactory(),
             new ClassPathResource("authentication2.txt"), ",");
 
@@ -140,7 +141,7 @@ class FileAuthenticationHandlerTests {
     @Test
     void verifyAuthenticateNoFileName() {
         val credential = new UsernamePasswordCredential();
-        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY, null,
+        authenticationHandler = new FileAuthenticationHandler(StringUtils.EMPTY,
             PrincipalFactoryUtils.newPrincipalFactory(),
             new ClassPathResource("fff"), FileAuthenticationHandler.DEFAULT_SEPARATOR);
 

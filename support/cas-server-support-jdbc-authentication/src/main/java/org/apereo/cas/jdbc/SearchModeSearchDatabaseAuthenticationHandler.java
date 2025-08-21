@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.jdbc.authn.SearchJdbcAuthenticationProperties;
 import org.apereo.cas.monitor.Monitorable;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,10 +29,10 @@ import java.util.ArrayList;
 @Monitorable
 public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler<SearchJdbcAuthenticationProperties> {
     public SearchModeSearchDatabaseAuthenticationHandler(final SearchJdbcAuthenticationProperties properties,
-                                                         final ServicesManager servicesManager,
+
                                                          final PrincipalFactory principalFactory,
                                                          final DataSource datasource) {
-        super(properties, servicesManager, principalFactory, datasource);
+        super(properties, principalFactory, datasource);
     }
 
     @Override

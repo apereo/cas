@@ -69,9 +69,7 @@ public class CasTrustedAuthenticationAutoConfiguration {
             final ServicesManager servicesManager) {
             val trusted = casProperties.getAuthn().getTrusted();
             return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(),
-                servicesManager,
-                trustedPrincipalFactory,
-                trusted.getOrder());
+                trustedPrincipalFactory, trusted.getOrder());
         }
     }
 

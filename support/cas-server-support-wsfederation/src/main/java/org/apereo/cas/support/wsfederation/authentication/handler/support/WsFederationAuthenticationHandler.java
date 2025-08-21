@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 
 import lombok.val;
@@ -21,12 +20,12 @@ import java.util.ArrayList;
  */
 public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    public WsFederationAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public WsFederationAuthenticationHandler(final String name,
                                              final PrincipalFactory principalFactory,
                                              final Integer order) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
     }
-    
+
     @Override
     public boolean supports(final Credential credentials) {
         return credentials != null && WsFederationCredential.class.isAssignableFrom(credentials.getClass());

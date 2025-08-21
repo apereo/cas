@@ -190,7 +190,7 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
                 .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
                     && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
                 .forEach(wsfed -> {
-                    val handler = new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager, wsfedPrincipalFactory, wsfed.getOrder());
+                    val handler = new WsFederationAuthenticationHandler(wsfed.getName(), wsfedPrincipalFactory, wsfed.getOrder());
                     if (wsfed.isAttributeResolverEnabled()) {
                         val cfg = wsFederationConfigurations.toSet().stream()
                             .filter(c -> {

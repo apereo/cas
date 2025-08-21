@@ -58,7 +58,7 @@ public class CasRestAuthenticationAutoConfiguration {
         val rest = casProperties.getAuthn().getRest();
         val handlers = rest
             .stream()
-            .map(prop -> new RestAuthenticationHandler(servicesManager,
+            .map(prop -> new RestAuthenticationHandler(
                 restAuthenticationPrincipalFactory, prop, applicationContext, httpClient))
             .toList();
         return BeanContainer.of(handlers);
@@ -95,7 +95,7 @@ public class CasRestAuthenticationAutoConfiguration {
             return plan -> {
                 if (casProperties.getMultitenancy().getCore().isEnabled()) {
                     val builder = new TenantRestAuthenticationHandlerBuilder(applicationContext,
-                        restAuthenticationPrincipalFactory, servicesManager, httpClient);
+                        restAuthenticationPrincipalFactory, httpClient);
                     plan.registerTenantAuthenticationHandlerBuilder(builder);
                 }
             };
