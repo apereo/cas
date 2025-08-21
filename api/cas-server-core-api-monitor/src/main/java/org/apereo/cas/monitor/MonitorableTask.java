@@ -4,7 +4,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
-
+import org.aspectj.lang.JoinPoint;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,5 +49,38 @@ public class MonitorableTask {
     public MonitorableTask withBoundedValue(final String name, final String value) {
         boundedValues.put(name, value);
         return this;
+    }
+
+    /**
+     * Collect unbounded value.
+     *
+     * @param name  the name
+     * @param value the value
+     * @return the monitorable task
+     */
+    @CanIgnoreReturnValue
+    public MonitorableTask withUnboundedValue(final String name, final String value) {
+        unboundedValues.put(name, value);
+        return this;
+    }
+
+    /**
+     * From join point to task.
+     *
+     * @param joinPoint the join point
+     * @return the monitorable task
+     */
+    public static MonitorableTask from(final JoinPoint joinPoint) {
+        return new MonitorableTask(toTaskName(joinPoint));
+    }
+
+    /**
+     * To task name string.
+     *
+     * @param joinPoint the join point
+     * @return the string
+     */
+    public static String toTaskName(final JoinPoint joinPoint) {
+        return joinPoint.getSignature().getDeclaringTypeName() + '.' + joinPoint.getSignature().getName();
     }
 }
