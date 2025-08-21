@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationFailedException;
 import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
@@ -67,13 +68,20 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
             val credentialPrincipal = multifactorAuthenticationService.fetch(tokenCredential);
             val resolvedPrincipal = resolvePrincipal(applicationContext, credentialPrincipal);
             val principal = multifactorAuthenticationService.validate(resolvedPrincipal, tokenCredential);
-            val authentication = Objects.requireNonNull(WebUtils.getInProgressAuthentication());
-            if (!principal.equals(authentication.getPrincipal())) {
+
+            val activePrincipal = findActivePrincipal();
+            if (!principal.equals(activePrincipal)) {
                 LOGGER.warn("Credential principal [{}] does not match authentication principal [{}]",
-                    principal.getId(), authentication.getPrincipal().getId());
+                    principal.getId(), activePrincipal.getId());
                 throw new MultifactorAuthenticationFailedException("Failed to authenticate code " + tokenCredential.getId());
             }
             return createHandlerResult(tokenCredential, principal);
         }, MultifactorAuthenticationFailedException::new);
+    }
+
+    protected Principal findActivePrincipal() {
+        val authentication = Objects.requireNonNull(WebUtils.getInProgressAuthentication());
+        val principal = authentication.getPrincipal();
+        return principal.getOwner();
     }
 }

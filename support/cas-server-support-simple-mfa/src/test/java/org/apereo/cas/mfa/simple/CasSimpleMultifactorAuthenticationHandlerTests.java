@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHolder;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailedException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.SurrogatePrincipal;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -123,7 +124,6 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
     @Test
     void verifySuccessfulAuthenticationWithTokenWithoutPrefix() throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal();
-
         val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService(),
             Map.of(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
@@ -131,6 +131,22 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
         val ticketIdWithoutPrefix = ticket.getId().substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
         val credential = new CasSimpleMultifactorTokenCredential(ticketIdWithoutPrefix);
         AuthenticationHolder.setCurrentAuthentication(RegisteredServiceTestUtils.getAuthentication(principal));
+        assertNotNull(casSimpleMultifactorAuthenticationHandler.authenticate(credential, mock(Service.class)).getPrincipal());
+        AuthenticationHolder.clear();
+    }
+
+    @Test
+    void verifySuccessWithImpersonation() throws Throwable {
+        val principal = RegisteredServiceTestUtils.getPrincipal();
+        val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
+        val ticket = factory.create(RegisteredServiceTestUtils.getService(),
+            Map.of(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
+        ticketRegistry.addTicket(ticket);
+        val ticketIdWithoutPrefix = ticket.getId().substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
+        val credential = new CasSimpleMultifactorTokenCredential(ticketIdWithoutPrefix);
+
+        val surrogatePrincipal = new SurrogatePrincipal(principal, RegisteredServiceTestUtils.getPrincipal("surrogate"));
+        AuthenticationHolder.setCurrentAuthentication(RegisteredServiceTestUtils.getAuthentication(surrogatePrincipal));
         assertNotNull(casSimpleMultifactorAuthenticationHandler.authenticate(credential, mock(Service.class)).getPrincipal());
         AuthenticationHolder.clear();
     }
