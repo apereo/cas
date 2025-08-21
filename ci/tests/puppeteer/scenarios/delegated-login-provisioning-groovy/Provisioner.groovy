@@ -1,5 +1,3 @@
-import groovy.json.*
-
 def run(Object[] args) {
     def principal = args[0]
     def userProfile = args[1]
@@ -12,7 +10,7 @@ def run(Object[] args) {
         destination.delete()
     }
     logger.info("Destination file: ${destination}")
-    def json = new JsonBuilder(principal).toPrettyString()
+    def json = new ObjectMapper().writeValueAsString(principal)
     destination.write(json)
     logger.info("Provisioning is complete.")
 }
