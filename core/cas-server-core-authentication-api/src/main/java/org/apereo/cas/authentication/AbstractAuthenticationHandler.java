@@ -66,7 +66,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     private Map<String, Serializable> tags = new LinkedHashMap<>();
 
     protected AbstractAuthenticationHandler(final String name, final PrincipalFactory principalFactory, final Integer order) {
-        this.name = StringUtils.isNotBlank(name) ? name : getClass().getSimpleName() + '-' + UUID.randomUUID();
+        this.name = StringUtils.isNotBlank(name) ? name : getClass().getSimpleName();
         this.principalFactory = Objects.requireNonNullElseGet(principalFactory, DefaultPrincipalFactory::new);
         this.order = Objects.requireNonNullElseGet(order, () -> RandomUtils.nextInt(1, Integer.MAX_VALUE));
     }

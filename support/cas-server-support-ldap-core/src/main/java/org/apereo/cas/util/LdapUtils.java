@@ -1076,8 +1076,7 @@ public class LdapUtils {
 
         LOGGER.debug("Creating LDAP authentication handler for [{}]", props.getLdapUrl());
         val handler = new LdapAuthenticationHandler(props.getName(),
-            principalFactory,
-            props.getOrder(), authenticator, strategy);
+            principalFactory, props.getOrder(), authenticator, strategy);
         handler.setCollectDnAttribute(props.isCollectDnAttribute());
 
         if (!props.getAdditionalAttributes().isEmpty()) {
