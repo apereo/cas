@@ -31,7 +31,7 @@ function snapshot() {
       exit 1
   fi
   printgreen "Publishing CAS SNAPSHOT artifacts. This might take a while..."
-  ./gradlew assemble publish \
+  ./gradlew assemble publishAggregationToCentralPortalSnapshots \
     -x test -x javadoc -x check --no-daemon --parallel \
     -DskipAot=true -DpublishSnapshots=true --stacktrace \
     --no-configuration-cache --configure-on-demand \

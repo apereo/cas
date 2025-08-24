@@ -32,8 +32,9 @@ ext {
     repositoryUsername = providers.systemProperty("repositoryUsername").getOrElse(System.getenv("REPOSITORY_USER"))
     repositoryPassword = providers.systemProperty("repositoryPassword").getOrElse(System.getenv("REPOSITORY_PWD"))
 
-    publishSnapshots = providers.systemProperty("publishSnapshots").present
-    publishReleases = providers.systemProperty("publishReleases").present
+    snapshotVersion = version.toString().endsWith("-SNAPSHOT")
+    publishSnapshots = providers.systemProperty("publishSnapshots").present && snapshotVersion
+    publishReleases = providers.systemProperty("publishReleases").present && !snapshotVersion
 
     publishFlag = publishSnapshots || publishReleases
 
@@ -78,41 +79,17 @@ def isArtifactSigningRequired = {
     publishReleases && !skipArtifactSigning
 }
 
-if (publishReleases) {
-    apply plugin: "com.gradleup.nmcp.aggregation"
-    nmcpAggregation {
-        centralPortal {
-            username = "${repositoryUsername}"
-            password = "${repositoryPassword}"
-            publicationName = "Apereo CAS Release ${project.version}"
-            publishingType = "AUTOMATIC"
-            validationTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
-            publishingTimeout = java.time.Duration.of(60, java.time.temporal.ChronoUnit.MINUTES)
-        }
-        publishAllProjectsProbablyBreakingProjectIsolation()
+apply plugin: "com.gradleup.nmcp.aggregation"
+nmcpAggregation {
+    centralPortal {
+        username = "${repositoryUsername}"
+        password = "${repositoryPassword}"
+        publicationName = "Apereo CAS Release ${project.version}"
+        publishingType = "AUTOMATIC"
+        validationTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
+        publishingTimeout = java.time.Duration.of(60, java.time.temporal.ChronoUnit.MINUTES)
     }
-}
-
-if (publishSnapshots && !publishReleases) {
-    apply plugin: "io.github.gradle-nexus.publish-plugin"
-    nexusPublishing {
-        packageGroup = "org.apereo"
-        repositories {
-            sonatype {
-                username = "${repositoryUsername}"
-                password = "${repositoryPassword}"
-                nexusUrl.set(uri("${releaseRepositoryUrl}"))
-                snapshotRepositoryUrl.set(uri("${snapshotsRepositoryUrl}"))
-            }
-        }
-
-        clientTimeout = java.time.Duration.ofSeconds(600)
-        connectTimeout = java.time.Duration.ofSeconds(600)
-        transitionCheckOptions {
-            maxRetries.set(100)
-            delayBetween.set(java.time.Duration.ofSeconds(60))
-        }
-    }
+    publishAllProjectsProbablyBreakingProjectIsolation()
 }
 
 apply from: rootProject.file("gradle/dependencies.gradle")
@@ -256,10 +233,10 @@ subprojects {
                         mavenWeb(MavenPublication) {
                             from components.web
                             pom {
-                                createPom(it, project)
+                                project.ext.createPom(it, project)
                             }
                             pom.withXml {
-                                createPomRepositories(asNode())
+                                project.ext.createPomRepositories(asNode())
                             }
                         }
                     } else if (project.hasProperty("skipPublication") && project.skipPublication) {
@@ -281,10 +258,10 @@ subprojects {
                             }
 
                             pom {
-                                createPom(it, project)
+                                project.ext.createPom(it, project)
                             }
                             pom.withXml {
-                                createPomRepositories(asNode())
+                                project.ext.createPomRepositories(asNode())
                             }
                         }
                     }
