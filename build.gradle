@@ -21,7 +21,6 @@ buildscript {
         classpath libs.gradle.plugin.native
         classpath libs.gradle.plugin.errorprone
         classpath libs.gradle.plugin.sonarqube
-        classpath libs.gradle.plugin.nexus
         classpath libs.gradle.plugin.nmcp
     }
 }
