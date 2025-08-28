@@ -122,7 +122,7 @@ class FileTrustStoreSslSocketFactoryTests {
         @Test
         void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() throws Throwable {
             val client = getSimpleHttpClient(sslFactory());
-            assertTrue(client.isValidEndPoint("http://wikipedia.org"));
+            assertTrue(client.isValidEndPoint("http://http.badssl.com/"));
         }
     }
 
