@@ -618,11 +618,16 @@ span button.toolbar {
     cursor: default;
 }
 
-.mdc-button--raised:not(:disabled, .reveal-password):hover {
-    background-color: var(--cas-theme-button-bg-hover, dodgerblue);
+.mdc-button--raised:not(:disabled, .reveal-password):hover,
+.mdc-button--raised:not(:disabled, .reveal-password):focus-visible {
     transform: scale(1.08);
     box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.15);
     cursor: pointer;
+}
+
+.mdc-button.btn-primary:not(:disabled):hover,
+.mdc-button.btn-primary:not(:disabled):focus-visible {
+    background-color: var(--cas-theme-button-bg-hover, dodgerblue);
 }
 
 .mdc-button--lg {
