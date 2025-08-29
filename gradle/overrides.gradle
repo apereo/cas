@@ -166,7 +166,11 @@ configurations.configureEach {
                     details.useVersion(libs.httpcore5.get().version)
                 }
                 if (requested.group.startsWith("com.fasterxml.jackson")) {
-                    details.useVersion(libs.jacksoncore.get().version)
+                    if (requested.name.equals("jackson-annotations")) {
+                        details.useVersion(libs.jackson.annotations.get().version)
+                    } else {
+                        details.useVersion(libs.jackson.core.lib.get().version)
+                    }
                 }
                 if (requested.group == "io.micrometer" && requested.name.startsWith("micrometer-")) {
                     if (requested.name.contains("tracing")) {
