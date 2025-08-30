@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="CAS - Enterprise Single Sign-On for the Web"/>
+    <meta name="keywords" content="authentication, login, cas, central authentication service, web, java, protocol, thymeleaf,
+                   open source, boot, spring, authorization, google, facebook, twitter, higher-ed, enterprise,
+                   access management, single sign-on, sso, RBAC, ABAC, attributes, SAML, OpenID, openid connect,
+                   JWT, ADFS"/>
+    <meta name="robots" content="index,follow"/>
+
+    
+    
+
+    
+
+
+
+
+
+
+
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/stylesheet.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/print.css'>
+
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,700' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:900,900italic,300,300italic&subset=latin-ext,latin' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - Configuring Authentication Events</title>
+
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="hidden-sm-down">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-4 col-md-2">
+                    <a href="../../index.html">
+                        <img class="undecorated" src="/cas/images/cas_logo.png">
+                    </a>
+                </div>
+                <div class="col-xs-8 col-md-6">
+                    <h1>Enterprise Identity for All Earthlings and Beyond</h1>
+<p><sub>Identity, Single Sign-On and Access Management</sub></p>
+                </div>
+                <div class="hidden-sm-down col-md-4">
+                    <a id="forkme_banner" href="https://github.com/apereo/cas">View on GitHub</a>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary bg-dark">
+        
+        <button onclick="navigateSidebar()" id="sidebarNavButton">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        
+        <div class="container">
+<!--            <button id="navigationNavButton" class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"-->
+<!--                    data-bs-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false"-->
+<!--                    aria-label="Toggle navigation">-->
+<!--                <span class="navbar-toggler-icon"></span>-->
+<!--            </button>-->
+
+            <div class="navbar-collapse collapse" id="navbarsExample04">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active"><a href="../../index.html" class="zoom nav-link">Home</a></li>
+                    <li class="nav-item"><a href="https://github.com/apereo/cas/releases" class="zoom nav-link">Releases</a></li>
+                    <li class="nav-item"><a href="../../Support.html" class="zoom nav-link">Support</a></li>
+                    <li class="nav-item"><a href="../../Mailing-Lists.html" class="zoom nav-link">Mailing Lists</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="zoom nav-link dropdown-toggle mr-md-2" href="javascript:void(0)" role="button" id="cas-versions" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Versions</a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="cas-versions">
+                            
+                            
+                            <a class="dropdown-item" href="/cas/development/">Development</a>
+                            
+                            
+                            
+                            <a class="dropdown-item" href="/cas/7.2.x/">v7.2.x</a>
+                            
+                            
+                            
+                            <a class="dropdown-item" href="/cas/7.1.x/">v7.1.x</a>
+                            
+                            
+                            
+                            <a class="dropdown-item" href="/cas/7.0.x/">v7.0.x</a>
+                            
+                            
+
+                        </div>
+                    </li>
+                    <li class="nav-item"><a href="https://apereo.github.io" target="_blank" rel="noopener" class="zoom nav-link">Blog</a></li>
+                </ul>
+
+            </div>
+
+        </div>
+    </nav>
+
+
+    <div class="container-fluid">
+        <div class="row flex-xl-nowrap">
+
+            
+                <div class="col-12 col-md-3 col-xl-2 docs-sidebar pb-5" id="sidebar"></div>
+
+                <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div id="pageContents">
+        <ul class="section-nav"></ul>
+    </div>
+</div>
+
+            
+
+            <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 cas-docs-content" role="main">
+                
+                
+                <div id="dev-doc-info" class="alert alert-danger" role="alert">
+                    <h3>WORKERS AHEAD!</h3>
+                    <p>You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+                
+
+                <section>
+                    
+                    <nav id="docsNavBar">
+                        <span id="toolbarIcons"></span>
+                    </nav>
+                    
+
+                    <div id="cas-docs-container">
+                        
+<h1 id="apache-kafka-authentication-events">Apache Kafka Authentication Events</h1>
+
+<p>Publishes authentication events into a Apache Kafka topic. This module only operates in a
+write-only mode and does not consume or fetch any events from Apache Kafka topics.</p>
+
+<script type="text/javascript">
+
+    function tabClicked(element) {
+        let radius = "0px 5px 5px 5px";
+        let href = $(element).attr("href");
+        if (!href.startsWith("#maven")) {
+            radius = "5px 5px 5px 5px";
+        }
+        $(".tab-pane .highlight>pre.highlight").css("border-radius", radius);
+
+        let label = $(element).text();
+
+        function updateTab(targetId, idsToDeactivate) {
+            $(`div #${targetId}orgapereocascasserversupporteventskafka`).addClass("active").addClass("show");
+            idsToDeactivate.forEach(id => $(`div #${id}orgapereocascasserversupporteventskafka`).removeClass("active").removeClass("show"));
+        }
+
+        switch (label) {
+        case "Apache Maven":
+            updateTab("maven", ["gradle", "bom", "bomGradle"]);
+            break;
+        case "Gradle":
+            updateTab("gradle", ["maven", "bom", "bomGradle"]);
+            break;
+        case "BOM - Spring":
+            updateTab("bom", ["maven", "gradle", "bomGradle"]);
+            break;
+        case "BOM - Gradle":
+            updateTab("bomGradle", ["maven", "bom", "gradle"]);
+            break;
+        }
+    }
+
+    window.onload = () => $("ul.cas-modules li.cas-module a.nav-link.active").first().click()
+</script>
+<div style="display: block">
+
+    <ul class="nav nav-pills cas-modules">
+        <li class="nav-item cas-module"><a class="nav-link" onclick="tabClicked(this)" data-bs-toggle="tab" href="#mavenorgapereocascasserversupporteventskafka">Apache Maven</a></li>
+        <li class="nav-item cas-module"><a class="nav-link" onclick="tabClicked(this)" data-bs-toggle="tab" href="#gradleorgapereocascasserversupporteventskafka">Gradle</a></li>
+<li class="nav-item cas-module"><a class="nav-link" onclick="tabClicked(this)" data-bs-toggle="tab" href="#bomorgapereocascasserversupporteventskafka">BOM - Spring</a></li>
+
+        <li class="nav-item cas-module">
+            <a class="nav-link active" onclick="tabClicked(this)" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupporteventskafka">BOM - Gradle</a>
+        </li>
+<li role="presentation" class="nav-item dropdown cas-module">
+            <a class="nav-link dropdown-toggle" onclick="tabClicked(this)" data-bs-toggle="dropdown" href="#" role="button">Resources<span class="caret"></span>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="javascript:showOverlay('cas-server-support-events-kafka',%20'cas-overlay');">Show in CAS Initializr</a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-events-kafka',%20'cas-overlay');">Generate CAS Server WAR Overlay</a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-events-kafka',%20'cas-config-server-overlay');">Generate CAS Configuration Server WAR Overlay</a>
+            </div>
+        </li>
+    </ul>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade in" id="mavenorgapereocascasserversupporteventskafka">
+<span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-events-kafka<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade in active show" id="gradleorgapereocascasserversupporteventskafka">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-events-kafka:${project.'cas.version'}"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade in" id="bomorgapereocascasserversupporteventskafka">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-events-kafka"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade in" id="bomGradleorgapereocascasserversupporteventskafka">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references should be included automatically and are listed here for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-events-kafka"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- fragment:keep -->
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+<ul class="nav nav-tabs nav-tabs-properties" id="navPillsMenuscaseventskafka">
+
+<li class="nav-item property-tab">
+    <a class="nav-link active" id="linkRequiredPropertiescaseventskafka" data-bs-toggle="tab" href="#requiredPropertiescaseventskafka"><i class="fa fa-hand-point-right px-1"></i>Required</a>
+</li>
+<li class="nav-item property-tab">
+    <a class="nav-link" id="linkOptionalPropertiescaseventskafka" data-bs-toggle="tab" href="#optionalPropertiescaseventskafka"><i class="fa fa-hand-spock px-1"></i>Optional</a>
+</li>
+
+<li class="nav-item property-tab" id="navSigningEncryptionPropertiescaseventskafka">
+    <a class="nav-link" id="linkSigningEncryptioncaseventskafka" data-bs-toggle="tab" href="#signingEncryptionPropertiescaseventskafka"><i class="fa fa-user-secret px-1"></i>Signing &amp; Encryption</a>
+</li>
+
+<li class="nav-item property-tab" id="navRdbmsPropertiescaseventskafka">
+    <a class="nav-link" id="linkRdbmscaseventskafka" data-bs-toggle="tab" href="#rdbmsPropertiescaseventskafka"><i class="fa fa-database px-1"></i>Hibernate &amp; JDBC</a>
+</li>
+<li class="nav-item property-tab" id="navEmailPropertiescaseventskafka">
+    <a class="nav-link" id="linkEmailcaseventskafka" data-bs-toggle="tab" href="#emailPropertiescaseventskafka"><i class="fa fa-envelope px-1"></i>Email Servers</a>
+</li>
+<li class="nav-item property-tab" id="navGroovyPropertiescaseventskafka">
+    <a class="nav-link" id="linkGroovycaseventskafka" data-bs-toggle="tab" href="#groovyPropertiescaseventskafka"><i class="fa fa-laptop-code px-1"></i>Groovy Scripting</a>
+</li>
+
+<li class="nav-item property-tab" id="navLdapPropertiescaseventskafka">
+    <a class="nav-link" id="linkLdapcaseventskafka" data-bs-toggle="tab" href="#ldapPropertiescaseventskafka"><i class="fa fa-server px-1"></i>LDAP &amp; Active Directory</a>
+</li>
+
+<li class="nav-item property-tab" id="navAuthnPredicatePropertiescaseventskafka">
+    <a class="nav-link" id="linkAuthnPredicatecaseventskafka" data-bs-toggle="tab" href="#authnPredicatePropertiescaseventskafka"><i class="fa fa-user-check px-1"></i>Authentication</a>
+</li>
+
+<li class="nav-item property-tab" id="navPasswordEncoderPropertiescaseventskafka">
+    <a class="nav-link" id="linkPasswordEncodercaseventskafka" data-bs-toggle="tab" href="#passwordEncoderPropertiescaseventskafka"><i class="fa fa-key px-1"></i>Password Encoding</a>
+</li>
+
+<li class="nav-item property-tab" id="navPrincipalTransformationPropertiescaseventskafka">
+    <a class="nav-link" id="linkPrincipalTransformationcaseventskafka" data-bs-toggle="tab" onclick="javascript:enablePropertiesTabcaseventskafka(this);" href="#principalTransformationPropertiescaseventskafka"><i class="fa fa-person-booth px-1"></i>Principal Transformation</a>
+</li>
+
+<li class="nav-item property-tab" id="navPasswordPolicyPropertiescaseventskafka">
+    <a class="nav-link" id="linkPasswordPolicycaseventskafka" data-bs-toggle="tab" onclick="javascript:enablePropertiesTabcaseventskafka(this);" href="#passwordPolicyPropertiescaseventskafka"><i class="fa fa-lock px-1"></i>Password Policy</a>
+</li>
+<li class="nav-item property-tab">
+    <a class="nav-link" onclick="javascript:enablePropertiesTabcaseventskafka(this);" id="linkNotescaseventskafka" data-bs-toggle="tab" href="#notescaseventskafka"><i class="fa fa-newspaper px-1"></i> Notes</a>
+</li>
+</ul>
+<div class="tab-content clearfix" id="casPropertiesTabContentcaseventskafka">
+
+
+    <div class="tab-pane properties-tab fade in active show" id="requiredPropertiescaseventskafka">
+        <i style="vertical-align: sub;" class="fas fa-info-circle small"></i>
+        <sub>
+            The configuration settings listed below are tagged as <u><i>Required</i></u> in the CAS configuration metadata. This flag indicates that the presence of the setting may be needed to activate or affect the behavior of the CAS feature and generally should be reviewed, possibly owned and adjusted. If the setting is assigned a default value, you do not need to strictly put the setting in your copy of the configuration, but should review it nonetheless to make sure it matches your deployment expectations.
+        </sub>
+        <br><p></p>
+
+        <p></p>
+
+        <table class="cas-datatable properties " id="tableRequiredPropertiescaseventskafka">
+            <thead><tr><th></th></tr></thead>
+            <tbody></tbody>
+        </table>
+
+        <textarea style="position:absolute; left: -10000px;" id="copyAreaRequiredPropertiescaseventskafka"></textarea>
+    </div>
+
+    <div class="tab-pane properties-tab fade in" id="optionalPropertiescaseventskafka">
+
+        <i style="vertical-align: sub;" class="fas fa-info-circle small"></i>
+        <sub>
+            The configuration settings listed below are tagged as <u><i>Optional</i></u> in the CAS configuration metadata. This
+            flag indicates that the presence of the setting
+            is not immediately necessary in the end-user CAS configuration, because a default value is assigned or
+            the activation of the feature is not conditionally controlled by the setting value. In other words, you should only include this field in your
+            configuration <strong>if you need to modify the default value</strong> or <strong>if you need to turn on the feature</strong> controlled by the setting.
+        </sub>
+        <br><p></p>
+
+        <table class="cas-datatable properties " id="tableOptionalPropertiescaseventskafka">
+            <thead><tr><th></th></tr></thead>
+            <tbody>
+<tr>
+    <td style="border-top: 0px; border-bottom: 1px solid #dee2e6;">
+<li class="property-name text-left" style="list-style: square">
+            <code class="text-wrap">cas.events.kafka.bootstrap-address=</code>
+        </li>
+        <div class="property-description text-wrap">
+            <p>
+                Kafka bootstrapping server address (i.e. localhost:9092).
+                    </p>
+<p></p>
+<p class="small text-left"><i class="fas fa-code small" data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Owner"></i> <code>org.apereo.cas.configuration.model.core.events.KafkaEventsProperties.</code></p>
+<p></p>
+                    <sub>
+                        <i class="fas fa-cog small" data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Configuration Strategy"></i>
+                        <a data-bs-toggle="modal" href="#" data-bs-target="#caseventskafkabootstrapaddressPropertyConfig"><small>How can I configure this property?</small></a>
+                    </sub>
+                    <p class="small text-left">
+                    </p>
+<div class="modal fade" id="caseventskafkabootstrapaddressPropertyConfig" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">CAS Property: <code>cas.events.kafka.bootstrap-address</code>
+</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Configuration properties can be included and activated using the following strategies.
+                                    <p></p>
+                                    <div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+                                        When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+                                        The only possible exception to this rule is when naming actuator endpoints; The name of the
+                                        actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode.
+                                    </p>
+                                    </div>
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-bs-toggle="tab" href="#simplepropertycaseventskafkabootstrapaddress"><i class="fa-brands fa-java px-1"></i>Java Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#yamlpropertycaseventskafkabootstrapaddress"><i class="fa fa-file-code px-1"></i>YAML Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#systempropertycaseventskafkabootstrapaddress"><i class="fa fa-laptop px-1"></i>System Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#envvarcaseventskafkabootstrapaddress"><i class="fa fa-laptop-code px-1"></i>Environment Variable</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#cmdargcaseventskafkabootstrapaddress"><i class="fa fa-terminal px-1"></i>Command-line Argument</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <p></p>
+                                        <div class="tab-pane fade active show" id="simplepropertycaseventskafkabootstrapaddress">
+                                            CAS properties can be specified using the Java configuration property syntax in any and all
+                                            <code>.properties</code> files:
+                                            <p></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>cas.events.kafka.bootstrap-address=...
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+
+                                            <p></p>
+                                            This is the most common form of property configuration that is recognized by CAS, regardless
+                                            of the actual property source, which might in fact be managed separately outside the CAS environment, by another system
+                                            or cloud framework.
+                                        </div>
+                                        <div class="tab-pane fade" id="yamlpropertycaseventskafkabootstrapaddress">CAS properties can be specified using the YAML syntax:<p></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="na">cas: <br>  events: <br>    kafka: <br>      bootstrap-address</span><span class="pi">:</span> <span class="s2">"</span><span class="s">..."</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <script>
+                                                setTimeout(() => $("#yamlpropertycaseventskafkabootstrapaddress td.gl").empty(), 250);
+                                            </script>
+
+                                            <p></p>
+                                            Note that YAML is very specific about structure and indentation. Be sure to verify the correctness of the final result
+                                            with your YAML validator of choice.
+                                        </div>
+                                        <div class="tab-pane fade" id="systempropertycaseventskafkabootstrapaddress">
+                                            CAS properties can be passed to the CAS web application as system properties, when the application is launched:
+                                            <p></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>java <span class="nt">-Dcas</span>.events.kafka.bootstrap-address<span class="o">=</span><span class="s2">"..."</span> <span class="nt">-jar</span> build/libs/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container and can be found in the <code>build/libs</code> directory. Note the placement of the system property which must be
+                                            specified before the CAS web application is launched.
+                                        </div>
+                                        <div class="tab-pane fade" id="envvarcaseventskafkabootstrapaddress">
+                                            CAS properties can specified as system environment variables before the CAS web application is launched:
+                                            <p></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td>
+<td class="rouge-code"><pre><span class="nb">export </span><span class="nv">CAS_EVENTS_KAFKA_BOOTSTRAP_ADDRESS</span><span class="o">=</span><span class="s2">"..."</span>
+
+java <span class="nt">-jar</span> build/libs/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container  and can be found in the <code>build/libs</code> directory.
+                                        </div>
+                                        <div class="tab-pane fade" id="cmdargcaseventskafkabootstrapaddress">
+                                            CAS properties can be passed to the CAS web application as command-line arguments, when the application is launched:
+                                            <p></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>java <span class="nt">-jar</span> build/libs/cas.war <span class="nt">--cas</span>.events.kafka.bootstrap-address<span class="o">=</span><span class="s2">"..."</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container and can be found in the <code>build/libs</code> directory.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+        </div>
+</td>
+</tr>
+<tr>
+    <td style="border-top: 0px; border-bottom: 1px solid #dee2e6;">
+<li class="property-name text-left" style="list-style: square">
+            <code class="text-wrap">cas.events.kafka.topic.compression-type=gzip</code>
+        </li>
+        <div class="property-description text-wrap">
+            <p>
+                Specify the final compression type for a given topic. This configuration accepts the standard compression codecs (<code>'gzip', 'snappy', 'lz4', 'zstd'</code>). It additionally accepts 'uncompressed' which is equivalent to no compression; and 'producer' which means retain the original compression codec set by the producer.
+                    </p>
+<p></p>
+<p class="small text-left"><i class="fas fa-code small" data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Owner"></i> <code>org.apereo.cas.configuration.model.support.kafka.KafkaSingleTopicProperties.</code></p>
+<p></p>
+                    <sub>
+                        <i class="fas fa-cog small" data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Configuration Strategy"></i>
+                        <a data-bs-toggle="modal" href="#" data-bs-target="#caseventskafkatopiccompressiontypePropertyConfig"><small>How can I configure this property?</small></a>
+                    </sub>
+                    <p class="small text-left">
+                    </p>
+<div class="modal fade" id="caseventskafkatopiccompressiontypePropertyConfig" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">CAS Property: <code>cas.events.kafka.topic.compression-type</code>
+</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Configuration properties can be included and activated using the following strategies.
+                                    <p></p>
+                                    <div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+                                        When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+                                        The only possible exception to this rule is when naming actuator endpoints; The name of the
+                                        actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode.
+                                    </p>
+                                    </div>
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-bs-toggle="tab" href="#simplepropertycaseventskafkatopiccompressiontype"><i class="fa-brands fa-java px-1"></i>Java Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#yamlpropertycaseventskafkatopiccompressiontype"><i class="fa fa-file-code px-1"></i>YAML Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#systempropertycaseventskafkatopiccompressiontype"><i class="fa fa-laptop px-1"></i>System Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#envvarcaseventskafkatopiccompressiontype"><i class="fa fa-laptop-code px-1"></i>Environment Variable</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#cmdargcaseventskafkatopiccompressiontype"><i class="fa fa-terminal px-1"></i>Command-line Argument</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <p></p>
+                                        <div class="tab-pane fade active show" id="simplepropertycaseventskafkatopiccompressiontype">
+                                            CAS properties can be specified using the Java configuration property syntax in any and all
+                                            <code>.properties</code> files:
+                                            <p></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>cas.events.kafka.topic.compression-type=gzip
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+
+                                            <p></p>
+                                            This is the most common form of property configuration that is recognized by CAS, regardless
+                                            of the actual property source, which might in fact be managed separately outside the CAS environment, by another system
+                                            or cloud framework.
+                                        </div>
+                                        <div class="tab-pane fade" id="yamlpropertycaseventskafkatopiccompressiontype">CAS properties can be specified using the YAML syntax:<p></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="na">cas: <br>  events: <br>    kafka: <br>      topic: <br>        compression-type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">gzip"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <script>
+                                                setTimeout(() => $("#yamlpropertycaseventskafkatopiccompressiontype td.gl").empty(), 250);
+                                            </script>
+
+                                            <p></p>
+                                            Note that YAML is very specific about structure and indentation. Be sure to verify the correctness of the final result
+                                            with your YAML validator of choice.
+                                        </div>
+                                        <div class="tab-pane fade" id="systempropertycaseventskafkatopiccompressiontype">
+                                            CAS properties can be passed to the CAS web application as system properties, when the application is launched:
+                                            <p></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>java <span class="nt">-Dcas</span>.events.kafka.topic.compression-type<span class="o">=</span><span class="s2">"gzip"</span> <span class="nt">-jar</span> build/libs/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container and can be found in the <code>build/libs</code> directory. Note the placement of the system property which must be
+                                            specified before the CAS web application is launched.
+                                        </div>
+                                        <div class="tab-pane fade" id="envvarcaseventskafkatopiccompressiontype">
+                                            CAS properties can specified as system environment variables before the CAS web application is launched:
+                                            <p></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td>
+<td class="rouge-code"><pre><span class="nb">export </span><span class="nv">CAS_EVENTS_KAFKA_TOPIC_COMPRESSION_TYPE</span><span class="o">=</span><span class="s2">"gzip"</span>
+
+java <span class="nt">-jar</span> build/libs/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container  and can be found in the <code>build/libs</code> directory.
+                                        </div>
+                                        <div class="tab-pane fade" id="cmdargcaseventskafkatopiccompressiontype">
+                                            CAS properties can be passed to the CAS web application as command-line arguments, when the application is launched:
+                                            <p></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>java <span class="nt">-jar</span> build/libs/cas.war <span class="nt">--cas</span>.events.kafka.topic.compression-type<span class="o">=</span><span class="s2">"gzip"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container and can be found in the <code>build/libs</code> directory.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+        </div>
+</td>
+</tr>
+<tr>
+    <td style="border-top: 0px; border-bottom: 1px solid #dee2e6;">
+<li class="property-name text-left" style="list-style: square">
+            <code class="text-wrap">cas.events.kafka.topic.config=</code>
+        </li>
+        <div class="property-description text-wrap">
+            <p>
+                Additional configuration options, as pointed out by <code>TopicConfig</code>.
+                    </p>
+<p></p>
+<p class="small text-left"><i class="fas fa-code small" data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Owner"></i> <code>org.apereo.cas.configuration.model.support.kafka.KafkaSingleTopicProperties.</code></p>
+<p></p>
+                    <sub>
+                        <i class="fas fa-cog small" data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Configuration Strategy"></i>
+                        <a data-bs-toggle="modal" href="#" data-bs-target="#caseventskafkatopicconfigPropertyConfig"><small>How can I configure this property?</small></a>
+                    </sub>
+                    <p class="small text-left">
+                    </p>
+<div class="modal fade" id="caseventskafkatopicconfigPropertyConfig" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">CAS Property: <code>cas.events.kafka.topic.config</code>
+</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Configuration properties can be included and activated using the following strategies.
+                                    <p></p>
+                                    <div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+                                        When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+                                        The only possible exception to this rule is when naming actuator endpoints; The name of the
+                                        actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode.
+                                    </p>
+                                    </div>
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-bs-toggle="tab" href="#simplepropertycaseventskafkatopicconfig"><i class="fa-brands fa-java px-1"></i>Java Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#yamlpropertycaseventskafkatopicconfig"><i class="fa fa-file-code px-1"></i>YAML Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#systempropertycaseventskafkatopicconfig"><i class="fa fa-laptop px-1"></i>System Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#envvarcaseventskafkatopicconfig"><i class="fa fa-laptop-code px-1"></i>Environment Variable</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#cmdargcaseventskafkatopicconfig"><i class="fa fa-terminal px-1"></i>Command-line Argument</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <p></p>
+                                        <div class="tab-pane fade active show" id="simplepropertycaseventskafkatopicconfig">
+                                            CAS properties can be specified using the Java configuration property syntax in any and all
+                                            <code>.properties</code> files:
+                                            <p></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>cas.events.kafka.topic.config=...
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+
+                                            <p></p>
+                                            This is the most common form of property configuration that is recognized by CAS, regardless
+                                            of the actual property source, which might in fact be managed separately outside the CAS environment, by another system
+                                            or cloud framework.
+                                        </div>
+                                        <div class="tab-pane fade" id="yamlpropertycaseventskafkatopicconfig">CAS properties can be specified using the YAML syntax:<p></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="na">cas: <br>  events: <br>    kafka: <br>      topic: <br>        config</span><span class="pi">:</span> <span class="s2">"</span><span class="s">..."</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <script>
+                                                setTimeout(() => $("#yamlpropertycaseventskafkatopicconfig td.gl").empty(), 250);
+                                            </script>
+
+                                            <p></p>
+                                            Note that YAML is very specific about structure and indentation. Be sure to verify the correctness of the final result
+                                            with your YAML validator of choice.
+                                        </div>
+                                        <div class="tab-pane fade" id="systempropertycaseventskafkatopicconfig">
+                                            CAS properties can be passed to the CAS web application as system properties, when the application is launched:
+                                            <p></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>java <span class="nt">-Dcas</span>.events.kafka.topic.config<span class="o">=</span><span class="s2">"..."</span> <span class="nt">-jar</span> build/libs/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container and can be found in the <code>build/libs</code> directory. Note the placement of the system property which must be
+                                            specified before the CAS web application is launched.
+                                        </div>
+                                        <div class="tab-pane fade" id="envvarcaseventskafkatopicconfig">
+                                            CAS properties can specified as system environment variables before the CAS web application is launched:
+                                            <p></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td>
+<td class="rouge-code"><pre><span class="nb">export </span><span class="nv">CAS_EVENTS_KAFKA_TOPIC_CONFIG</span><span class="o">=</span><span class="s2">"..."</span>
+
+java <span class="nt">-jar</span> build/libs/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container  and can be found in the <code>build/libs</code> directory.
+                                        </div>
+                                        <div class="tab-pane fade" id="cmdargcaseventskafkatopicconfig">
+                                            CAS properties can be passed to the CAS web application as command-line arguments, when the application is launched:
+                                            <p></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>java <span class="nt">-jar</span> build/libs/cas.war <span class="nt">--cas</span>.events.kafka.topic.config<span class="o">=</span><span class="s2">"..."</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container and can be found in the <code>build/libs</code> directory.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+        </div>
+</td>
+</tr>
+<tr>
+    <td style="border-top: 0px; border-bottom: 1px solid #dee2e6;">
+<li class="property-name text-left" style="list-style: square">
+            <code class="text-wrap">cas.events.kafka.topic.name=</code>
+        </li>
+        <div class="property-description text-wrap">
+            <p>
+                Set the name of the topic.
+                    </p>
+<p></p>
+<p class="small text-left"><i class="fas fa-code small" data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Owner"></i> <code>org.apereo.cas.configuration.model.support.kafka.KafkaSingleTopicProperties.</code></p>
+<p></p>
+                    <sub>
+                        <i class="fas fa-cog small" data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Configuration Strategy"></i>
+                        <a data-bs-toggle="modal" href="#" data-bs-target="#caseventskafkatopicnamePropertyConfig"><small>How can I configure this property?</small></a>
+                    </sub>
+                    <p class="small text-left">
+                    </p>
+<div class="modal fade" id="caseventskafkatopicnamePropertyConfig" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">CAS Property: <code>cas.events.kafka.topic.name</code>
+</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Configuration properties can be included and activated using the following strategies.
+                                    <p></p>
+                                    <div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+                                        When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+                                        The only possible exception to this rule is when naming actuator endpoints; The name of the
+                                        actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode.
+                                    </p>
+                                    </div>
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-bs-toggle="tab" href="#simplepropertycaseventskafkatopicname"><i class="fa-brands fa-java px-1"></i>Java Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#yamlpropertycaseventskafkatopicname"><i class="fa fa-file-code px-1"></i>YAML Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#systempropertycaseventskafkatopicname"><i class="fa fa-laptop px-1"></i>System Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#envvarcaseventskafkatopicname"><i class="fa fa-laptop-code px-1"></i>Environment Variable</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#cmdargcaseventskafkatopicname"><i class="fa fa-terminal px-1"></i>Command-line Argument</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <p></p>
+                                        <div class="tab-pane fade active show" id="simplepropertycaseventskafkatopicname">
+                                            CAS properties can be specified using the Java configuration property syntax in any and all
+                                            <code>.properties</code> files:
+                                            <p></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>cas.events.kafka.topic.name=...
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+
+                                            <p></p>
+                                            This is the most common form of property configuration that is recognized by CAS, regardless
+                                            of the actual property source, which might in fact be managed separately outside the CAS environment, by another system
+                                            or cloud framework.
+                                        </div>
+                                        <div class="tab-pane fade" id="yamlpropertycaseventskafkatopicname">CAS properties can be specified using the YAML syntax:<p></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="na">cas: <br>  events: <br>    kafka: <br>      topic: <br>        name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">..."</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <script>
+                                                setTimeout(() => $("#yamlpropertycaseventskafkatopicname td.gl").empty(), 250);
+                                            </script>
+
+                                            <p></p>
+                                            Note that YAML is very specific about structure and indentation. Be sure to verify the correctness of the final result
+                                            with your YAML validator of choice.
+                                        </div>
+                                        <div class="tab-pane fade" id="systempropertycaseventskafkatopicname">
+                                            CAS properties can be passed to the CAS web application as system properties, when the application is launched:
+                                            <p></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>java <span class="nt">-Dcas</span>.events.kafka.topic.name<span class="o">=</span><span class="s2">"..."</span> <span class="nt">-jar</span> build/libs/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container and can be found in the <code>build/libs</code> directory. Note the placement of the system property which must be
+                                            specified before the CAS web application is launched.
+                                        </div>
+                                        <div class="tab-pane fade" id="envvarcaseventskafkatopicname">
+                                            CAS properties can specified as system environment variables before the CAS web application is launched:
+                                            <p></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td>
+<td class="rouge-code"><pre><span class="nb">export </span><span class="nv">CAS_EVENTS_KAFKA_TOPIC_NAME</span><span class="o">=</span><span class="s2">"..."</span>
+
+java <span class="nt">-jar</span> build/libs/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container  and can be found in the <code>build/libs</code> directory.
+                                        </div>
+                                        <div class="tab-pane fade" id="cmdargcaseventskafkatopicname">
+                                            CAS properties can be passed to the CAS web application as command-line arguments, when the application is launched:
+                                            <p></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>java <span class="nt">-jar</span> build/libs/cas.war <span class="nt">--cas</span>.events.kafka.topic.name<span class="o">=</span><span class="s2">"..."</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container and can be found in the <code>build/libs</code> directory.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+        </div>
+</td>
+</tr>
+<tr>
+    <td style="border-top: 0px; border-bottom: 1px solid #dee2e6;">
+<li class="property-name text-left" style="list-style: square">
+            <code class="text-wrap">cas.events.kafka.topic.partitions=1</code>
+        </li>
+        <div class="property-description text-wrap">
+            <p>
+                Set the number of partitions (default 1).
+                    </p>
+<p></p>
+<p class="small text-left"><i class="fas fa-code small" data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Owner"></i> <code>org.apereo.cas.configuration.model.support.kafka.KafkaSingleTopicProperties.</code></p>
+<p></p>
+                    <sub>
+                        <i class="fas fa-cog small" data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Configuration Strategy"></i>
+                        <a data-bs-toggle="modal" href="#" data-bs-target="#caseventskafkatopicpartitionsPropertyConfig"><small>How can I configure this property?</small></a>
+                    </sub>
+                    <p class="small text-left">
+                    </p>
+<div class="modal fade" id="caseventskafkatopicpartitionsPropertyConfig" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">CAS Property: <code>cas.events.kafka.topic.partitions</code>
+</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Configuration properties can be included and activated using the following strategies.
+                                    <p></p>
+                                    <div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+                                        When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+                                        The only possible exception to this rule is when naming actuator endpoints; The name of the
+                                        actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode.
+                                    </p>
+                                    </div>
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-bs-toggle="tab" href="#simplepropertycaseventskafkatopicpartitions"><i class="fa-brands fa-java px-1"></i>Java Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#yamlpropertycaseventskafkatopicpartitions"><i class="fa fa-file-code px-1"></i>YAML Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#systempropertycaseventskafkatopicpartitions"><i class="fa fa-laptop px-1"></i>System Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#envvarcaseventskafkatopicpartitions"><i class="fa fa-laptop-code px-1"></i>Environment Variable</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#cmdargcaseventskafkatopicpartitions"><i class="fa fa-terminal px-1"></i>Command-line Argument</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <p></p>
+                                        <div class="tab-pane fade active show" id="simplepropertycaseventskafkatopicpartitions">
+                                            CAS properties can be specified using the Java configuration property syntax in any and all
+                                            <code>.properties</code> files:
+                                            <p></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>cas.events.kafka.topic.partitions=1
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+
+                                            <p></p>
+                                            This is the most common form of property configuration that is recognized by CAS, regardless
+                                            of the actual property source, which might in fact be managed separately outside the CAS environment, by another system
+                                            or cloud framework.
+                                        </div>
+                                        <div class="tab-pane fade" id="yamlpropertycaseventskafkatopicpartitions">CAS properties can be specified using the YAML syntax:<p></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="na">cas: <br>  events: <br>    kafka: <br>      topic: <br>        partitions</span><span class="pi">:</span> <span class="s2">"</span><span class="s">1"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <script>
+                                                setTimeout(() => $("#yamlpropertycaseventskafkatopicpartitions td.gl").empty(), 250);
+                                            </script>
+
+                                            <p></p>
+                                            Note that YAML is very specific about structure and indentation. Be sure to verify the correctness of the final result
+                                            with your YAML validator of choice.
+                                        </div>
+                                        <div class="tab-pane fade" id="systempropertycaseventskafkatopicpartitions">
+                                            CAS properties can be passed to the CAS web application as system properties, when the application is launched:
+                                            <p></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>java <span class="nt">-Dcas</span>.events.kafka.topic.partitions<span class="o">=</span><span class="s2">"1"</span> <span class="nt">-jar</span> build/libs/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container and can be found in the <code>build/libs</code> directory. Note the placement of the system property which must be
+                                            specified before the CAS web application is launched.
+                                        </div>
+                                        <div class="tab-pane fade" id="envvarcaseventskafkatopicpartitions">
+                                            CAS properties can specified as system environment variables before the CAS web application is launched:
+                                            <p></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td>
+<td class="rouge-code"><pre><span class="nb">export </span><span class="nv">CAS_EVENTS_KAFKA_TOPIC_PARTITIONS</span><span class="o">=</span><span class="s2">"1"</span>
+
+java <span class="nt">-jar</span> build/libs/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container  and can be found in the <code>build/libs</code> directory.
+                                        </div>
+                                        <div class="tab-pane fade" id="cmdargcaseventskafkatopicpartitions">
+                                            CAS properties can be passed to the CAS web application as command-line arguments, when the application is launched:
+                                            <p></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>java <span class="nt">-jar</span> build/libs/cas.war <span class="nt">--cas</span>.events.kafka.topic.partitions<span class="o">=</span><span class="s2">"1"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container and can be found in the <code>build/libs</code> directory.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+        </div>
+</td>
+</tr>
+<tr>
+    <td style="border-top: 0px; border-bottom: 1px solid #dee2e6;">
+<li class="property-name text-left" style="list-style: square">
+            <code class="text-wrap">cas.events.kafka.topic.replicas=1</code>
+        </li>
+        <div class="property-description text-wrap">
+            <p>
+                Set the number of replicas (default 1).
+                    </p>
+<p></p>
+<p class="small text-left"><i class="fas fa-code small" data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Owner"></i> <code>org.apereo.cas.configuration.model.support.kafka.KafkaSingleTopicProperties.</code></p>
+<p></p>
+                    <sub>
+                        <i class="fas fa-cog small" data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true" title="Configuration Strategy"></i>
+                        <a data-bs-toggle="modal" href="#" data-bs-target="#caseventskafkatopicreplicasPropertyConfig"><small>How can I configure this property?</small></a>
+                    </sub>
+                    <p class="small text-left">
+                    </p>
+<div class="modal fade" id="caseventskafkatopicreplicasPropertyConfig" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">CAS Property: <code>cas.events.kafka.topic.replicas</code>
+</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Configuration properties can be included and activated using the following strategies.
+                                    <p></p>
+                                    <div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+                                        When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+                                        The only possible exception to this rule is when naming actuator endpoints; The name of the
+                                        actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode.
+                                    </p>
+                                    </div>
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-bs-toggle="tab" href="#simplepropertycaseventskafkatopicreplicas"><i class="fa-brands fa-java px-1"></i>Java Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#yamlpropertycaseventskafkatopicreplicas"><i class="fa fa-file-code px-1"></i>YAML Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#systempropertycaseventskafkatopicreplicas"><i class="fa fa-laptop px-1"></i>System Property</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#envvarcaseventskafkatopicreplicas"><i class="fa fa-laptop-code px-1"></i>Environment Variable</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#cmdargcaseventskafkatopicreplicas"><i class="fa fa-terminal px-1"></i>Command-line Argument</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <p></p>
+                                        <div class="tab-pane fade active show" id="simplepropertycaseventskafkatopicreplicas">
+                                            CAS properties can be specified using the Java configuration property syntax in any and all
+                                            <code>.properties</code> files:
+                                            <p></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>cas.events.kafka.topic.replicas=1
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+
+                                            <p></p>
+                                            This is the most common form of property configuration that is recognized by CAS, regardless
+                                            of the actual property source, which might in fact be managed separately outside the CAS environment, by another system
+                                            or cloud framework.
+                                        </div>
+                                        <div class="tab-pane fade" id="yamlpropertycaseventskafkatopicreplicas">CAS properties can be specified using the YAML syntax:<p></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="na">cas: <br>  events: <br>    kafka: <br>      topic: <br>        replicas</span><span class="pi">:</span> <span class="s2">"</span><span class="s">1"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <script>
+                                                setTimeout(() => $("#yamlpropertycaseventskafkatopicreplicas td.gl").empty(), 250);
+                                            </script>
+
+                                            <p></p>
+                                            Note that YAML is very specific about structure and indentation. Be sure to verify the correctness of the final result
+                                            with your YAML validator of choice.
+                                        </div>
+                                        <div class="tab-pane fade" id="systempropertycaseventskafkatopicreplicas">
+                                            CAS properties can be passed to the CAS web application as system properties, when the application is launched:
+                                            <p></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>java <span class="nt">-Dcas</span>.events.kafka.topic.replicas<span class="o">=</span><span class="s2">"1"</span> <span class="nt">-jar</span> build/libs/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container and can be found in the <code>build/libs</code> directory. Note the placement of the system property which must be
+                                            specified before the CAS web application is launched.
+                                        </div>
+                                        <div class="tab-pane fade" id="envvarcaseventskafkatopicreplicas">
+                                            CAS properties can specified as system environment variables before the CAS web application is launched:
+                                            <p></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td>
+<td class="rouge-code"><pre><span class="nb">export </span><span class="nv">CAS_EVENTS_KAFKA_TOPIC_REPLICAS</span><span class="o">=</span><span class="s2">"1"</span>
+
+java <span class="nt">-jar</span> build/libs/cas.war
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container  and can be found in the <code>build/libs</code> directory.
+                                        </div>
+                                        <div class="tab-pane fade" id="cmdargcaseventskafkatopicreplicas">
+                                            CAS properties can be passed to the CAS web application as command-line arguments, when the application is launched:
+                                            <p></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre>java <span class="nt">-jar</span> build/libs/cas.war <span class="nt">--cas</span>.events.kafka.topic.replicas<span class="o">=</span><span class="s2">"1"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+
+                                            <p></p>
+                                            The above example assumes that the CAS web application is packaged as <code>cas.war</code>
+                                            with an embedded server container and can be found in the <code>build/libs</code> directory.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+        </div>
+</td>
+</tr>
+</tbody>
+        </table>
+
+        <textarea style="position:absolute; left: -10000px;" id="copyAreaOptionalPropertiescaseventskafka"># Kafka bootstrapping server address (i.e. localhost:9092).
+# cas.events.kafka.bootstrap-address=
+
+# Specify the final compression type for a given topic.
+# cas.events.kafka.topic.compression-type=gzip
+
+# Additional configuration options, as pointed out by {@code TopicConfig}.
+# cas.events.kafka.topic.config=
+
+# Set the name of the topic.
+# cas.events.kafka.topic.name=
+
+# Set the number of partitions (default 1).
+# cas.events.kafka.topic.partitions=1
+
+# Set the number of replicas (default 1).
+# cas.events.kafka.topic.replicas=1
+
+</textarea>
+    </div>
+<div class="tab-pane properties-tab fade in" id="notescaseventskafka">
+<!-- fragment:keep -->
+
+<p></p>
+
+<h4 id="configuration-metadata">Configuration Metadata</h4>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<h4 id="be-selective">Be Selective</h4>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<h4 id="yagni">YAGNI</h4>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<h4 id="naming-convention">Naming Convention</h4>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<h4 id="validation">Validation</h4>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<h4 id="indexed-settings">Indexed Settings</h4>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+    </div>
+<script>
+        window.addEventListener('load', (event) => {$("#linkRdbmscaseventskafka").remove();$("#linkEmailcaseventskafka").remove();$("#linkGroovycaseventskafka").remove();$("#linkSigningEncryptioncaseventskafka").remove();$("#linkRequiredPropertiescaseventskafka").remove();
+            $("#requiredPropertiescaseventskafka").remove();$("#linkPasswordPolicycaseventskafka").remove();$("#linkPrincipalTransformationcaseventskafka").remove();$("#linkPasswordEncodercaseventskafka").remove();$("#linkAuthnPredicatecaseventskafka").remove();$("#linkLdapcaseventskafka").remove();// console.log("Checking for visible link menu in: navPillsMenuscaseventskafka");
+            let id=$("#navPillsMenuscaseventskafka a:visible:first").prop('id');
+            // console.log("Attempting to select tab with id " + id);
+            if (id != undefined && id != null) {
+                // console.log("Selecting first tab with link id " + id);
+                let firstTabEl = document.querySelector(`#${id}`);
+                let firstTab = new bootstrap.Tab(firstTabEl);
+                firstTab.show();
+                // console.log("Selected tab with link id " + id);
+            }
+
+            let c = $("#tableRequiredPropertiescaseventskafka li.property-name code").length;
+            if (c <= ROWS) {
+                $("#navRequiredPropertiescaseventskafka").closest("table").remove();
+                $("#navRequiredPropertiesLeftcaseventskafka").closest("table").remove();
+            }
+            c = $("#tableOptionalPropertiescaseventskafka li.property-name code").length;
+            if (c <= ROWS) {
+                $("#navOptionalPropertiescaseventskafka").closest("table").remove();
+                $("#navOptionalPropertiesLeftcaseventskafka").closest("table").remove();
+            }
+            c = $("#tableThirdPartyPropertiescaseventskafka li.property-name code").length;
+            if (c <= ROWS) {
+                $("#navThirdPartyPropertiescaseventskafka").hide();
+            }
+
+        });
+    </script>
+
+</div>
+
+
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+
+    <footer>
+        <div class="container">
+            CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.
+        </div>
+    </footer>
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/main.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = 'Authentication';
+        let siteUrl = '';
+        let basePath = '/cas';
+
+        
+    </script>
+</body>
+
+</html>
