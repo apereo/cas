@@ -11,7 +11,7 @@ find ./ci/tests -type f -name "*.sh" -exec chmod +x {} \;
 dockerPlatform="unknown"
 docker ps &> /dev/null
 if [[ $? -ne 0 ]] ; then
-  printf "\n${RED}Docker engine is not available.${ENDCOLOR}\n"
+  printf "\n🔥 ${RED}Docker engine is not available.${ENDCOLOR}\n"
 else
   dockerPlatform=$(docker version --format '{{json .Server.Os}}')
   printf "\nDocker engine platform is ${GREEN}%s${ENDCOLOR}\n" "$dockerPlatform."
@@ -21,7 +21,7 @@ function isDockerOnLinux() {
   if [[ $dockerPlatform =~ "linux" ]]; then
     return 0
   fi
-  printf "${RED}Docker engine is not available for the linux platform.\n${ENDCOLOR}"
+  printf "🔥 ${RED}Docker engine is not available for the linux platform.\n${ENDCOLOR}"
   return 1
 }
 
@@ -29,7 +29,7 @@ function isDockerOnWindows() {
   if [[ $dockerPlatform =~ "windows" ]]; then
     return 0
   fi
-  printf "${RED}Docker engine is not available for the windows platform.\n${ENDCOLOR}"
+  printf "🔥 ${RED}Docker engine is not available for the windows platform.\n${ENDCOLOR}"
   return 1
 }
 
