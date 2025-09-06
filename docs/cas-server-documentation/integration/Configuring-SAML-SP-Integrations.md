@@ -68,7 +68,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://evernote.com">
 <img alt="Service provider logo" src="https://user-images.githubusercontent.com/1205228/233796964-51945275-2f35-4826-a8af-1c01417cdc8e.png" height="48" width="110"></a> 
 
-<a href="http://www.ellucian.com/Software/Colleague-WebAdvisor/">
+<a href="javascript:void(0)">
 <img alt="Service provider logo" src="https://user-images.githubusercontent.com/1205228/233796972-548fdc7f-983b-4cd2-a538-7181c75e1a88.png" height="48" width="140"></a>
 
 <a href="https://docs.openathens.net">

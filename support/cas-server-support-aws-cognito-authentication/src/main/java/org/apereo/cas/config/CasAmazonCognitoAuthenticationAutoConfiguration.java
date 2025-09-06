@@ -79,7 +79,7 @@ public class CasAmazonCognitoAuthenticationAutoConfiguration {
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val cognito = casProperties.getAuthn().getCognito();
-        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(servicesManager,
+        val handler = new AmazonCognitoAuthenticationAuthenticationHandler(
             amazonCognitoPrincipalFactory, amazonCognitoIdentityProvider, cognito,
             amazonCognitoAuthenticationJwtProcessor);
         handler.setState(cognito.getState());

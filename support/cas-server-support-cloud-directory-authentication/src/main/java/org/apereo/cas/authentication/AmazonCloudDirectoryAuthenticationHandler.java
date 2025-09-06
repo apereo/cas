@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.clouddirectory.AmazonCloudDirectoryRepository;
 import org.apereo.cas.configuration.model.support.clouddirectory.AmazonCloudDirectoryProperties;
-import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,11 +25,11 @@ public class AmazonCloudDirectoryAuthenticationHandler extends AbstractUsernameP
     private final AmazonCloudDirectoryProperties cloudDirectoryProperties;
 
     public AmazonCloudDirectoryAuthenticationHandler(final String name,
-                                                     final ServicesManager servicesManager,
+
                                                      final PrincipalFactory principalFactory,
                                                      final AmazonCloudDirectoryRepository repository,
                                                      final AmazonCloudDirectoryProperties cloudDirectoryProperties) {
-        super(name, servicesManager, principalFactory, cloudDirectoryProperties.getOrder());
+        super(name, principalFactory, cloudDirectoryProperties.getOrder());
         this.repository = repository;
         this.cloudDirectoryProperties = cloudDirectoryProperties;
     }
