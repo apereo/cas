@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -37,10 +36,6 @@ class RemoteAddressAuthenticationHandlerTests {
     @Autowired
     private CasConfigurationProperties casProperties;
     
-    @Autowired
-    @Qualifier(ServicesManager.BEAN_NAME)
-    private ServicesManager servicesManager;
-
     @Test
     void verifyAccount() throws Throwable {
         val credential = new RemoteAuthenticationCredential("192.168.1.7");
@@ -59,7 +54,7 @@ class RemoteAddressAuthenticationHandlerTests {
     void verifyBadRange() {
         val credential = new RemoteAuthenticationCredential("---");
         val handler = new RemoteAddressAuthenticationHandler(casProperties.getAuthn().getRemote(),
-            servicesManager, PrincipalFactoryUtils.newPrincipalFactory());
+            PrincipalFactoryUtils.newPrincipalFactory());
         handler.configureIpNetworkRange("abc/def");
         assertThrows(FailedLoginException.class, () -> remoteAddressAuthenticationHandler.authenticate(credential, mock(Service.class)));
     }

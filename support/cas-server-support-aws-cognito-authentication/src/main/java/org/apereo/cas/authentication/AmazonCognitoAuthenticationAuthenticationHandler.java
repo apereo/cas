@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.cognito.AmazonCognitoAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import com.nimbusds.jose.proc.SimpleSecurityContext;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
@@ -43,12 +42,12 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
     private final ConfigurableJWTProcessor jwtProcessor;
 
     public AmazonCognitoAuthenticationAuthenticationHandler(
-        final ServicesManager servicesManager,
+
         final PrincipalFactory principalFactory,
         final CognitoIdentityProviderClient cognitoIdentityProvider,
         final AmazonCognitoAuthenticationProperties properties,
         final ConfigurableJWTProcessor jwtProcessor) {
-        super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
+        super(properties.getName(), principalFactory, properties.getOrder());
         this.cognitoIdentityProvider = cognitoIdentityProvider;
         this.properties = properties;
         this.jwtProcessor = jwtProcessor;

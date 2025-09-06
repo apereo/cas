@@ -1,9 +1,8 @@
 {
-  "dependencies": "syncope-authentication,events-configuration",
+  "dependencies": "reports,monitor,syncope-authentication,events-configuration",
   "conditions": {
     "docker": "true"
   },
-
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",

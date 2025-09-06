@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.jdbc.authn.BaseJdbcAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -35,10 +34,10 @@ public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler<T extend
     protected final T properties;
 
     protected AbstractJdbcUsernamePasswordAuthenticationHandler(final T properties,
-                                                                final ServicesManager servicesManager,
+
                                                                 final PrincipalFactory principalFactory,
                                                                 final DataSource dataSource) {
-        super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
+        super(properties.getName(), principalFactory, properties.getOrder());
         this.properties = properties;
         this.dataSource = dataSource;
         this.jdbcTemplate = new JdbcTemplate(dataSource);

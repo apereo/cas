@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -46,14 +45,14 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
 
 
     public RadiusTokenAuthenticationHandler(final String name,
-                                            final ServicesManager servicesManager,
+
                                             final PrincipalFactory principalFactory,
                                             final List<RadiusServer> servers,
                                             final boolean failoverOnException,
                                             final boolean failoverOnAuthenticationFailure,
                                             final Integer order,
                                             final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         this.servers = servers;
         this.failoverOnException = failoverOnException;
         this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;
