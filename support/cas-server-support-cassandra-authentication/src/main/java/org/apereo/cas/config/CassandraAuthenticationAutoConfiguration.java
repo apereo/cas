@@ -77,7 +77,7 @@ public class CassandraAuthenticationAutoConfiguration {
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager) {
         val cassandra = casProperties.getAuthn().getCassandra();
-        val handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager, cassandraPrincipalFactory, cassandra.getOrder(), cassandra, cassandraRepository);
+        val handler = new CassandraAuthenticationHandler(cassandra.getName(), cassandraPrincipalFactory, cassandra.getOrder(), cassandra, cassandraRepository);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cassandra.getPrincipalTransformation()));
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(cassandra.getPasswordEncoder(), applicationContext));
         return handler;

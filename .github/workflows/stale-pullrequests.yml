@@ -10,7 +10,7 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v9
+      - uses: actions/stale@v10
         id: stale
         with:
           stale-pr-message: 'This pull request has been open and inactive. It will be closed shortly.'

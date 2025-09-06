@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasOktaAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import com.okta.authn.sdk.AuthenticationStateHandler;
 import com.okta.authn.sdk.client.AuthenticationClient;
@@ -45,11 +44,7 @@ import static org.mockito.Mockito.*;
 class OktaAuthenticationStateHandlerTests {
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier(ServicesManager.BEAN_NAME)
-    private ServicesManager servicesManager;
-
+    
     @Autowired
     @Qualifier("oktaAuthenticationHandler")
     private AuthenticationHandler oktaAuthenticationHandler;
@@ -83,7 +78,7 @@ class OktaAuthenticationStateHandlerTests {
                 adapter.handleSuccess(response);
                 return response;
             });
-        val handler = new OktaAuthenticationHandler(null, servicesManager,
+        val handler = new OktaAuthenticationHandler(null,
             oktaPrincipalFactory, casProperties.getAuthn().getOkta(), client);
         assertNotNull(handler.authenticate(credential, mock(Service.class)));
         assertNotNull(handler.getOktaAuthenticationClient());

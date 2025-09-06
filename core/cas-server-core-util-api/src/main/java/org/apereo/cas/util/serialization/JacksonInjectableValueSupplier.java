@@ -25,10 +25,11 @@ public class JacksonInjectableValueSupplier extends InjectableValues.Std {
     public JacksonInjectableValueSupplier(final Supplier<? extends Map<String, Object>> valueSupplier) {
         super(valueSupplier.get());
     }
-
+    
     @Override
-    public Object findInjectableValue(final Object valueId, final DeserializationContext deserializationContext,
-                                      final BeanProperty beanProperty, final Object beanInstance) {
+    public Object findInjectableValue(final DeserializationContext ctxt, final Object valueId,
+                                      final BeanProperty forProperty, final Object beanInstance,
+                                      final Boolean optional, final Boolean useInput) {
         val key = valueId.toString();
         val valueToReturn = this._values.get(key);
 

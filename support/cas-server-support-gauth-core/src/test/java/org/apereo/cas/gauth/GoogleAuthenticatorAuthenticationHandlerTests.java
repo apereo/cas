@@ -19,7 +19,6 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.otp.repository.token.CachingOneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -72,7 +71,7 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
+
     private CasGoogleAuthenticator googleAuthenticator;
 
     private GoogleAuthenticatorAuthenticationHandler handler;
@@ -85,14 +84,12 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
 
     @BeforeEach
     void initialize() throws Exception {
-        val servicesManager = mock(ServicesManager.class);
         googleAuthenticator = new DefaultCasGoogleAuthenticator(casProperties, tenantExtractor);
         tokenRepository = new CachingOneTimeTokenRepository(Caffeine.newBuilder().initialCapacity(10).build(s -> null));
         tokenCredentialRepository = new InMemoryGoogleAuthenticatorTokenCredentialRepository(
             CipherExecutor.noOpOfStringToString(), CipherExecutor.noOpOfNumberToNumber(), googleAuthenticator);
         googleAuthenticator.setCredentialRepository(new DummyCredentialRepository());
         handler = new GoogleAuthenticatorAuthenticationHandler("GAuth",
-            servicesManager,
             PrincipalFactoryUtils.newPrincipalFactory(),
             new GoogleAuthenticatorOneTimeTokenCredentialValidator(googleAuthenticator, tokenRepository, tokenCredentialRepository),
             null, new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
