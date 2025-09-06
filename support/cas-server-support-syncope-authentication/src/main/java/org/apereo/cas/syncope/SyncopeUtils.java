@@ -425,7 +425,7 @@ public class SyncopeUtils {
             return Splitter.on(",").splitToList(syncope.getDomain())
                 .stream()
                 .map(domain -> {
-                    val handler = new SyncopeAuthenticationHandler(syncope, servicesManager, syncopePrincipalFactory, domain.trim());
+                    val handler = new SyncopeAuthenticationHandler(syncope, syncopePrincipalFactory, domain.trim());
                     handler.setState(syncope.getState());
                     handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(syncope.getPasswordEncoder(), applicationContext));
                     handler.setPasswordPolicyConfiguration(syncopePasswordPolicyConfiguration);

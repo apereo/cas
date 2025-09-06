@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.jdbc.authn.ProcedureJdbcAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -25,9 +24,9 @@ import java.util.Map;
 public class StoredProcedureAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler<ProcedureJdbcAuthenticationProperties> {
 
     public StoredProcedureAuthenticationHandler(
-        final ProcedureJdbcAuthenticationProperties properties, final ServicesManager servicesManager,
+        final ProcedureJdbcAuthenticationProperties properties,
         final PrincipalFactory principalFactory, final DataSource dataSource) {
-        super(properties, servicesManager, principalFactory, dataSource);
+        super(properties, principalFactory, dataSource);
     }
 
     @Override

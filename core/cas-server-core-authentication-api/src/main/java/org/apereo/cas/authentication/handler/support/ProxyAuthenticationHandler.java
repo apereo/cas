@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -29,10 +28,10 @@ import javax.security.auth.login.FailedLoginException;
 public class ProxyAuthenticationHandler extends AbstractAuthenticationHandler {
     private final HttpClient httpClient;
 
-    public ProxyAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public ProxyAuthenticationHandler(final String name,
                                       final PrincipalFactory principalFactory,
                                       final Integer order, final HttpClient httpClient) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         this.httpClient = httpClient;
     }
 

@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -58,10 +57,10 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
     private final Resource resource;
 
     public JsonResourceAuthenticationHandler(
-        final String name, final ServicesManager servicesManager,
+        final String name,
         final PrincipalFactory principalFactory,
         final Integer order, final Resource resource) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         this.resource = resource;
     }
 
