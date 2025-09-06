@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.jdbc.authn.BindJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
-import org.apereo.cas.services.ServicesManager;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -40,14 +39,14 @@ class BindModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
 
     @Test
     void verifyAction() throws Throwable {
-        val h = new BindModeSearchDatabaseAuthenticationHandler(new BindJdbcAuthenticationProperties(), mock(ServicesManager.class),
+        val h = new BindModeSearchDatabaseAuthenticationHandler(new BindJdbcAuthenticationProperties(),
             PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource);
         assertNotNull(h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon"), mock(Service.class)));
     }
 
     @Test
     void verifyInvalidAction() {
-        val h = new BindModeSearchDatabaseAuthenticationHandler(new BindJdbcAuthenticationProperties(), mock(ServicesManager.class),
+        val h = new BindModeSearchDatabaseAuthenticationHandler(new BindJdbcAuthenticationProperties(),
             PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource);
         assertThrows(FailedLoginException.class,
             () -> h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("unknown", "Mellon"), mock(Service.class)));

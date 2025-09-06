@@ -101,7 +101,7 @@ class CasSimpleMultifactorAuthenticationConfiguration {
                 .build()
                 .get();
         }
-
+        
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_MFA_SIMPLE_UPDATE_EMAIL)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
