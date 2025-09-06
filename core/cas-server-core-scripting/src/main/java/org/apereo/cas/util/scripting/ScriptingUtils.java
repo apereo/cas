@@ -108,6 +108,9 @@ public class ScriptingUtils {
             "org.opensaml.saml.saml2.binding",
             "org.opensaml.saml.metadata.resolver",
             "org.opensaml.saml.common",
+
+            "com.fasterxml.jackson",
+            "com.fasterxml.jackson.databind",
             
             "org.apereo.cas",
             "org.apereo.cas.api",
