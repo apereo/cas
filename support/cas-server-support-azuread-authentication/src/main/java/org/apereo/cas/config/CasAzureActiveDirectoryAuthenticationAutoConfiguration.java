@@ -116,7 +116,7 @@ public class CasAzureActiveDirectoryAuthenticationAutoConfiguration {
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val azure = casProperties.getAuthn().getAzureActiveDirectory();
-                    val handler = new AzureActiveDirectoryAuthenticationHandler(servicesManager, factory, azure);
+                    val handler = new AzureActiveDirectoryAuthenticationHandler(factory, azure);
                     handler.setState(azure.getState());
                     handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(azure.getPrincipalTransformation()));
                     handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(azure.getPasswordEncoder(), applicationContext));

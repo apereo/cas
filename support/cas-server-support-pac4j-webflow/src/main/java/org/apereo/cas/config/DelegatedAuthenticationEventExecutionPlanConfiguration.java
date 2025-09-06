@@ -161,7 +161,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
             @Qualifier("delegatedClientDistributedSessionCookieCipherExecutor")
             final CipherExecutor delegatedClientDistributedSessionCookieCipherExecutor,
             final CasConfigurationProperties casProperties) {
-            
+
             val cipherExecutorResolver = new DefaultCipherExecutorResolver(delegatedClientDistributedSessionCookieCipherExecutor, tenantExtractor,
                 InterruptCookieProperties.class, bindingContext -> {
                 val properties = bindingContext.value();
@@ -216,7 +216,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
             final ServicesManager servicesManager) {
             val pac4j = casProperties.getAuthn().getPac4j().getCore();
             val handler = new DelegatedClientAuthenticationHandler(pac4j,
-                servicesManager, clientPrincipalFactory, identityProviders, clientUserProfileProvisioner,
+                clientPrincipalFactory, identityProviders, clientUserProfileProvisioner,
                 delegatedClientDistributedSessionStore, applicationContext);
             handler.setTypedIdUsed(pac4j.isTypedIdUsed());
             handler.setPrincipalAttributeId(pac4j.getPrincipalIdAttribute());

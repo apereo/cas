@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.mongo.MongoDbAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.mongodb.client.model.Filters;
@@ -33,11 +32,11 @@ public class MongoDbAuthenticationHandler extends AbstractUsernamePasswordAuthen
 
     private final MongoDbAuthenticationProperties properties;
 
-    public MongoDbAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public MongoDbAuthenticationHandler(final String name,
                                         final PrincipalFactory principalFactory,
                                         final MongoDbAuthenticationProperties properties,
                                         final MongoOperations mongoTemplate) {
-        super(name, servicesManager, principalFactory, properties.getOrder());
+        super(name, principalFactory, properties.getOrder());
         this.mongoTemplate = mongoTemplate;
         this.properties = properties;
     }
