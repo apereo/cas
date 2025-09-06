@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 /**
  * This is {@link OpenLdapWebAuthnCredentialRepositoryTests}.
@@ -48,12 +49,15 @@ class OpenLdapWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRe
         val connection = new LDAPConnection("localhost", 11389,
             bindInit.getBindDn(), bindInit.getBindCredential().getString());
 
-        val rs = new ByteArrayInputStream(getLdif(uid).getBytes(StandardCharsets.UTF_8));
-        LdapIntegrationTestsOperations.populateEntries(connection, rs, "ou=people,dc=example,dc=org", bindInit);
+        val badUser = new ByteArrayInputStream(getBadLdif(UUID.randomUUID().toString()).getBytes(StandardCharsets.UTF_8));
+        LdapIntegrationTestsOperations.populateEntries(connection, badUser, "ou=people,dc=example,dc=org", bindInit);
+
+        val goodUser = new ByteArrayInputStream(getGoodLdif(uid).getBytes(StandardCharsets.UTF_8));
+        LdapIntegrationTestsOperations.populateEntries(connection, goodUser, "ou=people,dc=example,dc=org", bindInit);
         return uid;
     }
 
-    protected String getLdif(final String user) {
+    protected String getGoodLdif(final String user) {
         val baseDn = casProperties.getAuthn().getMfa().getWebAuthn().getLdap().getBaseDn();
         return String.format("dn: cn=%s,%s%n"
             + "objectClass: top%n"
@@ -64,5 +68,19 @@ class OpenLdapWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRe
             + "userPassword: 123456%n"
             + "sn: %s%n"
             + "uid: %s%n", user, baseDn, user, user, user);
+    }
+
+    protected String getBadLdif(final String user) {
+        val baseDn = casProperties.getAuthn().getMfa().getWebAuthn().getLdap().getBaseDn();
+        return String.format("dn: cn=%s,%s%n"
+                + "objectClass: top%n"
+                + "objectClass: person%n"
+                + "objectClass: organizationalPerson%n"
+                + "objectClass: inetOrgPerson%n"
+                + "cn: %s%n"
+                + "userPassword: 123456%n"
+                + "sn: %s%n"
+                + "uid: %s%n"
+                + "casWebAuthnRecord: ZZaaaa.bbbb.cccc", user, baseDn, user, user, user);
     }
 }
