@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -44,7 +43,7 @@ class JaasAuthenticationHandlerTests {
 
     @Test
     void verifyWithValidCredentials() throws Throwable {
-        val handler = new JaasAuthenticationHandler("JAAS", mock(ServicesManager.class),
+        val handler = new JaasAuthenticationHandler("JAAS",
             PrincipalFactoryUtils.newPrincipalFactory(), 0);
         handler.setLoginConfigType("JavaLoginConfig");
         handler.setLoginConfigurationFile(this.fileName);
@@ -54,7 +53,7 @@ class JaasAuthenticationHandlerTests {
 
     @Test
     void verifyFailsCredentials() {
-        val handler = new JaasAuthenticationHandler("JAAS", mock(ServicesManager.class),
+        val handler = new JaasAuthenticationHandler("JAAS",
             PrincipalFactoryUtils.newPrincipalFactory(), 0);
         handler.setLoginConfigType("JavaLoginConfig");
         handler.setLoginConfigurationFile(this.fileName);
@@ -66,7 +65,7 @@ class JaasAuthenticationHandlerTests {
 
     @Test
     void verifyWithValidCredentialsPreDefined() throws Throwable {
-        val handler = new JaasAuthenticationHandler("JAAS", mock(ServicesManager.class),
+        val handler = new JaasAuthenticationHandler("JAAS",
             PrincipalFactoryUtils.newPrincipalFactory(), 0);
         handler.setLoginConfigType("JavaLoginConfig");
         handler.setLoginConfigurationFile(this.fileName);

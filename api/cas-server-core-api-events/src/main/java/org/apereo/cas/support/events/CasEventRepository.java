@@ -12,7 +12,14 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@FunctionalInterface
 public interface CasEventRepository {
+
+    /**
+     * The event source.
+     */
+    String PARAM_SOURCE = "source";
+
     /**
      * Name of the events transaction manager.
      */
@@ -72,7 +79,9 @@ public interface CasEventRepository {
      * @param dateTime the date time
      * @return the collection
      */
-    Stream<? extends CasEvent> load(ZonedDateTime dateTime);
+    default Stream<? extends CasEvent> load(final ZonedDateTime dateTime) {
+        return Stream.empty();
+    }
 
     /**
      * Gets events of type for principal.
@@ -81,7 +90,9 @@ public interface CasEventRepository {
      * @param principal the principal
      * @return the events of type
      */
-    Stream<? extends CasEvent> getEventsOfTypeForPrincipal(String type, String principal);
+    default Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
+        return Stream.empty();
+    }
 
     /**
      * Gets events of type for principal after date.
@@ -91,7 +102,9 @@ public interface CasEventRepository {
      * @param dateTime  the date time
      * @return the events of type
      */
-    Stream<? extends CasEvent> getEventsOfTypeForPrincipal(String type, String principal, ZonedDateTime dateTime);
+    default Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal, final ZonedDateTime dateTime) {
+        return Stream.empty();
+    }
 
     /**
      * Gets events of type.
@@ -99,7 +112,9 @@ public interface CasEventRepository {
      * @param type the type
      * @return the events of type
      */
-    Stream<? extends CasEvent> getEventsOfType(String type);
+    default Stream<? extends CasEvent> getEventsOfType(final String type) {
+        return Stream.empty();
+    }
 
     /**
      * Gets events of type after date.
@@ -108,7 +123,9 @@ public interface CasEventRepository {
      * @param dateTime the date time
      * @return the events of type
      */
-    Stream<? extends CasEvent> getEventsOfType(String type, ZonedDateTime dateTime);
+    default Stream<? extends CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
+        return Stream.empty();
+    }
 
     /**
      * Gets events for principal.
@@ -116,7 +133,9 @@ public interface CasEventRepository {
      * @param id the id
      * @return the events for principal
      */
-    Stream<? extends CasEvent> getEventsForPrincipal(String id);
+    default Stream<? extends CasEvent> getEventsForPrincipal(final String id) {
+        return Stream.empty();
+    }
 
     /**
      * Gets events for principal after date.
@@ -125,7 +144,9 @@ public interface CasEventRepository {
      * @param dateTime the date time
      * @return the events for principal
      */
-    Stream<? extends CasEvent> getEventsForPrincipal(String id, ZonedDateTime dateTime);
+    default Stream<? extends CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
+        return Stream.empty();
+    }
 
     /**
      * Aggregate stream.
@@ -155,5 +176,14 @@ public interface CasEventRepository {
      */
     default Stream<CasEventAggregate> aggregate(final Class type, final Duration start) {
         return Stream.empty();
+    }
+
+    /**
+     * No op cas event repository that does not save events.
+     *
+     * @return the cas event repository
+     */
+    static CasEventRepository noOp() {
+        return event -> event;
     }
 }

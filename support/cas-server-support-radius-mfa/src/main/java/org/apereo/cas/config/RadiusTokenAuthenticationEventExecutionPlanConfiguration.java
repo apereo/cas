@@ -158,8 +158,9 @@ class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val radius = casProperties.getAuthn().getMfa().getRadius();
-                    return new RadiusTokenAuthenticationHandler(radius.getName(), servicesManager,
-                        radiusTokenPrincipalFactory, radiusTokenServers.toList(), radius.isFailoverOnException(),
+                    return new RadiusTokenAuthenticationHandler(radius.getName(),
+                        radiusTokenPrincipalFactory, radiusTokenServers.toList(),
+                        radius.isFailoverOnException(),
                         radius.isFailoverOnAuthenticationFailure(),
                         radius.getOrder(), multifactorAuthenticationProvider);
                 })

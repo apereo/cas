@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
@@ -32,11 +31,11 @@ public class OAuth20AccessTokenAuthenticationHandler extends AbstractPreAndPostP
 
     private final ConfigurableApplicationContext applicationContext;
 
-    public OAuth20AccessTokenAuthenticationHandler(final ServicesManager servicesManager,
-                                                   final PrincipalFactory principalFactory,
-                                                   final ConfigurableApplicationContext applicationContext,
-                                                   final TokenAuthenticationProperties properties) {
-        super(StringUtils.EMPTY, servicesManager, principalFactory, properties.getOrder() - 1);
+    public OAuth20AccessTokenAuthenticationHandler(
+        final PrincipalFactory principalFactory,
+        final ConfigurableApplicationContext applicationContext,
+        final TokenAuthenticationProperties properties) {
+        super(StringUtils.EMPTY, principalFactory, properties.getOrder() - 1);
         this.applicationContext = applicationContext;
     }
 
