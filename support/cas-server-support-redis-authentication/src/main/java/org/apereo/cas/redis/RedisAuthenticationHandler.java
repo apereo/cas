@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.redis.core.CasRedisTemplate;
-import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,10 +27,10 @@ import java.util.ArrayList;
 public class RedisAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     private final CasRedisTemplate redisTemplate;
 
-    public RedisAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public RedisAuthenticationHandler(final String name,
                                       final PrincipalFactory principalFactory, final Integer order,
                                       final CasRedisTemplate redisTemplate) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         this.redisTemplate = redisTemplate;
     }
 

@@ -268,7 +268,7 @@ public class CasX509AuthenticationAutoConfiguration {
         val subjectDnPattern = StringUtils.isNotBlank(x509.getRegExSubjectDnPattern()) ? RegexUtils.createPattern(x509.getRegExSubjectDnPattern()) : null;
         val trustedIssuerDnPattern = StringUtils.isNotBlank(x509.getRegExTrustedIssuerDnPattern()) ? RegexUtils.createPattern(x509.getRegExTrustedIssuerDnPattern()) : null;
 
-        return new X509CredentialsAuthenticationHandler(x509.getName(), servicesManager, x509PrincipalFactory, trustedIssuerDnPattern, x509.getMaxPathLength(),
+        return new X509CredentialsAuthenticationHandler(x509.getName(), x509PrincipalFactory, trustedIssuerDnPattern, x509.getMaxPathLength(),
             x509.isMaxPathLengthAllowUnspecified(), x509.isCheckKeyUsage(), x509.isRequireKeyUsage(), subjectDnPattern, revChecker, x509.getOrder());
     }
 

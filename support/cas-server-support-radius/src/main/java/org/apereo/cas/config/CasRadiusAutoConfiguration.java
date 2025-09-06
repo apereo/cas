@@ -160,7 +160,7 @@ public class CasRadiusAutoConfiguration {
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val radius = casProperties.getAuthn().getRadius();
-                val h = new RadiusAuthenticationHandler(radius.getName(), servicesManager,
+                val h = new RadiusAuthenticationHandler(radius.getName(),
                     radiusPrincipalFactory, radiusServers.toList(), radius.isFailoverOnException(),
                     radius.isFailoverOnAuthenticationFailure());
                 h.setState(radius.getState());

@@ -126,6 +126,11 @@ CAS is now built with Gradle `9.1` and the build process has been updated to
 use the latest Gradle features and capabilities. This is a preparatory step to ensure CAS 
 is ready for Java `25`. Once more, remember that the baseline requirement 
 will remain unchanged and this is only a proactive measure.
+  
+### Groovy 5
+
+CAS now uses and supports Groovy `5` and the codebase has been updated to use the latest Groovy features and capabilities.
+We do not anticipate this to be a breaking change and expect all existing Groovy scripts to continue to work as is.
 
 ### OpenRewrite Recipes
 
@@ -153,3 +158,4 @@ are now configured to run with parallelism enabled.
 - When using a [selection menu](../mfa/Multifactor-Authentication-ProviderSelection.html) for multifactor authentication, it is possible to make multifactor authentication optional.
 - [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication-TokenManagement.html) gains an option to control the character set used to generate tokens. Furthermore, additional improvements are place to ensure generated tokens are unique and do not collide with each other, particularly when using a smaller token length.
 - CAS [may now be configured](../authentication/Configuring-SSO-Notifications.html) to send email messages or SMS when single sign-on sessions are created.
+- Authentication handlers that qualify (i.e. created as property `@Bean`s) are observed for monitoring and metrics purposes. 
