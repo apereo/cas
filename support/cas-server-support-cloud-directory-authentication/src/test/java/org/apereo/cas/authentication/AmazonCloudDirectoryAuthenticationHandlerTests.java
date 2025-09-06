@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.clouddirectory.AmazonCloudDirectoryRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -46,7 +45,7 @@ class AmazonCloudDirectoryAuthenticationHandlerTests {
         val repository = mock(AmazonCloudDirectoryRepository.class);
         when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username",
             List.of("casuser"), "password", List.of("Mellon")));
-        val h = new AmazonCloudDirectoryAuthenticationHandler(StringUtils.EMPTY, mock(ServicesManager.class),
+        val h = new AmazonCloudDirectoryAuthenticationHandler(StringUtils.EMPTY,
             PrincipalFactoryUtils.newPrincipalFactory(), repository, casProperties.getAuthn().getCloudDirectory());
         assertNotNull(h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon"), mock(Service.class)));
     }
@@ -55,7 +54,7 @@ class AmazonCloudDirectoryAuthenticationHandlerTests {
     void verifyNoPassAttr() {
         val repository = mock(AmazonCloudDirectoryRepository.class);
         when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username", List.of("casuser")));
-        val h = new AmazonCloudDirectoryAuthenticationHandler(StringUtils.EMPTY, mock(ServicesManager.class),
+        val h = new AmazonCloudDirectoryAuthenticationHandler(StringUtils.EMPTY,
             PrincipalFactoryUtils.newPrincipalFactory(), repository, casProperties.getAuthn().getCloudDirectory());
         assertThrows(AccountNotFoundException.class,
             () -> h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "123456"), mock(Service.class)));
@@ -66,7 +65,7 @@ class AmazonCloudDirectoryAuthenticationHandlerTests {
         val repository = mock(AmazonCloudDirectoryRepository.class);
         when(repository.getUser(anyString())).thenReturn(CollectionUtils.wrap("username",
             List.of("casuser"), "password", List.of("Mellon")));
-        val h = new AmazonCloudDirectoryAuthenticationHandler(StringUtils.EMPTY, mock(ServicesManager.class),
+        val h = new AmazonCloudDirectoryAuthenticationHandler(StringUtils.EMPTY,
             PrincipalFactoryUtils.newPrincipalFactory(), repository, casProperties.getAuthn().getCloudDirectory());
         assertThrows(FailedLoginException.class,
             () -> h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "123456"), mock(Service.class)));

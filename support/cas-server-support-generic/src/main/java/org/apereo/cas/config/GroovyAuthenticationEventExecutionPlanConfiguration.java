@@ -61,8 +61,8 @@ class GroovyAuthenticationEventExecutionPlanConfiguration {
             .when(BeanCondition.on("cas.authn.groovy.location").exists().given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val groovy = casProperties.getAuthn().getGroovy();
-                val handler = new GroovyAuthenticationHandler(groovy.getName(), servicesManager,
-                    groovyPrincipalFactory, groovy.getLocation(), groovy.getOrder());
+                val handler = new GroovyAuthenticationHandler(groovy.getName(),
+                    servicesManager, groovyPrincipalFactory, groovy.getLocation(), groovy.getOrder());
                 handler.setState(groovy.getState());
                 return handler;
             })

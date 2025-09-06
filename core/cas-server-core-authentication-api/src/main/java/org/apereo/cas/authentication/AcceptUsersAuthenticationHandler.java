@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.monitor.Monitorable;
-import org.apereo.cas.services.ServicesManager;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -41,17 +40,17 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     private Map<String, String> users;
 
     public AcceptUsersAuthenticationHandler(final Map<String, String> users) {
-        this(null, null, PrincipalFactoryUtils.newPrincipalFactory(), Integer.MAX_VALUE, users);
+        this(null, PrincipalFactoryUtils.newPrincipalFactory(), Integer.MAX_VALUE, users);
     }
 
     public AcceptUsersAuthenticationHandler(final String name) {
-        this(name, null, PrincipalFactoryUtils.newPrincipalFactory(), Integer.MAX_VALUE, new HashMap<>());
+        this(name, PrincipalFactoryUtils.newPrincipalFactory(), Integer.MAX_VALUE, new HashMap<>());
     }
 
-    public AcceptUsersAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public AcceptUsersAuthenticationHandler(final String name,
                                             final PrincipalFactory principalFactory, final Integer order,
                                             final Map<String, String> users) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         this.users = users;
     }
 
