@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
@@ -27,7 +26,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    
+
     /**
      * Array of RADIUS servers to authenticate against.
      */
@@ -45,9 +44,9 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
      */
     private final boolean failoverOnAuthenticationFailure;
 
-    public RadiusAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public RadiusAuthenticationHandler(final String name, final PrincipalFactory principalFactory,
                                        final List<RadiusServer> servers, final boolean failoverOnException, final boolean failoverOnAuthenticationFailure) {
-        super(name, servicesManager, principalFactory, null);
+        super(name, principalFactory, null);
         this.servers = servers;
         this.failoverOnException = failoverOnException;
         this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;

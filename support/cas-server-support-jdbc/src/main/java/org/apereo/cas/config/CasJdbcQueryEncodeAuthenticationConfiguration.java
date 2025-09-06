@@ -53,7 +53,7 @@ class CasJdbcQueryEncodeAuthenticationConfiguration {
         val jdbc = casProperties.getAuthn().getJdbc();
         jdbc.getEncode().forEach(properties -> {
             val handler = JdbcAuthenticationUtils.newAuthenticationHandler(properties, applicationContext,
-                jdbcPrincipalFactory, servicesManager, queryAndEncodePasswordPolicyConfiguration);
+                jdbcPrincipalFactory, queryAndEncodePasswordPolicyConfiguration);
             handlers.add(handler);
         });
         return handlers;
