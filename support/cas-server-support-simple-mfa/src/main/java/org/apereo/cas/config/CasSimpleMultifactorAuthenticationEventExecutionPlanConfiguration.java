@@ -85,7 +85,7 @@ class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         final CasConfigurationProperties casProperties) {
         val props = casProperties.getAuthn().getMfa().getSimple();
         return new CasSimpleMultifactorAuthenticationHandler(props,
-            applicationContext, servicesManager, casSimpleMultifactorPrincipalFactory,
+            applicationContext, casSimpleMultifactorPrincipalFactory,
             casSimpleMultifactorAuthenticationService, multifactorAuthenticationProvider);
     }
 

@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Principal;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.ToString;
 import java.io.Serial;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link SurrogatePrincipal}.
@@ -32,11 +34,17 @@ public class SurrogatePrincipal implements Principal {
 
     @Override
     public String getId() {
-        return surrogate.getId();
+        return Objects.requireNonNull(surrogate).getId();
     }
 
     @Override
     public Map<String, List<Object>> getAttributes() {
-        return surrogate.getAttributes();
+        return Objects.requireNonNull(surrogate).getAttributes();
+    }
+
+    @Override
+    @CanIgnoreReturnValue
+    public Principal getOwner() {
+        return this.primary;
     }
 }
