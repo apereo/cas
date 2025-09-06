@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.PrePostAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.ServicesManager;
 
 import lombok.NonNull;
 
@@ -30,10 +29,9 @@ import java.util.List;
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends AbstractAuthenticationHandler implements PrePostAuthenticationHandler {
 
     protected AbstractPreAndPostProcessingAuthenticationHandler(final String name,
-                                                                final ServicesManager servicesManager,
                                                                 final PrincipalFactory principalFactory,
                                                                 final Integer order) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
     }
 
     @Override

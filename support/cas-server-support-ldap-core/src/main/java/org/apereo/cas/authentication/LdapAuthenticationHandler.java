@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.monitor.Monitorable;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -86,21 +85,12 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     private String principalDnAttributeName = "principalLdapDn";
 
-    /**
-     * Creates a new authentication handler that delegates to the given authenticator.
-     *
-     * @param name             the name
-     * @param servicesManager  the services manager
-     * @param principalFactory the principal factory
-     * @param order            the order
-     * @param authenticator    Ldaptive authenticator component.
-     * @param strategy         the strategy
-     */
-    public LdapAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                     final PrincipalFactory principalFactory, final Integer order,
+    public LdapAuthenticationHandler(final String name,
+                                     final PrincipalFactory principalFactory,
+                                     final Integer order,
                                      final Authenticator authenticator,
                                      final AuthenticationPasswordPolicyHandlingStrategy strategy) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         this.authenticator = authenticator;
         this.passwordPolicyHandlingStrategy = strategy;
     }

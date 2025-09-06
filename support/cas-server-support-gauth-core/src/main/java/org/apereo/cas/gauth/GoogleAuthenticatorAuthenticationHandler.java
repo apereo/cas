@@ -11,7 +11,6 @@ import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -38,11 +37,11 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
 
     public GoogleAuthenticatorAuthenticationHandler(
         final String name,
-        final ServicesManager servicesManager,
+
         final PrincipalFactory principalFactory,
         final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator,
         final Integer order, final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         this.validator = validator;
         this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;
     }
