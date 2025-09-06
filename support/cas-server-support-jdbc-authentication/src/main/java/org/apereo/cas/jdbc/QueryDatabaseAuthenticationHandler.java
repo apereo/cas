@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.monitor.Monitorable;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -41,10 +40,10 @@ import java.util.Map;
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler<QueryJdbcAuthenticationProperties> {
 
     public QueryDatabaseAuthenticationHandler(final QueryJdbcAuthenticationProperties properties,
-                                              final ServicesManager servicesManager,
+
                                               final PrincipalFactory principalFactory,
                                               final DataSource dataSource) {
-        super(properties, servicesManager, principalFactory, dataSource);
+        super(properties, principalFactory, dataSource);
         if (StringUtils.isBlank(properties.getFieldPassword())) {
             LOGGER.warn("When the password field is left undefined, CAS will skip comparing database and user passwords for equality "
                 + ", (especially if the query results do not contain the password field),"

@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -137,7 +136,7 @@ class JsonResourceAuthenticationHandlerTests {
             ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
 
         mapper.writeValue(resource.getFile(), accounts);
-        this.handler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
+        this.handler = new JsonResourceAuthenticationHandler(null,
             PrincipalFactoryUtils.newPrincipalFactory(), null, resource);
         this.handler.setPasswordPolicyConfiguration(new PasswordPolicyContext(15));
 
@@ -150,7 +149,7 @@ class JsonResourceAuthenticationHandlerTests {
     @Test
     void verifyOkAccountFromExternalFile() throws Throwable {
         val resource = new ClassPathResource("sample-users.json");
-        val jsonHandler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
+        val jsonHandler = new JsonResourceAuthenticationHandler(null,
             PrincipalFactoryUtils.newPrincipalFactory(), null, resource);
         assertThrows(FailedLoginException.class,
             () -> jsonHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "bad-password"), mock(Service.class)));
@@ -166,7 +165,7 @@ class JsonResourceAuthenticationHandlerTests {
     @Test
     void verifyOkAccountFromExternalFileWithEncodedPassword() throws Throwable {
         val resource = new ClassPathResource("sample-users.json");
-        val jsonHandler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
+        val jsonHandler = new JsonResourceAuthenticationHandler(null,
             PrincipalFactoryUtils.newPrincipalFactory(), null, resource);
 
         val p = new PasswordEncoderProperties();
@@ -182,7 +181,7 @@ class JsonResourceAuthenticationHandlerTests {
     void verifyInvalidAccounts() throws Throwable {
         val resource = new FileSystemResource(Files.createTempFile("bad-account", ".json").toFile());
         FileUtils.write(resource.getFile(), "invalid-data", StandardCharsets.UTF_8);
-        val jsonHandler = new JsonResourceAuthenticationHandler(null, mock(ServicesManager.class),
+        val jsonHandler = new JsonResourceAuthenticationHandler(null,
             PrincipalFactoryUtils.newPrincipalFactory(), null, resource);
         assertThrows(PreventedException.class, () -> jsonHandler.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpiring", "Mellon"), mock(Service.class)));

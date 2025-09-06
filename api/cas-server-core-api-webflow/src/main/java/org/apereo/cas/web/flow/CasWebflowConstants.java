@@ -2104,7 +2104,7 @@ public interface CasWebflowConstants {
      * Action id 'mfaSimpleMultifactorUpdateEmailAction'.
      */
     String ACTION_ID_MFA_SIMPLE_UPDATE_EMAIL = "mfaSimpleMultifactorUpdateEmailAction";
-
+    
     /**
      * Action id 'loadAccountRegistrationPropertiesAction'.
      */

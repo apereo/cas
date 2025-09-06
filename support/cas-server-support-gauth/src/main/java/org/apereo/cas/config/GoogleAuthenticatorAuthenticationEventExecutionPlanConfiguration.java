@@ -112,7 +112,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             val gauth = casProperties.getAuthn().getMfa().getGauth();
-            return new GoogleAuthenticatorAuthenticationHandler(gauth.getName(), servicesManager,
+            return new GoogleAuthenticatorAuthenticationHandler(gauth.getName(),
                 googlePrincipalFactory, googleAuthenticatorOneTimeTokenCredentialValidator,
                 gauth.getOrder(), multifactorAuthenticationProvider);
         }
@@ -505,7 +505,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
             final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
-            
+
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -597,7 +597,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new GoogleMultifactorAuthenticationAccountProfilePrepareAction(googleAuthenticatorAccountRegistry,
-                            googleAuthenticatorMultifactorAuthenticationProvider, casProperties, tenantExtractor))
+                    googleAuthenticatorMultifactorAuthenticationProvider, casProperties, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_PREPARE)
                 .build()
                 .get();
