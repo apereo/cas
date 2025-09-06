@@ -60,6 +60,7 @@ dependencies {
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
+    testImplementation project(":support:cas-server-support-surrogate-core")
     testImplementation project(":support:cas-server-support-surrogate-authentication")
     testImplementation project(":support:cas-server-support-surrogate-webflow")
     testImplementation project(":support:cas-server-support-reports")

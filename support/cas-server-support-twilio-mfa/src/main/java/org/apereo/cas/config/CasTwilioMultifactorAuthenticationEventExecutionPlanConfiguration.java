@@ -65,7 +65,7 @@ class CasTwilioMultifactorAuthenticationEventExecutionPlanConfiguration {
         final CasConfigurationProperties casProperties) {
         val props = casProperties.getAuthn().getMfa().getTwilio();
         return new CasTwilioMultifactorAuthenticationHandler(casTwilioMultifactorAuthenticationService, props,
-            applicationContext, servicesManager, casTwilioMultifactorPrincipalFactory,
+            applicationContext, casTwilioMultifactorPrincipalFactory,
             multifactorAuthenticationProvider);
     }
 
