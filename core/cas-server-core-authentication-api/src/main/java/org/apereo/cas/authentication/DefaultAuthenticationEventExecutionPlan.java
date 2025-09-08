@@ -213,13 +213,13 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public Set<AuthenticationHandler> resolveAuthenticationHandlers() {
-        val clientInfo = Objects.requireNonNull(ClientInfoHolder.getClientInfo(), "Client info cannot be null");
+        val clientInfo = ClientInfoHolder.getClientInfo();
         val handlers = authenticationHandlerPrincipalResolverMap
             .keySet()
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .filter(handler -> {
-                if (StringUtils.isNotBlank(clientInfo.getTenant())) {
+                if (clientInfo != null && StringUtils.isNotBlank(clientInfo.getTenant())) {
                     val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(clientInfo.getTenant()).orElseThrow();
                     val authenticationHandlers = tenantDefinition.getAuthenticationPolicy().getAuthenticationHandlers();
                     return authenticationHandlers == null || authenticationHandlers.isEmpty() || authenticationHandlers.contains(handler.getName());
@@ -228,7 +228,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
             })
             .collect(Collectors.toList());
 
-        if (StringUtils.isNotBlank(clientInfo.getTenant())) {
+        if (clientInfo != null && StringUtils.isNotBlank(clientInfo.getTenant())) {
             val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(clientInfo.getTenant()).orElseThrow();
             if (!tenantDefinition.getProperties().isEmpty()) {
                 getTenantAuthenticationHandlerBuilders()
