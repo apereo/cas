@@ -60,10 +60,14 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         "/**/" + OidcConstants.CLIENT_CONFIGURATION_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Handle client configuration request", parameters = @Parameter(name = OAuth20Constants.CLIENT_ID, description = "Client ID", required = true))
-    public ResponseEntity handleRequestInternal(
+    public ResponseEntity<?> handleRequestInternal(
         @RequestParam(name = OAuth20Constants.CLIENT_ID)
         final String clientId,
         final HttpServletRequest request, final HttpServletResponse response) {
+        if(!getConfigurationContext().getCasProperties().getAuthn().getOidc().getRegistration().getDynamicClientRegistrationEnabled()) {
+            LOGGER.debug("Client configuration endpoint disabled: GET request rejected for clientId=[{}]", clientId);
+            return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        }
 
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.CLIENT_CONFIGURATION_URL))) {
@@ -105,12 +109,17 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
             )
         )
     )
-    public ResponseEntity handleUpdates(
+    public ResponseEntity<?> handleUpdates(
         @RequestParam(name = OAuth20Constants.CLIENT_ID)
         final String clientId,
         @RequestBody(required = false)
         final String jsonInput,
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        if(!getConfigurationContext().getCasProperties().getAuthn().getOidc().getRegistration().getDynamicClientRegistrationEnabled()) {
+            LOGGER.debug("Client configuration endpoint disabled: PATCH request rejected for clientId=[{}]", clientId);
+            return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        }
+            
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.CLIENT_CONFIGURATION_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
