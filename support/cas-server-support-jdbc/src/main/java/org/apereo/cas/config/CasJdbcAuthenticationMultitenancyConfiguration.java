@@ -47,8 +47,8 @@ class CasJdbcAuthenticationMultitenancyConfiguration {
                 if (casProperties.getMultitenancy().getCore().isEnabled()) {
                     val passwordPolicyConfiguration = new PasswordPolicyContext();
                     val principalFactory = PrincipalFactoryUtils.newPrincipalFactory();
-                    val builder = new TenantJdbcAuthenticationHandlerBuilder(passwordPolicyConfiguration, principalFactory,
-                        applicationContext, servicesManager);
+                    val builder = new TenantJdbcAuthenticationHandlerBuilder(passwordPolicyConfiguration,
+                        principalFactory, applicationContext);
                     plan.registerTenantAuthenticationHandlerBuilder(builder);
                 }
             };

@@ -10,7 +10,7 @@
     "crypto-js": "4.2.0",
     "dpop": "2.1.1",
     "express": "5.1.0",
-    "figlet": "1.8.2",
+    "figlet": "1.9.0",
     "http-cas-client": "0.4.3",
     "jose": "6.1.0",
     "jsonpath-plus": "10.3.0",
@@ -22,7 +22,7 @@
     "node-static-auth": "1.0.6",
     "p-limit": "7.1.1",
     "perf_hooks": "0.0.1",
-    "pino": "9.9.2",
+    "pino": "9.9.4",
     "pino-pretty": "13.1.1",
     "properties-reader": "2.3.0",
     "ps-node": "0.1.6",
@@ -38,8 +38,8 @@
     "yaml": "2.8.1"
   },
   "devDependencies": {
-    "@eslint/js": "9.34.0",
-    "eslint": "9.34.0",
+    "@eslint/js": "9.35.0",
+    "eslint": "9.35.0",
     "globals": "16.3.0"
   }
 }
