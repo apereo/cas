@@ -44,6 +44,7 @@ jobs:
           >> $GITHUB_OUTPUT
   release-to-central:
     runs-on: ubuntu-latest
+    needs: [check]
     if: needs.check.outputs.is_snapshot == 'false'
     steps:
       - name: Checkout
