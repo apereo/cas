@@ -144,6 +144,12 @@ as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.ht
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
 to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
 
+### Java 25
+
+As described, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. CAS is now able to
+build and run using Java `25`. Once more, remember that the baseline requirement will remain unchanged
+and this is just a preparatory step to ensure CAS is ready for the next version of Java.
+
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
