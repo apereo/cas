@@ -86,7 +86,7 @@ nmcpAggregation {
         publicationName = "Apereo CAS Release ${project.version}"
         publishingType = "AUTOMATIC"
         validationTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
-        publishingTimeout = java.time.Duration.of(60, java.time.temporal.ChronoUnit.MINUTES)
+        publishingTimeout = java.time.Duration.of(120, java.time.temporal.ChronoUnit.MINUTES)
     }
     publishAllProjectsProbablyBreakingProjectIsolation()
 }
