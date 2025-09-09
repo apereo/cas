@@ -88,7 +88,13 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
                 .filter(Objects::nonNull)
                 .map(StringUtils::trim)
                 .filter(StringUtils::isNotBlank)
-                .map(record -> getCipherExecutor().decode(record))
+                .map(record -> {
+                    try {
+                        return getCipherExecutor().decode(record);
+                    } catch (final Exception e) {
+                        return null;
+                    }
+                })
                 .filter(Objects::nonNull)
                 .map(LdapWebAuthnCredentialRepository::mapFromJson)
                 .filter(Objects::nonNull)
