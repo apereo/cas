@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -67,7 +68,7 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
                 .filter(Objects::nonNull)
                 .map(StringUtils::trim)
                 .filter(StringUtils::isNotBlank)
-                .map(record -> getCipherExecutor().decode(record))
+                .map(record -> FunctionUtils.doAndHandle(() -> getCipherExecutor().decode(record)))
                 .filter(Objects::nonNull)
                 .map(LdapWebAuthnCredentialRepository::mapFromJson)
                 .filter(Objects::nonNull)
@@ -88,7 +89,7 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
                 .filter(Objects::nonNull)
                 .map(StringUtils::trim)
                 .filter(StringUtils::isNotBlank)
-                .map(record -> getCipherExecutor().decode(record))
+                .map(record -> FunctionUtils.doAndHandle(() -> getCipherExecutor().decode(record)))
                 .filter(Objects::nonNull)
                 .map(LdapWebAuthnCredentialRepository::mapFromJson)
                 .filter(Objects::nonNull)
