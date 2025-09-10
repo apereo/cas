@@ -22,11 +22,11 @@
     "node-static-auth": "1.0.6",
     "p-limit": "7.1.1",
     "perf_hooks": "0.0.1",
-    "pino": "9.9.4",
+    "pino": "9.9.5",
     "pino-pretty": "13.1.1",
     "properties-reader": "2.3.0",
     "ps-node": "0.1.6",
-    "puppeteer": "24.19.0",
+    "puppeteer": "24.20.0",
     "puppeteer-loadtest": "2.2.1",
     "request": "2.88.2",
     "@napi-rs/canvas": "0.1.79",
@@ -40,6 +40,6 @@
   "devDependencies": {
     "@eslint/js": "9.35.0",
     "eslint": "9.35.0",
-    "globals": "16.3.0"
+    "globals": "16.4.0"
   }
 }
