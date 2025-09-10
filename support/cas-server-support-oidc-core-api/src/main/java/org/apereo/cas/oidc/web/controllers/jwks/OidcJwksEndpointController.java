@@ -10,6 +10,7 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -54,6 +55,7 @@ public class OidcJwksEndpointController extends BaseOidcController {
      *
      * @param request  the request
      * @param response the response
+     * @param kid      the kid
      * @param state    the state
      * @return the jwk set
      */
@@ -65,16 +67,16 @@ public class OidcJwksEndpointController extends BaseOidcController {
         parameters = @Parameter(name = "state", description = "Filter keys by their state name", required = false))
     public ResponseEntity handleRequestInternal(final HttpServletRequest request,
                                                 final HttpServletResponse response,
+                                                @RequestParam(value = "kid", required = false) final String kid,
                                                 @RequestParam(value = "state", required = false) final String state) {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.JWKS_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
-        try {
+        return FunctionUtils.doAndHandle(() -> {
             val resource = oidcJsonWebKeystoreGeneratorService.generate();
             val jsonWebKeySet = getJsonWebKeySet(resource);
-
             val servicesManager = getConfigurationContext().getServicesManager();
             servicesManager.getAllServicesOfType(OidcRegisteredService.class)
                 .stream()
@@ -88,6 +90,9 @@ public class OidcJwksEndpointController extends BaseOidcController {
                     set.ifPresent(keys -> keys.getJsonWebKeys().forEach(jsonWebKeySet::addJsonWebKey));
                 });
 
+            if (StringUtils.isNotBlank(kid)) {
+                jsonWebKeySet.getJsonWebKeys().removeIf(key -> !kid.equalsIgnoreCase(key.getKeyId()));
+            }
             if (StringUtils.isNotBlank(state)) {
                 jsonWebKeySet.getJsonWebKeys()
                     .removeIf(key -> {
@@ -98,10 +103,10 @@ public class OidcJwksEndpointController extends BaseOidcController {
             val body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             return new ResponseEntity<>(body, HttpStatus.OK);
-        } catch (final Throwable e) {
+        }, e -> {
             LoggingUtils.error(LOGGER, e);
             return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.BAD_REQUEST);
-        }
+        }).get();
     }
 
     private static JsonWebKeySet getJsonWebKeySet(final Resource resource) throws Exception {
