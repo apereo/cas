@@ -17,7 +17,7 @@
     "--cas.authn.oauth.core.user-profile-view-type=FLAT",
 
     "--cas.authn.oidc.core.issuer=${cas.server.name}/cas/oidc",
-    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/keystore.jwks",
     
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
     "--cas.authn.attribute-repository.stub.attributes.organization=apereo",
