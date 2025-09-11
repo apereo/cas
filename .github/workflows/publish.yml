@@ -41,9 +41,8 @@ jobs:
         id: check
         run: |
           casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
-          echo "Detected version: $casVersion"
+          echo "Detected CAS version: $casVersion"
           
-          # decide if it’s a SNAPSHOT
           if [[ "$casVersion" == *-SNAPSHOT ]]; then
             echo "is_snapshot=true"
           else
@@ -97,6 +96,12 @@ jobs:
            timeout_minutes: 70
            shell: bash
            command: ./ci/release.sh
+       - name: Verify SNAPSHOTs
+         if: ${{ env.REPOSITORY_USER != null && env.REPOSITORY_PWD != null }}
+         run: |
+            casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
+            echo "Detected CAS version: $casVersion"
+            mvn clean package -f ./ci/verify-pom.xml -Dcas.version="${casVersion}"
   ##########################################################################
 
   publish-modules-metadata:
