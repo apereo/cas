@@ -41,31 +41,27 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
 
     private final BlockingQueue<List<Authentication>> authenticationsPool;
 
-    private final boolean principalWithDomainName;
-
-    private final boolean ntlmAllowed;
-
-    private final long poolTimeoutInMilliseconds;
+    private final SpnegoProperties spnegoProperties;
 
     public JcifsSpnegoAuthenticationHandler(final SpnegoProperties spnegoProperties,
-                                            final PrincipalFactory principalFactory, final BlockingQueue<List<Authentication>> authenticationsPool) {
+                                            final PrincipalFactory principalFactory,
+                                            final BlockingQueue<List<Authentication>> authenticationsPool) {
         super(spnegoProperties.getName(), principalFactory, spnegoProperties.getOrder());
+        this.spnegoProperties = spnegoProperties;
         this.authenticationsPool = authenticationsPool;
-        this.principalWithDomainName = spnegoProperties.isPrincipalWithDomainName();
-        this.ntlmAllowed = spnegoProperties.isNtlmAllowed();
-        this.poolTimeoutInMilliseconds = Beans.newDuration(spnegoProperties.getPoolTimeout()).toMillis();
     }
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Throwable {
         val spnegoCredential = (SpnegoCredential) credential;
-        if (!this.ntlmAllowed && spnegoCredential.isNtlm()) {
+        if (!spnegoProperties.isNtlmAllowed() && spnegoCredential.isNtlm()) {
             throw new FailedLoginException("NTLM not allowed");
         }
 
         try {
             LOGGER.debug("Waiting for connection to validate SPNEGO Token");
-            val authentications = authenticationsPool.poll(this.poolTimeoutInMilliseconds, TimeUnit.MILLISECONDS);
+            val poolTimeoutInMilliseconds = Beans.newDuration(spnegoProperties.getPoolTimeout()).toMillis();
+            val authentications = authenticationsPool.poll(poolTimeoutInMilliseconds, TimeUnit.MILLISECONDS);
             if (authentications != null) {
                 try {
                     return doInternalAuthentication(authentications, spnegoCredential, service);
@@ -134,17 +130,9 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
     public boolean supports(final Class<? extends Credential> clazz) {
         return SpnegoCredential.class.isAssignableFrom(clazz);
     }
-
-    /**
-     * Gets the principal from the given name. The principal
-     * is created by the factory instance.
-     *
-     * @param name   the name
-     * @param isNtlm the is ntlm
-     * @return the simple principal
-     */
+    
     protected Principal getPrincipal(final String name, final boolean isNtlm) throws Throwable {
-        if (this.principalWithDomainName) {
+        if (spnegoProperties.isPrincipalWithDomainName()) {
             return this.principalFactory.createPrincipal(name);
         }
         if (isNtlm) {
