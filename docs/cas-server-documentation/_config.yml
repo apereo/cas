@@ -1,6 +1,7 @@
 exclude:
   - .idea
   - .history
+  - 7.0.x
   - 6.6.x
   - 6.5.x
   - 6.4.x
