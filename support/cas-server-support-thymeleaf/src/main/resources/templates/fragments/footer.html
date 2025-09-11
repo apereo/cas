@@ -1,9 +1,10 @@
 <footer th:if="${#cas.isTrue(#cas.theme('cas.footer.show'))}"
         class="py-3 d-flex justify-content-center align-items-center cas-footer"
-        id="casFooter">
+        id="casFooter" role="contentinfo">
     <span id="copyright" th:utext="#{copyright}" class="me-2 d-inline-block">Copyright Apereo, Inc</span>
     <span id="poweredBy" class="px-3 d-inline-block">
-        <span th:utext="#{poweredBy}">Powered by </span><a href="https://github.com/apereo/cas">Apereo CAS</a>
+        <span th:utext="#{poweredBy}">Powered by</span>
+        <a href="https://github.com/apereo/cas">Apereo CAS</a>
     </span>
     <code class="version"
           th:if="${#cas.isTrue(#cas.theme('cas.footer.show-version'))}"
@@ -14,4 +15,3 @@
           th:text="${'🖥️ ' + host}">
     </code>
 </footer>
-
