@@ -98,7 +98,9 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
                 nextToken = authentication.getNextToken();
             } catch (final AuthenticationException e) {
                 LOGGER.debug("Processing SPNEGO authentication failed with exception", e);
-                throw new FailedLoginException(e.getMessage());
+                if (!it.hasNext()) {
+                    throw new FailedLoginException(e.getMessage());
+                }
             }
         }
 
