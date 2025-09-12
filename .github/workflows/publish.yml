@@ -101,6 +101,7 @@ jobs:
          run: |
             casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
             echo "Detected CAS version: $casVersion"
+            mvn --version
             mvn clean package -U -f ./ci/verify-pom.xml -Dcas.version="${casVersion}"
   ##########################################################################
 
