@@ -4,7 +4,7 @@
   "dependencies": {
     "@stomp/stompjs": "7.1.1",
     "archiver": "7.0.1",
-    "axios": "1.11.0",
+    "axios": "1.12.2",
     "basic-auth": "2.0.1",
     "colors": "1.4.0",
     "crypto-js": "4.2.0",
@@ -29,11 +29,11 @@
     "puppeteer": "24.20.0",
     "puppeteer-loadtest": "2.2.1",
     "request": "2.88.2",
-    "@napi-rs/canvas": "0.1.79",
+    "@napi-rs/canvas": "0.1.80",
     "sockjs-client": "1.6.1",
     "speakeasy": "2.0.0",
     "unzipper": "0.12.3",
-    "wait-on": "8.0.4",
+    "wait-on": "8.0.5",
     "xml2js": "0.6.2",
     "yaml": "2.8.1"
   },
