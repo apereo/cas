@@ -6,7 +6,6 @@ import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtCipherExecutor;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
