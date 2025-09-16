@@ -130,6 +130,15 @@ public interface RedisKeyGenerator {
         throw new IllegalArgumentException("Unable to parse pattern " + key);
     }
 
+    /**
+     * For all entries and types.
+     *
+     * @return the string
+     */
+    default String forEverything() {
+        return forPrefixAndId("*", "*");
+    }
+    
     @SuperBuilder
     @Getter
     class RedisCompositeKey {

@@ -48,6 +48,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -241,10 +242,10 @@ class RedisServerTicketRegistryTests {
             LOGGER.info("Current repetition: [{}]", useEncryption ? "Encrypted" : "Plain");
             val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
             val ticketGrantingTicketToAdd = Stream.generate(() -> {
-                    val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
-                        .getNewTicketId(TicketGrantingTicket.PREFIX);
-                    return new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
-                }).limit(5);
+                val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                    .getNewTicketId(TicketGrantingTicket.PREFIX);
+                return new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+            }).limit(5);
             getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd);
             val totalCount = getNewTicketRegistry().countTickets();
             assertTrue(totalCount > 0);
@@ -297,7 +298,7 @@ class RedisServerTicketRegistryTests {
             });
         }
     }
-    
+
     @Nested
     @TestPropertySource(properties = {
         "cas.ticket.registry.redis.protocol-version=RESP2",
@@ -311,7 +312,7 @@ class RedisServerTicketRegistryTests {
         "CasFeatureModule.TicketRegistry.redis-messaging.enabled=false"
     })
     class NoMessagingTests extends BaseRedisSentinelTicketRegistryTests {
-        
+
         @RepeatedTest(2)
         void verifyTicketWithIdleTimeout() throws Throwable {
             val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
@@ -324,7 +325,7 @@ class RedisServerTicketRegistryTests {
             assertNotNull(authentication);
             await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertNull(getNewTicketRegistry().getTicket(ticketGrantingTicketId)));
         }
-        
+
     }
 
     @Nested
@@ -334,13 +335,13 @@ class RedisServerTicketRegistryTests {
             CasRedisTicketRegistryAutoConfiguration.class,
             BaseTicketRegistryTests.SharedTestConfiguration.class
         }, properties = {
-            "cas.ticket.tgt.core.only-track-most-recent-session=true",
-            "cas.ticket.registry.redis.host=localhost",
-            "cas.ticket.registry.redis.port=6379",
-            "cas.ticket.registry.redis.pool.max-active=20",
-            "cas.ticket.registry.redis.pool.enabled=true",
-            "cas.ticket.registry.redis.crypto.enabled=true"
-        })
+        "cas.ticket.tgt.core.only-track-most-recent-session=true",
+        "cas.ticket.registry.redis.host=localhost",
+        "cas.ticket.registry.redis.port=6379",
+        "cas.ticket.registry.redis.pool.max-active=20",
+        "cas.ticket.registry.redis.pool.enabled=true",
+        "cas.ticket.registry.redis.crypto.enabled=true"
+    })
     @ExtendWith(CasTestExtension.class)
     class RecentSessionsTests {
         @Autowired
@@ -368,10 +369,10 @@ class RedisServerTicketRegistryTests {
             CasRedisTicketRegistryAutoConfiguration.class,
             BaseTicketRegistryTests.SharedTestConfiguration.class
         }, properties = {
-            "cas.ticket.tgt.core.only-track-most-recent-session=false",
-            "cas.ticket.registry.redis.host=localhost",
-            "cas.ticket.registry.redis.port=6379",
-            "cas.ticket.registry.redis.crypto.enabled=false"
+        "cas.ticket.tgt.core.only-track-most-recent-session=false",
+        "cas.ticket.registry.redis.host=localhost",
+        "cas.ticket.registry.redis.port=6379",
+        "cas.ticket.registry.redis.crypto.enabled=false"
     })
     @ExtendWith(CasTestExtension.class)
     class TrackAllSessionsTests {
@@ -402,7 +403,7 @@ class RedisServerTicketRegistryTests {
         private void addTicketAndWait(final String principalId) throws Throwable {
             val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
             val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
-                    .getNewTicketId(TicketGrantingTicket.PREFIX);
+                .getNewTicketId(TicketGrantingTicket.PREFIX);
             val tgt = new TicketGrantingTicketImpl(tgtId, authentication, new HardTimeoutExpirationPolicy(2));
             ticketRegistry.addTicket(tgt);
             Thread.sleep(1000);
@@ -416,9 +417,9 @@ class RedisServerTicketRegistryTests {
             CasRedisTicketRegistryAutoConfiguration.class,
             BaseTicketRegistryTests.SharedTestConfiguration.class
         }, properties = {
-            "cas.ticket.tgt.core.only-track-most-recent-session=true",
-            "cas.ticket.registry.redis.host=localhost",
-            "cas.ticket.registry.redis.port=6379"
+        "cas.ticket.tgt.core.only-track-most-recent-session=true",
+        "cas.ticket.registry.redis.host=localhost",
+        "cas.ticket.registry.redis.port=6379"
     })
     @ExtendWith(CasTestExtension.class)
     class ConcurrentAddTicketGrantingTicketTests {
@@ -474,14 +475,14 @@ class RedisServerTicketRegistryTests {
 
     @Nested
     @SpringBootTest(
-            classes = {
-                    CasRedisCoreAutoConfiguration.class,
-                    CasRedisTicketRegistryAutoConfiguration.class,
-                    BaseTicketRegistryTests.SharedTestConfiguration.class
-            }, properties = {
-            "cas.ticket.tgt.core.only-track-most-recent-session=false",
-            "cas.ticket.registry.redis.host=localhost",
-            "cas.ticket.registry.redis.port=6379"
+        classes = {
+            CasRedisCoreAutoConfiguration.class,
+            CasRedisTicketRegistryAutoConfiguration.class,
+            BaseTicketRegistryTests.SharedTestConfiguration.class
+        }, properties = {
+        "cas.ticket.tgt.core.only-track-most-recent-session=false",
+        "cas.ticket.registry.redis.host=localhost",
+        "cas.ticket.registry.redis.port=6379"
     })
     @ExtendWith(CasTestExtension.class)
     class ConcurrentAddProxyTicketTests {
@@ -497,14 +498,14 @@ class RedisServerTicketRegistryTests {
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
-        
+
         @Test
         void verifyConcurrentAddTicket() throws Throwable {
             val principalId = UUID.randomUUID().toString();
             val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
             val tgtGenerator = new ProxyGrantingTicketIdGenerator(10, StringUtils.EMPTY);
             val pgt = new ProxyGrantingTicketImpl(tgtGenerator.getNewTicketId(TicketGrantingTicket.PREFIX),
-                    authentication, NeverExpiresExpirationPolicy.INSTANCE);
+                authentication, NeverExpiresExpirationPolicy.INSTANCE);
             ticketRegistry.addTicket(pgt);
 
             val request = new MockHttpServletRequest();
@@ -549,10 +550,59 @@ class RedisServerTicketRegistryTests {
                 val ptGenerator = new ProxyTicketIdGenerator(10, StringUtils.EMPTY);
                 for (var i = 0; i < max; i++) {
                     val proxyTicket = proxyGrantingTicket.grantProxyTicket(ptGenerator.getNewTicketId(ProxyTicket.PREFIX),
-                            service, new HardTimeoutExpirationPolicy(20), serviceTicketSessionTrackingPolicy);
+                        service, new HardTimeoutExpirationPolicy(20), serviceTicketSessionTrackingPolicy);
                     FunctionUtils.doUnchecked(__ -> ticketRegistry.addTicket(proxyTicket));
                 }
             }
         }
+    }
+
+
+    @Nested
+    @SpringBootTest(
+        classes = {
+            CasRedisCoreAutoConfiguration.class,
+            CasRedisTicketRegistryAutoConfiguration.class,
+            BaseTicketRegistryTests.SharedTestConfiguration.class
+        },
+        properties = {
+            "cas.ticket.tgt.core.only-track-most-recent-session=true",
+            "cas.ticket.registry.redis.host=localhost",
+            "cas.ticket.registry.redis.port=6379",
+            "cas.slo.disabled=true"
+        })
+    @ExtendWith(CasTestExtension.class)
+    class DisabledSloTests {
+        @Autowired
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        private TicketRegistry ticketRegistry;
+
+        @Autowired
+        @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
+        private TicketTrackingPolicy serviceTicketSessionTrackingPolicy;
+        
+        @Test
+        void verifyServicesUntrackedWithSloOff() throws Exception {
+            val authn = CoreAuthenticationTestUtils.getAuthentication(
+                Map.of("cn", List.of("cn1", "cn2"), "givenName", List.of("g1", "g2"),
+                    "authn-context", List.of("mfa-example")));
+            val ticketGrantingTicket = new TicketGrantingTicketImpl(
+                BaseTicketRegistryTests.TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+                authn, NeverExpiresExpirationPolicy.INSTANCE);
+            ticketRegistry.addTicket(ticketGrantingTicket);
+            val st = ticketGrantingTicket.grantServiceTicket(
+                BaseTicketRegistryTests.TestTicketIdentifiers.generate().serviceTicketId(),
+                RegisteredServiceTestUtils.getService(),
+                NeverExpiresExpirationPolicy.INSTANCE, false,
+                serviceTicketSessionTrackingPolicy);
+            ticketRegistry.addTicket(st);
+            assertEquals(1, ticketGrantingTicket.getServices().size());
+            ticketRegistry.updateTicket(ticketGrantingTicket);
+
+            val ticket = ticketRegistry.getTicket(ticketGrantingTicket.getId(), TicketGrantingTicket.class);
+            assertNotNull(ticket);
+            assertTrue(ticket.getServices().isEmpty());
+        }
+
     }
 }
