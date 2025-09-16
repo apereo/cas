@@ -39,7 +39,8 @@ class CasOAuth20ServicesConfiguration {
         final ConfigurableApplicationContext applicationContext) {
         return plan -> {
             val oAuthCallbackUrl = casProperties.getServer().getPrefix()
-                                   + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+                                   + OAuth20Constants.BASE_OAUTH20_URL + '/'
+                                   + OAuth20Constants.CALLBACK_AUTHORIZE_URL + ".*";
             val service = new CasRegisteredService();
             service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
             service.setName(service.getClass().getSimpleName());
