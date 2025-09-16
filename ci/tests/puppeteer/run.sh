@@ -563,7 +563,7 @@ function buildAndRun() {
   else
     serverType="native"
   fi
-  printgreen "Project type is chosen to be ${serverType:-external}"
+  printgreen "Server type is chosen to be ${serverType:-external}"
 
   if [[ "${NATIVE_BUILD}" == "false" && "${NATIVE_RUN}" == "false" ]]; then
     casWebApplicationFile="${PWD}/webapp/cas-server-webapp${serverType:+-$serverType}/build/libs/cas-server-webapp${serverType:+-$serverType}-${casVersion}.${projectType}"
