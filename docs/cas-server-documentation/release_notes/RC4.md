@@ -164,4 +164,4 @@ are now configured to run with parallelism enabled.
 - When using a [selection menu](../mfa/Multifactor-Authentication-ProviderSelection.html) for multifactor authentication, it is possible to make multifactor authentication optional.
 - [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication-TokenManagement.html) gains an option to control the character set used to generate tokens. Furthermore, additional improvements are place to ensure generated tokens are unique and do not collide with each other, particularly when using a smaller token length.
 - CAS [may now be configured](../authentication/Configuring-SSO-Notifications.html) to send email messages or SMS when single sign-on sessions are created.
-- Authentication handlers that qualify (i.e. created as property `@Bean`s) are observed for monitoring and metrics purposes. 
+- Authentication handlers that qualify (i.e. created as proper `@Bean`s) are observed for monitoring and metrics purposes. 

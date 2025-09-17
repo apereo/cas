@@ -2,22 +2,12 @@ package org.apereo.cas.oidc.web.controllers.jwks;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
-
-import lombok.val;
+import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletResponse;
-
-import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Locale;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link OidcJwksEndpointControllerTests}.
@@ -27,38 +17,35 @@ import static org.mockito.Mockito.*;
  */
 @Tag("OIDCWeb")
 class OidcJwksEndpointControllerTests extends AbstractOidcTests {
-    @Autowired
-    @Qualifier("oidcJwksController")
-    protected OidcJwksEndpointController oidcJwksEndpointController;
 
     @Test
-    void verifyOperation() {
-        val request = getHttpRequestForEndpoint(OidcConstants.JWKS_URL);
-        val response = new MockHttpServletResponse();
-
-        val result = oidcJwksEndpointController.handleRequestInternal(request, response,
-            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT.name().toLowerCase(Locale.ENGLISH));
-        assertTrue(result.getStatusCode().is2xxSuccessful());
+    void verifyOperation() throws Exception {
+        mockMvc.perform(get("/cas/oidc/" + OidcConstants.JWKS_URL)
+                .queryParam("state", JsonWebKeyLifecycleStates.CURRENT.name().toLowerCase(Locale.ENGLISH))
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isOk());
     }
 
     @Test
-    void verifyBadEndpointRequest() {
-        val request = getHttpRequestForEndpoint("unknown/issuer");
-        request.setRequestURI("unknown/issuer");
-        val response = new MockHttpServletResponse();
-        val mv = oidcJwksEndpointController.handleRequestInternal(request, response,
-            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT.name().toLowerCase(Locale.ENGLISH));
-        assertEquals(HttpStatus.BAD_REQUEST, mv.getStatusCode());
+    void verifyBadEndpointRequest() throws Exception {
+        mockMvc.perform(get("/cas/oidc/" + OidcConstants.JWKS_URL)
+                .queryParam("state", JsonWebKeyLifecycleStates.CURRENT.name().toLowerCase(Locale.ENGLISH))
+                .with(withHttpRequestProcessor())
+                .with(r -> {
+                    r.setServerName("sso2.example.org");
+                    return r;
+                })
+            )
+            .andExpect(status().isBadRequest());
     }
 
     @Test
-    void verifyFails() {
-        val request = getHttpRequestForEndpoint(OidcConstants.JWKS_URL);
-        val response = mock(HttpServletResponse.class);
-        doThrow(new RuntimeException()).when(response).setContentType(anyString());
-
-        val result = oidcJwksEndpointController.handleRequestInternal(request, response,
-            OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.CURRENT.name().toLowerCase(Locale.ENGLISH));
-        assertTrue(result.getStatusCode().is4xxClientError());
+    void verifyUnknownKid() throws Exception {
+        mockMvc.perform(get("/cas/oidc/" + OidcConstants.JWKS_URL)
+                .queryParam("state", JsonWebKeyLifecycleStates.CURRENT.name().toLowerCase(Locale.ENGLISH))
+                .queryParam("kid", "unknown")
+                .with(withHttpRequestProcessor())
+            )
+            .andExpect(status().isOk());
     }
 }
