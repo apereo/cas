@@ -116,7 +116,6 @@ class GitRepositoryBuilderTests {
         val builder = GitRepositoryBuilder.newInstance(props);
         assertDoesNotThrow(builder::build);
 
-
         val props2 = casProperties.getServiceRegistry().getGit();
         props2.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
         props2.setUsername("casuser");
