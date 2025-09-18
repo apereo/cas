@@ -4,7 +4,7 @@ networks:
 
 services:
   kafka:
-    image: 'bitnami/kafka:4.0.0'
+    image: 'bitnamilegacy/kafka:4.0.0'
     container_name: kafka-server
     networks:
       - kafka-net
