@@ -1,6 +1,5 @@
 package org.apereo.cas.git;
 
-
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -43,6 +42,7 @@ class GitRepositoryBuilderTests {
         val props = casProperties.getServiceRegistry().getGit();
         props.setRepositoryUrl("git@github.com:mmoayyed/sample-data.git");
         props.setBranchesToClone("master");
+        props.setActiveBranch("master");
         props.setClearExistingIdentities(true);
         props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(
             FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID()));
@@ -60,6 +60,7 @@ class GitRepositoryBuilderTests {
         props.setUsername("casuser");
         props.setPassword("password");
         props.setBranchesToClone("master");
+        props.setActiveBranch("master");
         props.setHttpClientType(BaseGitProperties.HttpClientTypes.HTTP_CLIENT);
         props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(
             FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID()));
@@ -85,9 +86,46 @@ class GitRepositoryBuilderTests {
         props.setUsername("casuser");
         props.setPassword("password");
         props.setBranchesToClone("master");
+        props.setActiveBranch("master");
         props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(
             "file://" + FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID()));
         val builder = GitRepositoryBuilder.newInstance(props);
         assertDoesNotThrow(builder::build);
+    }
+
+    @Test
+    void verifyBuildWithBadBranchAndWithoutExistingDirectory() throws Throwable {
+        val props = casProperties.getServiceRegistry().getGit();
+        props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
+        props.setUsername("casuser");
+        props.setPassword("password");
+        props.setActiveBranch("badbranch");
+        props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(
+                FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID()));
+        val builder = GitRepositoryBuilder.newInstance(props);
+        assertThrows(IllegalArgumentException.class, builder::build);
+    }
+
+    @Test
+    void verifyBuildWithBadBranchButWithExistingDirectory() throws Throwable {
+        val directory = FileUtils.getTempDirectoryPath() + File.separator + UUID.randomUUID();
+
+        val props = casProperties.getServiceRegistry().getGit();
+        props.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
+        props.setUsername("casuser");
+        props.setPassword("password");
+        props.setActiveBranch("master");
+        props.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(directory));
+        val builder = GitRepositoryBuilder.newInstance(props);
+        assertDoesNotThrow(builder::build);
+
+        val props2 = casProperties.getServiceRegistry().getGit();
+        props2.setRepositoryUrl("https://github.com/mmoayyed/sample-data.git");
+        props2.setUsername("casuser");
+        props2.setPassword("password");
+        props2.setActiveBranch("badbranch");
+        props2.getCloneDirectory().setLocation(ResourceUtils.getRawResourceFrom(directory));
+        val builder2 = GitRepositoryBuilder.newInstance(props2);
+        assertDoesNotThrow(builder2::build);
     }
 }

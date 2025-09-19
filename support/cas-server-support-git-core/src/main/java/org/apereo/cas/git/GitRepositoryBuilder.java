@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportConfigCallback;
+import org.eclipse.jgit.api.errors.RefNotFoundException;
 import org.eclipse.jgit.transport.ChainingCredentialsProvider;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.HttpTransport;
@@ -208,9 +209,13 @@ public class GitRepositoryBuilder {
     private GitRepository getExistingGitRepository(final TransportConfigCallback transportCallback) throws Exception {
         val git = Git.open(repositoryDirectory.getFile());
         LOGGER.debug("Checking out the branch [{}] at [{}]", activeBranch, repositoryDirectory);
-        git.checkout()
-            .setName(activeBranch)
-            .call();
+        try {
+            git.checkout()
+                .setName(activeBranch)
+                .call();
+        } catch (final RefNotFoundException e) {
+            LOGGER.error("Unable to use the [{}] branch. Keeping the current branch. Error: [{}]", activeBranch, e.getMessage());
+        }
         return new DefaultGitRepository(git, credentialsProviders, transportCallback,
             timeoutInSeconds, signCommits, rebase);
     }
