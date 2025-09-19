@@ -101,7 +101,7 @@ class OidcIdTokenGeneratorServiceTests {
             val tgt = new MockTicketGrantingTicket(authentication);
             val callback = casProperties.getServer().getPrefix()
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
-                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+                + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
             val service = webApplicationServiceFactory.createService(callback);
             tgt.getServices().putAll(CollectionUtils.wrap("service", service));
 
@@ -148,7 +148,7 @@ class OidcIdTokenGeneratorServiceTests {
             val tgt = new MockTicketGrantingTicket(authentication);
             val callback = casProperties.getServer().getPrefix()
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
-                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+                + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
             val service = webApplicationServiceFactory.createService(callback);
             tgt.getServices().putAll(CollectionUtils.wrap("service", service));
 
@@ -195,7 +195,7 @@ class OidcIdTokenGeneratorServiceTests {
             val tgt = new MockTicketGrantingTicket(authentication);
             val callback = casProperties.getServer().getPrefix()
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
-                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+                + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
             val service = webApplicationServiceFactory.createService(callback);
             tgt.getServices().putAll(CollectionUtils.wrap("service", service));
 
@@ -253,7 +253,7 @@ class OidcIdTokenGeneratorServiceTests {
             val tgt = new MockTicketGrantingTicket(authentication);
             val callback = casProperties.getServer().getPrefix()
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
-                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+                + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
 
             val service = webApplicationServiceFactory.createService(callback);
             tgt.getServices().putAll(CollectionUtils.wrap("service", service));
@@ -338,7 +338,7 @@ class OidcIdTokenGeneratorServiceTests {
             val tgt = new MockTicketGrantingTicket(authentication);
             val callback = casProperties.getServer().getPrefix()
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
-                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+                + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
             val service = webApplicationServiceFactory.createService(callback);
             tgt.getServices().putAll(CollectionUtils.wrap("service", service));
             ticketRegistry.addTicket(tgt);
@@ -398,7 +398,7 @@ class OidcIdTokenGeneratorServiceTests {
             val tgt = new MockTicketGrantingTicket(authentication);
             val callback = casProperties.getServer().getPrefix()
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
-                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+                + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
             val service = webApplicationServiceFactory.createService(callback);
             tgt.getServices().putAll(CollectionUtils.wrap("service", service));
             ticketRegistry.addTicket(tgt);
@@ -452,7 +452,7 @@ class OidcIdTokenGeneratorServiceTests {
 
             val callback = casProperties.getServer().getPrefix()
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
-                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+                + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
 
             val service = webApplicationServiceFactory.createService(callback);
             tgt.getServices().putAll(CollectionUtils.wrap("service", service));
@@ -503,7 +503,7 @@ class OidcIdTokenGeneratorServiceTests {
 
             val callback = casProperties.getServer().getPrefix()
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
-                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+                + OAuth20Constants.CALLBACK_AUTHORIZE_URL;
 
             val service = webApplicationServiceFactory.createService(callback);
             tgt.getServices().putAll(CollectionUtils.wrap("service", service));
