@@ -6,7 +6,6 @@ import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtCipherExecutor;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -95,13 +94,12 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
 
 
     private Key getEncryptionKeyForDecryption(final RegisteredService registeredService) {
-        val svc = (OAuthRegisteredService) registeredService;
-        if (svc instanceof OidcRegisteredService) {
+        if (registeredService instanceof final OidcRegisteredService oidcService) {
             val jwks = Objects.requireNonNull(cipherExecutor.getRegisteredServiceJsonWebKeystoreCache().get(
-                new OidcJsonWebKeyCacheKey(svc, OidcJsonWebKeyUsage.ENCRYPTION)));
+                new OidcJsonWebKeyCacheKey(oidcService, OidcJsonWebKeyUsage.ENCRYPTION)));
             if (jwks.isEmpty()) {
-                LOGGER.warn("Service [{}] with client id [{}] is configured to encrypt tokens, yet no JSON web key is available",
-                    svc.getServiceId(), svc.getClientId());
+                LOGGER.debug("Service [{}] with client id [{}] is configured to encrypt tokens, yet no JSON web key is available",
+                    oidcService.getServiceId(), oidcService.getClientId());
                 return null;
             }
             val jsonWebKey = (PublicJsonWebKey) jwks.get().getJsonWebKeys().getFirst();
@@ -111,7 +109,7 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
                             + "when operating on service [{}] with client id [{}]. Operations that deal "
                             + "with JWT encryption/decryption may not be functional, until a private "
                             + "key can be loaded for JSON web key [{}]",
-                    svc.getServiceId(), svc.getClientId(), jsonWebKey.getKeyId());
+                    oidcService.getServiceId(), oidcService.getClientId(), jsonWebKey.getKeyId());
                 return null;
             }
             return jsonWebKey.getPrivateKey();
