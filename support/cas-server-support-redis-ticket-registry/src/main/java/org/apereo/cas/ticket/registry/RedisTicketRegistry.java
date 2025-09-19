@@ -111,7 +111,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     public long deleteAll() {
         val size = new AtomicLong();
         redisKeyGeneratorFactory.getRedisKeyGenerators().forEach(generator -> {
-            val keyPattern = generator.forPrefixAndId("*", "*");
+            val keyPattern = generator.forEverything();
             val options = ScanOptions.scanOptions().match(keyPattern).build();
             try (val result = casRedisTemplates.getTicketsRedisTemplate().scan(options)) {
                 casRedisTemplates.getTicketsRedisTemplate().executePipelined((RedisCallback<Object>) connection -> {
@@ -330,7 +330,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     @Override
     public long countTickets() {
         val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(TicketGrantingTicket.PREFIX).orElseThrow();
-        val redisTicketsKey = redisKeyGenerator.forPrefixAndId("*", "*");
+        val redisTicketsKey = redisKeyGenerator.forEverything();
         return casRedisTemplates.getTicketsRedisTemplate().count(redisTicketsKey);
     }
 
@@ -387,7 +387,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     private Stream<String> fetchKeysForTickets() {
         val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(TicketGrantingTicket.PREFIX).orElseThrow();
-        val redisKey = redisKeyGenerator.forPrefixAndId("*", "*");
+        val redisKey = redisKeyGenerator.forEverything();
         return fetchKeysForTickets(redisKey);
     }
 
@@ -398,6 +398,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     protected RedisTicketDocument buildTicketAsDocument(final Ticket ticket) {
         return FunctionUtils.doUnchecked(() -> {
+            if (casProperties.getSlo().isDisabled() && ticket instanceof final TicketGrantingTicket tgt) {
+                tgt.removeAllServices();
+            }
             val encTicket = encodeTicket(ticket);
             val json = serializeTicket(encTicket);
             FunctionUtils.throwIf(StringUtils.isBlank(json),
