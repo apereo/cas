@@ -60,13 +60,13 @@ async function verifyAccessTokenWithKey(accessToken, kid, alg, clientId) {
 }
 
 async function verifyAccessTokenWithProfile(accessToken) {
-    const profileUrl = `https://localhost:8443/cas/oidc/oidcProfile`;
+    const profileUrl = "https://localhost:8443/cas/oidc/oidcProfile";
     await cas.log(`Calling user profile ${profileUrl}`);
     await cas.doPost(profileUrl, "", {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${accessToken}`
     }, (res) => {
-
+        cas.log(res.data);
     }, (error) => {
         throw `Operation failed: ${error}`;
     });
