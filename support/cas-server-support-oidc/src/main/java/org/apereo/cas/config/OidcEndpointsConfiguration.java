@@ -20,6 +20,9 @@ import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointContro
 import org.apereo.cas.oidc.web.controllers.authorize.OidcPushedAuthorizeEndpointController;
 import org.apereo.cas.oidc.web.controllers.ciba.OidcCibaController;
 import org.apereo.cas.oidc.web.controllers.discovery.OidcWellKnownEndpointController;
+import org.apereo.cas.oidc.web.controllers.dynareg.NoOpOidcClientConfigurationEndpointController;
+import org.apereo.cas.oidc.web.controllers.dynareg.NoOpOidcDynamicClientRegistrationEndpointController;
+import org.apereo.cas.oidc.web.controllers.dynareg.NoOpOidcInitialAccessTokenController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcInitialAccessTokenController;
@@ -39,6 +42,8 @@ import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
@@ -389,8 +394,14 @@ class OidcEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "oidcDynamicClientRegistrationEndpointController")
         public OidcDynamicClientRegistrationEndpointController oidcDynamicClientRegistrationEndpointController(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final OidcConfigurationContext oidcConfigurationContext) {
-            return new OidcDynamicClientRegistrationEndpointController(oidcConfigurationContext);
+            final OidcConfigurationContext oidcConfigurationContext,
+            final ConfigurableApplicationContext applicationContext) {
+            return BeanSupplier.of(OidcDynamicClientRegistrationEndpointController.class)
+            .when(BeanCondition.on("cas.authn.oidc.registration.dynamic-client-registration-enabled")
+                .isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
+            .supply(() -> new OidcDynamicClientRegistrationEndpointController(oidcConfigurationContext))
+            .otherwise(() -> new NoOpOidcDynamicClientRegistrationEndpointController(oidcConfigurationContext))
+            .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -398,8 +409,14 @@ class OidcEndpointsConfiguration {
         @Bean
         public OidcClientConfigurationEndpointController oidcClientConfigurationEndpointController(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final OidcConfigurationContext oidcConfigurationContext) {
-            return new OidcClientConfigurationEndpointController(oidcConfigurationContext);
+            final OidcConfigurationContext oidcConfigurationContext,
+            final ConfigurableApplicationContext applicationContext) {
+            return BeanSupplier.of(OidcClientConfigurationEndpointController.class)
+            .when(BeanCondition.on("cas.authn.oidc.registration.dynamic-client-registration-enabled")
+                .isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
+            .supply(() -> new OidcClientConfigurationEndpointController(oidcConfigurationContext))
+            .otherwise(() -> new NoOpOidcClientConfigurationEndpointController(oidcConfigurationContext))
+            .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -407,8 +424,14 @@ class OidcEndpointsConfiguration {
         @Bean
         public OidcInitialAccessTokenController oidcInitialAccessTokenController(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final OidcConfigurationContext oidcConfigurationContext) {
-            return new OidcInitialAccessTokenController(oidcConfigurationContext);
+            final OidcConfigurationContext oidcConfigurationContext,
+            final ConfigurableApplicationContext applicationContext) {
+            return BeanSupplier.of(OidcInitialAccessTokenController.class)
+            .when(BeanCondition.on("cas.authn.oidc.registration.dynamic-client-registration-enabled")
+                .isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
+            .supply(() -> new OidcInitialAccessTokenController(oidcConfigurationContext))
+            .otherwise(() -> new NoOpOidcInitialAccessTokenController(oidcConfigurationContext))
+            .get();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
